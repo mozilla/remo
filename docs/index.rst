@@ -2,18 +2,20 @@
 Welcome to this project's documentation!
 ========================================
 
-This is a documentation template for a **web application based on Playdoh**.
-Feel free to change this to your liking.
+This is the developer's documentation for ReMo Portal.
 
+About ReMo Portal
+-----------------
 
-About playdoh
--------------
+Mozilla Reps web tools and portal is the next phase of tools for the
+Mozilla Reps program. Its purpose is to provide the required tools for
+the day to day operations of the hundreds of Reps signed up in the
+program. Diversity of the Reps and Geographic distribution are key
+features of the program and those tools should help unify community
+practices and tools of mozillians around the world.
 
-This project is based on **playdoh**. Mozilla's Playdoh is an open source
-web application template based on `Django <http://www.djangoproject.com/>`_.
-
-To learn more about it, step by the `playdoh project page
-<https://github.com/mozilla/playdoh>`_.
+To learn more about it and the release schedule visit `ReMo Portal project page
+<https://wiki.mozilla.org/ReMo/Website>`_.
 
 Contents
 --------
