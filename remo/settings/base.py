@@ -30,7 +30,7 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     # Application base, containing global templates.
     'remo.base',
     # Example code. Can (and should) be removed for actual projects.
-    'remo.examples',
+    'remo.landing',
 ]
 
 

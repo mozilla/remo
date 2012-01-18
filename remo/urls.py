@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
 
-from .examples import urls
+import landing.urls
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -9,7 +9,7 @@ from .examples import urls
 
 urlpatterns = patterns('',
     # Example:
-    (r'', include(urls)),
+    (r'', include(landing.urls)),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
