@@ -1,6 +1,6 @@
-========================================
-Welcome to this project's documentation!
-========================================
+==========================================
+Welcome to this ReMo Portal documentation!
+==========================================
 
 This is the developer's documentation for ReMo Portal.
 
@@ -22,7 +22,6 @@ Contents
 
 .. toctree::
    :maxdepth: 1
-
 
 Indices and tables
 ------------------
