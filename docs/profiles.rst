@@ -115,3 +115,10 @@ Information is fetched using `MediaWiki Ask API extension
 new profiles will be created, existing profile will not be edited.
 
 
+API
+---
+
+Profiles App provides an API for other applications to receive data
+releated to Mozilla Reps.
+
+.. TODO: autodocument from api
