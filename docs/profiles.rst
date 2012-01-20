@@ -13,16 +13,18 @@ We are collecting the following information for each Rep:
  * Last Name
  * Birth Year
  * City
+ * Region
  * Country
  * Longitude, Latitude
  * Display Name
+ * Mozillians Profile
  * Private Email
  * Bugzilla Email
  * Twitter Account
  * GPG-Key
  * Jabber ID
- * IRC Name
- * IRC Channels
+ * IRC Nickname
+ * IRC Channels in irc.m.o
  * LinkedIn Profile URL
  * Diaspora Profile URL
  * Facebook Profile URL
