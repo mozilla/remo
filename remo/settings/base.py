@@ -29,8 +29,8 @@ ROOT_URLCONF = 'remo.urls'
 INSTALLED_APPS = list(INSTALLED_APPS) + [
     # Application base, containing global templates.
     'remo.base',
-    # Example code. Can (and should) be removed for actual projects.
     'remo.landing',
+    'remo.profiles',
 ]
 
 
@@ -57,3 +57,6 @@ JINGO_EXCLUDE_APPS = [
 # ]
 
 LOGGING = dict(loggers=dict(playdoh = {'level': logging.DEBUG}))
+
+# Set profile module
+AUTH_PROFILE_MODULE = 'profiles.UserProfile'
