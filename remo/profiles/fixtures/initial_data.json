@@ -1,0 +1,58 @@
+[
+    {
+        "pk": 1,
+        "model": "auth.group",
+        "fields": {
+            "name": "Admin",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.group",
+        "fields": {
+            "name": "Council",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.group",
+        "fields": {
+            "name": "Rep",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 4,
+        "model": "auth.group",
+        "fields": {
+            "name": "Mentor",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 1,
+        "model": "profiles.ircchannel",
+        "fields": {
+            "name": "#remo",
+            "description": "General discussion ReMo"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "profiles.ircchannel",
+        "fields": {
+            "name": "#remo-council",
+            "description": "ReMo council"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "profiles.ircchannel",
+        "fields": {
+            "name": "#remo-webdev",
+            "description": "ReMo Web Development"
+        }
+    }
+]
