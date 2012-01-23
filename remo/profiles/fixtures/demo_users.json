@@ -1,0 +1,198 @@
+[
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "admin",
+            "first_name": "Nikos",
+            "last_name": "Κουκος",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-01-23 05:29:21",
+            "groups": [
+                1
+            ],
+            "user_permissions": [],
+            "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
+            "email": "admin@example.com",
+            "date_joined": "2012-01-23 05:29:21"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.user",
+        "fields": {
+            "username": "counselor",
+            "first_name": "Babis",
+            "last_name": "Sougias",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-01-23 05:30:50",
+            "groups": [
+                2
+            ],
+            "user_permissions": [],
+            "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
+            "email": "counselor@example.com",
+            "date_joined": "2012-01-23 05:30:50"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.user",
+        "fields": {
+            "username": "mentor",
+            "first_name": "Menis",
+            "last_name": "Denis",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-01-23 05:31:21",
+            "groups": [
+                4
+            ],
+            "user_permissions": [],
+            "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
+            "email": "mentor@example.com",
+            "date_joined": "2012-01-23 05:31:21"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "auth.user",
+        "fields": {
+            "username": "rep",
+            "first_name": "Koki",
+            "last_name": "Foci",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-01-23 05:31:39",
+            "groups": [
+                3
+            ],
+            "user_permissions": [],
+            "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
+            "email": "rep@example.com",
+            "date_joined": "2012-01-23 05:31:39"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "auth.user",
+        "fields": {
+            "username": "rep2",
+            "first_name": "Chuck",
+            "last_name": "Norris",
+            "is_active": false,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-01-23 05:31:58",
+            "groups": [
+                3
+            ],
+            "user_permissions": [],
+            "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
+            "email": "rep2@example.com",
+            "date_joined": "2012-01-23 05:31:58"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "profiles.userprofile",
+        "fields": {
+            "city": "Athens",
+            "twitter_account": null,
+            "gpg_key": null,
+            "display_name": "admin",
+            "private_email": null,
+            "country": "Greece",
+            "irc_name": null,
+            "irc_channels": [],
+            "lon": null,
+            "lat": null,
+            "linkedin_url": null,
+            "user": 1,
+            "birth_date": "1990-01-09",
+            "personal_website_url": null,
+            "private_email_visible": true,
+            "diaspora_url": null,
+            "personal_blog_feed": null,
+            "facebook_url": null
+        }
+    },
+    {
+        "pk": 2,
+        "model": "profiles.userprofile",
+        "fields": {
+            "city": "Mountain View",
+            "twitter_account": "@foobarzzz",
+            "gpg_key": null,
+            "display_name": "babis",
+            "private_email": "babis@example.com",
+            "country": "USA",
+            "irc_name": null,
+            "irc_channels": [],
+            "lon": null,
+            "lat": null,
+            "linkedin_url": "http://www.linkedin.com/n/babis",
+            "user": 2,
+            "birth_date": "1989-03-12",
+            "personal_website_url": "http://www.babis.example.com",
+            "private_email_visible": true,
+            "diaspora_url": null,
+            "personal_blog_feed": null,
+            "facebook_url": null
+        }
+    },
+    {
+        "pk": 3,
+        "model": "profiles.userprofile",
+        "fields": {
+            "city": "New York",
+            "twitter_account": "@menisdenis",
+            "gpg_key": "0x33333333",
+            "display_name": "md",
+            "private_email": "menis.denis@example.com",
+            "country": "USA",
+            "irc_name": null,
+            "irc_channels": [],
+            "lon": null,
+            "lat": null,
+            "linkedin_url": null,
+            "user": 3,
+            "birth_date": "1992-03-09",
+            "personal_website_url": null,
+            "private_email_visible": false,
+            "diaspora_url": "http://joindiaspora.com/md",
+            "personal_blog_feed": null,
+            "facebook_url": null
+        }
+    },
+    {
+        "pk": 4,
+        "model": "profiles.userprofile",
+        "fields": {
+            "city": "Instabul",
+            "twitter_account": "@kokifoci",
+            "gpg_key": null,
+            "display_name": "koki",
+            "private_email": null,
+            "country": "Turkey",
+            "irc_name": null,
+            "irc_channels": [],
+            "lon": null,
+            "lat": null,
+            "linkedin_url": null,
+            "user": 4,
+            "birth_date": "1995-06-22",
+            "personal_website_url": null,
+            "private_email_visible": true,
+            "diaspora_url": null,
+            "personal_blog_feed": null,
+            "facebook_url": null
+        }
+    }
+]
