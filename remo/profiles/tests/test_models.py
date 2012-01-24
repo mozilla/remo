@@ -215,11 +215,19 @@ class UserProfileTest(TestCase):
 
 
     def test_empty_display_name_autogenerate(self):
-        pass
+        self.user_profile.display_name = None
+        self.user_profile.save()
+        eq_(self.user_profile.display_name, self.user.username)
+
+        self.user_profile.display_name = ''
+        self.user_profile.save()
+        eq_(self.user_profile.display_name, self.user.username)
 
 
     def test_edited_display_name_persists(self):
-        pass
+        self.user_profile.display_name = u"edited"
+        self.user_profile.save()
+        eq_(self.user_profile.display_name, u"edited")
 
 
     def test_user_joins_irc_channel(self):
