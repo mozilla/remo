@@ -7,15 +7,14 @@ import landing.urls
 # from django.contrib import admin
 # admin.autodiscover()
 
-urlpatterns = patterns('',
-    # Example:
+urlpatterns = patterns(
+    '',
+
+    # landing page
     (r'', include(landing.urls)),
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # (r'^admin/', include(admin.site.urls)),
+    # browserid
+    (r'^browserid/', include('django_browserid.urls')),
 )
 
 ## In DEBUG mode, serve media files through Django.

@@ -1,6 +1,5 @@
 # This is your project's main settings file that can be committed to your
 # repo. If you need to override a setting locally, use settings_local.py
-
 from funfactory.settings_base import *
 
 # Bundles is a dictionary of two dictionaries, css and js, which list css files
@@ -31,8 +30,9 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     'remo.base',
     'remo.landing',
     'remo.profiles',
-]
 
+    'django_browserid',
+]
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:
@@ -60,3 +60,8 @@ LOGGING = dict(loggers=dict(playdoh = {'level': logging.DEBUG}))
 
 # Set profile module
 AUTH_PROFILE_MODULE = 'profiles.UserProfile'
+
+# Add BrowserID as authentication backend
+AUTHENTICATION_BACKENDS = ('django_browserid.auth.BrowserIDBackend',
+                           'django.contrib.auth.backends.ModelBackend',
+                           )
