@@ -5,7 +5,7 @@ from test_utils import TestCase
 
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User, Group
-from remo.profiles.models import UserProfile
+from remo.profiles.models import UserProfile, IRCChannel
 
 class UserTest(TestCase):
     def test_new_user_is_inactive(self):
@@ -231,14 +231,30 @@ class UserProfileTest(TestCase):
 
 
     def test_user_joins_irc_channel(self):
-        pass
+        self.user_profile.join_irc_channel("#remo")
+        eq_(self.user_profile.irc_channels.count(), 1)
 
 
     def test_user_leaves_irc_channel(self):
-        pass
+        user_profile = User.objects.get(username="admin").get_profile()
+        user_profile.leave_irc_channel("#remo")
+        eq_(user_profile.irc_channels.count(), 0)
 
 
     def test_user_joins_multiple_irc_channels(self):
-        pass
+        self.user_profile.join_irc_channel("#remo")
+        self.user_profile.join_irc_channel("#remo-webdev")
+        eq_(self.user_profile.irc_channels.count(), 2)
 
+
+    def test_user_joins_irc_channel_again(self):
+        self.user_profile.join_irc_channel("#remo")
+        self.assertRaises(ValueError,
+                          self.user_profile.join_irc_channel("#remo-webdev"))
+
+
+    def test_user_joins_new_irc_channel(self):
+        self.user_profile.join_irc_channel("#channel_not_in_db")
+        eq_(IRCChannel.objects.count(), 4)
+        eq_(self.user_profile.irc_channels.count(), 1)
 

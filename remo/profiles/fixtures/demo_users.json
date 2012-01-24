@@ -110,7 +110,9 @@
             "private_email": null,
             "country": "Greece",
             "irc_name": null,
-            "irc_channels": [],
+            "irc_channels": [
+	        1
+	    ],
             "lon": null,
             "lat": null,
             "linkedin_url": null,

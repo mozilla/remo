@@ -119,6 +119,31 @@ class UserProfile(models.Model):
             group.user_set.remove(self.user)
 
 
+    def join_irc_channel(self, channel_name):
+        channel, created = IRCChannel.objects.get_or_create(name=channel_name.lower())
+        if created:
+            channel.save()
+
+        if channel in self.irc_channels.iterator():
+            raise ValueError("User already in channel %s" % channel_name)
+
+        else:
+            self.irc_channels.add(channel)
+
+
+    def leave_irc_channel(self, channel_name):
+        try:
+            channel = IRCChannel.objects.get(name=channel_name.lower())
+
+        except IRCChannel.DoesNotExist:
+            raise ValueError("Channel %s does not exist" % channel_name)
+
+        if channel not in self.irc_channels.iterator():
+            raise ValueError("User not in channel %s" % channel_name)
+
+        else:
+            self.irc_channels.remove(channel)
+
 
 def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
     """
