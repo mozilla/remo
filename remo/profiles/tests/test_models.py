@@ -7,18 +7,10 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User, Group
 from remo.profiles.models import UserProfile
 
-# test user can join irc channel
-# test user can leave irc channel
-# test user cannot have to entries with the same irc channel
-# test user gpg keyid
-# test user auto set display_name
-# test user manual set display_name
-# test user make/delete admin
-# test user make/delete rep
-# test user make/delete mentor
-# test user make/delete councelor
-# test create user, if inactive
-# test create user, create profile, if active
+class UserTest(TestCase):
+    def test_new_user_is_inactive(self):
+        pass
+
 
 class UserProfileTest(TestCase):
     fixtures = ['demo_users.json']
@@ -145,4 +137,93 @@ class UserProfileTest(TestCase):
         for gpg_keyid in gpg_keyids:
             self.user_profile.gpg_keyid = gpg_keyid
             self.assertRaises(ValidationError, self.user_profile.full_clean())
+
+
+    def test_join_mentor_group(self):
+        user_profile = User.objects.get(username="rep").get_profile()
+        user_profile.join_mentor_group()
+
+        mentor_group = Group.objects.get(name="Mentor")
+        eq_(mentor_group.user_set.count(), 2)
+
+
+    def test_leave_mentor_group(self):
+        user_profile = User.objects.get(username="mentor").get_profile()
+        user_profile.leave_mentor_group()
+
+        mentor_group = Group.objects.get(name="Mentor")
+        eq_(mentor_group.user_set.count(), 0)
+
+
+    def test_join_council_group(self):
+        user_profile = User.objects.get(username="rep").get_profile()
+        user_profile.join_council_group()
+
+        council_group = Group.objects.get(name="Council")
+        eq_(council_group.user_set.count(), 2)
+
+
+    def test_leave_council_group(self):
+        user_profile = User.objects.get(username="counselor").get_profile()
+        user_profile.leave_council_group()
+
+        council_group = Group.objects.get(name="Council")
+        eq_(council_group.user_set.count(), 0)
+
+
+    def test_join_admin_group(self):
+        user_profile = User.objects.get(username="rep").get_profile()
+        user_profile.join_admin_group()
+
+        admin_group = Group.objects.get(name="Admin")
+        eq_(admin_group.user_set.count(), 2)
+
+
+    def test_leave_admin_group(self):
+        user_profile = User.objects.get(username="admin").get_profile()
+        user_profile.leave_admin_group()
+
+        admin_group = Group.objects.get(name="Admin")
+        eq_(admin_group.user_set.count(), 0)
+
+
+    def test_join_rep_group(self):
+        user_profile = User.objects.get(username="counselor").get_profile()
+        user_profile.join_rep_group()
+
+        rep_group = Group.objects.get(name="Rep")
+        eq_(rep_group.user_set.count(), 3)
+
+
+    def test_leave_rep_group(self):
+        user_profile = User.objects.get(username="rep").get_profile()
+        user_profile.leave_rep_group()
+
+        rep_group = Group.objects.get(name="Rep")
+        eq_(rep_group.user_set.count(), 1)
+
+
+    def test_new_profile_activates_user(self):
+        pass
+
+
+    def test_empty_display_name_autogenerate(self):
+        pass
+
+
+    def test_edited_display_name_persists(self):
+        pass
+
+
+    def test_user_joins_irc_channel(self):
+        pass
+
+
+    def test_user_leaves_irc_channel(self):
+        pass
+
+
+    def test_user_joins_multiple_irc_channels(self):
+        pass
+
 

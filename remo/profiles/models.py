@@ -91,21 +91,81 @@ class UserProfile(models.Model):
         return self.private_email_visible
 
 
-    def add_to_mentor_group(self):
+    def join_mentor_group(self):
         group = Group.objects.get(name="Mentor")
 
-        if group in self.user.groups:
+        if group in self.user.groups.iterator():
             raise ValueError("User already in Mentor Group")
 
         else:
             group.user_set.add(self.user)
 
 
-    def remove_from_mentor_group(self):
+    def leave_mentor_group(self):
         group = Group.objects.get(name="Mentor")
 
-        if group not in self.user.groups:
+        if group not in self.user.groups.iterator():
             raise ValueError("User not in Mentor Group")
+
+        else:
+            group.user_set.remove(self.user)
+
+
+    def join_rep_group(self):
+        group = Group.objects.get(name="Rep")
+
+        if group in self.user.groups.iterator():
+            raise ValueError("User already in Rep Group")
+
+        else:
+            group.user_set.add(self.user)
+
+
+    def leave_rep_group(self):
+        group = Group.objects.get(name="Rep")
+
+        if group not in self.user.groups.iterator():
+            raise ValueError("User not in Rep Group")
+
+        else:
+            group.user_set.remove(self.user)
+
+
+    def join_admin_group(self):
+        group = Group.objects.get(name="Admin")
+
+        if group in self.user.groups.iterator():
+            raise ValueError("User already in Admin Group")
+
+        else:
+            group.user_set.add(self.user)
+
+
+    def leave_admin_group(self):
+        group = Group.objects.get(name="Admin")
+
+        if group not in self.user.groups.iterator():
+            raise ValueError("User not in Admin Group")
+
+        else:
+            group.user_set.remove(self.user)
+
+
+    def join_council_group(self):
+        group = Group.objects.get(name="Council")
+
+        if group in self.user.groups.iterator():
+            raise ValueError("User already in Council Group")
+
+        else:
+            group.user_set.add(self.user)
+
+
+    def leave_council_group(self):
+        group = Group.objects.get(name="Council")
+
+        if group not in self.user.groups.iterator():
+            raise ValueError("User not in Council Group")
 
         else:
             group.user_set.remove(self.user)
