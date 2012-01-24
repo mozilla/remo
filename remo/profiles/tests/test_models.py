@@ -9,7 +9,12 @@ from remo.profiles.models import UserProfile, IRCChannel
 
 class UserTest(TestCase):
     def test_new_user_is_inactive(self):
-        pass
+        new_user = User.objects.create_user(username="new_user",
+                                            email="new@example.com")
+        new_user.set_password("123")
+        new_user.save()
+
+        eq_(new_user.is_active, False)
 
 
 class UserProfileTest(TestCase):
@@ -93,15 +98,6 @@ class UserProfileTest(TestCase):
         for date in bogus_dates:
             self.user_profile.birth_date = date
             self.assertRaises(ValidationError, self.user_profile.full_clean)
-
-
-    def test_valid_twitter_username(self):
-        twitter_usernames = ["@validone", "@valid212", "@va1234567890123",
-                             "@_foo_", "@____"]
-
-        for twitter_username in twitter_usernames:
-            self.user_profile.twitter_username = twitter_username
-            self.assertIsNone(self.user_profile.full_clean())
 
 
     def test_valid_twitter_username(self):
