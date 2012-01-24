@@ -204,7 +204,14 @@ class UserProfileTest(TestCase):
 
 
     def test_new_profile_activates_user(self):
-        pass
+        user = User.objects.get(username="rep2")
+        user_profile = UserProfile(user=user,
+                                   birth_date=datetime.date(year=1980,
+                                                            month=1, day=1),
+                                   city=u"Athens",
+                                   country=u"Greece")
+        user_profile.save()
+        eq_(user.is_active, True)
 
 
     def test_empty_display_name_autogenerate(self):
