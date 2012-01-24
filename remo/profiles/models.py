@@ -91,84 +91,33 @@ class UserProfile(models.Model):
         return self.private_email_visible
 
 
-    def join_mentor_group(self):
-        group = Group.objects.get(name="Mentor")
+    def join_group(self, group_name):
+        try:
+            group = Group.objects.get(name=group_name)
+
+        except Group.DoesNotExist:
+            raise ValueError("Group %s does not exist" % group_name)
 
         if group in self.user.groups.iterator():
-            raise ValueError("User already in Mentor Group")
+            raise ValueError("User already in %s group" % group_name)
 
         else:
             group.user_set.add(self.user)
 
 
-    def leave_mentor_group(self):
-        group = Group.objects.get(name="Mentor")
+    def leave_group(self, group_name):
+        try:
+            group = Group.objects.get(name=group_name)
+
+        except Group.DoesNotExist:
+            raise ValueError("Group %s does not exist" % group_name)
 
         if group not in self.user.groups.iterator():
-            raise ValueError("User not in Mentor Group")
+            raise ValueError("User not in %s group" % group_name)
 
         else:
             group.user_set.remove(self.user)
 
-
-    def join_rep_group(self):
-        group = Group.objects.get(name="Rep")
-
-        if group in self.user.groups.iterator():
-            raise ValueError("User already in Rep Group")
-
-        else:
-            group.user_set.add(self.user)
-
-
-    def leave_rep_group(self):
-        group = Group.objects.get(name="Rep")
-
-        if group not in self.user.groups.iterator():
-            raise ValueError("User not in Rep Group")
-
-        else:
-            group.user_set.remove(self.user)
-
-
-    def join_admin_group(self):
-        group = Group.objects.get(name="Admin")
-
-        if group in self.user.groups.iterator():
-            raise ValueError("User already in Admin Group")
-
-        else:
-            group.user_set.add(self.user)
-
-
-    def leave_admin_group(self):
-        group = Group.objects.get(name="Admin")
-
-        if group not in self.user.groups.iterator():
-            raise ValueError("User not in Admin Group")
-
-        else:
-            group.user_set.remove(self.user)
-
-
-    def join_council_group(self):
-        group = Group.objects.get(name="Council")
-
-        if group in self.user.groups.iterator():
-            raise ValueError("User already in Council Group")
-
-        else:
-            group.user_set.add(self.user)
-
-
-    def leave_council_group(self):
-        group = Group.objects.get(name="Council")
-
-        if group not in self.user.groups.iterator():
-            raise ValueError("User not in Council Group")
-
-        else:
-            group.user_set.remove(self.user)
 
 
 def userprofile_set_display_name_pre_save(sender, instance, **kwargs):

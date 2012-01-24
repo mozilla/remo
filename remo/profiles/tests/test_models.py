@@ -141,7 +141,7 @@ class UserProfileTest(TestCase):
 
     def test_join_mentor_group(self):
         user_profile = User.objects.get(username="rep").get_profile()
-        user_profile.join_mentor_group()
+        user_profile.join_group("Mentor")
 
         mentor_group = Group.objects.get(name="Mentor")
         eq_(mentor_group.user_set.count(), 2)
@@ -149,7 +149,7 @@ class UserProfileTest(TestCase):
 
     def test_leave_mentor_group(self):
         user_profile = User.objects.get(username="mentor").get_profile()
-        user_profile.leave_mentor_group()
+        user_profile.leave_group("Mentor")
 
         mentor_group = Group.objects.get(name="Mentor")
         eq_(mentor_group.user_set.count(), 0)
@@ -157,7 +157,7 @@ class UserProfileTest(TestCase):
 
     def test_join_council_group(self):
         user_profile = User.objects.get(username="rep").get_profile()
-        user_profile.join_council_group()
+        user_profile.join_group("Council")
 
         council_group = Group.objects.get(name="Council")
         eq_(council_group.user_set.count(), 2)
@@ -165,7 +165,7 @@ class UserProfileTest(TestCase):
 
     def test_leave_council_group(self):
         user_profile = User.objects.get(username="counselor").get_profile()
-        user_profile.leave_council_group()
+        user_profile.leave_group("Council")
 
         council_group = Group.objects.get(name="Council")
         eq_(council_group.user_set.count(), 0)
@@ -173,7 +173,7 @@ class UserProfileTest(TestCase):
 
     def test_join_admin_group(self):
         user_profile = User.objects.get(username="rep").get_profile()
-        user_profile.join_admin_group()
+        user_profile.join_group("Admin")
 
         admin_group = Group.objects.get(name="Admin")
         eq_(admin_group.user_set.count(), 2)
@@ -181,7 +181,7 @@ class UserProfileTest(TestCase):
 
     def test_leave_admin_group(self):
         user_profile = User.objects.get(username="admin").get_profile()
-        user_profile.leave_admin_group()
+        user_profile.leave_group("Admin")
 
         admin_group = Group.objects.get(name="Admin")
         eq_(admin_group.user_set.count(), 0)
@@ -189,7 +189,7 @@ class UserProfileTest(TestCase):
 
     def test_join_rep_group(self):
         user_profile = User.objects.get(username="counselor").get_profile()
-        user_profile.join_rep_group()
+        user_profile.join_group("Rep")
 
         rep_group = Group.objects.get(name="Rep")
         eq_(rep_group.user_set.count(), 3)
@@ -197,7 +197,7 @@ class UserProfileTest(TestCase):
 
     def test_leave_rep_group(self):
         user_profile = User.objects.get(username="rep").get_profile()
-        user_profile.leave_rep_group()
+        user_profile.leave_group("Rep")
 
         rep_group = Group.objects.get(name="Rep")
         eq_(rep_group.user_set.count(), 1)
