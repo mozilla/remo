@@ -19,4 +19,4 @@ tmp/*
 *.mo
 .vagrant
 .virtualenv
-/vendor-local/lib/python/South-0.7.3.egg-info/*
+/vendor-local/lib/python/*.egg-info/*
