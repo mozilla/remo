@@ -4,17 +4,21 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
+from django.core.exceptions import ValidationError
 
 def _validate_birth_date(data, **kwargs):
     today = datetime.date.today()
-    youth_threshold_day = datetime.date(today.year-12, today.month, today.day-1)
-    maturity_threshold_day = datetime.date(today.year-90, today.month, today.day-1)
+    youth_threshold_day = datetime.date(today.year-12, today.month, today.day)+\
+                          datetime.timedelta(hours=24)
+
+    maturity_threshold_day = datetime.date(today.year-90, today.month, today.day)-\
+                             datetime.timedelta(hours=24)
 
     if data < youth_threshold_day and data > maturity_threshold_day:
         return data
 
     else:
-        raise ValidationError("Provided Birthdata is not valid")
+        raise ValidationError("Provided Birthdate is not valid")
 
 
 def _validate_twitter_username(data, **kwargs):
@@ -34,7 +38,7 @@ def _validate_gpg_keyid(data, **kwargs):
 
 
 def _validate_linkedin_url(data, **kwargs):
-    if re.match(r'http(s)?://www.linkedin.com/', data):
+    if re.match(r'http(s)?://(www.)?linkedin.com/', data):
         return data
 
     else:
@@ -42,7 +46,7 @@ def _validate_linkedin_url(data, **kwargs):
 
 
 def _validate_facebook_url(data, **kwargs):
-    if re.match(r'http(s)?://www.facebook.com/', data):
+    if re.match(r'http(s)?://(www.)?facebook.com/', data):
         return data
 
     else:
