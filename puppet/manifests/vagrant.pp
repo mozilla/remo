@@ -7,7 +7,7 @@ $PROJ_DIR = "/home/vagrant/project"
 
 # You can make these less generic if you like, but these are box-specific
 # so it's not required.
-$DB_NAME = "playdoh_app"
+$DB_NAME = "remo"
 $DB_USER = "root"
 
 Exec {
