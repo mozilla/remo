@@ -1,6 +1,6 @@
 import datetime
 
-from nose.tools import eq_
+from nose.tools import eq_, raises
 from test_utils import TestCase
 
 from django.core.exceptions import ValidationError
@@ -30,9 +30,11 @@ class UserProfileTest(TestCase):
                          "https://www.notvalid.com/foo"
                          ]
 
-        for facebook_url in facebook_urls:
-            self.user_profile.facebook_url = facebook_url
-            self.assertRaises(ValidationError, self.user_profile.full_clean)
+        @raises(ValidationError)
+        def test():
+            for facebook_url in facebook_urls:
+                self.user_profile.facebook_url = facebook_url
+                self.user_profile.full_clean()
 
 
     def test_valid_facebook_urls(self):
@@ -52,9 +54,11 @@ class UserProfileTest(TestCase):
                          "https://www.notvalid.com/foo"
                          ]
 
-        for linkedin_url in linkedin_urls:
-            self.user_profile.linkedin_url = linkedin_url
-            self.assertRaises(ValidationError, self.user_profile.full_clean)
+        @raises(ValidationError)
+        def test():
+            for linkedin_url in linkedin_urls:
+                self.user_profile.linkedin_url = linkedin_url
+                self.user_profile.full_clean()
 
 
     def test_valid_linkedin_urls(self):
@@ -95,27 +99,33 @@ class UserProfileTest(TestCase):
                           day=today.day) - datetime.timedelta(hours=24)
             ]
 
-        for date in bogus_dates:
-            self.user_profile.birth_date = date
-            self.assertRaises(ValidationError, self.user_profile.full_clean)
+        @raises(ValidationError)
+        def test():
+            for date in bogus_dates:
+                self.user_profile.birth_date = date
+                self.user_profile.full_clean()
 
 
     def test_valid_twitter_username(self):
         twitter_usernames = ["@validone", "@valid212", "@va1234567890123",
                              "@_foo_", "@____"]
 
-        for twitter_username in twitter_usernames:
-            self.user_profile.twitter_username = twitter_username
-            self.assertIsNone(self.user_profile.full_clean())
+        @raises(ValidationError)
+        def test():
+            for twitter_username in twitter_usernames:
+                self.user_profile.twitter_username = twitter_username
+                self.user_profile.full_clean()
 
 
     def test_bogus_twitter_username(self):
         twitter_usernames = ["@bogus*", "@bogus!", "@bogus ",
                              "@1234567890213456"]
 
-        for twitter_username in twitter_usernames:
-            self.user_profile.twitter_username = twitter_username
-            self.assertRaises(ValidationError, self.user_profile.full_clean())
+        @raises(ValidationError)
+        def test():
+            for twitter_username in twitter_usernames:
+                self.user_profile.twitter_username = twitter_username
+                self.user_profile.full_clean()
 
 
     def test_valid_gpg_keyid(self):
@@ -130,9 +140,11 @@ class UserProfileTest(TestCase):
     def test_bogus_gpg_keyid(self):
         gpg_keyids = ["0x0", "0000ffff", "0x000000001", "0xww0000ww"]
 
-        for gpg_keyid in gpg_keyids:
-            self.user_profile.gpg_keyid = gpg_keyid
-            self.assertRaises(ValidationError, self.user_profile.full_clean())
+        @raises(ValidationError)
+        def _test():
+            for gpg_keyid in gpg_keyids:
+                self.user_profile.gpg_keyid = gpg_keyid
+                self.user_profile.full_clean()
 
 
     def test_join_mentor_group(self):
@@ -243,10 +255,10 @@ class UserProfileTest(TestCase):
         eq_(self.user_profile.irc_channels.count(), 2)
 
 
+    @raises(ValueError)
     def test_user_joins_irc_channel_again(self):
         self.user_profile.join_irc_channel("#remo")
-        self.assertRaises(ValueError,
-                          self.user_profile.join_irc_channel("#remo-webdev"))
+        self.user_profile.join_irc_channel("#remo")
 
 
     def test_user_joins_new_irc_channel(self):
