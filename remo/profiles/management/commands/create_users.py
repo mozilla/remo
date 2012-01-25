@@ -32,6 +32,7 @@ class Command(BaseCommand):
               "Enjoy,\n"\
               "Mozilla Reps WebDev Team"
 
+
     def handle(self, *args, **options):
         if len(args) != 1:
             print "Please provide a file with emails.\n"
