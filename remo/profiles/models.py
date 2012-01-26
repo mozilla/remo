@@ -61,12 +61,21 @@ def _validate_facebook_url(data, **kwargs):
         raise ValidationError("Provided Facebook url is not valid")
 
 
+def _validate_display_name(data, **kwargs):
+    if re.match(r'[A-Za-z_]+', data):
+        return data
+
+    else:
+        raise ValidationError("Provided Display Name is not valid")
+
+
 class IRCChannel(models.Model):
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=300)
 
     def __unicode__(self):
         return self.name
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -76,7 +85,8 @@ class UserProfile(models.Model):
     country = models.CharField(max_length=30, blank=False)
     lon = models.FloatField(blank=True, null=True)
     lat = models.FloatField(blank=True, null=True)
-    display_name = models.CharField(max_length=15, blank=True, null=False)
+    display_name = models.CharField(max_length=15, blank=True, null=False,
+                                    validators=[_validate_display_name])
     private_email = models.EmailField(blank=True, null=True)
     private_email_visible = models.BooleanField(default=True)
     mozillians_profile_url = models.URLField(validators=

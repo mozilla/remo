@@ -171,6 +171,25 @@ class UserProfileTest(TestCase):
                 self.user_profile.full_clean()
 
 
+    def test_valid_display_name(self):
+        display_names = ["foobar", "foo_bar", "_foobar_", "foobar123"]
+
+
+        for display_name in display_names:
+            self.user_profile.display_name = display_name
+            self.assertIsNone(self.user_profile.full_clean())
+
+
+    def test_bogus_display_name(self):
+        display_names = ["01234567890123456", "foobar!", "foobar("]
+
+        @raises(ValidationError)
+        def _test():
+            for display_name in display_names:
+                self.user_profile.display_name = display_name
+                self.user_profile.full_clean()
+
+
     def test_join_mentor_group(self):
         user_profile = User.objects.get(username="rep").get_profile()
         user_profile.join_group("Mentor")
