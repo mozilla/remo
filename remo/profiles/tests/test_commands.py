@@ -59,6 +59,7 @@ class CreateUserTest(TestCase):
 
 
     def tearDown(self):
+        User.objects.all().delete()
         os.unlink(self.temp_file.name)
 
 
