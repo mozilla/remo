@@ -19,7 +19,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         while self.offset > -1:
-            r = requests.get(self.URL % self.offset)
+            try:
+                r = requests.get(self.URL % self.offset)
+
+            except requests.ConnectionError:
+                print "Connection Error"
+                sys.exit(-1)
 
             if r.status_code != 200:
                 print "Error fetching Wiki data"
