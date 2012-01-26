@@ -37,6 +37,14 @@ def _validate_gpg_keyid(data, **kwargs):
         raise ValidationError("Provided GPG KeyID is not valid")
 
 
+def _validate_mozillians_url(data, **kwargs):
+    if re.match(r'http(s)?://(www.)?mozillians.org/', data):
+        return data
+
+    else:
+        raise ValidationError("Provided Mozillians url is not valid")
+
+
 def _validate_linkedin_url(data, **kwargs):
     if re.match(r'http(s)?://(www.)?linkedin.com/', data):
         return data
@@ -64,12 +72,15 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     birth_date = models.DateField(validators=[_validate_birth_date])
     city = models.CharField(max_length=30, blank=True)
+    region = models.CharField(max_length=30, blank=True)
     country = models.CharField(max_length=30, blank=False)
     lon = models.FloatField(blank=True, null=True)
     lat = models.FloatField(blank=True, null=True)
     display_name = models.CharField(max_length=15, blank=True, null=False)
     private_email = models.EmailField(blank=True, null=True)
     private_email_visible = models.BooleanField(default=True)
+    mozillians_profile_url = models.URLField(validators=
+                                             [_validate_mozillians_url])
     twitter_account = models.CharField(max_length=16,
                                        validators=[_validate_twitter_username],
                                        blank=True, null=True)

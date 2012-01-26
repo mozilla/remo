@@ -73,6 +73,30 @@ class UserProfileTest(TestCase):
             self.assertIsNone(self.user_profile.full_clean())
 
 
+    def test_bogus_mozillians_urls(self):
+        mozillians_urls = ["http://www.notvalid.org/foo",
+                         "https://www.notvalid.org/foo"
+                         ]
+
+        @raises(ValidationError)
+        def test():
+            for mozillians_url in mozillians_urls:
+                self.user_profile.mozillians_url = mozillians_url
+                self.user_profile.full_clean()
+
+
+    def test_valid_mozillians_urls(self):
+        mozillians_urls = ["http://www.mozillians.org/valid",
+                         "http://mozillians.org/valid",
+                         "https://mozillians.org/valid",
+                         "https://www.mozillians.org/valid",
+                         ]
+
+        for mozillians_url in mozillians_urls:
+            self.user_profile.mozillians_url = mozillians_url
+            self.assertIsNone(self.user_profile.full_clean())
+
+
     def test_valid_birth_date(self):
         today = datetime.date.today()
         bogus_dates = [
