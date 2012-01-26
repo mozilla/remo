@@ -8,13 +8,34 @@ from django.contrib.auth.models import User, Group
 from remo.profiles.models import UserProfile, IRCChannel
 
 class UserTest(TestCase):
-    def test_new_user_is_inactive(self):
-        new_user = User.objects.create_user(username="new_user",
-                                            email="new@example.com")
-        new_user.set_password("123")
-        new_user.save()
+    fixtures = ['demo_users.json']
 
-        eq_(new_user.is_active, False)
+    def setUp(self):
+        self.new_user = User.objects.create_user(username="new_user",
+                                                 email="new-123@example.com")
+
+
+    def test_first_name_activates_user(self):
+        user = User.objects.get(username="rep2")
+        user.first_name = u"Foobar"
+        user.save()
+        eq_(user.is_active, True)
+
+
+    def test_new_user_is_inactive(self):
+        eq_(self.new_user.is_active, False)
+
+
+    def test_new_user_gets_profile(self):
+        eq_(isinstance(self.new_user.userprofile, UserProfile), True)
+
+
+    def test_new_user_has_display_name(self):
+        eq_(self.new_user.userprofile.display_name, "new_123")
+
+
+    def tearDown(self):
+        self.new_user.delete()
 
 
 class UserProfileTest(TestCase):
@@ -252,17 +273,6 @@ class UserProfileTest(TestCase):
 
         rep_group = Group.objects.get(name="Rep")
         eq_(rep_group.user_set.count(), 1)
-
-
-    def test_new_profile_activates_user(self):
-        user = User.objects.get(username="rep2")
-        user_profile = UserProfile(user=user,
-                                   birth_date=datetime.date(year=1980,
-                                                            month=1, day=1),
-                                   city=u"Athens",
-                                   country=u"Greece")
-        user_profile.save()
-        eq_(user.is_active, True)
 
 
     def test_empty_display_name_autogenerate(self):

@@ -84,8 +84,8 @@
         "model": "auth.user",
         "fields": {
             "username": "rep2",
-            "first_name": "Chuck",
-            "last_name": "Norris",
+            "first_name": "",
+            "last_name": "",
             "is_active": false,
             "is_superuser": false,
             "is_staff": false,

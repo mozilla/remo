@@ -3,7 +3,8 @@ import datetime
 
 from django.db import models
 from django.contrib.auth.models import User, Group
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
 def _validate_birth_date(data, **kwargs):
@@ -79,13 +80,15 @@ class IRCChannel(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    birth_date = models.DateField(validators=[_validate_birth_date])
-    city = models.CharField(max_length=30, blank=True)
-    region = models.CharField(max_length=30, blank=True)
-    country = models.CharField(max_length=30, blank=False)
+    birth_date = models.DateField(validators=[_validate_birth_date],
+                                  null=True)
+    city = models.CharField(max_length=30, blank=True, null=True)
+    region = models.CharField(max_length=30, blank=True, null=True)
+    country = models.CharField(max_length=30, blank=False, null=True)
     lon = models.FloatField(blank=True, null=True)
     lat = models.FloatField(blank=True, null=True)
-    display_name = models.CharField(max_length=15, blank=True, null=False,
+    display_name = models.CharField(max_length=15, blank=True, null=True,
+                                    unique=True,
                                     validators=[_validate_display_name])
     private_email = models.EmailField(blank=True, null=True)
     private_email_visible = models.BooleanField(default=True)
@@ -165,39 +168,53 @@ class UserProfile(models.Model):
         else:
             self.irc_channels.remove(channel)
 
-
+@receiver(pre_save, sender=UserProfile)
 def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
     """
-    Set display_name from user.username if display_name == ''
+    Set display_name from user.email if display_name == ''
+
+    Not setting username because we want to provide human readable,
+    nice display names. Username is used only if character limit is
+    reached
     """
     if not instance.display_name:
-        instance.display_name = instance.user.username
+        email = instance.user.email.split('@')[0]
+        display_name = re.sub(r'[^A-Za-z0-9_]', '_', email)
 
-models.signals.pre_save.connect(userprofile_set_display_name_pre_save,
-                                sender=UserProfile)
+        while True:
+            instance.display_name = display_name
+
+            try:
+                instance.validate_unique()
+
+            except ValidationError:
+                display_name += '_'
+                if len(display_name) > 15:
+                    # oops! just try username, sorry
+                    display_name = instance.user.username
+
+            else:
+                break
 
 
-def userprofile_set_active_post_save(sender, instance, created, **kwargs):
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, raw, **kwargs):
     """
-    Set user active if UserProfile get's created
+    Create a matching profile whenever a user object is created.
+
+    Use of /raw/ prevents conflicts when using loaddata
     """
-    if created:
-        instance.user.is_active = True
-        instance.user.save()
-
-models.signals.post_save.connect(userprofile_set_active_post_save,
-                                 sender=UserProfile)
+    if created and not raw:
+        profile, new = UserProfile.objects.get_or_create(user=instance)
 
 
+@receiver(pre_save, sender=User)
 def user_set_inactive_pre_save(sender, instance, **kwargs):
     """
     Set user inactive if there is no associated UserProfile
     """
-    try:
-        instance.get_profile()
-
-    except UserProfile.DoesNotExist:
+    if not instance.first_name:
         instance.is_active = False
 
-models.signals.pre_save.connect(user_set_inactive_pre_save,
-                                sender=User)
+    else:
+        instance.is_active = True
