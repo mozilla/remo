@@ -1,16 +1,20 @@
 import os
 import tempfile
+import json
+
+import requests
+import fudge
 
 from django.conf import settings
 from django.core import management, mail
 from django.contrib.auth.models import User
-from nose.tools import eq_
+from nose.tools import eq_, raises
 from test_utils import TestCase
 
 
 class CreateUserTest(TestCase):
     """
-    Create tests for create_user management command
+    Tests for create_user management command
     """
 
     def setUp(self):
@@ -56,3 +60,70 @@ class CreateUserTest(TestCase):
 
     def tearDown(self):
         os.unlink(self.temp_file.name)
+
+
+class FetchEmailsFromWikiTest(TestCase):
+    """
+    Tests for fetch_emails_from_wiki management command
+    """
+
+    @raises(SystemExit)
+    @fudge.patch('requests.get')
+    def test_command_with_connection_error(self, fake_requests_obj):
+        (fake_requests_obj.expects_call().raises(requests.ConnectionError))
+        management.call_command('fetch_emails_from_wiki')
+
+
+    @raises(SystemExit)
+    @fudge.patch('requests.get')
+    def test_command_with_invalid_code(self, fake_requests_obj):
+        request = requests.Request()
+        request.status_code=404
+        request.text='foo'
+
+        (fake_requests_obj.expects_call().returns(request))
+        management.call_command('fetch_emails_from_wiki')
+
+
+    @raises(SystemExit)
+    @fudge.patch('requests.get')
+    def test_command_with_bogus_data(self, fake_requests_obj):
+        request = requests.Request()
+        request.status_code = 200
+        request.text='foo'
+
+        (fake_requests_obj.expects_call().returns(request))
+        management.call_command('fetch_emails_from_wiki')
+
+
+    @fudge.patch('requests.get')
+    def test_command_with_valid_data(self, fake_requests_obj):
+        request = requests.Request()
+        request.status_code = 200
+        request.text = json.dumps(
+            {'ask': {
+                'query': {
+                    },
+                'results': {
+                    'items': [
+                        {
+                            'properties':{
+                                'bugzillamail':'foo@example.com',
+                                },
+                            "uri": "https:\/\/wiki.mozilla.org\/index.php?title=User:fooexample",
+                            },
+                        {
+                            'properties':{
+                                'bugzillamail':'test@example.com',
+                                },
+                            "uri": "https:\/\/wiki.mozilla.org\/index.php?title=User:testexample",
+                            },
+                        ],
+                    }
+                }
+             })
+
+        (fake_requests_obj.expects_call().returns(request))
+        management.call_command('fetch_emails_from_wiki')
+
+
