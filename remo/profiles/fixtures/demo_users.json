@@ -5,7 +5,7 @@
         "fields": {
             "username": "admin",
             "first_name": "Nikos",
-            "last_name": "Κουκος",
+            "last_name": "\u00ce\u009a\u00ce\u00bf\u00cf\u008d\u00ce\u00ba\u00ce\u00bf\u00cf\u0082",
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
