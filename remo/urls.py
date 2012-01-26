@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
-
-import landing.urls
+from django.views.generic.simple import direct_to_template
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -11,10 +10,31 @@ urlpatterns = patterns(
     '',
 
     # landing page
-    (r'', include(landing.urls)),
+    url(r'^$', direct_to_template, {'template': 'landingpage.html'},
+        name='home'),
+
+    # profiles
+    url(r'^profiles/edit/(?P<display_name>[A-Za-z0-9_]/)?$',
+     'remo.profiles.views.edit', name='profiles_edit'),
+    url(r'^profiles/list/$', 'remo.profiles.views.list_profiles',
+        name='profiles_list_profiles'),
+    url(r'^profiles/u/(?P<display_name>[A-Za-z0-9_])/$',
+     'remo.profiles.views.view_profile', name='profiles_view_profile'),
+    url(r'^profiles/me/$', 'remo.profiles.views.view_my_profile',
+        name='profiles_view_my_profile'),
+    url(r'^profiles/invite/$', 'remo.profiles.views.invite',
+        name='profiles_invite'),
 
     # browserid
-    (r'^browserid/', include('django_browserid.urls')),
+    url(r'^browserid/', include('django_browserid.urls')),
+
+    # login / logout
+    url(r'^login/$', direct_to_template, {'template':'login.html'},
+        name='login'),
+    url(r'^login/plain/$', 'remo.profiles.views.plainlogin',
+        {'template_name':'plainlogin.html'}, name='plainlogin'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout',
+        {'next_page':'/'}, name="logout"),
 )
 
 ## In DEBUG mode, serve media files through Django.

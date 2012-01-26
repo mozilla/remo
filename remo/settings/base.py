@@ -66,6 +66,13 @@ AUTHENTICATION_BACKENDS = ('django_browserid.auth.BrowserIDBackend',
                            'django.contrib.auth.backends.ModelBackend',
                            )
 
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/profiles/me/'
+
+
+# Required for BrowserID. Very important security feature
+SITE_URL = 'http://reps.mozilla.org'
+
 # Remove jinja template engine. To be revisited
 TEMPLATE_LOADERS = filter(lambda x: x != 'jingo.Loader', TEMPLATE_LOADERS)
 
