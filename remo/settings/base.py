@@ -69,7 +69,6 @@ AUTHENTICATION_BACKENDS = ('django_browserid.auth.BrowserIDBackend',
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/profiles/me/'
 
-
 # Required for BrowserID. Very important security feature
 SITE_URL = 'http://reps.mozilla.org'
 
@@ -80,3 +79,6 @@ TEMPLATE_LOADERS = filter(lambda x: x != 'jingo.Loader', TEMPLATE_LOADERS)
 MIDDLEWARE_CLASSES = filter(
     lambda x: x!='funfactory.middleware.LocaleURLMiddleware',
     MIDDLEWARE_CLASSES)
+
+# Add BrowserID Template context processor
+TEMPLATE_CONTEXT_PROCESSORS += ('django_browserid.context_processors.browserid_form',)
