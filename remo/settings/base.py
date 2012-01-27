@@ -27,6 +27,8 @@ ROOT_URLCONF = 'remo.urls'
 
 INSTALLED_APPS = list(INSTALLED_APPS) + [
     # Application base, containing global templates.
+    'south',
+
     'remo.base',
     'remo.landing',
     'remo.profiles',
