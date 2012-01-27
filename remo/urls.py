@@ -2,10 +2,6 @@ from django.conf import settings
 from django.conf.urls.defaults import *
 from django.views.generic.simple import direct_to_template
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
-
 urlpatterns = patterns(
     '',
 
@@ -29,8 +25,7 @@ urlpatterns = patterns(
     url(r'^browserid/', include('django_browserid.urls')),
 
     # login / logout
-    url(r'^login/$', direct_to_template, {'template':'login.html'},
-        name='login'),
+    url(r'^login/$', 'remo.profiles.views.login', name="login"),
     url(r'^login/plain/$', 'remo.profiles.views.plainlogin',
         {'template_name':'plainlogin.html'}, name='plainlogin'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
