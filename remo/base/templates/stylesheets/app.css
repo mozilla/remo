@@ -1,0 +1,96 @@
+/* Foundation v2.1.5 http://foundation.zurb.com */
+/* Artfully masterminded by ZURB  */
+
+/* -------------------------------------------------- 
+   Table of Contents
+-----------------------------------------------------
+:: Shared Styles
+*/
+
+
+/* -----------------------------------------
+   Shared Styles
+----------------------------------------- */
+
+{# MetaWebPro font family licensed from fontshop.com. WOFF-FTW! #}
+@font-face {
+    font-family: 'MetaBlack';
+    src: url('http://mozcom-cdn.mozilla.net/img/fonts/MetaWebPro-Black.eot');
+    src: local('☺'), url('http://mozcom-cdn.mozilla.net/img/fonts/MetaWebPro-Black.woff') format('woff');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'MetaNormal';
+    src: url('http://mozcom-cdn.mozilla.net/img/fonts/MetaWebPro-Normal.eot');
+    src: local('☺'), url('http://mozcom-cdn.mozilla.net/img/fonts/MetaWebPro-Normal.woff') format('woff');
+    font-weight: bold;
+}
+
+body {
+	border-top: 3px solid #686868;
+	background: #eee;
+}
+
+hr {
+	margin: 5px 0 18px;
+}
+
+#login-box {
+	text-align: right;
+	margin-top: 10px;
+}
+
+#logo-box {
+	font-family: 'MetaNormal';
+	margin-top: 10px;
+}
+
+#logo-box img {
+	height:40px; 
+	float:left;
+	padding: 3px;
+}
+
+#navigation-box {
+	text-align: right;
+}
+
+#navigation-box ul{
+	margin-bottom: 0px;
+	margin-top: 10px;
+	background: none;
+	border: none;
+}
+
+li.last {
+	border-right:none;
+}
+
+li.active {
+	background: #ddd;
+}
+
+#motto {
+	text-align: center;
+}
+
+.blogpost {
+	margin-top: 20px;
+}
+
+#more-posts {
+	text-align:right;
+	margin: 20px 0px 40px 0px;
+}
+
+#featured { 
+  width: 992px;
+  height: 200px;
+  background: #000 url('images/orbit/loading.gif') no-repeat center center; overflow: hidden; 
+}
+
+
+
+
+
