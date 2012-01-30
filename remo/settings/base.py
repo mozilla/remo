@@ -28,6 +28,7 @@ ROOT_URLCONF = 'remo.urls'
 INSTALLED_APPS = list(INSTALLED_APPS) + [
     # Application base, containing global templates.
     'south',
+    'django.contrib.messages',
 
     'remo.base',
     'remo.landing',
@@ -82,5 +83,9 @@ MIDDLEWARE_CLASSES = filter(
     lambda x: x!='funfactory.middleware.LocaleURLMiddleware',
     MIDDLEWARE_CLASSES)
 
-# Add BrowserID Template context processor
-TEMPLATE_CONTEXT_PROCESSORS += ('django_browserid.context_processors.browserid_form',)
+MIDDLEWARE_CLASSES += ('django.contrib.messages.middleware.MessageMiddleware',)
+
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'django_browserid.context_processors.browserid_form',
+    'django.contrib.messages.context_processors.messages'
+    )
