@@ -50,7 +50,7 @@
                         <ul>
                             <li class="account anonymous nomenu logout">
 			    {% if not user.is_authenticated %}
-			    <a id="browserid" href="{% url login %}">Sign In</a>
+			    <a id="browserid" href="{% url plainlogin %}">Sign In</a>
 			    <form method="POST" action="{% url browserid_verify %}">
 			    {% csrf_token %}
 			    {{ browserid_form.as_p }}
@@ -174,6 +174,18 @@
     <script src="/media/js/modernizr.foundation.js"></script>
     <script src="/media/js/foundation.js"></script>
     <script src="/media/js/app.js"></script>
-
+    <script src="https://browserid.org/include.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    $('#browserid').bind('click', function(e) {
+      e.preventDefault();
+      navigator.id.getVerifiedEmail(function(assertion) {
+        if (assertion) {
+          var $e = $('#id_assertion');
+          $e.val(assertion.toString());
+          $e.parent().submit();
+        }
+      });
+    });
+    </script>
 </body>
 </html>
