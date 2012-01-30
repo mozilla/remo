@@ -8,19 +8,19 @@ from session_csrf import anonymous_csrf
 
 @login_required
 def edit(request, display_name=None):
-    return HttpResponse("edit profile")
+    return direct_to_template(request, template="profiles_edit.html")
 
 
 def list_profiles(request):
-    return HttpResponse("list profiles")
+    return direct_to_template(request, template="profiles_people.html")
 
 
 def view_profile(request, display_name):
-    return HttpResponse("view_profile")
+    return direct_to_template(request, template="profiles_view.html")
 
 
 def invite(request):
-    return HttpResponse("invite")
+    return direct_to_template(request, template="profiles_invite.html")
 
 
 @login_required
