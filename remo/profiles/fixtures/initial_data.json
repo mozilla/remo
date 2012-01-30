@@ -54,5 +54,137 @@
             "name": "#remo-webdev",
             "description": "ReMo Web Development"
         }
+    },
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "giorgos",
+            "first_name": "Giorgos",
+            "last_name": "Logiotatidis",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": "2012-01-30 03:56:09",
+            "groups": [],
+            "user_permissions": [],
+            "password": "!",
+            "email": "giorgos@mozilla.com",
+            "date_joined": "2012-01-30 03:56:09"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.user",
+        "fields": {
+            "username": "pierros",
+            "first_name": "Pierros",
+            "last_name": "Papadeas",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": "2012-01-30 04:00:36",
+            "groups": [],
+            "user_permissions": [],
+            "password": "!",
+            "email": "pierros@mozilla.com",
+            "date_joined": "2012-01-30 04:00:36"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.user",
+        "fields": {
+            "username": "william",
+            "first_name": "William",
+            "last_name": "Quiviger",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": "2012-01-30 04:01:21",
+            "groups": [],
+            "user_permissions": [],
+            "password": "!",
+            "email": "william@mozilla.com",
+            "date_joined": "2012-01-30 04:01:21"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "profiles.userprofile",
+        "fields": {
+            "facebook_url": null,
+            "city": null,
+            "twitter_account": null,
+            "gpg_key": null,
+            "display_name": "giorgos",
+            "private_email": null,
+            "country": null,
+            "region": null,
+            "irc_channels": [],
+            "lon": null,
+            "irc_name": null,
+            "lat": null,
+            "linkedin_url": null,
+            "user": 1,
+            "birth_date": null,
+            "personal_website_url": null,
+            "private_email_visible": true,
+            "diaspora_url": null,
+            "personal_blog_feed": null,
+            "mozillians_profile_url": ""
+        }
+    },
+    {
+        "pk": 2,
+        "model": "profiles.userprofile",
+        "fields": {
+            "facebook_url": null,
+            "city": null,
+            "twitter_account": null,
+            "gpg_key": null,
+            "display_name": "pierros",
+            "private_email": null,
+            "country": null,
+            "region": null,
+            "irc_channels": [],
+            "lon": null,
+            "irc_name": null,
+            "lat": null,
+            "linkedin_url": null,
+            "user": 2,
+            "birth_date": null,
+            "personal_website_url": null,
+            "private_email_visible": true,
+            "diaspora_url": null,
+            "personal_blog_feed": null,
+            "mozillians_profile_url": ""
+        }
+    },
+    {
+        "pk": 3,
+        "model": "profiles.userprofile",
+        "fields": {
+            "facebook_url": null,
+            "city": null,
+            "twitter_account": null,
+            "gpg_key": null,
+            "display_name": "william",
+            "private_email": null,
+            "country": null,
+            "region": null,
+            "irc_channels": [],
+            "lon": null,
+            "irc_name": null,
+            "lat": null,
+            "linkedin_url": null,
+            "user": 3,
+            "birth_date": null,
+            "personal_website_url": null,
+            "private_email_visible": true,
+            "diaspora_url": null,
+            "personal_blog_feed": null,
+            "mozillians_profile_url": ""
+        }
     }
 ]

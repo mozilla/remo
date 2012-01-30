@@ -1,6 +1,6 @@
 [
     {
-        "pk": 1,
+        "pk": 4,
         "model": "auth.user",
         "fields": {
             "username": "admin",
@@ -20,7 +20,7 @@
         }
     },
     {
-        "pk": 2,
+        "pk": 5,
         "model": "auth.user",
         "fields": {
             "username": "counselor",
@@ -40,7 +40,7 @@
         }
     },
     {
-        "pk": 3,
+        "pk": 6,
         "model": "auth.user",
         "fields": {
             "username": "mentor",
@@ -60,7 +60,7 @@
         }
     },
     {
-        "pk": 4,
+        "pk": 7,
         "model": "auth.user",
         "fields": {
             "username": "rep",
@@ -80,7 +80,7 @@
         }
     },
     {
-        "pk": 5,
+        "pk": 8,
         "model": "auth.user",
         "fields": {
             "username": "rep2",
@@ -100,7 +100,7 @@
         }
     },
     {
-        "pk": 1,
+        "pk": 4,
         "model": "profiles.userprofile",
         "fields": {
             "city": "Athens",
@@ -118,7 +118,7 @@
             "lon": null,
             "lat": null,
             "linkedin_url": null,
-            "user": 1,
+            "user": 4,
             "birth_date": "1990-01-09",
             "personal_website_url": null,
             "private_email_visible": true,
@@ -128,7 +128,7 @@
         }
     },
     {
-        "pk": 2,
+        "pk": 5,
         "model": "profiles.userprofile",
         "fields": {
             "city": "Mountain View",
@@ -144,7 +144,7 @@
             "lon": null,
             "lat": null,
             "linkedin_url": "http://www.linkedin.com/n/babis",
-            "user": 2,
+            "user": 5,
             "birth_date": "1989-03-12",
             "personal_website_url": "http://www.babis.example.com",
             "private_email_visible": true,
@@ -154,7 +154,7 @@
         }
     },
     {
-        "pk": 3,
+        "pk": 6,
         "model": "profiles.userprofile",
         "fields": {
             "city": "New York City",
@@ -170,7 +170,7 @@
             "lon": null,
             "lat": null,
             "linkedin_url": null,
-            "user": 3,
+            "user": 6,
             "birth_date": "1992-03-09",
             "personal_website_url": null,
             "private_email_visible": false,
@@ -180,7 +180,7 @@
         }
     },
     {
-        "pk": 4,
+        "pk": 7,
         "model": "profiles.userprofile",
         "fields": {
             "city": "Istanbul",
@@ -196,13 +196,39 @@
             "lon": null,
             "lat": null,
             "linkedin_url": null,
-            "user": 4,
+            "user": 7,
             "birth_date": "1995-06-22",
             "personal_website_url": null,
             "private_email_visible": true,
             "diaspora_url": null,
             "personal_blog_feed": null,
             "facebook_url": null
+        }
+    },
+    {
+        "pk": 8,
+        "model": "profiles.userprofile",
+        "fields": {
+            "facebook_url": null,
+            "city": null,
+            "twitter_account": null,
+            "gpg_key": null,
+            "display_name": "rep2",
+            "private_email": null,
+            "country": null,
+            "region": null,
+            "irc_channels": [],
+            "lon": null,
+            "irc_name": null,
+            "lat": null,
+            "linkedin_url": null,
+            "user": 8,
+            "birth_date": null,
+            "personal_website_url": null,
+            "private_email_visible": true,
+            "diaspora_url": null,
+            "personal_blog_feed": null,
+            "mozillians_profile_url": ""
         }
     }
 ]

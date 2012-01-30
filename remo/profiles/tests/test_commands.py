@@ -26,7 +26,7 @@ class CreateUserTest(TestCase):
         # create a temporaty file with emails
         self.TEST_EMAILS = ["foo@example.com", "bar@example.com",
                             "bogusemail.com"]
-        self.NO_VALID_EMAILS = 2
+        self.NUMBER_VALID_EMAILS = 2
         self.temp_file = tempfile.NamedTemporaryFile(delete=False)
 
         for email in self.TEST_EMAILS:
@@ -47,19 +47,18 @@ class CreateUserTest(TestCase):
         opts = {'email':False}
         management.call_command('create_users', *args, **opts)
         eq_(len(mail.outbox), 0)
-        eq_(User.objects.count(), self.NO_VALID_EMAILS)
+        eq_(User.objects.count(), self.NUMBER_VALID_EMAILS + 3) # 3 initial users
 
 
     def test_command_input_file_send_email(self):
         args = [self.temp_file.name]
         opts = {'email':True}
         management.call_command('create_users', *args, **opts)
-        eq_(len(mail.outbox), self.NO_VALID_EMAILS)
-        eq_(User.objects.count(), self.NO_VALID_EMAILS)
+        eq_(len(mail.outbox), self.NUMBER_VALID_EMAILS)
+        eq_(User.objects.count(), self.NUMBER_VALID_EMAILS + 3) # 3 initial users
 
 
     def tearDown(self):
-        User.objects.all().delete()
         os.unlink(self.temp_file.name)
 
 
