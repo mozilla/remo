@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Mozilla Reps</title>
+  
+    <!-- Included CSS Files -->
+    <link rel="stylesheet" href="stylesheets/foundation.css">
+    <link rel="stylesheet" href="stylesheets/app.css">
+    <link rel="stylesheet" href="openlayers/theme/default/style.css" type="text/css">
+
+
+    <!--[if lt IE 9]>
+        <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+
+
+    <!-- IE Fix for HTML5 Tags -->
+    <!--[if lt IE 9]>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+</head>
+<body>
+
+    <!-- container -->
+    <div class="container">
+
+        <!-- Header -->
+        <header class="row">
+            <div class="twelve columns">
+
+                <!-- Sign In & Mozilla Tab -->
+                <div class="row">
+
+                    <!-- Mozilla Tab -->
+                    <div class="two columns push-ten" id="global-header-tab">
+                        <a href="http://mozilla.org/"><img src="images/mozilla-tab.png" alt="mozilla.org"></a>
+                    </div>
+
+                    <!-- Sign In & Sign Out -->
+                    <div class="ten columns pull-two" id="login-box">
+                        <ul>
+                            <li class="account anonymous nomenu logout"><a href="/login">Sign in with BrowserID</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+                
+                <!-- Logo & Navigation -->
+                <div class="row">
+                    
+                    <!-- Logo and Wordmark -->
+                    <div class="four columns" id="logo-box">
+                        <div class="row">
+                                <img src="images/remo_logo_medium.png">
+                                <h3>mozilla reps</h3>
+                        </div>
+                    </div>
+                
+                    <!-- Navigation -->
+                    <div class="eight columns" id="navigation-box">
+                        <ul class="nav-bar">
+                            <li>
+                                <a href="#" class="main">Main</a>
+                                </li>
+                            <li>
+                                <a href="#" class="main">People</a>
+                            </li>
+                            <li>
+                                <a href="#" class="main">Events</a>
+                            </li>
+                            <li>
+                                <a href="#" class="main">Labs</a>
+                            </li>
+                            <li>
+                                <a href="#" class="main">Planet</a>
+                            </li>
+                            <li>
+                                <a href="#" class="main">Wiki</a>
+                            </li>
+                            <li class="last">
+                                <a href="#" class="main" data-reveal-id="join-modal">Join</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>         
+            </div>
+        </header>
+
+        <!-- Separator -->
+        <div class="row">
+            <hr />
+        </div>
+
+        <!-- Page Content -->
+
+
+
+        <!-- Map -->
+        <div class="row show-on-desktop">
+            <div class="twelve columns">
+                <div id="map" class="smallmap"></div>
+            </div>
+        </div>
+
+        <!-- Search box -->
+        <div class="row">
+            <div class="ten columns" id="search">
+                <form class="nice">
+                    <span class="pictogram-search">s</span><input type="text" placeholder="Filter using any keyword" class="input-text big" />
+                </form>
+            </div>
+            <div class="one columns pictogram">
+                \
+            </div>
+            <div class="one columns pictogram">
+                4
+            </div>
+        </div>
+
+        </div>
+
+        <!-- People are here -->
+        <div class="row">
+            <ul class="block-grid mobile three-up">
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+                <li><div class="panel">Three-up element</div></li>
+            </ul>
+        </div>
+
+    </div>
+    <!-- container -->
+
+
+    <div id="join-modal" class="reveal-modal">
+        <p class="lead">So, you wanna join us?</p>
+        <h2>Cool!</h2>
+        <p>While the Mozilla Reps program is open to all, becoming a Mozilla Reps involves a short but rigorous application process to make sure those interested are motivated and ready to take on a leadership role within the Mozilla community.
+
+        If you feel up to the challenge and ready to take your participation in the Mozilla project to the next level, apply today to become a Mozilla Rep! The process involves three simple steps:
+        <ul>
+            <li><h4>Step 1</h4>Fill out and submit the MozillaReps application form. A member of the Mozilla Rep advisory council will be in touch within 24 hours.</li>
+            <li><h4>Step 2</h4>If your application is approved, you'll be invited to be interviewed by a member of the advisory council over IRC or IM that same week. The interview lasts about 15 minutes and you will be asked some simple questions about yourself, your experience contributing to the Mozilla project and, of course, your motivation for becoming a MozRep.</li>
+            <li><h4>Step 3</h4>If you pass the interview, your Mozilla Rep mentor who will get you started and familiar with the tools at your disposal to start organizing events, requesting budgets, swag, etc. </li>
+        </ul>
+        And just like that, you could become a Mozilla Rep! </p>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
+
+
+    <!-- Included JS Files -->
+
+    <script src="javascripts/jquery-1.7.1.min.js"></script>
+    <script src="javascripts/modernizr.foundation.js"></script>
+    <script src="javascripts/foundation.js"></script>
+    <script src="javascripts/app.js"></script>
+    <script src="openlayers/OpenLayers.js"></script>
+    <script src="javascripts/map.js"></script>
+
+</body>
+</html>
