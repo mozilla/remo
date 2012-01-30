@@ -70,7 +70,7 @@ AUTHENTICATION_BACKENDS = ('django_browserid.auth.BrowserIDBackend',
                            )
 
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/profiles/me/'
+LOGIN_REDIRECT_URL = '/people/me/'
 
 # Required for BrowserID. Very important security feature
 SITE_URL = 'http://reps.mozilla.org'
