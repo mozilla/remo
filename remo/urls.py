@@ -10,15 +10,16 @@ urlpatterns = patterns(
         name='home'),
 
     # profiles
-    url(r'^profiles/edit/(?P<display_name>[A-Za-z0-9_]/)?$',
-     'remo.profiles.views.edit', name='profiles_edit'),
-    url(r'^profiles/list/$', 'remo.profiles.views.list_profiles',
-        name='profiles_list_profiles'),
-    url(r'^profiles/u/(?P<display_name>[A-Za-z0-9_])/$',
-     'remo.profiles.views.view_profile', name='profiles_view_profile'),
-    url(r'^profiles/me/$', 'remo.profiles.views.view_my_profile',
+    url(r'^/u/(?P<display_name>[A-Za-z0-9_])/$',
+        'remo.profiles.views.view_profile', name='profiles_view_profile'),
+    url(r'^/u/(?P<display_name>[A-Za-z0-9_])/edit/$',
+        'remo.profiles.views.edit', name='profiles_edit'),
+
+    url(r'^people/me/$', 'remo.profiles.views.view_my_profile',
         name='profiles_view_my_profile'),
-    url(r'^profiles/invite/$', 'remo.profiles.views.invite',
+    url(r'^people/$', 'remo.profiles.views.list_profiles',
+        name='profiles_list_profiles'),
+    url(r'^people/invite/$', 'remo.profiles.views.invite',
         name='profiles_invite'),
 
     # browserid
