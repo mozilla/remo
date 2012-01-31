@@ -24,7 +24,7 @@ def _validate_birth_date(data, **kwargs):
 
 
 def _validate_twitter_username(data, **kwargs):
-    if re.match(r'@([A-Za-z0-9_]+)', data):
+    if data == "" or re.match(r'@([A-Za-z0-9_]+)', data):
         return data
 
     else:
@@ -32,7 +32,7 @@ def _validate_twitter_username(data, **kwargs):
 
 
 def _validate_gpg_keyid(data, **kwargs):
-    if re.match(r'0x[A-Fa-f0-9]{8}$', data):
+    if data == "" or re.match(r'0x[A-Fa-f0-9]{8}$', data):
         return data
 
     else:
@@ -40,7 +40,7 @@ def _validate_gpg_keyid(data, **kwargs):
 
 
 def _validate_mozillians_url(data, **kwargs):
-    if re.match(r'http(s)?://(www.)?mozillians.org/', data):
+    if data == "" or re.match(r'http(s)?://(www.)?mozillians.org/', data):
         return data
 
     else:
@@ -48,7 +48,7 @@ def _validate_mozillians_url(data, **kwargs):
 
 
 def _validate_linkedin_url(data, **kwargs):
-    if re.match(r'http(s)?://(www.)?linkedin.com/', data):
+    if data == "" or re.match(r'http(s)?://(www.)?linkedin.com/', data):
         return data
 
     else:
@@ -56,7 +56,7 @@ def _validate_linkedin_url(data, **kwargs):
 
 
 def _validate_facebook_url(data, **kwargs):
-    if re.match(r'http(s)?://(www.)?facebook.com/', data):
+    if data == "" or re.match(r'http(s)?://(www.)?facebook.com/', data):
         return data
 
     else:
@@ -64,7 +64,7 @@ def _validate_facebook_url(data, **kwargs):
 
 
 def _validate_display_name(data, **kwargs):
-    if re.match(r'[A-Za-z_]+', data):
+    if data == "" or re.match(r'[A-Za-z_]+', data):
         return data
 
     else:
@@ -83,35 +83,35 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   null=True)
-    city = models.CharField(max_length=30, blank=True, null=True)
-    region = models.CharField(max_length=30, blank=True, null=True)
-    country = models.CharField(max_length=30, blank=False, null=True)
+    city = models.CharField(max_length=30, blank=True, default="")
+    region = models.CharField(max_length=30, blank=True, default="")
+    country = models.CharField(max_length=30, blank=False, default="")
     lon = models.FloatField(blank=True, null=True)
     lat = models.FloatField(blank=True, null=True)
-    display_name = models.CharField(max_length=15, blank=True, null=True,
+    display_name = models.CharField(max_length=15, blank=True, default="",
                                     unique=True,
                                     validators=[_validate_display_name])
     private_email = models.EmailField(blank=True, null=True)
     private_email_visible = models.BooleanField(default=True)
     mozillians_profile_url = models.URLField(validators=
                                              [_validate_mozillians_url])
-    twitter_account = models.CharField(max_length=16,
+    twitter_account = models.CharField(max_length=16, default="",
                                        validators=[_validate_twitter_username],
-                                       blank=True, null=True)
+                                       blank=True)
     gpg_key = models.CharField(max_length=10, validators=[_validate_gpg_keyid],
-                               blank=True, null=True)
-    irc_name = models.CharField(max_length=30, blank=True, null=True)
+                               blank=True, default="")
+    irc_name = models.CharField(max_length=30, blank=True, default="")
     irc_channels = models.ManyToManyField(IRCChannel)
-    linkedin_url = models.URLField(blank=True, null=True,
+    linkedin_url = models.URLField(blank=True, null=True, default="",
                                    validators=[_validate_linkedin_url])
-    facebook_url = models.URLField(blank=True, null=True,
+    facebook_url = models.URLField(blank=True, null=True, default="",
                                    validators=[_validate_facebook_url])
     diaspora_url = models.URLField(blank=True, null=True)
     personal_website_url = models.URLField(blank=True, null=True)
     personal_blog_feed = models.URLField(blank=True, null=True)
     added_by = models.ForeignKey(User, null=True, blank=True,
                                  related_name="users_added")
-    bio = models.TextField(blank=True)
+    bio = models.TextField(blank=True, default="")
 
 
     def clean(self, *args, **kwargs):

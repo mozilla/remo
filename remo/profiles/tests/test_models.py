@@ -48,7 +48,8 @@ class UserProfileTest(TestCase):
 
     def test_bogus_facebook_urls(self):
         facebook_urls = ["http://www.notvalid.com/foo",
-                         "https://www.notvalid.com/foo"
+                         "https://www.notvalid.com/foo",
+                         ""
                          ]
 
         @raises(ValidationError)
@@ -87,6 +88,7 @@ class UserProfileTest(TestCase):
                          "http://linkedin.com/valid",
                          "https://linkedin.com/valid",
                          "https://www.linkedin.com/valid",
+                         ""
                          ]
 
         for linkedin_url in linkedin_urls:
@@ -96,7 +98,7 @@ class UserProfileTest(TestCase):
 
     def test_bogus_mozillians_urls(self):
         mozillians_urls = ["http://www.notvalid.org/foo",
-                         "https://www.notvalid.org/foo"
+                         "https://www.notvalid.org/foo", ""
                          ]
 
         @raises(ValidationError)
@@ -153,7 +155,7 @@ class UserProfileTest(TestCase):
 
     def test_valid_twitter_username(self):
         twitter_usernames = ["@validone", "@valid212", "@va1234567890123",
-                             "@_foo_", "@____"]
+                             "@_foo_", "@____", ""]
 
         @raises(ValidationError)
         def test():
@@ -174,7 +176,7 @@ class UserProfileTest(TestCase):
 
 
     def test_valid_gpg_keyid(self):
-        gpg_keyids = ["0x88ff88ff", "0x00000000"]
+        gpg_keyids = ["0x88ff88ff", "0x00000000", ""]
 
 
         for gpg_keyid in gpg_keyids:
@@ -193,7 +195,7 @@ class UserProfileTest(TestCase):
 
 
     def test_valid_display_name(self):
-        display_names = ["foobar", "foo_bar", "_foobar_", "foobar123"]
+        display_names = ["foobar", "foo_bar", "_foobar_", "foobar123", ""]
 
 
         for display_name in display_names:
