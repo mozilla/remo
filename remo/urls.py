@@ -6,8 +6,7 @@ urlpatterns = patterns(
     '',
 
     # landing page
-    url(r'^$', direct_to_template, {'template': 'landingpage.html'},
-        name='home'),
+    url(r'^$', 'remo.profiles.views.main', name='main'),
 
     # profiles
     url(r'^/u/(?P<display_name>[A-Za-z0-9_])/$',
@@ -17,16 +16,15 @@ urlpatterns = patterns(
 
     url(r'^people/me/$', 'remo.profiles.views.view_my_profile',
         name='profiles_view_my_profile'),
-    url(r'^people/$', 'remo.profiles.views.list_profiles',
-        name='profiles_list_profiles'),
     url(r'^people/invite/$', 'remo.profiles.views.invite',
         name='profiles_invite'),
+    url(r'^people/', 'remo.profiles.views.list_profiles',
+        name='profiles_list_profiles'),
 
     # browserid
     url(r'^browserid/', include('django_browserid.urls')),
 
     # login / logout
-    url(r'^login/$', 'remo.profiles.views.login', name="login"),
     url(r'^login/plain/$', 'remo.profiles.views.plainlogin',
         {'template_name':'plainlogin.html'}, name='plainlogin'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
