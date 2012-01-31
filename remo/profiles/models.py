@@ -111,6 +111,7 @@ class UserProfile(models.Model):
     personal_blog_feed = models.URLField(blank=True, null=True)
     added_by = models.ForeignKey(User, null=True, blank=True,
                                  related_name="users_added")
+    bio = models.TextField(blank=True)
 
 
     def clean(self, *args, **kwargs):

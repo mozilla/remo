@@ -124,7 +124,8 @@
             "private_email_visible": true,
             "diaspora_url": null,
             "personal_blog_feed": null,
-            "facebook_url": null
+            "facebook_url": null,
+	    "bio": ""
         }
     },
     {
@@ -150,7 +151,9 @@
             "private_email_visible": true,
             "diaspora_url": null,
             "personal_blog_feed": null,
-            "facebook_url": null
+            "facebook_url": null,
+            "added_by": 4,
+	    "bio": ""
         }
     },
     {
@@ -176,7 +179,9 @@
             "private_email_visible": false,
             "diaspora_url": "http://joindiaspora.com/md",
             "personal_blog_feed": null,
-            "facebook_url": null
+            "facebook_url": null,
+            "added_by": 4,
+	    "bio": ""
         }
     },
     {
@@ -202,7 +207,9 @@
             "private_email_visible": true,
             "diaspora_url": null,
             "personal_blog_feed": null,
-            "facebook_url": null
+            "facebook_url": null,
+            "added_by": 4,
+	    "bio": ""
         }
     },
     {
@@ -228,7 +235,9 @@
             "private_email_visible": true,
             "diaspora_url": null,
             "personal_blog_feed": null,
-            "mozillians_profile_url": ""
+            "mozillians_profile_url": "",
+            "added_by": 5,
+	    "bio": "This is my bio"
         }
     }
 ]
