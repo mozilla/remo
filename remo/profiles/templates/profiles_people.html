@@ -1,5 +1,61 @@
 {% extends "base.html" %}
 
 {% block content %}
-people
+
+        <!-- Map -->
+        <div class="row show-on-desktop">
+            <div class="twelve columns">
+                <div id="map" class="smallmap"></div>
+            </div>
+        </div>
+
+        <!-- Search box -->
+        <div class="row">
+            <div class="ten columns" id="search">
+                <form class="nice">
+                    <span class="pictogram-search">s</span><input type="text" placeholder="Filter using any keyword" id="searchfield" class="input-text big" />
+                </form>
+            </div>
+            <div class="one columns pictogram">
+                \
+            </div>
+            <div class="one columns pictogram">
+                4
+            </div>
+        </div>
+
+        </div>
+
+        <!-- People are here -->
+        <div class="row">
+            <ul class="block-grid mobile three-up" id="searchlist">
+	      {% for person in people %}
+	      <li><div class="panel">{{ person.first_name }}</div></li>
+	      {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block bottomextra %}
+    <script src="/media/openlayers/OpenLayers.js"></script>
+    <script src="/media/js/map.js"></script>
+    <script src="/media/js/jquery.min.js"></script>
+    <script src="/media/js/jquery.quicksearch.js"></script>
+    <script type="text/javascript">
+       var qs = $('input#searchfield').quicksearch('ul#searchlist li');
+    </script>
+    <script type="text/javascript">
+    $(document).ready(
+	function() {
+	    search_string = window.location.pathname.substr(8);
+	    if (search_string.length > 0) {
+		$('input#searchfield').val(search_string);
+		qs.cache();
+	    }
+	}
+    )
+    </script>
 {% endblock %}

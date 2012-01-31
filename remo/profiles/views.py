@@ -5,6 +5,8 @@ from django.contrib.auth.views import login as django_login
 from django.views.generic.simple import direct_to_template
 from session_csrf import anonymous_csrf
 
+from django.contrib.auth.models import User
+
 @anonymous_csrf
 def main(request):
     return direct_to_template(request, template="main.html")
@@ -16,7 +18,9 @@ def edit(request, display_name=None):
 
 
 def list_profiles(request):
-    return direct_to_template(request, template="profiles_people.html")
+    return render_to_response("profiles_people.html",
+                              {'people' : User.objects.filter(is_active=True)}
+                              )
 
 
 def view_profile(request, display_name):
