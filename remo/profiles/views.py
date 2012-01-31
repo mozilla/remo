@@ -3,8 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.views import login as django_login
 from django.views.generic.simple import direct_to_template
-
 from session_csrf import anonymous_csrf
+
+@anonymous_csrf
+def main(request):
+    return direct_to_template(request, template="main.html")
+
 
 @login_required
 def edit(request, display_name=None):
