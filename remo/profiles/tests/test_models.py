@@ -319,3 +319,14 @@ class UserProfileTest(TestCase):
         eq_(IRCChannel.objects.count(), 4)
         eq_(self.user_profile.irc_channels.count(), 1)
 
+
+    def test_added_by_valid(self):
+        mentor = User.objects.get(username="mentor")
+        self.user_profile.added_by = mentor
+        self.user_profile.full_clean()
+
+
+    @raises(ValidationError)
+    def test_added_by_bogus(self):
+        self.user_profile.added_by = self.user
+        self.user_profile.full_clean()

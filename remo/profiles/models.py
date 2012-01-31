@@ -7,6 +7,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 
+
 def _validate_birth_date(data, **kwargs):
     today = datetime.date.today()
     youth_threshold_day = datetime.date(today.year-12, today.month, today.day)+\
@@ -108,6 +109,16 @@ class UserProfile(models.Model):
     diaspora_url = models.URLField(blank=True, null=True)
     personal_website_url = models.URLField(blank=True, null=True)
     personal_blog_feed = models.URLField(blank=True, null=True)
+    added_by = models.ForeignKey(User, null=True, blank=True,
+                                 related_name="users_added")
+
+
+    def clean(self, *args, **kwargs):
+        # ensure that added_by is not the same as user
+        if self.added_by == self.user:
+            raise ValidationError("added_by cannot be the same as user")
+
+        return super(UserProfile, self).clean(*args, **kwargs)
 
 
     @property
