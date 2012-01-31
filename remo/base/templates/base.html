@@ -27,6 +27,9 @@
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+{% block headextra %}
+{% endblock %}
+
 </head>
 <body>
 
@@ -187,5 +190,8 @@
       });
     });
     </script>
+
+    {% block bottomextra %}
+    {% endblock %}
 </body>
 </html>
