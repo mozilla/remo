@@ -5,7 +5,6 @@ from django.views.generic.simple import direct_to_template
 urlpatterns = patterns(
     '',
 
-    # landing page
     url(r'^$', 'remo.profiles.views.main', name='main'),
 
     # profiles

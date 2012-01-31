@@ -31,7 +31,6 @@ INSTALLED_APPS = list(INSTALLED_APPS) + [
     'django.contrib.messages',
 
     'remo.base',
-    'remo.landing',
     'remo.profiles',
 
     'django_browserid',
