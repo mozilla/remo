@@ -40,7 +40,7 @@ class playdoh {
     exec { "south":
         cwd => "$PROJ_DIR",
         command => "python ./manage.py migrate",
-        require => Exec["grant_mysql_database"];
+        require => Exec["syncdb"];
     }
 
 }
