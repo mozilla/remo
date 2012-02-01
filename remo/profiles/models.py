@@ -6,6 +6,7 @@ from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
+from libravatar import libravatar_url
 
 
 def _validate_birth_date(data, **kwargs):
@@ -120,6 +121,11 @@ class UserProfile(models.Model):
             raise ValidationError("added_by cannot be the same as user")
 
         return super(UserProfile, self).clean(*args, **kwargs)
+
+
+    @property
+    def avatar_url(self):
+        return libravatar_url(email=self.user.email)
 
 
     @property
