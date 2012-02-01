@@ -175,25 +175,6 @@ class UserProfileTest(TestCase):
                 self.user_profile.full_clean()
 
 
-    def test_valid_gpg_keyid(self):
-        gpg_keyids = ["0x88ff88ff", "0x00000000", ""]
-
-
-        for gpg_keyid in gpg_keyids:
-            self.user_profile.gpg_keyid = gpg_keyid
-            self.assertIsNone(self.user_profile.full_clean())
-
-
-    def test_bogus_gpg_keyid(self):
-        gpg_keyids = ["0x0", "0000ffff", "0x000000001", "0xww0000ww"]
-
-        @raises(ValidationError)
-        def _test():
-            for gpg_keyid in gpg_keyids:
-                self.user_profile.gpg_keyid = gpg_keyid
-                self.user_profile.full_clean()
-
-
     def test_valid_display_name(self):
         display_names = ["foobar", "foo_bar", "_foobar_", "foobar123", ""]
 

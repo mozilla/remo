@@ -32,14 +32,6 @@ def _validate_twitter_username(data, **kwargs):
         raise ValidationError("Provided Twitter Username is not valid")
 
 
-def _validate_gpg_keyid(data, **kwargs):
-    if data == "" or re.match(r'0x[A-Fa-f0-9]{8}$', data):
-        return data
-
-    else:
-        raise ValidationError("Provided GPG KeyID is not valid")
-
-
 def _validate_mozillians_url(data, **kwargs):
     if data == "" or re.match(r'http(s)?://(www.)?mozillians.org/', data):
         return data
@@ -99,8 +91,6 @@ class UserProfile(models.Model):
     twitter_account = models.CharField(max_length=16, default="",
                                        validators=[_validate_twitter_username],
                                        blank=True)
-    gpg_key = models.CharField(max_length=10, validators=[_validate_gpg_keyid],
-                               blank=True, default="")
     irc_name = models.CharField(max_length=30, blank=True, default="")
     irc_channels = models.ManyToManyField(IRCChannel)
     linkedin_url = models.URLField(blank=True, null=True, default="",
