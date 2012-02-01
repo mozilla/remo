@@ -5,7 +5,7 @@ from test_utils import TestCase
 
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User, Group, Permission
-from remo.profiles.models import UserProfile, IRCChannel
+from remo.profiles.models import UserProfile
 
 class UserTest(TestCase):
     fixtures = ['demo_users.json']
@@ -274,35 +274,6 @@ class UserProfileTest(TestCase):
         eq_(self.user_profile.display_name, u"edited")
 
 
-    def test_user_joins_irc_channel(self):
-        self.user_profile.join_irc_channel("#remo")
-        eq_(self.user_profile.irc_channels.count(), 1)
-
-
-    def test_user_leaves_irc_channel(self):
-        user_profile = User.objects.get(username="admin").get_profile()
-        user_profile.leave_irc_channel("#remo")
-        eq_(user_profile.irc_channels.count(), 0)
-
-
-    def test_user_joins_multiple_irc_channels(self):
-        self.user_profile.join_irc_channel("#remo")
-        self.user_profile.join_irc_channel("#remo-webdev")
-        eq_(self.user_profile.irc_channels.count(), 2)
-
-
-    @raises(ValueError)
-    def test_user_joins_irc_channel_again(self):
-        self.user_profile.join_irc_channel("#remo")
-        self.user_profile.join_irc_channel("#remo")
-
-
-    def test_user_joins_new_irc_channel(self):
-        self.user_profile.join_irc_channel("#channel_not_in_db")
-        eq_(IRCChannel.objects.count(), 4)
-        eq_(self.user_profile.irc_channels.count(), 1)
-
-
     def test_added_by_valid(self):
         mentor = User.objects.get(username="mentor")
         self.user_profile.added_by = mentor
@@ -332,7 +303,6 @@ class PermissionTest(TestCase):
     def test_admin_group_has_all_permissions(self):
         user = User.objects.get(username="admin")
         for permission in self.permissions:
-            print permission
             eq_(user.has_perm(permission), True)
 
 

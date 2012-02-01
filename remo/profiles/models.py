@@ -64,14 +64,6 @@ def _validate_display_name(data, **kwargs):
         raise ValidationError("Provided Display Name is not valid")
 
 
-class IRCChannel(models.Model):
-    name = models.CharField(max_length=30)
-    description = models.CharField(max_length=300)
-
-    def __unicode__(self):
-        return self.name
-
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     birth_date = models.DateField(validators=[_validate_birth_date],
@@ -92,7 +84,7 @@ class UserProfile(models.Model):
                                        validators=[_validate_twitter_username],
                                        blank=True)
     irc_name = models.CharField(max_length=30, blank=True, default="")
-    irc_channels = models.ManyToManyField(IRCChannel)
+    irc_channels = models.TextField(blank=True, default="")
     linkedin_url = models.URLField(blank=True, null=True, default="",
                                    validators=[_validate_linkedin_url])
     facebook_url = models.URLField(blank=True, null=True, default="",
@@ -159,31 +151,6 @@ class UserProfile(models.Model):
         else:
             group.user_set.remove(self.user)
 
-
-    def join_irc_channel(self, channel_name):
-        channel, created = IRCChannel.objects.get_or_create(name=channel_name.lower())
-        if created:
-            channel.save()
-
-        if channel in self.irc_channels.iterator():
-            raise ValueError("User already in channel %s" % channel_name)
-
-        else:
-            self.irc_channels.add(channel)
-
-
-    def leave_irc_channel(self, channel_name):
-        try:
-            channel = IRCChannel.objects.get(name=channel_name.lower())
-
-        except IRCChannel.DoesNotExist:
-            raise ValueError("Channel %s does not exist" % channel_name)
-
-        if channel not in self.irc_channels.iterator():
-            raise ValueError("User not in channel %s" % channel_name)
-
-        else:
-            self.irc_channels.remove(channel)
 
 @receiver(pre_save, sender=UserProfile)
 def userprofile_set_display_name_pre_save(sender, instance, **kwargs):

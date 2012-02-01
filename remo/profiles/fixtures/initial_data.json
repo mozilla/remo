@@ -5,11 +5,11 @@
         "fields": {
             "name": "Admin",
             "permissions": [
-	        52,
-		53,
-		54,
-		55,
-		56
+	        49,
+		50,
+		51,
+		52,
+		53
 	    ]
         }
     },
@@ -35,32 +35,8 @@
         "fields": {
             "name": "Mentor",
             "permissions": [
-	        52
+	        49
 	    ]
-        }
-    },
-    {
-        "pk": 1,
-        "model": "profiles.ircchannel",
-        "fields": {
-            "name": "#remo",
-            "description": "General discussion ReMo"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "profiles.ircchannel",
-        "fields": {
-            "name": "#remo-council",
-            "description": "ReMo council"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "profiles.ircchannel",
-        "fields": {
-            "name": "#remo-webdev",
-            "description": "ReMo Web Development"
         }
     },
     {
@@ -128,7 +104,7 @@
             "private_email": "",
             "country": "",
             "region": "",
-            "irc_channels": [],
+            "irc_channels": "",
             "lon": null,
             "irc_name": "",
             "lat": null,
@@ -153,7 +129,7 @@
             "private_email": "",
             "country": "",
             "region": "",
-            "irc_channels": [],
+            "irc_channels": "",
             "lon": null,
             "irc_name": "",
             "lat": null,
@@ -178,7 +154,7 @@
             "private_email": "",
             "country": "",
             "region": "",
-            "irc_channels": [],
+            "irc_channels": "",
             "lon": null,
             "irc_name": "",
             "lat": null,
