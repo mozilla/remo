@@ -4,7 +4,7 @@ from nose.tools import eq_, raises
 from test_utils import TestCase
 
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 from remo.profiles.models import UserProfile, IRCChannel
 
 class UserTest(TestCase):
@@ -332,3 +332,45 @@ class UserProfileTest(TestCase):
     def test_added_by_bogus(self):
         self.user_profile.added_by = self.user
         self.user_profile.full_clean()
+
+
+class PermissionTest(TestCase):
+    fixtures = ['demo_users.json']
+
+
+    def setUp(self):
+        self.permissions = [
+            "profiles.create_user",
+            "profiles.add_to_admin_group",
+            "profiles.add_to_council_group",
+            "profiles.add_to_mentor_group",
+            "profiles.add_to_rep_group"
+            ]
+
+
+    def test_admin_group_has_all_permissions(self):
+        user = User.objects.get(username="admin")
+        for permission in self.permissions:
+            print permission
+            eq_(user.has_perm(permission), True)
+
+
+    def test_council_group_has_no_permissions(self):
+        user = User.objects.get(username="counselor")
+        for permission in self.permissions:
+            eq_(user.has_perm(permission), False)
+
+
+    def test_mentor_group_has_one_permission(self):
+        user = User.objects.get(username="mentor")
+        for permission in self.permissions:
+            if permission == "profiles.create_user":
+                eq_(user.has_perm(permission), True)
+            else:
+                eq_(user.has_perm(permission), False)
+
+
+    def test_rep_group_has_no_permissions(self):
+        user = User.objects.get(username="rep")
+        for permission in self.permissions:
+            eq_(user.has_perm(permission), False)

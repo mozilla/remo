@@ -115,6 +115,15 @@ class UserProfile(models.Model):
     bio = models.TextField(blank=True, default="")
 
 
+    class Meta:
+        permissions = (
+            ("create_user", "Can create new user"),
+            ("add_to_admin_group", "Can add user to admin group"),
+            ("add_to_council_group", "Can add user to council group"),
+            ("add_to_mentor_group", "Can add user to mentor group"),
+            ("add_to_rep_group", "Can add user to rep group"),
+            )
+
     def clean(self, *args, **kwargs):
         # ensure that added_by is not the same as user
         if self.added_by == self.user:

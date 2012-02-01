@@ -4,7 +4,13 @@
         "model": "auth.group",
         "fields": {
             "name": "Admin",
-            "permissions": []
+            "permissions": [
+	        52,
+		53,
+		54,
+		55,
+		56
+	    ]
         }
     },
     {
@@ -28,7 +34,9 @@
         "model": "auth.group",
         "fields": {
             "name": "Mentor",
-            "permissions": []
+            "permissions": [
+	        52
+	    ]
         }
     },
     {
