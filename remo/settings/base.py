@@ -25,9 +25,9 @@ MINIFY_BUNDLES = {
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'remo.urls'
 
-INSTALLED_APPS = list(INSTALLED_APPS) + [
+INSTALLED_APPS = ['south'] +\
+                 list(INSTALLED_APPS) + [
     # Application base, containing global templates.
-    'south',
     'django.contrib.messages',
 
     'remo.base',
