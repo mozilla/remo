@@ -12,7 +12,6 @@
    Shared Styles
 ----------------------------------------- */
 
-{# MetaWebPro font family licensed from fontshop.com. WOFF-FTW! #}
 @font-face {
     font-family: 'MetaBlack';
     src: url('http://mozcom-cdn.mozilla.net/img/fonts/MetaWebPro-Black.eot');
@@ -99,7 +98,7 @@ li.active {
 #featured {
   width: 992px;
   height: 200px;
-  background: #000 url('/media/img/orbit/loading.gif') no-repeat center center; overflow: hidden;
+  background: #000 url('images/orbit/loading.gif') no-repeat center center; overflow: hidden;
 }
 
 .smallmap {
@@ -108,7 +107,7 @@ li.active {
     border: 1px solid #ccc;
 }
 
-input.input-text.big {
+.input-text.big {
 	margin: 20px 0px;
 	width: 100%;
 	background: none !important;
@@ -117,7 +116,15 @@ input.input-text.big {
 	border-radius: 0px !important;
 }
 
-.pictogram {
+.input-text {
+	margin: 20px 0px !important;
+	background: none !important;
+	border: none !important;
+	border-bottom: 1px solid #ccc !important;
+	border-radius: 0px !important;
+}
+
+.pictogram-button {
 	margin-top: 20px;
 	text-align:center;
 	font-family: "ModernPictogramsNormal";
@@ -126,7 +133,16 @@ input.input-text.big {
 	cursor: pointer;
 }
 
-.pictogram.active, .pictogram:hover {
+.pictogram {
+	margin-top: 20px;
+	text-align:center;
+	font-family: "ModernPictogramsNormal";
+	font-size: 30px;
+	color: #aaa;
+	cursor: default;
+}
+
+.pictogram-button.active, .pictogram-button:hover {
 	color: #888;
 }
 
@@ -137,4 +153,25 @@ input.input-text.big {
 	text-align:center;
 	color: #ccc;
 	cursor: default;
+}
+
+#profile-image {
+	margin-top: 20px;
+	text-align: left;
+	color: #888;
+	font-size: 10px;
+}
+
+.use-those {
+	margin-top: 50px;
+	text-align: right;
+}
+
+.align-right {
+	text-align:right !important;
+}
+
+#save-profile {
+	margin-top: 50px;
+	text-align:right !important;
 }
