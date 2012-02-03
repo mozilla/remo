@@ -69,6 +69,21 @@ def invite(request):
                   )
 
 
+def delete_user(request, display_name):
+    user = get_object_or_404(User, userprofile__display_name=display_name)
+
+    if user != request.user and \
+           request.user.has_perm("profiles.can_edit_profiles") == False:
+        messages.error(request, 'Permission denied')
+        return redirect('main')
+
+    if request.POST:
+        user.delete()
+        messages.success(request, 'User was deleted')
+
+    return redirect('main')
+
+
 @login_required
 def view_my_profile(request):
     return view_profile(request,
