@@ -8,9 +8,9 @@ urlpatterns = patterns(
     url(r'^$', 'remo.profiles.views.main', name='main'),
 
     # profiles
-    url(r'^/u/(?P<display_name>[A-Za-z0-9_])/$',
+    url(r'^u/(?P<display_name>[A-Za-z0-9_]+)/$',
         'remo.profiles.views.view_profile', name='profiles_view_profile'),
-    url(r'^/u/(?P<display_name>[A-Za-z0-9_])/edit/$',
+    url(r'^u/(?P<display_name>[A-Za-z0-9_]+)/edit/$',
         'remo.profiles.views.edit', name='profiles_edit'),
 
     url(r'^people/me/$', 'remo.profiles.views.view_my_profile',
