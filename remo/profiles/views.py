@@ -18,9 +18,10 @@ def edit(request, display_name=None):
 
 
 def list_profiles(request):
-    return render_to_response("profiles_people.html",
-                              {'people' : User.objects.filter(is_active=True)}
-                              )
+    return render(request, 'profiles_people.html',
+                  {'people': User.objects.\
+                   filter(is_active=True, groups__name="Rep")
+                   })
 
 
 def view_profile(request, display_name):
