@@ -1,5 +1,29 @@
 {% extends "base.html" %}
+{% block pagetitle %}Adding a new rep{% endblock %}
 
 {% block content %}
-invite
+<!-- Adding new rep -->
+
+<div class="row">
+  <div class="twelve columns">
+    <h4>Adding new rep</h4>
+  </div>
+</div>
+
+
+<!-- Two column block -->
+
+<div class="row">
+  <div class="twelve columns">
+    <p>Please enter the bugzilla mail of the newly accepted rep and press add.</p>
+    <form action="{% url profiles_invite %}" method="post" class="custom">
+    {% csrf_token %}
+    <input type="text" name="email"  placeholder="Bugzilla mail" class="input-text">
+    {% if form.email.errors %}
+      <small class="error">{{ form.email.errors }}</small>
+    {% endif %}
+    <button type="submit" class="medium white button nice radius">Add rep</button>
+    </form>
+  </div>
+</div>
 {% endblock %}

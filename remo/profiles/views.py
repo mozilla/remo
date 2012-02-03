@@ -1,11 +1,22 @@
-from django.shortcuts import render_to_response
+from datetime import datetime
+
+import django.db
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponseForbidden
 from django.contrib.auth.views import login as django_login
 from django.views.generic.simple import direct_to_template
 from session_csrf import anonymous_csrf
-
+from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import permission_required
+from django.conf import settings
+from django_browserid.auth import default_username_algo
+
+import forms
+
+username_algo = getattr(settings, 'BROWSERID_USERNAME_ALGO',
+                        default_username_algo)
 
 @anonymous_csrf
 def main(request):
@@ -29,7 +40,33 @@ def view_profile(request, display_name):
 
 
 def invite(request):
-    return direct_to_template(request, template="profiles_invite.html")
+    if not request.user.has_perm("profiles.create_user"):
+        messages.error(request, 'Permission denied')
+        return redirect('main')
+
+    if request.POST:
+        form = forms.InviteUserForm(request.POST)
+
+        if form.is_valid():
+            email = form.cleaned_data['email']
+
+            try:
+                User.objects.create_user(username=username_algo(email),
+                                         email=email)
+
+            except django.db.IntegrityError:
+                messages.error(request, 'User already exists')
+
+            else:
+                messages.success(request, 'User was invited')
+                return redirect('profiles_invite')
+
+    else:
+        form = forms.InviteUserForm()
+
+    return render(request, "profiles_invite.html",
+                  {'form': form}
+                  )
 
 
 @login_required
