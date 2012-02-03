@@ -116,7 +116,18 @@
             <hr />
         </div>
 
+
         <!-- Page Content -->
+{% if messages %}
+	<div class="row">
+    {% for message in messages %}
+	<div class="alert-box {{ message.tags }}">
+	  {{ message }}
+	  <a href="" class="close">&times;</a>
+	</div>
+    {% endfor %}
+{% endif %}
+
 
 	{% block content %}
 	{% endblock %}
