@@ -59,7 +59,7 @@
 			    {{ browserid_form.as_p }}
 			    </form>
 			    {% else %}
-			    <a href="{% url profiles_view_my_profile %}">{{ user.first_name }} {{ user.last_name }}</a>
+			    <a href="{% url profiles_view_my_profile %}">{{ user.get_full_name }}</a>
 			    [<a href="{% url logout %}">Sign out</a>]
 			    {% endif %}
 			    </li>
