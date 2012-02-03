@@ -47,6 +47,19 @@ hr {
 	margin: 5px 0 18px;
 }
 
+a:link, a:visited{
+	text-decoration:none;
+	-moz-transition:color .3s ease-in;
+	-webkit-transition:color .3s ease-in;
+	transition:color .3s ease-in;
+}
+
+a:hover, a:active{
+	-moz-transition:color .3s ease-out;
+	-webkit-transition:color .3s ease-out;
+	transition:color .3s ease-out;
+}
+
 #login-box {
 	text-align: right;
 	margin-top: 10px;
@@ -105,6 +118,8 @@ li.active {
     width: 100%;
     height: 300px;
     border: 1px solid #ccc;
+    z-index: -1;
+    position: relative;
 }
 
 .input-text.big {
@@ -174,4 +189,64 @@ li.active {
 #save-profile {
 	margin-top: 50px;
 	text-align:right !important;
+}
+
+.flat {
+	background: none !important;
+	border: none !important;
+	border-bottom: 1px solid #ccc !important;
+	border-radius: 0px !important;
+	width: 100%;
+}
+
+/* Footer CSS */
+
+#footer h3 a:hover,#footer h3 a:active{
+	background:-moz-radial-gradient(center 45deg,ellipse closest-side,rgba(255,255,255,0.3) 0,rgba(255,255,255,0) 100%);
+	-moz-transition:background .2s ease-in-out;
+}
+
+#footer{
+	text-align:center;
+	color: rgb(153, 153, 153);
+	clear: both;
+	padding: 50px 0pt 20px;
+}
+
+#footer-contents{
+	width:980px;
+	text-align:left;
+	margin:auto;
+}
+
+#footer-contents[dir=rtl]{
+	text-align:right;
+}
+
+#footer h3 a,#footer h3 a:link,#footer h3 a:visited{
+	display:block;
+	height:40px;
+	width:100px;
+	text-indent:-200px;
+	font-size:1px;
+	overflow:hidden;
+}
+
+#footer li li a:link,#footer li li a:visited{
+	color:#669be1;
+	font-family:georgia,serif;
+	font-weight:normal;
+	font-size:13px;
+	text-transform:none;
+}
+
+#footer li li a:hover,#footer li li a:active{
+	color:#fff;
+}
+
+
+/* Errors in forms */
+
+small.error {
+	margin: -20px 0px 20px 4px;
 }
