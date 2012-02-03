@@ -293,10 +293,7 @@ class PermissionTest(TestCase):
     def setUp(self):
         self.permissions = [
             "profiles.create_user",
-            "profiles.add_to_admin_group",
-            "profiles.add_to_council_group",
-            "profiles.add_to_mentor_group",
-            "profiles.add_to_rep_group"
+            "profiles.can_edit_profiles",
             ]
 
 
