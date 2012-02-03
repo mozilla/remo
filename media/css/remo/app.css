@@ -111,7 +111,7 @@ li.active {
 #featured {
   width: 992px;
   height: 200px;
-  background: #000 url('images/orbit/loading.gif') no-repeat center center; overflow: hidden;
+  background: #000 url('/media/img/foundation/orbit/loading.gif') no-repeat center center; overflow: hidden;
 }
 
 .smallmap {
