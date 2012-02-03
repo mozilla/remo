@@ -66,6 +66,7 @@ def _validate_display_name(data, **kwargs):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
+    local_name = models.CharField(max_length=50, blank=True, default="")
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   null=True)
     city = models.CharField(max_length=30, blank=True, default="")

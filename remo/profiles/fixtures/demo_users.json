@@ -5,7 +5,7 @@
         "fields": {
             "username": "admin",
             "first_name": "Nikos",
-            "last_name": "\u00ce\u009a\u00ce\u00bf\u00cf\u008d\u00ce\u00ba\u00ce\u00bf\u00cf\u0082",
+            "last_name": "Koukos",
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
@@ -107,6 +107,7 @@
             "twitter_account": "",
             "display_name": "admin",
             "private_email": "",
+	    "local_name": "Lalala Lololo",
 	    "region":"attika",
             "country": "Greece",
 	    "mozillians_profile_url":"http://mozillians.org/profile/1",
