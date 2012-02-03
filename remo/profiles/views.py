@@ -40,8 +40,3 @@ def view_my_profile(request):
 @anonymous_csrf
 def plainlogin(request, template_name):
     return django_login(request, template_name=template_name)
-
-
-@anonymous_csrf
-def login(request):
-    return direct_to_template(request, template='login.html')
