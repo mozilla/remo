@@ -27,8 +27,11 @@
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-{% block headextra %}
-{% endblock %}
+    {% block headextra %}
+    {% endblock %}
+
+    <!-- our css is always last to override stuff -->
+    <link rel="stylesheet" href="/media/css/remo/app.css">
 
 </head>
 <body>
@@ -204,11 +207,14 @@
     <script src="/media/js/jquery-1.7.1.min.js"></script>
     <script src="/media/js/modernizr.foundation.js"></script>
     <script src="/media/js/foundation.js"></script>
-    <script src="/media/js/app.js"></script>
     <script src="https://browserid.org/include.js" type="text/javascript"></script>
     <script src="/media/js/activate.browserid.js" type="text/javascript"></script>
 
     {% block bottomextra %}
     {% endblock %}
-</body>
+
+    <!-- Our app.js is always last to override stuff -->
+    <script src="/media/js/app.js"></script>
+
+ </body>
 </html>
