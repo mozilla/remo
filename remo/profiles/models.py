@@ -77,7 +77,6 @@ class UserProfile(models.Model):
                                     unique=True,
                                     validators=[_validate_display_name])
     private_email = models.EmailField(blank=True, null=True)
-    private_email_visible = models.BooleanField(default=True)
     mozillians_profile_url = models.URLField(validators=
                                              [_validate_mozillians_url])
     twitter_account = models.CharField(max_length=16, default="",

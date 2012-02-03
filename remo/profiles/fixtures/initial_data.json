@@ -115,7 +115,6 @@
             "user": 1,
             "birth_date": null,
             "personal_website_url": "",
-            "private_email_visible": true,
             "diaspora_url": "",
             "personal_blog_feed": "",
             "mozillians_profile_url": ""
@@ -140,7 +139,6 @@
             "user": 2,
             "birth_date": null,
             "personal_website_url": "",
-            "private_email_visible": true,
             "diaspora_url": "",
             "personal_blog_feed": "",
             "mozillians_profile_url": ""
@@ -165,7 +163,6 @@
             "user": 3,
             "birth_date": null,
             "personal_website_url": "",
-            "private_email_visible": true,
             "diaspora_url": "",
             "personal_blog_feed": "",
             "mozillians_profile_url": ""
