@@ -115,7 +115,7 @@ class UserProfile(models.Model):
 
 
     @property
-    def avatar_url(self):
+    def get_avatar_url(self):
         return libravatar_url(email=self.user.email)
 
 
