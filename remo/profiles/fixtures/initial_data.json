@@ -47,7 +47,9 @@
             "is_superuser": true,
             "is_staff": true,
             "last_login": "2012-01-30 03:56:09",
-            "groups": [],
+            "groups": [
+	        1
+	    ],
             "user_permissions": [],
             "password": "!",
             "email": "giorgos@mozilla.com",
@@ -62,10 +64,12 @@
             "first_name": "Pierros",
             "last_name": "Papadeas",
             "is_active": true,
-            "is_superuser": true,
-            "is_staff": true,
+            "is_superuser": false,
+            "is_staff": false,
             "last_login": "2012-01-30 04:00:36",
-            "groups": [],
+            "groups": [
+	        1
+	    ],
             "user_permissions": [],
             "password": "!",
             "email": "pierros@mozilla.com",
@@ -80,10 +84,12 @@
             "first_name": "William",
             "last_name": "Quiviger",
             "is_active": true,
-            "is_superuser": true,
-            "is_staff": true,
+            "is_superuser": false,
+            "is_staff": false,
             "last_login": "2012-01-30 04:01:21",
-            "groups": [],
+            "groups": [
+	        1
+	    ],
             "user_permissions": [],
             "password": "!",
             "email": "william@mozilla.com",
