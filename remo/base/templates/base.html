@@ -53,7 +53,7 @@
                         <ul>
                             <li class="account anonymous nomenu logout">
 			    {% if not user.is_authenticated %}
-			    <a id="browserid" href="{% url plainlogin %}">Sign In</a>
+			    <a id="browserid" href="#">Sign In</a>
 			    <form method="POST" action="{% url browserid_verify %}">
 			    {% csrf_token %}
 			    {{ browserid_form.as_p }}
