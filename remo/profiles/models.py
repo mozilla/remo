@@ -199,3 +199,12 @@ def user_set_inactive_pre_save(sender, instance, **kwargs):
 
     else:
         instance.is_active = True
+
+
+@receiver(post_save, sender=User)
+def auto_add_to_mentor_group(sender, instance, created, raw, **kwargs):
+    """
+    Automatically add new users to Rep group
+    """
+    if created and not raw:
+        instance.groups.add(Group.objects.get(name="Rep"))

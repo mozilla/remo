@@ -34,6 +34,9 @@ class UserTest(TestCase):
         eq_(self.new_user.userprofile.display_name, "new_123")
 
 
+    def test_new_user_joins_rep_group(self):
+        eq_(self.new_user.groups.filter(name="Rep").count(), 1)
+
     def tearDown(self):
         self.new_user.delete()
 
