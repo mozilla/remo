@@ -2,7 +2,6 @@ from datetime import datetime
 
 import django.db
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.contrib.auth.views import login as django_login
 from django.views.generic.simple import direct_to_template
@@ -12,11 +11,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django_browserid.auth import default_username_algo
+from remo.base.decorators import permission_check
 
 import forms
 
 username_algo = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
+
 
 @anonymous_csrf
 def main(request):
@@ -39,11 +40,8 @@ def view_profile(request, display_name):
     return direct_to_template(request, template="profiles_view.html")
 
 
+@permission_check(permissions=['profiles.create_user'])
 def invite(request):
-    if not request.user.has_perm("profiles.create_user"):
-        messages.error(request, 'Permission denied')
-        return redirect('main')
-
     if request.POST:
         form = forms.InviteUserForm(request.POST)
 
@@ -69,13 +67,9 @@ def invite(request):
                   )
 
 
+@permission_check(permissions=['profiles.can_edit_profiles'])
 def delete_user(request, display_name):
     user = get_object_or_404(User, userprofile__display_name=display_name)
-
-    if user != request.user and \
-           request.user.has_perm("profiles.can_edit_profiles") == False:
-        messages.error(request, 'Permission denied')
-        return redirect('main')
 
     if request.POST:
         user.delete()
@@ -84,7 +78,7 @@ def delete_user(request, display_name):
     return redirect('main')
 
 
-@login_required
+@permission_check()
 def view_my_profile(request):
     return view_profile(request,
                         display_name=request.user.userprofile.display_name)
@@ -93,3 +87,5 @@ def view_my_profile(request):
 @anonymous_csrf
 def plainlogin(request, template_name):
     return django_login(request, template_name=template_name)
+
+
