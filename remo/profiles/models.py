@@ -95,6 +95,9 @@ class UserProfile(models.Model):
     added_by = models.ForeignKey(User, null=True, blank=True,
                                  related_name="users_added")
     bio = models.TextField(blank=True, default="")
+    gender = models.NullBooleanField(choices=((True, "Female"),
+                                              (False, "Male")),
+                                     default=None)
 
 
     class Meta:
