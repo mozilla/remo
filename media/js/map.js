@@ -3,14 +3,10 @@
 var map = new OpenLayers.Map("map");
 
 /* Declaring base layer */
-var ol_wms = new OpenLayers.Layer.WMS(
-    "OpenLayers WMS",
-    "http://vmap0.tiles.osgeo.org/wms/vmap0",
-    {layers: "basic"}
-);
+var osm = new OpenLayers.Layer.OSM();
 
 /* Adding layer to map */
-map.addLayers([ol_wms]);
+map.addLayers([osm]);
 
 /* Zooming inital to extend */
 map.zoomToMaxExtent();
