@@ -49,8 +49,10 @@ def invite(request):
             email = form.cleaned_data['email']
 
             try:
-                User.objects.create_user(username=username_algo(email),
-                                         email=email)
+                user = User.objects.create_user(username=username_algo(email),
+                                                email=email)
+                user.userprofile.added_by = request.user
+                user.userprofile.save()
 
             except django.db.IntegrityError:
                 messages.error(request, 'User already exists')
