@@ -103,7 +103,7 @@ class UserProfile(models.Model):
     class Meta:
         permissions = (
             ("create_user", "Can create new user"),
-            ("can_edit_profiles", "Can add / remove users from groups"),
+            ("can_edit_profiles", "Can edit profiles"),
             )
 
     def clean(self, *args, **kwargs):
