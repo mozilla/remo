@@ -1,28 +1,39 @@
-/* Foundation v2.1.5 http://foundation.zurb.com */
-/* Artfully masterminded by ZURB  */
-
 /* --------------------------------------------------
    Table of Contents
 -----------------------------------------------------
+:: Fonts
 :: Shared Styles
+:: Header Styles
+:: Main Page Styles
+:: People Page Styles
+:: View Profile Styles
+:: Edit Profile Styles
+:: Point Map Styles
+:: Delete Profile Styles
+:: Footer Styles
+:: Error Styles
+:: Pictogram Styles
+:: Planet feed Styles
+:: Logo gray Style
+:: Featured rep;
 */
 
 
 /* -----------------------------------------
-   Shared Styles
+   Fonts
 ----------------------------------------- */
 
 @font-face {
     font-family: 'MetaBlack';
-    src: url('http://mozcom-cdn.mozilla.net/img/fonts/MetaWebPro-Black.eot');
-    src: local('☺'), url('http://mozcom-cdn.mozilla.net/img/fonts/MetaWebPro-Black.woff') format('woff');
+    src: url('/media/fonts/MetaWebPro-Black.eot');
+    src: local('☺'), url('/media/fonts/MetaWebPro-Black.woff') format('woff');
     font-weight: bold;
 }
 
 @font-face {
     font-family: 'MetaNormal';
-    src: url('http://mozcom-cdn.mozilla.net/img/fonts/MetaWebPro-Normal.eot');
-    src: local('☺'), url('http://mozcom-cdn.mozilla.net/img/fonts/MetaWebPro-Normal.woff') format('woff');
+    src: url('/media/fonts/MetaWebPro-Normal.eot');
+    src: local('☺'), url('/media/fonts/MetaWebPro-Normal.woff') format('woff');
     font-weight: bold;
 }
 
@@ -37,6 +48,10 @@
     font-style: normal;
 
 }
+
+/* -----------------------------------------
+   Shared Styles
+----------------------------------------- */
 
 body {
 	border-top: 3px solid #686868;
@@ -60,6 +75,10 @@ a:hover, a:active{
 	transition:color .3s ease-out;
 }
 
+/* -----------------------------------------
+   Header Styles
+----------------------------------------- */
+
 #login-box {
 	text-align: right;
 	margin-top: 10px;
@@ -76,11 +95,19 @@ a:hover, a:active{
 	padding: 3px;
 }
 
-#navigation-box {
-	text-align: right;
+#navigation-box .nav-bar {
+	float: right !important;
 }
 
-#navigation-box ul{
+#navigation-box ul {
+	margin-bottom: 0px;
+	margin-top: 10px;
+	background: none;
+	border: none;
+}
+
+
+#navigation-box-mobile ul {
 	margin-bottom: 0px;
 	margin-top: 10px;
 	background: none;
@@ -95,12 +122,12 @@ li.active {
 	background: #ddd;
 }
 
-#motto {
-	text-align: center;
-}
+/* -----------------------------------------
+   Main Page Styles
+----------------------------------------- */
 
-.blogpost {
-	margin-top: 20px;
+.main-section {
+	margin-bottom: 40px;
 }
 
 #more-posts {
@@ -109,10 +136,16 @@ li.active {
 }
 
 #featured {
-  width: 992px;
-  height: 200px;
-  background: #000 url('/media/img/foundation/orbit/loading.gif') no-repeat center center; overflow: hidden;
+	width: 992px;
+	height: 200px;
+	background: #000 url('/media/img/foundation/orbit/loading.gif') no-repeat center center; overflow: hidden;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
+
+/* -----------------------------------------
+   People Page Styles
+----------------------------------------- */
 
 .smallmap {
     width: 100%;
@@ -120,6 +153,68 @@ li.active {
     border: 1px solid #ccc;
     z-index: -1;
     position: relative;
+}
+
+.view-change {
+	text-align: right;
+	margin-top: 20px;
+}
+
+/* -----------------------------------------
+   View Profile Styles
+----------------------------------------- */
+
+.grayed {
+	color: #888;
+}
+
+.profile-item {
+	margin-top: 20px;
+}
+
+.smallmap-profile-container {
+    margin-top: 20px !important;
+}
+
+.white.label {
+	background-color: #ccc; color: #444 !important;
+}
+
+/* -----------------------------------------
+   Edit Profile Styles
+----------------------------------------- */
+
+#profile-image {
+	margin-top: 20px;
+	text-align: left;
+	color: #888;
+	font-size: 10px;
+}
+
+.align-right {
+	text-align:right !important;
+}
+
+#save-profile {
+	margin-top: 50px;
+	margin-bottom: 20px;
+	text-align:right !important;
+}
+
+.flat {
+	background: none !important;
+	border: none !important;
+	border-bottom: 1px solid #ccc !important;
+	border-radius: 0px !important;
+	width: 100%;
+}
+
+.smallmap-profile {
+    width: 100%;
+    height: 128px;
+    z-index: -1;
+    position: relative;
+    float: right;
 }
 
 .input-text.big {
@@ -139,67 +234,44 @@ li.active {
 	border-radius: 0px !important;
 }
 
-.pictogram-button {
-	margin-top: 20px;
-	text-align:center;
-	font-family: "ModernPictogramsNormal";
-	font-size: 30px;
-	color: #ccc;
-	cursor: pointer;
-}
-
-.pictogram {
-	margin-top: 20px;
-	text-align:center;
-	font-family: "ModernPictogramsNormal";
-	font-size: 30px;
-	color: #aaa;
-	cursor: default;
-}
-
-.pictogram-button.active, .pictogram-button:hover {
-	color: #888;
-}
-
-.pictogram-search {
-	float:left;
-	font-family: "ModernPictogramsNormal";
-	font-size: 30px;
-	text-align:center;
-	color: #ccc;
-	cursor: default;
-}
-
-#profile-image {
-	margin-top: 20px;
-	text-align: left;
-	color: #888;
-	font-size: 10px;
-}
+/* -----------------------------------------
+   Point Map Styles
+----------------------------------------- */
 
 .use-those {
 	margin-top: 50px;
 	text-align: right;
 }
 
-.align-right {
-	text-align:right !important;
+a.small.button.close-reveal-modal {
+	font-size: 11px;
+	line-height: 1;
+	position: relative;
+	top: 0px;
+	right: 0px;
+	color: #fff;
+	font-weight: bold;
+	cursor: pointer;
 }
 
-#save-profile {
-	margin-top: 50px;
-	text-align:right !important;
+/* -----------------------------------------
+   Delete Profile Styles
+----------------------------------------- */
+
+a.large.button.close-reveal-modal {
+	font-size: 18px;
+	line-height: 1;
+	position: relative;
+	top: 0px;
+	right: 0px;
+	color: #fff;
+	font-weight: bold;
+	cursor: pointer;
 }
 
-.flat {
-	background: none !important;
-	border: none !important;
-	border-bottom: 1px solid #ccc !important;
-	border-radius: 0px !important;
-	width: 100%;
-}
-
-/* Footer CSS */
+/* -----------------------------------------
+   Footer Styles
+----------------------------------------- */
 
 #footer h3 a:hover,#footer h3 a:active{
 	background:-moz-radial-gradient(center 45deg,ellipse closest-side,rgba(255,255,255,0.3) 0,rgba(255,255,255,0) 100%);
@@ -245,8 +317,72 @@ li.active {
 }
 
 
-/* Errors in forms */
+/* -----------------------------------------
+   Error Styles
+----------------------------------------- */
 
 small.error {
 	margin: -20px 0px 20px 4px;
+}
+
+/* -----------------------------------------
+   Pictogram Styles
+----------------------------------------- */
+
+.pictogram-button {
+	margin-top: 20px;
+	text-align:center;
+	font-family: "ModernPictogramsNormal";
+	font-size: 30px;
+	color: #ccc;
+	cursor: pointer;
+}
+
+.pictogram {
+	margin-top: 20px;
+	text-align:center;
+	font-family: "ModernPictogramsNormal";
+	font-size: 30px;
+	color: #aaa;
+	cursor: default;
+}
+
+.pictogram-button.active, .pictogram-button:hover {
+	color: #888;
+}
+
+.pictogram-search {
+	float:left;
+	font-family: "ModernPictogramsNormal";
+	font-size: 30px;
+	text-align:center;
+	color: #ccc;
+	cursor: default;
+}
+
+/* -----------------------------------------
+   Planet feed Styles
+----------------------------------------- */
+
+.ItemTitle {
+	font-weight:bold;
+	margin:20px 0px 0px 0px;
+}
+
+.ItemContent {
+}
+
+/* -----------------------------------------
+   Logo Gray Styles
+----------------------------------------- */
+
+#gray-logo {
+	text-align:center;
+	margin-top:20px;
+}
+
+#about p {
+	font-weight:bold;
+	color: #777;
+	text-align: justify;
 }
