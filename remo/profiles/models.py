@@ -71,8 +71,8 @@ class UserProfile(models.Model):
     local_name = models.CharField(max_length=50, blank=True, default="")
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   null=True)
-    city = models.CharField(max_length=30, blank=True, default="")
-    region = models.CharField(max_length=30, blank=True, default="")
+    city = models.CharField(max_length=30, blank=False, default="")
+    region = models.CharField(max_length=30, blank=False, default="")
     country = models.CharField(max_length=30, blank=False, default="")
     lon = models.FloatField(blank=True, null=True)
     lat = models.FloatField(blank=True, null=True)
