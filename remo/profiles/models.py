@@ -89,7 +89,7 @@ class UserProfile(models.Model):
     display_name = models.CharField(max_length=15, blank=True, default="",
                                     unique=True,
                                     validators=[_validate_display_name])
-    private_email = models.EmailField(blank=True, null=True)
+    private_email = models.EmailField(blank=False, null=True)
     mozillians_profile_url = models.URLField(validators=
                                              [_validate_mozillians_url])
     twitter_account = models.CharField(max_length=16, default="",
@@ -148,11 +148,6 @@ class UserProfile(models.Model):
 
         return libravatar_url(email=self.user.email,
                               default=default_img_url)
-
-
-    @property
-    def is_private_email_visible(self):
-        return self.private_email_visible
 
 
 @receiver(pre_save, sender=UserProfile)
