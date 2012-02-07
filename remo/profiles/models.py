@@ -27,7 +27,7 @@ def _validate_birth_date(data, **kwargs):
 
 
 def _validate_twitter_username(data, **kwargs):
-    if data == "" or re.match(r'@([A-Za-z0-9_]+)', data):
+    if data == "" or re.match(r'([A-Za-z0-9_]+)', data):
         return data
 
     else:

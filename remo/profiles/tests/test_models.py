@@ -157,8 +157,8 @@ class UserProfileTest(TestCase):
 
 
     def test_valid_twitter_username(self):
-        twitter_usernames = ["@validone", "@valid212", "@va1234567890123",
-                             "@_foo_", "@____", ""]
+        twitter_usernames = ["validone", "valid212", "va1234567890123",
+                             "_foo_", "____", ""]
 
         @raises(ValidationError)
         def test():
@@ -168,8 +168,8 @@ class UserProfileTest(TestCase):
 
 
     def test_bogus_twitter_username(self):
-        twitter_usernames = ["@bogus*", "@bogus!", "@bogus ",
-                             "@1234567890213456"]
+        twitter_usernames = ["bogus*", "bogus!", "bogus ",
+                             "1234567890213456", "@foobar"]
 
         @raises(ValidationError)
         def test():

@@ -132,7 +132,7 @@
         "model": "profiles.userprofile",
         "fields": {
             "city": "Mountain View",
-            "twitter_account": "@foobarzzz",
+            "twitter_account": "foobarzzz",
             "display_name": "babis",
             "private_email": "babis@example.com",
 	    "region": "CA",
@@ -159,7 +159,7 @@
         "model": "profiles.userprofile",
         "fields": {
             "city": "New York City",
-            "twitter_account": "@menisdenis",
+            "twitter_account": "menisdenis",
             "display_name": "md",
             "private_email": "menis.denis@example.com",
 	    "region": "NY",
@@ -187,7 +187,7 @@
         "model": "profiles.userprofile",
         "fields": {
             "city": "Istanbul",
-            "twitter_account": "@kokifoci",
+            "twitter_account": "kokifoci",
             "display_name": "koki",
             "private_email": "koki@example.com",
 	    "region": "Marmara",
