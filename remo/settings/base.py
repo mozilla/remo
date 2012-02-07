@@ -29,6 +29,7 @@ INSTALLED_APPS = ['south'] +\
                  list(INSTALLED_APPS) + [
     # Application base, containing global templates.
     'django.contrib.messages',
+    'django.contrib.markup',
 
     'remo.base',
     'remo.profiles',
