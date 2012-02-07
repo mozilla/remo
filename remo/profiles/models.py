@@ -131,6 +131,14 @@ class UserProfile(models.Model):
 
 
     @property
+    def get_age(self):
+        # snippet from http://djangosnippets.org/snippets/557/
+        d = datetime.date.today()
+        age = (d.year - self.birth_date.year) -\
+              int((d.month, d.day) <\
+                  (self.birth_date.month, self.birth_date.day))
+        return age
+
     @property
     def get_avatar_url(self):
         default_img_url = reduce(lambda u, x: urlparse.urljoin(u, x),
