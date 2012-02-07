@@ -83,6 +83,7 @@ class UserProfile(models.Model):
     twitter_account = models.CharField(max_length=16, default="",
                                        validators=[_validate_twitter_username],
                                        blank=True)
+    jabber_id = models.CharField(max_length=50, blank=True, default="")
     irc_name = models.CharField(max_length=30, blank=True, default="")
     irc_channels = models.TextField(blank=True, default="")
     linkedin_url = models.URLField(blank=True, null=True, default="",
