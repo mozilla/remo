@@ -289,6 +289,19 @@ class UserProfileTest(TestCase):
         self.user_profile.full_clean()
 
 
+    def test_valid_mentor(self):
+        mentor = User.objects.filter(groups__name="Mentor")[0]
+        self.user_profile.mentor = mentor
+        self.user_profile.full_clean()
+
+
+    @raises(ValidationError)
+    def test_bogus_mentor(self):
+        mentor = User.objects.exclude(groups__name="Mentor")[0]
+        self.user_profile.mentor = mentor
+        self.user_profile.full_clean()
+
+
 class PermissionTest(TestCase):
     fixtures = ['demo_users.json']
 

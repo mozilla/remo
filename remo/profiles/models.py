@@ -66,6 +66,16 @@ def _validate_display_name(data, **kwargs):
         raise ValidationError("Provided Display Name is not valid")
 
 
+def _validate_mentor(data, **kwargs):
+    user = User.objects.get(pk=data)
+
+    if user.groups.filter(name="Mentor").count():
+        return data
+
+    else:
+        raise ValidationError("Selected user does not belong to mentor group")
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     local_name = models.CharField(max_length=50, blank=True, default="")
@@ -101,6 +111,9 @@ class UserProfile(models.Model):
     gender = models.NullBooleanField(choices=((True, "Female"),
                                               (False, "Male")),
                                      default=None)
+    mentor = models.ForeignKey(User, null=True, blank=True,
+                               related_name="mentors_users",
+                               validators=[_validate_mentor])
 
 
     class Meta:

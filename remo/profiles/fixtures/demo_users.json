@@ -11,7 +11,8 @@
             "is_staff": false,
             "last_login": "2012-01-23 05:29:21",
             "groups": [
-                1
+                1,
+		4
             ],
             "user_permissions": [],
             "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
@@ -173,6 +174,7 @@
             "diaspora_url": "http://joindiaspora.com/md",
             "personal_blog_feed": "",
             "facebook_url": "",
+	    "mentor": 4,
             "added_by": 4,
 	    "bio": ""
         }
@@ -199,6 +201,7 @@
             "diaspora_url": "",
             "personal_blog_feed": "",
             "facebook_url": "",
+	    "mentor": 6,
             "added_by": 4,
 	    "bio": ""
         }
@@ -225,6 +228,7 @@
             "diaspora_url": "",
             "personal_blog_feed": "",
             "mozillians_profile_url": "",
+	    "mentor": 6,
             "added_by": 5,
 	    "bio": "This is my bio"
         }
