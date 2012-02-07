@@ -73,7 +73,8 @@
 
                 </div>
 
-                <!-- Logo & Navigation -->
+
+		<!-- Logo & Navigation -->
                 <div class="row">
 
                     <!-- Logo and Wordmark -->
@@ -85,19 +86,19 @@
                     </div>
 
                     <!-- Navigation -->
-                    <div class="eight columns" id="navigation-box">
+                    <div class="eight columns hide-on-phones" id="navigation-box">
                         <ul class="nav-bar">
                             <li>
-                                <a href="/" class="main">Main</a>
+                                <a href="{% url main %}" class="main">Main</a>
                                 </li>
                             <li>
-                                <a href="/people/" class="main">People</a>
+                                <a href="{% url profiles_list_profiles %}" class="main">People</a>
                             </li>
                             <li>
                                 <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
                             </li>
                             <li>
-        			<a href="#" class="main" data-reveal-id="labs-modal">Labs</a>
+                                <a href="#" class="main" data-reveal-id="labs-modal">Labs</a>
                             </li>
                             <li>
                                 <a href="http://planet.mozillareps.org" class="main">Planet</a>
@@ -107,6 +108,21 @@
                             </li>
                             <li class="last">
                                 <a href="#" class="main" data-reveal-id="join-modal">Join</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Mobile Navigation -->
+                    <div class="eight columns show-on-phones" id="navigation-box-mobile">
+                        <ul class="nav-bar">
+                            <li>
+                                <a href="{% url main %}" class="main">Main</a>
+                                </li>
+                            <li>
+                                <a href="{% url profiles_list_profiles %}" class="main">People</a>
+                            </li>
+                            <li>
+                                <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
                             </li>
                         </ul>
                     </div>
