@@ -37,7 +37,8 @@ def list_profiles(request):
 
 
 def view_profile(request, display_name):
-    return direct_to_template(request, template="profiles_view.html")
+    user = get_object_or_404(User, userprofile__display_name = display_name)
+    return render(request, 'profiles_view.html', {'pageuser': user})
 
 
 @permission_check(permissions=['profiles.create_user'])
