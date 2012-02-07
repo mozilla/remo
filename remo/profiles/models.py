@@ -139,15 +139,15 @@ class UserProfile(models.Model):
                   (self.birth_date.month, self.birth_date.day))
         return age
 
-    @property
-    def get_avatar_url(self):
+    def get_avatar_url(self, size=128):
         default_img_url = reduce(lambda u, x: urlparse.urljoin(u, x),
                                  [settings.SITE_URL,
                                   settings.MEDIA_URL,
                                   'img/remo/remo_avatar.png'])
 
         return libravatar_url(email=self.user.email,
-                              default=default_img_url)
+                              default=default_img_url,
+                              size=size)
 
 
 @receiver(pre_save, sender=UserProfile)
