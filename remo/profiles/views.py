@@ -24,9 +24,16 @@ def main(request):
     return direct_to_template(request, template="main.html")
 
 
-@login_required
-def edit(request, display_name=None):
-    return direct_to_template(request, template="profiles_edit.html")
+@permission_check(permissions=['profiles.can_edit_profiles'],
+                  display_name_field='display_name')
+def edit(request, display_name):
+    user = get_object_or_404(User, userprofile__display_name = display_name)
+
+    return render(request, "profiles_edit.html",
+                  {'pageuser': user,
+                   'range_years': range(1950,
+                                        datetime.today().year-11)}
+                  )
 
 
 def list_profiles(request):
