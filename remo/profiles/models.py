@@ -147,34 +147,6 @@ class UserProfile(models.Model):
         return self.private_email_visible
 
 
-    def join_group(self, group_name):
-        try:
-            group = Group.objects.get(name=group_name)
-
-        except Group.DoesNotExist:
-            raise ValueError("Group %s does not exist" % group_name)
-
-        if group in self.user.groups.iterator():
-            raise ValueError("User already in %s group" % group_name)
-
-        else:
-            group.user_set.add(self.user)
-
-
-    def leave_group(self, group_name):
-        try:
-            group = Group.objects.get(name=group_name)
-
-        except Group.DoesNotExist:
-            raise ValueError("Group %s does not exist" % group_name)
-
-        if group not in self.user.groups.iterator():
-            raise ValueError("User not in %s group" % group_name)
-
-        else:
-            group.user_set.remove(self.user)
-
-
 @receiver(pre_save, sender=UserProfile)
 def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
     """
