@@ -1,6 +1,8 @@
 import re
 import datetime
+import urlparse
 
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save, pre_save
@@ -116,8 +118,15 @@ class UserProfile(models.Model):
 
 
     @property
+    @property
     def get_avatar_url(self):
-        return libravatar_url(email=self.user.email)
+        default_img_url = reduce(lambda u, x: urlparse.urljoin(u, x),
+                                 [settings.SITE_URL,
+                                  settings.MEDIA_URL,
+                                  'img/remo/remo_avatar.png'])
+
+        return libravatar_url(email=self.user.email,
+                              default=default_img_url)
 
 
     @property
