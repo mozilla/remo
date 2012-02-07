@@ -123,7 +123,8 @@
             "diaspora_url": "",
             "personal_blog_feed": "",
             "facebook_url": "",
-	    "bio": ""
+	    "bio": "",
+	    "gender":"True"
         }
     },
     {
@@ -149,7 +150,8 @@
             "personal_blog_feed": "",
             "facebook_url": "",
             "added_by": 4,
-	    "bio": ""
+	    "bio": "",
+	    "gender":"True"
         }
     },
     {
@@ -176,7 +178,8 @@
             "facebook_url": "",
 	    "mentor": 4,
             "added_by": 4,
-	    "bio": ""
+	    "bio": "",
+	    "gender":"False"
         }
     },
     {
@@ -203,7 +206,8 @@
             "facebook_url": "",
 	    "mentor": 6,
             "added_by": 4,
-	    "bio": ""
+	    "bio": "",
+	    "gender":"False"
         }
     },
     {
@@ -230,7 +234,8 @@
             "mozillians_profile_url": "",
 	    "mentor": 6,
             "added_by": 5,
-	    "bio": "This is my bio"
+	    "bio": "This is my bio",
+	    "gender":"False"
         }
     }
 ]
