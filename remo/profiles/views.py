@@ -81,7 +81,7 @@ def invite(request):
 def delete_user(request, display_name):
     user = get_object_or_404(User, userprofile__display_name=display_name)
 
-    if request.POST:
+    if request.method == 'POST':
         user.delete()
         messages.success(request, 'User was deleted')
 
