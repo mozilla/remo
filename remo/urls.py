@@ -5,7 +5,7 @@ from django.views.generic.simple import direct_to_template
 urlpatterns = patterns(
     '',
 
-    url(r'^$', 'remo.profiles.views.main', name='main'),
+    url(r'^$', 'remo.base.views.main', name='main'),
 
     # profiles
     url(r'^u/(?P<display_name>[A-Za-z0-9_]+)/$',

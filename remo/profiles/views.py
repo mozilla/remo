@@ -19,11 +19,6 @@ username_algo = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
 
 
-@anonymous_csrf
-def main(request):
-    return direct_to_template(request, template="main.html")
-
-
 @permission_check(permissions=['profiles.can_edit_profiles'],
                   display_name_field='display_name')
 def edit(request, display_name):
