@@ -156,9 +156,34 @@ li.active {
 }
 
 .view-change {
-	text-align: right;
+	text-align: center;
 	margin-top: 20px;
 }
+
+.grid-profile {
+       padding: 10px !important;
+       -moz-border-radius: 5px;
+       border-radius: 5px;
+       cursor: pointer;
+}
+
+.grid-profile-image img {
+       -moz-border-radius: 5px;
+       border-radius: 5px;
+}
+
+.grid-profile-text img {
+       text-align: left;
+}
+
+.mobile-list-warning {
+       text-align:center;
+}
+
+#list-people-view {
+       width: 100%;
+}
+
 
 /* -----------------------------------------
    View Profile Styles
@@ -186,7 +211,7 @@ li.active {
 
 #profile-image {
 	margin-top: 20px;
-	text-align: left;
+	text-align: center;
 	color: #888;
 	font-size: 10px;
 }
@@ -385,4 +410,16 @@ small.error {
 	font-weight:bold;
 	color: #777;
 	text-align: justify;
+}
+
+/* -----------------------------------------
+   Featured reps Styles
+----------------------------------------- */
+
+#featured-articles {
+    width: 100%;
+}
+
+.flat.big {
+	height: 200px;
 }
