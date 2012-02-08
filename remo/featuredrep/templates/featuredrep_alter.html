@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}Mozilla Reps - Add new featured rep{% endblock %}
+
+{% block content %}
+        <div class="row">
+            <div class="twelve columns">
+                <h5>Add or Edit Featured Reps article</h5>
+            </div>
+        </div>
+	<div class="row">
+	    <div class="six columns">
+                <p>Please specify the rep and add descriptive text.</p>
+                <form class="custom" method="post" action="{% url featuredrep_add_featured %}" >
+	          {% csrf_token %}
+		  <select id="id_user" name="user" style="display: none;">
+		    {% if not form.user.value %}<option selected="selected" value="">---------</option>{% endif %}
+		    {% for rep in reps %}
+		    <option value="{{ rep.id }}" {% if rep.id == form.user.value %}selected="selected"{% endif %}>{{ rep.get_full_name }} :{{ rep.userprofile.display_name }}</option>
+		    {% endfor %}
+		  </select>
+                    <small class="error">{{ form.user.errors }}</small>
+                    <textarea class="flat big" placeholder="Enter featured text using markup" name="text">{{ form.text.value }}</textarea>
+		    <small class="error">{{ form.text.errors }}</small>
+                    <button type="submit" class="small white button nice radius">Add or Edit Rep feature</button>
+                </form>
+            </div>
+        </div>
+{% endblock %}

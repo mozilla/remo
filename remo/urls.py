@@ -22,6 +22,18 @@ urlpatterns = patterns(
     url(r'^people/', 'remo.profiles.views.list_profiles',
         name='profiles_list_profiles'),
 
+    # featuredrep
+    url(r'featured/$', 'remo.featuredrep.views.list_featured',
+        name='featuredrep_list_featured'),
+    url(r'featured/add/$', 'remo.featuredrep.views.alter_featured',
+        name='featuredrep_add_featured'),
+    url(r'featured/edit/(?P<feature_id>\d+)/$',
+        'remo.featuredrep.views.alter_featured',
+        name='featuredrep_edit_featured'),
+    url(r'featured/delete/(?P<feature_id>\d+)/$',
+        'remo.featuredrep.views.delete_featured',
+        name='featuredrep_delete_featured'),
+
     # browserid
     url(r'^browserid/', include('django_browserid.urls')),
 
