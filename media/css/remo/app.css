@@ -32,7 +32,6 @@
 
 @font-face {
     font-family: 'MetaNormal';
-    src: url('/media/fonts/MetaWebPro-Normal.eot');
     src: local('☺'), url('/media/fonts/MetaWebPro-Normal.woff') format('woff');
     font-weight: bold;
 }
