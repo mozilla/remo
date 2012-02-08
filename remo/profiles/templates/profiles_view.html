@@ -253,10 +253,11 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
 					   new OpenLayers.Projection("EPSG:4326"),
 					   new OpenLayers.Projection("EPSG:900913")
 				       );;
-    map.setCenter(lonlat, 12); // Zoom level
+    map.setCenter(lonlat, 8); // Zoom level
     var size = new OpenLayers.Size(21, 33);
     var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
     var icon = new OpenLayers.Icon('/media/img/remo/marker.png',size,offset);
     markers.addMarker(new OpenLayers.Marker(lonlat,icon.clone()));
+    markers.setOpacity(0.7);
     </script>
 {% endblock %}
