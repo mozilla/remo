@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 
+{% load markup %}
+
 {% block content %}
 <!-- Sidereel Orbit featured images -->
         <div class="row show-on-desktop">
             <div class="twelve columns">
                 <div id="featured">
-		  <img src="images/show1.png" alt="Mozilla Festival closing session"/>
-		  <img src="images/show2.png" alt="Mozilla Reps in action"/>
-		  <img src="images/show3.png" alt="Mozilla Reps polo shirt"/>
+		  <img src="/media/img/remo/show1.png" alt="Mozilla Festival closing session"/>
+		  <img src="/media/img/remo/show2.png" alt="Mozilla Reps in action"/>
+		  <img src="/media/img/remo/show3.png" alt="Mozilla Reps polo shirt"/>
                 </div>
             </div>
         </div>
@@ -35,19 +37,27 @@
             <div class="four columns main-section">
                 <h5>Rep of the month</h5> <br>
                 <div class="row">
-                    <div class="four columns">
-                        <img src="http://dummyimage.com/80x80/999/ccc" alt="Rep of the month profile picture">
+		    {% if featuredrep %}
+         		<div class="four columns">
+                        <img src="{{ featuredrep.user.userprofile.get_avatar_url }}" alt="Rep of the month profile picture">
                     </div>
                     <div class="eight columns">
-                        <h5>Alex <br> Wafula</h5> <br> Nairobi, Kenya
-                    </div>
+
+		      <h5><a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">{{ featuredrep.user.first_name }}</a><br><a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">{{ featuredrep.user.last_name }}</a></h5> <br> {{ featuredrep.user.userprofile.region }}, {{ featuredrep.user.userprofile.country }}
+		    </div>
+		    {% else %}
+		    <div class="twelve columns">
+		      None for this month!
+		    </div>
+		    {% endif %}
+
                 </div>
 
                 <div class="row">
                     <div class="twelve columns">
                     <br>
-                    Applicake tiramisu pie ice cream sesame snaps carrot cake dragée. Pudding candy canes gingerbread lemon drops cake pie. Dragée biscuit jujubes jujubes. Cake ice cream faworki tart macaroon icing jelly beans cotton candy ice cream. Wafer candy halvah halvah bear claw cotton candy muffin cotton candy. Biscuit chupa chups wafer soufflé bonbon halvah pudding. Chupa chups caramels muffin bear claw gingerbread jujubes jelly. Faworki wafer tootsie roll. <br> <br> Lollipop pastry wypas. Wafer gummi bears caramels jelly-o sweet roll. Chupa chups pudding oat cake powder apple pie macaroon. Tart sugar plum faworki gingerbread dessert jujubes. Macaroon marshmallow cookie. Biscuit caramels powder fruitcake faworki jelly beans ice cream brownie wafer.
-                    </div>
+		      {{ featuredrep.text|restructuredtext }}
+		    </div>
                 </div>
             </div>
 
