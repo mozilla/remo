@@ -120,7 +120,8 @@
             "diaspora_url": "",
             "personal_blog_feed": "",
             "mozillians_profile_url": "",
-	    "gender":"False"
+	    "gender":"False",
+	    "registration_complete":"True"
         }
     },
     {
@@ -145,7 +146,8 @@
             "diaspora_url": "",
             "personal_blog_feed": "",
             "mozillians_profile_url": "",
-	    "gender":"False"
+	    "gender":"False",
+	    "registration_complete":"True"
         }
     },
     {
@@ -170,7 +172,8 @@
             "diaspora_url": "",
             "personal_blog_feed": "",
             "mozillians_profile_url": "",
-	    "gender":"False"
+	    "gender":"False",
+	    "registration_complete":"True"
         }
     }
 ]

@@ -15,15 +15,15 @@ class UserTest(TestCase):
                                                  email="new-123@example.com")
 
 
-    def test_first_name_activates_user(self):
+    def test_first_name_completes_registration(self):
         user = User.objects.get(username="rep2")
         user.first_name = u"Foobar"
         user.save()
-        eq_(user.is_active, True)
+        eq_(user.userprofile.registration_complete, True)
 
 
-    def test_new_user_is_inactive(self):
-        eq_(self.new_user.is_active, False)
+    def test_new_user_registration_incomplete(self):
+        eq_(self.new_user.userprofile.registration_complete, False)
 
 
     def test_new_user_gets_profile(self):

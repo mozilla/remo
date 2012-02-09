@@ -78,6 +78,7 @@ def _validate_mentor(data, **kwargs):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
+    registration_complete = models.BooleanField(default=False)
     local_name = models.CharField(max_length=50, blank=True, default="")
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   null=True)
@@ -190,16 +191,14 @@ def create_profile(sender, instance, created, raw, **kwargs):
         profile, new = UserProfile.objects.get_or_create(user=instance)
 
 
-@receiver(pre_save, sender=User)
-def user_set_inactive_pre_save(sender, instance, **kwargs):
+@receiver(post_save, sender=User)
+def user_set_inactive_post_save(sender, instance, raw, **kwargs):
     """
     Set user inactive if there is no associated UserProfile
     """
-    if not instance.first_name:
-        instance.is_active = False
-
-    else:
-        instance.is_active = True
+    if instance.first_name and not raw:
+        instance.userprofile.registration_complete = True
+        instance.userprofile.save()
 
 
 @receiver(post_save, sender=User)

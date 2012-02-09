@@ -71,12 +71,15 @@ def edit(request, display_name):
     group_bits = map(lambda x: user.groups.filter(name=x).count() > 0,
                      ['Admin', 'Council', 'Mentor', 'Rep'])
 
+    mentors = User.objects.filter(userprofile__registration_complete=True,
+                                  groups__name="Mentor")
+
     return render(request, "profiles_edit.html",
                   {'userform': userform,
                    'profileform': profileform,
                    'pageuser': user,
                    'group_bits': group_bits,
-                   'mentors': User.objects.filter(groups__name="Mentor"),
+                   'mentors': mentors,
                    'countries': COUNTRIES,
                    'range_years': range(1950,
                                         datetime.today().year-11)}
@@ -86,7 +89,8 @@ def edit(request, display_name):
 def list_profiles(request):
     return render(request, 'profiles_people.html',
                   {'people': User.objects.\
-                   filter(is_active=True, groups__name="Rep")
+                   filter(userprofile__registration_complete=True,
+                          groups__name="Rep")
                    })
 
 

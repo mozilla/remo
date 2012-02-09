@@ -54,8 +54,9 @@ def alter_featured(request, feature_id=None):
     return render(request, 'featuredrep_alter.html',
                   {'form':form,
                    'post_to': post_to,
-                   'reps':User.objects.filter(is_active=True,
-                                              groups__name="Rep")
+                   'reps':User.objects.filter(
+                       userprofile__registration_complete=True,
+                       groups__name="Rep")
                    })
 
 

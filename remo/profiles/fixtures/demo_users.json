@@ -112,7 +112,7 @@
 	    "region":"attika",
             "country": "Greece",
 	    "mozillians_profile_url":"http://mozillians.org/profile/1",
-            "irc_name": "",
+            "irc_name": "admin",
             "irc_channels": "",
             "lon": 13.41,
             "lat": 52.52,
@@ -124,6 +124,7 @@
             "personal_blog_feed": "",
             "facebook_url": "",
 	    "bio": "",
+	    "registration_complete":"True",
 	    "gender":"True"
         }
     },
@@ -138,7 +139,7 @@
 	    "region": "CA",
             "country": "USA",
 	    "mozillians_profile_url":"http://mozillians.org/profile/2",
-            "irc_name": "",
+            "irc_name": "babis",
             "irc_channels": "",
             "lon": 13.41,
             "lat": 52.52,
@@ -151,6 +152,7 @@
             "facebook_url": "",
             "added_by": 4,
 	    "bio": "",
+	    "registration_complete":"True",
 	    "gender":"True"
         }
     },
@@ -165,7 +167,7 @@
 	    "region": "NY",
             "country": "USA",
 	    "mozillians_profile_url":"http://mozillians.org/profile/3",
-            "irc_name": "",
+            "irc_name": "md",
             "irc_channels": "",
             "lon": 13.41,
             "lat": 52.52,
@@ -179,7 +181,8 @@
 	    "mentor": 4,
             "added_by": 4,
 	    "bio": "",
-	    "gender":"False"
+	    "gender":"False",
+	    "registration_complete":"True"
         }
     },
     {
@@ -193,7 +196,7 @@
 	    "region": "Marmara",
             "country": "Turkey",
 	    "mozillians_profile_url":"http://mozillians.org/profile/4",
-            "irc_name": "",
+            "irc_name": "koki",
             "irc_channels": "",
             "lon": 13.41,
             "lat": 52.52,
@@ -207,7 +210,8 @@
 	    "mentor": 6,
             "added_by": 4,
 	    "bio": "",
-	    "gender":"False"
+	    "gender":"False",
+	    "registration_complete":"True"
         }
     },
     {
@@ -223,7 +227,7 @@
             "region": "Thessaloniki",
             "irc_channels": "",
             "lon": null,
-            "irc_name": "",
+            "irc_name": "rep2",
             "lat": null,
             "linkedin_url": "",
             "user": 8,
