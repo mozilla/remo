@@ -49,16 +49,16 @@ Mozilla Reps - Edit Profile
 			  <option value="{{ year }}-01-01" {% if year == profileform.birth_date.value.year %}selected="selected"{% endif %}>{{ year }}</option>
 			  {% endfor %}
 			</select>
-		        {% if profileform.birth_date.errors %}
-		          <small class="error">{{ profileform.birth_date.errors }}</small>
-		        {% endif %}
-
 			<select name="gender">
 			  {% if not profileform.gender.value  %}<option selected="selected" value="">---------</option>{% endif %}
 			  <option value="True" {% if profileform.gender.value == "True" %}selected="selected"{% endif %}>Female</option>
 			  <option value="False" {% if profileform.gender.value == "False" %}selected="selected"{% endif %}>Male</option>
 			</select>
-		        {% if profileform.gender.errors %}
+		        {% if profileform.birth_date.errors %}
+		          <small class="error">{{ profileform.birth_date.errors }}</small>
+		        {% endif %}
+
+			{% if profileform.gender.errors %}
 		          <small class="error">{{ profileform.gender.errors }}</small>
 		        {% endif %}
 
