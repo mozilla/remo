@@ -15,7 +15,7 @@ class RegisterMiddleware(object):
                                              ):
 
                 messages.warning(request,
-                                 'Please complete yobur profile before proceeding')
+                                 'Please complete your profile before proceeding')
                 return redirect('profiles_edit', request.user.userprofile.display_name)
 
 
