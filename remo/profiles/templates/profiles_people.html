@@ -28,6 +28,7 @@
             <ul class="block-grid mobile three-up" id="searchlist">
 	      {% for person in people %}
                 <li id="li-person-{{ person.id }}">
+	          <a href="{% url profiles_view_profile person.userprofile.display_name %}">
                     <div class="panel grid-profile">
                         <div class="row">
                             <div class="three phone-one columns grid-profile-image">
@@ -38,6 +39,7 @@
                             </div>
                         <div>
                     </div>
+		  </a>
                 </li>
 	      {% endfor %}
             </ul>
