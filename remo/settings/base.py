@@ -81,7 +81,8 @@ MIDDLEWARE_CLASSES = filter(
     lambda x: x!='funfactory.middleware.LocaleURLMiddleware',
     MIDDLEWARE_CLASSES)
 
-MIDDLEWARE_CLASSES += ('django.contrib.messages.middleware.MessageMiddleware',)
+MIDDLEWARE_CLASSES += ('django.contrib.messages.middleware.MessageMiddleware',
+                       'remo.base.middleware.RegisterMiddleware')
 
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django_browserid.context_processors.browserid_form',
