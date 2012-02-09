@@ -11,7 +11,7 @@
 	<div class="row">
 	    <div class="six columns">
                 <p>Please specify the rep and add descriptive text.</p>
-                <form class="custom" method="post" action="{% url featuredrep_add_featured %}" >
+                <form class="custom" method="post" action="{{ post_to }}" >
 	          {% csrf_token %}
 		  <select id="id_user" name="user" style="display: none;">
 		    {% if not form.user.value %}<option selected="selected" value="">---------</option>{% endif %}

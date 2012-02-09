@@ -4,6 +4,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.core.urlresolvers import reverse
 
 from session_csrf import anonymous_csrf
 
@@ -21,13 +22,16 @@ def list_featured(request):
                   { 'featured': FeaturedRep.objects.all() }
                   )
 
+
 @permission_check(permissions=['profiles.can_edit_profiles'])
 def alter_featured(request, feature_id=None):
     if feature_id:
         feature = get_object_or_404(FeaturedRep, pk=feature_id)
+        post_to = reverse('featuredrep_edit_featured', args=[feature_id])
 
     else:
         feature = FeaturedRep(created_by=request.user)
+        post_to = reverse('featuredrep_add_featured')
 
     if request.method == 'POST':
         form = forms.FeaturedRepForm(request.POST, instance=feature)
@@ -49,6 +53,7 @@ def alter_featured(request, feature_id=None):
 
     return render(request, 'featuredrep_alter.html',
                   {'form':form,
+                   'post_to': post_to,
                    'reps':User.objects.filter(is_active=True,
                                               groups__name="Rep")
                    })
