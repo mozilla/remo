@@ -113,7 +113,7 @@ def invite(request):
                 messages.error(request, 'User already exists')
 
             else:
-                messages.success(request, 'User was invited')
+                messages.success(request, 'User was successfuly invited, now shoot some mails!')
                 return redirect('profiles_invite')
 
     else:
