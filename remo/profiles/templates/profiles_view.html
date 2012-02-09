@@ -98,7 +98,13 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
                         <p class="profile-item">
                             <span class="white radius label">Mozillians Profile</span> <a href="{{ pageuser.userprofile.mozillians_profile_url }}">{{ pageuser.userprofile.mozillians_profile_url }}</a>
                         </p>
-                    </div>
+		      {% if pageuser.userprofile.mentor %}
+                        <p class="profile-item">
+                            <span class="white radius label">Mentor</span> <a href="{% url profiles_view_profile pageuser.userprofile.mentor.userprofile.display_name %}">{{ pageuser.userprofile.mentor.get_full_name }}</a>
+                        </p>
+		      {% endif %}
+
+		    </div>
                 </div>
                 <div class="row">
 		    {% if pageuser.userprofile.twitter_account or pageuser.userprofile.facebook_url or pageuser.userprofile.diaspora_url or pageuser.userprofile.linkedin_url %}
@@ -143,9 +149,11 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
                         <p class="profile-item">
                             <span class="white radius label">IRC nickname</span> {{ pageuser.userprofile.irc_name }}
                         </p>
+		      {% if pageuser.userprofile.irc_channels %}
                         <p class="profile-item">
                             <span class="white radius label">IRC channels</span> {{ pageuser.userprofile.irc_channels }}
                         </p>
+		      {% endif %}
                     </div>
                 </div>
                 <div class="row">
