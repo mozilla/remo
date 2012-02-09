@@ -9,7 +9,7 @@ Mozilla Reps - Edit Profile
 
         <div class="row">
             <div class="twelve columns">
-                <h4>Editing profile of user {{ pageuser.userprofile.display_name }}</h4>
+                <h4>Editing profile of user {{ pageuser.userprofile.display_name }} {% if pageuser == request.user %}<small class="grayed">(this is you!)</small>{% endif %}</h4>
             </div>
         </div>
 

@@ -19,6 +19,9 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
                         <h4>{{ pageuser.first_name }}</h4>
                         <h4>{{ pageuser.last_name }}</h4>
                         <br>
+		        {% if pageuser == request.user %}
+		        <span class="grayed">(this is you!)</span>
+		        {% endif %}
 		        {% if pageuser.userprofile.local_name %}
                         <h5 class="grayed">{{ pageuser.userprofile.local_name }}</h4>
 		        {% endif %}
