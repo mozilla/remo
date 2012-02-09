@@ -90,7 +90,7 @@ class UserProfile(models.Model):
     display_name = models.CharField(max_length=15, blank=True, default="",
                                     unique=True,
                                     validators=[_validate_display_name])
-    private_email = models.EmailField(blank=False, null=True)
+    private_email = models.EmailField(blank=False, null=True, default="")
     mozillians_profile_url = models.URLField(validators=
                                              [_validate_mozillians_url])
     twitter_account = models.CharField(max_length=16, default="",
@@ -103,9 +103,9 @@ class UserProfile(models.Model):
                                    validators=[_validate_linkedin_url])
     facebook_url = models.URLField(blank=True, null=True, default="",
                                    validators=[_validate_facebook_url])
-    diaspora_url = models.URLField(blank=True, null=True)
-    personal_website_url = models.URLField(blank=True, null=True)
-    personal_blog_feed = models.URLField(blank=True, null=True)
+    diaspora_url = models.URLField(blank=True, null=True, default="")
+    personal_website_url = models.URLField(blank=True, null=True, default="")
+    personal_blog_feed = models.URLField(blank=True, null=True, default="")
     added_by = models.ForeignKey(User, null=True, blank=True,
                                  related_name="users_added")
     bio = models.TextField(blank=True, default="")
