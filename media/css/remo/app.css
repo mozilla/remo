@@ -111,6 +111,13 @@ a:hover, a:active{
 	margin-top: 10px;
 	background: none;
 	border: none;
+	float: none !important;
+}
+
+@media only screen and (max-width: 767px) {
+    #logo-box {
+    text-align:center;
+    }
 }
 
 li.last {
@@ -424,4 +431,17 @@ small.error {
 
 .flat.big {
 	height: 200px;
+}
+
+.featured-button {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.featured-edit {
+	float:left;
+}
+
+.featured-delete {
+	float:right;
 }
