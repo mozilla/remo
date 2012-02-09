@@ -39,11 +39,11 @@
                 <div class="row">
 		    {% if featuredrep %}
          		<div class="four columns">
-                        <img src="{{ featuredrep.user.userprofile.get_avatar_url }}" alt="Rep of the month profile picture">
+                        <img src="{{ featuredrep.user.userprofile.get_avatar_url }}" alt="Rep of the month profile picture" width="80px">
                     </div>
                     <div class="eight columns">
 
-		      <h5><a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">{{ featuredrep.user.first_name }}</a><br><a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">{{ featuredrep.user.last_name }}</a></h5> <br> {{ featuredrep.user.userprofile.region }}, {{ featuredrep.user.userprofile.country }}
+		      <h5><a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">{{ featuredrep.user.first_name }}</a><br><a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">{{ featuredrep.user.last_name }}</a></h5> <br> {{ featuredrep.user.userprofile.city }}, {{ featuredrep.user.userprofile.country }}
 		    </div>
 		    {% else %}
 		    <div class="twelve columns">
