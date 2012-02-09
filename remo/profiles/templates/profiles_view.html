@@ -252,7 +252,7 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
 				       {{ pageuser.userprofile.lat }}).transform(
 					   new OpenLayers.Projection("EPSG:4326"),
 					   new OpenLayers.Projection("EPSG:900913")
-				       );;
+				       );
     map.setCenter(lonlat, 8); // Zoom level
     var size = new OpenLayers.Size(21, 33);
     var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
