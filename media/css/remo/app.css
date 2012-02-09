@@ -422,3 +422,16 @@ small.error {
 .flat.big {
 	height: 200px;
 }
+
+.featured-button {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.featured-edit {
+	float:left;
+}
+
+.featured-delete {
+	float:right;
+}
