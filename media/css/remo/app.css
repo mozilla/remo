@@ -277,7 +277,7 @@ li.active {
 	text-align: right;
 }
 
-a.small.button.close-reveal-modal {
+.small.button.close-reveal-modal {
 	font-size: 11px;
 	line-height: 1;
 	position: relative;
@@ -292,7 +292,7 @@ a.small.button.close-reveal-modal {
    Delete Profile Styles
 ----------------------------------------- */
 
-a.large.button.close-reveal-modal {
+.large.button.close-reveal-modal {
 	font-size: 18px;
 	line-height: 1;
 	position: relative;
