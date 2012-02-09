@@ -108,6 +108,10 @@ def invite(request):
             email = form.cleaned_data['email']
 
             try:
+                # django does not required unique emails but we do
+                if User.objects.filter(email=email).count():
+                    raise django.db.IntegrityError
+
                 user = User.objects.create_user(username=username_algo(email),
                                                 email=email)
                 user.userprofile.added_by = request.user
