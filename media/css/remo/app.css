@@ -183,6 +183,9 @@ li.active {
        width: 100%;
 }
 
+#profiles_listview {
+    display: none;
+}
 
 /* -----------------------------------------
    View Profile Styles
