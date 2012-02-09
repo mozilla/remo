@@ -57,16 +57,7 @@ $(function() {
 	}
     })
 
-    var qs1 = $('input#searchfield').quicksearch('table#list-people-view tr td', {
-	'show': function () {
-	    markers_array[$(this).attr('id')].display(true);
-	    $(this).show();
-	},
-	'hide': function () {
-	    markers_array[$(this).attr('id')].display(false);
-	    $(this).hide();
-	}
-    })
+    var qs1 = $('input#searchfield').quicksearch('table#list-people-view tr td')
 
     search_string = window.location.pathname.substr(8);
     if (search_string.length > 0) {
