@@ -8,6 +8,7 @@ urlpatterns = patterns(
     url(r'^$', 'remo.base.views.main', name='main'),
 
     # profiles
+    # These urls should be in remo/profiles/urls.py
     url(r'^u/(?P<display_name>[A-Za-z0-9_]+)/$',
         'remo.profiles.views.view_profile', name='profiles_view_profile'),
     url(r'^u/(?P<display_name>[A-Za-z0-9_]+)/edit/$',
@@ -52,3 +53,4 @@ if settings.DEBUG:
         (r'^%s/(?P<path>.*)$' % media_url, 'django.views.static.serve',
          {'document_root': settings.MEDIA_ROOT}),
     )
+    # Missing pages for 500 and 404 errors

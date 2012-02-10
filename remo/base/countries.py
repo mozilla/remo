@@ -1,3 +1,10 @@
+# I don't think you need this here if you are using product_details_json
+# Updated countries are provided in that library
+# E.g. 
+# from utils import country_choices
+# COUNTRIES = country_choices()
+# Which means you probably don't need this file separately, and can include
+# into where you are calling it.
 COUNTRIES = [
     "Afghanistan", "Albania", "Algeria", "American Samoa", "Andorra", "Angola",
     "Anguilla", "Antigua & Barbuda", "Argentina", "Armenia", "Aruba",

@@ -1,5 +1,6 @@
 import sys
 import json
+# alphabetiz imports
 
 import requests
 
@@ -9,6 +10,7 @@ from django.core.validators import email_re
 
 
 class Command(BaseCommand):
+    # Missing comment
     args = ''
     help = 'Fetch ReMo emails from wiki.mozilla.org'
     offset = 0
@@ -18,6 +20,7 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        # Missing comment
         while self.offset > -1:
             try:
                 r = requests.get(self.URL % self.offset)
@@ -45,7 +48,7 @@ class Command(BaseCommand):
             # check offset
             if results.has_key('hasMore') and results['hasMore'] == 'true':
                 self.offset += int(results['count']) + 1
-
+            # remove this line break - keep conditions together.
             else:
                 self.offset = -1
 
@@ -55,6 +58,8 @@ class Command(BaseCommand):
 
                 except KeyError:
                     continue
+                    # Do you want to output some message in the console
+                    # when this exception occurs at least for debugging purposes?
 
                 # sanitize input
                 if not isinstance(email, basestring) or not email_re.match(email):

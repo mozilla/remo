@@ -13,9 +13,11 @@ from django.conf import settings
 from django_browserid.auth import default_username_algo
 from remo.base.decorators import permission_check
 from remo.base.countries import COUNTRIES
+# alphabetize imports
 
 import forms
 
+# capitalize constant
 username_algo = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
 
@@ -23,6 +25,7 @@ username_algo = getattr(settings, 'BROWSERID_USERNAME_ALGO',
 @permission_check(permissions=['profiles.can_edit_profiles'],
                   display_name_field='display_name')
 def edit(request, display_name):
+    # Missing comment
     user = get_object_or_404(User, userprofile__display_name = display_name)
 
     if request.method == 'POST':
@@ -36,7 +39,7 @@ def edit(request, display_name):
             if request.user.has_perm('profiles.can_edit_profiles'):
                 if request.POST.get('mentor_group', None):
                     user.groups.add(Group.objects.get(name="Mentor"))
-
+                    # get rid of line breaks in conditions that are paired.
                 else:
                     user.groups.remove(Group.objects.get(name="Mentor"))
 
@@ -87,20 +90,23 @@ def edit(request, display_name):
 
 
 def list_profiles(request):
+    # Missing comment
     return render(request, 'profiles_people.html',
                   {'people': User.objects.\
                    filter(userprofile__registration_complete=True,
                           groups__name="Rep")
-                   })
+                   }) # move this up to after "Rep)"
 
 
 def view_profile(request, display_name):
+    # Missing comment
     user = get_object_or_404(User, userprofile__display_name = display_name)
     return render(request, 'profiles_view.html', {'pageuser': user})
 
 
 @permission_check(permissions=['profiles.create_user'])
 def invite(request):
+    # Missing comment
     if request.POST:
         form = forms.InviteUserForm(request.POST)
 
@@ -134,6 +140,7 @@ def invite(request):
 
 @permission_check(permissions=['profiles.can_edit_profiles'])
 def delete_user(request, display_name):
+    # Missing comment
     user = get_object_or_404(User, userprofile__display_name=display_name)
 
     if request.method == 'POST':
@@ -145,12 +152,14 @@ def delete_user(request, display_name):
 
 @permission_check()
 def view_my_profile(request):
+    # Missing comment
     return view_profile(request,
                         display_name=request.user.userprofile.display_name)
 
 
 @anonymous_csrf
 def plainlogin(request, template_name):
+    # Missing comment
     return django_login(request, template_name=template_name)
 
 

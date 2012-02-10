@@ -2,7 +2,7 @@ from functools import wraps
 
 from django.contrib import messages
 from django.shortcuts import redirect
-
+# Two line breaks
 def permission_check(permissions=[], display_name_field=None):
     """
     Check if a user is logged in and has the required permissions.
@@ -26,6 +26,8 @@ def permission_check(permissions=[], display_name_field=None):
     user.userprofile.display_name == kwargs[display_name_field]
 
     """
+    # I think you want to implement this with this instead:
+    # https://docs.djangoproject.com/en/dev/topics/auth/#django.contrib.auth.decorators.user_passes_test
     def _dec(view_func):
         def _view(request, *args, **kwargs):
             if request.user.is_authenticated():
