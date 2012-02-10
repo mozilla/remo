@@ -44,6 +44,7 @@ click.activate();
 
 //Clicking "Use those" closes the modal and updates the hidden input fields
 $('.use-those').click(function() {
+    // indent
   $('input.point-lat').val($('input.point-lat-temp').val());
   $('input.point-long').val($('input.point-long-temp').val());
 });

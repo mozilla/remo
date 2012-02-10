@@ -6,7 +6,7 @@
 Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
 {% endblock %}
 {% block content %}
-
+{# fix indents #}
         <div class="row">
 
             <div class="six columns">
@@ -42,6 +42,7 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
                                 <img src="{{ pageuser.userprofile.get_avatar_url }}" width="128">
                             </div>
                             <div class="eight columns smallmap-profile-container">
+                                <!-- duplicate id -->
                                 <div id="map" class="smallmap-profile"></div>
                             </div>
                         </div>
@@ -178,7 +179,9 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
                     </div>
 		  {% endif %}
                 </div>
-
+<!-- we should make sure calling pageuser.userprofile isn't querying the db for
+     the profile every time. pageuser.get_profile caches, not sure this way
+     does. or just add the profile to the context. -->
 		{% if pageuser.userprofile.added_by and perms.profiles.can_edit_profile %}
 		<div class="row">
                     <div class="one columns pictogram">
@@ -199,13 +202,14 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
 	{% if user == pageuser or perms.profiles.can_edit_profiles %}
         <div class="row">
             <div id="save-profile" class="twelve columns align-right">
+              {# this happens so much it'd be easier to add a get_edit_url() to userprofile #}
                 <a href="{% url profiles_edit pageuser.userprofile.display_name %}" class="small white button nice radius">Edit profile</a>
             </div>
         </div>
 	{% endif %}
-
+{# no form on page #}
         </form>
-
+{# appears to be orphaned #}
     </div>
 
 
@@ -215,6 +219,7 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
         <div class="row">
             <div class="twelve columns">
                 <p class="lead">Please click your location in the map</p>
+              <!-- duplicate id -->
                 <div id="map" class="smallmap"></div>
             </div>
         </div>

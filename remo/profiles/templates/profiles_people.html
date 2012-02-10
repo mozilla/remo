@@ -3,6 +3,7 @@
 {% block pagetitle %}Mozilla Reps - People{% endblock %}
 
 {% block content %}
+    <!-- indents -->
         <!-- Map -->
         <div class="row show-on-desktop">
             <div class="twelve columns">
@@ -13,6 +14,7 @@
         <!-- Search box -->
 	<div class="row">
 	<div class="ten columns" id="search">
+      <!-- action attribute required -->
 	  <form class="nice" id="searchform">
 	  <span class="pictogram-search">s</span><input type="text" placeholder="Filter using any keyword" id="searchfield" class="input-text big" />
 	  </form>
@@ -32,6 +34,7 @@
                     <div class="panel grid-profile">
                         <div class="row">
                             <div class="three phone-one columns grid-profile-image">
+                                {# for long tags like this it's nice to use multiple lines and align the attrs #}
                                 <img src="{{ person.userprofile.get_avatar_url }}" width="50" alt="{{ person.get_full_name }} avatar">
                             </div>
                             <div class="nine phone-three columns grid-profile-text">

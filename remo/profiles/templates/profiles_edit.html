@@ -6,6 +6,7 @@ Mozilla Reps - Edit Profile
 
 {% block content %}
      <!-- Sample inputs -->
+    <!-- fix indents -->
 
         <div class="row">
             <div class="twelve columns">
@@ -72,6 +73,7 @@ Mozilla Reps - Edit Profile
                     <div class="one columns pictogram">
                         A
                     </div>
+                  <!-- two elements with the same id (profile-image) -->
                     <div class="eleven columns" id="profile-image">
                         <img src="{{ pageuser.userprofile.get_avatar_url }}?s=128"><br>
                         <span id="profile-image">Profile images are linked to your bugzilla mail <br>and are hosted in <a href="https://libravatar.org">libravatar.org</a></span>
@@ -162,6 +164,7 @@ Mozilla Reps - Edit Profile
                         T
                     </div>
                     <div class="eleven columns">
+                    <!-- would be best to use multiple lines for long tags like this and align attrs -->
                         <input type="text" placeholder="Twitter handle" value="{{ profileform.twitter_account.value }}" name="twitter_account" class="input-text big">
 		        {% if profileform.twitter_account.errors %}
 		          <small class="error">{{ profileform.twitter_account.errors }}</small>
@@ -258,6 +261,7 @@ Mozilla Reps - Edit Profile
             <div class="six columns">
             </div>
 
+          <!-- isn't this whole page about editing profiles? -->
 	    {% if perms.profiles.can_edit_profiles %}
             <div class="six columns">
                 <div class="row">
@@ -266,18 +270,22 @@ Mozilla Reps - Edit Profile
                     </div>
                     <div class="eleven columns"><br>
                         <label for="admin-bit">
+                          <!-- inline style and checked="checked" -->
                             <input type="checkbox" {% if group_bits.0 %}checked{% endif %} id="admin-bit" name="admin_group" style="display: none;">
                             <span class="custom checkbox"></span> Administrator
                         </label>
                         <label for="council-bit">
+                          <!-- ditto -->
                             <input type="checkbox" {% if group_bits.1 %}checked{% endif %} id="council-bit" name="council_group" style="display: none;">
                             <span class="custom checkbox"></span> Council member
                         </label>
                         <label for="mentor-bit">
+                          <!-- ditto -->
                             <input type="checkbox" {% if group_bits.2 %}checked{% endif %} id="mentor-bit" name="mentor_group" style="display: none;">
                             <span class="custom checkbox"></span> Mentor
                         </label>
                         <label for="rep-bit">
+                          <!-- ditto -->
                             <input type="checkbox" {% if group_bits.3 %}checked{% endif %} id="rep-bit" name="rep_group" style="display: none;">
 		      <span class="custom checkbox"></span> Rep
                         </label>
@@ -327,6 +335,7 @@ Mozilla Reps - Edit Profile
         <p>By pressing the following button you will permanently and irreversibly delete the profile of this Rep.<p>
         <form method="post" action="{% url profiles_delete pageuser.userprofile.display_name %}">
           {% csrf_token %}
+      <!-- button doesn't need href -->
         <button href="#" class="large red button nice radius close-reveal-modal">Delete profile</button>
         </form>
     </div>

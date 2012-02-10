@@ -1,13 +1,20 @@
 /* Foundation v2.1.5 http://foundation.zurb.com */
+
+/*
+Run all JS through jshint : http://www.jshint.com/
+or get the node module: https://github.com/jshint/node-jshint/
+
+Mixed tabs & spaces.
+*/
 $(document).ready(function () {
 
 
 	/* Activate the featured Orbit reel */
-
+    // why is this onload when it's inside of 'ready'?
 	$(window).load(function() {
          $('#featured').orbit({
               bullets: true,
-              directionalNav: false,
+              directionalNav: false, // extra comma will break some IEs
          });
     });
 
@@ -43,6 +50,7 @@ $(document).ready(function () {
 
 	/* ALERT BOXES ------------ */
 	$(".alert-box").delegate("a.close", "click", function(event) {
+        // indent 4 spaces
     event.preventDefault();
 	  $(this).closest(".alert-box").fadeOut(function(event){
 	    $(this).remove();
@@ -79,6 +87,7 @@ $(document).ready(function () {
 		}
 		lockNavBar = true;
 	});
+    // fix indents
   if (Modernizr.touch) {
     $('.nav-bar>li.has-flyout>a.main').css({
       'padding-right' : '75px',

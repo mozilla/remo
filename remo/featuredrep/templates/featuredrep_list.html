@@ -5,7 +5,7 @@
 {% block pagetitle %}Mozilla Reps - Featured Reps {% endblock%}
 
 {% block content %}
-
+<!-- fix indents -->
         <!-- List block -->
         <div class="row">
             <div class="twelve columns">
@@ -35,12 +35,15 @@
 		      {% for feature in featured %}
 		      <tr>
 			<td><a href="{% url profiles_view_profile feature.user.userprofile.display_name %}">{{ feature.user.get_full_name }}</a></td>
+                <!-- processing should be cached -->
 			<td>{{ feature.text|restructuredtext}}</td>
 			<td>{{ feature.created_on }}</td>
 			<td>
 			  <a href="{% url featuredrep_edit_featured feature.id %}" class="featured-edit pictogram-button">e</a>
+              <!-- consider moving to AJAX call and possibly popping up an "are you sure?" box. -->
 			  <form id="deleteform-{{ feature.id }}" method="post" action="{% url featuredrep_delete_featured feature.id %}">
 			  {% csrf_token %}
+                <!-- inline js :( -->
 			  <a href="#" data-reveal-id="delete-feature" onclick="$('#deleteform-{{ feature.id }}').submit()" class="featured-delete pictogram-button">X</a>
 			  </form>
 			</td>

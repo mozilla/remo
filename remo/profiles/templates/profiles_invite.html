@@ -17,6 +17,7 @@
   <div class="twelve columns">
     <p>Please enter the bugzilla mail of the newly accepted rep and press add.</p>
     <form action="{% url profiles_invite %}" method="post" class="custom">
+      <!-- indent inside the form and this page is perfect :) -->
     {% csrf_token %}
     <input type="text" name="email"  placeholder="Bugzilla mail" class="input-text">
     {% if form.email.errors %}

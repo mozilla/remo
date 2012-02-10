@@ -31,15 +31,19 @@ markers.setOpacity(0.7);
 
 $(function() {
     $('#searchform').submit(function(event) {
+        // indent
 	event.preventDefault();
-    })
+    }) // semicolon (run jshint)
 
+    // superfluous parenthesis around function
     $('#listviewbutton').bind('click', (function() {
+        // indent
 	$('#profiles_listview').hide();
 	$('#profiles_gridview').show();
 	qs.cache();
     }))
 
+    // same as above
     $('#gridviewbutton').bind('click', (function() {
 	$('#profiles_gridview').hide();
 	$('#profiles_listview').show();
@@ -47,6 +51,7 @@ $(function() {
     }))
 
     var qs = $('input#searchfield').quicksearch('ul#searchlist li', {
+        // indent
 	'show': function () {
 	    markers_array[$(this).attr('id')].display(true);
 	    $(this).show();
@@ -61,6 +66,7 @@ $(function() {
 
     search_string = window.location.pathname.substr(8);
     if (search_string.length > 0) {
+        // indent
 	$('input#searchfield').val(search_string);
 	qs.cache();
     }

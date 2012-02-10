@@ -3,6 +3,7 @@
 {% load markup %}
 
 {% block content %}
+<!-- whole file has indentation issues -->
 <!-- Sidereel Orbit featured images -->
         <div class="row show-on-desktop">
             <div class="twelve columns">
@@ -52,10 +53,11 @@
 		    {% endif %}
 
                 </div>
-
+                <!-- should be wrapped in a {% if featuredrep %} ? -->
                 <div class="row">
                     <div class="twelve columns">
                     <br>
+              <!-- should probably preprocess and store the ReST version for performance. -->
 		      {{ featuredrep.text|restructuredtext }}
 		    </div>
                 </div>

@@ -116,6 +116,7 @@ a:hover, a:active{
 
 @media only screen and (max-width: 767px) {
     #logo-box {
+    /* indent */
     text-align:center;
     }
 }
@@ -144,6 +145,7 @@ li.active {
 #featured {
 	width: 992px;
 	height: 200px;
+    /* all rules on their own line */
 	background: #000 url('/media/img/foundation/orbit/loading.gif') no-repeat center center; overflow: hidden;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -167,6 +169,7 @@ li.active {
 }
 
 .grid-profile {
+    /* indent 4 spaces */
        padding: 10px !important;
        -moz-border-radius: 5px;
        border-radius: 5px;
@@ -174,19 +177,23 @@ li.active {
 }
 
 .grid-profile-image img {
+    /* indent 4 spaces */
        -moz-border-radius: 5px;
        border-radius: 5px;
 }
 
 .grid-profile-text img {
+    /* indent 4 spaces */
        text-align: left;
 }
 
 .mobile-list-warning {
+    /* indent 4 spaces */
        text-align:center;
 }
 
 #list-people-view {
+    /* indent 4 spaces */
        width: 100%;
 }
 
@@ -403,6 +410,7 @@ small.error {
 	margin:20px 0px 0px 0px;
 }
 
+/* unnecessary? */
 .ItemContent {
 }
 

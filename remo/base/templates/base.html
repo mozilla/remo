@@ -12,7 +12,14 @@
     <meta name="viewport" content="width=device-width" />
 
     <title>{% block pagetitle %}Mozilla Reps{% endblock%}</title>
+<!--
+Should be using {{ MEDIA_URL }} for all references to js, css, and images.
+This happens a lot, so I'll only comment here. Finding all occurrences should
+be fairly trivial.
 
+Also, this file needs a lot of indentation work. I'll just say that here to
+avoid marking up the whole thing, and just mark specific types of things.
+-->
     <link rel="shortcut icon"  href="/media/img/remo/shortcut.ico" />
 
     <!-- Included CSS Files -->
@@ -36,7 +43,9 @@
 
 </head>
 <body>
-
+<!--
+We typically use 2 space indents for HTML b/c it gets so wide so quickly.
+-->
     <!-- container -->
     <div class="container">
 
@@ -48,6 +57,7 @@
                 <div class="row">
 
                     <!-- Mozilla Tab -->
+                    <!-- indentation is a mess -->
 		    <div class="two columns phone-one push-three-phone push-ten" id="global-header-tab">
                         <a href="http://mozilla.org/"><img src="/media/img/remo/mozilla-tab.png" alt="mozilla.org"></a>
 
@@ -58,10 +68,13 @@
                         <ul>
                             <li class="account anonymous nomenu logout">
 			    {% if not user.is_authenticated %}
+                <!-- indent inside django blocks/tags
+                     http://mozweb.readthedocs.org/en/latest/coding.html#django -->
 			    <a id="browserid" href="#">Sign In</a>
 			    <form method="POST" action="{% url browserid_verify %}">
 			    {% csrf_token %}
 			    {{ browserid_form.as_p }}
+                  <!-- don't need XML style tag end slash -->
 			    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
 			    </form>
 			    {% else %}
@@ -191,7 +204,7 @@
         short but rigorous application process to make sure those
         interested are motivated and ready to take on a leadership
         role within the Mozilla community.
-
+<!-- missing </p><p>? Also the <p> doesn't need its own line -->
         If you feel up to the challenge and ready to take your
         participation in the Mozilla project to the next level, apply
         today to become a Mozilla Rep! The process involves three
@@ -200,6 +213,7 @@
         <ul>
 	  <li>
 	  <h4>Step 1</h4>
+        <!-- consider using <p> around text -->
 	  Fill out and submit the <a
 	  href="https://bugzilla.mozilla.org/form.reps.mentorship">Mozilla
 	  Reps application form</a>. A Mozilla Rep mentor will be in
@@ -250,6 +264,7 @@
     <!-- Included JS Files -->
     <script src="/media/js/jquery-1.7.1.min.js"></script>
     <script src="/media/js/modernizr.foundation.js"></script>
+    <!-- foundation.js includes jquery 1.7.1. use one or the other. -->
     <script src="/media/js/foundation.js"></script>
     <script src="https://browserid.org/include.js" type="text/javascript"></script>
     <script src="/media/js/activate.browserid.js" type="text/javascript"></script>

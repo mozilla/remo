@@ -1,3 +1,4 @@
+// is this 3rd party code? attribution? license?
 (function($, window, document, undefined) {
 	$.fn.quicksearch = function (target, opt) {
 		
