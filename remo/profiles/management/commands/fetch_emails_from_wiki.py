@@ -27,19 +27,19 @@ class Command(BaseCommand):
                 r = requests.get(self.URL % self.offset)
 
             except requests.ConnectionError:
-                print "Connection Error"
+                self.stdout.write("Connection Error\n")
                 sys.exit(-1)
 
             if r.status_code != 200:
-                print "Error fetching Wiki data"
+                self.stdout.write("Error fetching Wiki data\n")
                 sys.exit(-1)
 
             try:
                 data = json.loads(r.text)
 
             except ValueError, e:
-                print r.text
-                print "Error decoding Wiki data"
+                self.stdout.write(r.text)
+                self.stdout.write("Error decoding Wiki data\n")
                 sys.exit(-1)
 
             # convenience pointers
@@ -56,15 +56,16 @@ class Command(BaseCommand):
                 try:
                     email = entry['properties']['bugzillamail']
                 except KeyError:
-                    print "# Error entry does not have bugzillamail: '%s'" %\
-                          json.dumps(entry)
+                    self.stdout.write("# Error entry does not have"
+                                      "bugzillamail: '%s'\n" %\
+                                      json.dumps(entry))
                     continue
 
                 # sanitize input
                 if not isinstance(email, basestring) or\
                        not email_re.match(email):
                     # ignoring invalid email
-                    print "# Invalid email for %s" % entry['uri']
+                    self.stdout.write("# Invalid email for %s\n" % entry['uri'])
                     continue
 
-                print email
+                self.stdout.write(email + '\n')
