@@ -1,10 +1,14 @@
-from django.db import models
 from django.contrib.auth.models import User
-# alphabetize imports
+from django.db import models
 
-# Create your models here. <-- remove comment, not needed.
+
 class FeaturedRep(models.Model):
-    # Missing comment for class
+    """
+    Featured Rep model.
+
+    Featured Rep -or Rep of the Month- relates existing users with
+    some text explaining why they are so cool.
+    """
     user = models.ForeignKey(User)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
