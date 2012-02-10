@@ -8,32 +8,11 @@ urlpatterns = patterns(
     url(r'^$', 'remo.base.views.main', name='main'),
 
     # profiles
-    # These urls should be in remo/profiles/urls.py
-    url(r'^u/(?P<display_name>[A-Za-z0-9_]+)/$',
-        'remo.profiles.views.view_profile', name='profiles_view_profile'),
-    url(r'^u/(?P<display_name>[A-Za-z0-9_]+)/edit/$',
-        'remo.profiles.views.edit', name='profiles_edit'),
-    url(r'^u/(?P<display_name>[A-Za-z0-9_]+)/delete/$',
-        'remo.profiles.views.delete_user', name='profiles_delete'),
-
-    url(r'^people/me/$', 'remo.profiles.views.view_my_profile',
-        name='profiles_view_my_profile'),
-    url(r'^people/invite/$', 'remo.profiles.views.invite',
-        name='profiles_invite'),
-    url(r'^people/', 'remo.profiles.views.list_profiles',
-        name='profiles_list_profiles'),
+    url(r'^u/', include('remo.profiles.user_urls')),
+    url(r'^people/', include('remo.profiles.people_urls')),
 
     # featuredrep
-    url(r'featured/$', 'remo.featuredrep.views.list_featured',
-        name='featuredrep_list_featured'),
-    url(r'featured/add/$', 'remo.featuredrep.views.alter_featured',
-        name='featuredrep_add_featured'),
-    url(r'featured/edit/(?P<feature_id>\d+)/$',
-        'remo.featuredrep.views.alter_featured',
-        name='featuredrep_edit_featured'),
-    url(r'featured/delete/(?P<feature_id>\d+)/$',
-        'remo.featuredrep.views.delete_featured',
-        name='featuredrep_delete_featured'),
+    url(r'^featured/', include('remo.featuredrep.urls')),
 
     # browserid
     url(r'^browserid/', include('django_browserid.urls')),
