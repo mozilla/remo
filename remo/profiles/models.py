@@ -1,15 +1,17 @@
-import re
 import datetime
+import re
 import urlparse
 
 from django.conf import settings
-from django.db import models
 from django.contrib.auth.models import User, Group
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from django.core.exceptions import ValidationError
+
 from libravatar import libravatar_url
-# alphabetize imports
+
 
 def _validate_birth_date(data, **kwargs):
     today = datetime.date.today()
@@ -23,7 +25,7 @@ def _validate_birth_date(data, **kwargs):
         return data
 
     else:
-        raise ValidationError("Provided Birthdate is not valid")
+        raise ValidationError("Provided Birthdate is not valid.")
 
 
 def _validate_twitter_username(data, **kwargs):
@@ -31,34 +33,7 @@ def _validate_twitter_username(data, **kwargs):
         return data
 
     else:
-        raise ValidationError("Provided Twitter Username is not valid")
-
-# Your URL validators should be refactored as a single call that handles all of these,
-# possibly as a list set in base.py
-# You might also want to use something like Django's RegexValidator:
-# https://docs.djangoproject.com/en/dev/ref/validators/#regexvalidator
-def _validate_mozillians_url(data, **kwargs):
-    if data == "" or re.match(r'http(s)?://(www.)?mozillians.org/', data):
-        return data
-
-    else:
-        raise ValidationError("Provided Mozillians url is not valid")
-
-
-def _validate_linkedin_url(data, **kwargs):
-    if data == "" or re.match(r'http(s)?://(www.)?linkedin.com/', data):
-        return data
-
-    else:
-        raise ValidationError("Provided LinkedIn url is not valid")
-
-
-def _validate_facebook_url(data, **kwargs):
-    if data == "" or re.match(r'http(s)?://(www.)?facebook.com/', data):
-        return data
-
-    else:
-        raise ValidationError("Provided Facebook url is not valid")
+        raise ValidationError("Provided Twitter Username is not valid.")
 
 
 def _validate_display_name(data, **kwargs):
@@ -66,7 +41,7 @@ def _validate_display_name(data, **kwargs):
         return data
 
     else:
-        raise ValidationError("Provided Display Name is not valid")
+        raise ValidationError("Provided Display Name is not valid.")
 
 
 def _validate_mentor(data, **kwargs):
@@ -94,21 +69,36 @@ class UserProfile(models.Model):
                                     unique=True,
                                     validators=[_validate_display_name])
     private_email = models.EmailField(blank=False, null=True, default="")
-    mozillians_profile_url = models.URLField(validators=
-                                             [_validate_mozillians_url])
+    mozillians_profile_url = models.URLField(
+        verify_exists=True,
+        validators=[
+            RegexValidator(regex=r'http(s)?://(www.)?mozillians.org/',
+                           message="Provided Mozillians url is not valid."),
+            ])
     twitter_account = models.CharField(max_length=16, default="",
                                        validators=[_validate_twitter_username],
                                        blank=True)
     jabber_id = models.CharField(max_length=50, blank=True, default="")
     irc_name = models.CharField(max_length=30, blank=False, default="")
     irc_channels = models.TextField(blank=True, default="")
-    linkedin_url = models.URLField(blank=True, null=True, default="",
-                                   validators=[_validate_linkedin_url])
-    facebook_url = models.URLField(blank=True, null=True, default="",
-                                   validators=[_validate_facebook_url])
-    diaspora_url = models.URLField(blank=True, null=True, default="") 
-    personal_website_url = models.URLField(blank=True, null=True, default="")
-    personal_blog_feed = models.URLField(blank=True, null=True, default="")
+    linkedin_url = models.URLField(
+        blank=True, null=True, default="", verify_exists=True,
+        validators=[
+            RegexValidator(regex=r'('')|(http(s)?://(www.)?linkedin.com/)',
+                           message="Provided LinkedIn url is not valid.")
+            ])
+    facebook_url = models.URLField(
+        blank=True, null=True, default="", verify_exists=True,
+        validators=[
+            RegexValidator(regex=r'('')|(http(s)?://(www.)?facebook.com/)',
+                           message="Provided Facebook url is not valid.")
+            ])
+    diaspora_url = models.URLField(blank=True, null=True, default="",
+                                   verify_exists=True)
+    personal_website_url = models.URLField(blank=True, null=True, default="",
+                                           verify_exists=True)
+    personal_blog_feed = models.URLField(blank=True, null=True, default="",
+                                         verify_exists=True)
     added_by = models.ForeignKey(User, null=True, blank=True,
                                  related_name="users_added")
     bio = models.TextField(blank=True, default="")
@@ -118,7 +108,6 @@ class UserProfile(models.Model):
     mentor = models.ForeignKey(User, null=True, blank=True,
                                related_name="mentors_users",
                                validators=[_validate_mentor])
-
 
     class Meta:
         permissions = (
@@ -133,7 +122,6 @@ class UserProfile(models.Model):
             raise ValidationError("added_by cannot be the same as user")
 
         return super(UserProfile, self).clean(*args, **kwargs)
-
 
     @property
     def get_age(self):
