@@ -5,8 +5,9 @@ from test_utils import TestCase
 
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User, Group, Permission
+# alphabetize imports
 from remo.profiles.models import UserProfile
-
+# needs two line breaks
 class UserTest(TestCase):
     fixtures = ['demo_users.json']
 
@@ -14,7 +15,7 @@ class UserTest(TestCase):
         self.new_user = User.objects.create_user(username="new_user",
                                                  email="new-123@example.com")
 
-
+    # one line break after each function                                             
     def test_first_name_completes_registration(self):
         user = User.objects.get(username="rep2")
         user.first_name = u"Foobar"

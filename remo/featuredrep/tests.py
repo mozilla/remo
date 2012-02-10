@@ -14,14 +14,18 @@ class ViewsTest(TestCase):
 
 
     def test_list_featured(self):
+        # Missing comment
         response = self.c.get('/featured/', follow=True)
         self.assertTemplateUsed(response, 'featuredrep_list.html')
 
 
     def test_add_featured(self):
+        # Missing comment
         response = self.c.post('/featured/add/',
                                {'user':5, 'text':'Testing'},
                                follow=True)
+                               # follow should be two spaces in, under the u
+                               # in 'user'
         self.assertTemplateUsed(response, 'featuredrep_list.html')
         eq_(FeaturedRep.objects.count(), 2)
         for m in response.context['messages']: m
@@ -29,6 +33,7 @@ class ViewsTest(TestCase):
 
 
     def test_edit_featured(self):
+        # Missing comment
         response = self.c.post('/featured/edit/1/',
                                {'user':5, 'text':'Foo'},
                                follow=True,)
@@ -41,6 +46,7 @@ class ViewsTest(TestCase):
 
 
     def test_delete_featured(self):
+        # Missing comment
         response = self.c.post('/featured/delete/1/', follow=True)
         self.assertTemplateUsed(response, 'featuredrep_list.html')
         eq_(FeaturedRep.objects.count(), 0)

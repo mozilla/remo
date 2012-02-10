@@ -35,6 +35,9 @@ class ViewsTest(TestCase):
         response = c.get('/u/koki/edit/', follow=True)
         self.assertTemplateUsed(response, 'main.html')
 
+        # You should add tests here to validate that editing and saving valid/invalid
+        # data actually does what you expect it to. Including testing for non-latin vs. latin.
+
 
     def test_delete_profile(self):
         # user can't delete own profile

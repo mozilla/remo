@@ -38,13 +38,15 @@ class CreateUserTest(TestCase):
         self.temp_file.close()
 
     def test_command_without_input_file(self):
+        # Missing comment
         args = []
         opts = {}
         self.assertRaises(SystemExit, management.call_command,
                           'create_users', *args, **opts)
 
-
+    # functions inside of classes do not need two line breaks - only one.
     def test_command_input_file_no_email(self):
+        # Missing comment
         args = [self.temp_file.name]
         opts = {'email':False}
         management.call_command('create_users', *args, **opts)
@@ -54,6 +56,7 @@ class CreateUserTest(TestCase):
 
 
     def test_command_input_file_send_email(self):
+        # Missing comment
         args = [self.temp_file.name]
         opts = {'email':True}
         management.call_command('create_users', *args, **opts)
@@ -74,6 +77,7 @@ class FetchEmailsFromWikiTest(TestCase):
     @raises(SystemExit)
     @fudge.patch('requests.get')
     def test_command_with_connection_error(self, fake_requests_obj):
+        # Missing comment
         (fake_requests_obj.expects_call().raises(requests.ConnectionError))
         management.call_command('fetch_emails_from_wiki')
 
@@ -81,6 +85,7 @@ class FetchEmailsFromWikiTest(TestCase):
     @raises(SystemExit)
     @fudge.patch('requests.get')
     def test_command_with_invalid_code(self, fake_requests_obj):
+        # Missing comment
         request = requests.Request()
         request.status_code=404
         request.text='foo'
@@ -92,6 +97,7 @@ class FetchEmailsFromWikiTest(TestCase):
     @raises(SystemExit)
     @fudge.patch('requests.get')
     def test_command_with_bogus_data(self, fake_requests_obj):
+        # Missing comment
         request = requests.Request()
         request.status_code = 200
         request.text='foo'
@@ -102,6 +108,7 @@ class FetchEmailsFromWikiTest(TestCase):
 
     @fudge.patch('requests.get')
     def test_command_with_valid_data(self, fake_requests_obj):
+        # Missing comment
         request = requests.Request()
         request.status_code = 200
         request.text = json.dumps(
@@ -125,6 +132,8 @@ class FetchEmailsFromWikiTest(TestCase):
                         ],
                     }
                 }
+                # You should add test emails that are incorrect and/or might break the script and
+                # verify that the correct ones made it through while the rest didn't.
              })
 
         (fake_requests_obj.expects_call().returns(request))

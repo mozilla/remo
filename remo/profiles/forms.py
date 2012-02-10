@@ -16,7 +16,11 @@ class ChangeUserForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'email')
 
 
+    # I'm curious why the first name and last name have to be latin?
+    # Do you not want users to have numbers in their name? Could you just
+    # match \w?
     def clean_first_name(self):
+        # Missing comment
         data = self.cleaned_data['first_name']
         print data
         if not re.match(r'(^[A-Za-z\' ]+$)', data):
@@ -25,6 +29,7 @@ class ChangeUserForm(forms.ModelForm):
         return data
 
     def clean_last_name(self):
+        # Missing comment
         data = self.cleaned_data['last_name']
         if not re.match(r'(^[A-Za-z\' ]+)$', data):
             raise ValidationError("Please use only latin characters.")

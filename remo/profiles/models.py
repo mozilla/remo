@@ -9,7 +9,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from libravatar import libravatar_url
-
+# alphabetize imports
 
 def _validate_birth_date(data, **kwargs):
     today = datetime.date.today()
@@ -33,7 +33,10 @@ def _validate_twitter_username(data, **kwargs):
     else:
         raise ValidationError("Provided Twitter Username is not valid")
 
-
+# Your URL validators should be refactored as a single call that handles all of these,
+# possibly as a list set in base.py
+# You might also want to use something like Django's RegexValidator:
+# https://docs.djangoproject.com/en/dev/ref/validators/#regexvalidator
 def _validate_mozillians_url(data, **kwargs):
     if data == "" or re.match(r'http(s)?://(www.)?mozillians.org/', data):
         return data
@@ -103,7 +106,7 @@ class UserProfile(models.Model):
                                    validators=[_validate_linkedin_url])
     facebook_url = models.URLField(blank=True, null=True, default="",
                                    validators=[_validate_facebook_url])
-    diaspora_url = models.URLField(blank=True, null=True, default="")
+    diaspora_url = models.URLField(blank=True, null=True, default="") 
     personal_website_url = models.URLField(blank=True, null=True, default="")
     personal_blog_feed = models.URLField(blank=True, null=True, default="")
     added_by = models.ForeignKey(User, null=True, blank=True,
@@ -124,7 +127,8 @@ class UserProfile(models.Model):
             )
 
     def clean(self, *args, **kwargs):
-        # ensure that added_by is not the same as user
+        # ensure that added_by is not the same as user <-- Make sure your comments are of the format
+        # """This is my comment and it is a sentence."""
         if self.added_by == self.user:
             raise ValidationError("added_by cannot be the same as user")
 
@@ -153,6 +157,7 @@ class UserProfile(models.Model):
 
 @receiver(pre_save, sender=UserProfile)
 def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
+    # Comments should be of a sentence structure and end in a period.
     """
     Set display_name from user.email if display_name == ''
 
@@ -160,11 +165,16 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
     nice display names. Username is used only if character limit is
     reached
     """
+    # I'm not sure if a user's email address is a good indicator of human
+    # readable-ness, since someone could have something like bb@mozilla.com
     if not instance.display_name:
         email = instance.user.email.split('@')[0]
         display_name = re.sub(r'[^A-Za-z0-9_]', '_', email)
 
         while True:
+            # This seems like an inefficient way to find a username and
+            # should be rewritten in a different way or the username should
+            # just be applied as the default behaviour.
             instance.display_name = display_name
 
             try:
