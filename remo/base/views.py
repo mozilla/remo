@@ -3,12 +3,9 @@ from session_csrf import anonymous_csrf
 
 from remo.featuredrep.models import FeaturedRep
 
-@anonymous_csrf
-def main(request):
-    try:
-        featured_rep = FeaturedRep.objects.latest()
-    except FeaturedRep.DoesNotExist:
-        featured_rep = None
-    # You should use get_object_or_404 instead of using a try/except
+import utils
 
+
+def main(request):
+    featured_rep = utils.latest_object_or_none(FeaturedRep)
     return render(request, 'main.html', {'featuredrep': featured_rep})
