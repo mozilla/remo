@@ -1,16 +1,14 @@
-import sys
 import json
-# alphabetiz imports
-
-import requests
+import sys
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.core.validators import email_re
 
+import requests
 
 class Command(BaseCommand):
-    # Missing comment
+    """ Command to fetch ReMo emails from wiki.mozilla.org using the API."""
     args = ''
     help = 'Fetch ReMo emails from wiki.mozilla.org'
     offset = 0
@@ -20,7 +18,10 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
-        # Missing comment
+        """ Fetches users from wiki.mozilla.org.
+
+        Prints the emails on stdout, one email per line
+        """
         while self.offset > -1:
             try:
                 r = requests.get(self.URL % self.offset)
@@ -41,28 +42,27 @@ class Command(BaseCommand):
                 print "Error decoding Wiki data"
                 sys.exit(-1)
 
-            # convinience pointers
+            # convenience pointers
             results = data['ask']['results']
             query = data['ask']['query']
 
             # check offset
             if results.has_key('hasMore') and results['hasMore'] == 'true':
                 self.offset += int(results['count']) + 1
-            # remove this line break - keep conditions together.
             else:
                 self.offset = -1
 
             for entry in results['items']:
                 try:
                     email = entry['properties']['bugzillamail']
-
                 except KeyError:
+                    print "# Error entry does not have bugzillamail: '%s'" %\
+                          json.dumps(entry)
                     continue
-                    # Do you want to output some message in the console
-                    # when this exception occurs at least for debugging purposes?
 
                 # sanitize input
-                if not isinstance(email, basestring) or not email_re.match(email):
+                if not isinstance(email, basestring) or\
+                       not email_re.match(email):
                     # ignoring invalid email
                     print "# Invalid email for %s" % entry['uri']
                     continue

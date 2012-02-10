@@ -7,7 +7,6 @@ from remo.featuredrep.models import FeaturedRep
 def main(request):
     try:
         featured_rep = FeaturedRep.objects.latest()
-
     except FeaturedRep.DoesNotExist:
         featured_rep = None
     # You should use get_object_or_404 instead of using a try/except
