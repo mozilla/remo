@@ -157,7 +157,6 @@ def view_my_profile(request):
                         display_name=request.user.userprofile.display_name)
 
 
-@anonymous_csrf
 def plainlogin(request, template_name):
     # Missing comment
     return django_login(request, template_name=template_name)
