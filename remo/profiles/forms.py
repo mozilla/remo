@@ -1,8 +1,8 @@
 import re
 
-from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from happyforms import forms
 
 from remo.profiles.models import UserProfile
 
@@ -15,26 +15,28 @@ class ChangeUserForm(forms.ModelForm):
         model = User
         fields = ('first_name', 'last_name', 'email')
 
+    def _clean_names(self, data):
+        """ Ensure that data is valid
 
-    # I'm curious why the first name and last name have to be latin?
-    # Do you not want users to have numbers in their name? Could you just
-    # match \w?
-    def clean_first_name(self):
-        # Missing comment
-        data = self.cleaned_data['first_name']
-        print data
+        Variabel data can contain only latin letters (both capital and
+        lower case), spaces and the character '.
+        """
         if not re.match(r'(^[A-Za-z\' ]+$)', data):
             raise ValidationError("Please use only latin characters.")
 
         return data
 
-    def clean_last_name(self):
-        # Missing comment
-        data = self.cleaned_data['last_name']
-        if not re.match(r'(^[A-Za-z\' ]+)$', data):
-            raise ValidationError("Please use only latin characters.")
+    def clean_first_name(self):
+        """ Ensure that first_name is valid. """
 
-        return data
+        data = self.cleaned_data['first_name']
+        return self._clean_names(data)
+
+    def clean_last_name(self):
+        """ Ensure that last_name is valid."""
+
+        data = self.cleaned_data['last_name']
+        return self._clean_names(data)
 
 
 class ChangeProfileForm(forms.ModelForm):
@@ -51,5 +53,6 @@ class ChangeProfileForm(forms.ModelForm):
 
 
     def clean_twitter_account(self):
+        """ Make sure that twitter_account does not start with a '@' """
         twitter_account = self.cleaned_data['twitter_account']
         return twitter_account.strip('@')

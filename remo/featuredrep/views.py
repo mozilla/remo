@@ -28,7 +28,6 @@ def alter_featured(request, feature_id=None):
     if feature_id:
         feature = get_object_or_404(FeaturedRep, pk=feature_id)
         post_to = reverse('featuredrep_edit_featured', args=[feature_id])
-
     else:
         feature = FeaturedRep(created_by=request.user)
         post_to = reverse('featuredrep_add_featured')
@@ -41,7 +40,6 @@ def alter_featured(request, feature_id=None):
 
             if feature_id:
                 messages.success(request, 'New featured rep article created ☺')
-
             else:
                 messages.success(request,
                                  'Featured rep article successfuly edited ☺')

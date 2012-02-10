@@ -26,23 +26,20 @@ def permission_check(permissions=[], display_name_field=None):
     user.userprofile.display_name == kwargs[display_name_field]
 
     """
-    # I think you want to implement this with this instead:
-    # https://docs.djangoproject.com/en/dev/topics/auth/#django.contrib.auth.decorators.user_passes_test
     def _dec(view_func):
         def _view(request, *args, **kwargs):
             if request.user.is_authenticated():
                 if (not permissions and not display_name_field) or\
-                       (len(permissions) and request.user.has_perms(permissions)) or\
+                       (len(permissions) and\
+                        request.user.has_perms(permissions)) or\
                        request.user.is_superuser or \
                        (display_name_field and \
                         kwargs[display_name_field] ==\
                         request.user.userprofile.display_name):
                     return view_func(request, *args, **kwargs)
-
                 else:
                     messages.error(request, 'Permission denied')
                     return redirect('main')
-
             else:
                 messages.warning(request, 'Please login')
                 return redirect('main')
