@@ -1,7 +1,7 @@
-from django.shortcuts import redirect
-from django.core.urlresolvers import reverse
 from django.contrib import messages
-# include in alphabetical order e.g. django.core comes before django.shortcuts
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
+
 
 class RegisterMiddleware(object):
     def process_request(self, request):
