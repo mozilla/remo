@@ -2,3 +2,4 @@ src/django-browserid
 src/requests
 src/chardet
 src/certifi
+src/happyforms
