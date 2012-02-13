@@ -73,7 +73,7 @@
                             <td><a href="{% url profiles_list_profiles %}{{ person.userprofile.city }}">{{ person.userprofile.city }}</a></td>
                             <td><a href="{% url profiles_list_profiles %}{{ person.userprofile.country }}">{{ person.userprofile.country }}</a></td>
                             <td>{{ person.userprofile.get_age }}</td>
-                            <td>{{ person.userprofile.mozillians_url|urlizetrunc:50}}</td>
+                            <td>{{ person.userprofile.mozillians_profile_url|urlizetrunc:50}}</td>
                             <td>{{ person.userprofile.private_email }}</td>
                         </tr>
 			{% endfor %}
