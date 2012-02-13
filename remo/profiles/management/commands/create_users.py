@@ -36,7 +36,6 @@ class Command(BaseCommand):
               "Enjoy,\n"\
               "Mozilla Reps WebDev Team"
 
-
     def handle(self, *args, **options):
         """
         Read emails from text file and create accounts. If

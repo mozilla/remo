@@ -1,11 +1,11 @@
 import json
 import sys
 
-from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.core.validators import email_re
 
 import requests
+
 
 class Command(BaseCommand):
     """ Command to fetch ReMo emails from wiki.mozilla.org using the API."""
@@ -15,7 +15,6 @@ class Command(BaseCommand):
     URL = 'https://wiki.mozilla.org/api.php?action=ask&'\
           'q=[[Category:Remouser]]'\
           '&format=json&offset=%s&po=bugzillamail'
-
 
     def handle(self, *args, **options):
         """ Fetches users from wiki.mozilla.org.
@@ -37,17 +36,16 @@ class Command(BaseCommand):
             try:
                 data = json.loads(r.text)
 
-            except ValueError, e:
+            except ValueError:
                 self.stdout.write(r.text)
                 self.stdout.write("Error decoding Wiki data\n")
                 sys.exit(-1)
 
             # convenience pointers
             results = data['ask']['results']
-            query = data['ask']['query']
 
             # check offset
-            if results.has_key('hasMore') and results['hasMore'] == 'true':
+            if 'hasMore' in results and results['hasMore'] == 'true':
                 self.offset += int(results['count']) + 1
             else:
                 self.offset = -1
@@ -65,7 +63,8 @@ class Command(BaseCommand):
                 if not isinstance(email, basestring) or\
                        not email_re.match(email):
                     # ignoring invalid email
-                    self.stdout.write("# Invalid email for %s\n" % entry['uri'])
+                    self.stdout.write("# Invalid email for %s\n" %\
+                                      entry['uri'])
                     continue
 
                 self.stdout.write(email + '\n')

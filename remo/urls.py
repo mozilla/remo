@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
 
 urlpatterns = patterns(
     '',
@@ -19,9 +18,9 @@ urlpatterns = patterns(
 
     # login / logout
     url(r'^login/plain/$', 'remo.profiles.views.plainlogin',
-        {'template_name':'plainlogin.html'}, name='plainlogin'),
+        {'template_name': 'plainlogin.html'}, name='plainlogin'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
-        {'next_page':'/'}, name="logout"),
+        {'next_page': '/'}, name="logout"),
 )
 
 ## In DEBUG mode, serve media files through Django.
@@ -32,4 +31,3 @@ if settings.DEBUG:
         (r'^%s/(?P<path>.*)$' % media_url, 'django.views.static.serve',
          {'document_root': settings.MEDIA_ROOT}),
     )
-    # Missing pages for 500 and 404 errors

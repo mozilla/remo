@@ -2,7 +2,8 @@ from functools import wraps
 
 from django.contrib import messages
 from django.shortcuts import redirect
-# Two line breaks
+
+
 def permission_check(permissions=[], display_name_field=None):
     """
     Check if a user is logged in and has the required permissions.
@@ -58,4 +59,3 @@ def permission_check(permissions=[], display_name_field=None):
 
         return wrapper
     return decorator
-
