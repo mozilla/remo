@@ -8,10 +8,9 @@ from django.contrib.auth.models import Group, User
 from django.shortcuts import get_object_or_404, redirect, render
 
 from django_browserid.auth import default_username_algo
+from product_details import product_details
 
 from remo.base.decorators import permission_check
-from remo.base.countries import COUNTRIES
-
 import forms
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
@@ -76,8 +75,9 @@ def edit(request, display_name):
                    'pageuser': user,
                    'group_bits': group_bits,
                    'mentors': mentors,
-                   'countries': COUNTRIES,
-                   'range_years': range(1950, datetime.today().year - 11)})
+                   'countries': product_details.get_regions("en").values(),
+                   'range_years': range(1950, datetime.today().year - 11)}
+                  )
 
 
 def list_profiles(request):
