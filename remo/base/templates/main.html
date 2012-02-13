@@ -1,76 +1,103 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% load markup %} {% block content %}
 
-{% load markup %}
-
-{% block content %}
 <!-- Sidereel Orbit featured images -->
-        <div class="row show-on-desktop">
-            <div class="twelve columns">
-                <div id="featured">
-		  <img src="/media/img/remo/show1.png" alt="Mozilla Festival closing session"/>
-		  <img src="/media/img/remo/show2.png" alt="Mozilla Reps in action"/>
-		  <img src="/media/img/remo/show3.png" alt="Mozilla Reps polo shirt"/>
-                </div>
-            </div>
-        </div>
+<div class="row show-on-desktop">
+  <div class="twelve columns">
+    <div id="featured">
+      <img src="{{ MEDIA_URL }}img/remo/show1.png" alt="Mozilla Festival closing session" />
+      <img src="{{ MEDIA_URL }}img/remo/show2.png" alt="Mozilla Reps in action" />
+      <img src="{{ MEDIA_URL }}img/remo/show3.png" alt="Mozilla Reps polo shirt" />
+    </div>
+  </div>
+</div>
 
-        <!-- Motto goes here -->
-        <div class="row">
-            <div class="twelve columns" id="motto">
-            </div>
-        </div>
+<!-- Motto goes here -->
+<div class="row">
+  <div class="twelve columns" id="motto">
+  </div>
+</div>
 
-        <!-- 3 Sections are here -->
-        <div class="row">
+<!-- 3 Sections are here -->
+<div class="row">
 
-            <!-- Upcoming events section -->
-            <div class="four columns main-section">
-                <div id="about"><h5>about:reps</h5><br>
-		  <p>The Mozilla Reps program aims to empower and support volunteer Mozillians who want to become official representatives of Mozilla in their region/locale.</p><p>The program provides a simple framework and a specific set of tools to help Mozillians to organize and/or attend events, recruit and mentor new contributors, document and share activities and last but not least, support their local communities better.</p><p>You can learn more about the program <a href="https://wiki.mozilla.org/ReMo">here</a>.</p></div>
-                <hr>
-                <div id="gray-logo">
-                    <img src="/media/img/remo/remo_avatar.png" alt="Reps Logo gray" width="200">
-                </div>
-            </div>
+  <!-- Upcoming events section -->
+  <div class="four columns main-section">
+    <div id="about">
+      <h5>
+        about:reps
+      </h5>
+      <br>
+      <p>
+        The Mozilla Reps program aims to empower and support volunteer Mozillians who want
+        to become official representatives of Mozilla in their region/locale.
+      </p>
+      <p>
+        The program provides a simple framework and a specific set of tools to help Mozillians
+        to organize and/or attend events, recruit and mentor new contributors, document and
+        share activities and last but not least, support their local communities better.
+      </p>
+      <p>
+        You can learn more about the program
+        <a href="https://wiki.mozilla.org/ReMo">here</a>
+        .
+      </p>
+    </div>
+    <hr>
+    <div id="gray-logo">
+      <img src="{{ MEDIA_URL }}img/remo/remo_avatar.png" alt="Reps Logo gray" width="200">
+    </div>
+  </div>
 
-            <!-- Featured Rep section -->
-            <div class="four columns main-section">
-                <h5>Rep of the month</h5> <br>
-                <div class="row">
-		    {% if featuredrep %}
-         		<div class="four columns">
-                        <img src="{{ featuredrep.user.userprofile.get_avatar_url }}" alt="Rep of the month profile picture" width="80">
-                    </div>
-                    <div class="eight columns">
+  <!-- Featured Rep section -->
+  <div class="four columns main-section">
+    <h5>
+      Rep of the month
+    </h5>
+    <br>
+    <div class="row">
+      {% if featuredrep %}
+      <div class="four columns">
+        <img src="{{ featuredrep.user.userprofile.get_avatar_url }}" alt="Rep of the month profile picture"
+        width="80">
+      </div>
+      <div class="eight columns">
+        <h5>
+          <a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">{{ featuredrep.user.first_name }}</a>
+          <br>
+          <a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">{{ featuredrep.user.last_name }}</a>
+        </h5>
+        <br>
+        {{ featuredrep.user.userprofile.city }}, {{ featuredrep.user.userprofile.country}}
+      </div>
+      {% else %}
+      <div class="twelve columns">
+        None for this month!
+      </div>
+      {% endif %}
+    </div>
+    <div class="row">
+      <div class="twelve columns">
+        <br>
+        {{ featuredrep.text|restructuredtext }}
+      </div>
+    </div>
+  </div>
 
-		      <h5><a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">{{ featuredrep.user.first_name }}</a><br><a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">{{ featuredrep.user.last_name }}</a></h5> <br> {{ featuredrep.user.userprofile.city }}, {{ featuredrep.user.userprofile.country }}
-		    </div>
-		    {% else %}
-		    <div class="twelve columns">
-		      None for this month!
-		    </div>
-		    {% endif %}
+  <!-- Planet Section -->
+  <div class="four columns main-section">
+    <h5>
+      Reps planet
+    </h5>
+    <div id="planet">
+      Fetching awesome Reps Planet posts...
+    </div>
+  </div>
 
-                </div>
-
-                <div class="row">
-                    <div class="twelve columns">
-                    <br>
-		      {{ featuredrep.text|restructuredtext }}
-		    </div>
-                </div>
-            </div>
-
-            <!-- Planet Section -->
-            <div class="four columns main-section">
-                <h5>Reps planet</h5>
-                <div id="planet">Fetching awesome Reps Planet posts...</div>
-            </div>
-            </div>
-        </div>
+</div>
+</div> <!-- This div ends the container div in base.html -->
 {% endblock %}
 
 {% block bottomextra %}
-    <script src="/media/js/FeedEk.js" type="text/javascript"></script>
-    <script src="/media/js/planet.js" type="text/javascript"></script>
+  <script src="{{ MEDIA_URL }}js/FeedEk.js" type="text/javascript"></script>
+  <script src="{{ MEDIA_URL }}js/planet.js" type="text/javascript"></script>
 {% endblock %}

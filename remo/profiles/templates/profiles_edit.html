@@ -1,338 +1,415 @@
 {% extends "base.html" %}
-
-{% block pagetitle %}
-Mozilla Reps - Edit Profile
-{% endblock %}
+{% block pagetitle %} Mozilla Reps - Edit Profile {% endblock %}
 
 {% block content %}
-     <!-- Sample inputs -->
-
-        <div class="row">
-            <div class="twelve columns">
-                <h4>Editing profile of user {{ pageuser.userprofile.display_name }} {% if pageuser == request.user %}<small class="grayed">(this is you!)</small>{% endif %}</h4>
-            </div>
+<!-- Sample inputs -->
+<div class="row">
+  <div class="twelve columns">
+    <h4>
+      Editing profile of user {{ pageuser.userprofile.display_name }} {% if pageuser == request.user %}
+      <small class="grayed">
+        (this is you!)
+      </small>
+      {% endif %}
+    </h4>
+  </div>
+</div>
+<form class="custom" method="post" action="{% url profiles_edit pageuser.userprofile.display_name %}">
+  {% csrf_token %}
+  <!-- Two column block -->
+  <div class="row">
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          J
         </div>
-
-        <form class="custom" method="post" action="{% url profiles_edit pageuser.userprofile.display_name %}">
-	{% csrf_token %}
-        <!-- Two column block -->
-
-        <div class="row">
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        J
-                    </div>
-                    <div class="eleven columns">
-                        <input type="text" placeholder="Username" name="display_name" value="{{ profileform.display_name.value }}" class="input-text big">
-		        {% if profileform.display_name.errors %}
-		          <small class="error">{{ profileform.display_name.errors }}</small>
-		        {% endif %}
-
-		        <input type="text" placeholder="Last name" name="last_name" value="{{ userform.last_name.value }}" class="input-text big">
-		        {% if userform.last_name.errors %}
-                          <small class="error">{{ userform.last_name.errors }}</small>
-		        {% endif %}
-		        <input type="text" placeholder="First name" name="first_name" value="{{ userform.first_name.value }}" class="input-text big">
-		        {% if userform.first_name.errors %}
-		          <small class="error">{{ userform.first_name.errors }}</small>
-		        {% endif %}
-
-                        <input type="text" placeholder="Name in local language" name="local_name" value="{{ profileform.local_name.value }}" class="input-text big">
-		        {% if profileform.local_name.errors %}
-		          <small class="error">{{ profileform.local_name.errors }}</small>
-		        {% endif %}
-
-		        <select name="birth_date">
-			  {% if not profileform.birth_date.value  %}<option selected="selected" value="">---------</option>{% endif %}
-			    {% for year in range_years reversed %}
-			  <option value="{{ year }}-01-01" {% if year == profileform.birth_date.value.year %}selected="selected"{% endif %}>{{ year }}</option>
-			  {% endfor %}
-			</select>
-			<select name="gender">
-			  {% if not profileform.gender.value  %}<option selected="selected" value="">---------</option>{% endif %}
-			  <option value="True" {% if profileform.gender.value == "True" %}selected="selected"{% endif %}>Female</option>
-			  <option value="False" {% if profileform.gender.value == "False" %}selected="selected"{% endif %}>Male</option>
-			</select>
-		        {% if profileform.birth_date.errors %}
-		          <small class="error">{{ profileform.birth_date.errors }}</small>
-		        {% endif %}
-
-			{% if profileform.gender.errors %}
-		          <small class="error">{{ profileform.gender.errors }}</small>
-		        {% endif %}
-
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        A
-                    </div>
-                    <div class="eleven columns" id="profile-image">
-                        <img src="{{ pageuser.userprofile.get_avatar_url }}?s=128"><br>
-                        <span id="profile-image">Profile images are linked to your bugzilla mail <br>and are hosted in <a href="https://libravatar.org">libravatar.org</a></span>
-                    </div>
-                </div>
-            </div>
-
+        <div class="eleven columns">
+          <input type="text" placeholder="Username" name="display_name" value="{{ profileform.display_name.value }}"
+          class="input-text big">
+          {% if profileform.display_name.errors %}
+          <small class="error">
+            {{ profileform.display_name.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="Last name" name="last_name" value="{{ userform.last_name.value }}"
+          class="input-text big">
+          {% if userform.last_name.errors %}
+          <small class="error">
+            {{ userform.last_name.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="First name" name="first_name" value="{{ userform.first_name.value }}"
+          class="input-text big">
+          {% if userform.first_name.errors %}
+          <small class="error">
+            {{ userform.first_name.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="Name in local language" name="local_name" value="{{ profileform.local_name.value }}"
+          class="input-text big">
+          {% if profileform.local_name.errors %}
+          <small class="error">
+            {{ profileform.local_name.errors }}
+          </small>
+          {% endif %}
+          <select name="birth_date">
+            {% if not profileform.birth_date.value %}
+            <option selected="selected" value="">
+              ---------
+            </option>
+            {% endif %} {% for year in range_years reversed %}
+            <option value="{{ year }}-01-01" {% if year == profileform.birth_date.value.year %} selected="selected" {% endif %}>
+              {{ year }}
+            </option>
+            {% endfor %}
+          </select>
+          <select name="gender">
+            {% if not profileform.gender.value %}
+            <option selected="selected" value="">
+              ---------
+            </option>
+            {% endif %}
+            <option value="True" {% if profileform.gender.value == "True" %}selected="selected"
+            {% endif %}>
+              Female
+            </option>
+            <option value="False" {% if profileform.gender.value == "False" %}selected="selected"
+            {% endif %}>
+              Male
+            </option>
+          </select>
+          {% if profileform.birth_date.errors %}
+          <small class="error">
+            {{ profileform.birth_date.errors }}
+          </small>
+          {% endif %} {% if profileform.gender.errors %}
+          <small class="error">
+            {{ profileform.gender.errors }}
+          </small>
+          {% endif %}
         </div>
-
-
-        <div class="row">
-
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        @
-                    </div>
-                    <div class="eleven columns">
-                        <input type="text" placeholder="Personal email" value="{{ profileform.private_email.value }}" name="private_email" class="input-text big">
-		        {% if profileform.private_email.errors %}
-		          <small class="error">{{ profileform.private_email.errors }}</small>
-		        {% endif %}
-
-   		        <input type="text" placeholder="Bugzilla email" value="{{ userform.email.value }}" name="email" class="input-text big">
-		        {% if userform.email.errors %}
-		          <small class="error">{{ userform.email.errors }}</small>
-		        {% endif %}
-
-                        <input type="text" placeholder="Mozillians.org profile" value="{{ profileform.mozillians_profile_url.value }}" name="mozillians_profile_url" class="input-text big">
-		        {% if profileform.mozillians_profile_url.errors %}
-		          <small class="error">{{ profileform.mozillians_profile_url.errors }}</small>
-		        {% endif %}
-
-		        <select name="mentor">
-			  {% if not profileform.mentor.value  %}<option selected="selected" value="">Choose mentor</option>{% endif %}
-			    {% for mentor in mentors %}
-			  <option value="{{ mentor.id }}" {% if mentor.id == profileform.mentor.value %}selected="selected"{% endif %}>{{ mentor.get_full_name }}</option>
-			  {% endfor %}
-			</select>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        p
-                    </div>
-                    <div class="eleven columns">
-                        <input type="text" placeholder="City" value="{{ profileform.city.value }}" name="city" class="input-text big">
-		        {% if profileform.city.errors %}
-		          <small class="error">{{ profileform.city.errors }}</small>
-		        {% endif %}
-
-		        <input type="text" placeholder="Region" value="{{ profileform.region.value }}" name="region" class="input-text big">
-		        {% if profileform.region.errors %}
-		          <small class="error">{{ profileform.region.errors }}</small>
-		        {% endif %}
-
-                        <select name="country">
-			  {% for country in countries %}
-			  <option value="{{ country }}" {% if profileform.country.value == country %} selected="selected"{% endif %}>{{ country }}</option>
-			  {% endfor %}
-                        </select>
-		        {% if profileform.country.errors %}
-		          <small class="error">{{ profileform.country.errors }}</small>
-		        {% endif %}
-
-			<input type="hidden" placeholder="Latitude" value="{{ profileform.lat.value }}" name="lat" class="input-text point-lat">
-                        <input type="hidden" placeholder="Longitude" value="{{ profileform.lon.value }}" name="lon" class="input-text point-long">
-			{% if profileform.lat.errors or profileform.lon.errors %}
-		          <small class="error">Please point in map</small>
-		        {% endif %}
-
-                        <div class="align-right"><a href="#" class="small white button nice radius" data-reveal-id="map-point">point in map</a></div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="row">
-
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        T
-                    </div>
-                    <div class="eleven columns">
-                        <input type="text" placeholder="Twitter handle" value="{{ profileform.twitter_account.value }}" name="twitter_account" class="input-text big">
-		        {% if profileform.twitter_account.errors %}
-		          <small class="error">{{ profileform.twitter_account.errors }}</small>
-		        {% endif %}
-
-		        <input type="text" placeholder="Facebook profile" value="{{ profileform.facebook_url.value }}" name="facebook_url" class="input-text big">
-		        {% if profileform.facebook_url.errors %}
-		          <small class="error">{{ profileform.facebook_url.errors }}</small>
-		        {% endif %}
-
-                        <input type="text" placeholder="Diaspora profile" value="{{ profileform.diaspora_url.value }}" name="diaspora_url" class="input-text big">
-		        {% if profileform.diaspora_url.errors %}
-		          <small class="error">{{ profileform.diaspora_url.errors }}</small>
-		        {% endif %}
-
-                        <input type="text" placeholder="LinkedIn profile" value="{{ profileform.linkedin_url.value }}" name="linkedin_url" class="input-text big">
-		        {% if profileform.linkedin_url.errors %}
-		          <small class="error">{{ profileform.linkedin_url.errors }}</small>
-		        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        b
-                    </div>
-                    <div class="eleven columns">
-                        <input type="text" placeholder="Jabber ID" value="{{ profileform.jabber_id.value }}" name="jabber_id" class="input-text big">
-		        {% if profileform.jabber_id.errors %}
-		          <small class="error">{{ profileform.jabber_id.errors }}</small>
-		        {% endif %}
-
-		        <input type="text" placeholder="IRC nickname" value="{{ profileform.irc_name.value }}" name="irc_name" class="input-text big">
-		        {% if profileform.irc_name.errors %}
-		          <small class="error">{{ profileform.irc_name.errors }}</small>
-		        {% endif %}
-
-		        <textarea class="flat" placeholder="Please list the channels you use in IRC" name="irc_channels">{{ profileform.irc_channels.value }}</textarea>
-		        {% if profileform.irc_channels.errors %}
-		          <small class="error">{{ profileform.irc_channels.errors }}</small>
-		        {% endif %}
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="row">
-
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        w
-                    </div>
-                    <div class="eleven columns">
-                        <input type="text" placeholder="Personal site URL" value="{{ profileform.personal_website_url.value }}" name="personal_website_url" class="input-text big">
-		        {% if profileform.personal_website_url.errors %}
-		          <small class="error">{{ profileform.personal_website_url.errors }}</small>
-		        {% endif %}
-
-		      <input type="text" placeholder="Personal blog Feed" value="{{ profileform.personal_blog_feed.value }}" name="personal_blog_feed" class="input-text big">
-		      {% if profileform.personal_blog_feed.errors %}
-		          <small class="error">{{ profileform.personal_blog_feed.errors }}</small>
-		      {% endif %}
-
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        V
-                    </div>
-                    <div class="eleven columns"><br>
-                        <textarea class="flat" placeholder="Bio - Write us a bit about yourself" name="bio">{{ profileform.bio.value }}</textarea>
-		        {% if profileform.bio.errors %}
-		          <small class="error">{{ profileform.bio.errors }}</small>
-		        {% endif %}
-
-		    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="row">
-
-            <div class="six columns">
-            </div>
-
-	    {% if perms.profiles.can_edit_profiles %}
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        W
-                    </div>
-                    <div class="eleven columns"><br>
-                        <label for="admin-bit">
-                            <input type="checkbox" {% if group_bits.0 %}checked{% endif %} id="admin-bit" name="admin_group" style="display: none;">
-                            <span class="custom checkbox"></span> Administrator
-                        </label>
-                        <label for="council-bit">
-                            <input type="checkbox" {% if group_bits.1 %}checked{% endif %} id="council-bit" name="council_group" style="display: none;">
-                            <span class="custom checkbox"></span> Council member
-                        </label>
-                        <label for="mentor-bit">
-                            <input type="checkbox" {% if group_bits.2 %}checked{% endif %} id="mentor-bit" name="mentor_group" style="display: none;">
-                            <span class="custom checkbox"></span> Mentor
-                        </label>
-                        <label for="rep-bit">
-                            <input type="checkbox" {% if group_bits.3 %}checked{% endif %} id="rep-bit" name="rep_group" style="display: none;">
-		      <span class="custom checkbox"></span> Rep
-                        </label>
-		        <div class="align-right">
-			  <a href="#" class="small red button nice radius" data-reveal-id="delete-profile">Delete profile</a>
-			</div>
-                    </div>
-                </div>
-            </div>
-	    {% endif %}
-
-        </div>
-        <div class="row">
-            <div id="save-profile" class="twelve columns align-right">
-                <button type="submit" class="medium blue button nice radius">Save profile</button>
-            </div>
-        </div>
-
-        </form>
-
-
-        <!-- Map Point Reveal Modal -->
-    <div id="map-point" class="reveal-modal">
-        <a class="close-reveal-modal">&#215;</a>
-        <div class="row">
-            <div class="twelve columns">
-                <p class="lead">Please click your location on the map</p>
-                <div id="map" class="smallmap"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="six columns">
-                <input type="text" placeholder="Latitude" class="input-text point-lat-temp">
-                <input type="text" placeholder="Longitude" class="input-text point-long-temp">
-            </div>
-            <div class="six columns use-those">
-                <a href="#" class="small blue button nice radius close-reveal-modal">Use those &raquo;</a>
-            </div>
-        </div>
+      </div>
     </div>
-
-    <!-- Delete Profile Reveal Modal -->
-    <div id="delete-profile" class="reveal-modal">
-        <a class="close-reveal-modal">&#215;</a>
-        <p class="lead">Are you sure you want to do that?</p>
-        <h2>Warning!</h2>
-        <p>By pressing the following button you will permanently and irreversibly delete the profile of this Rep.<p>
-        <form method="post" action="{% url profiles_delete pageuser.userprofile.display_name %}">
-          {% csrf_token %}
-        <button href="#" class="large red button nice radius close-reveal-modal">Delete profile</button>
-        </form>
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          A
+        </div>
+        <div class="eleven columns profile-image">
+          <img src="{{ pageuser.userprofile.get_avatar_url }}?s=128">
+          <br>
+          <span class="profile-image">
+            Profile images are linked to your bugzilla mail
+            <br>
+            Login to <a href="https://libravatar.org">libravatar.org</a> to change your profile
+          </span>
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          @
+        </div>
+        <div class="eleven columns">
+          <input type="text" placeholder="Personal email" value="{{ profileform.private_email.value }}"
+          name="private_email" class="input-text big">
+          {% if profileform.private_email.errors %}
+          <small class="error">
+            {{ profileform.private_email.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="Bugzilla email" value="{{ userform.email.value }}"
+          name="email" class="input-text big">
+          {% if userform.email.errors %}
+          <small class="error">
+            {{ userform.email.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="Mozillians.org profile" value="{{ profileform.mozillians_profile_url.value }}"
+          name="mozillians_profile_url" class="input-text big">
+          {% if profileform.mozillians_profile_url.errors %}
+          <small class="error">
+            {{ profileform.mozillians_profile_url.errors }}
+          </small>
+          {% endif %}
+          <select name="mentor">
+            {% if not profileform.mentor.value %}
+            <option selected="selected" value="">
+              Choose mentor
+            </option>
+            {% endif %} {% for mentor in mentors %}
+            <option value="{{ mentor.id }}" {% if mentor.id == profileform.mentor.value %} selected="selected"
+            {% endif %}>
+              {{ mentor.get_full_name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          p
+        </div>
+        <div class="eleven columns">
+          <input type="text" placeholder="City" value="{{ profileform.city.value }}" name="city"
+          class="input-text big">
+          {% if profileform.city.errors %}
+          <small class="error">
+            {{ profileform.city.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="Region" value="{{ profileform.region.value }}" name="region"
+          class="input-text big">
+          {% if profileform.region.errors %}
+          <small class="error">
+            {{ profileform.region.errors }}
+          </small>
+          {% endif %}
+          <select name="country">
+            {% for country in countries %}
+            <option value="{{ country }}" {% if profileform.country.value == country %} selected="selected"
+            {% endif %}>
+              {{ country }}
+            </option>
+            {% endfor %}
+          </select>
+          {% if profileform.country.errors %}
+          <small class="error">
+            {{ profileform.country.errors }}
+          </small>
+          {% endif %}
+          <input type="hidden" placeholder="Latitude" value="{{ profileform.lat.value }}"
+          name="lat" class="input-text point-lat">
+          <input type="hidden" placeholder="Longitude" value="{{ profileform.lon.value }}"
+          name="lon" class="input-text point-long">
+          {% if profileform.lat.errors or profileform.lon.errors %}
+          <small class="error">
+            Please point in map
+          </small>
+          {% endif %}
+          <div class="align-right">
+            <a href="#" class="small white button nice radius" data-reveal-id="map-point">point in map</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          T
+        </div>
+        <div class="eleven columns">
+          <input type="text" placeholder="Twitter handle" value="{{ profileform.twitter_account.value }}"
+          name="twitter_account" class="input-text big">
+          {% if profileform.twitter_account.errors %}
+          <small class="error">
+            {{ profileform.twitter_account.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="Facebook profile" value="{{ profileform.facebook_url.value }}"
+          name="facebook_url" class="input-text big">
+          {% if profileform.facebook_url.errors %}
+          <small class="error">
+            {{ profileform.facebook_url.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="Diaspora profile" value="{{ profileform.diaspora_url.value }}"
+          name="diaspora_url" class="input-text big">
+          {% if profileform.diaspora_url.errors %}
+          <small class="error">
+            {{ profileform.diaspora_url.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="LinkedIn profile" value="{{ profileform.linkedin_url.value }}"
+          name="linkedin_url" class="input-text big">
+          {% if profileform.linkedin_url.errors %}
+          <small class="error">
+            {{ profileform.linkedin_url.errors }}
+          </small>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          b
+        </div>
+        <div class="eleven columns">
+          <input type="text" placeholder="Jabber ID" value="{{ profileform.jabber_id.value }}"
+          name="jabber_id" class="input-text big">
+          {% if profileform.jabber_id.errors %}
+          <small class="error">
+            {{ profileform.jabber_id.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="IRC nickname" value="{{ profileform.irc_name.value }}"
+          name="irc_name" class="input-text big">
+          {% if profileform.irc_name.errors %}
+          <small class="error">
+            {{ profileform.irc_name.errors }}
+          </small>
+          {% endif %}
+          <textarea class="flat" placeholder="Please list the channels you use in IRC" name="irc_channels">
+            {{ profileform.irc_channels.value }}
+          </textarea>
+          {% if profileform.irc_channels.errors %}
+          <small class="error">
+            {{ profileform.irc_channels.errors }}
+          </small>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          w
+        </div>
+        <div class="eleven columns">
+          <input type="text" placeholder="Personal site URL" value="{{ profileform.personal_website_url.value }}"
+          name="personal_website_url" class="input-text big">
+          {% if profileform.personal_website_url.errors %}
+          <small class="error">
+            {{ profileform.personal_website_url.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="Personal blog Feed" value="{{ profileform.personal_blog_feed.value }}"
+          name="personal_blog_feed" class="input-text big">
+          {% if profileform.personal_blog_feed.errors %}
+          <small class="error">
+            {{ profileform.personal_blog_feed.errors }}
+          </small>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          V
+        </div>
+        <div class="eleven columns">
+          <br>
+          <textarea class="flat" placeholder="Bio - Write us a bit about yourself" name="bio">
+            {{ profileform.bio.value }}
+          </textarea>
+          {% if profileform.bio.errors %}
+          <small class="error">
+            {{ profileform.bio.errors }}
+          </small>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+    </div>
+    {% if perms.profiles.can_edit_profiles %}
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          W
+        </div>
+        <div class="eleven columns">
+          <br>
+          <label for="admin-bit">
+            <input type="checkbox" {% if group_bits.0 %}checked="checked"{% endif %} id="admin-bit" name="admin_group">
+            <span class="custom checkbox">
+            </span>
+            Administrator
+          </label>
+          <label for="council-bit">
+            <input type="checkbox" {% if group_bits.1 %}checked="checked"{% endif %} id="council-bit"
+            name="council_group">
+            <span class="custom checkbox">
+            </span>
+            Council member
+          </label>
+          <label for="mentor-bit">
+            <input type="checkbox" {% if group_bits.2 %}checked="checked"{% endif %} id="mentor-bit" name="mentor_group">
+            <span class="custom checkbox">
+            </span>
+            Mentor
+          </label>
+          <label for="rep-bit">
+            <input type="checkbox" {% if group_bits.3 %}checked="checked"{% endif %} id="rep-bit" name="rep_group"
+            style="display: none;">
+            <span class="custom checkbox">
+            </span>
+            Rep
+          </label>
+          <div class="align-right">
+            <a href="#" class="small red button nice radius" data-reveal-id="delete-profile">Delete profile</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <div class="row">
+    <div id="save-profile" class="twelve columns align-right">
+      <button type="submit" class="medium blue button nice radius">
+        Save profile
+      </button>
+    </div>
+  </div>
+</form>
+<!-- Map Point Reveal Modal -->
+<div id="map-point" class="reveal-modal">
+  <a class="close-reveal-modal">&#215;</a>
+  <div class="row">
+    <div class="twelve columns">
+      <p class="lead">
+        Please click your location on the map
+      </p>
+      <div id="map" class="smallmap">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      <input type="text" placeholder="Latitude" class="input-text point-lat-temp">
+      <input type="text" placeholder="Longitude" class="input-text point-long-temp">
+    </div>
+    <div class="six columns use-those">
+      <a href="#" class="small blue button nice radius close-reveal-modal">Use those &raquo;</a>
+    </div>
+  </div>
+</div>
+<!-- Delete Profile Reveal Modal -->
+<div id="delete-profile" class="reveal-modal">
+  <a class="close-reveal-modal">&#215;</a>
+  <p class="lead">
+    Are you sure you want to do that?
+  </p>
+  <h2>
+    Warning!
+  </h2>
+  <p>
+    By pressing the following button you will permanently and irreversibly delete the
+    profile of this Rep.
+    <p>
+      <form method="post" action="{% url profiles_delete pageuser.userprofile.display_name %}">
+        {% csrf_token %}
+        <button class="large red button nice radius close-reveal-modal">
+          Delete profile
+        </button>
+      </form>
+</div>
 {% endblock %}
 
 {% block bottomextra %}
-    <script src="/media/openlayers/OpenLayers.js"></script>
-    <script src="/media/js/map-point.js" type="text/javascript"></script>
+<script src="{{ MEDIA_URL }}openlayers/OpenLayers.js"></script>
+<script src="{{ MEDIA_URL }}js/map-point.js" type="text/javascript"></script>
 {% endblock %}

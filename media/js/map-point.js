@@ -7,24 +7,28 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
         'stopDouble': false
     },
 
-    initialize: function(options) {
+    initialize: function (options) {
         this.handlerOptions = OpenLayers.Util.extend(
-            {}, this.defaultHandlerOptions
+            {},
+            this.defaultHandlerOptions
         );
         OpenLayers.Control.prototype.initialize.apply(
-            this, arguments
+            this,
+            arguments
         );
         this.handler = new OpenLayers.Handler.Click(
-            this, {
+            this,
+            {
                 'click': this.trigger
-            }, this.handlerOptions
+            },
+            this.handlerOptions
         );
     },
 
-    trigger: function(e) {
+    trigger: function (e) {
         var lonlat = map.getLonLatFromViewPortPx(e.xy);
-        $('input.point-lat-temp').val(Math.round(((lonlat.lat/100000)*1000000))/1000000);
-        $('input.point-long-temp').val(Math.round(((lonlat.lon/100000)*1000000))/1000000);
+        $('input.point-lat-temp').val(Math.round(((lonlat.lat / 100000) * 1000000)) / 1000000);
+        $('input.point-long-temp').val(Math.round(((lonlat.lon / 100000) * 1000000)) / 1000000);
     }
 
 });
@@ -43,7 +47,7 @@ map.addControl(click);
 click.activate();
 
 //Clicking "Use those" closes the modal and updates the hidden input fields
-$('.use-those').click(function() {
-  $('input.point-lat').val($('input.point-lat-temp').val());
-  $('input.point-long').val($('input.point-long-temp').val());
+$('.use-those').click(function () {
+    $('input.point-lat').val($('input.point-lat-temp').val());
+    $('input.point-long').val($('input.point-long-temp').val());
 });
