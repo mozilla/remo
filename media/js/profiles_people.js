@@ -57,6 +57,7 @@ $(function() {
 	}
     })
 
+    qs1 = $('input#searchfield').quicksearch('table#list-people-view tbody tr');
     var qs1 = $('input#searchfield').quicksearch('table#list-people-view tr td')
 
     search_string = window.location.pathname.substr(8);
