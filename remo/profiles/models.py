@@ -14,6 +14,8 @@ from libravatar import libravatar_url
 
 
 def _validate_birth_date(data, **kwargs):
+    """ Validator to ensure age of at least 12 years old and less than
+    90 years old."""
     today = datetime.date.today()
     youth_threshold_day = datetime.date(today.year - 12, today.month,
                                         today.day) +\
@@ -30,7 +32,8 @@ def _validate_birth_date(data, **kwargs):
 
 
 def _validate_mentor(data, **kwargs):
-    """ Validator to ensure that selected user belongs in the Mentor group. """
+    """ Validator to ensure that selected user belongs in the Mentor
+    group."""
     user = User.objects.get(pk=data)
 
     if user.groups.filter(name="Mentor").count():
@@ -54,7 +57,8 @@ class UserProfile(models.Model):
         max_length=15, blank=True, default="", unique=True,
         validators=[
             RegexValidator(regex=r'("")|([A-Za-z0-9_]+)',
-                           message="Please only A-Z characters and underscores.")
+                           message="Please only A-Z characters and "
+                                   "underscores.")
             ])
     private_email = models.EmailField(blank=False, null=True, default="")
     mozillians_profile_url = models.URLField(

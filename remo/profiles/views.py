@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth.views import login as django_login
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
+from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from django_browserid.auth import default_username_algo
@@ -37,28 +38,26 @@ def edit(request, display_name):
             profileform.save()
 
             if request.user.has_perm('profiles.can_edit_profiles'):
-                if request.POST.get('mentor_group', None):
-                    user.groups.add(Group.objects.get(name="Mentor"))
-                else:
-                    user.groups.remove(Group.objects.get(name="Mentor"))
+                groups = {'Mentor': 'mentor_group',
+                          'Admin': 'admin_group',
+                          'Council': 'council_group',
+                          'Rep': 'rep_group'}
 
-                if request.POST.get('admin_group', None):
-                    user.groups.add(Group.objects.get(name="Admin"))
-                else:
-                    user.groups.remove(Group.objects.get(name="Admin"))
-
-                if request.POST.get('council_group', None):
-                    user.groups.add(Group.objects.get(name="Council"))
-                else:
-                    user.groups.remove(Group.objects.get(name="Council"))
-
-                if request.POST.get('rep_group', None):
-                    user.groups.add(Group.objects.get(name="Rep"))
-                else:
-                    user.groups.remove(Group.objects.get(name="Rep"))
+                for group_db, group_html in groups.items():
+                    if request.POST.get(group_html, None):
+                        user.groups.add(Group.objects.get(name=group_db))
+                    else:
+                        user.groups.remove(Group.objects.get(name=group_db))
 
             messages.success(request, 'Profile successfully edited')
-            return redirect('profiles_view_my_profile')
+
+            if request.user == user:
+                return redirect('profiles_view_my_profile')
+            else:
+                redirect_url = reverse('profiles_view_profile',
+                                       kwargs={'display_name':
+                                               user.userprofile.display_name})
+                return redirect(redirect_url)
     else:
         userform = forms.ChangeUserForm(instance=user)
         profileform = forms.ChangeProfileForm(instance=user.userprofile)
@@ -129,9 +128,7 @@ def invite(request):
     else:
         form = forms.InviteUserForm()
 
-    return render(request, "profiles_invite.html",
-                  {'form': form}
-                  )
+    return render(request, "profiles_invite.html", {'form': form})
 
 
 @permission_check(permissions=['profiles.can_edit_profiles'])

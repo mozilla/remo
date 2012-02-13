@@ -87,7 +87,7 @@
             "username": "rep2",
             "first_name": "",
             "last_name": "",
-            "is_active": false,
+            "is_active": true,
             "is_superuser": false,
             "is_staff": false,
             "last_login": "2012-01-23 05:31:58",
@@ -239,7 +239,8 @@
 	    "mentor": 6,
             "added_by": 5,
 	    "bio": "This is my bio",
-	    "gender":"False"
+	    "gender":"False",
+            "registration_complete":"False"
         }
     }
 ]

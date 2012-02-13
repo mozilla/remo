@@ -10,6 +10,7 @@ class ViewsTest(TestCase):
     fixtures = ['demo_users.json', 'demo_featured.json']
 
     def setUp(self):
+        """ Setup Tests """
         self.c = Client()
         self.c.login(username="admin", password="passwd")
 

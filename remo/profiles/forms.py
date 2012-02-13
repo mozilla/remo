@@ -2,15 +2,19 @@ import re
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+
 from happyforms import forms
 
 from remo.profiles.models import UserProfile
 
+
 class InviteUserForm(forms.Form):
+    """ Form to invite a new user """
     email = forms.EmailField(label='Email')
 
 
 class ChangeUserForm(forms.ModelForm):
+    """ Form to change user details """
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
@@ -40,6 +44,7 @@ class ChangeUserForm(forms.ModelForm):
 
 
 class ChangeProfileForm(forms.ModelForm):
+    """ Form to change userprofile details """
     class Meta:
         model = UserProfile
         fields = ('local_name', 'birth_date',
@@ -50,7 +55,6 @@ class ChangeProfileForm(forms.ModelForm):
                   'irc_channels', 'facebook_url', 'diaspora_url',
                   'personal_website_url', 'personal_blog_feed',
                   'bio', 'gender', 'mentor')
-
 
     def clean_twitter_account(self):
         """ Make sure that twitter_account does not start with a '@' """

@@ -1,8 +1,7 @@
 import json
 import os
-import tempfile
-import sys
 import StringIO
+import tempfile
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -12,6 +11,9 @@ from test_utils import TestCase
 
 import requests
 import fudge
+
+from remo.profiles.management.commands.fetch_emails_from_wiki \
+     import Command as cmd
 
 
 class CreateUserTest(TestCase):
@@ -137,23 +139,23 @@ class FetchEmailsFromWikiTest(TestCase):
         request.status_code = 200
         request.text = json.dumps(
             {'ask':
-             {'query': { },
+             {'query': {},
               'results': {
                   'items':
-                  [{ 'properties':{'bugzillamail':'foo@example.com', },
-                     "uri": "https:\/\/wiki.mozilla.org\/index.php?title=User:fooexample",},
-                   {'properties':{'bugzillamail':'test@example.com',},
-                    "uri": "https:\/\/wiki.mozilla.org\/index.php?title=User:testexample",},
-                   {'properties':{'bugzillamail':'testexample.com',},
-                    "uri": "https:\/\/wiki.mozilla.org\/index.php?title=User:bogus",},]}
+                  [{'properties':{'bugzillamail':'foo@example.com'},
+                     "uri": "https:\/\/wiki.mozilla.org\/index.php?"
+                            "title=User:fooexample"},
+                   {'properties':{'bugzillamail':'test@example.com'},
+                    "uri": "https:\/\/wiki.mozilla.org\/index.php?"
+                           "title=User:testexample"},
+                   {'properties':{'bugzillamail':'testexample.com'},
+                    "uri": "https:\/\/wiki.mozilla.org\/index.php?"
+                           "title=User:bogus"}]}
               }})
 
         (fake_requests_obj.expects_call().returns(request))
 
         output = StringIO.StringIO()
-
-        from remo.profiles.management.commands.fetch_emails_from_wiki import Command as cmd
-
         cmd_obj = cmd()
         cmd_obj.stdout = output
         cmd_obj.handle()
@@ -163,6 +165,3 @@ class FetchEmailsFromWikiTest(TestCase):
         eq_(lines[0], "foo@example.com")
         eq_(lines[1], "test@example.com")
         eq_(lines[2][0], "#")
-
-
-
