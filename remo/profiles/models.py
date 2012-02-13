@@ -1,79 +1,45 @@
-import re
 import datetime
+import re
 import urlparse
 
-from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save, pre_save
-from django.dispatch import receiver
+from django.conf import settings
+from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.dispatch import receiver
+
 from libravatar import libravatar_url
 
 
 def _validate_birth_date(data, **kwargs):
+    """ Validator to ensure age of at least 12 years old and less than
+    90 years old."""
     today = datetime.date.today()
-    youth_threshold_day = datetime.date(today.year-12, today.month, today.day)+\
+    youth_threshold_day = datetime.date(today.year - 12, today.month,
+                                        today.day) +\
                           datetime.timedelta(hours=24)
 
-    maturity_threshold_day = datetime.date(today.year-90, today.month, today.day)-\
+    maturity_threshold_day = datetime.date(today.year - 90, today.month,
+                                           today.day) -\
                              datetime.timedelta(hours=24)
 
     if data < youth_threshold_day and data > maturity_threshold_day:
         return data
-
     else:
-        raise ValidationError("Provided Birthdate is not valid")
-
-
-def _validate_twitter_username(data, **kwargs):
-    if data == "" or re.match(r'([A-Za-z0-9_]+)', data):
-        return data
-
-    else:
-        raise ValidationError("Provided Twitter Username is not valid")
-
-
-def _validate_mozillians_url(data, **kwargs):
-    if data == "" or re.match(r'http(s)?://(www.)?mozillians.org/', data):
-        return data
-
-    else:
-        raise ValidationError("Provided Mozillians url is not valid")
-
-
-def _validate_linkedin_url(data, **kwargs):
-    if data == "" or re.match(r'http(s)?://(www.)?linkedin.com/', data):
-        return data
-
-    else:
-        raise ValidationError("Provided LinkedIn url is not valid")
-
-
-def _validate_facebook_url(data, **kwargs):
-    if data == "" or re.match(r'http(s)?://(www.)?facebook.com/', data):
-        return data
-
-    else:
-        raise ValidationError("Provided Facebook url is not valid")
-
-
-def _validate_display_name(data, **kwargs):
-    if data == "" or re.match(r'[A-Za-z_]+', data):
-        return data
-
-    else:
-        raise ValidationError("Provided Display Name is not valid")
+        raise ValidationError("Provided Birthdate is not valid.")
 
 
 def _validate_mentor(data, **kwargs):
+    """ Validator to ensure that selected user belongs in the Mentor
+    group."""
     user = User.objects.get(pk=data)
 
     if user.groups.filter(name="Mentor").count():
         return data
-
     else:
-        raise ValidationError("Selected user does not belong to mentor group")
+        raise ValidationError("Please select a user from the mentor group.")
 
 
 class UserProfile(models.Model):
@@ -87,25 +53,47 @@ class UserProfile(models.Model):
     country = models.CharField(max_length=30, blank=False, default="")
     lon = models.FloatField(blank=True, null=True)
     lat = models.FloatField(blank=True, null=True)
-    display_name = models.CharField(max_length=15, blank=True, default="",
-                                    unique=True,
-                                    validators=[_validate_display_name])
+    display_name = models.CharField(
+        max_length=15, blank=True, default="", unique=True,
+        validators=[
+            RegexValidator(regex=r'("")|([A-Za-z0-9_]+)',
+                           message="Please only A-Z characters and "
+                                   "underscores.")
+            ])
     private_email = models.EmailField(blank=False, null=True, default="")
-    mozillians_profile_url = models.URLField(validators=
-                                             [_validate_mozillians_url])
-    twitter_account = models.CharField(max_length=16, default="",
-                                       validators=[_validate_twitter_username],
-                                       blank=True)
+    mozillians_profile_url = models.URLField(
+        verify_exists=True,
+        validators=[
+            RegexValidator(regex=r'http(s)?://(www.)?mozillians.org/',
+                           message="Please provide a valid Mozillians url.")
+            ])
+    twitter_account = models.CharField(
+        max_length=16, default="", blank=True,
+        validators=[
+            RegexValidator(regex=r'("")|([A-Za-z0-9_]+)',
+                           message="Please provide a valid Twitter handle.")
+            ])
     jabber_id = models.CharField(max_length=50, blank=True, default="")
     irc_name = models.CharField(max_length=30, blank=False, default="")
     irc_channels = models.TextField(blank=True, default="")
-    linkedin_url = models.URLField(blank=True, null=True, default="",
-                                   validators=[_validate_linkedin_url])
-    facebook_url = models.URLField(blank=True, null=True, default="",
-                                   validators=[_validate_facebook_url])
-    diaspora_url = models.URLField(blank=True, null=True, default="")
-    personal_website_url = models.URLField(blank=True, null=True, default="")
-    personal_blog_feed = models.URLField(blank=True, null=True, default="")
+    linkedin_url = models.URLField(
+        blank=True, null=True, default="", verify_exists=True,
+        validators=[
+            RegexValidator(regex=r'("")|(http(s)?://(www.)?linkedin.com/)',
+                           message="Please provide a valid LinkedIn url.")
+            ])
+    facebook_url = models.URLField(
+        blank=True, null=True, default="", verify_exists=True,
+        validators=[
+            RegexValidator(regex=r'('')|(http(s)?://(www.)?facebook.com/)',
+                           message="Please provide a valid Facebook url.")
+            ])
+    diaspora_url = models.URLField(blank=True, null=True, default="",
+                                   verify_exists=True)
+    personal_website_url = models.URLField(blank=True, null=True, default="",
+                                           verify_exists=True)
+    personal_blog_feed = models.URLField(blank=True, null=True, default="",
+                                         verify_exists=True)
     added_by = models.ForeignKey(User, null=True, blank=True,
                                  related_name="users_added")
     bio = models.TextField(blank=True, default="")
@@ -116,7 +104,6 @@ class UserProfile(models.Model):
                                related_name="mentors_users",
                                validators=[_validate_mentor])
 
-
     class Meta:
         permissions = (
             ("create_user", "Can create new user"),
@@ -124,16 +111,22 @@ class UserProfile(models.Model):
             )
 
     def clean(self, *args, **kwargs):
-        # ensure that added_by is not the same as user
+        """
+        Ensure that added_by variable does not have the same value as
+        user variable.
+        """
         if self.added_by == self.user:
             raise ValidationError("added_by cannot be the same as user")
 
         return super(UserProfile, self).clean(*args, **kwargs)
 
-
     @property
     def get_age(self):
-        # snippet from http://djangosnippets.org/snippets/557/
+        """ Return the age of the user as an integer.
+
+        Age gets calculated from birth_date variable.
+        Snippet from http://djangosnippets.org/snippets/557/
+        """
         d = datetime.date.today()
         age = (d.year - self.birth_date.year) -\
               int((d.month, d.day) <\
@@ -141,6 +134,11 @@ class UserProfile(models.Model):
         return age
 
     def get_avatar_url(self, size=128):
+        """ Get a url pointing to user's avatar.
+
+        The libravatar network is used for avatars. Optional argument
+        size can be provided to set the avatar size.
+        """
         default_img_url = reduce(lambda u, x: urlparse.urljoin(u, x),
                                  [settings.SITE_URL,
                                   settings.MEDIA_URL,
@@ -153,12 +151,19 @@ class UserProfile(models.Model):
 
 @receiver(pre_save, sender=UserProfile)
 def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
+    # Comments should be of a sentence structure and end in a period.
     """
     Set display_name from user.email if display_name == ''
 
     Not setting username because we want to provide human readable,
-    nice display names. Username is used only if character limit is
-    reached
+    nice display names. Username is used only if character limit (>15)
+    is reached.
+
+    Looping to find a unique display_name is not optimal but since we
+    are focused on UX we can take some db hits to achieve the best
+    possible user experience. Note that we are not expecting more than
+    500 registered users on this website, so name conflicts should be
+    very limited.
     """
     if not instance.display_name:
         email = instance.user.email.split('@')[0]
@@ -173,7 +178,8 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
             except ValidationError:
                 display_name += '_'
                 if len(display_name) > 15:
-                    # oops! just try username, sorry
+                    # We didn't manage to find a unique display_name
+                    # based on email. Just go with calculated username.
                     display_name = instance.user.username
 
             else:

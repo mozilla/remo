@@ -88,3 +88,6 @@ TEMPLATE_CONTEXT_PROCESSORS += (
     'django_browserid.context_processors.browserid_form',
     'django.contrib.messages.context_processors.messages'
     )
+
+# Instruct session-csrf to always produce tokens for anonymous users
+ANON_ALWAYS = True
