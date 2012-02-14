@@ -53,25 +53,25 @@
 ----------------------------------------- */
 
 body {
-	border-top: 3px solid #686868;
-	background: #eee;
+    border-top: 3px solid #686868;
+    background: #eee;
 }
 
 hr {
-	margin: 5px 0 18px;
+    margin: 5px 0 18px;
 }
 
 a:link, a:visited{
-	text-decoration:none;
-	-moz-transition:color .3s ease-in;
-	-webkit-transition:color .3s ease-in;
-	transition:color .3s ease-in;
+    text-decoration:none;
+    -moz-transition:color .3s ease-in;
+    -webkit-transition:color .3s ease-in;
+    transition:color .3s ease-in;
 }
 
 a:hover, a:active{
-	-moz-transition:color .3s ease-out;
-	-webkit-transition:color .3s ease-out;
-	transition:color .3s ease-out;
+    -moz-transition:color .3s ease-out;
+    -webkit-transition:color .3s ease-out;
+    transition:color .3s ease-out;
 }
 
 /* -----------------------------------------
@@ -79,53 +79,53 @@ a:hover, a:active{
 ----------------------------------------- */
 
 #login-box {
-	text-align: right;
-	margin-top: 10px;
+    text-align: right;
+    margin-top: 10px;
 }
 
 #logo-box {
-	font-family: 'MetaNormal';
-	margin-top: 10px;
+    font-family: 'MetaNormal';
+    margin-top: 10px;
 }
 
 #logo-box img {
-	height:40px;
-	float:left;
-	padding: 3px;
+    height:40px;
+    float:left;
+    padding: 3px;
 }
 
 #navigation-box .nav-bar {
-	float: right !important;
+    float: right !important;
 }
 
 #navigation-box ul {
-	margin-bottom: 0px;
-	margin-top: 10px;
-	background: none;
-	border: none;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    background: none;
+    border: none;
 }
 
 
 #navigation-box-mobile ul {
-	margin-bottom: 0px;
-	margin-top: 10px;
-	background: none;
-	border: none;
-	float: none !important;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    background: none;
+    border: none;
+    float: none !important;
 }
 
 @media only screen and (max-width: 767px) {
     #logo-box {
-    text-align:center;
+        text-align:center;
     }
 }
 
 li.last {
-	border-right:none;
+    border-right:none;
 }
 
 li.active {
-	background: #ddd;
+    background: #ddd;
 }
 
 /* -----------------------------------------
@@ -133,20 +133,21 @@ li.active {
 ----------------------------------------- */
 
 .main-section {
-	margin-bottom: 40px;
+    margin-bottom: 40px;
 }
 
 #more-posts {
-	text-align:right;
-	margin: 20px 0px 40px 0px;
+    text-align:right;
+    margin: 20px 0px 40px 0px;
 }
 
 #featured {
-	width: 992px;
-	height: 200px;
-	background: #000 url('/media/img/foundation/orbit/loading.gif') no-repeat center center; overflow: hidden;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
+    width: 992px;
+    height: 200px;
+    background: #000 url('/media/img/foundation/orbit/loading.gif') no-repeat center center; 
+    overflow: hidden;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 /* -----------------------------------------
@@ -162,32 +163,32 @@ li.active {
 }
 
 .view-change {
-	text-align: center;
-	margin-top: 20px;
+    text-align: center;
+    margin-top: 20px;
 }
 
 .grid-profile {
-       padding: 10px !important;
-       -moz-border-radius: 5px;
-       border-radius: 5px;
-       cursor: pointer;
+    padding: 10px !important;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .grid-profile-image img {
-       -moz-border-radius: 5px;
-       border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .grid-profile-text img {
-       text-align: left;
+    text-align: left;
 }
 
 .mobile-list-warning {
-       text-align:center;
+    text-align:center;
 }
 
 #list-people-view {
-       width: 100%;
+    width: 100%;
 }
 
 #profiles_listview {
@@ -199,11 +200,11 @@ li.active {
 ----------------------------------------- */
 
 .grayed {
-	color: #888;
+    color: #888;
 }
 
 .profile-item {
-	margin-top: 20px;
+    margin-top: 20px;
 }
 
 .smallmap-profile-container {
@@ -211,36 +212,36 @@ li.active {
 }
 
 .white.label {
-	background-color: #ccc; color: #444 !important;
+    background-color: #ccc; color: #444 !important;
 }
 
 /* -----------------------------------------
    Edit Profile Styles
 ----------------------------------------- */
 
-#profile-image {
-	margin-top: 20px;
-	text-align: center;
-	color: #888;
-	font-size: 10px;
+.profile-image {
+    margin-top: 20px;
+    text-align: center;
+    color: #888;
+    font-size: 10px;
 }
 
 .align-right {
-	text-align:right !important;
+    text-align:right !important;
 }
 
 #save-profile {
-	margin-top: 50px;
-	margin-bottom: 20px;
-	text-align:right !important;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    text-align:right !important;
 }
 
 .flat {
-	background: none !important;
-	border: none !important;
-	border-bottom: 1px solid #ccc !important;
-	border-radius: 0px !important;
-	width: 100%;
+    background: none !important;
+    border: none !important;
+    border-bottom: 1px solid #ccc !important;
+    border-radius: 0px !important;
+    width: 100%;
 }
 
 .smallmap-profile {
@@ -252,20 +253,20 @@ li.active {
 }
 
 .input-text.big {
-	margin: 20px 0px;
-	width: 100%;
-	background: none !important;
-	border: none !important;
-	border-bottom: 1px solid #ccc !important;
-	border-radius: 0px !important;
+    margin: 20px 0px;
+    width: 100%;
+    background: none !important;
+    border: none !important;
+    border-bottom: 1px solid #ccc !important;
+    border-radius: 0px !important;
 }
 
 .input-text {
-	margin: 20px 0px !important;
-	background: none !important;
-	border: none !important;
-	border-bottom: 1px solid #ccc !important;
-	border-radius: 0px !important;
+    margin: 20px 0px !important;
+    background: none !important;
+    border: none !important;
+    border-bottom: 1px solid #ccc !important;
+    border-radius: 0px !important;
 }
 
 /* -----------------------------------------
@@ -273,19 +274,19 @@ li.active {
 ----------------------------------------- */
 
 .use-those {
-	margin-top: 50px;
-	text-align: right;
+    margin-top: 50px;
+    text-align: right;
 }
 
 .small.button.close-reveal-modal {
-	font-size: 11px;
-	line-height: 1;
-	position: relative;
-	top: 0px;
-	right: 0px;
-	color: #fff;
-	font-weight: bold;
-	cursor: pointer;
+    font-size: 11px;
+    line-height: 1;
+    position: relative;
+    top: 0px;
+    right: 0px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* -----------------------------------------
@@ -293,14 +294,14 @@ li.active {
 ----------------------------------------- */
 
 .large.button.close-reveal-modal {
-	font-size: 18px;
-	line-height: 1;
-	position: relative;
-	top: 0px;
-	right: 0px;
-	color: #fff;
-	font-weight: bold;
-	cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    position: relative;
+    top: 0px;
+    right: 0px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* -----------------------------------------
@@ -308,46 +309,46 @@ li.active {
 ----------------------------------------- */
 
 #footer h3 a:hover,#footer h3 a:active{
-	background:-moz-radial-gradient(center 45deg,ellipse closest-side,rgba(255,255,255,0.3) 0,rgba(255,255,255,0) 100%);
-	-moz-transition:background .2s ease-in-out;
+    background:-moz-radial-gradient(center 45deg,ellipse closest-side,rgba(255,255,255,0.3) 0,rgba(255,255,255,0) 100%);
+    -moz-transition:background .2s ease-in-out;
 }
 
 #footer{
-	text-align:center;
-	color: rgb(153, 153, 153);
-	clear: both;
-	padding: 50px 0pt 20px;
+    text-align:center;
+    color: rgb(153, 153, 153);
+    clear: both;
+    padding: 50px 0pt 20px;
 }
 
 #footer-contents{
-	width:980px;
-	text-align:left;
-	margin:auto;
+    width:980px;
+    text-align:left;
+    margin:auto;
 }
 
 #footer-contents[dir=rtl]{
-	text-align:right;
+    text-align:right;
 }
 
 #footer h3 a,#footer h3 a:link,#footer h3 a:visited{
-	display:block;
-	height:40px;
-	width:100px;
-	text-indent:-200px;
-	font-size:1px;
-	overflow:hidden;
+    display:block;
+    height:40px;
+    width:100px;
+    text-indent:-200px;
+    font-size:1px;
+    overflow:hidden;
 }
 
 #footer li li a:link,#footer li li a:visited{
-	color:#669be1;
-	font-family:georgia,serif;
-	font-weight:normal;
-	font-size:13px;
-	text-transform:none;
+    color:#669be1;
+    font-family:georgia,serif;
+    font-weight:normal;
+    font-size:13px;
+    text-transform:none;
 }
 
 #footer li li a:hover,#footer li li a:active{
-	color:#fff;
+    color:#fff;
 }
 
 
@@ -356,7 +357,7 @@ li.active {
 ----------------------------------------- */
 
 small.error {
-	margin: -20px 0px 20px 4px;
+    margin: -20px 0px 20px 4px;
 }
 
 /* -----------------------------------------
@@ -364,34 +365,34 @@ small.error {
 ----------------------------------------- */
 
 .pictogram-button {
-	margin-top: 20px;
-	text-align:center;
-	font-family: "ModernPictogramsNormal";
-	font-size: 30px;
-	color: #ccc;
-	cursor: pointer;
+    margin-top: 20px;
+    text-align:center;
+    font-family: "ModernPictogramsNormal";
+    font-size: 30px;
+    color: #ccc;
+    cursor: pointer;
 }
 
 .pictogram {
-	margin-top: 20px;
-	text-align:center;
-	font-family: "ModernPictogramsNormal";
-	font-size: 30px;
-	color: #aaa;
-	cursor: default;
+    margin-top: 20px;
+    text-align:center;
+    font-family: "ModernPictogramsNormal";
+    font-size: 30px;
+    color: #aaa;
+    cursor: default;
 }
 
 .pictogram-button.active, .pictogram-button:hover {
-	color: #888;
+    color: #888;
 }
 
 .pictogram-search {
-	float:left;
-	font-family: "ModernPictogramsNormal";
-	font-size: 30px;
-	text-align:center;
-	color: #ccc;
-	cursor: default;
+    float:left;
+    font-family: "ModernPictogramsNormal";
+    font-size: 30px;
+    text-align:center;
+    color: #ccc;
+    cursor: default;
 }
 
 /* -----------------------------------------
@@ -399,11 +400,8 @@ small.error {
 ----------------------------------------- */
 
 .ItemTitle {
-	font-weight:bold;
-	margin:20px 0px 0px 0px;
-}
-
-.ItemContent {
+    font-weight:bold;
+    margin:20px 0px 0px 0px;
 }
 
 /* -----------------------------------------
@@ -411,14 +409,14 @@ small.error {
 ----------------------------------------- */
 
 #gray-logo {
-	text-align:center;
-	margin-top:20px;
+    text-align:center;
+    margin-top:20px;
 }
 
 #about p {
-	font-weight:bold;
-	color: #777;
-	text-align: justify;
+    font-weight:bold;
+    color: #777;
+    text-align: justify;
 }
 
 /* -----------------------------------------
@@ -430,18 +428,22 @@ small.error {
 }
 
 .flat.big {
-	height: 200px;
+    height: 200px;
 }
 
 .featured-button {
-	margin-top: 20px;
-	margin-bottom: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .featured-edit {
-	float:left;
+    float:left;
 }
 
 .featured-delete {
-	float:right;
+    float:right;
+}
+
+select#id_user {
+    display: none;
 }
