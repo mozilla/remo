@@ -1,264 +1,246 @@
 <!DOCTYPE html>
-
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+<!--[if lt IE 7]>
+  <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en">
+<![endif]-->
+
+<!--[if IE 7]>
+  <html class="no-js lt-ie9 lt-ie8" lang="en">
+<![endif]-->
+
+<!--[if IE 8]>
+  <html class="no-js lt-ie9" lang="en">
+<![endif]-->
+
+<!--[if gt IE 8]>
+<!-->
+  <html lang="en">
+<!--<![endif]-->
+
 <head>
-    <meta charset="utf-8" />
-
-    <!-- Set the viewport width to device width for mobile -->
-    <meta name="viewport" content="width=device-width" />
-
-    <title>{% block pagetitle %}Mozilla Reps{% endblock%}</title>
-
-    <link rel="shortcut icon"  href="/media/img/remo/shortcut.ico" />
-
-    <!-- Included CSS Files -->
-    <link rel="stylesheet" href="/media/css/remo/foundation.css">
-
-    <!--[if lt IE 9]>
-        <link rel="stylesheet" href="/media/css/remo/ie.css">
-    <![endif]-->
-
-
-    <!-- IE Fix for HTML5 Tags -->
-    <!--[if lt IE 9]>
-        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    {% block headextra %}
-    {% endblock %}
-
-    <!-- our css is always last to override stuff -->
-    <link rel="stylesheet" href="/media/css/remo/app.css">
-
+  <meta charset="utf-8" />
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+  <title>
+    {% block pagetitle %}Mozilla Reps{% endblock%}
+  </title>
+  <link rel="shortcut icon" href="{{ MEDIA_URL }}img/remo/shortcut.ico" />
+  <!-- Included CSS Files -->
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/remo/foundation.css">
+  <!--[if lt IE 9]>
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/remo/ie.css">
+  <![endif]-->
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js">
+    </script>
+  <![endif]-->
+  {% block headextra %} {% endblock %}
+  <!-- our css is always last to override stuff -->
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/remo/app.css">
 </head>
+
 <body>
 
-    <!-- container -->
-    <div class="container">
+  <!-- container -->
+  <div class="container">
 
-        <!-- Header -->
-        <header class="row">
-            <div class="twelve columns">
+    <!-- Header -->
+    <header class="row">
+      <div class="twelve columns">
 
-                <!-- Sign In & Mozilla Tab -->
-                <div class="row">
-
-                    <!-- Mozilla Tab -->
-		    <div class="two columns phone-one push-three-phone push-ten" id="global-header-tab">
-                        <a href="http://mozilla.org/"><img src="/media/img/remo/mozilla-tab.png" alt="mozilla.org"></a>
-
-                    </div>
-
-                    <!-- Sign In & Sign Out -->
-                   <div class="ten columns phone-three pull-one-phone pull-two" id="login-box">
-                        <ul>
-                            <li class="account anonymous nomenu logout">
-			    {% if not user.is_authenticated %}
-			    <a id="browserid" href="#">Sign In</a>
-			    <form method="POST" action="{% url browserid_verify %}">
-			    {% csrf_token %}
-			    {{ browserid_form.as_p }}
-			    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-			    </form>
-			    {% else %}
-			    <a href="{% url profiles_view_my_profile %}">{{ user.get_full_name|default:user.userprofile.display_name}}</a>
-			    [<a href="{% url logout %}">Sign out</a>]
-			    {% endif %}
-			    </li>
-
-                        </ul>
-                    </div>
-
-                </div>
-
-
-		<!-- Logo & Navigation -->
-                <div class="row">
-
-                    <!-- Logo and Wordmark -->
-                    <div class="four columns" id="logo-box">
-		        <div class="row hide-on-phones">
-			        <img src="/media/img/remo/remo_logo_medium.png" alt="Mozilla Reps logo">
-                                <h3>mozilla reps</h3>
-                        </div>
-			<div class="row show-on-phones">
-			  <h2>mozilla reps mobile</h2>
-			</div>
-                    </div>
-
-                    <!-- Navigation -->
-                    <div class="eight columns hide-on-phones" id="navigation-box">
-                        <ul class="nav-bar">
-                            <li>
-                                <a href="{% url main %}" class="main">Main</a>
-                                </li>
-                            <li>
-                                <a href="{% url profiles_list_profiles %}" class="main">People</a>
-                            </li>
-                            <li>
-                                <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
-                            </li>
-                            <li>
-                                <a href="#" class="main" data-reveal-id="labs-modal">Labs</a>
-                            </li>
-                            <li>
-                                <a href="http://planet.mozillareps.org" class="main">Planet</a>
-                            </li>
-                            <li>
-                                <a href="https://wiki.mozilla.org/ReMo" class="main">Wiki</a>
-                            </li>
-                            <li class="last">
-                                <a href="#" class="main" data-reveal-id="join-modal">Join</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Mobile Navigation -->
-                    <div class="eight columns show-on-phones" id="navigation-box-mobile">
-                        <ul class="nav-bar">
-                            <li>
-                                <a href="{% url main %}" class="main">Main</a>
-                                </li>
-                            <li>
-                                <a href="{% url profiles_list_profiles %}" class="main">People</a>
-                            </li>
-                            <li>
-                                <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-        </header>
-
-        <!-- Separator -->
+        <!-- Sign In & Mozilla Tab -->
         <div class="row">
-            <hr />
+
+          <!-- Mozilla Tab -->
+          <div class="two columns phone-one push-three-phone push-ten" id="global-header-tab">
+            <a href="http://mozilla.org/"><img src="{{ MEDIA_URL }}img/remo/mozilla-tab.png" alt="mozilla.org"></a>
+          </div>
+
+          <!-- Sign In & Sign Out -->
+          <div class="ten columns phone-three pull-one-phone pull-two" id="login-box">
+            <ul>
+              <li class="account anonymous nomenu logout">
+                {% if not user.is_authenticated %}
+                <a id="browserid" href="#">Sign In</a>
+                <form method="POST" action="{% url browserid_verify %}">
+                  {% csrf_token %} {{ browserid_form.as_p }}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                </form>
+                {% else %}
+                <a href="{% url profiles_view_my_profile %}">{{ user.get_full_name|default:user.userprofile.display_name}}</a>
+                [<a href="{% url logout %}">Sign out</a>]
+                {% endif %}
+              </li>
+            </ul>
+          </div>
         </div>
 
+        <!-- Logo & Navigation -->
+        <div class="row">
 
-        <!-- Page Content -->
-{% if messages %}
-	<div class="row">
-    {% for message in messages %}
-	<div class="alert-box {{ message.tags }}">
-	  {{ message }}
-	  <a href="" class="close">&times;</a>
-	</div>
-    {% endfor %}
+          <!-- Logo and Wordmark -->
+          <div class="four columns" id="logo-box">
+            <div class="row hide-on-phones">
+              <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png" alt="Mozilla Reps logo">
+              <h3>mozilla reps</h3>
+            </div>
+            <div class="row show-on-phones">
+              <h2>mozilla reps mobile</h2>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="eight columns hide-on-phones" id="navigation-box">
+            <ul class="nav-bar">
+              <li>
+                <a href="{% url main %}" class="main">Main</a>
+              </li>
+              <li>
+                <a href="{% url profiles_list_profiles %}" class="main">People</a>
+              </li>
+              <li>
+                <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
+              </li>
+              <li>
+                <a href="#" class="main" data-reveal-id="labs-modal">Labs</a>
+              </li>
+              <li>
+                <a href="http://planet.mozillareps.org" class="main">Planet</a>
+              </li>
+              <li>
+                <a href="https://wiki.mozilla.org/ReMo" class="main">Wiki</a>
+              </li>
+              <li class="last">
+                <a href="#" class="main" data-reveal-id="join-modal">Join</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Mobile Navigation -->
+          <div class="eight columns show-on-phones" id="navigation-box-mobile">
+            <ul class="nav-bar">
+              <li>
+                <a href="{% url main %}" class="main">Main</a>
+              </li>
+              <li>
+                <a href="{% url profiles_list_profiles %}" class="main">People</a>
+              </li>
+              <li>
+                <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- Separator -->
+    <div class="row">
+      <hr>
     </div>
-{% endif %}
 
+    <!-- Page Content -->
+    {% if messages %}
+    <div class="row">
+      {% for message in messages %}
+      <div class="alert-box {{ message.tags }}">
+        {{ message }}
+        <a href="" class="close">&times;</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
 
-	{% block content %}
-	{% endblock %}
-
-
-    <!-- container -->
+    {% block content %}
+    {% endblock %}
 
     <!-- Footer -->
     <div id="footer" class="hide-on-phones">
-        <div class="row">
-            <hr />
+      <div class="row">
+        <hr />
+      </div>
+      <div id="footer-contents">
+        <div id="copyright">
+          <p id="footer-links">
+            <a href="http://www.mozilla.org/en-US/privacy-policy.html">Privacy Policy</a>
+            &nbsp;|&nbsp;
+            <a href="http://www.mozilla.org/en-US/about/legal.html">Legal Notices</a>
+            &nbsp;|&nbsp;
+            <a href="http://www.mozilla.org/en-US/legal/fraud-report/index.html">Report Trademark Abuse</a>
+          </p>
+          <p>
+            Except where otherwise
+            <a href="http://www.mozilla.org/en-US/about/legal.html#site">noted</a>
+            , content on this site is licensed under the
+            <br />
+            <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative
+Commons Attribution Share-Alike License v3.0</a>
+            or any later version.
+          </p>
         </div>
-        <div id="footer-contents">
-            <div id="copyright">
-                <p id="footer-links"><a href="http://www.mozilla.org/en-US/privacy-policy.html">Privacy Policy</a> &nbsp;|&nbsp;
-                <a href="http://www.mozilla.org/en-US/about/legal.html">Legal Notices</a> &nbsp;|&nbsp;
-                <a href="http://www.mozilla.org/en-US/legal/fraud-report/index.html">Report Trademark Abuse</a></p>
-                <p>Except where
-                otherwise <a href="http://www.mozilla.org/en-US/about/legal.html#site">noted</a>,
-                content on this site is licensed under the
-                <br /><a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative
-                Commons Attribution Share-Alike License v3.0</a> or any
-                later version.</p>
-            </div>
-        </div>
+      </div>
     </div>
-
-    <!-- join modal start -->
+    <!-- Join modal start -->
     <div id="join-modal" class="reveal-modal">
-        <p class="lead">So, you wanna join us?</p>
-        <h2>Cool!</h2>
-        <p>
-        While the Mozilla Reps program is open to all existing
-        Mozilla Community members, becoming a Mozilla Rep involves a
-        short but rigorous application process to make sure those
-        interested are motivated and ready to take on a leadership
-        role within the Mozilla community.
-
-        If you feel up to the challenge and ready to take your
-        participation in the Mozilla project to the next level, apply
-        today to become a Mozilla Rep! The process involves three
-        simple steps:
-        </p>
-        <ul>
-	  <li>
-	  <h4>Step 1</h4>
-	  Fill out and submit the <a
-	  href="https://bugzilla.mozilla.org/form.reps.mentorship">Mozilla
-	  Reps application form</a>. A Mozilla Rep mentor will be in
-	  touch within 24 hours.
-	  </li>
-
-	  <li>
-	  <h4>Step 2</h4>
-	  If your application is approved, you'll be invited to be
-	  interviewed by a member of the advisory council over IRC or
-	  IM that same week. The interview lasts about 15 minutes and
-	  you will be asked some simple questions about yourself, your
-	  experience contributing to the Mozilla project and, of
-	  course, your motivation for becoming a MozRep.
-	  </li>
-
-	  <li>
-	  <h4>Step 3</h4>
-	  If you pass the interview, your Mozilla Rep mentor who will
-	  get you started and familiar with the tools at your disposal
-	  to start organizing events, requesting budgets, swag, etc.
-	  </li>
-        </ul>
-
-	<p>
-        And just like that, you could become a Mozilla Rep!
-	</p>
-        <a class="close-reveal-modal">&#215;</a>
+      <p class="lead">So, you wanna join us?</p>
+      <h2>Cool!</h2>
+      <p>While the Mozilla Reps program is open to all existing Mozilla Community members,
+        becoming a Mozilla Rep involves a short but rigorous application process to make
+        sure those interested are motivated and ready to take on a leadership role within
+        the Mozilla community. If you feel up to the challenge and ready to take your participation
+        in the Mozilla project to the next level, apply today to become a Mozilla Rep! The
+        process involves three simple steps:</p>
+      <ul>
+        <li>
+          <h4>Step 1</h4>
+          <p>Fill out and submit the
+          <a href="https://bugzilla.mozilla.org/form.reps.mentorship">Mozilla
+Reps application form</a>
+          . A Mozilla Rep mentor will be in touch within 24 hours.</p>
+        </li>
+        <li>
+          <h4>Step 2</h4>
+          <p>If your application is approved, you'll be invited to be interviewed by a member
+          of the advisory council over IRC or IM that same week. The interview lasts about
+          15 minutes and you will be asked some simple questions about yourself, your experience
+          contributing to the Mozilla project and, of course, your motivation for becoming
+          a MozRep.</p>
+        </li>
+        <li>
+          <h4>Step 3</h4>
+          <p>If you pass the interview, your Mozilla Rep mentor who will get you started and
+          familiar with the tools at your disposal to start organizing events, requesting budgets,
+          swag, etc.</p>
+        </li>
+      </ul>
+      <p>And just like that, you could become a Mozilla Rep!</p>
+      <a class="close-reveal-modal">&#215;</a>
     </div>
-    <!-- join modal end -->
+    <!-- Join modal end -->
 
     <!-- Labs Reveal Modal -->
     <div id="labs-modal" class="reveal-modal">
-        <a class="close-reveal-modal">&#215;</a>
-        <p class="lead">Reps is all about experimenting!</p>
-        <h2>Labs are coming...</h2>
-
-        <p>In this section of our site we will be developing, testing
-        and showcasing awesome new tools for Mozilla Reps.<p>
-
-        <p>Do you have what it takes to experiment and help us shape the
-        future of Mozilla Reps tools? Drop by #remo-dev or subscribe to
-        <a href="https://lists.mozilla.org/listinfo/reps-webdev">our
-        mailing list</a> to share your ideas and start hacking!</p>
+      <a class="close-reveal-modal">&#215;</a>
+      <p class="lead">Reps is all about experimenting!</p>
+      <h2>Labs are coming...</h2>
+      <p>In this section of our site we will be developing, testing and showcasing awesome new 
+      tools for Mozilla Reps.</p>
+      <p>Do you have what it takes to experiment and help us shape the future of Mozilla Reps 
+      tools? Drop by #remo-dev or subscribe to <a href="https://lists.mozilla.org/listinfo/reps-webdev">our mailing
+      list</a> to share your ideas and start hacking!</p>
     </div>
     <!-- Labs Reveal Modal End -->
 
     <!-- Included JS Files -->
-    <script src="/media/js/jquery-1.7.1.min.js"></script>
-    <script src="/media/js/modernizr.foundation.js"></script>
-    <script src="/media/js/foundation.js"></script>
+    <script src="{{ MEDIA_URL }}js/modernizr.foundation.js"></script>
+    <script src="{{ MEDIA_URL }}js/foundation.js"></script>
     <script src="https://browserid.org/include.js" type="text/javascript"></script>
-    <script src="/media/js/activate.browserid.js" type="text/javascript"></script>
-
-    {% block bottomextra %}
-    {% endblock %}
-
+    <script src="{{ MEDIA_URL }}js/activate.browserid.js" type="text/javascript"></script>
+    {% block bottomextra %} {% endblock %}
     <!-- Our app.js is always last to override stuff -->
-    <script src="/media/js/app.js"></script>
+    <script src="{{ MEDIA_URL }}js/app.js"></script>
+</body>
 
- </body>
 </html>

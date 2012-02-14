@@ -1,255 +1,285 @@
 {% extends "base.html" %}
-
 {% load markup %}
 
-{% block pagetitle %}
-Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
-{% endblock %}
+{% block pagetitle %} Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }} {% endblock %} 
+
 {% block content %}
-
+<div class="row">
+  <div class="six columns">
+    <div class="row">
+      <div class="one columns pictogram">
+        J
+      </div>
+      <div class="eleven columns">
+        <br>
+        <h4>
+          {{ pageuser.first_name }}
+        </h4>
+        <h4>
+          {{ pageuser.last_name }}
+        </h4>
+        {% if pageuser == request.user %}
+        <span class="grayed">
+          (this is you!)
+        </span>
+        {% else %}
+        <br>
+        {% endif %}
+        {% if pageuser.userprofile.local_name %}
+        <h5 class="grayed">
+          {{ pageuser.userprofile.local_name }}
+          </h4>
+          {% endif %}
+          <h5 class="grayed">
+            {{ pageuser.userprofile.display_name }}
+          </h5>
+      </div>
+    </div>
+  </div>
+  <div class="six columns">
+    <div class="row">
+      <div class="one columns pictogram">
+        A
+      </div>
+      <div class="eleven columns">
         <div class="row">
-
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        J
-                    </div>
-                    <div class="eleven columns">
-                        <br>
-                        <h4>{{ pageuser.first_name }}</h4>
-                        <h4>{{ pageuser.last_name }}</h4>
-                        <br>
-		        {% if pageuser == request.user %}
-		        <span class="grayed">(this is you!)</span>
-		        {% endif %}
-		        {% if pageuser.userprofile.local_name %}
-                        <h5 class="grayed">{{ pageuser.userprofile.local_name }}</h4>
-		        {% endif %}
-                        <h5 class="grayed">{{ pageuser.userprofile.display_name }}</h5>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        A
-                    </div>
-                    <div class="eleven columns">
-                        <div class="row">
-                            <div id="profile-image" class="four columns">
-                                <img src="{{ pageuser.userprofile.get_avatar_url }}" width="128">
-                            </div>
-                            <div class="eight columns smallmap-profile-container">
-                                <div id="map" class="smallmap-profile"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-
-        <div class="row">
-
-            <div class="six columns">
-                <div class="row">
-		  {% if pageuser.userprofile.bio %}
-		    <div class="one columns pictogram">
-                        V
-                    </div>
-                    <div class="eleven columns"><br>
-		      <p>
-		      {{ pageuser.userprofile.bio|restructuredtext }}
-		      </p>
-                    </div>
-		  {% endif %}
-                </div>
-            </div>
-
-
-            <div class="six columns">
-                <div class="row">
-                    <div class="one columns pictogram">
-                        p
-                    </div>
-                    <div class="eleven columns">
-                        <p class="profile-item">
-                            <span class="white radius label">Location</span> <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.city }}">{{ pageuser.userprofile.city }}</a> -  <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.region }}">{{ pageuser.userprofile.region }}</a> -  <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.country }}">{{ pageuser.userprofile.country }}</a>
-                        </p>
-                        <p class="profile-item">
-                            <span class="white radius label">Age</span> {{ pageuser.userprofile.get_age }}
-                        </p>
-                        <p class="profile-item">
-                            <span class="white radius label">Gender</span> {{ pageuser.userprofile.get_gender_display }}
-                        </p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="one columns pictogram">
-                        @
-                    </div>
-                    <div class="eleven columns">
-                        <p class="profile-item">
-                            <span class="white radius label">Personal Mail</span> {{ pageuser.userprofile.private_email }}
-                        </p>
-                        <p class="profile-item">
-                            <span class="white radius label">Bugzilla Mail</span> {{ pageuser.email }}
-                        </p>
-                        <p class="profile-item">
-                            <span class="white radius label">Mozillians Profile</span> <a href="{{ pageuser.userprofile.mozillians_profile_url }}">{{ pageuser.userprofile.mozillians_profile_url }}</a>
-                        </p>
-		      {% if pageuser.userprofile.mentor %}
-                        <p class="profile-item">
-                            <span class="white radius label">Mentor</span> <a href="{% url profiles_view_profile pageuser.userprofile.mentor.userprofile.display_name %}">{{ pageuser.userprofile.mentor.get_full_name }}</a>
-                        </p>
-		      {% endif %}
-
-		    </div>
-                </div>
-                <div class="row">
-		    {% if pageuser.userprofile.twitter_account or pageuser.userprofile.facebook_url or pageuser.userprofile.diaspora_url or pageuser.userprofile.linkedin_url %}
-                    <div class="one columns pictogram">
-                        T
-                    </div>
-                    <div class="eleven columns">
-		      {% if pageuser.userprofile.twitter_account %}
-		         <p class="profile-item">
-                            <span class="white radius label">Twitter handle</span> <a href="http://twitter.com/#!/{{ pageuser.userprofile.twitter_account }}">@{{ pageuser.userprofile.twitter_account }}</a>
-                        </p>
-		      {% endif %}
-		      {% if pageuser.userprofile.facebook_url %}
-                        <p class="profile-item">
-                            <span class="white radius label">Facebook profile</span> {{ pageuser.userprofile.facebook_url|urlizetrunc:50 }}
-                        </p>
-		      {% endif %}
-		      {% if pageuser.userprofile.diaspora_url %}
-                        <p class="profile-item">
-                            <span class="white radius label">Diaspora profile</span> {{ pageuser.userprofile.diaspora_url|urlizetrunc:50 }}
-                        </p>
-		      {% endif %}
-		      {% if pageuser.userprofile.linkedin_url %}
-                        <p class="profile-item">
-                            <span class="white radius label">LinkedIn profile</span> {{ pageuser.userprofile.linkedin_url|urlizetrunc:50 }}
-                        </p>
-		      {% endif %}
-                    </div>
-		    {% endif %}
-
-		</div>
-                <div class="row">
-                    <div class="one columns pictogram">
-                        b
-                    </div>
-                    <div class="eleven columns">
-		      {% if pageuser.userprofile.jabber_id %}
-                        <p class="profile-item">
-                            <span class="white radius label">Jabber ID</span> {{ pageuser.userprofile.jabber_id }}
-                        </p>
-		      {% endif %}
-                        <p class="profile-item">
-                            <span class="white radius label">IRC nickname</span> {{ pageuser.userprofile.irc_name }}
-                        </p>
-		      {% if pageuser.userprofile.irc_channels %}
-                        <p class="profile-item">
-                            <span class="white radius label">IRC channels</span> {{ pageuser.userprofile.irc_channels }}
-                        </p>
-		      {% endif %}
-                    </div>
-                </div>
-                <div class="row">
-		  {% if pageuser.userprofile.personal_website_url or pageuser.userprofile.personal_blog_feed %}
-                    <div class="one columns pictogram">
-                        w
-                    </div>
-                    <div class="eleven columns">
-		      {% if pageuser.userprofile.personal_website_url %}
-                        <p class="profile-item">
-                            <span class="white radius label">Personal Site</span> {{ pageuser.userprofile.personal_website_url|urlizetrunc:50 }}
-                        </p>
-		      {% endif %}
-		      {% if pageuser.userprofile.personal_blog_feed %}
-                        <p class="profile-item">
-                            <span class="white radius label">Personal Blog Feed</span> {{ pageuser.userprofile.personal_blog_feed|urlizetrunc:50 }}
-                        </p>
-		      {% endif %}
-                    </div>
-		  {% endif %}
-                </div>
-
-		{% if pageuser.userprofile.added_by and perms.profiles.can_edit_profile %}
-		<div class="row">
-                    <div class="one columns pictogram">
-                        l
-                    </div>
-                    <div class="eleven columns">
-                        <p class="profile-item">
-                            <span class="white radius label">Added by</span> <a href="{% url profiles_view_profile display_name=pageuser.userprofile.added_by.userprofile.display_name %}">{{ pageuser.userprofile.added_by.userprofile.display_name }}</a>
-                        </p>
-                    </div>
-                </div>
-		{% endif %}
-
+          <div class="four columns profile-image">
+            <img src="{{ pageuser.userprofile.get_avatar_url }}" width="128">
           </div>
-
-        </div>
-
-	{% if user == pageuser or perms.profiles.can_edit_profiles %}
-        <div class="row">
-            <div id="save-profile" class="twelve columns align-right">
-                <a href="{% url profiles_edit pageuser.userprofile.display_name %}" class="small white button nice radius">Edit profile</a>
+          <div class="eight columns smallmap-profile-container">
+            <div id="map" class="smallmap-profile">
             </div>
+          </div>
         </div>
-	{% endif %}
-
-        </form>
-
+      </div>
     </div>
-
-
-    <!-- Map Point Reveal Modal -->
-    <div id="map-point" class="reveal-modal">
-        <a class="close-reveal-modal">&#215;</a>
-        <div class="row">
-            <div class="twelve columns">
-                <p class="lead">Please click your location in the map</p>
-                <div id="map" class="smallmap"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="six columns">
-                <input type="text" placeholder="Latitude" class="input-text point-lat-temp">
-                <input type="text" placeholder="Longitude" class="input-text point-long-temp">
-            </div>
-            <div class="six columns use-those">
-                <a href="#" class="small blue button nice radius close-reveal">Use those &raquo;</a>
-            </div>
-        </div>
+  </div>
+</div>
+<div class="row">
+  <div class="six columns">
+    <div class="row">
+      {% if pageuser.userprofile.bio %}
+      <div class="one columns pictogram">
+        V
+      </div>
+      <div class="eleven columns">
+        <br>
+        <p>
+          {{ pageuser.userprofile.bio|restructuredtext }}
+        </p>
+      </div>
+      {% endif %}
     </div>
-
-    <!-- Delete Profile Reveal Modal -->
-    <div id="delete-profile" class="reveal-modal">
-        <a class="close-reveal-modal">&#215;</a>
-        <p class="lead">Are you sure you want to do that?</p>
-        <h2>Warning!</h2>
-        <p>By pressing the following button you will permanently and irreversibly delete the profile of this Rep.<p>
-        <a href="#" class="large red button nice radius">Delete profile</a>
+  </div>
+  <div class="six columns">
+    <div class="row">
+      <div class="one columns pictogram">
+        p
+      </div>
+      <div class="eleven columns">
+        <p class="profile-item">
+          <span class="white radius label">
+            Location
+          </span>
+          &nbsp;<a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.city }}">{{ pageuser.userprofile.city }}</a>
+          -
+          <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.region }}">{{ pageuser.userprofile.region }}</a>
+          -
+          <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.country }}">{{ pageuser.userprofile.country }}</a>
+        </p>
+        <p class="profile-item">
+          <span class="white radius label">
+            Age
+          </span>
+          &nbsp;{{ pageuser.userprofile.get_age }}
+        </p>
+        <p class="profile-item">
+          <span class="white radius label">
+            Gender
+          </span>
+          &nbsp;{{ pageuser.userprofile.get_gender_display }}
+        </p>
+      </div>
     </div>
+    <div class="row">
+      <div class="one columns pictogram">
+        @
+      </div>
+      <div class="eleven columns">
+        <p class="profile-item">
+          <span class="white radius label">
+            Personal Mail
+          </span>
+          &nbsp;{{ pageuser.userprofile.private_email }}
+        </p>
+        <p class="profile-item">
+          <span class="white radius label">
+            Bugzilla Mail
+          </span>
+          &nbsp;{{ pageuser.email }}
+        </p>
+        <p class="profile-item">
+          <span class="white radius label">
+            Mozillians Profile
+          </span>
+          &nbsp;<a href="{{ pageuser.userprofile.mozillians_profile_url }}">{{ pageuser.userprofile.mozillians_profile_url }}</a>
+        </p>
+        {% if pageuser.userprofile.mentor %}
+        <p class="profile-item">
+          <span class="white radius label">
+            Mentor
+          </span>
+          &nbsp;<a href="{% url profiles_view_profile pageuser.userprofile.mentor.userprofile.display_name %}">{{ pageuser.userprofile.mentor.get_full_name }}</a>
+        </p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row">
+      {% if pageuser.userprofile.twitter_account or pageuser.userprofile.facebook_url or pageuser.userprofile.diaspora_url or pageuser.userprofile.linkedin_url %}
+      <div class="one columns pictogram">
+        T
+      </div>
+      <div class="eleven columns">
+        {% if pageuser.userprofile.twitter_account %}
+        <p class="profile-item">
+          <span class="white radius label">
+            Twitter handle
+          </span>
+          &nbsp;<a href="http://twitter.com/#!/{{ pageuser.userprofile.twitter_account }}">@{{ pageuser.userprofile.twitter_account }}</a>
+        </p>
+        {% endif %}
+        {% if pageuser.userprofile.facebook_url %}
+        <p class="profile-item">
+          <span class="white radius label">
+            Facebook profile
+          </span>
+          &nbsp;{{ pageuser.userprofile.facebook_url|urlizetrunc:50 }}
+        </p>
+        {% endif %}
+        {% if pageuser.userprofile.diaspora_url %}
+        <p class="profile-item">
+          <span class="white radius label">
+            Diaspora profile
+          </span>
+          &nbsp;{{ pageuser.userprofile.diaspora_url|urlizetrunc:50 }}
+        </p>
+        {% endif %}
+        {% if pageuser.userprofile.linkedin_url %}
+        <p class="profile-item">
+          <span class="white radius label">
+            LinkedIn profile
+          </span>
+          &nbsp;{{ pageuser.userprofile.linkedin_url|urlizetrunc:50 }}
+        </p>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+    <div class="row">
+      <div class="one columns pictogram">
+        b
+      </div>
+      <div class="eleven columns">
+        {% if pageuser.userprofile.jabber_id %}
+        <p class="profile-item">
+          <span class="white radius label">
+            Jabber ID
+          </span>
+          &nbsp;{{ pageuser.userprofile.jabber_id }}
+        </p>
+        {% endif %}
+        <p class="profile-item">
+          <span class="white radius label">
+            IRC nickname
+          </span>
+          &nbsp;{{ pageuser.userprofile.irc_name }}
+        </p>
+        {% if pageuser.userprofile.irc_channels %}
+        <p class="profile-item">
+          <span class="white radius label">
+            IRC channels
+          </span>
+          &nbsp;{{ pageuser.userprofile.irc_channels }}
+        </p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row">
+      {% if pageuser.userprofile.personal_website_url or pageuser.userprofile.personal_blog_feed %}
+      <div class="one columns pictogram">
+        w
+      </div>
+      <div class="eleven columns">
+        {% if pageuser.userprofile.personal_website_url %}
+        <p class="profile-item">
+          <span class="white radius label">
+            Personal Site
+          </span>
+          &nbsp;{{ pageuser.userprofile.personal_website_url|urlizetrunc:50 }}
+        </p>
+        {% endif %} {% if pageuser.userprofile.personal_blog_feed %}
+        <p class="profile-item">
+          <span class="white radius label">
+            Personal Blog Feed
+          </span>
+          &nbsp;{{ pageuser.userprofile.personal_blog_feed|urlizetrunc:50 }}
+        </p>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% if pageuser.userprofile.added_by and perms.profiles.can_edit_profile %}
+    <div class="row">
+      <div class="one columns pictogram">
+        l
+      </div>
+      <div class="eleven columns">
+        <p class="profile-item">
+          <span class="white radius label">
+            Added by
+          </span>
+          &nbsp;<a href="{% url profiles_view_profile display_name=pageuser.userprofile.added_by.userprofile.display_name %}">{{ pageuser.userprofile.added_by.userprofile.display_name }}</a>
+        </p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% if user == pageuser or perms.profiles.can_edit_profiles %}
+<div class="row">
+  <div id="save-profile" class="twelve columns align-right">
+    <a href="{% url profiles_edit pageuser.userprofile.display_name %}" class="small white button nice radius">Edit profile</a>
+  </div>
+</div>
+{% endif %}
+</div>
 
-
+<!-- Delete Profile Reveal Modal -->
+<div id="delete-profile" class="reveal-modal">
+  <a class="close-reveal-modal">&#215;</a>
+  <p class="lead">
+    Are you sure you want to do that?
+  </p>
+  <h2>
+    Warning!
+  </h2>
+  <p>
+    By pressing the following button you will permanently and irreversibly delete the
+    profile of this Rep.
+    <p>
+      <a href="#" class="large red button nice radius">Delete profile</a>
+</div>
 {% endblock %}
 
 {% block bottomextra %}
-    <script type="text/javascript" src="/media/openlayers/OpenLayers.js"></script>
-    <script type="text/javascript">
+<script type="text/javascript" src="{{ MEDIA_URL }}openlayers/OpenLayers.js"></script>
+<script type="text/javascript">
     var map = new OpenLayers.Map('map', {
-	controls: [
-            new OpenLayers.Control.Navigation(),
-            new OpenLayers.Control.ArgParser(),
-            new OpenLayers.Control.Attribution()
-	]
+      controls: [
+      new OpenLayers.Control.Navigation(),
+      new OpenLayers.Control.ArgParser(),
+      new OpenLayers.Control.Attribution()],
+      projection: new OpenLayers.Projection("EPSG:900913")
     });
     var panel = new OpenLayers.Control.Panel();
     var markers = new OpenLayers.Layer.Markers("Reps");
@@ -259,16 +289,12 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
     map.zoomToMaxExtent();
     map.addLayer(markers);
 
-    var lonlat = new OpenLayers.LonLat({{ pageuser.userprofile.lon }},
-				       {{ pageuser.userprofile.lat }}).transform(
-					   new OpenLayers.Projection("EPSG:4326"),
-					   new OpenLayers.Projection("EPSG:900913")
-				       );
+    var lonlat = new OpenLayers.LonLat({{ pageuser.userprofile.lon }}, {{ pageuser.userprofile.lat }});
     map.setCenter(lonlat, 8); // Zoom level
     var size = new OpenLayers.Size(21, 33);
-    var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
-    var icon = new OpenLayers.Icon('/media/img/remo/marker.png',size,offset);
-    markers.addMarker(new OpenLayers.Marker(lonlat,icon.clone()));
+    var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+    var icon = new OpenLayers.Icon('{{ MEDIA_URL }}img/remo/marker.png', size, offset);
+    markers.addMarker(new OpenLayers.Marker(lonlat, icon.clone()));
     markers.setOpacity(0.7);
-    </script>
+</script>
 {% endblock %}

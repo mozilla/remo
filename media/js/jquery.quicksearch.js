@@ -1,3 +1,6 @@
+// jQuery quicksearch is made by Rik Lomas at Lomalogue
+// Under the same licenses as the jQuery library itself: http://docs.jquery.com/License
+
 (function($, window, document, undefined) {
 	$.fn.quicksearch = function (target, opt) {
 		

@@ -1,58 +1,75 @@
 {% extends "base.html" %}
-
 {% load markup %}
 
 {% block pagetitle %}Mozilla Reps - Featured Reps {% endblock%}
 
 {% block content %}
+<!-- List block -->
+<div class="row">
+  <div class="twelve columns">
+    <h5>
+      Featured Reps articles
+    </h5>
+  </div>
+</div>
+<!-- Adding new rep -->
+<div class="row">
+  <div class="twelve columns align-right">
+    <a href="{% url featuredrep_add_featured %}" class="featured-button small white button nice radius">Add new</a>
+  </div>
+</div>
+<div class="row">
+  <div class="twelve columns">
+    <table id="featured-articles">
+      <thead>
+        <tr>
+          <th>
+            Rep Name
+          </th>
+          <th>
+            Featured text
+          </th>
+          <th>
+            Date featured
+          </th>
+          <th>
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for feature in featured %}
+        <tr>
+          <td>
+            <a href="{% url profiles_view_profile feature.user.userprofile.display_name %}">{{ feature.user.get_full_name }}</a>
+          </td>
+          <td>
+            {{ feature.text|restructuredtext}}
+          </td>
+          <td>
+            {{ feature.created_on }}
+          </td>
+          <td>
+            <a href="{% url featuredrep_edit_featured feature.id %}" class="featured-edit pictogram-button">e</a>
+            <form id="deleteform-{{ feature.id }}" method="post" action="{% url featuredrep_delete_featured feature.id %}">
+              {% csrf_token %}
+              <a href="#" data-reveal-id="delete-feature" class="featured-delete pictogram-button">X</a>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td>
+            No entries yet!
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
 
-        <!-- List block -->
-        <div class="row">
-            <div class="twelve columns">
-                <h5>Featured Reps articles</h5>
-            </div>
-        </div>
-
-	<!-- Adding new rep -->
-        <div class="row">
-            <div class="twelve columns align-right">
-                <a href="{% url featuredrep_add_featured %}" class="featured-button small white button nice radius">Add new</a>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="twelve columns">
-                <table id="featured-articles">
-                    <thead>
-                        <tr>
-                            <th>Rep Name</th>
-                            <th>Featured text</th>
-                            <th>Date featured</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-		      {% for feature in featured %}
-		      <tr>
-			<td><a href="{% url profiles_view_profile feature.user.userprofile.display_name %}">{{ feature.user.get_full_name }}</a></td>
-			<td>{{ feature.text|restructuredtext}}</td>
-			<td>{{ feature.created_on }}</td>
-			<td>
-			  <a href="{% url featuredrep_edit_featured feature.id %}" class="featured-edit pictogram-button">e</a>
-			  <form id="deleteform-{{ feature.id }}" method="post" action="{% url featuredrep_delete_featured feature.id %}">
-			  {% csrf_token %}
-			  <a href="#" data-reveal-id="delete-feature" onclick="$('#deleteform-{{ feature.id }}').submit()" class="featured-delete pictogram-button">X</a>
-			  </form>
-			</td>
-		      </tr>
-		      {% empty %}
-		      <tr>
-			<td>No entries yet!</td>
-		      </tr>
-		      {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
+{% block bottomextra %}
+<script src="{{ MEDIA_URL }}js/featuredrep.js" type="text/javascript"></script>
 {% endblock %}

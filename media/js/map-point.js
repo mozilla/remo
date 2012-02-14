@@ -7,43 +7,51 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
         'stopDouble': false
     },
 
-    initialize: function(options) {
+    initialize: function (options) {
         this.handlerOptions = OpenLayers.Util.extend(
-            {}, this.defaultHandlerOptions
+            {},
+            this.defaultHandlerOptions
         );
         OpenLayers.Control.prototype.initialize.apply(
-            this, arguments
+            this,
+            arguments
         );
         this.handler = new OpenLayers.Handler.Click(
-            this, {
+            this,
+            {
                 'click': this.trigger
-            }, this.handlerOptions
+            },
+            this.handlerOptions
         );
     },
 
-    trigger: function(e) {
-        var lonlat = map.getLonLatFromViewPortPx(e.xy);
-        $('input.point-lat-temp').val(Math.round(((lonlat.lat/100000)*1000000))/1000000);
-        $('input.point-long-temp').val(Math.round(((lonlat.lon/100000)*1000000))/1000000);
+    trigger: function (e) {
+        var lonlat = map_point.getLonLatFromViewPortPx(e.xy);
+        $('input.point-lat-temp').val(lonlat.lat);
+        $('input.point-long-temp').val(lonlat.lon);
     }
 
 });
-var map;
 
-map = new OpenLayers.Map('map');
+var map_point;
+
+map_point = new OpenLayers.Map('map_point', {
+    projection: new OpenLayers.Projection("EPSG:900913")
+} );
 
 var osm = new OpenLayers.Layer.OSM();
 
-map.addLayers([osm]);
+map_point.addLayers([osm]);
 
-map.zoomToMaxExtent();
+map_point.zoomToMaxExtent();
 
 var click = new OpenLayers.Control.Click();
-map.addControl(click);
+map_point.addControl(click);
 click.activate();
 
 //Clicking "Use those" closes the modal and updates the hidden input fields
-$('.use-those').click(function() {
-  $('input.point-lat').val($('input.point-lat-temp').val());
-  $('input.point-long').val($('input.point-long-temp').val());
+$('.use-those').click(function () {
+    $('input.point-lat').val($('input.point-lat-temp').val());
+    $('input.point-long').val($('input.point-long-temp').val());
 });
+
