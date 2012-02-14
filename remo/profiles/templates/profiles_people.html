@@ -111,8 +111,7 @@
 <script src="{{ MEDIA_URL }}js/jquery.quicksearch.js"></script>
 <script type="text/javascript">
     {% for person in people %}
-    var lonlat = new OpenLayers.LonLat({{ person.userprofile.lon }}, {{ person.userprofile.lat }}).transform(
-    new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+    var lonlat = new OpenLayers.LonLat({{ person.userprofile.lon }}, {{ person.userprofile.lat }});
     marker = new OpenLayers.Marker(lonlat, icon.clone())
     markers.addMarker(marker);
     markers_array["li-person-{{ person.id }}"] = marker; {% endfor %}

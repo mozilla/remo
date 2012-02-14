@@ -276,7 +276,10 @@
 <script type="text/javascript">
     var map = new OpenLayers.Map('map', {
       controls: [
-      new OpenLayers.Control.Navigation(), new OpenLayers.Control.ArgParser(), new OpenLayers.Control.Attribution()]
+      new OpenLayers.Control.Navigation(),
+      new OpenLayers.Control.ArgParser(),
+      new OpenLayers.Control.Attribution()],
+      projection: new OpenLayers.Projection("EPSG:900913")
     });
     var panel = new OpenLayers.Control.Panel();
     var markers = new OpenLayers.Layer.Markers("Reps");
@@ -286,8 +289,7 @@
     map.zoomToMaxExtent();
     map.addLayer(markers);
 
-    var lonlat = new OpenLayers.LonLat({{ pageuser.userprofile.lon }}, {{ pageuser.userprofile.lat }}).transform(
-    new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+    var lonlat = new OpenLayers.LonLat({{ pageuser.userprofile.lon }}, {{ pageuser.userprofile.lat }});
     map.setCenter(lonlat, 8); // Zoom level
     var size = new OpenLayers.Size(21, 33);
     var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
