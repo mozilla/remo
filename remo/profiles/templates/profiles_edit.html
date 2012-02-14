@@ -257,9 +257,7 @@
             {{ profileform.irc_name.errors }}
           </small>
           {% endif %}
-          <textarea class="flat" placeholder="Please list the channels you use in IRC" name="irc_channels">
-            {{ profileform.irc_channels.value }}
-          </textarea>
+          <textarea class="flat" placeholder="Please list the channels you use in IRC" name="irc_channels">{{ profileform.irc_channels.value }}</textarea>
           {% if profileform.irc_channels.errors %}
           <small class="error">
             {{ profileform.irc_channels.errors }}
@@ -401,13 +399,13 @@
   <p>
     By pressing the following button you will permanently and irreversibly delete the
     profile of this Rep.
-    <p>
-      <form method="post" action="{% url profiles_delete pageuser.userprofile.display_name %}">
-        {% csrf_token %}
-        <button class="large red button nice radius close-reveal-modal">
-          Delete profile
-        </button>
-      </form>
+  </p>
+    <form method="post" action="{% url profiles_delete pageuser.userprofile.display_name %}">
+      {% csrf_token %}
+      <button class="large red button nice radius close-reveal-modal">
+        Delete profile
+      </button>
+    </form>
 </div>
 {% endblock %}
 

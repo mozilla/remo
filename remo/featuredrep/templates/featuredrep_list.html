@@ -53,8 +53,7 @@
             <a href="{% url featuredrep_edit_featured feature.id %}" class="featured-edit pictogram-button">e</a>
             <form id="deleteform-{{ feature.id }}" method="post" action="{% url featuredrep_delete_featured feature.id %}">
               {% csrf_token %}
-              <a href="#" data-reveal-id="delete-feature" onclick="$('#deleteform-{{ feature.id }}').submit()"
-              class="featured-delete pictogram-button">X</a>
+              <a href="#" data-reveal-id="delete-feature" class="featured-delete pictogram-button">X</a>
             </form>
           </td>
         </tr>

@@ -18,8 +18,7 @@
       <span class="pictogram-search">
         s
       </span>
-      <input type="text" placeholder="Filter using any keyword" id="searchfield" class="input-text big"
-      />
+      <input type="text" placeholder="Filter using any keyword" id="searchfield" class="input-text big">
     </form>
   </div>
   <div class="two columns view-change">
@@ -41,12 +40,12 @@
       <a href="{% url profiles_view_profile person.userprofile.display_name %}">
         <div class="panel grid-profile">
             <div class="row">
-                <div class="three phone-one columns grid-profile-image">
-                    <img src="{{ person.userprofile.get_avatar_url }}" width="50" alt="{{ person.get_full_name }} avatar">
-                </div>
-                <div class="nine phone-three columns grid-profile-text">
-                    <h6>{{ person.first_name }} </h6><h6>{{ person.last_name }}</h6>{{ person.userprofile.city }}, {{ person.userprofile.country }}
-                </div>
+              <div class="three phone-one columns grid-profile-image">
+                <img src="{{ person.userprofile.get_avatar_url }}" width="50" alt="{{ person.get_full_name }} avatar">
+              </div>
+              <div class="nine phone-three columns grid-profile-text">
+                <h6>{{ person.first_name }} </h6><h6>{{ person.last_name }}</h6>{{ person.userprofile.city }}, {{ person.userprofile.country }}
+              </div>
             <div>
         </div>
       </a>
