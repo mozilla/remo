@@ -15,6 +15,8 @@ class InviteUserForm(forms.Form):
 
 class ChangeUserForm(forms.ModelForm):
     """ Form to change user details """
+    email = forms.EmailField()
+
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
