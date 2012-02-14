@@ -5,8 +5,7 @@ from django.shortcuts import redirect
 
 
 def permission_check(permissions=[], display_name_field=None):
-    """
-    Check if a user is logged in and has the required permissions.
+    """Check if a user is logged in and has the required permissions.
 
     1. If user is not logged in then redirect to 'main', display login
     message
@@ -27,9 +26,12 @@ def permission_check(permissions=[], display_name_field=None):
     user.userprofile.display_name == kwargs[display_name_field]
 
     """
+
     def decorator(func):
+
         @wraps(func)
         def wrapper(request, *args, **kwargs):
+
             def _check_if_user_has_permissions():
                 if permissions:
                     if request.user.has_perms(permissions):
@@ -38,16 +40,16 @@ def permission_check(permissions=[], display_name_field=None):
 
             def _check_if_user_owns_page():
                 if display_name_field:
-                    if kwargs[display_name_field] ==\
-                           request.user.userprofile.display_name:
+                    if (kwargs[display_name_field] ==
+                        request.user.userprofile.display_name):
                         return True
                 return False
 
             if request.user.is_authenticated():
-                if (not permissions and not display_name_field) or \
-                   request.user.is_superuser or \
-                   _check_if_user_owns_page() or \
-                   _check_if_user_has_permissions():
+                if ((not permissions and not display_name_field) or
+                    request.user.is_superuser or
+                    _check_if_user_owns_page() or
+                    _check_if_user_has_permissions()):
 
                     return func(request, *args, **kwargs)
                 else:

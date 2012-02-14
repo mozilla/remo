@@ -1,7 +1,6 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns(
-    'remo.profiles.views',
+urlpatterns = patterns('remo.profiles.views',
     url(r'^(?P<display_name>[A-Za-z0-9_]+)/$',
         'view_profile', name='profiles_view_profile'),
     url(r'^(?P<display_name>[A-Za-z0-9_]+)/edit/$',

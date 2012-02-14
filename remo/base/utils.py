@@ -1,7 +1,7 @@
 def latest_object_or_none(model_class, field_name=None):
-    """
-    Identical to Model.latest, except instead of throwing exceptions,
+    """Identical to Model.latest, except instead of throwing exceptions,
     this returns None.
+
     """
     try:
         return model_class.objects.latest(field_name)

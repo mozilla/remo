@@ -1,9 +1,7 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns(
-    '',
-
+urlpatterns = patterns('',
     url(r'^$', 'remo.base.views.main', name='main'),
 
     # profiles
@@ -20,7 +18,7 @@ urlpatterns = patterns(
     url(r'^login/plain/$', 'remo.profiles.views.plainlogin',
         {'template_name': 'plainlogin.html'}, name='plainlogin'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
-        {'next_page': '/'}, name="logout"),
+        {'next_page': '/'}, name='logout'),
 )
 
 ## In DEBUG mode, serve media files through Django.

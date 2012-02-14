@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from remo.base.decorators import permission_check
@@ -12,18 +11,18 @@ from models import FeaturedRep
 
 @permission_check(permissions=['profiles.can_edit_profiles'])
 def list_featured(request):
-    """ List all Featured Reps. """
+    """List all Featured Reps."""
     return render(request, 'featuredrep_list.html',
                   {'featured': FeaturedRep.objects.all()})
 
 
 @permission_check(permissions=['profiles.can_edit_profiles'])
 def alter_featured(request, feature_id=None):
-    """
-    Create or edit a Featured Rep.
+    """Create or edit a Featured Rep.
 
     If feature_id == None then a new Featured Rep entry is created,
     otherwise the Featured Rep entry with id == feature_id is edited.
+
     """
     if feature_id:
         feature = get_object_or_404(FeaturedRep, pk=feature_id)
@@ -39,10 +38,11 @@ def alter_featured(request, feature_id=None):
             form.save()
 
             if feature_id:
-                messages.success(request, 'New featured rep article created ☺')
+                messages.success(request, 'New featured rep article created '
+                                          '&#9786;')
             else:
-                messages.success(request,
-                                 'Featured rep article successfuly edited ☺')
+                messages.success(request, 'Featured rep article successfuly '
+                                          'edited &#9786;')
 
             return redirect('featuredrep_list_featured')
 
@@ -51,8 +51,8 @@ def alter_featured(request, feature_id=None):
 
     # List only user that belong in Rep group and have completed
     # registration.
-    reps = User.ojbect.filter(userprofile__registration_complete=True,
-                              groups__name="Rep")
+    reps = User.objects.filter(userprofile__registration_complete=True,
+                               groups__name='Rep')
 
     return render(request, 'featuredrep_alter.html',
                   {'form': form, 'post_to': post_to, 'reps': reps})
@@ -60,7 +60,7 @@ def alter_featured(request, feature_id=None):
 
 @permission_check(permissions=['profiles.can_edit_profiles'])
 def delete_featured(request, feature_id):
-    """ Delete a Featured Rep entry """
+    """Delete a Featured Rep entry."""
     if request.method == 'POST':
         feature = get_object_or_404(FeaturedRep, pk=feature_id)
         feature.delete()

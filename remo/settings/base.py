@@ -25,18 +25,18 @@ MINIFY_BUNDLES = {
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'remo.urls'
 
-INSTALLED_APPS = ['south'] +\
+INSTALLED_APPS = ['south'] + \
                  list(INSTALLED_APPS) + [
-    # Application base, containing global templates.
-    'django.contrib.messages',
-    'django.contrib.markup',
+                     # Application base, containing global templates.
+                     'django.contrib.messages',
+                     'django.contrib.markup',
 
-    'remo.base',
-    'remo.profiles',
-    'remo.featuredrep',
+                     'remo.base',
+                     'remo.profiles',
+                     'remo.featuredrep',
 
-    'django_browserid',
-]
+                     'django_browserid',
+                     ]
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:
@@ -78,7 +78,7 @@ TEMPLATE_LOADERS = filter(lambda x: x != 'jingo.Loader', TEMPLATE_LOADERS)
 
 # Remove LocaleURLMiddleware since we are not localing our website
 MIDDLEWARE_CLASSES = filter(
-    lambda x: x!='funfactory.middleware.LocaleURLMiddleware',
+    lambda x: x != 'funfactory.middleware.LocaleURLMiddleware',
     MIDDLEWARE_CLASSES)
 
 MIDDLEWARE_CLASSES += ('django.contrib.messages.middleware.MessageMiddleware',
@@ -86,8 +86,7 @@ MIDDLEWARE_CLASSES += ('django.contrib.messages.middleware.MessageMiddleware',
 
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django_browserid.context_processors.browserid_form',
-    'django.contrib.messages.context_processors.messages'
-    )
+    'django.contrib.messages.context_processors.messages')
 
 # Instruct session-csrf to always produce tokens for anonymous users
 ANON_ALWAYS = True

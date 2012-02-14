@@ -1,7 +1,6 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns(
-    '',
+urlpatterns = patterns('',
     url(r'^$', 'remo.featuredrep.views.list_featured',
         name='featuredrep_list_featured'),
     url(r'^add/$', 'remo.featuredrep.views.alter_featured',

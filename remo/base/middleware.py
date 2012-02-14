@@ -4,28 +4,28 @@ from django.shortcuts import redirect
 
 
 class RegisterMiddleware(object):
-    """
-    Middleware to enforce users to complete registration.
+    """Middleware to enforce users to complete registration.
 
     When a user logins and has the registration_complete field in his
     userprofile set to False the middleware will automatically
     redirect him to edit profile with the appropriate message
     displayed. The only allowed destinations are the edit profile and
     the signout page.
+
     """
+
     def process_request(self, request):
-        if request.user.is_authenticated() and not\
-               request.user.userprofile.registration_complete:
+        if (request.user.is_authenticated() and not
+            request.user.userprofile.registration_complete):
 
             allow_urls = [
                 reverse('logout'),
                 reverse('profiles_edit',
                         kwargs={'display_name':
-                                request.user.userprofile.display_name})
-                ]
+                                request.user.userprofile.display_name})]
 
-            if not request.path.startswith('/media') and \
-               not filter(lambda x: request.path == x, allow_urls):
+            if (not request.path.startswith('/media') and
+                not filter(lambda x: request.path == x, allow_urls)):
                 messages.warning(request, 'Please complete your '
                                           'profile before proceeding.')
                 return redirect('profiles_edit',

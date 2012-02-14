@@ -240,7 +240,7 @@
             "added_by": 5,
 	    "bio": "This is my bio",
 	    "gender":"False",
-            "registration_complete":"False"
+	    "registration_complete":"False"
         }
     }
 ]

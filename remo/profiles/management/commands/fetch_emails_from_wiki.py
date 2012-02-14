@@ -1,4 +1,5 @@
 import json
+import logging
 import sys
 
 from django.core.management.base import BaseCommand
@@ -6,39 +7,41 @@ from django.core.validators import email_re
 
 import requests
 
+LOGGER = logging.getLogger("playdoh")
+
 
 class Command(BaseCommand):
-    """ Command to fetch ReMo emails from wiki.mozilla.org using the API."""
+    """Command to fetch ReMo emails from wiki.mozilla.org using the API."""
     args = ''
     help = 'Fetch ReMo emails from wiki.mozilla.org'
     offset = 0
-    URL = 'https://wiki.mozilla.org/api.php?action=ask&'\
-          'q=[[Category:Remouser]]'\
-          '&format=json&offset=%s&po=bugzillamail'
+    URL = ('https://wiki.mozilla.org/api.php?action=ask&'
+           'q=[[Category:Remouser]]'
+           '&format=json&offset=%s&po=bugzillamail')
 
     def handle(self, *args, **options):
-        """ Fetches users from wiki.mozilla.org.
+        """Fetches users from wiki.mozilla.org.
 
-        Prints the emails on stdout, one email per line
+        Prints the emails on stdout, one email per line.
+
         """
         while self.offset > -1:
             try:
                 r = requests.get(self.URL % self.offset)
 
             except requests.ConnectionError:
-                self.stdout.write("Connection Error\n")
+                LOGGER.error('Connection Error.')
                 sys.exit(-1)
 
             if r.status_code != 200:
-                self.stdout.write("Error fetching Wiki data\n")
+                LOGGER.error('Error fetching wiki data.')
                 sys.exit(-1)
 
             try:
                 data = json.loads(r.text)
 
             except ValueError:
-                self.stdout.write(r.text)
-                self.stdout.write("Error decoding Wiki data\n")
+                LOGGER.error('Error decoding wiki data.')
                 sys.exit(-1)
 
             # convenience pointers
@@ -54,17 +57,15 @@ class Command(BaseCommand):
                 try:
                     email = entry['properties']['bugzillamail']
                 except KeyError:
-                    self.stdout.write("# Error entry does not have"
-                                      "bugzillamail: '%s'\n" %\
-                                      json.dumps(entry))
+                    LOGGER.warning('# Error entry does not have '
+                                   'bugzillamail: %s' % json.dumps(entry))
                     continue
 
                 # sanitize input
-                if not isinstance(email, basestring) or\
-                       not email_re.match(email):
+                if (not isinstance(email, basestring) or
+                    not email_re.match(email)):
                     # ignoring invalid email
-                    self.stdout.write("# Invalid email for %s\n" %\
-                                      entry['uri'])
+                    LOGGER.warning('# Invalid email: %s' % entry['uri'])
                     continue
 
                 self.stdout.write(email + '\n')

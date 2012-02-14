@@ -10,18 +10,23 @@ class ViewsTest(TestCase):
     fixtures = ['demo_users.json', 'demo_featured.json']
 
     def setUp(self):
-        """ Setup Tests """
+        """Setup Tests."""
         self.c = Client()
-        self.c.login(username="admin", password="passwd")
+        self.c.login(username='admin', password='passwd')
 
-    def test_list_featured(self):
-        """ Test featuredrep_list_featured view """
+    def test_view_add_featured_page(self):
+        """Get add featured page."""
+        response = self.c.get(reverse('featuredrep_add_featured'))
+        self.assertTemplateUsed(response, 'featuredrep_alter.html')
+
+    def test_view_list_featured_page(self):
+        """Get list featuredrep page."""
         response = self.c.get(reverse('featuredrep_list_featured'),
                               follow=True)
         self.assertTemplateUsed(response, 'featuredrep_list.html')
 
     def test_add_featured(self):
-        """ Test featuredrep_add_featured view """
+        """Test featuredrep_add_featured view."""
         response = self.c.post(reverse('featuredrep_add_featured'),
                                {'user': 5, 'text': 'Testing'}, follow=True)
         self.assertTemplateUsed(response, 'featuredrep_list.html')
@@ -31,9 +36,9 @@ class ViewsTest(TestCase):
         eq_(m.tags, u'success')
 
     def test_edit_featured(self):
-        """ Test featuredrep_edit_featured view """
+        """Test featuredrep_edit_featured view."""
         response = self.c.post(reverse('featuredrep_edit_featured', args=[1]),
-                               {'user': 5, 'text': 'Foo'}, follow=True,)
+                               {'user': 5, 'text': 'Foo'}, follow=True)
         self.assertTemplateUsed(response, 'featuredrep_list.html')
         eq_(FeaturedRep.objects.count(), 1)
         for m in response.context['messages']:
@@ -43,7 +48,7 @@ class ViewsTest(TestCase):
         eq_(u.text, 'Foo')
 
     def test_delete_featured(self):
-        """ Test featuredrep_delete_featured view """
+        """Test featuredrep_delete_featured view."""
         response = self.c.post(reverse('featuredrep_delete_featured',
                                        args=[1]), follow=True)
         self.assertTemplateUsed(response, 'featuredrep_list.html')
