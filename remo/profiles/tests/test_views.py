@@ -16,7 +16,7 @@ class ViewsTest(TestCase):
         u = User.objects.get(email="foobar@example.com")
         eq_(u.userprofile.added_by, User.objects.get(username="mentor"))
 
-    def test_edit_profile(self):
+    def test_edit_profile_permissions(self):
         # user edits own profile
         c = Client()
         c.login(username="rep", password="passwd")
