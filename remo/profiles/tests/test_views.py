@@ -8,6 +8,32 @@ from remo.profiles.models import User
 class ViewsTest(TestCase):
     fixtures = ['demo_users.json']
 
+    def setUp(self):
+        """ Setup tests """
+        self.data = {'display_name': u'koki',
+                     'first_name': u'first',
+                     'email': u'rep@example.com',
+                     'last_name': u'last',
+                     'local_name': u'local',
+                     'birth_date': u'1980-01-01',
+                     'private_email': u'private_email@bar.com',
+                     'twitter_account': u'foobar',
+                     'city': u'city',
+                     'region': u'region',
+                     'country': u'Greece',
+                     'lon': 12.23,
+                     'lat': 12.23,
+                     'mozillians_profile_url': u'http://mozillians.org/',
+                     'jabber_id': u'foo@jabber.org',
+                     'irc_name': u'ircname',
+                     'linkedin_url': u'http://www.linkedin.com/',
+                     'facebook_url': u'http://www.facebook.com/',
+                     'diaspora_url': u'http://www.example.com',
+                     'personal_website_url': u'http://www.example.com',
+                     'personal_blog_feed': u'http://example.com',
+                     'bio': u'bio foo',
+                     'mentor_id': 1}
+
     def test_invite_user(self):
         c = Client()
         c.login(username="mentor", password="passwd")
@@ -34,6 +60,25 @@ class ViewsTest(TestCase):
         c.login(username="mentor", password="passwd")
         response = c.get('/u/koki/edit/', follow=True)
         self.assertTemplateUsed(response, 'main.html')
+
+    def test_edit_profile_redirect(self):
+        """
+        Test that after profile redirection is correct.
+
+        When a user edit his own profile must be redirected to
+        reverse('profiles_view_my_profile') whereas when editing
+        another user's profile, then user must be redirected to
+        profile view of the just edited profile.
+        """
+        c = Client()
+        c.login(username="admin", password="passwd")
+        response = c.post('/u/koki/edit/', self.data, follow=True)
+        eq_(response.request['PATH_INFO'], '/u/koki/')
+
+        c = Client()
+        c.login(username="rep", password="passwd")
+        response = c.post('/u/koki/edit/', self.data, follow=True)
+        eq_(response.request['PATH_INFO'], '/people/me/')
 
     def test_delete_profile(self):
         # user can't delete own profile
