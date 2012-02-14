@@ -64,13 +64,13 @@ class UserProfile(models.Model):
     mozillians_profile_url = models.URLField(
         verify_exists=True,
         validators=[
-            RegexValidator(regex=r'http(s)?://(www.)?mozillians.org/',
+            RegexValidator(regex=r'^http(s)?://(www.)?mozillians.org/',
                            message="Please provide a valid Mozillians url.")
             ])
     twitter_account = models.CharField(
         max_length=16, default="", blank=True,
         validators=[
-            RegexValidator(regex=r'("")|([A-Za-z0-9_]+)',
+            RegexValidator(regex=r'("^$")|(^[A-Za-z0-9_]+)',
                            message="Please provide a valid Twitter handle.")
             ])
     jabber_id = models.CharField(max_length=50, blank=True, default="")
@@ -79,13 +79,13 @@ class UserProfile(models.Model):
     linkedin_url = models.URLField(
         blank=True, null=True, default="", verify_exists=True,
         validators=[
-            RegexValidator(regex=r'("")|(http(s)?://(www.)?linkedin.com/)',
+            RegexValidator(regex=r'("^$")|(^http(s)?://(www.)?linkedin.com/)',
                            message="Please provide a valid LinkedIn url.")
             ])
     facebook_url = models.URLField(
         blank=True, null=True, default="", verify_exists=True,
         validators=[
-            RegexValidator(regex=r'('')|(http(s)?://(www.)?facebook.com/)',
+            RegexValidator(regex=r'("^$")|(^http(s)?://(www.)?facebook.com/)',
                            message="Please provide a valid Facebook url.")
             ])
     diaspora_url = models.URLField(blank=True, null=True, default="",
