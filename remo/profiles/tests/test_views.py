@@ -12,7 +12,7 @@ class ViewsTest(TestCase):
     fixtures = ['demo_users.json']
 
     def setUp(self):
-        """ Setup tests """
+        """ Setup tests. """
         self.data = {'display_name': u'koki',
                      'first_name': u'first',
                      'email': u'rep@example.com',
@@ -38,6 +38,7 @@ class ViewsTest(TestCase):
                      'mentor': 6}
 
     def test_invite_user(self):
+        """ Test that user is invited. """
         c = Client()
         c.login(username="mentor", password="passwd")
         c.post('/people/invite/', {'email': 'foobar@example.com'})
@@ -46,6 +47,7 @@ class ViewsTest(TestCase):
         eq_(u.userprofile.added_by, User.objects.get(username="mentor"))
 
     def test_edit_profile_permissions(self):
+        """ Test user permissions to edit profiles. """
         # user edits own profile
         c = Client()
         c.login(username="rep", password="passwd")
@@ -84,6 +86,7 @@ class ViewsTest(TestCase):
         eq_(response.request['PATH_INFO'], '/people/me/')
 
     def test_edit_profile(self):
+        """ Test correct edit of user profile. """
         c = Client()
         c.login(username="rep", password="passwd")
 
@@ -127,6 +130,7 @@ class ViewsTest(TestCase):
             self.assertTemplateUsed(response, 'profiles_edit.html')
 
     def test_delete_profile(self):
+        """ Test profile deletion. """
         # user can't delete own profile
         c = Client()
         c.login(username="rep", password="passwd")
@@ -155,6 +159,7 @@ class ViewsTest(TestCase):
         eq_(m.tags, u'error')
 
     def test_profiles_me(self):
+        """ Test that user gets own profile rendered. """
         # user gets own profile page rendered
         c = Client()
         c.login(username="rep", password="passwd")
@@ -169,7 +174,9 @@ class ViewsTest(TestCase):
             pass
         eq_(m.tags, u'warning')
 
-    def test_uncomplete_profile(self):
+    def test_incomplete_profile(self):
+        """ Test that user with incomplete profile gets redirected to edit page.
+        """
         c = Client()
         c.login(username="rep2", password="passwd")
         response = c.get('/people/me/', follow=True)
