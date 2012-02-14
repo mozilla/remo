@@ -2,6 +2,7 @@ import datetime
 import time
 
 from nose.tools import eq_
+from django.core.urlresolvers import reverse
 from django.test.client import Client
 from test_utils import TestCase
 
@@ -36,12 +37,18 @@ class ViewsTest(TestCase):
                      'personal_blog_feed': u'http://example.com/',
                      'bio': u'bio foo',
                      'mentor': 6}
+        self.user_url = reverse('profiles_view_profile',
+                                kwargs={'display_name': 'koki'})
+        self.user_edit_url = reverse('profiles_edit',
+                                     kwargs={'display_name': 'koki'})
+        self.user_delete_url = reverse('profiles_delete',
+                                       kwargs={'display_name': 'koki'})
 
     def test_invite_user(self):
         """ Test that user is invited. """
         c = Client()
         c.login(username="mentor", password="passwd")
-        c.post('/people/invite/', {'email': 'foobar@example.com'})
+        c.post(reverse('profiles_invite'), {'email': 'foobar@example.com'})
 
         u = User.objects.get(email="foobar@example.com")
         eq_(u.userprofile.added_by, User.objects.get(username="mentor"))
@@ -51,19 +58,19 @@ class ViewsTest(TestCase):
         # user edits own profile
         c = Client()
         c.login(username="rep", password="passwd")
-        response = c.get('/u/koki/edit/', follow=True)
+        response = c.get(self.user_edit_url, follow=True)
         self.assertTemplateUsed(response, 'profiles_edit.html')
 
         # admin edits user's profile
         c = Client()
         c.login(username="admin", password="passwd")
-        response = c.get('/u/koki/edit/', follow=True)
+        response = c.get(self.user_edit_url, follow=True)
         self.assertTemplateUsed(response, 'profiles_edit.html')
 
         # third user denied permission to edit user's profile
         c = Client()
         c.login(username="mentor", password="passwd")
-        response = c.get('/u/koki/edit/', follow=True)
+        response = c.get(self.user_edit_url, follow=True)
         self.assertTemplateUsed(response, 'main.html')
 
     def test_edit_profile_redirect(self):
@@ -77,13 +84,15 @@ class ViewsTest(TestCase):
         """
         c = Client()
         c.login(username="admin", password="passwd")
-        response = c.post('/u/koki/edit/', self.data, follow=True)
-        eq_(response.request['PATH_INFO'], '/u/koki/')
+        response = c.post(self.user_edit_url, self.data, follow=True)
+        with open("/tmp/ll.html", "w") as f:
+            f.write(response.content)
+        eq_(response.request['PATH_INFO'], self.user_url)
 
         c = Client()
         c.login(username="rep", password="passwd")
-        response = c.post('/u/koki/edit/', self.data, follow=True)
-        eq_(response.request['PATH_INFO'], '/people/me/')
+        response = c.post(self.user_edit_url, self.data, follow=True)
+        eq_(response.request['PATH_INFO'], reverse('profiles_view_my_profile'))
 
     def test_edit_profile(self):
         """ Test correct edit of user profile. """
@@ -91,10 +100,8 @@ class ViewsTest(TestCase):
         c.login(username="rep", password="passwd")
 
         # edit with correct data
-        response = c.post('/u/koki/edit/', self.data, follow=True)
-        with open("/tmp/ll.html", "w") as f:
-            f.write(response.content)
-        eq_(response.request['PATH_INFO'], '/people/me/')
+        response = c.post(self.user_edit_url, self.data, follow=True)
+        eq_(response.request['PATH_INFO'], reverse('profiles_view_my_profile'))
 
         # ensure that all user data was saved
         user = User.objects.get(username="rep")
@@ -126,7 +133,7 @@ class ViewsTest(TestCase):
             # remove a mandatory field and ensure that edit fails
             temp_data = self.data.copy()
             del(temp_data[field])
-            response = c.post('/u/koki/edit/', temp_data, follow=True)
+            response = c.post(self.user_edit_url, temp_data, follow=True)
             self.assertTemplateUsed(response, 'profiles_edit.html')
 
     def test_delete_profile(self):
@@ -134,7 +141,7 @@ class ViewsTest(TestCase):
         # user can't delete own profile
         c = Client()
         c.login(username="rep", password="passwd")
-        response = c.post('/u/koki/delete/', follow=True)
+        response = c.post(self.user_delete_url, follow=True)
         self.assertTemplateUsed(response, 'main.html')
         for m in response.context['messages']:
             pass
@@ -143,7 +150,8 @@ class ViewsTest(TestCase):
         # admin can delete user's profile
         c = Client()
         c.login(username="admin", password="passwd")
-        response = c.post('/u/koki/delete/', {'delete': 'true'}, follow=True)
+        response = c.post(self.user_delete_url, {'delete': 'true'},
+                          follow=True)
         self.assertTemplateUsed(response, 'main.html')
         for m in response.context['messages']:
             pass
@@ -152,7 +160,7 @@ class ViewsTest(TestCase):
         # third user can't delete user's profile
         c = Client()
         c.login(username="mentor", password="passwd")
-        response = c.post('/u/koki/delete/', follow=True)
+        response = c.post(self.user_delete_url, follow=True)
         self.assertTemplateUsed(response, 'main.html')
         for m in response.context['messages']:
             pass
@@ -163,21 +171,22 @@ class ViewsTest(TestCase):
         # user gets own profile page rendered
         c = Client()
         c.login(username="rep", password="passwd")
-        response = c.get('/people/me/', follow=True)
+        response = c.get(reverse('profiles_view_my_profile'), follow=True)
         self.assertTemplateUsed(response, 'profiles_view.html')
 
         # anonymous user get message to login first
         c = Client()
-        response = c.get('/people/me/', follow=True)
+        response = c.get(reverse('profiles_view_my_profile'), follow=True)
         self.assertTemplateUsed(response, 'main.html')
         for m in response.context['messages']:
             pass
         eq_(m.tags, u'warning')
 
     def test_incomplete_profile(self):
-        """ Test that user with incomplete profile gets redirected to edit page.
+        """ Test that user with incomplete profile gets redirected to
+        edit page.
         """
         c = Client()
         c.login(username="rep2", password="passwd")
-        response = c.get('/people/me/', follow=True)
+        response = c.get(reverse('profiles_view_my_profile'), follow=True)
         self.assertTemplateUsed(response, 'profiles_edit.html')
