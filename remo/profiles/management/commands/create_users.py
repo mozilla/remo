@@ -6,13 +6,16 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.core.validators import email_re
 from django.core.mail import send_mail
+# alphabetize imports
 
 from django_browserid.auth import default_username_algo
 
+# If this is a constant, capitalize all letters
 username_algo = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
 
 class Command(BaseCommand):
+    # Missing comment
     args = '<user_list.txt>'
     help = 'Create new users from file'
     option_list = list(BaseCommand.option_list) + [
@@ -22,7 +25,7 @@ class Command(BaseCommand):
                     default=True,
                     help='Do not send invitation emails'
                     )
-        ]
+        ] # Move square bracket and parenthesis to the end of help='..'
 
     FROM_EMAIL = "reps@mozilla.com"
     SUBJECT = "Welcome to ReMo Portal"
@@ -34,6 +37,7 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        # Missing comment
         if len(args) != 1:
             print "Please provide a file with emails.\n"
             sys.exit(-1)
@@ -46,7 +50,8 @@ class Command(BaseCommand):
                     print "Email '%s' is not valid, ignoring.\n" % email,
                     continue
 
-                # create account
+                # create account <-- I think this is self explanatory so this comment is
+                # not required.
                 User.objects.create_user(username=username_algo(email),
                                          email=email)
 

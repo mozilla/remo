@@ -1,4 +1,4 @@
-# Create your views here.
+# Create your views here. <-- you don't need this comment.
 # -*- coding: utf-8 -*-
 
 from django.contrib.auth.models import User
@@ -10,21 +10,24 @@ from session_csrf import anonymous_csrf
 
 from remo.featuredrep.models import FeaturedRep
 from remo.base.decorators import permission_check
+# alphabetize your imports per section (section based on line breaks)
 
 import forms
-
+# two line breaks required
 @permission_check(permissions=['profiles.can_edit_profiles'])
 def list_featured(request):
+    # Needs comment
     form = forms.FeaturedRepForm()
 
     return render(request,
                   'featuredrep_list.html',
                   { 'featured': FeaturedRep.objects.all() }
-                  )
+                  ) # bracket should be at the end of the curly brace above
 
 
 @permission_check(permissions=['profiles.can_edit_profiles'])
 def alter_featured(request, feature_id=None):
+    # Needs comment
     if feature_id:
         feature = get_object_or_404(FeaturedRep, pk=feature_id)
         post_to = reverse('featuredrep_edit_featured', args=[feature_id])
@@ -62,10 +65,11 @@ def alter_featured(request, feature_id=None):
 
 @permission_check(permissions=['profiles.can_edit_profiles'])
 def delete_featured(request, feature_id):
+    # Needs comment
     if request.method == 'POST':
         feature = get_object_or_404(FeaturedRep, pk=feature_id)
         feature.delete()
         messages.success(request, 'Featured rep article successfuly deleted')
 
     return redirect('featuredrep_list_featured')
-
+# Extra line break here, should only be 1 line break
