@@ -86,6 +86,11 @@ class UserProfile(models.Model):
                                            verify_exists=True)
     personal_blog_feed = models.URLField(blank=True, null=False, default='',
                                          verify_exists=True)
+    wiki_profile_url = models.URLField(
+        blank=False, null=False, default='', verify_exists=True,
+        validators=[
+            RegexValidator(regex=r'^http(s)?://wiki.mozilla.org/User:',
+                           message='Please provide a valid wiki url.')])
     added_by = models.ForeignKey(User, null=True, blank=True,
                                  related_name='users_added')
     bio = models.TextField(blank=True, default='')
