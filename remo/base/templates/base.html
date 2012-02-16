@@ -146,7 +146,7 @@
     <div class="row">
       {% for message in messages %}
       <div class="alert-box {{ message.tags }}">
-        {{ message }}
+        {{ message|safe }}
         <a href="" class="close">&times;</a>
       </div>
       {% endfor %}
@@ -225,9 +225,9 @@ Reps application form</a>
       <a class="close-reveal-modal">&#215;</a>
       <p class="lead">Reps is all about experimenting!</p>
       <h2>Labs are coming...</h2>
-      <p>In this section of our site we will be developing, testing and showcasing awesome new 
+      <p>In this section of our site we will be developing, testing and showcasing awesome new
       tools for Mozilla Reps.</p>
-      <p>Do you have what it takes to experiment and help us shape the future of Mozilla Reps 
+      <p>Do you have what it takes to experiment and help us shape the future of Mozilla Reps
       tools? Drop by #remo-dev or subscribe to <a href="https://lists.mozilla.org/listinfo/reps-webdev">our mailing
       list</a> to share your ideas and start hacking!</p>
     </div>
