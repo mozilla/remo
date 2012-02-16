@@ -59,33 +59,36 @@
             </small>
           {% endif %}
           <select name="birth_date">
-            {% if not profileform.birth_date.value %}
-              <option selected="selected" value="">
-                Birth Year
-              </option>
-            {% endif %}
+            <option selected="selected" value="">
+              Birth Year
+            </option>
             {% for year in range_years reversed %}
               <option value="{{ year }}-01-01"
                       {% if year == profileform.birth_date.value.year %}
-                      selected="selected"
+                        selected="selected"
                       {% endif %}>
                 {{ year }}
               </option>
             {% endfor %}
           </select>
           <select name="gender">
-            {% if not profileform.gender.value %}
-              <option selected="selected" value="">
-                Gender
-              </option>
-            {% endif %}
+            <option value="None"
+                    {% if profileform.gender.value == None %}
+                      selected="selected"
+                    {% endif %}>Gender
+            </option>
             <option value="True"
-              {% if profileform.gender.value == "True" %}selected="selected"{% endif %}>
-              Female
+                    {% if profileform.gender.value %}
+                      selected="selected"
+                    {% endif %}>Female
             </option>
             <option value="False"
-              {% if profileform.gender.value == "False" %}selected="selected"{% endif %}>
-              Male
+                    {% if profileform.gender.value != None %}
+                      {% if not profileform.gender.value %}
+                        selected="selected"
+                      {% endif %}
+                    {% endif %}
+                    >Male
             </option>
           </select>
           {% if profileform.birth_date.errors %}
@@ -112,7 +115,8 @@
           </a>
           <br>
           <span class="profile-image">
-            Step 1: Create an account on <a href="https://libravatar.org" target="_blank">libravatar.org</a> .
+            Step 1: Create an account on
+            <a href="https://libravatar.org" target="_blank">libravatar.org</a>.
             <br>
             Step 2: Once logged in, upload a photo and associate it to your bugzilla email.
           </span>
