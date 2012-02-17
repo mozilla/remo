@@ -33,11 +33,11 @@ class ChangeUserForm(forms.ModelForm):
     def _clean_names(self, data):
         """Ensure that data is valid.
 
-        Variable data can contain only latin letters (both capital and
+        Variable data can contain only Latin letters (both capital and
         lower case), spaces and the character '.
         """
         if not re.match(r'(^[A-Za-z\' ]+$)', data):
-            raise ValidationError('Please use only latin characters.')
+            raise ValidationError('Please use only Latin characters.')
 
         return data
 
