@@ -148,6 +148,8 @@ li.active {
     overflow: hidden;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    box-shadow: 5px 5px 10px #aaa;
+    -moz-box-shadow: 5px 5px 10px #aaa;
 }
 
 /* -----------------------------------------
