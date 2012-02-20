@@ -68,10 +68,12 @@ def edit(request, display_name):
     mentors = User.objects.filter(userprofile__registration_complete=True,
                                   groups__name='Mentor')
 
+    pageuser = get_object_or_404(User, userprofile__display_name=display_name)
+
     return render(request, 'profiles_edit.html',
                   {'userform': userform,
                    'profileform': profileform,
-                   'pageuser': user,
+                   'pageuser': pageuser,
                    'group_bits': group_bits,
                    'mentors': mentors,
                    'countries': product_details.get_regions('en').values(),
