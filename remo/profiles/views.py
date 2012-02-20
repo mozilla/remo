@@ -68,13 +68,16 @@ def edit(request, display_name):
     mentors = User.objects.filter(userprofile__registration_complete=True,
                                   groups__name='Mentor')
 
+    countries = product_details.get_regions('en').values()
+    countries.sort()
+
     return render(request, 'profiles_edit.html',
                   {'userform': userform,
                    'profileform': profileform,
                    'pageuser': user,
                    'group_bits': group_bits,
                    'mentors': mentors,
-                   'countries': product_details.get_regions('en').values(),
+                   'countries': countries,
                    'range_years': range(1950, datetime.today().year - 11)})
 
 
