@@ -144,7 +144,7 @@ li.active {
 #featured {
     width: 992px;
     height: 200px;
-    background: #000 url('/media/img/foundation/orbit/loading.gif') no-repeat center center; 
+    background: #000 url('/media/img/foundation/orbit/loading.gif') no-repeat center center;
     overflow: hidden;
     -moz-border-radius: 5px;
     border-radius: 5px;
@@ -153,6 +153,10 @@ li.active {
 /* -----------------------------------------
    People Page Styles
 ----------------------------------------- */
+
+.hidden {
+    display: none;
+}
 
 .smallmap {
     width: 100%;
