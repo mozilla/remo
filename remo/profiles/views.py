@@ -88,7 +88,9 @@ def list_profiles(request):
     return render(request, 'profiles_people.html',
                   {'people': User.objects.\
                    filter(userprofile__registration_complete=True,
-                          groups__name='Rep')})
+                          groups__name='Rep').order_by('userprofile__country',
+                                                       'last_name',
+                                                       'first_name')})
 
 
 def view_profile(request, display_name):
