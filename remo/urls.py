@@ -1,6 +1,10 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
 
+
+handler404 = 'remo.base.views.custom_404'
+handler500 = 'remo.base.views.custom_500'
+
 urlpatterns = patterns('',
     url(r'^$', 'remo.base.views.main', name='main'),
 
@@ -26,6 +30,8 @@ if settings.DEBUG:
     # Remove leading and trailing slashes so the regex matches.
     media_url = settings.MEDIA_URL.lstrip('/').rstrip('/')
     urlpatterns += patterns('',
+        (r'^404/$', handler404),
+        (r'^500/$', handler500),
         (r'^%s/(?P<path>.*)$' % media_url, 'django.views.static.serve',
          {'document_root': settings.MEDIA_ROOT}),
     )

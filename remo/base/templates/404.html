@@ -1,0 +1,19 @@
+{% extends "main.html" %}
+{% block pagetitle %}Page not found!{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<!-- 404 Modal -->
+<div id="404-error" class="reveal-modal">
+  <p class="lead">oops, we couldn't find that!</p>
+  <h2>404 - Not found</h2>
+  <p>We are sorry but we couldn't find the page you requested.</p>
+  <p>Check the address for typing errors such as ww.example.com instead of www.example.com</p>
+  <a class="close-reveal-modal">&#215;</a>
+</div>
+<!-- 404 Modal End -->
+{% endblock %}
+
+{% block bottomextra %}
+  <script src="{{ MEDIA_URL }}js/404.js" type="text/javascript"></script>
+{% endblock %}
