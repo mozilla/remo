@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load markup %}
 
-{% block pagetitle %} Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }} {% endblock %} 
+{% block pagetitle %} Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }} {% endblock %}
 
 {% block content %}
 <div class="row">
@@ -47,7 +47,10 @@
             <img src="{{ pageuser.userprofile.get_avatar_url }}" width="128">
           </div>
           <div class="eight columns smallmap-profile-container">
-            <div id="map" class="smallmap-profile">
+            <div id="map" class="smallmap-profile"
+                 data-lon="{{ pageuser.userprofile.lon }}"
+                 data-lat="{{ pageuser.userprofile.lat }}"
+                 data-mediaurl="{{ MEDIA_URL}}">
             </div>
           </div>
         </div>
@@ -122,9 +125,15 @@
           <span class="white radius label">
             Mozillians Profile
           </span>
-          &nbsp;<a href="{{ pageuser.userprofile.mozillians_profile_url }}">{{ pageuser.userprofile.mozillians_profile_url }}</a>
+          &nbsp;{{ pageuser.userprofile.mozillians_profile_url|urlizetrunc:50 }}
         </p>
-        {% if pageuser.userprofile.mentor %}
+        <p class="profile-item">
+          <span class="white radius label">
+            Wiki Profile
+          </span>
+          &nbsp;{{ pageuser.userprofile.wiki_profile_url|urlizetrunc:50 }}
+        </p>
+	{% if pageuser.userprofile.mentor %}
         <p class="profile-item">
           <span class="white radius label">
             Mentor
@@ -273,28 +282,5 @@
 
 {% block bottomextra %}
 <script type="text/javascript" src="{{ MEDIA_URL }}openlayers/OpenLayers.js"></script>
-<script type="text/javascript">
-    var map = new OpenLayers.Map('map', {
-      controls: [
-      new OpenLayers.Control.Navigation(),
-      new OpenLayers.Control.ArgParser(),
-      new OpenLayers.Control.Attribution()],
-      projection: new OpenLayers.Projection("EPSG:900913")
-    });
-    var panel = new OpenLayers.Control.Panel();
-    var markers = new OpenLayers.Layer.Markers("Reps");
-    var osm = new OpenLayers.Layer.OSM();
-
-    map.addLayers([osm]);
-    map.zoomToMaxExtent();
-    map.addLayer(markers);
-
-    var lonlat = new OpenLayers.LonLat({{ pageuser.userprofile.lon }}, {{ pageuser.userprofile.lat }});
-    map.setCenter(lonlat, 8); // Zoom level
-    var size = new OpenLayers.Size(21, 33);
-    var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
-    var icon = new OpenLayers.Icon('{{ MEDIA_URL }}img/remo/marker.png', size, offset);
-    markers.addMarker(new OpenLayers.Marker(lonlat, icon.clone()));
-    markers.setOpacity(0.7);
-</script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/profiles_view.js"></script>
 {% endblock %}

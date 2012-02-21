@@ -29,11 +29,12 @@ class ViewsTest(TestCase):
                      'lon': 12.23,
                      'lat': 12.23,
                      'mozillians_profile_url': u'http://mozillians.org/',
+                     'wiki_profile_url': u'https://wiki.mozilla.org/User:',
                      'jabber_id': u'foo@jabber.org',
                      'irc_name': u'ircname',
                      'linkedin_url': u'http://www.linkedin.com/',
                      'facebook_url': u'http://www.facebook.com/',
-                     'diaspora_url': u'http://www.example.com/',
+                     'diaspora_url': u'https://joindiaspora.com/',
                      'personal_website_url': u'http://www.example.com/',
                      'personal_blog_feed': u'http://example.com/',
                      'bio': u'bio foo',
@@ -170,7 +171,7 @@ class ViewsTest(TestCase):
         mandatory_fields = ['first_name', 'last_name', 'email',
                             'birth_date', 'private_email', 'city', 'region',
                             'country', 'lon', 'lat', 'mozillians_profile_url',
-                            'irc_name']
+                            'irc_name', 'wiki_profile_url']
         for field in mandatory_fields:
             # remove a mandatory field and ensure that edit fails
             temp_data = self.data.copy()

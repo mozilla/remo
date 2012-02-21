@@ -66,7 +66,7 @@ class ChangeProfileForm(forms.ModelForm):
                   'twitter_account', 'jabber_id', 'irc_name',
                   'irc_channels', 'facebook_url', 'linkedin_url',
                   'diaspora_url', 'personal_website_url', 'personal_blog_feed',
-                  'bio', 'gender', 'mentor')
+                  'bio', 'gender', 'mentor', 'wiki_profile_url')
 
     def clean_twitter_account(self):
         """Make sure that twitter_account does not start with a '@'."""
