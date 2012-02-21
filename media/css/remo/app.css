@@ -148,6 +148,21 @@ li.active {
     overflow: hidden;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    box-shadow: 0px 5px 10px #aaa;
+    -moz-box-shadow: 0px 5px 10px #aaa;
+}
+
+#main-featured-avatar {
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+ul.orbit-bullets li {
+    background: url('/media/img/foundation/orbit/bullets.png') no-repeat 4px 0 !important;
+}
+
+ul.orbit-bullets li.active {
+    background-position: -8px 0 !important; 
 }
 
 /* -----------------------------------------
