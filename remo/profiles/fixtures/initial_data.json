@@ -57,116 +57,22 @@
         }
     },
     {
-        "pk": 2,
-        "model": "auth.user",
-        "fields": {
-            "username": "pierros",
-            "first_name": "Pierros",
-            "last_name": "Papadeas",
-            "is_active": true,
-            "is_superuser": false,
-            "is_staff": false,
-            "last_login": "2012-01-30 04:00:36",
-            "groups": [
-	        1,
-		3
-	    ],
-            "user_permissions": [],
-            "password": "!",
-            "email": "pierros@mozilla.com",
-            "date_joined": "2012-01-30 04:00:36"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "auth.user",
-        "fields": {
-            "username": "william",
-            "first_name": "William",
-            "last_name": "Quiviger",
-            "is_active": true,
-            "is_superuser": false,
-            "is_staff": false,
-            "last_login": "2012-01-30 04:01:21",
-            "groups": [
-	        1,
-		3
-	    ],
-            "user_permissions": [],
-            "password": "!",
-            "email": "william@mozilla.com",
-            "date_joined": "2012-01-30 04:01:21"
-        }
-    },
-    {
         "pk": 1,
         "model": "profiles.userprofile",
         "fields": {
             "facebook_url": "",
             "city": "Athens",
-            "twitter_account": "",
+            "twitter_account": "glogiotatidis",
             "display_name": "giorgos",
             "private_email": "",
             "country": "Greece",
             "region": "Attica",
             "irc_channels": "",
-            "lon": 23.72,
+            "lon": 2640517.1417437,
             "irc_name": "",
-            "lat": 38.01,
-            "linkedin_url": "",
+            "lat": 4576437.7568531,
+            "linkedin_url": "http://www.linkedin.com/in/glogiotatidis",
             "user": 1,
-            "birth_date": null,
-            "personal_website_url": "",
-            "diaspora_url": "",
-            "personal_blog_feed": "",
-            "mozillians_profile_url": "",
-	    "gender":"False",
-	    "registration_complete":"True"
-        }
-    },
-    {
-        "pk": 2,
-        "model": "profiles.userprofile",
-        "fields": {
-            "facebook_url": "",
-            "city": "Athens",
-            "twitter_account": "",
-            "display_name": "pierros",
-            "private_email": "",
-            "country": "Greece",
-            "region": "Attica",
-            "irc_channels": "",
-            "lon": 23.72,
-            "irc_name": "",
-            "lat": 38.01,
-            "linkedin_url": "",
-            "user": 2,
-            "birth_date": null,
-            "personal_website_url": "",
-            "diaspora_url": "",
-            "personal_blog_feed": "",
-            "mozillians_profile_url": "",
-	    "gender":"False",
-	    "registration_complete":"True"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "profiles.userprofile",
-        "fields": {
-            "facebook_url": "",
-            "city": "Berlin",
-            "twitter_account": "",
-            "display_name": "william",
-            "private_email": "",
-            "country": "Germany",
-            "region": "Berlin",
-            "irc_channels": "",
-            "lon": 13.41,
-            "irc_name": "",
-            "lat": 52.52,
-            "linkedin_url": "",
-            "user": 3,
             "birth_date": null,
             "personal_website_url": "",
             "diaspora_url": "",
