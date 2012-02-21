@@ -128,11 +128,20 @@
             {{ userform.email.errors }}
           </small>
           {% endif %}
-          <input type="text" placeholder="Mozillians.org profile" value="{{ profileform.mozillians_profile_url.value }}"
+          <input type="text" placeholder="Mozillians.org profile"
+                 value="{{ profileform.mozillians_profile_url.value }}"
           name="mozillians_profile_url" class="input-text big">
           {% if profileform.mozillians_profile_url.errors %}
           <small class="error">
             {{ profileform.mozillians_profile_url.errors }}
+          </small>
+          {% endif %}
+          <input type="text" placeholder="Wiki profile"
+                 value="{{ profileform.wiki_profile_url.value }}"
+                 name="wiki_profile_url" class="input-text big">
+          {% if profileform.wiki_profile_url.errors %}
+          <small class="error">
+            {{ profileform.wiki_profile_url.errors }}
           </small>
           {% endif %}
           <select name="mentor">
@@ -140,9 +149,10 @@
             <option selected="selected" value="">
               Choose mentor
             </option>
-            {% endif %} {% for mentor in mentors %}
-            <option value="{{ mentor.id }}" {% if mentor.id == profileform.mentor.value %} selected="selected"
-            {% endif %}>
+            {% endif %}
+            {% for mentor in mentors %}
+            <option value="{{ mentor.id }}" {% if mentor.id == profileform.mentor.value %}
+                    selected="selected" {% endif %}>
               {{ mentor.get_full_name }}
             </option>
             {% endfor %}
