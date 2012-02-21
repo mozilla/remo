@@ -269,6 +269,10 @@ li.active {
     border-radius: 0px !important;
 }
 
+.custom.dropdown {
+    margin-bottom: 20px !important;
+}
+
 /* -----------------------------------------
    Point Map Styles
 ----------------------------------------- */
