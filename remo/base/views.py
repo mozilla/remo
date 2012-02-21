@@ -1,6 +1,7 @@
 from django import http
 from django.conf import settings
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import redirect, render
 from django.template import Context, RequestContext, loader
 
 import utils
@@ -27,3 +28,18 @@ def custom_500(request):
     t = loader.get_template('500.html')
     return http.HttpResponseServerError(
         t.render(Context({'MEDIA_URL': settings.MEDIA_URL})))
+
+
+def login_failed(request):
+    """Login failed view.
+
+    This view acts like a segway between a failed login attempt and
+    'main' view. Adds messages in the messages framework queue, that
+    informs user login failed.
+
+    """
+    messages.warning(request, ("Login failed. Please make sure that you are "
+                               "an accepted Rep and you use your Bugzilla "
+                               "email to login."))
+
+    return redirect('main')

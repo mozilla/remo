@@ -90,3 +90,5 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 
 # Instruct session-csrf to always produce tokens for anonymous users
 ANON_ALWAYS = True
+
+LOGIN_REDIRECT_URL_FAILURE = '/login/failed/'
