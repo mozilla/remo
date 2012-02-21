@@ -409,8 +409,10 @@ small.error {
 ----------------------------------------- */
 
 #gray-logo {
-    text-align:center;
-    margin-top:20px;
+    text-align: center;
+    margin-top: 20px;
+    width: 100px;
+    margin: 0 auto;
 }
 
 #about p {
