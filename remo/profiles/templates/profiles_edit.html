@@ -96,12 +96,14 @@
           A
         </div>
         <div class="eleven columns profile-image">
-          <img src="{{ pageuser.userprofile.get_avatar_url }}?s=128">
+          <a href="https://libravatar.org" target="_blank">
+            <img src="{{ pageuser.userprofile.get_avatar_url }}?s=128">
+          </a>
           <br>
           <span class="profile-image">
-            Profile images are linked to your Bugzilla mail
+            Step 1: Create an account on <a href="https://libravatar.org" target="_blank">libravatar.org</a> .
             <br>
-            Login to <a href="https://libravatar.org">libravatar.org</a> to change your profile
+            Step 2: Once logged in, upload a photo and associate it to your bugzilla email.
           </span>
         </div>
       </div>
