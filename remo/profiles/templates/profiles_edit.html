@@ -55,7 +55,7 @@
           <select name="birth_date">
             {% if not profileform.birth_date.value %}
             <option selected="selected" value="">
-              ---------
+              Birth Year
             </option>
             {% endif %} {% for year in range_years reversed %}
             <option value="{{ year }}-01-01" {% if year == profileform.birth_date.value.year %} selected="selected" {% endif %}>
@@ -66,7 +66,7 @@
           <select name="gender">
             {% if not profileform.gender.value %}
             <option selected="selected" value="">
-              ---------
+              Gender
             </option>
             {% endif %}
             <option value="True" {% if profileform.gender.value == "True" %}selected="selected"
