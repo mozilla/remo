@@ -11,7 +11,12 @@ from remo.featuredrep.models import FeaturedRep
 def main(request):
     """Main page of the website."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
-    return render(request, 'main.html', {'featuredrep': featured_rep})
+    if featured_rep:
+        avatar_url = featured_rep.user.userprofile.get_avatar_url(80)
+    else:
+        avatar_url = None
+    return render(request, 'main.html', {'featuredrep': featured_rep,
+                                         'avatar_url': avatar_url})
 
 
 def custom_404(request):

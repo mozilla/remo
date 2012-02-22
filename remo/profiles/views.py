@@ -73,10 +73,13 @@ def edit(request, display_name):
     countries = product_details.get_regions('en').values()
     countries.sort()
 
+    avatar_url = pageuser.userprofile.get_avatar_url(128)
+
     return render(request, 'profiles_edit.html',
                   {'userform': userform,
                    'profileform': profileform,
                    'pageuser': pageuser,
+                   'avatar_url': avatar_url,
                    'group_bits': group_bits,
                    'mentors': mentors,
                    'countries': countries,
@@ -96,7 +99,9 @@ def list_profiles(request):
 def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User, userprofile__display_name=display_name)
-    return render(request, 'profiles_view.html', {'pageuser': user})
+    avatar_url = user.userprofile.get_avatar_url(128)
+    return render(request, 'profiles_view.html', {'pageuser': user,
+                                                  'avatar_url': avatar_url})
 
 
 @permission_check()

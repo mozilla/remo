@@ -123,6 +123,7 @@ class UserProfile(models.Model):
 
         Age gets calculated from birth_date variable.
         Snippet from http://djangosnippets.org/snippets/557/
+
         """
         d = datetime.date.today()
         age = ((d.year - self.birth_date.year) -
@@ -130,11 +131,12 @@ class UserProfile(models.Model):
                    (self.birth_date.month, self.birth_date.day)))
         return age
 
-    def get_avatar_url(self, size=128):
+    def get_avatar_url(self, size=50):
         """Get a url pointing to user's avatar.
 
         The libravatar network is used for avatars. Optional argument
         size can be provided to set the avatar size.
+
         """
         default_img_url = reduce(lambda u, x: urlparse.urljoin(u, x),
                                  [settings.SITE_URL,
@@ -159,6 +161,7 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
     possible user experience. Note that we are not expecting more than
     500 registered users on this website, so name conflicts should be
     very limited.
+
     """
     if not instance.display_name:
         email = instance.user.email.split('@')[0]
