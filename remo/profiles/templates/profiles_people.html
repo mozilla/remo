@@ -37,34 +37,34 @@
 <div class="row" id="profiles_gridview">
   <ul class="block-grid mobile three-up" id="searchlist">
     {% for person in people %}
-    <li id="li-person-{{ person.id }}">
-      <a href="{% url profiles_view_profile person.userprofile.display_name %}">
-        <div class="panel grid-profile">
+      <li id="li-person-{{ person.id }}">
+        <a href="{% url profiles_view_profile person.userprofile.display_name %}">
+          <div class="panel grid-profile">
             <div class="row">
               <div class="three phone-one columns grid-profile-image">
                 <img src="{{ person.userprofile.get_avatar_url }}"
                      class="profiles-people-avatar"
                      alt="{{ person.get_full_name }} avatar">
-              </div>
-              <div class="nine phone-three columns grid-profile-text">
-                <h6>{{ person.first_name }}</h6>
-                <h6>{{ person.last_name }}</h6>
-                {{ person.userprofile.city }}, {{ person.userprofile.country }}
-                <span class="hidden">{{ person.userprofile.display_name }}</span>
-                <span class="hidden">{{ person.userprofile.local_name }}</span>
-                <span class="hidden">{{ person.userprofile.get_age }}</span>
-                <span class="hidden">{{ person.userprofile.region }}</span>
-                <span class="hidden">{{ person.userprofile.private_email }}</span>
-                <span class="hidden">{{ person.email }}</span>
-                <span class="hidden">{{ person.userprofile.irc_name }}</span>
-                <span class="hidden">{{ person.userprofile.twitter_account }}</span>
-                <span class="hidden">{{ person.userprofile.jabber_id }}</span>
-                <span class="hidden">{{ person.userprofile.get_gender_display }}</span>
-              </div>
-            <div>
-        </div>
-      </a>
-    </li>
+                </div>
+                <div class="nine phone-three columns grid-profile-text">
+                  <h6>{{ person.first_name }}</h6>
+                  <h6>{{ person.last_name }}</h6>
+                  {{ person.userprofile.city }}, {{ person.userprofile.country }}
+                  <span class="hidden">{{ person.userprofile.display_name }}</span>
+                  <span class="hidden">{{ person.userprofile.local_name }}</span>
+                  <span class="hidden">{{ person.userprofile.get_age }}</span>
+                  <span class="hidden">{{ person.userprofile.region }}</span>
+                  <span class="hidden">{{ person.userprofile.private_email }}</span>
+                  <span class="hidden">{{ person.email }}</span>
+                  <span class="hidden">{{ person.userprofile.irc_name }}</span>
+                  <span class="hidden">{{ person.userprofile.twitter_account }}</span>
+                  <span class="hidden">{{ person.userprofile.jabber_id }}</span>
+                  <span class="hidden">{{ person.userprofile.get_gender_display }}</span>
+                </div>
+              <div>
+          </div>
+        </a>
+      </li>
     {% endfor %}
   </ul>
 </div>
@@ -88,44 +88,44 @@
         </thead>
         <tbody>
           {% for person in people %}
-          <tr>
-            <td>
-              <a href="{% url profiles_view_profile person.userprofile.display_name %}">
-                {{ person.get_full_name }}
-              </a>
-            </td>
-            <td>
-              {{ person.userprofile.display_name }}
-            </td>
-            <td>
-              <a href="{% url profiles_list_profiles %}{{ person.userprofile.city }}">
-                {{ person.userprofile.city }}
-              </a>
-            </td>
-            <td>
-              <a href="{% url profiles_list_profiles %}{{ person.userprofile.country }}">
-                {{ person.userprofile.country }}
-              </a>
-            </td>
-            <td>
-              {{ person.userprofile.get_age }}
-            </td>
-            <td>
-              {{ person.userprofile.mozillians_profile_url|urlizetrunc:50}}
-            </td>
-            <td>
-              {{ person.userprofile.private_email }}
-            </td>
-            <td class="hidden">
-              <span>{{ person.userprofile.local_name }}</span>
-              <span>{{ person.userprofile.region }}</span>
-              <span>{{ person.email }}</span>
-              <span>{{ person.userprofile.irc_name }}</span>
-              <span>{{ person.userprofile.twitter_account }}</span>
-              <span>{{ person.userprofile.jabber_id }}</span>
-              <span>{{ person.userprofile.get_gender_display }}</span>
-            </td>
-          </tr>
+            <tr>
+              <td>
+                <a href="{% url profiles_view_profile person.userprofile.display_name %}">
+                  {{ person.get_full_name }}
+                </a>
+              </td>
+              <td>
+                {{ person.userprofile.display_name }}
+              </td>
+              <td>
+                <a href="{% url profiles_list_profiles %}{{ person.userprofile.city }}">
+                  {{ person.userprofile.city }}
+                </a>
+              </td>
+              <td>
+                <a href="{% url profiles_list_profiles %}{{ person.userprofile.country }}">
+                  {{ person.userprofile.country }}
+                </a>
+              </td>
+              <td>
+                {{ person.userprofile.get_age }}
+              </td>
+              <td>
+                {{ person.userprofile.mozillians_profile_url|urlizetrunc:50}}
+              </td>
+              <td>
+                {{ person.userprofile.private_email }}
+              </td>
+              <td class="hidden">
+                <span>{{ person.userprofile.local_name }}</span>
+                <span>{{ person.userprofile.region }}</span>
+                <span>{{ person.email }}</span>
+                <span>{{ person.userprofile.irc_name }}</span>
+                <span>{{ person.userprofile.twitter_account }}</span>
+                <span>{{ person.userprofile.jabber_id }}</span>
+                <span>{{ person.userprofile.get_gender_display }}</span>
+              </td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -139,12 +139,12 @@
 <script src="{{ MEDIA_URL }}js/profiles_people.js"></script>
 <script src="{{ MEDIA_URL }}js/jquery.quicksearch.js"></script>
 <script type="text/javascript">
-    {% for person in people %}
+  {% for person in people %}
       var lonlat = new OpenLayers.LonLat({{ person.userprofile.lon }},
                                          {{ person.userprofile.lat }});
       marker = new OpenLayers.Marker(lonlat, icon.clone())
       markers.addMarker(marker);
       markers_array["li-person-{{ person.id }}"] = marker;
-    {% endfor %}
+  {% endfor %}
 </script>
 {% endblock %}

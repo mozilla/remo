@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block pagetitle %}Adding a new rep{% endblock %}
+{% block pagetitle %}Mozilla Reps - Adding a new rep{% endblock %}
 
 {% block content %}
 
@@ -18,9 +18,9 @@
       {% csrf_token %}
       <input type="text" name="email" placeholder="Bugzilla mail" class="input-text">
       {% if form.email.errors %}
-      <small class="error">
-        {{ form.email.errors }}
-      </small>
+        <small class="error">
+          {{ form.email.errors }}
+        </small>
       {% endif %}
       <button type="submit" class="medium white button nice radius">
         Add rep
@@ -28,5 +28,4 @@
     </form>
   </div>
 </div>
-
 {% endblock %}

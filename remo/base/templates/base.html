@@ -54,7 +54,9 @@
 
           <!-- Mozilla Tab -->
           <div class="two columns phone-one push-three-phone push-ten" id="global-header-tab">
-            <a href="http://mozilla.org/"><img src="{{ MEDIA_URL }}img/remo/mozilla-tab.png" alt="mozilla.org"></a>
+            <a href="http://mozilla.org/">
+              <img src="{{ MEDIA_URL }}img/remo/mozilla-tab.png" alt="mozilla.org">
+            </a>
           </div>
 
           <!-- Sign In & Sign Out -->
@@ -62,14 +64,16 @@
             <ul>
               <li class="account anonymous nomenu logout">
                 {% if not user.is_authenticated %}
-                <a id="browserid" href="#">Sign In</a>
-                <form method="POST" action="{% url browserid_verify %}">
-                  {% csrf_token %} {{ browserid_form.as_p }}
-                  <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                </form>
+                  <a id="browserid" href="#">Sign In</a>
+                  <form method="POST" action="{% url browserid_verify %}">
+                    {% csrf_token %} {{ browserid_form.as_p }}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                  </form>
                 {% else %}
-                <a href="{% url profiles_view_my_profile %}">{{ user.get_full_name|default:user.userprofile.display_name}}</a>
-                [<a href="{% url logout %}">Sign out</a>]
+                  <a href="{% url profiles_view_my_profile %}">
+                    {{ user.get_full_name|default:user.userprofile.display_name}}
+                  </a>
+                  [<a href="{% url logout %}">Sign out</a>]
                 {% endif %}
               </li>
             </ul>
@@ -83,7 +87,8 @@
           <div class="four columns" id="logo-box">
             <div class="row hide-on-phones">
               <a href="{% url main %}">
-                <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png" alt="Mozilla Reps logo">
+                <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
+                     alt="Mozilla Reps logo">
                 <h3>mozilla reps</h3>
               </a>
             </div>
@@ -145,14 +150,14 @@
 
     <!-- Page Content -->
     {% if messages %}
-    <div class="row">
-      {% for message in messages %}
-      <div class="alert-box {{ message.tags }}">
-        {{ message|safe }}
-        <a href="" class="close">&times;</a>
+      <div class="row">
+        {% for message in messages %}
+          <div class="alert-box {{ message.tags }}">
+            {{ message|safe }}
+            <a href="#" class="close">&times;</a>
+          </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
     {% endif %}
 
     {% block content %}
@@ -170,16 +175,18 @@
             &nbsp;|&nbsp;
             <a href="http://www.mozilla.org/en-US/about/legal.html">Legal Notices</a>
             &nbsp;|&nbsp;
-            <a href="http://www.mozilla.org/en-US/legal/fraud-report/index.html">Report Trademark Abuse</a>
+            <a href="http://www.mozilla.org/en-US/legal/fraud-report/index.html">
+              Report Trademark Abuse
+            </a>
           </p>
           <p>
             Except where otherwise
-            <a href="http://www.mozilla.org/en-US/about/legal.html#site">noted</a>
-            , content on this site is licensed under the
+            <a href="http://www.mozilla.org/en-US/about/legal.html#site">noted</a>,
+            content on this site is licensed under the
             <br />
-            <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative
-Commons Attribution Share-Alike License v3.0</a>
-            or any later version.
+            <a href="http://creativecommons.org/licenses/by-sa/3.0/">
+              Creative Commons Attribution Share-Alike License v3.0
+            </a> or any later version.
           </p>
         </div>
       </div>
@@ -188,9 +195,29 @@ Commons Attribution Share-Alike License v3.0</a>
     <div id="join-modal" class="reveal-modal">
       <p class="lead">So, you wanna join us?</p>
       <h2>Cool!</h2>
-      <p>The Mozilla Reps program is open to all existing Mozilla Community members. Before you become a Mozilla Rep, you must complete a short but rigorous application process in order  to demonstrate your interest in and motivation for joining the program. Are you ready to take on the challenges and rewards of advancing your leadership to the next level in Mozilla? If your answer is YES, apply to become a Mozilla Rep today!</p>
-      <p>Not sure if you're ready for Mozilla Reps? There are many other ways to take the lead in the Mozilla Community. If you're a student, register for the <a href="http://studentreps.mozilla.org">Student Reps program</a> to gain experience leading projects at your school. And all of our contributor opportunities are available to you on the <a href="https://mozilla.org/contribute">Get Involved homepage</a>.</p>
-      <p>The Mozilla Reps application process involves three simple steps:</p>
+      <p>
+        The Mozilla Reps program is open to all existing Mozilla
+        Community members. Before you become a Mozilla Rep, you must
+        complete a short but rigorous application process in order to
+        demonstrate your interest in and motivation for joining the
+        program. Are you ready to take on the challenges and rewards
+        of advancing your leadership to the next level in Mozilla? If
+        your answer is YES, apply to become a Mozilla Rep today!
+      </p>
+      <p>
+        Not sure if you're ready for Mozilla Reps? There are many
+        other ways to take the lead in the Mozilla Community. If
+        you're a student, register for
+        the <a href="http://studentreps.mozilla.org">Student Reps
+        program</a> to gain experience leading projects at your
+        school. And all of our contributor opportunities are available
+        to you on the <a href="https://mozilla.org/contribute">Get
+        Involved homepage</a>.
+      </p>
+      <p>
+        The Mozilla Reps application process involves three simple
+        steps:
+      </p>
       <ul>
         <li>
           <h4>Step 1</h4>
@@ -201,17 +228,22 @@ Reps application form</a>
         </li>
         <li>
           <h4>Step 2</h4>
-          <p>If your application is approved, you'll be invited to be interviewed by a member
-          of the advisory council over IRC or IM that same week. The interview lasts about
-          15 minutes and you will be asked some simple questions about yourself, your experience
-          contributing to the Mozilla project and, of course, your motivation for becoming
-          a MozRep.</p>
+          <p>If your application is approved, you'll be invited to be
+          interviewed by a member of the advisory council over IRC or
+          IM that same week. The interview lasts about 15 minutes and
+          you will be asked some simple questions about yourself, your
+          experience contributing to the Mozilla project and, of
+          course, your motivation for becoming a MozRep.</p>
         </li>
         <li>
           <h4>Step 3</h4>
-          <p>If you're accepted into the Mozilla Reps program, your mentor will get you started and
-          familiar with the tools at your disposal to start organizing events, requesting budgets,
-          swag, etc. And just like that, you could become a Mozilla Rep!</p>
+          <p>
+            If you're accepted into the Mozilla Reps program, your
+            mentor will get you started and familiar with the tools at
+            your disposal to start organizing events, requesting
+            budgets, swag, etc. And just like that, you could become a
+            Mozilla Rep!
+          </p>
         </li>
       </ul>
       <p>Thanks for your interest in making the Web better with Mozilla!</p>
@@ -224,11 +256,14 @@ Reps application form</a>
       <a class="close-reveal-modal">&#215;</a>
       <p class="lead">Reps is all about experimenting!</p>
       <h2>Labs are coming...</h2>
-      <p>In this section of our site we will be developing, testing and showcasing awesome new
-      tools for Mozilla Reps.</p>
-      <p>Do you have what it takes to experiment and help us shape the future of Mozilla Reps
-      tools? Drop by <a href="irc://irc.mozilla.org/remo-dev">#remo-dev</a> or subscribe to <a href="https://lists.mozilla.org/listinfo/reps-webdev">our mailing
-      list</a> to share your ideas and start hacking!</p>
+      <p>In this section of our site we will be developing, testing
+      and showcasing awesome new tools for Mozilla Reps.</p>
+      <p>Do you have what it takes to experiment and help us shape the
+      future of Mozilla Reps tools? Drop
+      by <a href="irc://irc.mozilla.org/remo-dev">#remo-dev</a> or
+      subscribe
+      to <a href="https://lists.mozilla.org/listinfo/reps-webdev">our
+      mailing list</a> to share your ideas and start hacking!</p>
     </div>
     <!-- Labs Reveal Modal End -->
 
