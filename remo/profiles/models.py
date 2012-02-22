@@ -44,7 +44,7 @@ class UserProfile(models.Model):
     registration_complete = models.BooleanField(default=False)
     local_name = models.CharField(max_length=50, blank=True, default='')
     birth_date = models.DateField(validators=[_validate_birth_date],
-                                  null=True)
+                                  blank=True, null=True)
     city = models.CharField(max_length=30, blank=False, default='')
     region = models.CharField(max_length=30, blank=False, default='')
     country = models.CharField(max_length=30, blank=False, default='')
@@ -94,7 +94,8 @@ class UserProfile(models.Model):
     added_by = models.ForeignKey(User, null=True, blank=True,
                                  related_name='users_added')
     bio = models.TextField(blank=True, default='')
-    gender = models.NullBooleanField(choices=((True, 'Female'),
+    gender = models.NullBooleanField(choices=((None, 'Gender'),
+                                              (True, 'Female'),
                                               (False, 'Male')),
                                      default=None)
     mentor = models.ForeignKey(User, null=True, blank=True,

@@ -169,7 +169,7 @@ class ViewsTest(TestCase):
 
         # test with missing mandatory fields
         mandatory_fields = ['first_name', 'last_name', 'email',
-                            'birth_date', 'private_email', 'city', 'region',
+                            'private_email', 'city', 'region',
                             'country', 'lon', 'lat', 'mozillians_profile_url',
                             'irc_name', 'wiki_profile_url']
         for field in mandatory_fields:
