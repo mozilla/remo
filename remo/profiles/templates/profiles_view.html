@@ -2,7 +2,7 @@
 {% load markup %}
 
 {% block pagetitle %}
-Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
+Mozilla Reps - Profile of {{ user_profile.display_name }}
 {% endblock %}
 
 {% block content %}
@@ -27,13 +27,13 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
         {% else %}
         <br>
         {% endif %}
-        {% if pageuser.userprofile.local_name %}
+        {% if user_profile.local_name %}
           <h5 class="grayed">
-            {{ pageuser.userprofile.local_name }}
+            {{ user_profile.local_name }}
           </h5>
         {% endif %}
           <h5 class="grayed">
-            {{ pageuser.userprofile.display_name }}
+            {{ user_profile.display_name }}
           </h5>
       </div>
     </div>
@@ -50,8 +50,8 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
           </div>
           <div class="eight columns smallmap-profile-container">
             <div id="map" class="smallmap-profile"
-                 data-lon="{{ pageuser.userprofile.lon }}"
-                 data-lat="{{ pageuser.userprofile.lat }}"
+                 data-lon="{{ user_profile.lon }}"
+                 data-lat="{{ user_profile.lat }}"
                  data-mediaurl="{{ MEDIA_URL}}">
             </div>
           </div>
@@ -63,14 +63,14 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
 <div class="row">
   <div class="six columns">
     <div class="row">
-      {% if pageuser.userprofile.bio %}
+      {% if user_profile.bio %}
         <div class="one columns pictogram">
           V
         </div>
         <div class="eleven columns">
           <br>
           <p>
-            {{ pageuser.userprofile.bio|restructuredtext }}
+            {{ user_profile.bio|restructuredtext }}
           </p>
         </div>
       {% endif %}
@@ -87,30 +87,34 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
             Location
           </span>
           &nbsp;
-          <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.city }}">
-            {{ pageuser.userprofile.city }}
+          <a href="{% url profiles_list_profiles %}{{ user_profile.city }}">
+            {{ user_profile.city }}
           </a>
           -
-          <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.region }}">
-            {{ pageuser.userprofile.region }}
+          <a href="{% url profiles_list_profiles %}{{ user_profile.region }}">
+            {{ user_profile.region }}
           </a>
           -
-          <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.country }}">
-            {{ pageuser.userprofile.country }}
+          <a href="{% url profiles_list_profiles %}{{ user_profile.country }}">
+            {{ user_profile.country }}
           </a>
         </p>
+        {% if user_profile.get_age %}
         <p class="profile-item">
           <span class="white radius label">
             Age
           </span>
-          &nbsp;{{ pageuser.userprofile.get_age }}
+          &nbsp;{{ user_profile.get_age }}
         </p>
+        {% endif %}
+        {% if not user_profile.gender == None %}
         <p class="profile-item">
           <span class="white radius label">
             Gender
           </span>
-          &nbsp;{{ pageuser.userprofile.get_gender_display }}
+          &nbsp;{{ user_profile.get_gender_display }}
         </p>
+        {% endif %}
       </div>
     </div>
     <div class="row">
@@ -122,7 +126,7 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
           <span class="white radius label">
             Personal Mail
           </span>
-          &nbsp;{{ pageuser.userprofile.private_email }}
+          &nbsp;{{ user_profile.private_email }}
         </p>
         <p class="profile-item">
           <span class="white radius label">
@@ -134,66 +138,66 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
           <span class="white radius label">
             Mozillians Profile
           </span>
-          &nbsp;{{ pageuser.userprofile.mozillians_profile_url|urlizetrunc:50 }}
+          &nbsp;{{ user_profile.mozillians_profile_url|urlizetrunc:50 }}
         </p>
         <p class="profile-item">
           <span class="white radius label">
             Wiki Profile
           </span>
-          &nbsp;{{ pageuser.userprofile.wiki_profile_url|urlizetrunc:50 }}
+          &nbsp;{{ user_profile.wiki_profile_url|urlizetrunc:50 }}
         </p>
-        {% if pageuser.userprofile.mentor %}
+        {% if mentor %}
           <p class="profile-item">
             <span class="white radius label">
               Mentor
             </span>
             &nbsp;
-            <a href="{% url profiles_view_profile pageuser.userprofile.mentor.userprofile.display_name %}">
-              {{ pageuser.userprofile.mentor.get_full_name }}
+            <a href="{% url profiles_view_profile mentor.userprofile.display_name %}">
+              {{ mentor.get_full_name }}
             </a>
           </p>
         {% endif %}
       </div>
     </div>
     <div class="row">
-      {% if pageuser.userprofile.twitter_account or pageuser.userprofile.facebook_url or pageuser.userprofile.diaspora_url or pageuser.userprofile.linkedin_url %}
+      {% if user_profile.twitter_account or user_profile.facebook_url or user_profile.diaspora_url or user_profile.linkedin_url %}
         <div class="one columns pictogram">
           T
         </div>
         <div class="eleven columns">
-        {% if pageuser.userprofile.twitter_account %}
+        {% if user_profile.twitter_account %}
           <p class="profile-item">
             <span class="white radius label">
               Twitter handle
             </span>
             &nbsp;
-            <a href="http://twitter.com/#!/{{ pageuser.userprofile.twitter_account }}">
-              @{{ pageuser.userprofile.twitter_account }}
+            <a href="http://twitter.com/#!/{{ user_profile.twitter_account }}">
+              @{{ user_profile.twitter_account }}
             </a>
           </p>
         {% endif %}
-        {% if pageuser.userprofile.facebook_url %}
+        {% if user_profile.facebook_url %}
           <p class="profile-item">
             <span class="white radius label">
               Facebook profile
             </span>
-            &nbsp;{{ pageuser.userprofile.facebook_url|urlizetrunc:50 }}
+            &nbsp;{{ user_profile.facebook_url|urlizetrunc:50 }}
           </p>
         {% endif %}
-        {% if pageuser.userprofile.diaspora_url %}
+        {% if user_profile.diaspora_url %}
           <p class="profile-item">
             <span class="white radius label">
               Diaspora profile
             </span>
-            &nbsp;{{ pageuser.userprofile.diaspora_url|urlizetrunc:50 }}
+            &nbsp;{{ user_profile.diaspora_url|urlizetrunc:50 }}
           </p>
         {% endif %}
-        {% if pageuser.userprofile.linkedin_url %}
+        {% if user_profile.linkedin_url %}
           <p class="profile-item">
             <span class="white radius label">
               LinkedIn profile
             </span>
-            &nbsp;{{ pageuser.userprofile.linkedin_url|urlizetrunc:50 }}
+            &nbsp;{{ user_profile.linkedin_url|urlizetrunc:50 }}
           </p>
         {% endif %}
         </div>
@@ -204,56 +208,56 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
         b
       </div>
       <div class="eleven columns">
-        {% if pageuser.userprofile.jabber_id %}
+        {% if user_profile.jabber_id %}
           <p class="profile-item">
             <span class="white radius label">
               Jabber ID
             </span>
-            &nbsp;{{ pageuser.userprofile.jabber_id }}
+            &nbsp;{{ user_profile.jabber_id }}
           </p>
         {% endif %}
         <p class="profile-item">
           <span class="white radius label">
             IRC nickname
           </span>
-          &nbsp;{{ pageuser.userprofile.irc_name }}
+          &nbsp;{{ user_profile.irc_name }}
         </p>
-        {% if pageuser.userprofile.irc_channels %}
+        {% if user_profile.irc_channels %}
           <p class="profile-item">
             <span class="white radius label">
               IRC channels
             </span>
-            &nbsp;{{ pageuser.userprofile.irc_channels }}
+            &nbsp;{{ user_profile.irc_channels }}
           </p>
         {% endif %}
       </div>
     </div>
     <div class="row">
-      {% if pageuser.userprofile.personal_website_url or pageuser.userprofile.personal_blog_feed %}
+      {% if user_profile.personal_website_url or user_profile.personal_blog_feed %}
         <div class="one columns pictogram">
           w
         </div>
         <div class="eleven columns">
-          {% if pageuser.userprofile.personal_website_url %}
+          {% if user_profile.personal_website_url %}
             <p class="profile-item">
               <span class="white radius label">
                 Personal Site
               </span>
-              &nbsp;{{ pageuser.userprofile.personal_website_url|urlizetrunc:50 }}
+              &nbsp;{{ user_profile.personal_website_url|urlizetrunc:50 }}
             </p>
           {% endif %}
-          {% if pageuser.userprofile.personal_blog_feed %}
+          {% if user_profile.personal_blog_feed %}
             <p class="profile-item">
               <span class="white radius label">
                 Personal Blog Feed
               </span>
-              &nbsp;{{ pageuser.userprofile.personal_blog_feed|urlizetrunc:50 }}
+              &nbsp;{{ user_profile.personal_blog_feed|urlizetrunc:50 }}
             </p>
           {% endif %}
         </div>
       {% endif %}
     </div>
-    {% if pageuser.userprofile.added_by and perms.profiles.can_edit_profile %}
+    {% if added_by and perms.profiles.can_edit_profile %}
       <div class="row">
         <div class="one columns pictogram">
           l
@@ -264,8 +268,8 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
               Added by
             </span>
             &nbsp;
-            <a href="{% url profiles_view_profile pageuser.userprofile.added_by.userprofile.display_name %}">
-              {{ pageuser.userprofile.added_by.userprofile.display_name }}
+            <a href="{% url profiles_view_profile added_by.userprofile.display_name %}">
+              {{ added_by.userprofile.display_name }}
             </a>
           </p>
         </div>
@@ -276,7 +280,7 @@ Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
 {% if user == pageuser or perms.profiles.can_edit_profiles %}
   <div class="row">
     <div id="save-profile" class="twelve columns align-right">
-      <a href="{% url profiles_edit pageuser.userprofile.display_name %}"
+      <a href="{% url profiles_edit user_profile.display_name %}"
          class="small white button nice radius">Edit profile</a>
     </div>
   </div>

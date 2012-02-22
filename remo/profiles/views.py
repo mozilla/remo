@@ -100,8 +100,12 @@ def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User, userprofile__display_name=display_name)
     avatar_url = user.userprofile.get_avatar_url(128)
-    return render(request, 'profiles_view.html', {'pageuser': user,
-                                                  'avatar_url': avatar_url})
+    return render(request, 'profiles_view.html',
+                  {'pageuser': user,
+                   'user_profile': user.userprofile,
+                   'added_by': user.userprofile.added_by,
+                   'mentor': user.userprofile.mentor,
+                   'avatar_url': avatar_url})
 
 
 @permission_check()
