@@ -2,13 +2,13 @@
 <html>
 
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+    <meta http-equiv="Content-Type" content="text/html;">
     <title>Mozilla Reps - Plain login</title>
   </head>
 
   <body>
     {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
+      <p>Your username and password didn't match. Please try again.</p>
     {% endif %}
     <form method="post" action="{% url plainlogin %}">
       {% csrf_token %}

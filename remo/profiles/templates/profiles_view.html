@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% load markup %}
 
-{% block pagetitle %} Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }} {% endblock %}
+{% block pagetitle %}
+Mozilla Reps - Profile of {{ pageuser.userprofile.display_name }}
+{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -19,17 +21,17 @@
           {{ pageuser.last_name }}
         </h4>
         {% if pageuser == request.user %}
-        <span class="grayed">
-          (this is you!)
-        </span>
+          <span class="grayed">
+            (this is you!)
+          </span>
         {% else %}
         <br>
         {% endif %}
         {% if pageuser.userprofile.local_name %}
-        <h5 class="grayed">
-          {{ pageuser.userprofile.local_name }}
-          </h4>
-          {% endif %}
+          <h5 class="grayed">
+            {{ pageuser.userprofile.local_name }}
+          </h5>
+        {% endif %}
           <h5 class="grayed">
             {{ pageuser.userprofile.display_name }}
           </h5>
@@ -62,15 +64,15 @@
   <div class="six columns">
     <div class="row">
       {% if pageuser.userprofile.bio %}
-      <div class="one columns pictogram">
-        V
-      </div>
-      <div class="eleven columns">
-        <br>
-        <p>
-          {{ pageuser.userprofile.bio|restructuredtext }}
-        </p>
-      </div>
+        <div class="one columns pictogram">
+          V
+        </div>
+        <div class="eleven columns">
+          <br>
+          <p>
+            {{ pageuser.userprofile.bio|restructuredtext }}
+          </p>
+        </div>
       {% endif %}
     </div>
   </div>
@@ -84,11 +86,18 @@
           <span class="white radius label">
             Location
           </span>
-          &nbsp;<a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.city }}">{{ pageuser.userprofile.city }}</a>
+          &nbsp;
+          <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.city }}">
+            {{ pageuser.userprofile.city }}
+          </a>
           -
-          <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.region }}">{{ pageuser.userprofile.region }}</a>
+          <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.region }}">
+            {{ pageuser.userprofile.region }}
+          </a>
           -
-          <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.country }}">{{ pageuser.userprofile.country }}</a>
+          <a href="{% url profiles_list_profiles %}{{ pageuser.userprofile.country }}">
+            {{ pageuser.userprofile.country }}
+          </a>
         </p>
         <p class="profile-item">
           <span class="white radius label">
@@ -133,55 +142,61 @@
           </span>
           &nbsp;{{ pageuser.userprofile.wiki_profile_url|urlizetrunc:50 }}
         </p>
-	{% if pageuser.userprofile.mentor %}
-        <p class="profile-item">
-          <span class="white radius label">
-            Mentor
-          </span>
-          &nbsp;<a href="{% url profiles_view_profile pageuser.userprofile.mentor.userprofile.display_name %}">{{ pageuser.userprofile.mentor.get_full_name }}</a>
-        </p>
+        {% if pageuser.userprofile.mentor %}
+          <p class="profile-item">
+            <span class="white radius label">
+              Mentor
+            </span>
+            &nbsp;
+            <a href="{% url profiles_view_profile pageuser.userprofile.mentor.userprofile.display_name %}">
+              {{ pageuser.userprofile.mentor.get_full_name }}
+            </a>
+          </p>
         {% endif %}
       </div>
     </div>
     <div class="row">
       {% if pageuser.userprofile.twitter_account or pageuser.userprofile.facebook_url or pageuser.userprofile.diaspora_url or pageuser.userprofile.linkedin_url %}
-      <div class="one columns pictogram">
-        T
-      </div>
-      <div class="eleven columns">
+        <div class="one columns pictogram">
+          T
+        </div>
+        <div class="eleven columns">
         {% if pageuser.userprofile.twitter_account %}
-        <p class="profile-item">
-          <span class="white radius label">
-            Twitter handle
-          </span>
-          &nbsp;<a href="http://twitter.com/#!/{{ pageuser.userprofile.twitter_account }}">@{{ pageuser.userprofile.twitter_account }}</a>
-        </p>
+          <p class="profile-item">
+            <span class="white radius label">
+              Twitter handle
+            </span>
+            &nbsp;
+            <a href="http://twitter.com/#!/{{ pageuser.userprofile.twitter_account }}">
+              @{{ pageuser.userprofile.twitter_account }}
+            </a>
+          </p>
         {% endif %}
         {% if pageuser.userprofile.facebook_url %}
-        <p class="profile-item">
-          <span class="white radius label">
-            Facebook profile
-          </span>
-          &nbsp;{{ pageuser.userprofile.facebook_url|urlizetrunc:50 }}
-        </p>
+          <p class="profile-item">
+            <span class="white radius label">
+              Facebook profile
+            </span>
+            &nbsp;{{ pageuser.userprofile.facebook_url|urlizetrunc:50 }}
+          </p>
         {% endif %}
         {% if pageuser.userprofile.diaspora_url %}
-        <p class="profile-item">
-          <span class="white radius label">
-            Diaspora profile
-          </span>
-          &nbsp;{{ pageuser.userprofile.diaspora_url|urlizetrunc:50 }}
-        </p>
+          <p class="profile-item">
+            <span class="white radius label">
+              Diaspora profile
+            </span>
+            &nbsp;{{ pageuser.userprofile.diaspora_url|urlizetrunc:50 }}
+          </p>
         {% endif %}
         {% if pageuser.userprofile.linkedin_url %}
-        <p class="profile-item">
-          <span class="white radius label">
-            LinkedIn profile
-          </span>
-          &nbsp;{{ pageuser.userprofile.linkedin_url|urlizetrunc:50 }}
-        </p>
+          <p class="profile-item">
+            <span class="white radius label">
+              LinkedIn profile
+            </span>
+            &nbsp;{{ pageuser.userprofile.linkedin_url|urlizetrunc:50 }}
+          </p>
         {% endif %}
-      </div>
+        </div>
       {% endif %}
     </div>
     <div class="row">
@@ -190,12 +205,12 @@
       </div>
       <div class="eleven columns">
         {% if pageuser.userprofile.jabber_id %}
-        <p class="profile-item">
-          <span class="white radius label">
-            Jabber ID
-          </span>
-          &nbsp;{{ pageuser.userprofile.jabber_id }}
-        </p>
+          <p class="profile-item">
+            <span class="white radius label">
+              Jabber ID
+            </span>
+            &nbsp;{{ pageuser.userprofile.jabber_id }}
+          </p>
         {% endif %}
         <p class="profile-item">
           <span class="white radius label">
@@ -204,62 +219,67 @@
           &nbsp;{{ pageuser.userprofile.irc_name }}
         </p>
         {% if pageuser.userprofile.irc_channels %}
-        <p class="profile-item">
-          <span class="white radius label">
-            IRC channels
-          </span>
-          &nbsp;{{ pageuser.userprofile.irc_channels }}
-        </p>
+          <p class="profile-item">
+            <span class="white radius label">
+              IRC channels
+            </span>
+            &nbsp;{{ pageuser.userprofile.irc_channels }}
+          </p>
         {% endif %}
       </div>
     </div>
     <div class="row">
       {% if pageuser.userprofile.personal_website_url or pageuser.userprofile.personal_blog_feed %}
-      <div class="one columns pictogram">
-        w
-      </div>
-      <div class="eleven columns">
-        {% if pageuser.userprofile.personal_website_url %}
-        <p class="profile-item">
-          <span class="white radius label">
-            Personal Site
-          </span>
-          &nbsp;{{ pageuser.userprofile.personal_website_url|urlizetrunc:50 }}
-        </p>
-        {% endif %} {% if pageuser.userprofile.personal_blog_feed %}
-        <p class="profile-item">
-          <span class="white radius label">
-            Personal Blog Feed
-          </span>
-          &nbsp;{{ pageuser.userprofile.personal_blog_feed|urlizetrunc:50 }}
-        </p>
-        {% endif %}
-      </div>
+        <div class="one columns pictogram">
+          w
+        </div>
+        <div class="eleven columns">
+          {% if pageuser.userprofile.personal_website_url %}
+            <p class="profile-item">
+              <span class="white radius label">
+                Personal Site
+              </span>
+              &nbsp;{{ pageuser.userprofile.personal_website_url|urlizetrunc:50 }}
+            </p>
+          {% endif %}
+          {% if pageuser.userprofile.personal_blog_feed %}
+            <p class="profile-item">
+              <span class="white radius label">
+                Personal Blog Feed
+              </span>
+              &nbsp;{{ pageuser.userprofile.personal_blog_feed|urlizetrunc:50 }}
+            </p>
+          {% endif %}
+        </div>
       {% endif %}
     </div>
     {% if pageuser.userprofile.added_by and perms.profiles.can_edit_profile %}
-    <div class="row">
-      <div class="one columns pictogram">
-        l
+      <div class="row">
+        <div class="one columns pictogram">
+          l
+        </div>
+        <div class="eleven columns">
+          <p class="profile-item">
+            <span class="white radius label">
+              Added by
+            </span>
+            &nbsp;
+            <a href="{% url profiles_view_profile pageuser.userprofile.added_by.userprofile.display_name %}">
+              {{ pageuser.userprofile.added_by.userprofile.display_name }}
+            </a>
+          </p>
+        </div>
       </div>
-      <div class="eleven columns">
-        <p class="profile-item">
-          <span class="white radius label">
-            Added by
-          </span>
-          &nbsp;<a href="{% url profiles_view_profile display_name=pageuser.userprofile.added_by.userprofile.display_name %}">{{ pageuser.userprofile.added_by.userprofile.display_name }}</a>
-        </p>
-      </div>
-    </div>
     {% endif %}
   </div>
 </div>
 {% if user == pageuser or perms.profiles.can_edit_profiles %}
-<div class="row">
-  <div id="save-profile" class="twelve columns align-right">
-    <a href="{% url profiles_edit pageuser.userprofile.display_name %}" class="small white button nice radius">Edit profile</a>
+  <div class="row">
+    <div id="save-profile" class="twelve columns align-right">
+      <a href="{% url profiles_edit pageuser.userprofile.display_name %}"
+         class="small white button nice radius">Edit profile</a>
+    </div>
   </div>
-</div>
 {% endif %}
 </div>
 
