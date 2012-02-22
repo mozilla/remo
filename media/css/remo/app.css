@@ -169,6 +169,21 @@ ul.orbit-bullets li.active {
    People Page Styles
 ----------------------------------------- */
 
+#profiles-view-avatar, #profiles-edit-avatar {
+    width: 128px;
+    height: 128px;
+}
+
+#main-featured-avatar {
+    width: 80px;
+    height: 80px
+}
+
+.profiles-people-avatar {
+    width: 50px;
+    height: 50px;
+}
+
 .hidden {
     display: none;
 }
