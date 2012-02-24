@@ -12,6 +12,8 @@ from django.dispatch import receiver
 
 from libravatar import libravatar_url
 
+DISPLAY_NAME_MAX_LENGTH = 50
+
 
 def _validate_birth_date(data, **kwargs):
     """Validator to ensure age of at least 12 years old."""
@@ -42,7 +44,7 @@ class UserProfile(models.Model):
     """Definition of UserProfile Model."""
     user = models.OneToOneField(User)
     registration_complete = models.BooleanField(default=False)
-    local_name = models.CharField(max_length=50, blank=True, default='')
+    local_name = models.CharField(max_length=100, blank=True, default='')
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   blank=True, null=True)
     city = models.CharField(max_length=30, blank=False, default='')
@@ -51,7 +53,8 @@ class UserProfile(models.Model):
     lon = models.FloatField(blank=False, null=True)
     lat = models.FloatField(blank=False, null=True)
     display_name = models.CharField(
-        max_length=15, blank=True, default='', unique=True,
+        max_length=DISPLAY_NAME_MAX_LENGTH, blank=True, default='',
+        unique=True,
         validators=[
             RegexValidator(regex=r'("")|([A-Za-z0-9_]+)',
                            message='Please only A-Z characters, numbers and '
@@ -154,8 +157,8 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
     """Set display_name from user.email if display_name == ''.
 
     Not setting username because we want to provide human readable,
-    nice display names. Username is used only if character limit (>15)
-    is reached.
+    nice display names. Username is used only if character limit
+    (>DISPLAY_NAME_MAX_LENGTH) is reached.
 
     Looping to find a unique display_name is not optimal but since we
     are focused on UX we can take some db hits to achieve the best
@@ -167,6 +170,7 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
     if not instance.display_name:
         email = instance.user.email.split('@')[0]
         display_name = re.sub(r'[^A-Za-z0-9_]', '_', email)
+        display_name = display_name[:DISPLAY_NAME_MAX_LENGTH]
 
         while True:
             instance.display_name = display_name
@@ -176,7 +180,7 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
 
             except ValidationError:
                 display_name += '_'
-                if len(display_name) > 15:
+                if len(display_name) > DISPLAY_NAME_MAX_LENGTH:
                     # We didn't manage to find a unique display_name
                     # based on email. Just go with calculated username.
                     display_name = instance.user.username
