@@ -162,7 +162,7 @@ ul.orbit-bullets li {
 }
 
 ul.orbit-bullets li.active {
-    background-position: -8px 0 !important; 
+    background-position: -8px 0 !important;
 }
 
 /* -----------------------------------------
@@ -252,6 +252,11 @@ ul.orbit-bullets li.active {
 /* -----------------------------------------
    Edit Profile Styles
 ----------------------------------------- */
+
+.custom.dropdown ul {
+    max-height: 150px;
+    overflow-y: auto;
+}
 
 .profile-image {
     margin-top: 20px;
