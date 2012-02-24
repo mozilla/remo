@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from nose.tools import eq_, raises
 from test_utils import TestCase
 
-from remo.profiles.models import UserProfile
+from remo.profiles.models import DISPLAY_NAME_MAX_LENGTH, UserProfile
 
 
 class UserTest(TestCase):
@@ -70,6 +70,18 @@ class UserTest(TestCase):
             email='chucknorisfooo@foo.example.com')
 
         eq_(new_user3.userprofile.display_name, new_user3.username)
+
+    def test_initial_display_name_larger_than_max(self):
+        """Test that when a user with email username larger than
+        DISPLAY_NAME_MAX_LENGTH gets an auto-generated name stripped
+        down to DISPLAY_NAME_MAX_LENGTH.
+
+        """
+        new_user = User.objects.create_user(
+            username='dummyusername',
+            email=('x' * (DISPLAY_NAME_MAX_LENGTH + 10)) + '@example.com')
+
+        eq_(new_user.userprofile.display_name, 'x' * DISPLAY_NAME_MAX_LENGTH)
 
 
 class UserProfileTest(TestCase):
