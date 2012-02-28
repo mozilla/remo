@@ -58,44 +58,8 @@
               {{ profileform.local_name.errors }}
             </small>
           {% endif %}
-          <select name="birth_date">
-            <option selected="selected" value="">
-              Birth Year
-            </option>
-            {% for year in range_years reversed %}
-              <option value="{{ year }}-01-01"
-                      {% if year == profileform.birth_date.value.year %}
-                        selected="selected"
-                      {% endif %}>
-                {{ year }}
-              </option>
-            {% endfor %}
+            {{ profileform.gender }}
           </select>
-          <select name="gender">
-            <option value="None"
-                    {% if profileform.gender.value == None %}
-                      selected="selected"
-                    {% endif %}>Gender
-            </option>
-            <option value="True"
-                    {% if profileform.gender.value %}
-                      selected="selected"
-                    {% endif %}>Female
-            </option>
-            <option value="False"
-                    {% if profileform.gender.value != None %}
-                      {% if not profileform.gender.value %}
-                        selected="selected"
-                      {% endif %}
-                    {% endif %}
-                    >Male
-            </option>
-          </select>
-          {% if profileform.birth_date.errors %}
-            <small class="error">
-              {{ profileform.birth_date.errors }}
-            </small>
-          {% endif %}
           {% if profileform.gender.errors %}
             <small class="error">
               {{ profileform.gender.errors }}

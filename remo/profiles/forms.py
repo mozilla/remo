@@ -56,6 +56,9 @@ class ChangeUserForm(forms.ModelForm):
 
 class ChangeProfileForm(forms.ModelForm):
     """Form to change userprofile details."""
+    gender = forms.ChoiceField(choices=((None, "Gender"),
+                                        (True, "Female"),
+                                        (False, "Male")))
 
     class Meta:
         model = UserProfile
