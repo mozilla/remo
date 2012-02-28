@@ -52,7 +52,6 @@
                   {{ person.userprofile.city }}, {{ person.userprofile.country }}
                   <span class="hidden">{{ person.userprofile.display_name }}</span>
                   <span class="hidden">{{ person.userprofile.local_name }}</span>
-                  <span class="hidden">{{ person.userprofile.birth_date.year }}</span>
                   <span class="hidden">{{ person.userprofile.region }}</span>
                   <span class="hidden">{{ person.userprofile.private_email }}</span>
                   <span class="hidden">{{ person.email }}</span>
@@ -81,7 +80,6 @@
             <th>Username</th>
             <th>City</th>
             <th>Country</th>
-            <th>Birth Year</th>
             <th>Mozillian Profile</th>
             <th>Personal mail</th>
           </tr>
@@ -106,9 +104,6 @@
                 <a href="{% url profiles_list_profiles %}{{ person.userprofile.country }}">
                   {{ person.userprofile.country }}
                 </a>
-              </td>
-              <td>
-                {{ person.userprofile.birth_date.year }}
               </td>
               <td>
                 {{ person.userprofile.mozillians_profile_url|urlizetrunc:50}}
