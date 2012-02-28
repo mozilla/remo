@@ -99,14 +99,6 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             {{ user_profile.country }}
           </a>
         </p>
-        {% if user_profile.birth_date %}
-        <p class="profile-item">
-          <span class="white radius label">
-            Birth Year
-          </span>
-          &nbsp;{{ user_profile.birth_date.year }}
-        </p>
-        {% endif %}
         {% if not user_profile.gender == None %}
         <p class="profile-item">
           <span class="white radius label">
