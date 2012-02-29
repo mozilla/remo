@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% load markup %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
 
 <!-- Sidereel Orbit featured images -->
 <div class="row show-on-desktop">
@@ -64,16 +66,16 @@
       </div>
       <div class="eight columns">
         <h5>
-          <a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">
+          <a href="{{ url('profiles_view_profile', featuredrep.user.userprofile.display_name) }}">
             {{ featuredrep.user.first_name }}
           </a>
           <br>
-          <a href="{% url profiles_view_profile featuredrep.user.userprofile.display_name %}">
+          <a href="{{ url('profiles_view_profile', featuredrep.user.userprofile.display_name) }}">
             {{ featuredrep.user.last_name }}
           </a>
         </h5>
         <br>
-        {{ featuredrep.user.userprofile.city }}, {{ featuredrep.user.userprofile.country}}
+        {{ featuredrep.user.userprofile.city }}, {{ featuredrep.user.userprofile.country }}
       </div>
       {% else %}
       <div class="twelve columns">

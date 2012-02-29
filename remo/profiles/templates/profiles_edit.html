@@ -16,8 +16,8 @@
   </div>
 </div>
 <form class="custom" method="post"
-      action="{% url profiles_edit pageuser.userprofile.display_name %}">
-  {% csrf_token %}
+      action="{{ url('profiles_edit', pageuser.userprofile.display_name) }}">
+  {{ csrf() }}
   <!-- Two column block -->
   <div class="row">
     <div class="six columns">
@@ -27,7 +27,7 @@
         </div>
         <div class="eleven columns">
           <input type="text" placeholder="Username" name="display_name"
-                 value="{{ profileform.display_name.value }}"
+                 value="{{ profileform.display_name.value() }}"
           class="input-text big">
           {% if profileform.display_name.errors %}
             <small class="error">
@@ -35,7 +35,7 @@
             </small>
           {% endif %}
           <input type="text" placeholder="Last name" name="last_name"
-                 value="{{ userform.last_name.value }}"
+                 value="{{ userform.last_name.value() }}"
           class="input-text big">
           {% if userform.last_name.errors %}
             <small class="error">
@@ -43,7 +43,7 @@
             </small>
           {% endif %}
           <input type="text" placeholder="First name" name="first_name"
-                 value="{{ userform.first_name.value }}"
+                 value="{{ userform.first_name.value() }}"
           class="input-text big">
           {% if userform.first_name.errors %}
             <small class="error">
@@ -51,7 +51,7 @@
             </small>
           {% endif %}
           <input type="text" placeholder="Name in local language"
-                 name="local_name" value="{{ profileform.local_name.value }}"
+                 name="local_name" value="{{ profileform.local_name.value() }}"
           class="input-text big">
           {% if profileform.local_name.errors %}
             <small class="error">
@@ -96,14 +96,14 @@
         </div>
         <div class="eleven columns">
           <input type="text" placeholder="Personal email"
-                 value="{{ profileform.private_email.value }}"
+                 value="{{ profileform.private_email.value() }}"
           name="private_email" class="input-text big">
           {% if profileform.private_email.errors %}
             <small class="error">
               {{ profileform.private_email.errors }}
             </small>
           {% endif %}
-          <input type="text" placeholder="Bugzilla email" value="{{ userform.email.value }}"
+          <input type="text" placeholder="Bugzilla email" value="{{ userform.email.value() }}"
           name="email" class="input-text big">
           {% if userform.email.errors %}
             <small class="error">
@@ -111,7 +111,7 @@
             </small>
           {% endif %}
           <input type="text" placeholder="Mozillians.org profile"
-                 value="{{ profileform.mozillians_profile_url.value }}"
+                 value="{{ profileform.mozillians_profile_url.value() }}"
           name="mozillians_profile_url" class="input-text big">
           {% if profileform.mozillians_profile_url.errors %}
             <small class="error">
@@ -119,7 +119,7 @@
             </small>
           {% endif %}
           <input type="text" placeholder="Wiki profile"
-                 value="{{ profileform.wiki_profile_url.value }}"
+                 value="{{ profileform.wiki_profile_url.value() }}"
                  name="wiki_profile_url" class="input-text big">
           {% if profileform.wiki_profile_url.errors %}
             <small class="error">
@@ -127,15 +127,15 @@
             </small>
           {% endif %}
           <select name="mentor">
-            {% if not profileform.mentor.value %}
+            {% if not profileform.mentor.value() %}
               <option selected="selected" value="">
                 Choose mentor
               </option>
             {% endif %}
             {% for mentor in mentors %}
-              <option value="{{ mentor.id }}" {% if mentor.id == profileform.mentor.value %}
+              <option value="{{ mentor.id }}" {% if mentor.id == profileform.mentor.value() %}
                       selected="selected" {% endif %}>
-                {{ mentor.get_full_name }}
+                {{ mentor.get_full_name() }}
               </option>
             {% endfor %}
           </select>
@@ -148,14 +148,14 @@
           p
         </div>
         <div class="eleven columns">
-          <input type="text" placeholder="City" value="{{ profileform.city.value }}"
+          <input type="text" placeholder="City" value="{{ profileform.city.value() }}"
                  name="city" class="input-text big">
           {% if profileform.city.errors %}
             <small class="error">
               {{ profileform.city.errors }}
             </small>
           {% endif %}
-          <input type="text" placeholder="State or Region" value="{{ profileform.region.value }}"
+          <input type="text" placeholder="State or Region" value="{{ profileform.region.value() }}"
                  name="region" class="input-text big">
           {% if profileform.region.errors %}
             <small class="error">
@@ -163,12 +163,12 @@
             </small>
           {% endif %}
           <select name="country">
-            {% if not profileform.country.value %}
+            {% if not profileform.country.value() %}
               <option selected="selected">Country</option>
             {% endif%}
             {% for country in countries %}
               <option value="{{ country }}"
-                {% if profileform.country.value == country %}selected="selected"{% endif %}>
+                {% if profileform.country.value() == country %}selected="selected"{% endif %}>
                 {{ country }}
               </option>
             {% endfor %}
@@ -178,9 +178,9 @@
               {{ profileform.country.errors }}
             </small>
           {% endif %}
-          <input type="hidden" placeholder="Latitude" value="{{ profileform.lat.value }}"
+          <input type="hidden" placeholder="Latitude" value="{{ profileform.lat.value() }}"
           name="lat" class="input-text point-lat">
-          <input type="hidden" placeholder="Longitude" value="{{ profileform.lon.value }}"
+          <input type="hidden" placeholder="Longitude" value="{{ profileform.lon.value() }}"
           name="lon" class="input-text point-long">
           {% if profileform.lat.errors or profileform.lon.errors %}
             <small class="error">
@@ -203,7 +203,7 @@
         </div>
         <div class="eleven columns">
           <input type="text" placeholder="Twitter handle"
-                 value="{{ profileform.twitter_account.value }}"
+                 value="{{ profileform.twitter_account.value() }}"
           name="twitter_account" class="input-text big">
           {% if profileform.twitter_account.errors %}
             <small class="error">
@@ -211,7 +211,7 @@
             </small>
           {% endif %}
           <input type="text" placeholder="Facebook profile"
-                 value="{{ profileform.facebook_url.value }}"
+                 value="{{ profileform.facebook_url.value() }}"
           name="facebook_url" class="input-text big">
           {% if profileform.facebook_url.errors %}
             <small class="error">
@@ -219,7 +219,7 @@
             </small>
           {% endif %}
           <input type="text" placeholder="Diaspora profile"
-                 value="{{ profileform.diaspora_url.value }}"
+                 value="{{ profileform.diaspora_url.value() }}"
           name="diaspora_url" class="input-text big">
           {% if profileform.diaspora_url.errors %}
             <small class="error">
@@ -227,7 +227,7 @@
             </small>
           {% endif %}
           <input type="text" placeholder="LinkedIn profile"
-                 value="{{ profileform.linkedin_url.value }}"
+                 value="{{ profileform.linkedin_url.value() }}"
           name="linkedin_url" class="input-text big">
           {% if profileform.linkedin_url.errors %}
             <small class="error">
@@ -244,7 +244,7 @@
         </div>
         <div class="eleven columns">
           <input type="text" placeholder="Jabber ID"
-                 value="{{ profileform.jabber_id.value }}"
+                 value="{{ profileform.jabber_id.value() }}"
           name="jabber_id" class="input-text big">
           {% if profileform.jabber_id.errors %}
             <small class="error">
@@ -252,7 +252,7 @@
             </small>
           {% endif %}
           <input type="text" placeholder="IRC nickname"
-                 value="{{ profileform.irc_name.value }}"
+                 value="{{ profileform.irc_name.value() }}"
           name="irc_name" class="input-text big">
           {% if profileform.irc_name.errors %}
             <small class="error">
@@ -260,7 +260,7 @@
             </small>
           {% endif %}
           <textarea class="flat" placeholder="Please list the channels you use in IRC"
-                    name="irc_channels">{{ profileform.irc_channels.value }}</textarea>
+                    name="irc_channels">{{ profileform.irc_channels.value() }}</textarea>
           {% if profileform.irc_channels.errors %}
             <small class="error">
               {{ profileform.irc_channels.errors }}
@@ -278,7 +278,7 @@
         </div>
         <div class="eleven columns">
           <input type="text" placeholder="Personal site URL"
-                 value="{{ profileform.personal_website_url.value }}"
+                 value="{{ profileform.personal_website_url.value() }}"
                  name="personal_website_url" class="input-text big">
           {% if profileform.personal_website_url.errors %}
             <small class="error">
@@ -286,7 +286,7 @@
             </small>
           {% endif %}
           <input type="text" placeholder="Feed for Reps Planet"
-                 value="{{ profileform.personal_blog_feed.value }}"
+                 value="{{ profileform.personal_blog_feed.value() }}"
                  name="personal_blog_feed" class="input-text big">
           {% if profileform.personal_blog_feed.errors %}
             <small class="error">
@@ -304,7 +304,7 @@
         <div class="eleven columns">
           <br>
           <textarea class="flat" placeholder="Bio - Write us a bit about yourself"
-                    name="bio">{{ profileform.bio.value }}</textarea>
+                    name="bio">{{ profileform.bio.value() }}</textarea>
           {% if profileform.bio.errors %}
             <small class="error">
               {{ profileform.bio.errors }}
@@ -409,8 +409,8 @@
     By pressing the following button you will permanently and irreversibly delete the
     profile of this Rep.
   </p>
-    <form method="post" action="{% url profiles_delete pageuser.userprofile.display_name %}">
-      {% csrf_token %}
+    <form method="post" action="{{ url('profiles_delete', pageuser.userprofile.display_name) }}">
+      {{ csrf() }}
       <button class="large red button nice radius close-reveal-modal">
         Delete profile
       </button>
