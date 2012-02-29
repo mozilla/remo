@@ -61,7 +61,6 @@ class UserProfile(models.Model):
                                    'underscores.')])
     private_email = models.EmailField(blank=False, null=True, default='')
     mozillians_profile_url = models.URLField(
-        verify_exists=True,
         validators=[
             RegexValidator(regex=r'^http(s)?://(www.)?mozillians.org/',
                            message='Please provide a valid Mozillians url.')])
@@ -74,23 +73,20 @@ class UserProfile(models.Model):
     irc_name = models.CharField(max_length=30, blank=False, default='')
     irc_channels = models.TextField(blank=True, default='')
     linkedin_url = models.URLField(
-        blank=True, null=False, default='', verify_exists=True,
+        blank=True, null=False, default='',
         validators=[
             RegexValidator(regex=r'("^$")|(^http(s)?://(www.)?linkedin.com/)',
                            message='Please provide a valid LinkedIn url.')])
     facebook_url = models.URLField(
-        blank=True, null=False, default='', verify_exists=True,
+        blank=True, null=False, default='',
         validators=[
             RegexValidator(regex=r'("^$")|(^http(s)?://(www.)?facebook.com/)',
                            message='Please provide a valid Facebook url.')])
-    diaspora_url = models.URLField(blank=True, null=False, default='',
-                                   verify_exists=True)
-    personal_website_url = models.URLField(blank=True, null=False, default='',
-                                           verify_exists=True)
-    personal_blog_feed = models.URLField(blank=True, null=False, default='',
-                                         verify_exists=True)
+    diaspora_url = models.URLField(blank=True, null=False, default='')
+    personal_website_url = models.URLField(blank=True, null=False, default='')
+    personal_blog_feed = models.URLField(blank=True, null=False, default='')
     wiki_profile_url = models.URLField(
-        blank=False, null=False, default='', verify_exists=True,
+        blank=False, null=False, default='',
         validators=[
             RegexValidator(regex=r'^http(s)?://wiki.mozilla.org/User:',
                            message='Please provide a valid wiki url.')])
