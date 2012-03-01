@@ -56,7 +56,7 @@ class UserProfile(models.Model):
         max_length=DISPLAY_NAME_MAX_LENGTH, blank=True, default='',
         unique=True,
         validators=[
-            RegexValidator(regex=r'("")|([A-Za-z0-9_]+$)',
+            RegexValidator(regex=r'("")|(^[A-Za-z0-9_]+$)',
                            message='Please only A-Z characters, numbers and '
                                    'underscores.')])
     private_email = models.EmailField(blank=False, null=True, default='')
