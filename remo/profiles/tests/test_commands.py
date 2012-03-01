@@ -33,7 +33,7 @@ class CreateUserTest(TestCase):
 
         # create a temporaty file with emails
         self.TEST_EMAILS = ['foo@example.com', 'bar@example.com',
-                            'bogusemail.com']
+                            'bogusemail.com', 'foo@example.com']
         self.NUMBER_VALID_EMAILS = 2
         self.temp_file = tempfile.NamedTemporaryFile(delete=False)
 
