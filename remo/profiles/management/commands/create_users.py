@@ -25,11 +25,11 @@ class Command(BaseCommand):
     args = '<user_list.txt>'
     help = 'Create new users from file'
     option_list = list(BaseCommand.option_list) + [
-        make_option('--no-email',
-                    action='store_false',
+        make_option('--send-email',
+                    action='store_true',
                     dest='email',
-                    default=True,
-                    help='Do not send invitation emails')]
+                    default=False,
+                    help='Send invitation emails')]
 
     FROM_EMAIL = 'reps@mozilla.com'
     SUBJECT = 'Welcome to ReMo Portal'
