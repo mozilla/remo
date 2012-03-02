@@ -3,11 +3,13 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.template import Context, RequestContext, loader
+from django.views.decorators.cache import never_cache
 
 import utils
 from remo.featuredrep.models import FeaturedRep
 
 
+@never_cache
 def main(request):
     """Main page of the website."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
