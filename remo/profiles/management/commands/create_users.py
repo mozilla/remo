@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.core.management.base import BaseCommand
 from django.core.validators import email_re
+from django.db.utils import IntegrityError
 
 from django_browserid.auth import default_username_algo
 
@@ -56,8 +57,13 @@ class Command(BaseCommand):
                     LOGGER.warning('Ignoring not valid email: "%s"' % email)
                     continue
 
-                User.objects.create_user(username=USERNAME_ALGO(email),
-                                         email=email)
+                user, created = User.objects.get_or_create(
+                    username=USERNAME_ALGO(email),
+                    email=email)
+
+                if not created:
+                    LOGGER.warning('User "%s" already exists' % email)
+                    continue
 
                 # Send invitation email if option is True. Default (yes)
                 if options['email']:
