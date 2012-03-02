@@ -73,9 +73,6 @@ AUTHENTICATION_BACKENDS = ('django_browserid.auth.BrowserIDBackend',
 # Required for BrowserID. Very important security feature
 SITE_URL = 'http://reps.mozilla.org'
 
-# Remove jinja template engine. To be revisited
-TEMPLATE_LOADERS = filter(lambda x: x != 'jingo.Loader', TEMPLATE_LOADERS)
-
 # Remove LocaleURLMiddleware since we are not localing our website
 MIDDLEWARE_CLASSES = filter(
     lambda x: x != 'funfactory.middleware.LocaleURLMiddleware',

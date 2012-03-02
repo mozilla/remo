@@ -63,17 +63,17 @@
           <div class="ten columns phone-three pull-one-phone pull-two" id="login-box">
             <ul>
               <li class="account anonymous nomenu logout">
-                {% if not user.is_authenticated %}
+                {% if not user.is_authenticated() %}
                   <a id="browserid" href="#">Sign In</a>
-                  <form method="POST" action="{% url browserid_verify %}">
-                    {% csrf_token %} {{ browserid_form.as_p }}
-                    <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                  <form method="POST" action="{{ url('browserid_verify') }}">
+                    {{ csrf() }} {{ browserid_form.as_p() }}
+                    <input type="hidden" name="next" value="{{ request.get_full_path() }}" />
                   </form>
                 {% else %}
-                  <a href="{% url profiles_view_my_profile %}">
-                    {{ user.get_full_name|default:user.userprofile.display_name}}
+                  <a href="{{ url('profiles_view_my_profile') }}">
+                    {{ user.get_full_name()|default('user.userprofile.display_name') }}
                   </a>
-                  [<a href="{% url logout %}">Sign out</a>]
+                  [<a href="{{ url('logout') }}">Sign out</a>]
                 {% endif %}
               </li>
             </ul>
@@ -86,7 +86,7 @@
           <!-- Logo and Wordmark -->
           <div class="four columns" id="logo-box">
             <div class="row hide-on-phones">
-              <a href="{% url main %}">
+              <a href="{{ url('main') }}">
                 <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
                      alt="Mozilla Reps logo">
                 <h3>mozilla reps</h3>
@@ -101,10 +101,10 @@
           <div class="eight columns hide-on-phones" id="navigation-box">
             <ul class="nav-bar">
               <li>
-                <a href="{% url main %}" class="main">Main</a>
+                <a href="{{ url('main') }}" class="main">Main</a>
               </li>
               <li>
-                <a href="{% url profiles_list_profiles %}" class="main">People</a>
+                <a href="{{ url('profiles_list_profiles') }}" class="main">People</a>
               </li>
               <li>
                 <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
@@ -128,10 +128,10 @@
           <div class="eight columns show-on-phones" id="navigation-box-mobile">
             <ul class="nav-bar">
               <li>
-                <a href="{% url main %}" class="main">Main</a>
+                <a href="{{ url('main') }}" class="main">Main</a>
               </li>
               <li>
-                <a href="{% url profiles_list_profiles %}" class="main">People</a>
+                <a href="{{ url('profiles_list_profiles') }}" class="main">People</a>
               </li>
               <li>
                 <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
@@ -196,7 +196,7 @@
       <p class="lead">So, you wanna join us?</p>
       <h2>Cool!</h2>
       <p>
-        The Mozilla Reps program is open to all Mozillians who are 18 years 
+        The Mozilla Reps program is open to all Mozillians who are 18 years
         of age and above. Before you become a Mozilla Rep, you must
         complete a short but rigorous application process in order to
         demonstrate your interest in and motivation for joining the
@@ -222,9 +222,10 @@
         <li>
           <h4>Step 1</h4>
           <p>Fill out and submit the
-          <a href="https://bugzilla.mozilla.org/form.reps.mentorship">Mozilla
-Reps application form</a>
-          . A Mozilla Rep mentor will be in touch within 24 hours.</p>
+          <a href="https://bugzilla.mozilla.org/form.reps.mentorship">
+            Mozilla Reps application form
+          </a>.
+          A Mozilla Rep mentor will be in touch within 24 hours.</p>
         </li>
         <li>
           <h4>Step 2</h4>

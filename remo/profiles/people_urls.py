@@ -1,4 +1,3 @@
-from django.core.urlresolvers import reverse
 from django.conf.urls.defaults import *
 
 # We use /people/[query] to automatically load the people list view
