@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.cache import never_cache
 
 from remo.base.decorators import permission_check
 
@@ -9,6 +10,7 @@ import forms
 from models import FeaturedRep
 
 
+@never_cache
 @permission_check(permissions=['profiles.can_edit_profiles'])
 def list_featured(request):
     """List all Featured Reps."""
@@ -16,6 +18,7 @@ def list_featured(request):
                   {'featured': FeaturedRep.objects.all()})
 
 
+@never_cache
 @permission_check(permissions=['profiles.can_edit_profiles'])
 def alter_featured(request, feature_id=None):
     """Create or edit a Featured Rep.

@@ -6,6 +6,7 @@ from django.contrib.auth.models import Group, User
 from django.contrib.auth.views import login as django_login
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.cache import never_cache
 
 from django_browserid.auth import default_username_algo
 from product_details import product_details
@@ -17,6 +18,7 @@ USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
 
 
+@never_cache
 @permission_check(permissions=['profiles.can_edit_profiles'],
                   display_name_field='display_name')
 def edit(request, display_name):
@@ -86,6 +88,7 @@ def edit(request, display_name):
                    'range_years': range(1950, datetime.today().year - 11)})
 
 
+@never_cache
 def list_profiles(request):
     """List users in Rep Group."""
     return render(request, 'profiles_people.html',
@@ -96,6 +99,7 @@ def list_profiles(request):
                                                        'first_name')})
 
 
+@never_cache
 def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User, userprofile__display_name=display_name)
@@ -115,6 +119,7 @@ def view_my_profile(request):
                         display_name=request.user.userprofile.display_name)
 
 
+@never_cache
 @permission_check(permissions=['profiles.create_user'])
 def invite(request):
     """Invite a user."""
