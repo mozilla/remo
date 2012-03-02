@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load markup %}
 
 {% block pagetitle %}
 Mozilla Reps - Profile of {{ user_profile.display_name }}
@@ -87,15 +86,15 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             Location
           </span>
           &nbsp;
-          <a href="{% url profiles_list_profiles %}{{ user_profile.city }}">
+          <a href="{{ url('profiles_list_profiles') }}{{ user_profile.city }}">
             {{ user_profile.city }}
           </a>
           -
-          <a href="{% url profiles_list_profiles %}{{ user_profile.region }}">
+          <a href="{{ url('profiles_list_profiles') }}{{ user_profile.region }}">
             {{ user_profile.region }}
           </a>
           -
-          <a href="{% url profiles_list_profiles %}{{ user_profile.country }}">
+          <a href="{{ url('profiles_list_profiles') }}{{ user_profile.country }}">
             {{ user_profile.country }}
           </a>
         </p>
@@ -104,7 +103,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           <span class="white radius label">
             Gender
           </span>
-          &nbsp;{{ user_profile.get_gender_display }}
+          &nbsp;{{ user_profile.get_gender_display() }}
         </p>
         {% endif %}
       </div>
@@ -130,13 +129,13 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           <span class="white radius label">
             Mozillians Profile
           </span>
-          &nbsp;{{ user_profile.mozillians_profile_url|urlizetrunc:50 }}
+          &nbsp;{{ user_profile.mozillians_profile_url|urlize(50) }}
         </p>
         <p class="profile-item">
           <span class="white radius label">
             Wiki Profile
           </span>
-          &nbsp;{{ user_profile.wiki_profile_url|urlizetrunc:50 }}
+          &nbsp;{{ user_profile.wiki_profile_url|urlize(50) }}
         </p>
         {% if mentor %}
           <p class="profile-item">
@@ -144,15 +143,16 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
               Mentor
             </span>
             &nbsp;
-            <a href="{% url profiles_view_profile mentor.userprofile.display_name %}">
-              {{ mentor.get_full_name }}
+            <a href="{{ url('profiles_view_profile', mentor.userprofile.display_name) }}">
+              {{ mentor.get_full_name() }}
             </a>
           </p>
         {% endif %}
       </div>
     </div>
     <div class="row">
-      {% if user_profile.twitter_account or user_profile.facebook_url or user_profile.diaspora_url or user_profile.linkedin_url %}
+      {% if user_profile.twitter_account or user_profile.facebook_url or
+            user_profile.diaspora_url or user_profile.linkedin_url %}
         <div class="one columns pictogram">
           T
         </div>
@@ -173,7 +173,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             <span class="white radius label">
               Facebook profile
             </span>
-            &nbsp;{{ user_profile.facebook_url|urlizetrunc:50 }}
+            &nbsp;{{ user_profile.facebook_url|urlize(50) }}
           </p>
         {% endif %}
         {% if user_profile.diaspora_url %}
@@ -181,7 +181,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             <span class="white radius label">
               Diaspora profile
             </span>
-            &nbsp;{{ user_profile.diaspora_url|urlizetrunc:50 }}
+            &nbsp;{{ user_profile.diaspora_url|urlize(50) }}
           </p>
         {% endif %}
         {% if user_profile.linkedin_url %}
@@ -189,7 +189,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             <span class="white radius label">
               LinkedIn profile
             </span>
-            &nbsp;{{ user_profile.linkedin_url|urlizetrunc:50 }}
+            &nbsp;{{ user_profile.linkedin_url|urlize(50) }}
           </p>
         {% endif %}
         </div>
@@ -235,7 +235,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
               <span class="white radius label">
                 Personal Site
               </span>
-              &nbsp;{{ user_profile.personal_website_url|urlizetrunc:50 }}
+              &nbsp;{{ user_profile.personal_website_url|urlize(50) }}
             </p>
           {% endif %}
           {% if user_profile.personal_blog_feed %}
@@ -243,7 +243,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
               <span class="white radius label">
                 Feed for Reps Planet
               </span>
-              &nbsp;{{ user_profile.personal_blog_feed|urlizetrunc:50 }}
+              &nbsp;{{ user_profile.personal_blog_feed|urlize(50) }}
             </p>
           {% endif %}
         </div>
@@ -260,7 +260,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
               Added by
             </span>
             &nbsp;
-            <a href="{% url profiles_view_profile added_by.userprofile.display_name %}">
+            <a href="{{ url('profiles_view_profile', added_by.userprofile.display_name) }}">
               {{ added_by.userprofile.display_name }}
             </a>
           </p>
@@ -272,7 +272,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 {% if user == pageuser or perms.profiles.can_edit_profiles %}
   <div class="row">
     <div id="save-profile" class="twelve columns align-right">
-      <a href="{% url profiles_edit user_profile.display_name %}"
+      <a href="{{ url('profiles_edit', user_profile.display_name) }}"
          class="small white button nice radius">Edit profile</a>
     </div>
   </div>

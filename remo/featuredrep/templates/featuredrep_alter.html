@@ -15,17 +15,17 @@
       Please specify the rep and add descriptive text.
     </p>
     <form class="custom" method="post" action="{{ post_to }}">
-      {% csrf_token %}
+      {{ csrf() }}
       <select id="id_user" name="user">
-        {% if not form.user.value %}
+        {% if not form.user.value() %}
           <option selected="selected" value="">
             ---------
           </option>
         {% endif %}
         {% for rep in reps %}
           <option value="{{ rep.id }}"
-                  {% if rep.id == form.user.value %}selected="selected"{% endif %}>
-            {{ rep.get_full_name }} :{{ rep.userprofile.display_name }}
+                  {% if rep.id == form.user.value() %}selected="selected"{% endif %}>
+            {{ rep.get_full_name() }} :{{ rep.userprofile.display_name }}
           </option>
         {% endfor %}
       </select>
@@ -33,7 +33,7 @@
         {{ form.user.errors }}
       </small>
       <textarea class="flat big" placeholder="Enter featured text using markup"
-                name="text">{{ form.text.value }}</textarea>
+                name="text">{{ form.text.value() }}</textarea>
       <small class="error">
         {{ form.text.errors }}
       </small>

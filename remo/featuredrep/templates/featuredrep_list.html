@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load markup %}
 
 {% block pagetitle %}Mozilla Reps - Featured Reps {% endblock%}
 
@@ -15,7 +14,7 @@
 <!-- Adding new rep -->
 <div class="row">
   <div class="twelve columns align-right">
-    <a href="{% url featuredrep_add_featured %}"
+    <a href="{{ url('featuredrep_add_featured') }}"
        class="featured-button small white button nice radius">Add new</a>
   </div>
 </div>
@@ -42,8 +41,8 @@
         {% for feature in featured %}
         <tr>
           <td>
-            <a href="{% url profiles_view_profile feature.user.userprofile.display_name %}">
-              {{ feature.user.get_full_name }}
+            <a href="{{ url('profiles_view_profile', feature.user.userprofile.display_name) }}">
+              {{ feature.user.get_full_name() }}
             </a>
           </td>
           <td>
@@ -53,17 +52,17 @@
             {{ feature.created_on }}
           </td>
           <td>
-            <a href="{% url featuredrep_edit_featured feature.id %}"
+            <a href="{{ url('featuredrep_edit_featured', feature.id) }}"
                class="featured-edit pictogram-button">e</a>
             <form id="deleteform-{{ feature.id }}" method="post"
-                  action="{% url featuredrep_delete_featured feature.id %}">
-              {% csrf_token %}
+                  action="{{ url('featuredrep_delete_featured', feature.id) }}">
+              {{ csrf() }}
               <a href="#" data-reveal-id="delete-feature"
                  class="featured-delete pictogram-button">X</a>
             </form>
           </td>
         </tr>
-        {% empty %}
+        {% else %}
         <tr>
           <td>
             No entries yet!
