@@ -52,8 +52,11 @@
    Shared Styles
 ----------------------------------------- */
 
+html {
+    border-top: 2px solid white;
+}
+
 body {
-    border-top: 3px solid #686868;
     background: #eee;
 }
 
@@ -81,6 +84,12 @@ a:hover, a:active{
 #login-box {
     text-align: right;
     margin-top: 10px;
+}
+
+@media only screen and (max-width: 767px) {
+    #login-box {
+        text-align:left;
+    }
 }
 
 #logo-box {
