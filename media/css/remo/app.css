@@ -60,6 +60,10 @@ body {
     background: #eee;
 }
 
+#wrapper {
+    background: rgb(230,231,232) url('/media/img/remo/mozorg-gradient.png') repeat-x top center;
+}
+
 hr {
     margin: 5px 0 18px;
 }
