@@ -1,0 +1,31 @@
+Hey there {{ user.first_name|capitalize }},
+
+We've noticed that the following Rep(s) you're mentoring has not filed
+a monthly report in more than a month :( These reports are really
+important for the success of the Mozilla Reps program as they not only
+let you see the great work your "mentees" do but they also give the
+broader community a unique opportunity to see what they've been up to
+in their region of the world.
+
+Rep(s) without a report for over a month:
+{% for rep in reps_without_report.all() %}
+{% if rep.userprofile.mentor == user %}
+- {{ rep.get_full_name() }} ( {{ SITE_URL }}{{ url('profiles_view_profile', rep.userprofile.display_name) }} )
+{% endif %}
+{% endfor %}
+
+You can head over to the Mozilla Reps Dashboard to get a better
+visibility of their status:
+
+{{ SITE_URL }}{{ url('dashboard') }}
+
+Please make sure to get in touch with them and see if they are still
+interested in being Mozilla Reps or if they prefer to leave the
+program.
+
+As always, if you have any questions or any assistance, don't hesitate
+to contact your fellow mentor or Mozilla Reps Council members.
+
+Cheers!
+
+The Mozilla Reps Council

@@ -20,10 +20,10 @@ BUGZILLA_FIELDS = [u'is_confirmed', u'summary', u'creator', u'creation_time',
                    u'status', u'assigned_to', u'resolution',
                    u'last_change_time', u'cf_due_date']
 
-URL = ("https://api-dev.bugzilla.mozilla.org/latest/bug/"
-       "?username={username}&password={password}&"
-       "product=Mozilla%20Reps&component={component}&"
-       "include_fields={fields}&changed_after={timedelta}d")
+URL = ('https://api-dev.bugzilla.mozilla.org/latest/bug/'
+       '?username={username}&password={password}&'
+       'product=Mozilla%20Reps&component={component}&'
+       'include_fields={fields}&changed_after={timedelta}d')
 
 
 @task()
@@ -47,7 +47,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
         response = requests.get(url)
 
         if response.status_code != 200:
-            raise ValueError("Invalid response from server.")
+            raise ValueError('Invalid response from server.')
 
         bugs = json.loads(response.text)
 
@@ -59,7 +59,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
                                              email=bdata['creator']['name'])
 
             bug.bug_creation_time = datetime.strptime(bdata['creation_time'],
-                                                      "%Y-%m-%dT%H:%M:%SZ")
+                                                      '%Y-%m-%dT%H:%M:%SZ')
             bug.component = bdata['component']
             bug.whiteboard = bdata.get('whiteboard', '')
 
@@ -77,7 +77,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
             bug.due_date = bdata.get('cf_due_date', None)
             if 'last_change_time' in bdata:
                 bug.bug_last_change_time = datetime.strptime(
-                    bdata['last_change_time'], "%Y-%m-%dT%H:%M:%SZ")
+                    bdata['last_change_time'], '%Y-%m-%dT%H:%M:%SZ')
             bug.save()
 
     set_last_updated_date(now)

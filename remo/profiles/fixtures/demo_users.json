@@ -1,5 +1,46 @@
 [
     {
+        "pk": 1,
+        "model": "auth.group",
+        "fields": {
+            "name": "Admin",
+            "permissions": [
+                52,
+                53,
+                66,
+                67
+            ]
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.group",
+        "fields": {
+            "name": "Council",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.group",
+        "fields": {
+            "name": "Rep",
+            "permissions": []
+        }
+    },
+    {
+        "pk": 4,
+        "model": "auth.group",
+        "fields": {
+            "name": "Mentor",
+            "permissions": [
+                52,
+                66,
+                67
+            ]
+        }
+    },
+    {
         "pk": 4,
         "model": "auth.user",
         "fields": {
@@ -12,7 +53,7 @@
             "last_login": "2012-01-23 05:29:21",
             "groups": [
                 1,
-		4
+                4
             ],
             "user_permissions": [],
             "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
@@ -108,11 +149,11 @@
             "twitter_account": "",
             "display_name": "admin",
             "private_email": "admin@example.com",
-	    "local_name": "Lalala Lololo",
-	    "region":"attika",
+            "local_name": "Lalala Lololo",
+            "region":"attika",
             "country": "Greece",
-	    "mozillians_profile_url":"http://mozillians.org/en-US/about/",
-	    "wiki_profile_url": "https://wiki.mozilla.org/User:",
+            "mozillians_profile_url":"http://mozillians.org/en-US/about/",
+            "wiki_profile_url": "https://wiki.mozilla.org/User:",
             "irc_name": "admin",
             "irc_channels": "",
             "lon": 13.41,
@@ -124,9 +165,10 @@
             "diaspora_url": "",
             "personal_blog_feed": "",
             "facebook_url": "",
-	    "bio": "",
-	    "registration_complete":"True",
-	    "gender":"True"
+            "bio": "",
+            "registration_complete":"True",
+            "gender":"True",
+            "date_joined_program": "2011-07-01"
         }
     },
     {
@@ -137,10 +179,10 @@
             "twitter_account": "foobarzzz",
             "display_name": "babis",
             "private_email": "babis@example.com",
-	    "region": "CA",
+            "region": "CA",
             "country": "USA",
-	    "mozillians_profile_url":"http://mozillians.org/en-US/about/",
-	    "wiki_profile_url": "https://wiki.mozilla.org/User:",
+            "mozillians_profile_url":"http://mozillians.org/en-US/about/",
+            "wiki_profile_url": "https://wiki.mozilla.org/User:",
             "irc_name": "babis",
             "irc_channels": "",
             "lon": 13.41,
@@ -153,9 +195,10 @@
             "personal_blog_feed": "",
             "facebook_url": "",
             "added_by": 4,
-	    "bio": "",
-	    "registration_complete":"True",
-	    "gender":"True"
+            "bio": "",
+            "registration_complete":"True",
+            "gender":"True",
+            "date_joined_program": "2011-07-01"
         }
     },
     {
@@ -166,10 +209,10 @@
             "twitter_account": "menisdenis",
             "display_name": "md",
             "private_email": "menis.denis@example.com",
-	    "region": "NY",
+            "region": "NY",
             "country": "USA",
-	    "mozillians_profile_url":"http://mozillians.org/en-US/about/",
-	    "wiki_profile_url": "https://wiki.mozilla.org/User:",
+            "mozillians_profile_url":"http://mozillians.org/en-US/about/",
+            "wiki_profile_url": "https://wiki.mozilla.org/User:",
             "irc_name": "md",
             "irc_channels": "",
             "lon": 13.41,
@@ -181,11 +224,12 @@
             "diaspora_url": "https://joindiaspora.com/",
             "personal_blog_feed": "",
             "facebook_url": "",
-	    "mentor": 4,
+            "mentor": 4,
             "added_by": 4,
-	    "bio": "",
-	    "gender":"False",
-	    "registration_complete":"True"
+            "bio": "",
+            "gender":"False",
+            "registration_complete":"True",
+            "date_joined_program": "2011-07-01"
         }
     },
     {
@@ -196,10 +240,10 @@
             "twitter_account": "kokifoci",
             "display_name": "koki",
             "private_email": "koki@example.com",
-	    "region": "Marmara",
+            "region": "Marmara",
             "country": "Turkey",
-	    "mozillians_profile_url":"http://mozillians.org/en-US/about/",
-	    "wiki_profile_url": "https://wiki.mozilla.org/User:",
+            "mozillians_profile_url":"http://mozillians.org/en-US/about/",
+            "wiki_profile_url": "https://wiki.mozilla.org/User:",
             "irc_name": "koki",
             "irc_channels": "",
             "lon": 13.41,
@@ -211,11 +255,12 @@
             "diaspora_url": "",
             "personal_blog_feed": "",
             "facebook_url": "",
-	    "mentor": 6,
+            "mentor": 6,
             "added_by": 4,
-	    "bio": "",
-	    "gender":"False",
-	    "registration_complete":"True"
+            "bio": "",
+            "gender":"False",
+            "registration_complete":"True",
+            "date_joined_program": "2011-07-01"
         }
     },
     {
@@ -240,12 +285,13 @@
             "diaspora_url": "",
             "personal_blog_feed": "",
             "mozillians_profile_url": "",
-	    "wiki_profile_url": "",
-	    "mentor": 6,
+            "wiki_profile_url": "",
+            "mentor": 6,
             "added_by": 5,
-	    "bio": "This is my bio",
-	    "gender":"False",
-	    "registration_complete":"False"
+            "bio": "This is my bio",
+            "gender":"False",
+            "registration_complete":"False",
+            "date_joined_program": "2011-07-01"
         }
     }
 ]

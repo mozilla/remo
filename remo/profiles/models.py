@@ -3,16 +3,19 @@ import re
 import urlparse
 
 from django.conf import settings
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group, User, Permission
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
+from south.signals import post_migrate
+
 from libravatar import libravatar_url
 
 DISPLAY_NAME_MAX_LENGTH = 50
+
 
 def _validate_birth_date(data, **kwargs):
     """Validator to ensure age of at least 12 years old."""
@@ -51,7 +54,8 @@ class UserProfile(models.Model):
     """Definition of UserProfile Model."""
     user = models.OneToOneField(User)
     registration_complete = models.BooleanField(default=False)
-    date_joined_program = models.DateField(null=True, blank=True, default=None)
+    date_joined_program = models.DateField(
+        blank=True, default=datetime.datetime(month=6, year=2011, day=1))
     local_name = models.CharField(max_length=100, blank=True, default='')
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   blank=True, null=True)
@@ -219,3 +223,21 @@ def auto_add_to_mentor_group(sender, instance, created, raw, **kwargs):
     """Automatically add new users to Rep group."""
     if created and not raw:
         instance.groups.add(Group.objects.get(name='Rep'))
+
+
+@receiver(post_migrate)
+def report_set_groups(app, sender, signal, **kwargs):
+    """Set permissions to groups."""
+    if (isinstance(app, basestring) and app != 'profiles'):
+        return True
+
+    for group_name in ['Admin', 'Mentor']:
+        group, created = Group.objects.get_or_create(name=group_name)
+        permission = Permission.objects.get(codename='create_user',
+                                            content_type__name='user profile')
+        group.permissions.add(permission)
+
+    group = Group.objects.get(name='Admin')
+    permission = Permission.objects.get(codename='can_edit_profiles',
+                                        content_type__name='user profile')
+    group.permissions.add(permission)
