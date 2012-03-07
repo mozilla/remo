@@ -43,239 +43,245 @@
 
 <body>
 
-  <!-- container -->
-  <div class="container">
+  <!-- Wrapper for background -->
+  <div id="wrapper">
 
-    <!-- Header -->
-    <header class="row">
-      <div class="twelve columns">
+    <!-- container -->
+    <div class="container">
 
-        <!-- Sign In & Mozilla Tab -->
-        <div class="row">
+      <!-- Header -->
+      <header class="row">
+        <div class="twelve columns">
 
-          <!-- Mozilla Tab -->
-          <div class="two columns phone-one push-three-phone push-ten" id="global-header-tab">
-            <a href="http://www.mozilla.org/" id="tabzilla">mozilla</a>
+          <!-- Sign In & Mozilla Tab -->
+          <div class="row">
+
+            <!-- Mozilla Tab -->
+            <div class="two columns phone-one push-three-phone push-ten" id="global-header-tab">
+              <a href="http://www.mozilla.org/" id="tabzilla">mozilla</a>
+            </div>
+
+            <!-- Sign In & Sign Out -->
+            <div class="ten columns phone-three pull-one-phone pull-two" id="login-box">
+              <ul>
+                <li class="account anonymous nomenu logout">
+                  {% if not user.is_authenticated() %}
+                    <a id="browserid" href="#">Sign In</a>
+                    <form method="POST" action="{{ url('browserid_verify') }}">
+                      {{ csrf() }} {{ browserid_form.as_p() }}
+                      <input type="hidden" name="next" value="{{ request.get_full_path() }}" />
+                    </form>
+                  {% else %}
+                    <a href="{{ url('profiles_view_my_profile') }}">
+                      {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                    </a>
+                    [<a href="{{ url('logout') }}">Sign out</a>]
+                  {% endif %}
+                </li>
+              </ul>
+            </div>
           </div>
 
-          <!-- Sign In & Sign Out -->
-          <div class="ten columns phone-three pull-one-phone pull-two" id="login-box">
-            <ul>
-              <li class="account anonymous nomenu logout">
-                {% if not user.is_authenticated() %}
-                  <a id="browserid" href="#">Sign In</a>
-                  <form method="POST" action="{{ url('browserid_verify') }}">
-                    {{ csrf() }} {{ browserid_form.as_p() }}
-                    <input type="hidden" name="next" value="{{ request.get_full_path() }}" />
-                  </form>
-                {% else %}
-                  <a href="{{ url('profiles_view_my_profile') }}">
-                    {{ user.get_full_name()|default('user.userprofile.display_name') }}
-                  </a>
-                  [<a href="{{ url('logout') }}">Sign out</a>]
-                {% endif %}
-              </li>
-            </ul>
+          <!-- Logo & Navigation -->
+          <div class="row">
+
+            <!-- Logo and Wordmark -->
+            <div class="four columns" id="logo-box">
+              <div class="row hide-on-phones">
+                <a href="{{ url('main') }}">
+                  <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
+                       alt="Mozilla Reps logo">
+                  <h3>mozilla reps</h3>
+                </a>
+              </div>
+              <div class="row show-on-phones">
+                <h2>mozilla reps mobile</h2>
+              </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="eight columns hide-on-phones" id="navigation-box">
+              <ul class="nav-bar">
+                <li>
+                  <a href="{{ url('main') }}" class="main">Main</a>
+                </li>
+                <li>
+                  <a href="{{ url('profiles_list_profiles') }}" class="main">People</a>
+                </li>
+                <li>
+                  <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
+                </li>
+                <li>
+                  <a href="#" class="main" data-reveal-id="labs-modal">Labs</a>
+                </li>
+                <li>
+                  <a href="http://planet.mozillareps.org" class="main">Planet</a>
+                </li>
+                <li>
+                  <a href="https://wiki.mozilla.org/ReMo" class="main">Wiki</a>
+                </li>
+                <li class="last">
+                  <a href="#" class="main" data-reveal-id="join-modal">Join</a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div class="eight columns show-on-phones" id="navigation-box-mobile">
+              <ul class="nav-bar">
+                <li>
+                  <a href="{{ url('main') }}" class="main">Main</a>
+                </li>
+                <li>
+                  <a href="{{ url('profiles_list_profiles') }}" class="main">People</a>
+                </li>
+                <li>
+                  <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
+                </li>
+              </ul>
+            </div>
+
           </div>
         </div>
+      </header>
 
-        <!-- Logo & Navigation -->
+      <!-- Separator -->
+      <div class="row">
+        <hr>
+      </div>
+
+      <!-- Page Content -->
+      {% if messages %}
         <div class="row">
+          {% for message in messages %}
+            <div class="alert-box {{ message.tags }}">
+              {{ message|safe }}
+              <a href="#" class="close">&times;</a>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
 
-          <!-- Logo and Wordmark -->
-          <div class="four columns" id="logo-box">
-            <div class="row hide-on-phones">
-              <a href="{{ url('main') }}">
-                <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
-                     alt="Mozilla Reps logo">
-                <h3>mozilla reps</h3>
+      {% block content %}
+      {% endblock %}
+
+      <!-- Footer -->
+      <div id="footer" class="hide-on-phones">
+        <div class="row">
+          <hr />
+        </div>
+        <div id="footer-contents">
+          <div id="copyright">
+            <p id="footer-links">
+              <a href="http://www.mozilla.org/en-US/privacy-policy.html">Privacy Policy</a>
+              &nbsp;|&nbsp;
+              <a href="http://www.mozilla.org/en-US/about/legal.html">Legal Notices</a>
+              &nbsp;|&nbsp;
+              <a href="http://www.mozilla.org/en-US/legal/fraud-report/index.html">
+                Report Trademark Abuse
               </a>
-            </div>
-            <div class="row show-on-phones">
-              <h2>mozilla reps mobile</h2>
-            </div>
+            </p>
+            <p>
+              Except where otherwise
+              <a href="http://www.mozilla.org/en-US/about/legal.html#site">noted</a>,
+              content on this site is licensed under the
+              <br />
+              <a href="http://creativecommons.org/licenses/by-sa/3.0/">
+                Creative Commons Attribution Share-Alike License v3.0
+              </a> or any later version.
+            </p>
           </div>
-
-          <!-- Navigation -->
-          <div class="eight columns hide-on-phones" id="navigation-box">
-            <ul class="nav-bar">
-              <li>
-                <a href="{{ url('main') }}" class="main">Main</a>
-              </li>
-              <li>
-                <a href="{{ url('profiles_list_profiles') }}" class="main">People</a>
-              </li>
-              <li>
-                <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
-              </li>
-              <li>
-                <a href="#" class="main" data-reveal-id="labs-modal">Labs</a>
-              </li>
-              <li>
-                <a href="http://planet.mozillareps.org" class="main">Planet</a>
-              </li>
-              <li>
-                <a href="https://wiki.mozilla.org/ReMo" class="main">Wiki</a>
-              </li>
-              <li class="last">
-                <a href="#" class="main" data-reveal-id="join-modal">Join</a>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Mobile Navigation -->
-          <div class="eight columns show-on-phones" id="navigation-box-mobile">
-            <ul class="nav-bar">
-              <li>
-                <a href="{{ url('main') }}" class="main">Main</a>
-              </li>
-              <li>
-                <a href="{{ url('profiles_list_profiles') }}" class="main">People</a>
-              </li>
-              <li>
-                <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
-              </li>
-            </ul>
-          </div>
-
         </div>
       </div>
-    </header>
-
-    <!-- Separator -->
-    <div class="row">
-      <hr>
-    </div>
-
-    <!-- Page Content -->
-    {% if messages %}
-      <div class="row">
-        {% for message in messages %}
-          <div class="alert-box {{ message.tags }}">
-            {{ message|safe }}
-            <a href="#" class="close">&times;</a>
-          </div>
-        {% endfor %}
+      <!-- Join modal start -->
+      <div id="join-modal" class="reveal-modal">
+        <p class="lead">So, you wanna join us?</p>
+        <h2>Cool!</h2>
+        <p>
+          The Mozilla Reps program is open to all Mozillians who are 18 years
+          of age and above. Before you become a Mozilla Rep, you must
+          complete a short but rigorous application process in order to
+          demonstrate your interest in and motivation for joining the
+          program. Are you ready to take on the challenges and rewards
+          of advancing your leadership to the next level in Mozilla? If
+          your answer is YES, apply to become a Mozilla Rep today!
+        </p>
+        <p>
+          Not sure if you're ready for Mozilla Reps? There are many
+          other ways to take the lead in the Mozilla Community. If
+          you're a student, register for
+          the <a href="http://studentreps.mozilla.org">Student Reps
+          program</a> to gain experience leading projects at your
+          school. And all of our contributor opportunities are available
+          to you on the <a href="https://mozilla.org/contribute">Get
+          Involved homepage</a>.
+        </p>
+        <p>
+          The Mozilla Reps application process involves three simple
+          steps:
+        </p>
+        <ul>
+          <li>
+            <h4>Step 1</h4>
+            <p>Fill out and submit the
+            <a href="https://bugzilla.mozilla.org/form.reps.mentorship">
+              Mozilla Reps application form
+            </a>.
+            A Mozilla Rep mentor will be in touch within 24 hours.</p>
+          </li>
+          <li>
+            <h4>Step 2</h4>
+            <p>If your application is approved, you'll be invited to be
+            interviewed by a member of the advisory council over IRC or
+            IM that same week. The interview lasts about 15 minutes and
+            you will be asked some simple questions about yourself, your
+            experience contributing to the Mozilla project and, of
+            course, your motivation for becoming a MozRep.</p>
+          </li>
+          <li>
+            <h4>Step 3</h4>
+            <p>
+              If you're accepted into the Mozilla Reps program, your
+              mentor will get you started and familiar with the tools at
+              your disposal to start organizing events, requesting
+              budgets, swag, etc. And just like that, you could become a
+              Mozilla Rep!
+            </p>
+          </li>
+        </ul>
+        <p>Thanks for your interest in making the Web better with Mozilla!</p>
+        <a class="close-reveal-modal">&#215;</a>
       </div>
-    {% endif %}
+      <!-- Join modal end -->
 
-    {% block content %}
-    {% endblock %}
-
-    <!-- Footer -->
-    <div id="footer" class="hide-on-phones">
-      <div class="row">
-        <hr />
+      <!-- Labs Reveal Modal -->
+      <div id="labs-modal" class="reveal-modal">
+        <a class="close-reveal-modal">&#215;</a>
+        <p class="lead">Reps is all about experimenting!</p>
+        <h2>Labs are coming...</h2>
+        <p>In this section of our site we will be developing, testing
+        and showcasing awesome new tools for Mozilla Reps.</p>
+        <p>Do you have what it takes to experiment and help us shape the
+        future of Mozilla Reps tools? Drop
+        by <a href="irc://irc.mozilla.org/remo-dev">#remo-dev</a> or
+        subscribe
+        to <a href="https://lists.mozilla.org/listinfo/reps-webdev">our
+        mailing list</a> to share your ideas and start hacking!</p>
       </div>
-      <div id="footer-contents">
-        <div id="copyright">
-          <p id="footer-links">
-            <a href="http://www.mozilla.org/en-US/privacy-policy.html">Privacy Policy</a>
-            &nbsp;|&nbsp;
-            <a href="http://www.mozilla.org/en-US/about/legal.html">Legal Notices</a>
-            &nbsp;|&nbsp;
-            <a href="http://www.mozilla.org/en-US/legal/fraud-report/index.html">
-              Report Trademark Abuse
-            </a>
-          </p>
-          <p>
-            Except where otherwise
-            <a href="http://www.mozilla.org/en-US/about/legal.html#site">noted</a>,
-            content on this site is licensed under the
-            <br />
-            <a href="http://creativecommons.org/licenses/by-sa/3.0/">
-              Creative Commons Attribution Share-Alike License v3.0
-            </a> or any later version.
-          </p>
-        </div>
-      </div>
-    </div>
-    <!-- Join modal start -->
-    <div id="join-modal" class="reveal-modal">
-      <p class="lead">So, you wanna join us?</p>
-      <h2>Cool!</h2>
-      <p>
-        The Mozilla Reps program is open to all Mozillians who are 18 years
-        of age and above. Before you become a Mozilla Rep, you must
-        complete a short but rigorous application process in order to
-        demonstrate your interest in and motivation for joining the
-        program. Are you ready to take on the challenges and rewards
-        of advancing your leadership to the next level in Mozilla? If
-        your answer is YES, apply to become a Mozilla Rep today!
-      </p>
-      <p>
-        Not sure if you're ready for Mozilla Reps? There are many
-        other ways to take the lead in the Mozilla Community. If
-        you're a student, register for
-        the <a href="http://studentreps.mozilla.org">Student Reps
-        program</a> to gain experience leading projects at your
-        school. And all of our contributor opportunities are available
-        to you on the <a href="https://mozilla.org/contribute">Get
-        Involved homepage</a>.
-      </p>
-      <p>
-        The Mozilla Reps application process involves three simple
-        steps:
-      </p>
-      <ul>
-        <li>
-          <h4>Step 1</h4>
-          <p>Fill out and submit the
-          <a href="https://bugzilla.mozilla.org/form.reps.mentorship">
-            Mozilla Reps application form
-          </a>.
-          A Mozilla Rep mentor will be in touch within 24 hours.</p>
-        </li>
-        <li>
-          <h4>Step 2</h4>
-          <p>If your application is approved, you'll be invited to be
-          interviewed by a member of the advisory council over IRC or
-          IM that same week. The interview lasts about 15 minutes and
-          you will be asked some simple questions about yourself, your
-          experience contributing to the Mozilla project and, of
-          course, your motivation for becoming a MozRep.</p>
-        </li>
-        <li>
-          <h4>Step 3</h4>
-          <p>
-            If you're accepted into the Mozilla Reps program, your
-            mentor will get you started and familiar with the tools at
-            your disposal to start organizing events, requesting
-            budgets, swag, etc. And just like that, you could become a
-            Mozilla Rep!
-          </p>
-        </li>
-      </ul>
-      <p>Thanks for your interest in making the Web better with Mozilla!</p>
-      <a class="close-reveal-modal">&#215;</a>
-    </div>
-    <!-- Join modal end -->
+      <!-- Labs Reveal Modal End -->
 
-    <!-- Labs Reveal Modal -->
-    <div id="labs-modal" class="reveal-modal">
-      <a class="close-reveal-modal">&#215;</a>
-      <p class="lead">Reps is all about experimenting!</p>
-      <h2>Labs are coming...</h2>
-      <p>In this section of our site we will be developing, testing
-      and showcasing awesome new tools for Mozilla Reps.</p>
-      <p>Do you have what it takes to experiment and help us shape the
-      future of Mozilla Reps tools? Drop
-      by <a href="irc://irc.mozilla.org/remo-dev">#remo-dev</a> or
-      subscribe
-      to <a href="https://lists.mozilla.org/listinfo/reps-webdev">our
-      mailing list</a> to share your ideas and start hacking!</p>
-    </div>
-    <!-- Labs Reveal Modal End -->
+      <!-- Included JS Files -->
+      <script src="{{ MEDIA_URL }}js/modernizr.foundation.js"></script>
+      <script src="{{ MEDIA_URL }}js/foundation.js"></script>
+      <script src="https://browserid.org/include.js" type="text/javascript"></script>
+      <script src="{{ MEDIA_URL }}js/activate.browserid.js" type="text/javascript"></script>
+      <script src="{{ MEDIA_URL }}js/tabzilla.js" type="text/javascript"></script>
+      {% block bottomextra %} {% endblock %}
+      <!-- Our app.js is always last to override stuff -->
+      <script src="{{ MEDIA_URL }}js/app.js"></script>
 
-    <!-- Included JS Files -->
-    <script src="{{ MEDIA_URL }}js/modernizr.foundation.js"></script>
-    <script src="{{ MEDIA_URL }}js/foundation.js"></script>
-    <script src="https://browserid.org/include.js" type="text/javascript"></script>
-    <script src="{{ MEDIA_URL }}js/activate.browserid.js" type="text/javascript"></script>
-    <script src="{{ MEDIA_URL }}js/tabzilla.js" type="text/javascript"></script>
-    {% block bottomextra %} {% endblock %}
-    <!-- Our app.js is always last to override stuff -->
-    <script src="{{ MEDIA_URL }}js/app.js"></script>
+  </div> <!-- End of background wrapper -->
+
 </body>
 
 </html>
