@@ -81,6 +81,7 @@ $(function () {
     qs1 = $('input#searchfield').quicksearch('table#list-people-view tbody tr');
 
     search_string = window.location.pathname.substr(8);
+    search_string = unescape(search_string);
     if (search_string.length > 0) {
         $('input#searchfield').val(search_string);
         qs.cache();
