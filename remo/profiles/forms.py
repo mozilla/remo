@@ -95,7 +95,8 @@ class ChangeProfileForm(forms.ModelForm):
                   'twitter_account', 'jabber_id', 'irc_name',
                   'irc_channels', 'facebook_url', 'linkedin_url',
                   'diaspora_url', 'personal_website_url', 'personal_blog_feed',
-                  'bio', 'gender', 'mentor', 'wiki_profile_url')
+                  'bio', 'gender', 'mentor', 'wiki_profile_url',
+                  'functional_areas')
 
 
 class ChangeDateJoinedForm(forms.ModelForm):

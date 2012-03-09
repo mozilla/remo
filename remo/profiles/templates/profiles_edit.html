@@ -312,8 +312,20 @@
           {% endif %}
         </div>
       </div>
+      <div class="row">
+        <div class="one columns pictogram">
+          j
+        </div>
+        <div class="eleven columns edit-profile-item">
+          <div class="align-right">
+              <a href="#" class="small white button nice radius"
+                 data-reveal-id="interests-modal">Mark your interests</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
   <div class="row">
     <div class="six columns">
     </div>
@@ -323,7 +335,7 @@
           <div class="one columns pictogram">
             %
           </div>
-          <div class="eleven columns">
+          <div class="eleven columns edit-profile-item">
             Date Rep joined program<br/><br/>
             {{ datejoinedform.date_joined_program }}
             {% if datejoinedform.date_joined_program.errors %}
@@ -384,6 +396,32 @@
       </button>
     </div>
   </div>
+
+  <!-- Interests modal -->
+  <div id="interests-modal" class="reveal-modal">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">
+      Specify your interests in Functional Areas of Mozilla
+    </p>
+    <h3>
+      Functional Areas
+    </h3>
+    <ul class="block-grid three-up">
+      {% for choice in profileform.functional_areas.field.choices %}
+        <li>
+          <label for="{{ choice.1 }}-bit">
+            <input type="checkbox" name="functional_areas" value="{{ choice.0 }}"
+                   {% if choice.0 in profileform.functional_areas.value() %}
+                     checked="checked"
+                   {% endif %}/>
+            {{ choice.1 }}
+        </li>
+      {% endfor %}
+    </ul>
+    <a href="#" class="small blue button nice radius close-reveal-modal">
+      Choose these areas &raquo;
+    </a>
+  </div>
 </form>
 
 <!-- Map Point Reveal Modal -->
@@ -431,6 +469,7 @@
       </button>
     </form>
 </div>
+
 {% endblock %}
 
 {% block bottomextra %}

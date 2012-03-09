@@ -435,6 +435,10 @@ ul.orbit-bullets li.active {
     margin-top: -12px;
 }
 
+.edit-profile-item {
+    margin-top: 20px;
+}
+
 /* -----------------------------------------
    Point Map Styles
 ----------------------------------------- */
@@ -453,6 +457,7 @@ ul.orbit-bullets li.active {
     color: #fff;
     font-weight: bold;
     cursor: pointer;
+    letter-spacing: 0px;
 }
 
 /* -----------------------------------------
@@ -468,6 +473,7 @@ ul.orbit-bullets li.active {
     color: #fff;
     font-weight: bold;
     cursor: pointer;
+    letter-spacing: 0px;
 }
 
 /* -----------------------------------------
