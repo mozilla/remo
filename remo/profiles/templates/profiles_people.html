@@ -58,7 +58,10 @@
                   <span class="hidden">{{ person.userprofile.irc_name }}</span>
                   <span class="hidden">{{ person.userprofile.twitter_account }}</span>
                   <span class="hidden">{{ person.userprofile.jabber_id }}</span>
-                  <span class="hidden">{{ person.userprofile.get_gender_display }}</span>
+                  <span class="hidden">{{ person.userprofile.get_gender_display() }}</span>
+                  {% for group in person.groups.all() %}
+                    <span class="hidden">Group:{{ group.name }}</span>
+                  {% endfor %}
                 </div>
               <div>
           </div>
@@ -119,6 +122,9 @@ x                <a href="{{ url('profiles_list_profiles') }}{{ person.userprofi
                 <span>{{ person.userprofile.twitter_account }}</span>
                 <span>{{ person.userprofile.jabber_id }}</span>
                 <span>{{ person.userprofile.get_gender_display() }}</span>
+                {% for group in person.groups.all() %}
+                  <span>Group:{{ group.name }}</span>
+                {% endfor %}
               </td>
             </tr>
           {% endfor %}
