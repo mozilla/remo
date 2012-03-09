@@ -47,9 +47,9 @@ class UserProfile(models.Model):
     local_name = models.CharField(max_length=100, blank=True, default='')
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   blank=True, null=True)
-    city = models.CharField(max_length=30, blank=False, default='')
-    region = models.CharField(max_length=30, blank=False, default='')
-    country = models.CharField(max_length=30, blank=False, default='')
+    city = models.CharField(max_length=50, blank=False, default='')
+    region = models.CharField(max_length=50, blank=False, default='')
+    country = models.CharField(max_length=50, blank=False, default='')
     lon = models.FloatField(blank=False, null=True)
     lat = models.FloatField(blank=False, null=True)
     display_name = models.CharField(
@@ -70,7 +70,7 @@ class UserProfile(models.Model):
             RegexValidator(regex=r'("^$")|(^[A-Za-z0-9_]+$)',
                            message='Please provide a valid Twitter handle.')])
     jabber_id = models.CharField(max_length=50, blank=True, default='')
-    irc_name = models.CharField(max_length=30, blank=False, default='')
+    irc_name = models.CharField(max_length=50, blank=False, default='')
     irc_channels = models.TextField(blank=True, default='')
     linkedin_url = models.URLField(
         blank=True, null=False, default='',
