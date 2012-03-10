@@ -48,16 +48,34 @@
 
 }
 
+@font-face {
+    font-family: 'Open Sans';
+    src: url('//www.mozilla.org/img/fonts/OpenSans-Regular-webfont.eot');
+    src: url('//www.mozilla.org/img/fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('//www.mozilla.org/img/fonts/OpenSans-Regular-webfont.woff') format('woff'),
+         url('//www.mozilla.org/img/fonts/OpenSans-Regular-webfont.ttf') format('truetype'),
+         url('//www.mozilla.org/img/fonts/OpenSans-Regular-webfont.svg#OpenSansRegular') format('svg');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    src: url('//www.mozilla.org/img/fonts/OpenSans-Semibold-webfont.eot');
+    src: url('//www.mozilla.org/img/fonts/OpenSans-Semibold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('//www.mozilla.org/img/fonts/OpenSans-Semibold-webfont.woff') format('woff'),
+         url('//www.mozilla.org/img/fonts/OpenSans-Semibold-webfont.ttf') format('truetype'),
+         url('//www.mozilla.org/img/fonts/OpenSans-Semibold-webfont.svg#OpenSansSemibold') format('svg');
+    font-weight: 600;
+    font-style: normal;
+}
+
 /* -----------------------------------------
    Shared Styles
 ----------------------------------------- */
 
 html {
     border-top: 2px solid white;
-}
-
-body {
-    background: #eee;
 }
 
 #wrapper {
@@ -376,47 +394,33 @@ ul.orbit-bullets li.active {
    Footer Styles
 ----------------------------------------- */
 
-#footer h3 a:hover,#footer h3 a:active{
-    background:-moz-radial-gradient(center 45deg,ellipse closest-side,rgba(255,255,255,0.3) 0,rgba(255,255,255,0) 100%);
-    -moz-transition:background .2s ease-in-out;
+#colophon {
+    color: #bbb;
+    padding: 48px 0;
+    font-size: 14px;
+    line-height: 18px;
 }
 
-#footer{
-    text-align:center;
-    color: rgb(153, 153, 153);
-    clear: both;
-    padding: 50px 0pt 20px;
+#colophon a,
+    a:link,
+    a:visited {
+        color: rgb(103,167,208);
 }
 
-#footer-contents{
-    width:980px;
-    text-align:left;
-    margin:auto;
+#colophon a:hover,
+    a:active {
+        color: rgb(83,147,188);
 }
 
-#footer-contents[dir=rtl]{
-    text-align:right;
+
+#colophon nav {
+    font-family: 'Open Sans', sans-serif;
 }
 
-#footer h3 a,#footer h3 a:link,#footer h3 a:visited{
-    display:block;
-    height:40px;
-    width:100px;
-    text-indent:-200px;
-    font-size:1px;
-    overflow:hidden;
-}
-
-#footer li li a:link,#footer li li a:visited{
-    color:#669be1;
-    font-family:georgia,serif;
-    font-weight:normal;
-    font-size:13px;
-    text-transform:none;
-}
-
-#footer li li a:hover,#footer li li a:active{
-    color:#fff;
+#colophon ul li {
+    font-family: 'Open Sans', sans-serif;
+    list-style-type: none;
+    margin: 0 0 2px 0;
 }
 
 
