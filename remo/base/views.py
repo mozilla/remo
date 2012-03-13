@@ -34,7 +34,8 @@ def custom_500(request):
     """Custom 500 error handler."""
     t = loader.get_template('500.html')
     return http.HttpResponseServerError(
-        t.render(Context({'MEDIA_URL': settings.MEDIA_URL})))
+        t.render(Context({'MEDIA_URL': settings.MEDIA_URL,
+                          'user': request.user})))
 
 
 def login_failed(request):

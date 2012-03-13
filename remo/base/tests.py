@@ -12,3 +12,4 @@ class ViewsTest(TestCase):
         c = Client()
         response = c.get(reverse('main'))
         eq_(response.status_code, 200)
+        self.assertTemplateUsed(response, 'main.html')
