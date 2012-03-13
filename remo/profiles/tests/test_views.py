@@ -15,7 +15,7 @@ class ViewsTest(TestCase):
 
     def setUp(self):
         """Setup tests."""
-        self.data = {'display_name': u'koki',
+        self.data = {'display_name': u'Koki',
                      'first_name': u'first',
                      'email': u'rep@example.com',
                      'last_name': u'last',
@@ -40,11 +40,11 @@ class ViewsTest(TestCase):
                      'bio': u'bio foo',
                      'mentor': 6}
         self.user_url = reverse('profiles_view_profile',
-                                kwargs={'display_name': 'koki'})
+                                kwargs={'display_name': 'Koki'})
         self.user_edit_url = reverse('profiles_edit',
-                                     kwargs={'display_name': 'koki'})
+                                     kwargs={'display_name': 'Koki'})
         self.user_delete_url = reverse('profiles_delete',
-                                       kwargs={'display_name': 'koki'})
+                                       kwargs={'display_name': 'Koki'})
 
     def test_view_my_profile_page(self):
         """Get my profile page."""
@@ -154,11 +154,12 @@ class ViewsTest(TestCase):
 
         temp_data = self.data.copy()
 
-        # delete already checked items
         eq_(user.userprofile.mentor.id, temp_data['mentor'])
         eq_(user.userprofile.birth_date,
             datetime.date(*(time.strptime(temp_data['birth_date'],
                                           '%Y-%m-%d')[0:3])))
+
+        # delete already checked items
         for item in ['email', 'first_name', 'last_name',
                      'birth_date', 'mentor']:
             del(temp_data[item])
@@ -233,4 +234,25 @@ class ViewsTest(TestCase):
         c = Client()
         c.login(username='rep2', password='passwd')
         response = c.get(reverse('profiles_view_my_profile'), follow=True)
+        self.assertTemplateUsed(response, 'profiles_edit.html')
+
+    def test_case_insensitive_profile_url(self):
+        """Test the display_name is case insensitive in profile urls."""
+        c = Client()
+        c.login(username='rep', password='passwd')
+
+        response = c.get(reverse('profiles_view_profile',
+                                 kwargs={'display_name': 'koki'}), follow=True)
+        self.assertTemplateUsed(response, 'profiles_view.html')
+
+        response = c.get(reverse('profiles_view_profile',
+                                 kwargs={'display_name': 'Koki'}), follow=True)
+        self.assertTemplateUsed(response, 'profiles_view.html')
+
+        response = c.get(reverse('profiles_edit',
+                                 kwargs={'display_name': 'koki'}), follow=True)
+        self.assertTemplateUsed(response, 'profiles_edit.html')
+
+        response = c.get(reverse('profiles_edit',
+                                 kwargs={'display_name': 'Koki'}), follow=True)
         self.assertTemplateUsed(response, 'profiles_edit.html')

@@ -224,7 +224,7 @@ class UserProfileTest(TestCase):
         letters and underscores.
 
         """
-        display_names = ['01234567890123456', 'foobar!', 'foobar(']
+        display_names = ['01234567890123456', 'foobar!', 'foobar(', 'foo bar']
 
         @raises(ValidationError)
         def _test():

@@ -40,8 +40,8 @@ def permission_check(permissions=[], display_name_field=None):
 
             def _check_if_user_owns_page():
                 if display_name_field:
-                    if (kwargs[display_name_field] ==
-                        request.user.userprofile.display_name):
+                    if (kwargs[display_name_field].lower() ==
+                        request.user.userprofile.display_name.lower()):
                         return True
                 return False
 
