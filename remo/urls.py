@@ -32,8 +32,8 @@ if settings.DEBUG:
     # Remove leading and trailing slashes so the regex matches.
     media_url = settings.MEDIA_URL.lstrip('/').rstrip('/')
     urlpatterns += patterns('',
-        (r'^404/$', handler404),
-        (r'^500/$', handler500),
-        (r'^%s/(?P<path>.*)$' % media_url, 'django.views.static.serve',
-         {'document_root': settings.MEDIA_ROOT}),
+        url(r'^404/$', handler404, name='404'),
+        url(r'^500/$', handler500, name='500'),
+        url(r'^%s/(?P<path>.*)$' % media_url, 'django.views.static.serve',
+            {'document_root': settings.MEDIA_ROOT}),
     )
