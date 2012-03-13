@@ -7,7 +7,6 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.core.management.base import BaseCommand
 from django.core.validators import email_re
-from django.db.utils import IntegrityError
 
 from django_browserid.auth import default_username_algo
 

@@ -27,8 +27,13 @@ def edit(request, display_name):
     Permission to edit user profile is granted to the user who owns
     the profile and all the users with permissions to edit profiles.
 
+    Argument display_name should be lowered before queries because we
+    allow case-insensitive profile urls. E.g. both /u/Giorgos and
+    /u/giorgos are the same person.
+
     """
-    user = get_object_or_404(User, userprofile__display_name=display_name)
+    user = get_object_or_404(User,
+                             userprofile__display_name__iexact=display_name)
 
     if request.method == 'POST':
         userform = forms.ChangeUserForm(request.POST, instance=user)
@@ -102,7 +107,8 @@ def list_profiles(request):
 @never_cache
 def view_profile(request, display_name):
     """View user profile."""
-    user = get_object_or_404(User, userprofile__display_name=display_name)
+    user = get_object_or_404(User,
+                             userprofile__display_name__iexact=display_name)
     avatar_url = user.userprofile.get_avatar_url(128)
     return render(request, 'profiles_view.html',
                   {'pageuser': user,
