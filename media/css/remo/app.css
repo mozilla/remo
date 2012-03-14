@@ -355,6 +355,13 @@ ul.orbit-bullets li.active {
     margin-bottom: 20px !important;
 }
 
+.more-info {
+    color: #888;
+    font-size: 10px;
+    text-align: right;
+    margin-top: -12px;
+}
+
 /* -----------------------------------------
    Point Map Styles
 ----------------------------------------- */
