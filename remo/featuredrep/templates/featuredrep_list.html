@@ -6,18 +6,30 @@
 <!-- List block -->
 <div class="row">
   <div class="twelve columns">
-    <h5>
-      Featured Reps articles
-    </h5>
+    <h3>
+      Featured Reps
+    </h3>
+  </div>
+</div>
+<div class="row">
+  <div class="twelve columns">
+    <p>
+      This is an archive of all past "Reps of the Month". This
+      special recognition is given each month by the Mozilla Reps
+      Council to a Rep who has gone above and beyond to help push the
+      Mozilla project forward in his/her region.
+    </p>
   </div>
 </div>
 <!-- Adding new rep -->
-<div class="row">
-  <div class="twelve columns align-right">
-    <a href="{{ url('featuredrep_add_featured') }}"
-       class="featured-button small white button nice radius">Add new</a>
+{% if perms.profiles.can_edit_profiles %}
+  <div class="row">
+    <div class="twelve columns align-right">
+      <a href="{{ url('featuredrep_add_featured') }}"
+         class="featured-button small white button nice radius">Add new</a>
+    </div>
   </div>
-</div>
+{% endif %}
 <div class="row">
   <div class="twelve columns">
     <table id="featured-articles">
@@ -32,9 +44,11 @@
           <th>
             Date featured
           </th>
-          <th>
-            Actions
-          </th>
+          {% if perms.profiles.can_edit_profiles %}
+            <th>
+              Actions
+            </th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -51,16 +65,18 @@
           <td>
             {{ feature.created_on }}
           </td>
-          <td>
-            <a href="{{ url('featuredrep_edit_featured', feature.id) }}"
-               class="featured-edit pictogram-button">e</a>
-            <form id="deleteform-{{ feature.id }}" method="post"
-                  action="{{ url('featuredrep_delete_featured', feature.id) }}">
-              {{ csrf() }}
-              <a href="#" data-reveal-id="delete-feature"
-                 class="featured-delete pictogram-button">X</a>
-            </form>
-          </td>
+          {% if perms.profiles.can_edit_profiles %}
+            <td>
+              <a href="{{ url('featuredrep_edit_featured', feature.id) }}"
+                 class="featured-edit pictogram-button">e</a>
+              <form id="deleteform-{{ feature.id }}" method="post"
+                    action="{{ url('featuredrep_delete_featured', feature.id) }}">
+                {{ csrf() }}
+                <a href="#" data-reveal-id="delete-feature"
+                   class="featured-delete pictogram-button">X</a>
+              </form>
+            </td>
+          {% endif %}
         </tr>
         {% else %}
         <tr>
