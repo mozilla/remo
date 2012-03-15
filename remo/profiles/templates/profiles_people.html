@@ -37,7 +37,7 @@
 <div class="row" id="profiles_gridview">
   <ul class="block-grid mobile three-up" id="searchlist">
     {% for person in people %}
-      <li id="li-person-{{ person.id }}">
+      <li id="li-person-{{ person.id }}" class="profiles-li-item">
         <a href="{{ url('profiles_view_profile', person.userprofile.display_name) }}">
           <div class="panel grid-profile">
             <div class="row">
@@ -132,6 +132,8 @@ x                <a href="{{ url('profiles_list_profiles') }}{{ person.userprofi
       </table>
     </div>
   </div>
+</div>
+<div class="row" id="profiles-number-of-reps">
 </div>
 {% endblock %}
 
