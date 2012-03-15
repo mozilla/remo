@@ -246,7 +246,7 @@
         <div class="eleven columns">
           <input type="text" placeholder="Jabber ID"
                  value="{{ profileform.jabber_id.value() }}"
-          name="jabber_id" class="input-text big">
+                 name="jabber_id" class="input-text big">
           {% if profileform.jabber_id.errors %}
             <small class="error">
               {{ profileform.jabber_id.errors }}
@@ -254,7 +254,7 @@
           {% endif %}
           <input type="text" placeholder="IRC nickname"
                  value="{{ profileform.irc_name.value() }}"
-          name="irc_name" class="input-text big">
+                 name="irc_name" class="input-text big">
           {% if profileform.irc_name.errors %}
             <small class="error">
               {{ profileform.irc_name.errors }}
@@ -322,6 +322,20 @@
       <div class="six columns">
         <div class="row">
           <div class="one columns pictogram">
+            %
+          </div>
+          <div class="eleven columns">
+            Date Rep joined program<br/><br/>
+            {{ datejoinedform.date_joined_program }}
+            {% if datejoinedform.date_joined_program.errors %}
+              <small class="error">
+                {{ datejoinedform.date_joined_program.errors }}
+              </small>
+            {% endif %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="one columns pictogram">
             W
           </div>
           <div class="eleven columns">
@@ -354,13 +368,14 @@
               </span>
               Rep
             </label>
+          </div>
+          <div class="row">
             <div class="align-right">
               <a href="#" class="small red button nice radius"
                  data-reveal-id="delete-profile">Delete profile</a>
             </div>
           </div>
         </div>
-      </div>
     {% endif %}
   </div>
   <div class="row">
