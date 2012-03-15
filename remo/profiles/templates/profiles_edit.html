@@ -34,6 +34,7 @@
               {{ profileform.display_name.errors }}
             </small>
           {% endif %}
+          <p class="more-info">changing your username will result in changing your profile URL</p>
           <input type="text" placeholder="Last name" name="last_name"
                  value="{{ userform.last_name.value() }}"
           class="input-text big">
@@ -182,15 +183,15 @@
           name="lat" class="input-text point-lat">
           <input type="hidden" placeholder="Longitude" value="{{ profileform.lon.value() }}"
           name="lon" class="input-text point-long">
-          {% if profileform.lat.errors or profileform.lon.errors %}
-            <small class="error">
-              Please point in map
-            </small>
-          {% endif %}
           <div class="align-right">
             <a href="#" class="small white button nice radius"
-               data-reveal-id="map-point">point in map</a>
+               data-reveal-id="map-point">Point your marker in map</a>
           </div>
+          {% if profileform.lat.errors or profileform.lon.errors %}
+            <small class="error">
+              Please use the point in map button.
+            </small>
+          {% endif %}
         </div>
       </div>
     </div>
