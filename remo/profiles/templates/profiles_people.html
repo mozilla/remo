@@ -99,7 +99,7 @@
                 {{ person.userprofile.display_name }}
               </td>
               <td>
-x                <a href="{{ url('profiles_list_profiles') }}{{ person.userprofile.city }}">
+                <a href="{{ url('profiles_list_profiles') }}{{ person.userprofile.city }}">
                   {{ person.userprofile.city }}
                 </a>
               </td>
@@ -133,7 +133,10 @@ x                <a href="{{ url('profiles_list_profiles') }}{{ person.userprofi
     </div>
   </div>
 </div>
-<div class="row" id="profiles-number-of-reps">
+<div class="row">
+  <div class="twelve columns reps-number">
+    <p><span id="profiles-number-of-reps"></span> Reps were found.</p>
+  </div>
 </div>
 {% endblock %}
 

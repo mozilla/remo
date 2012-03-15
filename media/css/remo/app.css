@@ -272,6 +272,12 @@ ul.orbit-bullets li.active {
     display: none;
 }
 
+.reps-number {
+    color: #888;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
 /* -----------------------------------------
    View Profile Styles
 ----------------------------------------- */
