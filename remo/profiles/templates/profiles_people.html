@@ -45,25 +45,25 @@
                 <img src="{{ person.userprofile.get_avatar_url() }}"
                      class="profiles-people-avatar"
                      alt="{{ person.get_full_name() }} avatar">
-                </div>
-                <div class="nine phone-three columns grid-profile-text">
-                  <h6>{{ person.first_name }}</h6>
-                  <h6>{{ person.last_name }}</h6>
-                  {{ person.userprofile.city }}, {{ person.userprofile.country }}
-                  <span class="hidden">{{ person.userprofile.display_name }}</span>
-                  <span class="hidden">{{ person.userprofile.local_name }}</span>
-                  <span class="hidden">{{ person.userprofile.region }}</span>
-                  <span class="hidden">{{ person.userprofile.private_email }}</span>
-                  <span class="hidden">{{ person.email }}</span>
-                  <span class="hidden">{{ person.userprofile.irc_name }}</span>
-                  <span class="hidden">{{ person.userprofile.twitter_account }}</span>
-                  <span class="hidden">{{ person.userprofile.jabber_id }}</span>
-                  <span class="hidden">{{ person.userprofile.get_gender_display() }}</span>
-                  {% for group in person.groups.all() %}
-                    <span class="hidden">Group:{{ group.name }}</span>
-                  {% endfor %}
-                </div>
-              <div>
+              </div>
+              <div class="nine phone-three columns grid-profile-text">
+                <h6>{{ person.first_name }}</h6>
+                <h6>{{ person.last_name }}</h6>
+                {{ person.userprofile.city }}, {{ person.userprofile.country }}
+                <span class="hidden">{{ person.userprofile.display_name }}</span>
+                <span class="hidden">{{ person.userprofile.local_name }}</span>
+                <span class="hidden">{{ person.userprofile.region }}</span>
+                <span class="hidden">{{ person.userprofile.private_email }}</span>
+                <span class="hidden">{{ person.email }}</span>
+                <span class="hidden">{{ person.userprofile.irc_name }}</span>
+                <span class="hidden">{{ person.userprofile.twitter_account }}</span>
+                <span class="hidden">{{ person.userprofile.jabber_id }}</span>
+                <span class="hidden">{{ person.userprofile.get_gender_display() }}</span>
+                {% for group in person.groups.all() %}
+                <span class="hidden">Group:{{ group.name }}</span>
+                {% endfor %}
+              </div>
+            </div>
           </div>
         </a>
       </li>
