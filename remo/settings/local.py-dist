@@ -71,3 +71,11 @@ SECRET_KEY = ''
 # Common Event Format logging parameters
 #CEF_PRODUCT = 'Playdoh'
 #CEF_VENDOR = 'Mozilla'
+
+# Uncomment the following line for local development, or BrowserID
+# will fail to log you in.
+# SITE_URL = 'http://127.0.0.1:8000'
+
+# remozilla configuration
+# REMOZILLA_USERNAME = ''
+# REMOZILLA_PASSWORD = ''
