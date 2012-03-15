@@ -47,6 +47,11 @@ function redraw_grid() {
         function (index) {return index % 5 == 0;}).css('clear', 'left')
 }
 
+function calculate_number_of_reps() {
+    number_of_reps = $(".profiles-li-item[style!='display: none;']").length
+    $("#profiles-number-of-reps").html(number_of_reps);
+}
+
 $(function () {
     $('#searchform').submit(function (event) {
         event.preventDefault();
@@ -75,6 +80,7 @@ $(function () {
         },
         'onAfter': function () {
             redraw_grid();
+	    calculate_number_of_reps();
         }
     });
 
