@@ -11,7 +11,6 @@ from models import FeaturedRep
 
 
 @never_cache
-@permission_check(permissions=['profiles.can_edit_profiles'])
 def list_featured(request):
     """List all Featured Reps."""
     return render(request, 'featuredrep_list.html',
