@@ -2,12 +2,12 @@ import datetime
 import re
 import urlparse
 
-from django.db import models
-from django.db.models.signals import post_save, pre_save
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.db import models
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from libravatar import libravatar_url

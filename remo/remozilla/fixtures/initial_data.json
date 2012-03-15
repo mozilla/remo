@@ -1,0 +1,9 @@
+[
+    {
+        "pk": 1,
+        "model": "remozilla.status",
+        "fields": {
+            "last_updated": "1970-01-01 00:00:00"
+        }
+    }
+]

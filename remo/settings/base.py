@@ -34,6 +34,7 @@ INSTALLED_APPS = ['south'] + \
                      'remo.base',
                      'remo.profiles',
                      'remo.featuredrep',
+                     'remo.remozilla',
 
                      'django_browserid',
                      ]
