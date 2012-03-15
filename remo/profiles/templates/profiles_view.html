@@ -249,23 +249,41 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         </div>
       {% endif %}
     </div>
-    {% if added_by and perms.profiles.can_edit_profile %}
-      <div class="row">
-        <div class="one columns pictogram">
-          l
+    {% if perms.profiles.can_edit_profile %}
+      {% if added_by %}
+        <div class="row">
+          <div class="one columns pictogram">
+            l
+          </div>
+          <div class="eleven columns">
+            <p class="profile-item">
+              <span class="white radius label">
+                Added by
+              </span>
+              &nbsp;
+              <a href="{{ url('profiles_view_profile', added_by.userprofile.display_name) }}">
+                {{ added_by.userprofile.display_name }}
+              </a>
+            </p>
+          </div>
         </div>
-        <div class="eleven columns">
-          <p class="profile-item">
-            <span class="white radius label">
-              Added by
-            </span>
-            &nbsp;
-            <a href="{{ url('profiles_view_profile', added_by.userprofile.display_name) }}">
-              {{ added_by.userprofile.display_name }}
-            </a>
-          </p>
+      {% endif %}
+      {% if user_profile.date_joined_program %}
+        <div class="row">
+          <div class="one columns pictogram">
+            %
+          </div>
+          <div class="eleven columns">
+            <p class="profile-item">
+              <span class="white radius label">
+                Date Joined
+              </span>
+              &nbsp;
+              {{ user_profile.date_joined_program.strftime('%d %B %Y') }}
+            </p>
+          </div>
         </div>
-      </div>
+      {% endif %}
     {% endif %}
   </div>
 </div>

@@ -1,7 +1,9 @@
 import re
+from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.forms.extras.widgets import SelectDateWidget
 
 from happyforms import forms
 
@@ -75,3 +77,15 @@ class ChangeProfileForm(forms.ModelForm):
         """Make sure that twitter_account does not start with a '@'."""
         twitter_account = self.cleaned_data['twitter_account']
         return twitter_account.strip('@')
+
+
+class ChangeDateJoinedForm(forms.ModelForm):
+    """Form to change userprofile date_joined_program field."""
+    date_joined_program = forms.DateField(
+        required=False,
+        widget=SelectDateWidget(years=range(2011, datetime.now().year+1),
+                                required=False))
+
+    class Meta:
+        model = UserProfile
+        fields = ['date_joined_program']

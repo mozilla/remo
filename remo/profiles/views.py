@@ -39,12 +39,19 @@ def edit(request, display_name):
         userform = forms.ChangeUserForm(request.POST, instance=user)
         profileform = forms.ChangeProfileForm(request.POST,
                                               instance=user.userprofile)
+        datejoinedform = forms.ChangeDateJoinedForm(request.POST,
+                                                    instance=user.userprofile)
 
-        if userform.is_valid() and profileform.is_valid():
+        if (userform.is_valid() and profileform.is_valid() and
+            datejoinedform.is_valid()):
             userform.save()
             profileform.save()
 
             if request.user.has_perm('profiles.can_edit_profiles'):
+                # Update date joined
+                datejoinedform.save()
+
+                # Update groups.
                 groups = {'Mentor': 'mentor_group',
                           'Admin': 'admin_group',
                           'Council': 'council_group',
@@ -68,12 +75,10 @@ def edit(request, display_name):
     else:
         userform = forms.ChangeUserForm(instance=user)
         profileform = forms.ChangeProfileForm(instance=user.userprofile)
+        datejoinedform = forms.ChangeDateJoinedForm(instance=user.userprofile)
 
     group_bits = map(lambda x: user.groups.filter(name=x).exists(),
                      ['Admin', 'Council', 'Mentor', 'Rep'])
-
-    mentors = User.objects.filter(userprofile__registration_complete=True,
-                                  groups__name='Mentor')
 
     pageuser = get_object_or_404(User, userprofile__display_name=display_name)
 
@@ -85,10 +90,10 @@ def edit(request, display_name):
     return render(request, 'profiles_edit.html',
                   {'userform': userform,
                    'profileform': profileform,
+                   'datejoinedform': datejoinedform,
                    'pageuser': pageuser,
                    'avatar_url': avatar_url,
                    'group_bits': group_bits,
-                   'mentors': mentors,
                    'countries': countries,
                    'range_years': range(1950, datetime.today().year - 11)})
 
