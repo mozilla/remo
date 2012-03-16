@@ -35,6 +35,7 @@ def custom_500(request):
     t = loader.get_template('500.html')
     return http.HttpResponseServerError(
         t.render(Context({'MEDIA_URL': settings.MEDIA_URL,
+                          'request': request,
                           'user': request.user})))
 
 
