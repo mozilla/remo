@@ -6,19 +6,26 @@ from funfactory.settings_base import *
 # and js files that can be bundled together by the minify app.
 MINIFY_BUNDLES = {
     'css': {
-        'example_css': (
-            'css/examples/main.css',
-        ),
-        'example_mobile_css': (
-            'css/examples/mobile.css',
-        ),
+        'common': (
+            'css/remo/foundation.css',
+            'css/remo/tabzilla.css',
+            ),
+        'common_ie': (
+            'css/remo/ie.css',
+            ),
+        'remo': (
+            'css/remo/app.css',
+            )
     },
     'js': {
-        'example_js': (
-            'js/examples/libs/jquery-1.4.4.min.js',
-            'js/examples/libs/jquery.cookie.js',
-            'js/examples/init.js',
-        ),
+        'common': (
+            'js/modernizr.foundation.js',
+            'js/foundation.js',
+            'js/activate.browserid.js',
+            'js/tabzilla.js',
+             # Our app.js is always last to override stuff
+            'js/app.js',
+            ),
     }
 }
 
