@@ -127,19 +127,7 @@
               {{ profileform.wiki_profile_url.errors }}
             </small>
           {% endif %}
-          <select name="mentor">
-            {% if not profileform.mentor.value() %}
-              <option selected="selected" value="">
-                Choose mentor
-              </option>
-            {% endif %}
-            {% for mentor in mentors %}
-              <option value="{{ mentor.id }}" {% if mentor.id == profileform.mentor.value() %}
-                      selected="selected" {% endif %}>
-                {{ mentor.get_full_name() }}
-              </option>
-            {% endfor %}
-          </select>
+          {{ profileform.mentor }}
         </div>
       </div>
     </div>

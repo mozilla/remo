@@ -61,6 +61,30 @@ class ChangeProfileForm(forms.ModelForm):
     gender = forms.ChoiceField(required=False, choices=((None, "Gender"),
                                                         (True, "Female"),
                                                         (False, "Male")))
+    mentor = forms.ChoiceField(required=False, choices=[])
+
+    def __init__(self, *args, **kwargs):
+        super(ChangeProfileForm, self).__init__(*args, **kwargs)
+        mentor_choices = ([(None, "Choose Mentor")] +
+                          [(u.id, u.get_full_name()) for u in
+                           User.objects.filter(
+                               userprofile__registration_complete=True,
+                               groups__name='Mentor')])
+        self.fields['mentor'].choices = mentor_choices
+
+    def clean_twitter_account(self):
+        """Make sure that twitter_account does not start with a '@'."""
+        twitter_account = self.cleaned_data['twitter_account']
+        return twitter_account.strip('@')
+
+    def clean_mentor(self):
+        value = self.cleaned_data['mentor']
+        if value == u'None':
+            value = None
+        else:
+            value = User.objects.get(pk=value)
+
+        return value
 
     class Meta:
         model = UserProfile
@@ -72,11 +96,6 @@ class ChangeProfileForm(forms.ModelForm):
                   'irc_channels', 'facebook_url', 'linkedin_url',
                   'diaspora_url', 'personal_website_url', 'personal_blog_feed',
                   'bio', 'gender', 'mentor', 'wiki_profile_url')
-
-    def clean_twitter_account(self):
-        """Make sure that twitter_account does not start with a '@'."""
-        twitter_account = self.cleaned_data['twitter_account']
-        return twitter_account.strip('@')
 
 
 class ChangeDateJoinedForm(forms.ModelForm):
