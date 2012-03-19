@@ -16,6 +16,7 @@
 :: Planet feed Styles
 :: Logo gray Style
 :: Featured rep;
+:: About page Styles
 */
 
 
@@ -587,4 +588,26 @@ small.error {
 
 select#id_user {
     display: none;
+}
+
+/* -----------------------------------------
+   About page Styles
+----------------------------------------- */
+
+#about-text ul {
+    list-style-type: circle !important;
+    list-style-position: inside;
+}
+
+#about-text h4 {
+    margin-top: 40px !important;
+}
+#about-navigation li {
+    font-family: "Open Sans";
+    font-size: 16px;
+    margin-top: 20px !important;
+}
+
+#about-navigation nav {
+    margin-bottom: 50px !important;
 }

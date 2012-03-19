@@ -66,6 +66,8 @@
                 <li class="account anonymous nomenu logout">
                   {% if not user.is_authenticated() %}
                     <a id="browserid" href="#">Sign In</a>
+                     or
+                    <a href="#" data-reveal-id="join-modal">Join</a>
                     <form method="POST" action="{{ url('browserid_verify') }}">
                       {{ csrf() }} {{ browserid_form.as_p() }}
                       <input type="hidden" name="next" value="{{ request.get_full_path() }}" />
@@ -120,7 +122,7 @@
                   <a href="https://wiki.mozilla.org/ReMo" class="main">Wiki</a>
                 </li>
                 <li class="last">
-                  <a href="#" class="main" data-reveal-id="join-modal">Join</a>
+                  <a href="{{ url('faq') }}" class="main">FAQ</a>
                 </li>
               </ul>
             </div>
