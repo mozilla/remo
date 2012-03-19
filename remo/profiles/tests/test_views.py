@@ -6,6 +6,8 @@ from django.test.client import Client
 from nose.tools import eq_
 from test_utils import TestCase
 
+from pyquery import PyQuery as pq
+
 from remo.profiles.models import User
 
 
@@ -256,3 +258,18 @@ class ViewsTest(TestCase):
         response = c.get(reverse('profiles_edit',
                                  kwargs={'display_name': 'Koki'}), follow=True)
         self.assertTemplateUsed(response, 'profiles_edit.html')
+
+    def test_number_of_reps_visibility(self):
+        """Test visibility of number of reps based on authentication status."""
+        c = Client()
+
+        # try anonymous
+        response = c.get(reverse('profiles_list_profiles'), follow=True)
+        d = pq(response.content)
+        eq_(len(d('#profiles-number-of-reps')), 0)
+
+        # try logged in
+        c.login(username='rep', password='passwd')
+        response = c.get(reverse('profiles_list_profiles'), follow=True)
+        d = pq(response.content)
+        eq_(len(d('#profiles-number-of-reps')), 1)

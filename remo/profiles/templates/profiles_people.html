@@ -60,7 +60,7 @@
                 <span class="hidden">{{ person.userprofile.jabber_id }}</span>
                 <span class="hidden">{{ person.userprofile.get_gender_display() }}</span>
                 {% for group in person.groups.all() %}
-                <span class="hidden">Group:{{ group.name }}</span>
+                  <span class="hidden">Group:{{ group.name }}</span>
                 {% endfor %}
               </div>
             </div>
@@ -109,7 +109,7 @@
                 </a>
               </td>
               <td>
-                {{ person.userprofile.mozillians_profile_url|urlize(50)}}
+                {{ person.userprofile.mozillians_profile_url|urlize(50) }}
               </td>
               <td>
                 {{ person.userprofile.private_email }}
@@ -133,11 +133,13 @@
     </div>
   </div>
 </div>
-<div class="row">
-  <div class="twelve columns reps-number">
-    <p><span id="profiles-number-of-reps"></span> Reps were found.</p>
+{% if user.is_authenticated() %}
+  <div class="row">
+    <div class="twelve columns reps-number">
+      <p><span id="profiles-number-of-reps"></span> Reps were found.</p>
+    </div>
   </div>
-</div>
+{% endif %}
 {% endblock %}
 
 {% block bottomextra %}
