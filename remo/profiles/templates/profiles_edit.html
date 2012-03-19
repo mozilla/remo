@@ -28,7 +28,7 @@
         <div class="eleven columns">
           <input type="text" placeholder="Username" name="display_name"
                  value="{{ profileform.display_name.value() }}"
-          class="input-text big">
+                 class="input-text big">
           <div class="required-field"></div>
           {% if profileform.display_name.errors %}
             <small class="error">
@@ -38,7 +38,7 @@
           <p class="more-info">changing your username will result in changing your profile URL</p>
           <input type="text" placeholder="Last name" name="last_name"
                  value="{{ userform.last_name.value() }}"
-          class="input-text big">
+                 class="input-text big">
           <div class="required-field"></div>
           {% if userform.last_name.errors %}
             <small class="error">
@@ -47,7 +47,7 @@
           {% endif %}
           <input type="text" placeholder="First name" name="first_name"
                  value="{{ userform.first_name.value() }}"
-          class="input-text big">
+                 class="input-text big">
           <div class="required-field"></div>
           {% if userform.first_name.errors %}
             <small class="error">
@@ -56,7 +56,7 @@
           {% endif %}
           <input type="text" placeholder="Name in local language"
                  name="local_name" value="{{ profileform.local_name.value() }}"
-          class="input-text big">
+                 class="input-text big">
           {% if profileform.local_name.errors %}
             <small class="error">
               {{ profileform.local_name.errors }}
