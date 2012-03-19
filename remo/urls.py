@@ -21,8 +21,6 @@ urlpatterns = patterns('',
     # login / logout
     url(r'^login/failed/$', 'remo.base.views.login_failed',
         name='login_failed'),
-    url(r'^login/plain/$', 'remo.profiles.views.plainlogin',
-        {'template_name': 'plainlogin.html'}, name='plainlogin'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': '/'}, name='logout'),
 )
