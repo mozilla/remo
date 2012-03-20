@@ -63,7 +63,7 @@
             {{ feature.text|restructuredtext}}
           </td>
           <td>
-            {{ feature.created_on }}
+            {{ feature.created_on.strftime('%d-%m-%Y') }}
           </td>
           {% if perms.profiles.can_edit_profiles %}
             <td>
