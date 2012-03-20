@@ -79,12 +79,12 @@
       <table id="list-people-view">
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Full Name</th>
+            <th>Name in local language</th>
             <th>Username</th>
             <th>City</th>
+            <th>Region</th>
             <th>Country</th>
-            <th>Mozillian Profile</th>
-            <th>Personal mail</th>
           </tr>
         </thead>
         <tbody>
@@ -96,6 +96,9 @@
                 </a>
               </td>
               <td>
+                {{ person.userprofile.local_name }}
+              </td>
+              <td>
                 {{ person.userprofile.display_name }}
               </td>
               <td>
@@ -104,24 +107,22 @@
                 </a>
               </td>
               <td>
+                <a href="{{ url('profiles_list_profiles') }}{{ person.userprofile.region }}">
+                  {{ person.userprofile.region }}
+                </a>
+              </td>
+              <td>
                 <a href="{{ url('profiles_list_profiles') }}{{ person.userprofile.country }}">
                   {{ person.userprofile.country }}
                 </a>
               </td>
-              <td>
-                {{ person.userprofile.mozillians_profile_url|urlize(50) }}
-              </td>
-              <td>
-                {{ person.userprofile.private_email }}
-              </td>
               <td class="hidden">
-                <span>{{ person.userprofile.local_name }}</span>
-                <span>{{ person.userprofile.region }}</span>
                 <span>{{ person.email }}</span>
                 <span>{{ person.userprofile.irc_name }}</span>
                 <span>{{ person.userprofile.twitter_account }}</span>
                 <span>{{ person.userprofile.jabber_id }}</span>
                 <span>{{ person.userprofile.get_gender_display() }}</span>
+                <span>{{ person.userprofile.private_email }}</span>
                 {% for group in person.groups.all() %}
                   <span>Group:{{ group.name }}</span>
                 {% endfor %}
