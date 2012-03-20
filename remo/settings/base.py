@@ -79,7 +79,7 @@ AUTHENTICATION_BACKENDS = ('django_browserid.auth.BrowserIDBackend',
                            )
 
 # Required for BrowserID. Very important security feature
-SITE_URL = 'http://reps.mozilla.org'
+SITE_URL = 'https://reps.mozilla.org'
 
 # Remove LocaleURLMiddleware since we are not localing our website
 MIDDLEWARE_CLASSES = filter(
