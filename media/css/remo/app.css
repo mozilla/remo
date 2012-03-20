@@ -466,14 +466,23 @@ ul.orbit-bullets li.active {
     line-height: 18px;
 }
 
-#colophon a,
-    a:link,
-    a:visited {
+#colophon a {
         color: rgb(103,167,208);
 }
 
-#colophon a:hover,
-    a:active {
+#colophon a:link {
+        color: rgb(103,167,208);
+}
+
+#colophon a:visited {
+        color: rgb(103,167,208);
+}
+
+#colophon a:hover {
+        color: rgb(83,147,188);
+}
+
+#colophon a:active {
         color: rgb(83,147,188);
 }
 
