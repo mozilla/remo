@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
+from django.views.generic.simple import direct_to_template
 
 
 handler404 = 'remo.base.views.custom_404'
@@ -23,6 +24,12 @@ urlpatterns = patterns('',
         name='login_failed'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': '/'}, name='logout'),
+
+    # About and Faq directs
+    url(r'^about/', direct_to_template, {'template': 'about.html'},
+        name='about'),
+    url(r'^faq/', direct_to_template, {'template': 'faq.html'},
+        name='faq'),
 )
 
 ## In DEBUG mode, serve media files through Django.
