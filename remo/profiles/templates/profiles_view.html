@@ -76,6 +76,30 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
     </div>
   </div>
   <div class="six columns">
+    {% if usergroups %}
+      <div class="row">
+        <div class="one columns pictogram">
+          )
+        </div>
+        <div class="eleven columns">
+          <h6 class="profile-item">
+            {% for group in usergroups %}
+              {% if group.name == "Mentor" %}
+                <a href="{{ url('profiles_list_profiles') }}Group:{{ group.name }}">
+                  Reps Mentor
+                </a>
+              {% endif %}
+              {% if group.name == "Council" %}
+                <a href="{{ url('profiles_list_profiles') }}Group:{{ group.name }}">
+                  Reps Council
+                </a> member
+              {% endif %}
+              {% if not loop.last %} - {% endif %}
+            {% endfor %}
+          </h6>
+        </div>
+      </div>
+    {% endif %}
     <div class="row">
       <div class="one columns pictogram">
         p
