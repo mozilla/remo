@@ -146,6 +146,20 @@ h4 {
     letter-spacing: -0.25px;
 }
 
+.required-field {
+    color: #888;
+    font-family: 'ModernPictogramsNormal';
+    font-size: 12px;
+    float: right;
+    margin-bottom: -40px;
+    position: relative;
+    top: -40px;
+}
+
+.required-field:before {
+    content: '\*';
+}
+
 /* -----------------------------------------
    Header Styles
 ----------------------------------------- */
