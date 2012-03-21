@@ -62,6 +62,9 @@
                 {% for group in person.groups.all() %}
                   <span class="hidden">Group:{{ group.name }}</span>
                 {% endfor %}
+                {% for area in person.userprofile.functional_areas.all() %}
+                  <span class="hidden">Area:'{{ area.name}}'</span>
+                {% endfor %}
               </div>
             </div>
           </div>
@@ -125,6 +128,9 @@
                 <span>{{ person.userprofile.private_email }}</span>
                 {% for group in person.groups.all() %}
                   <span>Group:{{ group.name }}</span>
+                {% endfor %}
+                {% for area in person.userprofile.functional_areas.all() %}
+                  <span>Area:'{{ area.name}}'</span>
                 {% endfor %}
               </td>
             </tr>
