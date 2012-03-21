@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.views import login as django_login
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
 
@@ -115,12 +116,15 @@ def view_profile(request, display_name):
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
     avatar_url = user.userprofile.get_avatar_url(128)
+    usergroups = user.groups.filter(Q(name="Mentor")|Q(name="Council"))
+
     return render(request, 'profiles_view.html',
                   {'pageuser': user,
                    'user_profile': user.userprofile,
                    'added_by': user.userprofile.added_by,
                    'mentor': user.userprofile.mentor,
-                   'avatar_url': avatar_url})
+                   'avatar_url': avatar_url,
+                   'usergroups': usergroups})
 
 
 @permission_check()
