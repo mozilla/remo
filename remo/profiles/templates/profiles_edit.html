@@ -29,6 +29,7 @@
           <input type="text" placeholder="Username" name="display_name"
                  value="{{ profileform.display_name.value() }}"
           class="input-text big">
+          <div class="required-field"></div>
           {% if profileform.display_name.errors %}
             <small class="error">
               {{ profileform.display_name.errors }}
@@ -38,6 +39,7 @@
           <input type="text" placeholder="Last name" name="last_name"
                  value="{{ userform.last_name.value() }}"
           class="input-text big">
+          <div class="required-field"></div>
           {% if userform.last_name.errors %}
             <small class="error">
               {{ userform.last_name.errors }}
@@ -46,6 +48,7 @@
           <input type="text" placeholder="First name" name="first_name"
                  value="{{ userform.first_name.value() }}"
           class="input-text big">
+          <div class="required-field"></div>
           {% if userform.first_name.errors %}
             <small class="error">
               {{ userform.first_name.errors }}
@@ -99,6 +102,7 @@
           <input type="text" placeholder="Personal email"
                  value="{{ profileform.private_email.value() }}"
           name="private_email" class="input-text big">
+          <div class="required-field"></div>
           {% if profileform.private_email.errors %}
             <small class="error">
               {{ profileform.private_email.errors }}
@@ -106,6 +110,7 @@
           {% endif %}
           <input type="text" placeholder="Bugzilla email" value="{{ userform.email.value() }}"
           name="email" class="input-text big">
+          <div class="required-field"></div>
           {% if userform.email.errors %}
             <small class="error">
               {{ userform.email.errors }}
@@ -114,6 +119,7 @@
           <input type="text" placeholder="Mozillians.org profile"
                  value="{{ profileform.mozillians_profile_url.value() }}"
           name="mozillians_profile_url" class="input-text big">
+          <div class="required-field"></div>
           {% if profileform.mozillians_profile_url.errors %}
             <small class="error">
               {{ profileform.mozillians_profile_url.errors }}
@@ -122,6 +128,7 @@
           <input type="text" placeholder="Wiki profile"
                  value="{{ profileform.wiki_profile_url.value() }}"
                  name="wiki_profile_url" class="input-text big">
+          <div class="required-field"></div>
           {% if profileform.wiki_profile_url.errors %}
             <small class="error">
               {{ profileform.wiki_profile_url.errors }}
@@ -139,6 +146,7 @@
         <div class="eleven columns">
           <input type="text" placeholder="City" value="{{ profileform.city.value() }}"
                  name="city" class="input-text big">
+          <div class="required-field"></div>
           {% if profileform.city.errors %}
             <small class="error">
               {{ profileform.city.errors }}
@@ -146,6 +154,7 @@
           {% endif %}
           <input type="text" placeholder="State or Region" value="{{ profileform.region.value() }}"
                  name="region" class="input-text big">
+          <div class="required-field"></div>
           {% if profileform.region.errors %}
             <small class="error">
               {{ profileform.region.errors }}
@@ -174,6 +183,7 @@
           <div class="align-right">
             <a href="#" class="small white button nice radius"
                data-reveal-id="map-point">Point your marker in map</a>
+            <div class="required-field"></div>
           </div>
           {% if profileform.lat.errors or profileform.lon.errors %}
             <small class="error">
@@ -243,6 +253,7 @@
           <input type="text" placeholder="IRC nickname"
                  value="{{ profileform.irc_name.value() }}"
                  name="irc_name" class="input-text big">
+          <div class="required-field"></div>
           {% if profileform.irc_name.errors %}
             <small class="error">
               {{ profileform.irc_name.errors }}
