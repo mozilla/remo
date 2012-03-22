@@ -35,7 +35,8 @@
               {{ profileform.display_name.errors }}
             </small>
           {% endif %}
-          <p class="more-info">changing your username will result in changing your profile URL</p>
+          <p class="more-info">changing your username will result in
+          changing your profile URL</p>
           <input type="text" placeholder="Last name" name="last_name"
                  value="{{ userform.last_name.value() }}"
                  class="input-text big">
@@ -63,7 +64,6 @@
             </small>
           {% endif %}
             {{ profileform.gender }}
-          </select>
           {% if profileform.gender.errors %}
             <small class="error">
               {{ profileform.gender.errors }}
@@ -101,15 +101,16 @@
         <div class="eleven columns">
           <input type="text" placeholder="Personal email"
                  value="{{ profileform.private_email.value() }}"
-          name="private_email" class="input-text big">
+                 name="private_email" class="input-text big">
           <div class="required-field"></div>
           {% if profileform.private_email.errors %}
             <small class="error">
               {{ profileform.private_email.errors }}
             </small>
           {% endif %}
-          <input type="text" placeholder="Bugzilla email" value="{{ userform.email.value() }}"
-          name="email" class="input-text big">
+          <input type="text" placeholder="Bugzilla email"
+                 value="{{ userform.email.value() }}"
+                 name="email" class="input-text big">
           <div class="required-field"></div>
           {% if userform.email.errors %}
             <small class="error">
@@ -118,7 +119,7 @@
           {% endif %}
           <input type="text" placeholder="Mozillians.org profile"
                  value="{{ profileform.mozillians_profile_url.value() }}"
-          name="mozillians_profile_url" class="input-text big">
+                 name="mozillians_profile_url" class="input-text big">
           <div class="required-field"></div>
           {% if profileform.mozillians_profile_url.errors %}
             <small class="error">
@@ -152,7 +153,8 @@
               {{ profileform.city.errors }}
             </small>
           {% endif %}
-          <input type="text" placeholder="State or Region" value="{{ profileform.region.value() }}"
+          <input type="text" placeholder="State or Region"
+                 value="{{ profileform.region.value() }}"
                  name="region" class="input-text big">
           <div class="required-field"></div>
           {% if profileform.region.errors %}
@@ -176,10 +178,12 @@
               {{ profileform.country.errors }}
             </small>
           {% endif %}
-          <input type="hidden" placeholder="Latitude" value="{{ profileform.lat.value() }}"
-          name="lat" class="input-text point-lat">
-          <input type="hidden" placeholder="Longitude" value="{{ profileform.lon.value() }}"
-          name="lon" class="input-text point-long">
+          <input type="hidden" placeholder="Latitude"
+                 value="{{ profileform.lat.value() }}"
+                 name="lat" class="input-text point-lat">
+          <input type="hidden" placeholder="Longitude"
+                 value="{{ profileform.lon.value() }}"
+                 name="lon" class="input-text point-long">
           <div class="align-right">
             <a href="#" class="small white button nice radius"
                data-reveal-id="map-point">Point your marker in map</a>
@@ -375,7 +379,8 @@
             </div>
           </div>
         </div>
-    {% endif %}
+      {% endif %}
+      </div>
   </div>
   <div class="row">
     <div id="save-profile" class="twelve columns align-right">
