@@ -162,6 +162,11 @@ h4 {
     content: '\*';
 }
 
+/* Setting tabzilla z-index to 30 so it is displayed below modals */
+#tabzilla {
+    z-index: 30 !important;
+}
+
 /* -----------------------------------------
    Header Styles
 ----------------------------------------- */
