@@ -14,7 +14,6 @@ from libravatar import libravatar_url
 
 DISPLAY_NAME_MAX_LENGTH = 50
 
-
 def _validate_birth_date(data, **kwargs):
     """Validator to ensure age of at least 12 years old."""
     today = datetime.date.today()
@@ -38,6 +37,14 @@ def _validate_mentor(data, **kwargs):
         raise ValidationError('Please select a user from the mentor group.')
 
     return data
+
+
+class FunctionalArea(models.Model):
+    """Mozilla functional areas."""
+    name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.name
 
 
 class UserProfile(models.Model):
@@ -101,6 +108,8 @@ class UserProfile(models.Model):
     mentor = models.ForeignKey(User, null=True, blank=True,
                                related_name='mentors_users',
                                validators=[_validate_mentor])
+    functional_areas = models.ManyToManyField(FunctionalArea, blank=True,
+                                              null=True)
 
     class Meta:
         permissions = (

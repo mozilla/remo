@@ -273,6 +273,25 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         </div>
       {% endif %}
     </div>
+    {% if user_profile.functional_areas.all() %}
+      <div class="row">
+        <div class="one columns pictogram">
+          j
+        </div>
+        <div class="eleven columns">
+          <p class="profile-item">
+            <span class="white radius label">
+              Intrested in
+            </span>
+            &nbsp;
+            {% for area in user_profile.functional_areas.all() %}
+              <a href="{{ url('profiles_list_profiles') }}Area:'{{ area.name }}'">
+                 {{ area.name }}</a>{% if not loop.last %}, {% endif %}
+            {% endfor %}
+          </p>
+        </div>
+      </div>
+    {% endif %}
     {% if perms.profiles.can_edit_profile %}
       {% if added_by %}
         <div class="row">
