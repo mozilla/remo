@@ -99,7 +99,7 @@ class UserProfile(models.Model):
                                               (False, 'Male')),
                                      default=None)
     mentor = models.ForeignKey(User, null=True, blank=True,
-                               related_name='mentors_users',
+                               related_name='mentees',
                                validators=[_validate_mentor])
 
     class Meta:

@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% block pagetitle %}Mozilla Reps - Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="twelve columns">
+    <h4>Dashboard</h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="twelve columns">
+
+    <!-- budget requests block -->
+    <div class="row dashboard-box">
+      <div class="seven columns">
+        <h5>Budget Requests</h5>
+      </div>
+      <div class="five columns">
+        <dl class="sub-nav dashboard-filter">
+          <dt>Filter:</dt>
+          <dd class="active">
+            <a id="dashboard-br-mine-button" href="javascript:void(0)">Mine</a>
+          </dd>
+          {% if mentees_budget_requests != None %}
+            <dd>
+              <a id="dashboard-br-mentees-button" href="javascript:void(0)">My mentees</a>
+            </dd>
+          {% endif %}
+          {% if all_budget_requests != None %}
+            <dd>
+              <a id="dashboard-br-all-button" href="javascript:void(0)">All</a>
+            </dd>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+    <div class="row">
+      <div id="dashboard-br-my-block">
+        {% if my_budget_requests %}
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Creator</th>
+                <th>Whiteboard</th>
+                <th>Resolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bug in my_budget_requests %}
+                <tr class='my-budget-request'>
+                  <td>
+                    <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
+                  </td>
+                  <td>{{ bug.creator }}</td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="row">
+            <div class="twelve columns no-bugs">
+              <p>No Bugs found!</p>
+            </div>
+          </div>
+        {% endif %}
+      </div> <!-- end my_budget_requests -->
+
+      <div id="dashboard-br-mentees-block" class="hidden">
+        {% if mentees_budget_requests %}
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Creator</th>
+                <th>Whiteboard</th>
+                <th>Resolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bug in mentees_budget_requests %}
+                <tr class='my-budget-request'>
+                  <td>
+                    <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
+                  </td>
+                  <td>{{ bug.creator }}</td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="row">
+            <div class="twelve columns no-bugs">
+              <p>No Bugs found!</p>
+            </div>
+          </div>
+        {% endif %}
+      </div> <!-- end mentees_budget_requests -->
+
+
+      <div id="dashboard-br-all-block" class="hidden">
+        {% if all_budget_requests %}
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Creator</th>
+                <th>Whiteboard</th>
+                <th>Resolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bug in all_budget_requests %}
+                <tr class='my-budget-request'>
+                  <td>
+                    <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
+                  </td>
+                  <td>{{ bug.creator }}</td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="row">
+            <div class="twelve columns no-bugs">
+              <p>No Bugs found!</p>
+            </div>
+          </div>
+        {% endif %}
+        <div class="align-right">
+          <a href="https://bugzilla.mozilla.org/buglist.cgi?list_id=2655390;resolution=---;classification=Other;query_format=advanced;component=Budget%20Requests;product=Mozilla%20Reps"
+             class="small white button nice radius">See all bugs</a>
+        </div>
+      </div> <!-- end all_budget_requests -->
+    </div>
+
+    <!-- end budget requests block -->
+
+
+    <!-- swag requests block -->
+    <div class="row dashboard-box">
+      <div class="seven columns">
+        <h5>Swag Requests</h5>
+      </div>
+      <div class="five columns">
+        <dl class="sub-nav dashboard-filter">
+          <dt>Filter:</dt>
+          <dd class="active">
+            <a id="dashboard-sr-mine-button" href="javascript:void(0)">Mine</a>
+          </dd>
+          {% if mentees_swag_requests != None %}
+            <dd>
+              <a id="dashboard-sr-mentees-button" href="javascript:void(0)">My mentees</a>
+            </dd>
+          {% endif %}
+          {% if all_swag_requests != None %}
+            <dd>
+              <a id="dashboard-sr-all-button" href="javascript:void(0)">All</a>
+            </dd>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+    <div class="row">
+      <div id="dashboard-sr-my-block">
+        {% if my_swag_requests %}
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Creator</th>
+                <th>Whiteboard</th>
+                <th>Resolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bug in my_swag_requests %}
+                <tr class='my-swag-request'>
+                  <td>
+                    <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
+                  </td>
+                  <td>{{ bug.creator }}</td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="row">
+            <div class="twelve columns no-bugs">
+              <p>No Bugs found!</p>
+            </div>
+          </div>
+        {% endif %}
+      </div> <!-- end my_swag_requests -->
+
+      <div id="dashboard-sr-mentees-block" class="hidden">
+        {% if mentees_swag_requests %}
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Creator</th>
+                <th>Whiteboard</th>
+                <th>Resolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bug in mentees_swag_requests %}
+                <tr class='my-swag-request'>
+                  <td>
+                    <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
+                  </td>
+                  <td>{{ bug.creator }}</td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="row">
+            <div class="twelve columns no-bugs">
+              <p>No Bugs found!</p>
+            </div>
+          </div>
+        {% endif %}
+      </div> <!-- end mentees_swag_requests -->
+
+
+      <div id="dashboard-sr-all-block" class="hidden">
+        {% if all_swag_requests %}
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Creator</th>
+                <th>Whiteboard</th>
+                <th>Resolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bug in all_swag_requests %}
+                <tr class='my-swag-request'>
+                  <td>
+                    <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
+                  </td>
+                  <td>{{ bug.creator }}</td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="row">
+            <div class="twelve columns no-bugs">
+              <p>No Bugs found!</p>
+            </div>
+          </div>
+        {% endif %}
+        <div class="align-right">
+          <a href="https://bugzilla.mozilla.org/buglist.cgi?list_id=2655390;resolution=---;classification=Other;query_format=advanced;component=Swag%20Requests;product=Mozilla%20Reps"
+             class="small white button nice radius">See all bugs</a>
+        </div>
+      </div> <!-- end all_swag_requests -->
+    </div>
+    <!-- end swag requests block -->
+
+
+    <!-- community it requests block -->
+    {% if cit_requests %}
+    <div class="row dashboard-box">
+      <div class="seven columns">
+        <h5>Community IT Requests</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div id="dashboard-citr-block">
+        {% if cit_requests %}
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Creator</th>
+                <th>Whiteboard</th>
+                <th>Resolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for bug in cit_requests %}
+                <tr class='my-swag-request'>
+                  <td>
+                    <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
+                  </td>
+                  <td>{{ bug.creator }}</td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="row">
+            <div class="twelve columns no-bugs">
+              <p>No Bugs found!</p>
+            </div>
+          </div>
+        {% endif %}
+      </div> <!-- end cit_requests -->
+    </div>
+    {% endif %}
+    <!-- end community it requests block -->
+
+
+  </div>
+</div>
+{% endblock %}
+
+{% block bottomextra %}
+  <script src="{{ MEDIA_URL }}js/dashboard.js" type="text/javascript"></script>
+{% endblock %}
