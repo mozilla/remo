@@ -70,7 +70,8 @@
                     <a href="#" data-reveal-id="join-modal">Join</a>
                     <form method="POST" action="{{ url('browserid_verify') }}">
                       {{ csrf() }} {{ browserid_form }}
-                      <input type="hidden" name="next" value="{{ request.get_full_path() }}" />
+                      <input type="hidden" name="next"
+                             value="{{ next_url|default(request.get_full_path()) }}" />
                     </form>
                   {% else %}
                     <a href="{{ url('profiles_view_my_profile') }}">
@@ -104,7 +105,11 @@
             <div class="eight columns hide-on-phones" id="navigation-box">
               <ul class="nav-bar">
                 <li>
-                  <a href="{{ url('main') }}" class="main">Main</a>
+                  {% if user.is_authenticated() %}
+                    <a href="{{ url('dashboard') }}" class="main">Dashboard</a>
+                  {% else %}
+                    <a href="{{ url('main') }}" class="main">Main</a>
+                  {% endif %}
                 </li>
                 <li>
                   <a href="{{ url('profiles_list_profiles') }}" class="main">People</a>

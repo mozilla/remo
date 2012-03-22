@@ -14,9 +14,10 @@
 :: Error Styles
 :: Pictogram Styles
 :: Planet feed Styles
-:: Logo gray Style
-:: Featured rep;
+:: Logo gray Styles
+:: Featured rep Styles
 :: About page Styles
+:: Dashboard Styles
 */
 
 
@@ -639,4 +640,60 @@ select#id_user {
 
 #about-navigation nav {
     margin-bottom: 50px !important;
+}
+
+/* -----------------------------------------
+   Dashboard Styles
+----------------------------------------- */
+
+.dashboard-table {
+    width: 100%;
+}
+
+.dashboard-filter {
+    float: right;
+}
+
+.dashboard-box {
+    margin-top: 20px;
+}
+
+dl.sub-nav dd.active a {
+    background-color: rgb(103, 167, 208);
+    color: #fff;
+    padding: 3px 9px;
+}
+
+dl.sub-nav {
+    margin: 2px;
+    padding: 0 auto;
+}
+
+.no-bugs {
+    color: #888;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.dashboard-mentee {
+    margin: 10px !important;
+    text-align: center;
+    padding: 10px !important;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.dashboard-mentee.ontime {
+    background: -moz-linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
+}
+
+.dashboard-mentee.overdue {
+    background: -moz-linear-gradient(top, #FFFFFF 0%, #CC9900 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
+}
+
+.dashboard-mentee.notfilled {
+    background: -moz-linear-gradient(top, #FFFFFF 0%, #CC6600 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
 }
