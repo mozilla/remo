@@ -24,7 +24,13 @@ class Bug(models.Model):
     due_date = models.DateTimeField(null=True, blank=True)
 
     def __unicode__(self):
-        return u"%d" % self.bug_id
+        return u'%d' % self.bug_id
+
+    def get_bugzilla_url(self):
+        return u'https://bugzilla.mozilla.org/show_bug.cgi?id=%d' % self.bug_id
+
+    class Meta:
+        ordering = ['-bug_last_change_time']
 
 
 class Status(models.Model):

@@ -1,14 +1,11 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
 
 
 handler404 = 'remo.base.views.custom_404'
 handler500 = 'remo.base.views.custom_500'
 
 urlpatterns = patterns('',
-    url(r'^$', 'remo.base.views.main', name='main'),
-
     # profiles
     url(r'^u/', include('remo.profiles.user_urls')),
     url(r'^people/', include('remo.profiles.people_urls')),
@@ -25,11 +22,8 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': '/'}, name='logout'),
 
-    # About and Faq directs
-    url(r'^about/', direct_to_template, {'template': 'about.html'},
-        name='about'),
-    url(r'^faq/', direct_to_template, {'template': 'faq.html'},
-        name='faq'),
+    url(r'^$', 'remo.base.views.main', name='main'),
+    url(r'^', include('remo.base.urls')),
 )
 
 ## In DEBUG mode, serve media files through Django.

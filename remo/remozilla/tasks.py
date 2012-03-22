@@ -44,7 +44,6 @@ def fetch_bugs(components=COMPONENTS, days=None):
                          component=quote(component),
                          fields=','.join(BUGZILLA_FIELDS),
                          timedelta=days)
-
         response = requests.get(url)
 
         if response.status_code != 200:
@@ -76,6 +75,9 @@ def fetch_bugs(components=COMPONENTS, days=None):
             bug.status = bdata['status']
             bug.resolution = bdata.get('resolution', '')
             bug.due_date = bdata.get('cf_due_date', None)
+            if 'last_change_time' in bdata:
+                bug.bug_last_change_time = datetime.strptime(
+                    bdata['last_change_time'], "%Y-%m-%dT%H:%M:%SZ")
             bug.save()
 
     set_last_updated_date(now)
