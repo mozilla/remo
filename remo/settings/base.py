@@ -19,6 +19,7 @@ MINIFY_BUNDLES = {
     },
     'js': {
         'common': (
+            'js/webtrends.js',
             'js/modernizr.foundation.js',
             'js/foundation.js',
             'js/activate.browserid.js',
