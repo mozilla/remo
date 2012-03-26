@@ -18,6 +18,8 @@
 :: Featured rep Styles
 :: About page Styles
 :: Dashboard Styles
+:: Additions towards 2.2;
+:: Reports Styles
 */
 
 
@@ -701,4 +703,99 @@ dl.sub-nav {
 .dashboard-mentee.notfilled {
     background: -moz-linear-gradient(top, #FFFFFF 0%, #CC6600 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
+}
+
+/* -----------------------------------------
+   Additions towards 2.2
+----------------------------------------- */
+
+ul.mreports {
+    display: block;
+    background: #f4f4f4;
+    padding: 10px 10px;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+ul.mreports li {
+    margin: 0;
+    padding: 0 4px 0 0;
+    float: left;
+}
+
+ul.mreports li a, ul.mreports li span {
+    text-transform: uppercase;
+    font-size: 11px;
+    padding-left: 4px;
+}
+
+ul.mreports li:first-child a, ul.mreports li:first-child span {
+    padding-left: 0;
+}
+
+ul.mreports li:before {
+    content: "/";
+    color: #aaa;
+}
+
+ul.mreports li:first-child:before {
+    content: "";
+}
+
+ul.mreports li.exists a {
+}
+
+ul.mreports li:hover a, ul.mreports li a:focus {
+    text-decoration: underline;
+}
+
+ul.mreports li.exists:hover a, ul.mreports li.exists a:focus {
+    text-decoration: none;
+}
+
+ul.mreports li.unavailable a {
+    color: #999;
+}
+
+ul.mreports li.unavailable:hover a, ul.pagination li.unavailable a:focus {
+    text-decoration: none;
+    color: #999;
+    cursor: default;
+}
+
+ul.mreports li.editable a {
+    color: #dd4433;
+}
+
+
+/* -----------------------------------------
+   Reports Styles
+----------------------------------------- */
+
+.report-instructions {
+    margin-top: 20px;
+}
+
+.report-box {
+    margin-top: 20px;
+}
+
+.report-item textarea, select, p {
+    margin-top: 20px !important;
+}
+
+.report-comment {
+    margin-top: 20px !important;
+}
+
+.report-comment .report-delete-comment {
+    font-size: 22px;
+    line-height: .5;
+    position: relative;
+    float: right;
+    color: #aaa;
+    text-shadow: 0 -1px 1px rbga(0,0,0,.6);
+    font-weight: bold;
+    cursor: pointer;
 }

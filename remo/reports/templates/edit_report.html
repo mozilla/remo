@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}
+Mozilla Reps - Edit Report
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="twelve columns">
+    <h4>Editing Monthly Report</h4>
+  </div>
+</div>
+<form id="reportform" method="post" class="custom">
+  {{ csrf() }}
+  <div class="row">
+    <!-- Non-editable elements -->
+    <div class="six columns">
+      <div class="row report-box">
+        <div class="one columns pictogram">
+          J
+        </div>
+        <div class="eleven columns">
+          <input type="text" placeholder="Username" name="display_name"
+                 value="{{ pageuser.userprofile.display_name }}" readonly
+                 class="input-text big">
+          <input type="text" placeholder="Month" name="report_month"
+                 value="{{ month }}" readonly
+                 class="input-text big">
+          <input type="text" placeholder="Year" name="report_year"
+                 value="{{ year }}" readonly
+                 class="input-text big">
+        </div>
+      </div>
+    </div>
+
+    <!-- Text about empty reports -->
+    <div class="six columns">
+      <div class="row report-box">
+        <div class="one columns pictogram">
+          =
+        </div>
+        <div class="eleven columns report-instructions">
+          <p>All Mozillians are super busy and sometimes you need to
+          take a break from Mozilla awesomeness and you'll find
+          yourself with or even no information to share a given
+          month. That's OK! If you feel that this is the month click
+          on the button below:</p>
+          <p>In any doubt please contact your mentor.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <!-- Past and future Items -->
+    <div class="six columns">
+      <div class="row report-box">
+        <div class="one columns pictogram">
+          {
+        </div>
+        <div class="eleven columns report-item">
+          <textarea class="flat" placeholder="Past items summary" id="past_items"
+                    name="past_items">{{ report_form.past_items.value() }}</textarea>
+          {% if report_form.past_items.errors %}
+            <small class="error">
+              {{ report_form.past_items.errors }}
+            </small>
+          {% endif %}
+          <textarea class="flat" placeholder="Future plans summary"
+                    name="future_items">{{ report_form.future_items.value() }}</textarea>
+          {% if report_form.future_items.errors %}
+            <small class="error">
+              {{ report_form.future_items.errors }}
+            </small>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Recruits and flags -->
+    <div class="six columns">
+      <div class="row report-box">
+        <div class="one columns pictogram">
+          6
+        </div>
+        <div class="eleven columns report-item">
+          <textarea class="flat"
+                    placeholder="Share you efforts to get new people involved and recruited"
+                    name="recruits_comments">{{ report_form.recruits_comments.value() }}</textarea>
+          {% if report_form.recruits_comments.errors %}
+            <small class="error">
+              {{ report_form.recruits_comments.errors }}
+            </small>
+          {% endif %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="one columns pictogram">
+          !
+        </div>
+        <div class="eleven columns report-item">
+          <textarea class="flat" placeholder="Notify your mentor about any help you need"
+                    name="flags">{{ report_form.flags.value() }}</textarea>
+          {% if report_form.flags.errors %}
+            <small class="error">
+              {{ report_form.flags.errors }}
+            </small>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Events -->
+    <div class="six columns" >
+      <div id="eventformset">
+      {% for form in report_event_formset %}
+        {{ form.id }}
+        {{ form.report }}
+        <div class="row report-box {% if loop.last %} eventblock {% endif %}"
+             id="{{ form.prefix }}-row" >
+          <div class="one columns pictogram">
+            u
+          </div>
+          <div class="eleven columns report-item">
+            <div class="row report-event">
+              <!-- {{ form.name }} -->
+              <input type="text" placeholder="Name of Event"
+                     name="{{ form.name.html_name }}" value="{{ form.name.value() }}"
+                     class="input-text big">
+              {% if form.name.errors %}
+                <small class="error">
+                  {{ form.name.errors }}
+                </small>
+              {% endif %}
+
+              {{ form.participation_type }}
+              {% if form.participation_type.errors %}
+                <small class="error">
+                  {{ form.participation_type.errors }}
+                </small>
+              {% endif %}
+
+              <textarea class="flat" placeholder="Describe the event briefly"
+                        name="{{ form.description.html_name }}">{{ form.description.value() }}</textarea>
+              {% if form.description.errors %}
+                <small class="error">
+                  {{ form.description.errors }}
+                </small>
+              {% endif %}
+
+              <input type="text" placeholder="Link to event"
+                     name="{{ form.link.html_name }}" value="{{ form.link.value() }}"
+                     class="input-text big">
+              {% if form.link.errors %}
+                <small class="error">
+                  {{ form.link.errors }}
+                </small>
+              {% endif %}
+
+              {{ form.DELETE }} Delete event
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+      <div class="align-right">
+        <a id="reports-add-event-button" href="javascript:void(0)"
+           class="small white button nice radius">Add another event
+        </a>
+      </div>
+    </div>
+      {{ report_event_formset.management_form }}
+    </div>
+
+    <!-- Activities and Links -->
+    <div class="six columns">
+      <div id="linkformset">
+        {% for form in report_link_formset %}
+        {{ form.id }}
+        {{ form.report }}
+        <div class="row report-box {% if loop.last %} linkblock {% endif %}">
+          <div class="one columns pictogram">
+            a
+          </div>
+          <div class="eleven columns report-item">
+            <div class="row report-activity">
+              <input type="text" placeholder="Link to activity"
+                     name="{{ form.link.html_name }}"
+                     value="{{ form.link.value() }}"
+                     class="input-text big">
+              {% if form.link.errors %}
+                <small class="error">
+                  {{ form.link.errors }}
+                </small>
+              {% endif %}
+
+              <textarea class="flat"
+                        placeholder="Describe activity briefly (e.g. blogpost, article, project, tweet)"
+                        name="{{ form.description.html_name }}">{{ form.description.value() }}</textarea>
+              {% if form.description.errors %}
+                <small class="error">
+                  {{ form.description.errors }}
+                </small>
+              {% endif %}
+
+              {{ form.DELETE }} Delete activity
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="align-right">
+          <a id="reports-add-link-button" href="javascript:void(0)"
+             class="small white button nice radius">Add another activity</a>
+        </div>
+
+      </div>
+    </div>
+    {{ report_link_formset.management_form }}
+  </div>
+
+  <div class="row">
+    <div class="six columns">
+    </div>
+
+    {% if perms.reports.can_edit_reports %}
+      <!-- Mentors and Admins panel -->
+      <div class="six columns">
+        <div class="row report-box">
+          <div class="one columns pictogram">
+            (
+          </div>
+          <div class="eleven columns">
+            <br/>
+            {{ report_form.overdue }} Overdue report
+            <br/>
+            {{ report_form.empty }} Empty report
+
+            {% if (not created) and (perms.reports.can_delete_reports) %}
+              <div class="align-right">
+                <a href="#" class="small red button nice radius"
+                   data-reveal-id="delete-report">Delete Report</a>
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Report submit button -->
+  <div class="row report-box">
+    <div id="save-report" class="twelve columns align-right">
+      <a id="reports-submit-button" type="submit"
+         class="medium blue button nice radius">
+        Save report
+      </a>
+    </div>
+  </div>
+
+<!-- Empty Report Reveal Modal -->
+<div id="empty-report" class="reveal-modal">
+  <a class="close-reveal-modal">&#215;</a>
+  <p class="lead">
+    Are you sure you want to do that?
+  </p>
+  <h2>
+    File an empty report
+  </h2>
+  <p>
+    By pressing the following button you will file an empty report for
+    this month. Your mentor will be notified.
+  </p>
+  <button id="reports-emptyreport-button"
+          class="small blue button nice radius close-reveal-modal">
+    File empty report
+  </button>
+</form>
+</div>
+
+<!-- Delete Profile Reveal Modal -->
+<div id="delete-report" class="reveal-modal">
+  <a class="close-reveal-modal">&#215;</a>
+  <p class="lead">
+    Are you sure you want to do that?
+  </p>
+  <h2>
+    Warning!
+  </h2>
+  <p>
+    By pressing the following button you will permanently and irreversibly delete this
+    report.
+  </p>
+    <form method="post"
+          action="{{ url('reports_delete_report', pageuser.userprofile.display_name,
+                  year, month) }}">
+      {{ csrf() }}
+      <button class="large red button nice radius close-reveal-modal">
+        Delete report
+      </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block bottomextra %}
+  <script src="{{ MEDIA_URL }}js/jquery.formset.min.js" type="text/javascript"></script>
+  <script src="{{ MEDIA_URL }}js/reports_edit_report.js" type="text/javascript"></script>
+{% endblock %}

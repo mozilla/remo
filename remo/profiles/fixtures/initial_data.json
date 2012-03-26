@@ -4,10 +4,7 @@
         "model": "auth.group",
         "fields": {
             "name": "Admin",
-            "permissions": [
-	        49,
-		50
-	    ]
+            "permissions": []
         }
     },
     {
@@ -31,9 +28,7 @@
         "model": "auth.group",
         "fields": {
             "name": "Mentor",
-            "permissions": [
-	        49
-	    ]
+            "permissions": []
         }
     },
     {
@@ -48,8 +43,8 @@
             "is_staff": true,
             "last_login": "2012-01-30 03:56:09",
             "groups": [
-	        1
-	    ],
+                1
+            ],
             "user_permissions": [],
             "password": "!",
             "email": "giorgos@mozilla.com",
@@ -78,8 +73,9 @@
             "diaspora_url": "",
             "personal_blog_feed": "",
             "mozillians_profile_url": "",
-	    "gender":"False",
-	    "registration_complete":"True"
+            "gender":"False",
+            "registration_complete":"True",
+            "date_joined_program": "2011-07-01"
         }
     },
     {

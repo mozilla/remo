@@ -43,6 +43,7 @@ INSTALLED_APPS = ['south'] + \
                      'remo.profiles',
                      'remo.featuredrep',
                      'remo.remozilla',
+                     'remo.reports',
 
                      'django_browserid',
                      ]
@@ -98,3 +99,5 @@ TEMPLATE_CONTEXT_PROCESSORS += (
 ANON_ALWAYS = True
 
 LOGIN_REDIRECT_URL_FAILURE = '/login/failed/'
+
+FROM_EMAIL = 'reps@mozilla.com'

@@ -14,6 +14,7 @@ from product_details import product_details
 
 import forms
 from remo.base.decorators import permission_check
+from remo.reports.utils import get_reports_for_year
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
@@ -33,6 +34,18 @@ def edit(request, display_name):
     /u/giorgos are the same person.
 
     """
+
+    def date_joined_form_validation(form):
+        """Convenience function to only validate datejoinedform when
+        user has permissions.
+
+        """
+        if request.user.has_perm('profiles.can_edit_profiles'):
+            if form.is_valid():
+                return True
+            return False
+        return True
+
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
 
@@ -44,7 +57,7 @@ def edit(request, display_name):
                                                     instance=user.userprofile)
 
         if (userform.is_valid() and profileform.is_valid() and
-            datejoinedform.is_valid()):
+            date_joined_form_validation(datejoinedform)):
             userform.save()
             profileform.save()
 
@@ -116,15 +129,29 @@ def view_profile(request, display_name):
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
     avatar_url = user.userprofile.get_avatar_url(128)
-    usergroups = user.groups.filter(Q(name="Mentor")|Q(name="Council"))
+    usergroups = user.groups.filter(Q(name='Mentor')|Q(name='Council'))
 
-    return render(request, 'profiles_view.html',
-                  {'pageuser': user,
-                   'user_profile': user.userprofile,
-                   'added_by': user.userprofile.added_by,
-                   'mentor': user.userprofile.mentor,
-                   'avatar_url': avatar_url,
-                   'usergroups': usergroups})
+    data = {'pageuser': user,
+            'user_profile': user.userprofile,
+            'added_by': user.userprofile.added_by,
+            'mentor': user.userprofile.mentor,
+            'avatar_url': avatar_url,
+            'usergroups': usergroups}
+
+    if user.groups.filter(name='Rep').exists():
+        if (request.user.groups.filter(name='Admin').exists() or
+            (request.user.is_authenticated() and
+             user in request.user.mentees.all()) or
+            user == request.user):
+            reports = get_reports_for_year(user, start_year=2011,
+                                           end_year=2012, private=False)
+        else:
+            reports = get_reports_for_year(user, start_year=2011,
+                                           end_year=2012, private=True)
+
+        data['monthly_reports'] = reports
+
+    return render(request, 'profiles_view.html', data)
 
 
 @permission_check()

@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}
+Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year }}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="twelve columns">
+    <h4>Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year }}</h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="six columns">
+    <div class="row">
+      <div class="one columns pictogram">
+        J
+      </div>
+      <div class="eleven columns">
+        <br>
+        <h4>
+          <a href="{{ url('profiles_view_profile', user_profile.display_name) }}">
+            {{ pageuser.first_name }}
+          </a>
+        </h4>
+        <h4>
+          <a href="{{ url('profiles_view_profile', user_profile.display_name) }}">
+            {{ pageuser.last_name }}
+          </a>
+        </h4>
+        {% if user == pageuser %}
+          <span class="grayed">
+            (that's you!)
+          </span>
+        {% endif %}
+        <p class="report-item">
+          <span class="white radius label">
+            Date filled
+          </span>&nbsp;
+          {{ report.created_on.strftime('%Y-%m-%d') }}
+        </p>
+        <!-- the p below visible only to mentors council and admins -->
+        {% if view_status and (report.overdue or report.empty) %}
+          <p class="report-item">
+            <span class="white radius label">
+              Status
+            </span>&nbsp;
+            {% if report.overdue %}
+              Overdue
+            {% endif %}
+            {% if report.empty %}
+              Empty
+            {% endif %}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="six columns">
+    <div class="row">
+      <div class="one columns pictogram">
+        A
+      </div>
+      <div class="eleven columns">
+        <div class="row">
+          <div class="four columns profile-image">
+            <img id="profiles-view-avatar"
+                 src="{{ user_profile.get_avatar_url(128) }}">
+          </div>
+          <div class="eight columns smallmap-profile-container">
+            <div id="map" class="smallmap-profile"
+                 data-lon="{{ user_profile.lon }}"
+                 data-lat="{{ user_profile.lat }}"
+                 data-mediaurl="{{ MEDIA_URL }}">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+
+  <!-- Past and future Items -->
+  <div class="six columns">
+    <div class="row report-box">
+      <div class="one columns pictogram">
+        {
+      </div>
+      <div class="eleven columns report-item">
+        <p class="report-item">
+          <span class="white radius label">
+            Past items
+          </span>&nbsp;
+          {{ report.past_items|restructuredtext }}
+        </p>
+        <p class="report-item">
+          <span class="white radius label">
+            Future plans
+          </span>&nbsp;
+          {{ report.future_items|restructuredtext }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recruits and flags -->
+  <div class="six columns">
+    <div class="row report-box">
+      <div class="one columns pictogram">
+        6
+      </div>
+      <div class="eleven columns report-item">
+        <p class="report-item">
+          <span class="white radius label">
+            Recruits efforts
+          </span>&nbsp;
+          {{ report.recruits_comments|restructuredtext }}
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="one columns pictogram">
+        !
+      </div>
+      <div class="eleven columns report-item">
+        <p class="report-item">
+          <span class="white radius label">
+            Flags
+          </span>&nbsp;
+          {{ report.flags|restructuredtext }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+
+  <!-- Events -->
+  <div class="six columns">
+    <div class="row report-box">
+      <div class="one columns pictogram">
+        u
+      </div>
+      <div class="eleven columns report-item">
+        {% for event in report.reportevent_set.all() %}
+          <p class="report-item">
+            <span class="white radius label">
+              Event
+            </span>&nbsp;
+            <a href="{{ event.link }}">{{ event.name }}</a>
+            <span class="grayed">
+              as {{ event.get_participation_type_display() }}
+            </span><br>
+            {{ event.description }}
+          </p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Activities and Links -->
+  <div class="six columns">
+    <div class="row report-box">
+      <div class="one columns pictogram">
+        a
+      </div>
+      <div class="eleven columns report-item">
+        {% for activity in report.reportlink_set.all() %}
+          <p class="report-item">
+            <span class="white radius label">
+              Activity
+            </span>&nbsp;
+            {{ activity.description }}
+            <a href="{{ activity.link }}">(link)</a>
+          </p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if editable %}
+  <!-- Edit report -->
+  <div class="row">
+    <div id="edit-report" class="twelve columns align-right">
+      <a href="{{ report|get_report_edit_url }}"
+         class="small white button nice radius">Edit report</a>
+    </div>
+  </div>
+{% endif %}
+
+<!-- Comments -->
+<div class="row">
+  <div class="twelve columns">
+    <div class="row report-box">
+      <div class="one columns pictogram">
+        b
+      </div>
+      <div class="eleven columns report-item">
+        {% for comment in report.reportcomment_set.all() %}
+          <div class="report-comment">
+            <span class="white radius label">
+              Comment {{ loop.index }}
+            </span>&nbsp;
+            <span class="grayed">by </span>
+            <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
+              {{ comment.user.get_full_name() }}
+            </a>
+            <span class="grayed"> at {{ comment.created_on }}</span><br>
+            {{ comment.comment }}
+            {% if perms.reports.can_delete_reports %}
+              <form method="post" action="{{ comment|get_comment_delete_url }}">
+                {{ csrf() }}
+                <button type="submit" class="report-delete-comment">&#215;</button>
+              </form>
+            {% endif %}
+          </div>
+        {% endfor %}
+        {% if user.is_authenticated() %}
+          <div id="report-comment-post">
+            <form method="post" actions="{{ report_comment_form_url }}"
+                  class="custom">
+              {{ csrf() }}
+              <textarea name="comment" class="flat"
+                        placeholder="Add comment to this report"
+                        name="past-items"></textarea>
+              <div id="post-comment" class="align-right">
+                <button type="submit" class="small white button nice radius">
+                  Post comment
+                </button>
+              </div>
+            </form>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block bottomextra %}
+<script type="text/javascript" src="{{ MEDIA_URL }}openlayers/OpenLayers.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/profiles_view.js"></script>
+{% endblock %}

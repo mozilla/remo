@@ -1,0 +1,18 @@
+Hey there {{ user.first_name|capitalize }},
+
+This is a friendly reminder to file your Mozilla Reps monthly report.
+
+To file your report, click here: {{ SITE_URL }}{{ url('reports_edit_report',
+                                                      userprofile.display_name, year, month) }}
+
+If you've been too busy this month and haven't had time to work on
+Mozilla Reps stuff, that's totally fine, just make sure to file your
+report even if it's empty that way we know you're still active in the
+program!
+
+As always, if you have any questions or any assistance filing your
+report, don't hesitate to contact your mentor or fellow Mozilla Reps.
+
+Cheers!
+
+The Mozilla Reps Council

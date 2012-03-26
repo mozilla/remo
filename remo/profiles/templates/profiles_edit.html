@@ -207,7 +207,7 @@
         <div class="eleven columns">
           <input type="text" placeholder="Twitter handle"
                  value="{{ profileform.twitter_account.value() }}"
-          name="twitter_account" class="input-text big">
+                 name="twitter_account" class="input-text big">
           {% if profileform.twitter_account.errors %}
             <small class="error">
               {{ profileform.twitter_account.errors }}
@@ -215,7 +215,7 @@
           {% endif %}
           <input type="text" placeholder="Facebook profile"
                  value="{{ profileform.facebook_url.value() }}"
-          name="facebook_url" class="input-text big">
+                 name="facebook_url" class="input-text big">
           {% if profileform.facebook_url.errors %}
             <small class="error">
               {{ profileform.facebook_url.errors }}
@@ -223,7 +223,7 @@
           {% endif %}
           <input type="text" placeholder="Diaspora profile"
                  value="{{ profileform.diaspora_url.value() }}"
-          name="diaspora_url" class="input-text big">
+                 name="diaspora_url" class="input-text big">
           {% if profileform.diaspora_url.errors %}
             <small class="error">
               {{ profileform.diaspora_url.errors }}
@@ -231,7 +231,7 @@
           {% endif %}
           <input type="text" placeholder="LinkedIn profile"
                  value="{{ profileform.linkedin_url.value() }}"
-          name="linkedin_url" class="input-text big">
+                 name="linkedin_url" class="input-text big">
           {% if profileform.linkedin_url.errors %}
             <small class="error">
               {{ profileform.linkedin_url.errors }}

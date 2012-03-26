@@ -78,6 +78,7 @@ class ChangeProfileForm(forms.ModelForm):
         return twitter_account.strip('@')
 
     def clean_mentor(self):
+        """Convert mentor field from number to User."""
         value = self.cleaned_data['mentor']
         if value == u'None':
             value = None
