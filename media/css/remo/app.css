@@ -676,7 +676,7 @@ dl.sub-nav {
 
 .no-bugs {
     color: #888;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     text-align: center;
 }
 
@@ -701,4 +701,8 @@ dl.sub-nav {
 .dashboard-mentee.notfilled {
     background: -moz-linear-gradient(top, #FFFFFF 0%, #CC6600 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
+}
+
+.dashboard-action {
+    margin: 5px 0px 20px 0px;
 }
