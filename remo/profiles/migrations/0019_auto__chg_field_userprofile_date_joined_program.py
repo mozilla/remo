@@ -8,29 +8,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        # Adding model 'FunctionalArea'
-        db.create_table('profiles_functionalarea', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-        ))
-        db.send_create_signal('profiles', ['FunctionalArea'])
-
-        # Adding M2M table for field functional_areas on 'UserProfile'
-        db.create_table('profiles_userprofile_functional_areas', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('userprofile', models.ForeignKey(orm['profiles.userprofile'], null=False)),
-            ('functionalarea', models.ForeignKey(orm['profiles.functionalarea'], null=False))
-        ))
-        db.create_unique('profiles_userprofile_functional_areas', ['userprofile_id', 'functionalarea_id'])
+        # Changing field 'UserProfile.date_joined_program'
+        db.alter_column('profiles_userprofile', 'date_joined_program', self.gf('django.db.models.fields.DateField')(default=datetime.date(2011, 6, 1)))
 
 
     def backwards(self, orm):
 
-        # Deleting model 'FunctionalArea'
-        db.delete_table('profiles_functionalarea')
-
-        # Removing M2M table for field functional_areas on 'UserProfile'
-        db.delete_table('profiles_userprofile_functional_areas')
+        # Changing field 'UserProfile.date_joined_program'
+        db.alter_column('profiles_userprofile', 'date_joined_program', self.gf('django.db.models.fields.DateField')(null=True))
 
 
     models = {
@@ -82,11 +67,11 @@ class Migration(SchemaMigration):
             'birth_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
             'country': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'date_joined_program': ('django.db.models.fields.DateField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
+            'date_joined_program': ('django.db.models.fields.DateField', [], {'default': 'None', 'blank': 'True'}),
             'diaspora_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
             'display_name': ('django.db.models.fields.CharField', [], {'default': "''", 'unique': 'True', 'max_length': '50', 'blank': 'True'}),
             'facebook_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
-            'functional_areas': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['profiles.FunctionalArea']", 'null': 'True', 'symmetrical': 'False'}),
+            'functional_areas': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['profiles.FunctionalArea']", 'null': 'True', 'blank': 'True'}),
             'gender': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'irc_channels': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
@@ -96,7 +81,7 @@ class Migration(SchemaMigration):
             'linkedin_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
             'local_name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '100', 'blank': 'True'}),
             'lon': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
-            'mentor': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'mentors_users'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'mentor': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'mentees'", 'null': 'True', 'to': "orm['auth.User']"}),
             'mozillians_profile_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
             'personal_blog_feed': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
             'personal_website_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
