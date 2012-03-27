@@ -158,15 +158,12 @@ class UserProfileTest(TestCase):
             self.assertIsNone(self.user_profile.full_clean())
 
     def test_valid_birth_date(self):
-        """Test that we accept birth dates between 12 and 90 years old."""
+        """Test that we accept birth dates between 12."""
         today = datetime.date.today()
         bogus_dates = [
             datetime.date(year=1980, month=12, day=2),
             datetime.date(year=today.year - 12, month=today.month,
-                          day=today.day) - datetime.timedelta(hours=24),
-            datetime.date(year=today.year - 90, month=today.month,
-                          day=today.day) + datetime.timedelta(hours=24)]
-
+                          day=today.day) - datetime.timedelta(hours=24)]
         for date in bogus_dates:
             self.user_profile.birth_date = date
             self.assertIsNone(self.user_profile.full_clean())

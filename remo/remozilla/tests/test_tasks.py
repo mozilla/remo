@@ -18,12 +18,14 @@ class FetchBugsTest(TestCase):
     @raises(requests.ConnectionError)
     @fudge.patch('requests.get')
     def test_connection_error(self, fake_requests_obj):
+        """Test fetch_bugs connection error exception."""
         (fake_requests_obj.expects_call().raises(requests.ConnectionError))
         fetch_bugs()
 
     @raises(ValueError)
     @fudge.patch('requests.get')
     def test_invalid_return_code(self, fake_requests_obj):
+        """Test fetch_bugs invalid status code exception."""
         request = requests.Request()
         request.status_code = 500
         request.text = 'Foobar'
@@ -32,6 +34,7 @@ class FetchBugsTest(TestCase):
 
     @fudge.patch('requests.get')
     def test_with_valid_data(self, fake_requests_obj):
+        """Test fetch_bugs valid bug data processing."""
         previous_last_updated_time = get_last_updated_date()
 
         request = requests.Request()

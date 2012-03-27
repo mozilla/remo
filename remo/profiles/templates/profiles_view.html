@@ -19,7 +19,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         <h4>
           {{ pageuser.last_name }}
         </h4>
-        {% if pageuser == request.user %}
+        {% if pageuser == user %}
           <span class="grayed">
             (that's you!)
           </span>
@@ -51,7 +51,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             <div id="map" class="smallmap-profile"
                  data-lon="{{ user_profile.lon }}"
                  data-lat="{{ user_profile.lat }}"
-                 data-mediaurl="{{ MEDIA_URL}}">
+                 data-mediaurl="{{ MEDIA_URL }}">
             </div>
           </div>
         </div>
@@ -74,6 +74,31 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         </div>
       {% endif %}
     </div>
+    {% if monthly_reports %}
+      <div class="row">
+        <div class="one columns pictogram">
+          a
+        </div>
+        <div class="eleven columns">
+          <h5 class="profile-item">Monthly Reports</h5>
+          {% for year, reports in monthly_reports.items() %}
+            {% if reports %}
+              <div class="row">
+                <div class="twelve columns">
+                  <span class="white radius label">{{ year }}</span>
+                  <ul class="mreports">
+                    {% for month in reports %}
+                      <li class="{{ month.class }}"><a href="{{ month.link }}">{{ month.name }}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
   </div>
   <div class="six columns">
     {% if usergroups %}

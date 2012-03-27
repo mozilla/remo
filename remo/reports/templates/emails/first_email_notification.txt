@@ -1,0 +1,23 @@
+Greetings {{ user.first_name|capitalize }}!
+
+It's that time of the month again for you to file your Mozilla Reps
+monthly report :) These reports are really important for the success
+of the Mozilla Reps program as they not only let your mentor see the
+great work you do but also give the broader community an opportunity
+to see what you've been up to in your region this past month.
+
+To file your report, click here: {{ SITE_URL }}{{ url('reports_edit_report',
+                                                      userprofile.display_name, year, month) }}
+
+Of course, all Mozillians are super busy. Sometimes you need to take a
+break from all this Mozilla awesomeness and you'll realize you have no
+information to share a given month. That's OK! Don't worry about
+filing an empty Monthly Report. Just submitting it shows that you're
+still active in the program!
+
+As always, if you have any questions or any assistance filing your
+report, don't hesitate to contact your mentor or fellow Mozilla Reps.
+
+Cheers!
+
+The Mozilla Reps Council

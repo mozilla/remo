@@ -17,6 +17,7 @@ from remo.profiles.management.commands.fetch_emails_from_wiki import Command
 
 class CreateUserTest(TestCase):
     """Tests for create_user management command."""
+    fixtures = ['demo_users.json']
 
     def setUp(self):
         """Setup tests.

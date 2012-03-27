@@ -1,0 +1,76 @@
+[
+    {
+        "pk": 1,
+        "model": "reports.report",
+        "fields": {
+            "past_items": "",
+            "month": "2012-02-01",
+            "created_on": "2012-03-08 03:58:59",
+            "flags": "",
+            "user": 7,
+            "future_items": "",
+            "updated_on": "2012-03-08 03:58:59",
+            "recruits_comments": "",
+            "empty": true,
+            "overdue": false,
+            "mentor": 6
+        }
+    },
+    {
+        "pk": 2,
+        "model": "reports.report",
+        "fields": {
+            "past_items": "Past items here.",
+            "month": "2012-01-01",
+            "created_on": "2012-03-08 04:00:29",
+            "flags": "Flags go here.",
+            "user": 7,
+            "future_items": "Next items here.",
+            "updated_on": "2012-03-08 04:00:29",
+            "recruits_comments": "Foo bar comment on recruits.",
+            "empty": false,
+            "overdue": true,
+            "mentor": 6
+        }
+    },
+    {
+        "pk": 9,
+        "model": "reports.reportcomment",
+        "fields": {
+            "report": 1,
+            "comment": "Empty report?",
+            "created_on": "2012-03-07 08:14:17",
+            "user": 7
+        }
+    },
+    {
+        "pk": 10,
+        "model": "reports.reportcomment",
+        "fields": {
+            "report": 1,
+            "comment": "huh?",
+            "created_on": "2012-03-07 08:14:17",
+            "user": 6
+        }
+    },
+    {
+        "pk": 1,
+        "model": "reports.reportevent",
+        "fields": {
+            "report": 2,
+            "participation_type": 1,
+            "link": "http://example.com/foocamp",
+            "name": "FooCamp Australia",
+            "description": "Description of FooCamp goes here"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "reports.reportlink",
+        "fields": {
+            "report": 2,
+            "link": "http://example.com/foocamppics/",
+            "description": "FooCamp Pics"
+        }
+    }
+]
