@@ -7,7 +7,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding model 'FunctionalArea'
         db.create_table('profiles_functionalarea', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -25,7 +25,7 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        
+
         # Deleting model 'FunctionalArea'
         db.delete_table('profiles_functionalarea')
 
@@ -80,8 +80,9 @@ class Migration(SchemaMigration):
             'added_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'users_added'", 'null': 'True', 'to': "orm['auth.User']"}),
             'bio': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'birth_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '30'}),
-            'country': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '30'}),
+            'city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
+            'country': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
+            'date_joined_program': ('django.db.models.fields.DateField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'diaspora_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
             'display_name': ('django.db.models.fields.CharField', [], {'default': "''", 'unique': 'True', 'max_length': '50', 'blank': 'True'}),
             'facebook_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
@@ -89,7 +90,7 @@ class Migration(SchemaMigration):
             'gender': ('django.db.models.fields.NullBooleanField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'irc_channels': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
-            'irc_name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '30'}),
+            'irc_name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
             'jabber_id': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'blank': 'True'}),
             'lat': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
             'linkedin_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
@@ -100,7 +101,7 @@ class Migration(SchemaMigration):
             'personal_blog_feed': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
             'personal_website_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
             'private_email': ('django.db.models.fields.EmailField', [], {'default': "''", 'max_length': '75', 'null': 'True'}),
-            'region': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '30'}),
+            'region': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
             'registration_complete': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'twitter_account': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '16', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'}),
