@@ -678,7 +678,7 @@ dl.sub-nav {
 
 .no-bugs {
     color: #888;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     text-align: center;
 }
 
@@ -798,4 +798,8 @@ ul.mreports li.editable a {
     text-shadow: 0 -1px 1px rbga(0,0,0,.6);
     font-weight: bold;
     cursor: pointer;
+}
+
+.dashboard-action {
+    margin: 5px 0px 20px 0px;
 }
