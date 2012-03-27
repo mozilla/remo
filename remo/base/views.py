@@ -87,10 +87,15 @@ def dashboard(request):
 def custom_404(request):
     """Custom 404 error handler."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
+    if featured_rep:
+        avatar_url = featured_rep.user.userprofile.get_avatar_url(80)
+    else:
+        avatar_url = None
     t = loader.get_template('404.html')
     return http.HttpResponseNotFound(
         t.render(RequestContext(request, {'request_path': request.path,
-                                          'featuredrep': featured_rep})))
+                                          'featuredrep': featured_rep,
+                                          'avatar_url': avatar_url})))
 
 
 def custom_500(request):
