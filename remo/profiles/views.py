@@ -3,11 +3,10 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
-from django.contrib.auth.views import login as django_login
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_page, never_cache
 
 from django_browserid.auth import default_username_algo
 from product_details import product_details
@@ -113,7 +112,7 @@ def edit(request, display_name):
                    'range_years': range(1950, datetime.today().year - 11)})
 
 
-@never_cache
+@cache_page(60*30) # 30 minute caching
 def list_profiles(request):
     """List users in Rep Group."""
     return render(request, 'profiles_people.html',
@@ -199,8 +198,3 @@ def delete_user(request, display_name):
         messages.success(request, 'User was deleted')
 
     return redirect('main')
-
-
-def plainlogin(request, template_name):
-    """Login without BrowserID."""
-    return django_login(request, template_name=template_name)
