@@ -21,4 +21,3 @@ def format_datetime(obj, type=None):
     if type=="full":
         return obj.strftime("%d %B %Y %H:%M")
     return obj.strftime("%Y-%m-%d %H:%M")
-
