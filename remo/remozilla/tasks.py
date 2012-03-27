@@ -13,7 +13,7 @@ from remo.remozilla.models import Bug
 from remo.remozilla.utils import get_last_updated_date, set_last_updated_date
 
 COMPONENTS = ['Budget Requests', 'Community IT Requests', 'Mentorship',
-              'Swag Requests']
+              'Swag Requests', 'Planning']
 
 BUGZILLA_FIELDS = [u'is_confirmed', u'summary', u'creator', u'creation_time',
                    u'component', u'whiteboard', u'op_sys', u'cc', u'id',
