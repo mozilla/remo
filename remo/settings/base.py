@@ -101,3 +101,28 @@ ANON_ALWAYS = True
 LOGIN_REDIRECT_URL_FAILURE = '/login/failed/'
 
 FROM_EMAIL = 'reps@mozilla.com'
+
+ADMINS = (
+    ('Mozilla Reps', 'reps@mozilla.com'),
+)
+
+MANAGERS = ADMINS
+
+# Basic email logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
