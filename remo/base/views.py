@@ -1,6 +1,7 @@
 from django import http
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import redirect, render
@@ -72,6 +73,16 @@ def dashboard(request):
         my_cit_requests = None
         my_planning_requests = planning_requests.filter(my_q_assigned)
 
+    if user.groups.filter(name='Admin').exists():
+        reps = User.objects.filter(groups__name="Rep")
+        reps_without_mentors = reps.filter(
+            userprofile__registration_complete=True, userprofile__mentor=None)
+        reps_without_profile = reps.filter(
+            userprofile__registration_complete=False)
+    else:
+        reps_without_mentors = None
+        reps_without_profile = None
+
     return render(request, 'dashboard.html',
                   {'my_budget_requests': my_budget_requests,
                    'mentees_budget_requests': mentees_budget_requests,
@@ -81,7 +92,9 @@ def dashboard(request):
                    'all_swag_requests': all_swag_requests,
                    'my_cit_requests': my_cit_requests,
                    'my_mentorship_requests': my_mentorship_requests,
-                   'my_planning_requests': my_planning_requests})
+                   'my_planning_requests': my_planning_requests,
+                   'reps_without_profile': reps_without_profile,
+                   'reps_without_mentors': reps_without_mentors})
 
 
 def custom_404(request):
