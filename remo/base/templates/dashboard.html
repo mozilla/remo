@@ -55,11 +55,16 @@
                   <td>
                     <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
                   </td>
-                  <td>{{ bug.creator }}</td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
                   <td>{{ bug.summary }}</td>
                   <td>{{ bug.whiteboard }}</td>
                   <td>{{ bug.status }}</td>
-                  <td>{{ bug.updated_on }}</td>
+                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -92,11 +97,16 @@
                   <td>
                     <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
                   </td>
-                  <td>{{ bug.creator }}</td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
                   <td>{{ bug.summary }}</td>
                   <td>{{ bug.whiteboard }}</td>
                   <td>{{ bug.status }}</td>
-                  <td>{{ bug.updated_on }}</td>
+                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -130,11 +140,16 @@
                   <td>
                     <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
                   </td>
-                  <td>{{ bug.creator }}</td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
                   <td>{{ bug.summary }}</td>
                   <td>{{ bug.whiteboard }}</td>
                   <td>{{ bug.status }}</td>
-                  <td>{{ bug.updated_on }}</td>
+                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -200,11 +215,16 @@
                   <td>
                     <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
                   </td>
-                  <td>{{ bug.creator }}</td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
                   <td>{{ bug.summary }}</td>
                   <td>{{ bug.whiteboard }}</td>
                   <td>{{ bug.status }}</td>
-                  <td>{{ bug.updated_on }}</td>
+                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -237,11 +257,16 @@
                   <td>
                     <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
                   </td>
-                  <td>{{ bug.creator }}</td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
                   <td>{{ bug.summary }}</td>
                   <td>{{ bug.whiteboard }}</td>
                   <td>{{ bug.status }}</td>
-                  <td>{{ bug.updated_on }}</td>
+                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -275,11 +300,16 @@
                   <td>
                     <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
                   </td>
-                  <td>{{ bug.creator }}</td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
                   <td>{{ bug.summary }}</td>
                   <td>{{ bug.whiteboard }}</td>
                   <td>{{ bug.status }}</td>
-                  <td>{{ bug.updated_on }}</td>
+                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -301,41 +331,99 @@
 
 
     <!-- community it requests block -->
-    {% if cit_requests %}
-    <div class="row dashboard-box">
-      <div class="seven columns">
-        <h5>Community IT Requests</h5>
+    {% if my_cit_requests != None %}
+      <div class="row dashboard-box">
+        <div class="seven columns">
+          <h5>Community IT Requests</h5>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div id="dashboard-citr-block">
-        {% if cit_requests %}
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Creator</th>
-                <th>Summary</th>
-                <th>Whiteboard</th>
-                <th>Status</th>
-                <th>Last updated</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for bug in cit_requests %}
-                <tr class='my-swag-request'>
-                  <td>
-                    <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
-                  </td>
-                  <td>{{ bug.creator }}</td>
-                  <td>{{ bug.summary }}</td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td>{{ bug.updated_on }}</td>
+      <div class="row">
+        <div id="dashboard-citr-block">
+          {% if my_cit_requests %}
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Creator</th>
+                  <th>Summary</th>
+                  <th>Whiteboard</th>
+                  <th>Status</th>
+                  <th>Last updated</th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {% for bug in my_cit_requests %}
+                  <tr class='my-cit-request'>
+                    <td>
+                      <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
+                    </td>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      bug.creator|get_display_name) }}">
+                        {{ bug.creator|get_display_name }}
+                      </a>
+                    </td>
+                    <td>{{ bug.summary }}</td>
+                    <td>{{ bug.whiteboard }}</td>
+                    <td>{{ bug.status }}</td>
+                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="row">
+              <div class="twelve columns no-bugs">
+                <p>No Bugs found!</p>
+              </div>
+            </div>
+          {% endif %}
+        </div> <!-- end my_cit_requests -->
+      </div>
+    {% endif %}
+    <!-- end community it requests block -->
+
+    <!-- mentorship requests block -->
+    {% if my_mentorship_requests != None %}
+      <div class="row dashboard-box">
+        <div class="seven columns">
+          <h5>Mentorship</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div id="dashboard-mentorship-block">
+          {% if my_mentorship_requests %}
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Creator</th>
+                  <th>Summary</th>
+                  <th>Whiteboard</th>
+                  <th>Status</th>
+                  <th>Last updated</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for bug in my_mentorship_requests %}
+                  <tr class='my-mentorship-request'>
+                    <td>
+                      <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
+                    </td>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      bug.creator|get_display_name) }}">
+                        {{ bug.creator|get_display_name }}
+                      </a>
+                    </td>
+                    <td>{{ bug.summary }}</td>
+                    <td>{{ bug.whiteboard }}</td>
+                    <td>{{ bug.status }}</td>
+                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
         {% else %}
           <div class="row">
             <div class="twelve columns no-bugs">
@@ -343,12 +431,65 @@
             </div>
           </div>
         {% endif %}
-      </div> <!-- end cit_requests -->
+      </div> <!-- end my_mentorship_requests -->
     </div>
     {% endif %}
-    <!-- end community it requests block -->
+    <!-- end mentorship requests block -->
 
 
+    <!-- planning requests block -->
+    {% if my_mentorship_requests != None %}
+      <div class="row dashboard-box">
+        <div class="seven columns">
+          <h5>Planning</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div id="dashboard-mentorship-block">
+          {% if my_planning_requests %}
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Creator</th>
+                  <th>Summary</th>
+                  <th>Whiteboard</th>
+                  <th>Status</th>
+                  <th>Last updated</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for bug in my_planning_requests %}
+                  <tr class='my-planning-request'>
+                    <td>
+                      <a href="{{ bug.get_bugzilla_url() }}">{{ bug.bug_id }}</a>
+                    </td>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      bug.creator|get_display_name) }}">
+                        {{ bug.creator|get_display_name }}
+                      </a>
+                    </td>
+                    <td>{{ bug.summary }}</td>
+                    <td>{{ bug.whiteboard }}</td>
+                    <td>{{ bug.status }}</td>
+                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="row">
+              <div class="twelve columns no-bugs">
+                <p>No Bugs found!</p>
+              </div>
+            </div>
+          {% endif %}
+        </div> <!-- end my_planning_requests -->
+      </div>
+    {% endif %}
+    <!-- end planning requests block -->
+  </div>
   </div>
 </div>
 {% endblock %}
