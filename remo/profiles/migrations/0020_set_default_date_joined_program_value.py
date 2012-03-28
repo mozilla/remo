@@ -9,9 +9,10 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        db.execute(("UPDATE profiles_userprofile SET date_joined_program = %s"
-                    "WHERE date_joined_program = null"), ["2011-07-01"])
+        pass
 
+    def backwards(self, orm):
+        pass
 
     models = {
         'auth.group': {
