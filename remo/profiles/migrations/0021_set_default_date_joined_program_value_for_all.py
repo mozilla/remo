@@ -4,12 +4,10 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
-
-
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        pass
+        db.execute("UPDATE profiles_userprofile SET date_joined_program = '2011-07-01'")
 
     def backwards(self, orm):
         pass
