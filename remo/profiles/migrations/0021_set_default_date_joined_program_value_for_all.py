@@ -7,7 +7,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        db.execute("UPDATE profiles_userprofile SET date_joined_program = '2011-07-01'")
+        db.execute("UPDATE profiles_userprofile SET date_joined_program = '2011-06-01'")
 
     def backwards(self, orm):
         pass
