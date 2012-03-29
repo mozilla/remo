@@ -61,6 +61,7 @@ $(function () {
         $('#profiles_listview').hide();
         $('#profiles_gridview').show();
         qs.cache();
+        redraw_grid();
     });
 
     $('#gridviewbutton').bind('click', function () {
@@ -91,5 +92,6 @@ $(function () {
     if (search_string.length > 0) {
         $('input#searchfield').val(search_string);
         qs.cache();
+        redraw_grid();
     }
 });
