@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from django.conf import settings
 from django.contrib import messages
@@ -139,15 +139,16 @@ def view_profile(request, display_name):
             'usergroups': usergroups}
 
     if user.groups.filter(name='Rep').exists():
+        today = date.today()
         if (request.user.groups.filter(name='Admin').exists() or
             (request.user.is_authenticated() and
              user in request.user.mentees.all()) or
             user == request.user):
             reports = get_reports_for_year(user, start_year=2011,
-                                           end_year=2012, private=False)
+                                           end_year=today.year, private=False)
         else:
             reports = get_reports_for_year(user, start_year=2011,
-                                           end_year=2012, private=True)
+                                           end_year=today.year, private=True)
 
         data['monthly_reports'] = reports
 

@@ -81,21 +81,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         </div>
         <div class="eleven columns">
           <h5 class="profile-item">Monthly Reports</h5>
-          {% for year, reports in monthly_reports.items() %}
-            {% if reports %}
-              <div class="row">
-                <div class="twelve columns">
-                  <span class="white radius label">{{ year }}</span>
-                  <ul class="mreports">
-                    {% for month in reports %}
-                      <li class="{{ month.class }}"><a href="{{ month.link }}">{{ month.name }}</a>
-                      </li>
-                    {% endfor %}
-                  </ul>
-                </div>
-              </div>
-            {% endif %}
-          {% endfor %}
+          {% include "monthly_reports.html" %}
         </div>
       </div>
     {% endif %}
