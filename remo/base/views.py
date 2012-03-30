@@ -36,8 +36,6 @@ def main(request):
 def dashboard(request):
     """Dashboard view."""
     user = request.user
-    user = User.objects.get(username="mentor")
-
     budget_requests = Bug.objects.filter(component='Budget Requests')
     budget_requests = budget_requests.exclude(status='RESOLVED')
     swag_requests = Bug.objects.filter(component='Swag Requests')
@@ -71,7 +69,8 @@ def dashboard(request):
                                 order_by('-created_on')[:20])
         mentees_reports_grid = Report.objects.filter(
             mentor=user, month__month=previous_month.month,
-            month__year=previous_month.year).order_by('last_name', 'first_name')
+            month__year=previous_month.year).order_by('user__last_name',
+                                                      'user__first_name')
     else:
         mentees_budget_requests = None
         mentees_swag_requests = None
