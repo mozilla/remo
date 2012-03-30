@@ -11,6 +11,169 @@
 <div class="row">
   <div class="twelve columns">
 
+    <!-- reports block -->
+    <div class="dashboard-box">
+      <div class="row">
+        <div class="seven columns">
+          <h5>Reports</h5>
+        </div>
+        <div class="five columns">
+          <dl class="sub-nav dashboard-filter">
+            <dt>Filter:</dt>
+            <dd class="active">
+              <a id="dashboard-reports-mine-button" href="javascript:void(0)">
+                Mine
+              </a>
+            </dd>
+            {% if mentees_reports_grid != None %}
+              <dd>
+                <a id="dashboard-reports-mentees-grid-button" href="javascript:void(0)">
+                  My mentees grid
+                </a>
+              </dd>
+            {% endif %}
+            {% if mentees_reports_list != None %}
+              <dd>
+                <a id="dashboard-reports-mentees-list-button" href="javascript:void(0)">
+                  My mentees list
+                </a>
+              </dd>
+            {% endif %}
+            {% if all_reports != None %}
+              <dd>
+                <a id="dashboard-reports-all-button" href="javascript:void(0)">
+                  All
+                </a>
+              </dd>
+            {% endif %}
+          </dl>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- my block -->
+        <div id="dashboard-reports-my-block">
+          {% include "monthly_reports.html" %}
+        </div>
+        <!-- end my block -->
+
+        <!-- mentees list block -->
+        <div id="dashboard-reports-mentees-list-block" class="hidden">
+          {% if mentees_reports_list %}
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th>Fullname</th>
+                  <th>Year</th>
+                  <th>Month</th>
+                  <th>Date filled</th>
+                  <th>Empty</th>
+                  <th>Overdue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for report in mentees_reports_list %}
+                  <tr>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      report.user|get_display_name) }}">
+                        {{ report.user.get_full_name() }}
+                      </a>
+                    </td>
+                    <td>{{ report.month.strftime("%Y") }}</td>
+                    <td>{{ report.month.strftime("%B") }}</td>
+                    <td>{{ report.updated_on|format_datetime }}</td>
+                    <td>{{ report.empty }}</td>
+                    <td>{{ report.overdue }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="row">
+              <div class="twelve columns no-bugs">
+                <p>No Bugs found!</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        <!-- end mentees list block -->
+
+        <!-- mentes grid block -->
+        <div id="dashboard-reports-mentees-grid-block" class="hidden">
+          {% if mentees_reports_grid %}
+            <h5>for {{ mentees_reports_grid[0].month.strftime("%B %Y") }}</h5>
+            <ul class="block-grid four-up">
+              {% for report in mentees_reports_grid %}
+                <li>
+                  <div class="panel dashboard-mentee">
+                    <img src="{{ report.user.userprofile.get_avatar_url(50) }}"
+                         class="profiles-people-avatar"
+                         alt="avatar">
+                    <a href="{{ url('profiles_view_profile',
+                                    report.user|get_display_name) }}">
+                      <h6>{{ report.user.get_full_name() }}</h6>
+                    </a>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="row">
+              <div class="twelve columns no-bugs">
+                <p>No Bugs found!</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        <!-- end mentees grid block -->
+
+        <!-- all reports block -->
+        <div id="dashboard-reports-all-block" class="hidden">
+          {% if all_reports %}
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th>Fullname</th>
+                  <th>Year</th>
+                  <th>Month</th>
+                  <th>Date filled</th>
+                  <th>Empty</th>
+                  <th>Overdue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for report in all_reports %}
+                  <tr>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      report.user|get_display_name) }}">
+                        {{ report.user.get_full_name() }}
+                      </a>
+                    </td>
+                    <td>{{ report.month.strftime("%Y") }}</td>
+                    <td>{{ report.month.strftime("%B") }}</td>
+                    <td>{{ report.updated_on|format_datetime }}</td>
+                    <td>{{ report.empty }}</td>
+                    <td>{{ report.overdue }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="row">
+              <div class="twelve columns no-bugs">
+                <p>No Bugs found!</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        <!-- end all reports block -->
+
+    </div>
+    <!-- end reports block -->
+
+
     <!-- budget requests block -->
     <div class="row dashboard-box">
       <div class="seven columns">

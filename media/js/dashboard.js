@@ -1,4 +1,50 @@
 $(document).ready(function () {
+    $("#dashboard-reports-all-button").click(function () {
+        $("#dashboard-reports-all-block").show('fast');
+        $("#dashboard-reports-my-block").hide('fast');
+        $("#dashboard-reports-mentees-list-block").hide('fast');
+        $("#dashboard-reports-mentees-grid-block").hide('fast');
+
+        $(this).parent().addClass("active");
+        $("#dashboard-reports-mine-button").parent().removeClass("active");
+        $("#dashboard-reports-mentees-grid-button").parent().removeClass("active");
+        $("#dashboard-reports-mentees-list-button").parent().removeClass("active");
+    });
+    $("#dashboard-reports-mine-button").click(function () {
+        $("#dashboard-reports-my-block").show('fast');
+        $("#dashboard-reports-all-block").hide('fast');
+        $("#dashboard-reports-mentees-list-block").hide('fast');
+        $("#dashboard-reports-mentees-grid-block").hide('fast');
+
+        $(this).parent().addClass("active");
+        $("#dashboard-reports-all-button").parent().removeClass("active");
+        $("#dashboard-reports-mentees-grid-button").parent().removeClass("active");
+        $("#dashboard-reports-mentees-list-button").parent().removeClass("active");
+    });
+    $("#dashboard-reports-mentees-list-button").click(function () {
+        $("#dashboard-reports-mentees-list-block").show('fast');
+        $("#dashboard-reports-my-block").hide('fast');
+        $("#dashboard-reports-all-block").hide('fast');
+        $("#dashboard-reports-mentees-grid-block").hide('fast');
+
+        $(this).parent().addClass("active");
+        $("#dashboard-reports-all-button").parent().removeClass("active");
+        $("#dashboard-reports-mentees-grid-button").parent().removeClass("active");
+        $("#dashboard-reports-mine-button").parent().removeClass("active");
+    });
+    $("#dashboard-reports-mentees-grid-button").click(function () {
+        $("#dashboard-reports-mentees-grid-block").show('fast');
+        $("#dashboard-reports-mentees-list-block").hide('fast');
+        $("#dashboard-reports-my-block").hide('fast');
+        $("#dashboard-reports-all-block").hide('fast');
+
+        $(this).parent().addClass("active");
+        $("#dashboard-reports-all-button").parent().removeClass("active");
+        $("#dashboard-reports-mentees-list-button").parent().removeClass("active");
+        $("#dashboard-reports-mine-button").parent().removeClass("active");
+    });
+
+
     $("#dashboard-br-all-button").click(function () {
         $(this).parent().addClass("active");
         $("#dashboard-br-my-block").hide('fast');
