@@ -40,6 +40,7 @@ class ViewsTest(TestCase):
                      'personal_website_url': u'http://www.example.com/',
                      'personal_blog_feed': u'http://example.com/',
                      'bio': u'bio foo',
+                     'date_joined_program': '2011-07-01',
                      'mentor': 6}
         self.user_url = reverse('profiles_view_profile',
                                 kwargs={'display_name': 'Koki'})
@@ -163,7 +164,7 @@ class ViewsTest(TestCase):
 
         # delete already checked items
         for item in ['email', 'first_name', 'last_name',
-                     'birth_date', 'mentor']:
+                     'birth_date', 'mentor', 'date_joined_program']:
             del(temp_data[item])
 
         # ensure that all user profile data was saved

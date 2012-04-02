@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 
 from remo.base.utils import number2month
 from remo.reports.tasks import send_remo_mail
-from remo.reports.utils import go_back_n_months
+from remo.base.utils import go_back_n_months
 
 
 class Command(BaseCommand):

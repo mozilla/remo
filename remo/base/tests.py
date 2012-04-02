@@ -24,8 +24,20 @@ class ViewsTest(TestCase):
         eq_(response.status_code, 200)
         self.assertTemplateUsed(response, 'main.html')
 
-        # Get as logged in user.
+        # Get as logged in rep.
         c.login(username='rep', password='passwd')
+        response = c.get(reverse('dashboard'))
+        eq_(response.status_code, 200)
+        self.assertTemplateUsed(response, 'dashboard.html')
+
+        # Get as logged in mentor.
+        c.login(username='mentor', password='passwd')
+        response = c.get(reverse('dashboard'))
+        eq_(response.status_code, 200)
+        self.assertTemplateUsed(response, 'dashboard.html')
+
+        # Get as logged in counselor.
+        c.login(username='counselor', password='passwd')
         response = c.get(reverse('dashboard'))
         eq_(response.status_code, 200)
         self.assertTemplateUsed(response, 'dashboard.html')

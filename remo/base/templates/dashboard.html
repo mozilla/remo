@@ -102,12 +102,12 @@
         <!-- mentes grid block -->
         <div id="dashboard-reports-mentees-grid-block" class="hidden">
           {% if mentees_reports_grid %}
-            <h5>for {{ mentees_reports_grid[0].month.strftime("%B %Y") }}</h5>
+            <h5>for {{ mentees_reports_grid['month'] }}</h5>
             <ul class="block-grid four-up">
-              {% for report in mentees_reports_grid %}
+              {% for report in mentees_reports_grid['reports'] %}
                 <li>
-                  <div class="panel dashboard-mentee">
-                    <img src="{{ report.user.userprofile.get_avatar_url(50) }}"
+                  <div class="panel dashboard-mentee {{ report.status }}">
+                    <img src="{{ report.user|get_avatar_url(50) }}"
                          class="profiles-people-avatar"
                          alt="avatar">
                     <a href="{{ url('profiles_view_profile',
