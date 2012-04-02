@@ -179,7 +179,7 @@ def invite(request):
             # Fetch bugs from day 0 to correlate new user with bugs.
             fetch_bugs.delay(days=10000)
 
-            messages.success(request, ('User was successfuly invited, '
+            messages.success(request, ('User was successfully invited, '
                                        'now shoot some mails!'))
             return redirect('profiles_invite')
 
