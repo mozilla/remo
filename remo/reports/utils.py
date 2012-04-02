@@ -43,11 +43,7 @@ def get_reports_for_year(user, start_year, end_year=None,
     for year in range(max(start_year, date_joined.year), end_year+1):
         reports = user.reports.filter(month__year=year)
 
-        if (reports.count() == 0 and private == True):
-            reports_list[year] = None
-            continue
-        else:
-            reports_list[year] = []
+        reports_list[year] = []
 
         for month in range(1, 13):
             month_details = {'name': number2month(month, full_name=False),
