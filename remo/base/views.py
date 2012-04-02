@@ -61,7 +61,8 @@ def dashboard(request):
     my_swag_requests = swag_requests.filter(my_q)
 
     if user.groups.filter(name='Mentor').exists():
-        mentees_budget_requests = budget_requests.filter(creator__in=my_mentees)
+        mentees_budget_requests = (budget_requests.
+                                   filter(creator__in=my_mentees))
         mentees_swag_requests = swag_requests.filter(creator__in=my_mentees)
         my_mentorship_requests = mentorship_requests.filter(my_q)
         my_mentorship_requests = my_mentorship_requests.order_by('whiteboard')
