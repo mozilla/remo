@@ -81,7 +81,11 @@
                       </a>
                     </td>
                     <td>{{ report.month.strftime("%Y") }}</td>
-                    <td>{{ report.month.strftime("%B") }}</td>
+                    <td>
+                      <a href="{{ report|get_report_view_url }}">
+                        {{ report.month.strftime("%B") }}
+                      </a>
+                    </td>
                     <td>{{ report.updated_on|format_datetime }}</td>
                     <td>{{ report.empty }}</td>
                     <td>{{ report.overdue }}</td>
@@ -152,7 +156,11 @@
                       </a>
                     </td>
                     <td>{{ report.month.strftime("%Y") }}</td>
-                    <td>{{ report.month.strftime("%B") }}</td>
+                    <td>
+                      <a href="{{ report|get_report_view_url }}">
+                        {{ report.month.strftime("%B") }}
+                      </a>
+                    </td>
                     <td>{{ report.updated_on|format_datetime }}</td>
                     <td>{{ report.empty }}</td>
                     <td>{{ report.overdue }}</td>
