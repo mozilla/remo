@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.cache import cache_page, never_cache
+from django.views.decorators.cache import cache_control, never_cache
 
 from django_browserid.auth import default_username_algo
 from product_details import product_details
@@ -99,20 +99,17 @@ def edit(request, display_name):
     countries = product_details.get_regions('en').values()
     countries.sort()
 
-    avatar_url = pageuser.userprofile.get_avatar_url(128)
-
     return render(request, 'profiles_edit.html',
                   {'userform': userform,
                    'profileform': profileform,
                    'datejoinedform': datejoinedform,
                    'pageuser': pageuser,
-                   'avatar_url': avatar_url,
                    'group_bits': group_bits,
                    'countries': countries,
                    'range_years': range(1950, datetime.today().year - 11)})
 
 
-@cache_page(60*30) # 30 minute caching
+@cache_control(private=True, max_age=60*10)
 def list_profiles(request):
     """List users in Rep Group."""
     return render(request, 'profiles_people.html',
@@ -123,19 +120,17 @@ def list_profiles(request):
                                                        'first_name')})
 
 
-@never_cache
+@cache_control(private=True, max_age=60*5)
 def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
-    avatar_url = user.userprofile.get_avatar_url(128)
     usergroups = user.groups.filter(Q(name='Mentor')|Q(name='Council'))
 
     data = {'pageuser': user,
             'user_profile': user.userprofile,
             'added_by': user.userprofile.added_by,
             'mentor': user.userprofile.mentor,
-            'avatar_url': avatar_url,
             'usergroups': usergroups}
 
     if user.groups.filter(name='Rep').exists():
@@ -162,7 +157,7 @@ def view_my_profile(request):
                         display_name=request.user.userprofile.display_name)
 
 
-@never_cache
+@cache_control(private=True, no_cache=True)
 @permission_check(permissions=['profiles.create_user'])
 def invite(request):
     """Invite a user."""

@@ -7,6 +7,8 @@ from django.dispatch import receiver
 
 from south.signals import post_migrate
 
+from remo.base.utils import go_back_n_months
+
 OVERDUE_DAY = 7
 
 
@@ -66,11 +68,13 @@ def report_set_month_day_pre_save(sender, instance, **kwargs):
 @receiver(pre_save, sender=Report)
 def report_set_overdue_pre_save(sender, instance, raw, **kwargs):
     """Set overdue on Report object creation."""
-    today = datetime.datetime.today()
+    today = datetime.date.today()
+    previous_month = go_back_n_months(today, first_day=True)
+
     if not instance.id and not raw:
-        instance.overdue = (today.day > OVERDUE_DAY and
-                            today.month > instance.month.month and
-                            today.year >= instance.month.year)
+        if (previous_month > instance.month or
+            (previous_month == instance.month and today.day > OVERDUE_DAY)):
+            instance.overdue = True
 
 
 class ReportComment(models.Model):

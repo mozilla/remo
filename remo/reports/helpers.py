@@ -34,3 +34,9 @@ def get_comment_delete_url(obj):
                            'year': obj.report.month.year,
                            'month': month_name,
                            'comment_id': obj.id})
+
+
+@register.filter
+def get_mentees(user):
+    return [mentee_profile.user for mentee_profile in
+            user.mentees.order_by('user__last_name', 'user__first_name')]

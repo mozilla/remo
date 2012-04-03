@@ -42,7 +42,7 @@
           <div class="panel grid-profile">
             <div class="row">
               <div class="three phone-one columns grid-profile-image">
-                <img src="{{ person.userprofile.get_avatar_url() }}"
+                <img src="{{ person|get_avatar_url }}"
                      class="profiles-people-avatar"
                      alt="{{ person.get_full_name() }} avatar">
               </div>

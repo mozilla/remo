@@ -1,8 +1,6 @@
 import datetime
 import re
-import urlparse
 
-from django.conf import settings
 from django.contrib.auth.models import Group, User, Permission
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -11,8 +9,6 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from south.signals import post_migrate
-
-from libravatar import libravatar_url
 
 DISPLAY_NAME_MAX_LENGTH = 50
 
@@ -144,22 +140,6 @@ class UserProfile(models.Model):
                int((d.month, d.day) <
                    (self.birth_date.month, self.birth_date.day)))
         return age
-
-    def get_avatar_url(self, size=50):
-        """Get a url pointing to user's avatar.
-
-        The libravatar network is used for avatars. Optional argument
-        size can be provided to set the avatar size.
-
-        """
-        default_img_url = reduce(lambda u, x: urlparse.urljoin(u, x),
-                                 [settings.SITE_URL,
-                                  settings.MEDIA_URL,
-                                  'img/remo/remo_avatar.png'])
-
-        return libravatar_url(email=self.user.email,
-                              default=default_img_url,
-                              size=size)
 
 
 @receiver(pre_save, sender=UserProfile)

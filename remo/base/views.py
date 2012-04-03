@@ -8,17 +8,18 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.template import Context, RequestContext, loader
-from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control, never_cache
 
 import utils
 from remo.base.decorators import permission_check
 from remo.featuredrep.models import FeaturedRep
 from remo.remozilla.models import Bug
 from remo.reports.models import Report
-from remo.reports.utils import get_reports_for_year, go_back_n_months
+from remo.reports.utils import get_mentee_reports_for_month
+from remo.reports.utils import get_reports_for_year
 
 
-@never_cache
+@cache_control(private=True, no_cache=True)
 def main(request):
     """Main page of the website."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
@@ -48,7 +49,6 @@ def dashboard(request):
     planning_requests = planning_requests.exclude(status='RESOLVED')
 
     today = date.today()
-    previous_month = go_back_n_months(today)
     monthly_reports = get_reports_for_year(user, start_year=2011,
                                            end_year=today.year,
                                            private=False)
@@ -68,10 +68,8 @@ def dashboard(request):
         my_mentorship_requests = my_mentorship_requests.order_by('whiteboard')
         mentees_reports_list = (Report.objects.filter(mentor=user).
                                 order_by('-created_on')[:20])
-        mentees_reports_grid = Report.objects.filter(
-            mentor=user, month__month=previous_month.month,
-            month__year=previous_month.year).order_by('user__last_name',
-                                                      'user__first_name')
+        mentees_reports_grid = get_mentee_reports_for_month(user)
+
     else:
         mentees_budget_requests = None
         mentees_swag_requests = None

@@ -1,28 +1,11 @@
-import calendar
-from datetime import datetime, timedelta
+from datetime import date, datetime
 
 from django.core.urlresolvers import reverse
 
-from remo.base.utils import number2month
-from remo.reports.helpers import get_report_view_url
-
-
-def go_back_n_months(date, n=1):
-    """Return date minus n months."""
-    tmp_date = datetime(year=date.year, month=date.month, day=15)
-    tmp_date -= timedelta(days=31 * n)
-    last_day_of_month = calendar.monthrange(tmp_date.year, tmp_date.month)[1]
-    return datetime(year=tmp_date.year, month=tmp_date.month,
-                    day=min(date.day, last_day_of_month))
-
-
-def go_fwd_n_months(date, n=1):
-    """Return date plus n months."""
-    tmp_date = datetime(year=date.year, month=date.month, day=15)
-    tmp_date += timedelta(days=31 * n)
-    last_day_of_month = calendar.monthrange(tmp_date.year, tmp_date.month)[1]
-    return datetime(year=tmp_date.year, month=tmp_date.month,
-                    day=min(date.day, last_day_of_month))
+from remo.base.utils import get_object_or_none, go_back_n_months
+from remo.base.utils import go_fwd_n_months, number2month
+from remo.reports.models import Report
+from remo.reports.helpers import get_mentees, get_report_view_url
 
 
 def get_reports_for_year(user, start_year, end_year=None,
@@ -55,9 +38,10 @@ def get_reports_for_year(user, start_year, end_year=None,
                 month_details['link'] = get_report_view_url(report)
             else:
                 month_details['report'] = None
-                date = datetime(year=year, month=month, day=1)
+                dateobj = datetime(year=year, month=month, day=1)
 
-                if (private or month_first_report > date or date >= today):
+                if (private or month_first_report > dateobj or
+                    dateobj >= today):
                     month_details['class'] = 'unavailable'
                     month_details['link'] = '#'
                 else:
@@ -72,3 +56,31 @@ def get_reports_for_year(user, start_year, end_year=None,
             reports_list[year].append(month_details)
 
     return reports_list
+
+
+def get_mentee_reports_for_month(user, dateobj=None):
+    """Return a dictionary with Mentee reports for month in dateobj.
+
+    If dateobj==None return the reports of the previous month.
+
+    """
+    if not dateobj:
+        dateobj = go_back_n_months(date.today(), first_day=True)
+
+    mentees = get_mentees(user)
+    mentees_list = {'month': dateobj.strftime("%B %Y"),
+                    'reports': []}
+
+    for mentee in mentees:
+        report = get_object_or_none(Report, user=mentee, month=dateobj)
+        if report == None:
+            status = 'notfilled'
+        elif report.overdue:
+            status = 'overdue'
+        else:
+            status = ''
+
+        mentees_list['reports'].append({'user': mentee, 'status': status,
+                                        'report': report})
+
+    return mentees_list

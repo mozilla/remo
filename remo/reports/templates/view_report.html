@@ -67,7 +67,7 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
         <div class="row">
           <div class="four columns profile-image">
             <img id="profiles-view-avatar"
-                 src="{{ user_profile.get_avatar_url(128) }}">
+                 src="{{ pageuser|get_avatar_url(128) }}">
           </div>
           <div class="eight columns smallmap-profile-container">
             <div id="map" class="smallmap-profile"

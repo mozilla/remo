@@ -18,6 +18,7 @@ def get_display_name(obj):
 
 @register.filter
 def format_datetime(obj, type=None):
+    """Return datetime obj formatted."""
     if type=="full":
         return obj.strftime("%d %B %Y %H:%M")
     return obj.strftime("%Y-%m-%d %H:%M")

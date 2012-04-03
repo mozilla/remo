@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control, never_cache
 
 from remo.base.decorators import permission_check
 
@@ -10,7 +10,7 @@ import forms
 from models import FeaturedRep
 
 
-@never_cache
+@cache_control(private=True, max_age=60*10)
 def list_featured(request):
     """List all Featured Reps."""
     return render(request, 'featuredrep_list.html',
