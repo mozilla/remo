@@ -92,7 +92,7 @@
           {% else %}
             <div class="row">
               <div class="twelve columns no-bugs">
-                <p>No Bugs found!</p>
+                <p>No Reports found!</p>
               </div>
             </div>
           {% endif %}
@@ -121,7 +121,7 @@
           {% else %}
             <div class="row">
               <div class="twelve columns no-bugs">
-                <p>No Bugs found!</p>
+                <p>No Reports found!</p>
               </div>
             </div>
           {% endif %}
@@ -163,13 +163,13 @@
           {% else %}
             <div class="row">
               <div class="twelve columns no-bugs">
-                <p>No Bugs found!</p>
+                <p>No Reports found!</p>
               </div>
             </div>
           {% endif %}
         </div>
         <!-- end all reports block -->
-
+      </div>
     </div>
     <!-- end reports block -->
 
@@ -621,90 +621,6 @@
     {% endif %}
     <!-- end mentorship requests block -->
 
-    <!-- Admin block -->
-    {% if reps_without_mentors %}
-      <div class="row dashboard-box">
-        <div class="seven columns">
-          <h5>Reps without mentors</h5>
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Full Name</th>
-                <th>Account created on</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for rep in reps_without_mentors %}
-                <tr>
-                  <td>
-                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                      {{ rep|get_display_name }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                      {{ rep.get_full_name() }}
-                    </a>
-                  </td>
-                  <td>
-                    {{ rep.date_joined|format_datetime }}
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    {% endif %}
-
-    {% if reps_without_profile %}
-      <div class="row dashboard-box">
-        <div class="seven columns">
-          <h5>Invited but not filled profile</h5>
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th>Bugzilla Mail</th>
-                <th>Invited by</th>
-                <th>Date Invited</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for rep in reps_without_profile %}
-                <tr>
-                  <td>
-                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                      {{ rep.email }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    rep.userprofile.added_by|get_display_name) }}">
-                      {{ rep.userprofile.added_by|get_display_name }}
-                    </a>
-                  </td>
-                  <td>
-                    {{ rep.date_joined|format_datetime }}
-                  </td>
-              </tr>
-             {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    {% endif %}
-    <!-- End Admin block -->
-
-
     <!-- planning requests block -->
     {% if my_mentorship_requests != None %}
       <div class="row dashboard-box">
@@ -757,7 +673,97 @@
       </div>
     {% endif %}
     <!-- end planning requests block -->
-  </div>
+
+    <!-- Admin block -->
+    <div class="row dashboard-box">
+      <div class="seven columns">
+        <h5>Administration</h5>
+      </div>
+    </div>
+    <dl class="tabs">
+      {% if reps_without_mentors %}
+        <dd><a href="#nomentors" class="active">No mentors</a></dd>
+      {% endif %}
+      {% if reps_without_profile %}
+        <dd><a href="#emptyprofiles">Empty profiles</a></dd>
+      {% endif %}
+    </dl>
+    <ul class="tabs-content">
+      {% if reps_without_mentors %}
+        <li id="nomentorsTab" class="active">Reps without mentors set are displayed here:
+          <div class="row">
+            <div>
+              <table class="dashboard-table">
+                <thead>
+                  <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Account created on</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for rep in reps_without_mentors %}
+                    <tr>
+                      <td>
+                        <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                          {{ rep|get_display_name }}
+                        </a>
+                      </td>
+                      <td>
+                        <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                          {{ rep.get_full_name() }}
+                        </a>
+                      </td>
+                      <td>
+                        {{ rep.date_joined|format_datetime }}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </li>
+      {% endif %}
+      {% if reps_without_profile %}
+        <li id="emptyprofilesTab">Reps that are invited but not filled their profiles are displayed here:
+          <div class="row">
+            <div>
+              <table class="dashboard-table">
+                <thead>
+                  <tr>
+                    <th>Bugzilla Mail</th>
+                    <th>Invited by</th>
+                    <th>Date Invited</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for rep in reps_without_profile %}
+                    <tr>
+                      <td>
+                        <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                          {{ rep.email }}
+                        </a>
+                      </td>
+                      <td>
+                        <a href="{{ url('profiles_view_profile',
+                                        rep.userprofile.added_by|get_display_name) }}">
+                          {{ rep.userprofile.added_by|get_display_name }}
+                        </a>
+                      </td>
+                      <td>
+                        {{ rep.date_joined|format_datetime }}
+                      </td>
+                  </tr>
+                 {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </li>
+      {% endif %}
+    </ul>
+    <!-- End Admin block -->
   </div>
 </div>
 {% endblock %}
