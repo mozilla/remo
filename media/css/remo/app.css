@@ -230,10 +230,6 @@ li.last {
     border-right:none;
 }
 
-li.active {
-    background: #ddd;
-}
-
 /* -----------------------------------------
    Main Page Styles
 ----------------------------------------- */
