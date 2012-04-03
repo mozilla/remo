@@ -14,6 +14,7 @@ class FirstNotificationTest(TestCase):
     fixtures = ['demo_users.json', 'demo_reports.json']
 
     def test_send_notification(self):
+        """Test sending of first notification to Reps to fill reports."""
         management.call_command('send_first_report_notification', [], {})
         eq_(len(mail.outbox), 1)
 
@@ -24,6 +25,7 @@ class SecondNotificationTest(TestCase):
 
     @fudge.patch('datetime.datetime.today')
     def test_send_notification_with_reports_filled(self, fake_requests_obj):
+        """Test sending of second notification, with reports filled."""
         # act like it's March 2012
         fake_date = datetime.datetime(year=2012, month=3, day=1)
         (fake_requests_obj.expects_call().returns(fake_date))
@@ -33,6 +35,7 @@ class SecondNotificationTest(TestCase):
 
     @fudge.patch('datetime.datetime.today')
     def test_send_notification_without_reports_filled(self, fake_requests_obj):
+        """Test sending of second notification, with missing reports."""
         # act like it's March 2012
         fake_date = datetime.datetime(year=2012, month=3, day=1)
         (fake_requests_obj.expects_call().returns(fake_date))
@@ -49,6 +52,7 @@ class ThirdNotificationTest(TestCase):
 
     @fudge.patch('datetime.datetime.today')
     def test_send_notification_with_reports_filled(self, fake_requests_obj):
+        """Test sending of second notification, with reports filled."""
         # act like it's March 2012
         fake_date = datetime.datetime(year=2012, month=3, day=1)
         (fake_requests_obj.expects_call().returns(fake_date))
@@ -58,6 +62,7 @@ class ThirdNotificationTest(TestCase):
 
     @fudge.patch('datetime.datetime.today')
     def test_send_notification_without_reports_filled(self, fake_requests_obj):
+        """Test sending of second notification, with missing reports."""
         # act like it's March 2012
         fake_date = datetime.datetime(year=2012, month=3, day=1)
         (fake_requests_obj.expects_call().returns(fake_date))
@@ -74,6 +79,7 @@ class MentorNotificationTest(TestCase):
 
     @fudge.patch('datetime.datetime.today')
     def test_send_notification_with_reports_filled(self, fake_requests_obj):
+        """Test sending of mentor notification, with reports filled."""
         # act like it's March 2012
         fake_date = datetime.datetime(year=2012, month=3, day=1)
         (fake_requests_obj.expects_call().returns(fake_date))
@@ -83,6 +89,7 @@ class MentorNotificationTest(TestCase):
 
     @fudge.patch('datetime.datetime.today')
     def test_send_notification_without_reports_filled(self, fake_requests_obj):
+        """Test sending of second notification, with reports missing."""
         # act like it's March 2012
         fake_date = datetime.datetime(year=2012, month=3, day=1)
         (fake_requests_obj.expects_call().returns(fake_date))

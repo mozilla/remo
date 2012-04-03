@@ -45,7 +45,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
       <div class="eleven columns">
         <div class="row">
           <div class="four columns profile-image">
-            <img id="profiles-view-avatar" src="{{ avatar_url }}">
+            <img id="profiles-view-avatar" src="{{ pageuser|get_avatar_url(128) }}">
           </div>
           <div class="eight columns smallmap-profile-container">
             <div id="map" class="smallmap-profile"

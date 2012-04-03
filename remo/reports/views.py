@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control, never_cache
 
 import forms
 import remo.base.utils as utils
@@ -13,7 +13,7 @@ from remo.base.decorators import permission_check
 from models import Report, ReportComment
 
 
-@never_cache
+@cache_control(private=True, no_cache=True)
 def view_report(request, display_name, year, month):
     """View report view."""
     month_number = utils.month2number(month)
