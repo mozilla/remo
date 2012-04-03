@@ -789,15 +789,19 @@ ul.mreports li.editable a {
     margin-top: 20px !important;
 }
 
-.report-comment .report-delete-comment {
+.report-delete-comment {
+    background: none;
+    border: none;
     font-size: 22px;
-    line-height: .5;
-    position: relative;
     float: right;
     color: #aaa;
     text-shadow: 0 -1px 1px rbga(0,0,0,.6);
     font-weight: bold;
     cursor: pointer;
+}
+
+.report-delete-comment:hover {
+    color: #888;
 }
 
 .dashboard-action {
