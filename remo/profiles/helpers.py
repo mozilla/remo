@@ -14,6 +14,9 @@ def get_avatar_url(user, size=50):
     size can be provided to set the avatar size.
 
     """
+    if not user:
+        return None
+
     default_img_url = reduce(lambda u, x: urlparse.urljoin(u, x),
                              [settings.SITE_URL,
                               settings.MEDIA_URL,

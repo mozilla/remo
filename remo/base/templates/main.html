@@ -61,7 +61,7 @@
     <div class="row">
       {% if featuredrep %}
       <div class="four columns">
-        <img src="{{ avatar_url }}" id="main-featured-avatar"
+        <img src="{{ featuredrep.user|get_avatar_url(80) }}" id="main-featured-avatar"
              alt="Rep of the month profile picture">
       </div>
       <div class="eight columns">

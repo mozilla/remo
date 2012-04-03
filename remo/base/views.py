@@ -23,12 +23,7 @@ from remo.reports.utils import get_reports_for_year
 def main(request):
     """Main page of the website."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
-    if featured_rep:
-        avatar_url = featured_rep.user.userprofile.get_avatar_url(80)
-    else:
-        avatar_url = None
     return render(request, 'main.html', {'featuredrep': featured_rep,
-                                         'avatar_url': avatar_url,
                                          'next_url': reverse('dashboard')})
 
 
@@ -121,15 +116,10 @@ def dashboard(request):
 def custom_404(request):
     """Custom 404 error handler."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
-    if featured_rep:
-        avatar_url = featured_rep.user.userprofile.get_avatar_url(80)
-    else:
-        avatar_url = None
     t = loader.get_template('404.html')
     return http.HttpResponseNotFound(
         t.render(RequestContext(request, {'request_path': request.path,
-                                          'featuredrep': featured_rep,
-                                          'avatar_url': avatar_url})))
+                                          'featuredrep': featured_rep})))
 
 
 def custom_500(request):
