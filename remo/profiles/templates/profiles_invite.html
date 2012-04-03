@@ -13,7 +13,7 @@
 <!-- Two column block -->
 <div class="row">
   <div class="twelve columns">
-    <p>Please enter the Bugzilla mail of the newly accepted rep and press add.</p>
+    <p>Please enter the Bugzilla email address of the newly accepted rep and click "Add Rep".</p>
     <form action="{{ url('profiles_invite') }}" method="post" class="custom">
       {{ csrf() }}
       <input type="text" name="email" placeholder="Bugzilla mail" class="input-text">
