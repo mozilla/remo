@@ -686,19 +686,23 @@ dl.sub-nav {
     border-radius: 5px;
 }
 
-.dashboard-mentee.ontime {
-    background: -moz-linear-gradient(top, #FFFFFF 0%, #F4F4F4 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
-}
-
-.dashboard-mentee.overdue {
-    background: -moz-linear-gradient(top, #FFFFFF 0%, #CC9900 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
-}
-
 .dashboard-mentee.notfilled {
-    background: -moz-linear-gradient(top, #FFFFFF 0%, #CC6600 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFFFFF), color-stop(100%,#F4F4F4));
+    background: -moz-linear-gradient(top, #da8589 0%, #B50A11 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#da8589), color-stop(100%,#B50A11));
+}
+
+.dashboard-mentee.notfilled h6 {
+    color: white;
+    text-shadow: none;
+}
+
+.dashboard-mentee:hover {
+    -moz-transition:box-shadow .1s ease-out;
+    -webkit-transition:box-shadow .1s ease-out;
+    transition:box-shadow .1s ease-out;
+    box-shadow: 0 2px 5px gray;
+    -webkit-box-shadow: 0 2px 5px gray;
+    -moz-box-shadow: 0 2px 5px gray;
 }
 
 /* -----------------------------------------
