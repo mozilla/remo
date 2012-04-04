@@ -110,15 +110,15 @@
             <ul class="block-grid four-up">
               {% for report in mentees_reports_grid['reports'] %}
                 <li>
-                  <div class="panel dashboard-mentee {{ report.status }}">
-                    <img src="{{ report.user|get_avatar_url(50) }}"
-                         class="profiles-people-avatar"
-                         alt="avatar">
-                    <a href="{{ url('profiles_view_profile',
+                  <a href="{{ url('profiles_view_profile',
                                     report.user|get_display_name) }}">
+                    <div class="panel dashboard-mentee {{ report.status }}">
+                      <img src="{{ report.user|get_avatar_url(50) }}"
+                           class="profiles-people-avatar"
+                           alt="avatar">
                       <h6>{{ report.user.get_full_name() }}</h6>
-                    </a>
-                  </div>
+                    </div>
+                  </a>
                 </li>
               {% endfor %}
             </ul>
