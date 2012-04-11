@@ -1,12 +1,13 @@
 from django.contrib.auth.models import User
 from django.contrib.markup.templatetags import markup
 from jingo import register
+from jinja2 import Markup
 
 
 @register.filter
 def restructuredtext(text):
     """Return text rendered as RestructuredText."""
-    return markup.restructuredtext(text)
+    return Markup(markup.restructuredtext(text))
 
 
 @register.filter
