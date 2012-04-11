@@ -116,7 +116,7 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
       <div class="eleven columns report-item">
         <p class="report-item">
           <span class="white radius label">
-            Recruits efforts
+            Recruit efforts
           </span>&nbsp;
           {{ report.recruits_comments|restructuredtext }}
         </p>
@@ -200,52 +200,54 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
 {% endif %}
 
 <!-- Comments -->
-<div class="row">
-  <div class="twelve columns">
-    <div class="row report-box">
-      <div class="one columns pictogram">
-        b
-      </div>
-      <div class="eleven columns report-item">
-        {% for comment in report.reportcomment_set.all() %}
-          <div class="report-comment">
-            {% if perms.reports.can_delete_reports %}
-              <form method="post" action="{{ comment|get_comment_delete_url }}">
+{% if report.reportcomment_set.count() > 0 or user.is_authenticated() %}
+  <div class="row">
+    <div class="twelve columns">
+      <div class="row report-box">
+        <div class="one columns pictogram">
+          b
+        </div>
+        <div class="eleven columns report-item">
+          {% for comment in report.reportcomment_set.all() %}
+            <div class="report-comment">
+              {% if perms.reports.can_delete_reports %}
+                <form method="post" action="{{ comment|get_comment_delete_url }}">
+                  {{ csrf() }}
+                  <button type="submit" class="report-delete-comment">&#215;</button>
+                </form>
+              {% endif %}
+              <span class="white radius label">
+                Comment {{ loop.index }}
+              </span>&nbsp;
+              <span class="grayed">by </span>
+              <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
+                {{ comment.user.get_full_name() }}
+              </a>
+              <span class="grayed"> at {{ comment.created_on }}</span><br>
+              {{ comment.comment }}
+            </div>
+          {% endfor %}
+          {% if user.is_authenticated() %}
+            <div id="report-comment-post">
+              <form method="post" actions="{{ report_comment_form_url }}"
+                    class="custom">
                 {{ csrf() }}
-                <button type="submit" class="report-delete-comment">&#215;</button>
+                <textarea name="comment" class="flat"
+                          placeholder="Add comment to this report"
+                          name="past-items"></textarea>
+                <div id="post-comment" class="align-right">
+                  <button type="submit" class="small white button nice radius">
+                    Post comment
+                  </button>
+                </div>
               </form>
-            {% endif %}
-            <span class="white radius label">
-              Comment {{ loop.index }}
-            </span>&nbsp;
-            <span class="grayed">by </span>
-            <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
-              {{ comment.user.get_full_name() }}
-            </a>
-            <span class="grayed"> at {{ comment.created_on }}</span><br>
-            {{ comment.comment }}
-          </div>
-        {% endfor %}
-        {% if user.is_authenticated() %}
-          <div id="report-comment-post">
-            <form method="post" actions="{{ report_comment_form_url }}"
-                  class="custom">
-              {{ csrf() }}
-              <textarea name="comment" class="flat"
-                        placeholder="Add comment to this report"
-                        name="past-items"></textarea>
-              <div id="post-comment" class="align-right">
-                <button type="submit" class="small white button nice radius">
-                  Post comment
-                </button>
-              </div>
-            </form>
-          </div>
-        {% endif %}
+            </div>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
-</div>
+{% endif %}
 {% endblock %}
 
 {% block bottomextra %}
