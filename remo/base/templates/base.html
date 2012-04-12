@@ -69,7 +69,7 @@
                      or
                     <a href="#" data-reveal-id="join-modal">Join</a>
                     <form method="POST" action="{{ url('browserid_verify') }}">
-                      {{ csrf() }} {{ browserid_form }}
+                      {{ csrf() }} {{ browserid_form|safe }}
                       <input type="hidden" name="next"
                              value="{{ next_url|default(request.get_full_path()) }}" />
                     </form>
