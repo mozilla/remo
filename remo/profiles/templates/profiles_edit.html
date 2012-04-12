@@ -32,7 +32,7 @@
           <div class="required-field"></div>
           {% if profileform.display_name.errors %}
             <small class="error">
-              {{ profileform.display_name.errors }}
+              {{ profileform.display_name.errors|safe }}
             </small>
           {% endif %}
           <p class="more-info">changing your username will result in
@@ -43,7 +43,7 @@
           <div class="required-field"></div>
           {% if userform.last_name.errors %}
             <small class="error">
-              {{ userform.last_name.errors }}
+              {{ userform.last_name.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="First name" name="first_name"
@@ -52,7 +52,7 @@
           <div class="required-field"></div>
           {% if userform.first_name.errors %}
             <small class="error">
-              {{ userform.first_name.errors }}
+              {{ userform.first_name.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="Name in local language"
@@ -60,13 +60,13 @@
                  class="input-text big">
           {% if profileform.local_name.errors %}
             <small class="error">
-              {{ profileform.local_name.errors }}
+              {{ profileform.local_name.errors|safe }}
             </small>
           {% endif %}
-            {{ profileform.gender }}
+            {{ profileform.gender|safe }}
           {% if profileform.gender.errors %}
             <small class="error">
-              {{ profileform.gender.errors }}
+              {{ profileform.gender.errors|safe }}
             </small>
           {% endif %}
         </div>
@@ -105,7 +105,7 @@
           <div class="required-field"></div>
           {% if profileform.private_email.errors %}
             <small class="error">
-              {{ profileform.private_email.errors }}
+              {{ profileform.private_email.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="Bugzilla email"
@@ -114,7 +114,7 @@
           <div class="required-field"></div>
           {% if userform.email.errors %}
             <small class="error">
-              {{ userform.email.errors }}
+              {{ userform.email.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="Mozillians.org profile"
@@ -123,7 +123,7 @@
           <div class="required-field"></div>
           {% if profileform.mozillians_profile_url.errors %}
             <small class="error">
-              {{ profileform.mozillians_profile_url.errors }}
+              {{ profileform.mozillians_profile_url.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="Wiki profile"
@@ -132,10 +132,10 @@
           <div class="required-field"></div>
           {% if profileform.wiki_profile_url.errors %}
             <small class="error">
-              {{ profileform.wiki_profile_url.errors }}
+              {{ profileform.wiki_profile_url.errors|safe }}
             </small>
           {% endif %}
-          {{ profileform.mentor }}
+          {{ profileform.mentor|safe }}
         </div>
       </div>
     </div>
@@ -150,7 +150,7 @@
           <div class="required-field"></div>
           {% if profileform.city.errors %}
             <small class="error">
-              {{ profileform.city.errors }}
+              {{ profileform.city.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="State or Region"
@@ -159,7 +159,7 @@
           <div class="required-field"></div>
           {% if profileform.region.errors %}
             <small class="error">
-              {{ profileform.region.errors }}
+              {{ profileform.region.errors|safe }}
             </small>
           {% endif %}
           <select name="country">
@@ -175,7 +175,7 @@
           </select>
           {% if profileform.country.errors %}
             <small class="error">
-              {{ profileform.country.errors }}
+              {{ profileform.country.errors|safe }}
             </small>
           {% endif %}
           <input type="hidden" placeholder="Latitude"
@@ -210,7 +210,7 @@
                  name="twitter_account" class="input-text big">
           {% if profileform.twitter_account.errors %}
             <small class="error">
-              {{ profileform.twitter_account.errors }}
+              {{ profileform.twitter_account.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="Facebook profile"
@@ -218,7 +218,7 @@
                  name="facebook_url" class="input-text big">
           {% if profileform.facebook_url.errors %}
             <small class="error">
-              {{ profileform.facebook_url.errors }}
+              {{ profileform.facebook_url.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="Diaspora profile"
@@ -226,7 +226,7 @@
                  name="diaspora_url" class="input-text big">
           {% if profileform.diaspora_url.errors %}
             <small class="error">
-              {{ profileform.diaspora_url.errors }}
+              {{ profileform.diaspora_url.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="LinkedIn profile"
@@ -234,7 +234,7 @@
                  name="linkedin_url" class="input-text big">
           {% if profileform.linkedin_url.errors %}
             <small class="error">
-              {{ profileform.linkedin_url.errors }}
+              {{ profileform.linkedin_url.errors|safe }}
             </small>
           {% endif %}
         </div>
@@ -251,7 +251,7 @@
                  name="jabber_id" class="input-text big">
           {% if profileform.jabber_id.errors %}
             <small class="error">
-              {{ profileform.jabber_id.errors }}
+              {{ profileform.jabber_id.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="IRC nickname"
@@ -260,14 +260,14 @@
           <div class="required-field"></div>
           {% if profileform.irc_name.errors %}
             <small class="error">
-              {{ profileform.irc_name.errors }}
+              {{ profileform.irc_name.errors|safe }}
             </small>
           {% endif %}
           <textarea class="flat" placeholder="Please list the channels you use in IRC"
                     name="irc_channels">{{ profileform.irc_channels.value() }}</textarea>
           {% if profileform.irc_channels.errors %}
             <small class="error">
-              {{ profileform.irc_channels.errors }}
+              {{ profileform.irc_channels.errors|safe }}
             </small>
           {% endif %}
         </div>
@@ -286,7 +286,7 @@
                  name="personal_website_url" class="input-text big">
           {% if profileform.personal_website_url.errors %}
             <small class="error">
-              {{ profileform.personal_website_url.errors }}
+              {{ profileform.personal_website_url.errors|safe }}
             </small>
           {% endif %}
           <input type="text" placeholder="Feed for Reps Planet"
@@ -294,7 +294,7 @@
                  name="personal_blog_feed" class="input-text big">
           {% if profileform.personal_blog_feed.errors %}
             <small class="error">
-              {{ profileform.personal_blog_feed.errors }}
+              {{ profileform.personal_blog_feed.errors|safe }}
             </small>
           {% endif %}
         </div>
@@ -311,7 +311,7 @@
                     name="bio">{{ profileform.bio.value() }}</textarea>
           {% if profileform.bio.errors %}
             <small class="error">
-              {{ profileform.bio.errors }}
+              {{ profileform.bio.errors|safe }}
             </small>
           {% endif %}
         </div>
@@ -341,10 +341,10 @@
           </div>
           <div class="eleven columns edit-profile-item">
             Date Rep joined program<br/><br/>
-            {{ datejoinedform.date_joined_program }}
+            {{ datejoinedform.date_joined_program|safe }}
             {% if datejoinedform.date_joined_program.errors %}
               <small class="error">
-                {{ datejoinedform.date_joined_program.errors }}
+                {{ datejoinedform.date_joined_program.errors|safe }}
               </small>
             {% endif %}
           </div>
