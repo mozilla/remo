@@ -238,8 +238,8 @@ li.last {
     margin-bottom: 40px;
 }
 
-#more-posts {
-    text-align:right;
+.more-posts {
+    text-align: left;
     margin: 20px 0px 40px 0px;
 }
 
@@ -265,6 +265,12 @@ ul.orbit-bullets li {
 
 ul.orbit-bullets li.active {
     background-position: -8px 0 !important;
+}
+
+#planet {
+    height: 80ex;
+    overflow: hidden;
+    text-overflow: clip;
 }
 
 /* -----------------------------------------
