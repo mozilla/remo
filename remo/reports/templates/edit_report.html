@@ -43,7 +43,7 @@ Mozilla Reps - Edit Report
           <p>All Mozillians are super busy and sometimes you need to
           take a break from Mozilla awesomeness and you'll find
           yourself with little or even no information to share in a given
-          month. That's OK! If you feel that this is the month, skip the 
+          month. That's OK! If you feel that this is the month, skip the
           fields and click directly 'Save report'</p>
           <p>In any doubt, please contact your mentor.</p>
         </div>
@@ -64,14 +64,14 @@ Mozilla Reps - Edit Report
                     name="past_items">{{ report_form.past_items.value() }}</textarea>
           {% if report_form.past_items.errors %}
             <small class="error">
-              {{ report_form.past_items.errors }}
+              {{ report_form.past_items.errors|safe }}
             </small>
           {% endif %}
           <textarea class="flat" placeholder="Future plans summary"
                     name="future_items">{{ report_form.future_items.value() }}</textarea>
           {% if report_form.future_items.errors %}
             <small class="error">
-              {{ report_form.future_items.errors }}
+              {{ report_form.future_items.errors|safe }}
             </small>
           {% endif %}
         </div>
@@ -90,7 +90,7 @@ Mozilla Reps - Edit Report
                     name="recruits_comments">{{ report_form.recruits_comments.value() }}</textarea>
           {% if report_form.recruits_comments.errors %}
             <small class="error">
-              {{ report_form.recruits_comments.errors }}
+              {{ report_form.recruits_comments.errors|safe }}
             </small>
           {% endif %}
         </div>
@@ -104,7 +104,7 @@ Mozilla Reps - Edit Report
                     name="flags">{{ report_form.flags.value() }}</textarea>
           {% if report_form.flags.errors %}
             <small class="error">
-              {{ report_form.flags.errors }}
+              {{ report_form.flags.errors|safe }}
             </small>
           {% endif %}
         </div>
@@ -117,8 +117,8 @@ Mozilla Reps - Edit Report
     <div class="six columns" >
       <div id="eventformset">
       {% for form in report_event_formset %}
-        {{ form.id }}
-        {{ form.report }}
+        {{ form.id|safe }}
+        {{ form.report|safe }}
         <div class="row report-box {% if loop.last %} eventblock {% endif %}"
              id="{{ form.prefix }}-row" >
           <div class="one columns pictogram">
@@ -132,14 +132,14 @@ Mozilla Reps - Edit Report
                      class="input-text big">
               {% if form.name.errors %}
                 <small class="error">
-                  {{ form.name.errors }}
+                  {{ form.name.errors|safe }}
                 </small>
               {% endif %}
 
-              {{ form.participation_type }}
+              {{ form.participation_type|safe }}
               {% if form.participation_type.errors %}
                 <small class="error">
-                  {{ form.participation_type.errors }}
+                  {{ form.participation_type.errors|safe }}
                 </small>
               {% endif %}
 
@@ -147,7 +147,7 @@ Mozilla Reps - Edit Report
                         name="{{ form.description.html_name }}">{{ form.description.value() }}</textarea>
               {% if form.description.errors %}
                 <small class="error">
-                  {{ form.description.errors }}
+                  {{ form.description.errors|safe }}
                 </small>
               {% endif %}
 
@@ -156,11 +156,11 @@ Mozilla Reps - Edit Report
                      class="input-text big">
               {% if form.link.errors %}
                 <small class="error">
-                  {{ form.link.errors }}
+                  {{ form.link.errors|safe }}
                 </small>
               {% endif %}
 
-              {{ form.DELETE }} Delete event
+              {{ form.DELETE|safe }} Delete event
             </div>
           </div>
         </div>
@@ -172,15 +172,15 @@ Mozilla Reps - Edit Report
         </a>
       </div>
     </div>
-      {{ report_event_formset.management_form }}
+      {{ report_event_formset.management_form|safe }}
     </div>
 
     <!-- Activities and Links -->
     <div class="six columns">
       <div id="linkformset">
         {% for form in report_link_formset %}
-        {{ form.id }}
-        {{ form.report }}
+        {{ form.id|safe }}
+        {{ form.report|safe }}
         <div class="row report-box {% if loop.last %} linkblock {% endif %}">
           <div class="one columns pictogram">
             a
@@ -193,7 +193,7 @@ Mozilla Reps - Edit Report
                      class="input-text big">
               {% if form.link.errors %}
                 <small class="error">
-                  {{ form.link.errors }}
+                  {{ form.link.errors|safe }}
                 </small>
               {% endif %}
 
@@ -202,11 +202,11 @@ Mozilla Reps - Edit Report
                         name="{{ form.description.html_name }}">{{ form.description.value() }}</textarea>
               {% if form.description.errors %}
                 <small class="error">
-                  {{ form.description.errors }}
+                  {{ form.description.errors|safe }}
                 </small>
               {% endif %}
 
-              {{ form.DELETE }} Delete activity
+              {{ form.DELETE|safe }} Delete activity
             </div>
           </div>
         </div>
@@ -218,7 +218,7 @@ Mozilla Reps - Edit Report
 
       </div>
     </div>
-    {{ report_link_formset.management_form }}
+    {{ report_link_formset.management_form|safe }}
   </div>
 
   <div class="row">
@@ -234,9 +234,9 @@ Mozilla Reps - Edit Report
           </div>
           <div class="eleven columns">
             <br/>
-            {{ report_form.overdue }} Overdue report
+            {{ report_form.overdue|safe }} Overdue report
             <br/>
-            {{ report_form.empty }} Empty report
+            {{ report_form.empty|safe }} Empty report
 
             {% if (not created) and (perms.reports.can_delete_reports) %}
               <div class="align-right">
