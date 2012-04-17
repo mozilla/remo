@@ -50,8 +50,7 @@ class UserProfile(models.Model):
     """Definition of UserProfile Model."""
     user = models.OneToOneField(User)
     registration_complete = models.BooleanField(default=False)
-    date_joined_program = models.DateField(
-        blank=True, default=datetime.date(month=6, year=2011, day=1))
+    date_joined_program = models.DateField(blank=True, auto_now_add=True)
     local_name = models.CharField(max_length=100, blank=True, default='')
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   blank=True, null=True)
