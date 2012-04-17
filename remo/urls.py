@@ -7,6 +7,8 @@ handler500 = 'remo.base.views.custom_500'
 
 urlpatterns = patterns('',
     # profiles
+    url(r'^me/$', 'remo.profiles.views.view_my_profile',
+        name='profiles_view_my_profile'),
     url(r'^u/', include('remo.profiles.user_urls')),
     url(r'^people/', include('remo.profiles.people_urls')),
 
