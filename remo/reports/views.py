@@ -13,6 +13,27 @@ from remo.base.decorators import permission_check
 from models import Report, ReportComment
 
 
+@permission_check()
+@cache_control(private=True, no_cache=True)
+def current_report(request, edit=False):
+    display_name = request.user.userprofile.display_name
+    previous_month = utils.go_back_n_months(datetime.date.today(),
+                                            first_day=True)
+    month_name = utils.number2month(previous_month.month)
+    report = utils.get_object_or_none(
+        Report, user__userprofile__display_name=display_name,
+        month=previous_month)
+
+    view = 'reports_view_report'
+    if edit or not report:
+        view = 'reports_edit_report'
+
+    redirect_url = reverse(view, kwargs={'display_name': display_name,
+                                         'year': previous_month.year,
+                                         'month': month_name})
+    return redirect(redirect_url)
+
+
 @cache_control(private=True, no_cache=True)
 def view_report(request, display_name, year, month):
     """View report view."""

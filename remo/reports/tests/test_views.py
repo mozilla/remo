@@ -1,10 +1,13 @@
+import datetime
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from nose.tools import eq_, nottest
 from test_utils import TestCase
 
-from remo.reports.models import ReportComment
+from remo.base.utils import go_back_n_months
+from remo.reports.models import Report, ReportComment
 
 
 class ViewsTest(TestCase):
@@ -39,6 +42,36 @@ class ViewsTest(TestCase):
                      'reportlink_set-0-link': 'http://example.com/link',
                      'reportlink_set-0-description': 'This is description',
                      'reportlink_set-0-DELETE': False}
+
+    def test_view_current_report_page(self):
+        """Test view report page."""
+        # If anonymous, return an error.
+        c = Client()
+        response = c.get(reverse('reports_view_current_report'), follow=True)
+        self.assertTemplateUsed(response, 'main.html')
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'warning')
+
+        # Login.
+        c.login(username='rep', password='passwd')
+
+        # If report does not exist, render edit page.
+        response = c.get(reverse('reports_view_current_report'), follow=True)
+        self.assertTemplateUsed(response, 'edit_report.html')
+
+        # If report exists, render report.
+        Report.objects.create(user=self.user, empty=True,
+                              month=go_back_n_months(datetime.date.today()))
+        response = c.get(reverse('reports_view_current_report'), follow=True)
+        self.assertTemplateUsed(response, 'view_report.html')
+
+    def test_edit_current_report_page(self):
+        """Test view report page."""
+        c = Client()
+        c.login(username='rep', password='passwd')
+        response = c.get(reverse('reports_edit_current_report'), follow=True)
+        self.assertTemplateUsed(response, 'edit_report.html')
 
     def test_view_report_page(self):
         """Test view report page."""
