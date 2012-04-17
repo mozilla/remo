@@ -8,9 +8,15 @@ handler404 = 'remo.base.views.custom_404'
 handler500 = 'remo.base.views.custom_500'
 
 urlpatterns = patterns('',
-    # profiles
+    # 'me' urls
     url(r'^me/$', 'remo.profiles.views.view_my_profile',
         name='profiles_view_my_profile'),
+    url(r'^me/currentreport/$', 'remo.reports.views.current_report',
+        name='reports_view_current_report'),
+    url(r'^me/currentreport/edit/$', 'remo.reports.views.current_report',
+        dict({'edit': True}), name='reports_edit_current_report'),
+
+    # profiles
     url(r'^u/', include('remo.profiles.user_urls')),
     url(r'^people/', include('remo.profiles.people_urls')),
 
