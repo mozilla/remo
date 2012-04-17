@@ -1,6 +1,8 @@
 from django.conf import settings
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import include, patterns, url
 
+from funfactory.monkeypatches import patch
+patch()
 
 handler404 = 'remo.base.views.custom_404'
 handler500 = 'remo.base.views.custom_500'
