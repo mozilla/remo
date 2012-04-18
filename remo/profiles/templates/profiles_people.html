@@ -5,8 +5,8 @@
 
 <!-- Map -->
 <div class="row show-on-desktop">
-  <div class="twelve columns">
-    <div id="map" class="smallmap">
+  <div class="twelve columns" style='height:350px;'>
+    <div id="map" class="smallmap" style='height:350px;'>
     </div>
   </div>
 </div>
@@ -37,7 +37,9 @@
 <div class="row" id="profiles_gridview">
   <ul class="block-grid mobile three-up" id="searchlist">
     {% for person in people %}
-      <li id="li-person-{{ person.id }}" class="profiles-li-item">
+      <li id="li-person-{{ person.id }}" class="profiles-li-item"
+          data-lon="{{ person.userprofile.lon }}" data-lat="{{ person.userprofile.lat }}"
+          data-fullname="{{ person.get_full_name() }}">
         <a href="{{ url('profiles_view_profile', person.userprofile.display_name) }}">
           <div class="panel grid-profile">
             <div class="row">
@@ -92,7 +94,7 @@
         </thead>
         <tbody>
           {% for person in people %}
-            <tr>
+            <tr id="tr-person-{{ person.id }}">
               <td>
                 <a href="{{ url('profiles_view_profile', person.userprofile.display_name) }}">
                   {{ person.get_full_name() }}
@@ -119,20 +121,6 @@
                   {{ person.userprofile.country }}
                 </a>
               </td>
-              <td class="hidden">
-                <span>{{ person.email }}</span>
-                <span>{{ person.userprofile.irc_name }}</span>
-                <span>{{ person.userprofile.twitter_account }}</span>
-                <span>{{ person.userprofile.jabber_id }}</span>
-                <span>{{ person.userprofile.get_gender_display() }}</span>
-                <span>{{ person.userprofile.private_email }}</span>
-                {% for group in person.groups.all() %}
-                  <span>Group:{{ group.name }}</span>
-                {% endfor %}
-                {% for area in person.userprofile.functional_areas.all() %}
-                  <span>Area:'{{ area.name}}'</span>
-                {% endfor %}
-              </td>
             </tr>
           {% endfor %}
         </tbody>
@@ -150,16 +138,10 @@
 {% endblock %}
 
 {% block bottomextra %}
-<script src="{{ MEDIA_URL }}openlayers/OpenLayers.js"></script>
-<script src="{{ MEDIA_URL }}js/profiles_people.js"></script>
-<script src="{{ MEDIA_URL }}js/jquery.quicksearch.js"></script>
-<script type="text/javascript">
-  {% for person in people %}
-      var lonlat = new OpenLayers.LonLat({{ person.userprofile.lon }},
-                                         {{ person.userprofile.lat }});
-      marker = new OpenLayers.Marker(lonlat, icon.clone())
-      markers.addMarker(marker);
-      markers_array["li-person-{{ person.id }}"] = marker;
-  {% endfor %}
-</script>
+  {{ css('leaflet') }}
+  <!--[if lte IE 8]>
+      <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
+  <![endif]-->
+  {{ js('leaflet') }}
+  {{ js('profiles_people') }}
 {% endblock %}
