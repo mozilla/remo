@@ -50,9 +50,6 @@
                 }
             }
             $addBtn.click(function () {
-		window.c = c;
-		console.log('papari')
-		console.log(c)
                 var b = parseInt(a("#id_" + c.prefix + "-TOTAL_FORMS").val());
                 var e = a("." + c.formCssClass + ":first").clone(true).get(0);
                 a(e).removeAttr("id").insertAfter(a("." + c.formCssClass + ":last"));

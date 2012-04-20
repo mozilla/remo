@@ -48,10 +48,8 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             <img id="profiles-view-avatar" src="{{ pageuser|get_avatar_url(128) }}">
           </div>
           <div class="eight columns smallmap-profile-container">
-            <div id="map" class="smallmap-profile"
-                 data-lon="{{ user_profile.lon }}"
-                 data-lat="{{ user_profile.lat }}"
-                 data-mediaurl="{{ MEDIA_URL }}">
+            <div id="map">
+              <img src="{{ get_static_map_url(256, 128, user_profile.lat, user_profile.lon, 1) }}"/>
             </div>
           </div>
         </div>
@@ -365,9 +363,4 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
     <p>
       <a href="#" class="large red button nice radius">Delete profile</a>
 </div>
-{% endblock %}
-
-{% block bottomextra %}
-<script type="text/javascript" src="{{ MEDIA_URL }}openlayers/OpenLayers.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/profiles_view.js"></script>
 {% endblock %}

@@ -1,10 +1,11 @@
-$(function() {
+$(document).ready(function() {
     $('.eventblock').formset({
         formCssClass: 'dynamic-event-form',
         prefix: 'reportevent_set',
         addBtnObj: $("#reports-add-event-button"),
         addDeleteButton: null
     });
+
     $('.linkblock').formset({
         formCssClass: 'dynamic-link-form',
         prefix: 'reportlink_set',

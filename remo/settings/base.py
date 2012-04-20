@@ -15,6 +15,9 @@ MINIFY_BUNDLES = {
             ),
         'remo': (
             'css/remo/app.css',
+            ),
+        'leaflet': (
+            'leaflet/leaflet.css',
             )
     },
     'js': {
@@ -27,6 +30,16 @@ MINIFY_BUNDLES = {
              # Our app.js is always last to override stuff
             'js/app.js',
             ),
+        'profiles_people': (
+            'js/jquery.quicksearch.js',
+            'js/profiles_people.js'
+            ),
+        'leaflet': (
+            'leaflet/leaflet.js',
+            ),
+        'profiles_edit_profile': (
+            'js/profiles_edit_profile.js',
+            )
     }
 }
 
@@ -107,3 +120,6 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
+
+CLOUDMADE_API = 'b465ca1b6fe040dba7eec0291ecb7a8c'
+CLOUDMADE_MARKER_PURPLE = 'fc2feea1e8e84d0192c32a2b867073a3'
