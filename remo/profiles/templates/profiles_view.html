@@ -150,13 +150,15 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           <span class="white radius label">
             Personal Mail
           </span>
-          &nbsp;{{ user_profile.private_email }}
+          &nbsp;{% if user.is_authenticated() %} {{ user_profile.private_email }}
+          {% else %} {{ user_profile.private_email|mailhide }} {% endif %}
         </p>
         <p class="profile-item">
           <span class="white radius label">
             Bugzilla Mail
           </span>
-          &nbsp;{{ pageuser.email }}
+          &nbsp;{% if user.is_authenticated() %} {{ pageuser.email }}
+          {% else %} {{ pageuser.email|mailhide }} {% endif %}
         </p>
         <p class="profile-item">
           <span class="white radius label">

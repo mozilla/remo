@@ -55,8 +55,10 @@
                 <span class="hidden">{{ person.userprofile.display_name }}</span>
                 <span class="hidden">{{ person.userprofile.local_name }}</span>
                 <span class="hidden">{{ person.userprofile.region }}</span>
-                <span class="hidden">{{ person.userprofile.private_email }}</span>
-                <span class="hidden">{{ person.email }}</span>
+                {% if user.is_authenticated() %}
+                    <span class="hidden">{{ person.userprofile.private_email }}</span>
+                    <span class="hidden">{{ person.email }}</span>
+                {% endif %}
                 <span class="hidden">{{ person.userprofile.irc_name }}</span>
                 <span class="hidden">{{ person.userprofile.twitter_account }}</span>
                 <span class="hidden">{{ person.userprofile.jabber_id }}</span>
