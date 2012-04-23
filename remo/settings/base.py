@@ -31,6 +31,7 @@ MINIFY_BUNDLES = {
             'js/webtrends.js',
             'js/activate.browserid.js',
             'js/tabzilla.js',
+            'js/jquery.prettydate.js',
              # Our app.js is always last to override stuff
             'js/app.js',
             ),
@@ -47,6 +48,9 @@ MINIFY_BUNDLES = {
         'base_dashboard': (
             'js/stupidtable.js',
             'js/dashboard.js'
+            ),
+        'profiles_view_report': (
+            'js/profiles_view_report.js',
             ),
     }
 }
