@@ -46,9 +46,12 @@ def dashboard(request):
     planning_requests = planning_requests.exclude(status='RESOLVED')
 
     today = date.today()
-    monthly_reports = get_reports_for_year(user, start_year=2011,
-                                           end_year=today.year,
-                                           private=False)
+    if user.groups.filter(name='Rep').exists():
+        monthly_reports = get_reports_for_year(user, start_year=2011,
+                                               end_year=today.year,
+                                               private=False)
+    else:
+        monthly_reports = None
 
     my_q = (Q(cc=user) | Q(creator=user))
     my_q_assigned = (my_q | Q(assigned_to=user))
