@@ -50,7 +50,7 @@ class UserProfile(models.Model):
     """Definition of UserProfile Model."""
     user = models.OneToOneField(User)
     registration_complete = models.BooleanField(default=False)
-    date_joined_program = models.DateField(blank=True, auto_now_add=True)
+    date_joined_program = models.DateField(blank=True)
     local_name = models.CharField(max_length=100, blank=True, default='')
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   blank=True, null=True)
@@ -139,6 +139,13 @@ class UserProfile(models.Model):
                int((d.month, d.day) <
                    (self.birth_date.month, self.birth_date.day)))
         return age
+
+
+@receiver(pre_save, sender=UserProfile)
+def userprofile_set_date_joined_program_pre_save(sender, instance, **kwargs):
+    """Set date_joined_program to today when empty."""
+    if not instance.date_joined_program:
+        instance.date_joined_program = datetime.datetime.now()
 
 
 @receiver(pre_save, sender=UserProfile)
