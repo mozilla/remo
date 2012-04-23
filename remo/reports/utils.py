@@ -73,7 +73,7 @@ def get_mentee_reports_for_month(user, dateobj=None):
 
     for mentee in mentees:
         report = get_object_or_none(Report, user=mentee, month=dateobj)
-        if report == None:
+        if report is None:
             status = 'notfilled'
         elif report.overdue:
             status = 'overdue'
