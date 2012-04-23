@@ -70,10 +70,8 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
                  src="{{ pageuser|get_avatar_url(128) }}">
           </div>
           <div class="eight columns smallmap-profile-container">
-            <div id="map" class="smallmap-profile"
-                 data-lon="{{ user_profile.lon }}"
-                 data-lat="{{ user_profile.lat }}"
-                 data-mediaurl="{{ MEDIA_URL }}">
+            <div id="map" class="smallmap-profile">
+              <img src="{{ get_static_map_url(256, 128, user_profile.lat, user_profile.lon, 1) }}"/>
             </div>
           </div>
         </div>
@@ -248,9 +246,4 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
     </div>
   </div>
 {% endif %}
-{% endblock %}
-
-{% block bottomextra %}
-<script type="text/javascript" src="{{ MEDIA_URL }}openlayers/OpenLayers.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/profiles_view.js"></script>
 {% endblock %}
