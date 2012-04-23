@@ -101,6 +101,7 @@ $(document).ready(function () {
 
     // auto fade out success messages
     $(".success").delay(5000).fadeOut('slow');
-
-
 });
+
+// leaflet root
+L_ROOT_URL = '/media/leaflet/';
