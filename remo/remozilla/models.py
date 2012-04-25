@@ -26,9 +26,6 @@ class Bug(models.Model):
     def __unicode__(self):
         return u'%d' % self.bug_id
 
-    def get_bugzilla_url(self):
-        return u'https://bugzilla.mozilla.org/show_bug.cgi?id=%d' % self.bug_id
-
     class Meta:
         ordering = ['-bug_last_change_time']
 

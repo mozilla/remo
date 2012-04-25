@@ -100,4 +100,6 @@ $(document).ready(function () {
         $("#dashboard-sr-all-block").hide('fast');
         $("#dashboard-sr-all-button").parent().removeClass("active");
     });
+
+    $("table").each(function(index, item) { $(item).stupidtable(); });
 });
