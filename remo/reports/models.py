@@ -95,9 +95,9 @@ class ReportEvent(models.Model):
     description = models.TextField(default='')
     link = models.URLField()
     participation_type = models.PositiveSmallIntegerField(
-        choices=((1, 'Organized'),
-                 (2, 'Organized and Mozilla presence'),
-                 (3, 'Attended')))
+        choices=((1, 'Organizer'),
+                 (2, 'Mozilla presence Organizer'),
+                 (3, 'Attendee')))
 
 
 class ReportLink(models.Model):
