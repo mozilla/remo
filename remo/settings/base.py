@@ -39,7 +39,11 @@ MINIFY_BUNDLES = {
             ),
         'profiles_edit_profile': (
             'js/profiles_edit_profile.js',
-            )
+            ),
+        'base_dashboard': (
+            'js/stupidtable.js',
+            'js/dashboard.js'
+            ),
     }
 }
 

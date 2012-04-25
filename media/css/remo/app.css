@@ -653,6 +653,14 @@ select#id_user {
    Dashboard Styles
 ----------------------------------------- */
 
+.dashboard-action {
+    margin: 5px 0px 20px 0px;
+}
+
+.dashboard-clickable {
+    cursor: pointer;
+}
+
 .dashboard-table {
     width: 100%;
 }
@@ -806,8 +814,4 @@ ul.mreports li.editable a {
 
 .report-delete-comment:hover {
     color: #888;
-}
-
-.dashboard-action {
-    margin: 5px 0px 20px 0px;
 }
