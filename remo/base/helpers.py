@@ -86,3 +86,8 @@ def mailhide(value):
               """ address">%(email)s...@%(domain)s</a>""") % args
 
     return Markup(result)
+
+
+@register.filter
+def get_bugzilla_url(bug_id):
+    return u'https://bugzilla.mozilla.org/show_bug.cgi?id=%d' % bug_id
