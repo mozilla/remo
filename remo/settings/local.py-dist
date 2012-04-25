@@ -79,3 +79,8 @@ SECRET_KEY = ''
 # remozilla configuration
 # REMOZILLA_USERNAME = ''
 # REMOZILLA_PASSWORD = ''
+
+# Mailhide configuration
+# MAILHIDE_PUB_KEY = ''
+# MAILHIDE_PRIV_KEY = ''
+
