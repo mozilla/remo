@@ -22,9 +22,10 @@ MINIFY_BUNDLES = {
     },
     'js': {
         'common': (
-            'js/webtrends.js',
+            'js/jquery.min.js',
             'js/modernizr.foundation.js',
             'js/foundation.js',
+            'js/webtrends.js',
             'js/activate.browserid.js',
             'js/tabzilla.js',
              # Our app.js is always last to override stuff
