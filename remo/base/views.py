@@ -34,6 +34,7 @@ def main(request):
 def dashboard(request):
     """Dashboard view."""
     user = request.user
+    args = {}
     budget_requests = Bug.objects.filter(component='Budget Requests')
     budget_requests = budget_requests.exclude(status='RESOLVED')
     swag_requests = Bug.objects.filter(component='Swag Requests')
@@ -46,9 +47,10 @@ def dashboard(request):
     planning_requests = planning_requests.exclude(status='RESOLVED')
 
     today = date.today()
-    monthly_reports = get_reports_for_year(user, start_year=2011,
-                                           end_year=today.year,
-                                           private=False)
+    if user.groups.filter(name='Rep').exists():
+        args['monthly_reports'] = get_reports_for_year(user, start_year=2011,
+                                               end_year=today.year,
+                                               private=False)
 
     my_q = (Q(cc=user) | Q(creator=user))
     my_q_assigned = (my_q | Q(assigned_to=user))
@@ -58,61 +60,33 @@ def dashboard(request):
     my_swag_requests = swag_requests.filter(my_q)
 
     if user.groups.filter(name='Mentor').exists():
-        mentees_budget_requests = (budget_requests.
-                                   filter(creator__in=my_mentees))
-        mentees_swag_requests = swag_requests.filter(creator__in=my_mentees)
+        args['mentees_budget_requests'] = (budget_requests.
+                                           filter(creator__in=my_mentees))
+        args['mentees_swag_requests'] = swag_requests.filter(creator__in=my_mentees)
         my_mentorship_requests = mentorship_requests.filter(my_q)
-        my_mentorship_requests = my_mentorship_requests.order_by('whiteboard')
-        mentees_reports_list = (Report.objects.filter(mentor=user).
-                                order_by('-created_on')[:20])
-        mentees_reports_grid = get_mentee_reports_for_month(user)
-
-    else:
-        mentees_budget_requests = None
-        mentees_swag_requests = None
-        my_mentorship_requests = None
-        mentees_reports_list = None
-        mentees_reports_grid = None
+        args['my_mentorship_requests'] = my_mentorship_requests.order_by('whiteboard')
+        args['mentees_reports_list'] = (Report.objects.filter(mentor=user).
+                                        order_by('-created_on')[:20])
+        args['mentees_reports_grid'] = get_mentee_reports_for_month(user)
 
     if user.groups.filter(Q(name='Admin') | Q(name='Council')).exists():
-        all_budget_requests = budget_requests.all()[:20]
-        all_swag_requests = swag_requests.all()[:20]
-        my_cit_requests = cit_requests
-        my_planning_requests = planning_requests
-        all_reports = Report.objects.all().order_by('-created_on')[:20]
+        args['all_budget_requests'] = budget_requests.all()[:20]
+        args['all_swag_requests'] = swag_requests.all()[:20]
+        args['my_cit_requests'] = cit_requests
+        args['my_planning_requests'] = planning_requests
+        args['all_reports'] = Report.objects.all().order_by('-created_on')[:20]
     else:
-        all_budget_requests = None
-        all_swag_requests = None
-        my_cit_requests = None
-        my_planning_requests = planning_requests.filter(my_q_assigned)
-        all_reports = None
+        args['my_planning_requests'] = planning_requests.filter(my_q_assigned)
 
     if user.groups.filter(name='Admin').exists():
+        args['is_admin'] = True
         reps = User.objects.filter(groups__name="Rep")
-        reps_without_mentors = reps.filter(
+        args['reps_without_mentors'] = reps.filter(
             userprofile__registration_complete=True, userprofile__mentor=None)
-        reps_without_profile = reps.filter(
+        args['reps_without_profile'] = reps.filter(
             userprofile__registration_complete=False)
-    else:
-        reps_without_mentors = None
-        reps_without_profile = None
 
-    return render(request, 'dashboard.html',
-                  {'my_budget_requests': my_budget_requests,
-                   'mentees_budget_requests': mentees_budget_requests,
-                   'all_budget_requests': all_budget_requests,
-                   'my_swag_requests': my_swag_requests,
-                   'mentees_swag_requests': mentees_swag_requests,
-                   'all_swag_requests': all_swag_requests,
-                   'my_cit_requests': my_cit_requests,
-                   'my_mentorship_requests': my_mentorship_requests,
-                   'my_planning_requests': my_planning_requests,
-                   'reps_without_profile': reps_without_profile,
-                   'reps_without_mentors': reps_without_mentors,
-                   'monthly_reports': monthly_reports,
-                   'mentees_reports_list': mentees_reports_list,
-                   'mentees_reports_grid': mentees_reports_grid,
-                   'all_reports': all_reports})
+    return render(request, 'dashboard.html', args)
 
 
 def custom_404(request):
