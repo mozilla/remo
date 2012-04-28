@@ -131,13 +131,13 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             {{ user_profile.country }}
           </a>
         </p>
-        {% if not user_profile.gender == None %}
-        <p class="profile-item">
-          <span class="white radius label">
-            Gender
-          </span>
-          &nbsp;{{ user_profile.get_gender_display() }}
-        </p>
+        {% if user_profile.gender is not none %}
+          <p class="profile-item">
+            <span class="white radius label">
+              Gender
+            </span>
+            &nbsp;{{ user_profile.get_gender_display() }}
+          </p>
         {% endif %}
       </div>
     </div>

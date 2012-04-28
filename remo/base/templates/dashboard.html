@@ -10,175 +10,197 @@
 
 <div class="row">
   <div class="twelve columns">
-
-    <!-- reports block -->
-    <div class="dashboard-box">
-      <div class="row">
-        <div class="seven columns">
-          <h5>Reports</h5>
-        </div>
-        <div class="five columns">
-          <dl class="sub-nav dashboard-filter">
-            <dt>Filter:</dt>
-            <dd class="active">
-              <a id="dashboard-reports-mine-button" href="javascript:void(0)">
-                Mine
-              </a>
-            </dd>
-            {% if mentees_reports_grid != None %}
-              <dd>
-                <a id="dashboard-reports-mentees-grid-button" href="javascript:void(0)">
-                  My mentees grid
-                </a>
-              </dd>
-            {% endif %}
-            {% if mentees_reports_list != None %}
-              <dd>
-                <a id="dashboard-reports-mentees-list-button" href="javascript:void(0)">
-                  My mentees list
-                </a>
-              </dd>
-            {% endif %}
-            {% if all_reports != None %}
-              <dd>
-                <a id="dashboard-reports-all-button" href="javascript:void(0)">
-                  All
-                </a>
-              </dd>
-            {% endif %}
-          </dl>
-        </div>
-      </div>
-
-      <div class="row">
-        <!-- my block -->
-        <div id="dashboard-reports-my-block">
-          {% include "monthly_reports.html" %}
-        </div>
-        <!-- end my block -->
-
-        <!-- mentees list block -->
-        <div id="dashboard-reports-mentees-list-block" class="hidden">
-          {% if mentees_reports_list %}
-            <table class="dashboard-table">
-              <thead>
-                <tr>
-                  <th class="dashboard-clickable type-string">Fullname</th>
-                  <th class="dashboard-clickable type-int">Year</th>
-                  <th class="dashboard-clickable type-string">Month</th>
-                  <th class="dashboard-clickable type-string">Date filled</th>
-                  <th class="dashboard-clickable type-string">Empty</th>
-                  <th class="dashboard-clickable type-string">Overdue</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for report in mentees_reports_list %}
-                  <tr>
-                    <td>
-                      <a href="{{ url('profiles_view_profile',
-                                      report.user|get_display_name) }}">
-                        {{ report.user.get_full_name() }}
-                      </a>
-                    </td>
-                    <td>{{ report.month.strftime("%Y") }}</td>
-                    <td>
-                      <a href="{{ report|get_report_view_url }}">
-                        {{ report.month.strftime("%B") }}
-                      </a>
-                    </td>
-                    <td>{{ report.updated_on|format_datetime }}</td>
-                    <td>{{ report.empty }}</td>
-                    <td>{{ report.overdue }}</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          {% else %}
-            <div class="row">
-              <div class="twelve columns no-bugs">
-                <p>No Reports found!</p>
-              </div>
-            </div>
-          {% endif %}
-        </div>
-        <!-- end mentees list block -->
-
-        <!-- mentes grid block -->
-        <div id="dashboard-reports-mentees-grid-block" class="hidden">
-          {% if mentees_reports_grid %}
-            <h5>for {{ mentees_reports_grid['month'] }}</h5>
-            <ul class="block-grid four-up">
-              {% for report in mentees_reports_grid['reports'] %}
-                <li>
-                  <a href="{{ url('profiles_view_profile',
-                                    report.user|get_display_name) }}">
-                    <div class="panel dashboard-mentee {{ report.status }}">
-                      <img src="{{ report.user|get_avatar_url(50) }}"
-                           class="profiles-people-avatar"
-                           alt="avatar">
-                      <h6>{{ report.user.get_full_name() }}</h6>
-                    </div>
+    {% if monthly_reports is defined or
+          mentees_reports_list is defined or
+          mentees_reports_grid is defined or
+          all_reports is defined %}
+      <!-- reports block -->
+      <div class="dashboard-box">
+        <div class="row">
+          <div class="seven columns">
+            <h5>Reports</h5>
+          </div>
+          <div class="five columns">
+            <dl class="sub-nav dashboard-filter">
+              <dt>Filter:</dt>
+              {% if monthly_reports is defined %}
+                <dd class="active">
+                  <a id="dashboard-reports-mine-button" href="javascript:void(0)">
+                    Mine
                   </a>
-                </li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            <div class="row">
-              <div class="twelve columns no-bugs">
-                <p>No Reports found!</p>
-              </div>
-            </div>
-          {% endif %}
+                </dd>
+              {% endif %}
+              {% if mentees_reports_grid is defined %}
+                <dd {% if monthly_reports is not defined %} class="active" {% endif %}>
+                  <a id="dashboard-reports-mentees-grid-button" href="javascript:void(0)">
+                    My mentees grid
+                  </a>
+                </dd>
+              {% endif %}
+              {% if mentees_reports_list is defined %}
+                <dd>
+                  <a id="dashboard-reports-mentees-list-button" href="javascript:void(0)">
+                    My mentees list
+                  </a>
+                </dd>
+              {% endif %}
+              {% if all_reports is defined %}
+                <dd {% if monthly_reports is not defined and
+                          mentees_reports_grid is not defined %}
+                    class="active"
+                    {% endif %}>
+                  <a id="dashboard-reports-all-button" href="javascript:void(0)">
+                    All
+                  </a>
+                </dd>
+              {% endif %}
+            </dl>
+          </div>
         </div>
-        <!-- end mentees grid block -->
 
-        <!-- all reports block -->
-        <div id="dashboard-reports-all-block" class="hidden">
-          {% if all_reports %}
-            <table class="dashboard-table">
-              <thead>
-                <tr>
-                  <th class="dashboard-clickable type-string">Fullname</th>
-                  <th class="dashboard-clickable type-int">Year</th>
-                  <th class="dashboard-clickable type-string">Month</th>
-                  <th class="dashboard-clickable type-string">Date filled</th>
-                  <th class="dashboard-clickable type-string">Empty</th>
-                  <th class="dashboard-clickable type-string">Overdue</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for report in all_reports %}
-                  <tr>
-                    <td>
-                      <a href="{{ url('profiles_view_profile',
-                                      report.user|get_display_name) }}">
-                        {{ report.user.get_full_name() }}
-                      </a>
-                    </td>
-                    <td>{{ report.month.strftime("%Y") }}</td>
-                    <td>
-                      <a href="{{ report|get_report_view_url }}">
-                        {{ report.month.strftime("%B") }}
-                      </a>
-                    </td>
-                    <td>{{ report.updated_on|format_datetime }}</td>
-                    <td>{{ report.empty }}</td>
-                    <td>{{ report.overdue }}</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          {% else %}
-            <div class="row">
-              <div class="twelve columns no-bugs">
-                <p>No Reports found!</p>
-              </div>
+        <div class="row">
+          <!-- my block -->
+          {% if monthly_reports is defined %}
+            <div id="dashboard-reports-my-block">
+              {% include "monthly_reports.html" %}
             </div>
           {% endif %}
+          <!-- end my block -->
+
+          <!-- mentees list block -->
+          {% if mentees_reports_list is defined %}
+            <div id="dashboard-reports-mentees-list-block" class="hidden">
+              {% if mentees_reports_list %}
+                <table class="dashboard-table">
+                  <thead>
+                    <tr>
+                      <th>Fullname</th>
+                      <th>Year</th>
+                      <th>Month</th>
+                      <th>Date filled</th>
+                      <th>Empty</th>
+                      <th>Overdue</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for report in mentees_reports_list %}
+                      <tr>
+                        <td>
+                          <a href="{{ url('profiles_view_profile',
+                                          report.user|get_display_name) }}">
+                            {{ report.user.get_full_name() }}
+                          </a>
+                        </td>
+                        <td>{{ report.month.strftime("%Y") }}</td>
+                        <td>
+                          <a href="{{ report|get_report_view_url }}">
+                            {{ report.month.strftime("%B") }}
+                          </a>
+                        </td>
+                        <td>{{ report.updated_on|format_datetime }}</td>
+                        <td>{{ report.empty }}</td>
+                        <td>{{ report.overdue }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              {% else %}
+                <div class="row">
+                  <div class="twelve columns no-bugs">
+                    <p>No Reports found!</p>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+          <!-- end mentees list block -->
+
+          <!-- mentes grid block -->
+          {% if mentees_reports_grid is defined %}
+            <div id="dashboard-reports-mentees-grid-block"
+                 {% if monthly_reports is defined %} class="hidden" {% endif %}>
+              <h5>for {{ mentees_reports_grid['month'] }}</h5>
+              {% if mentees_reports_grid['reports']|length > 0 %}
+                <ul class="block-grid four-up">
+                  {% for report in mentees_reports_grid['reports'] %}
+                    <li>
+                      <a href="{{ url('profiles_view_profile',
+                                        report.user|get_display_name) }}">
+                        <div class="panel dashboard-mentee {{ report.status }}">
+                          <img src="{{ report.user|get_avatar_url(50) }}"
+                               class="profiles-people-avatar"
+                               alt="avatar">
+                          <h6>{{ report.user.get_full_name() }}</h6>
+                        </div>
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <div class="row">
+                  <div class="twelve columns no-bugs">
+                    <p>No Reports found!</p>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+          <!-- end mentees grid block -->
+
+          <!-- all reports block -->
+          {% if all_reports is defined %}
+            <div id="dashboard-reports-all-block"
+                 {% if monthly_reports is defined or
+                       mentees_reports_grid is defined %}
+                     class="hidden"
+                 {% endif %}>
+              {% if all_reports %}
+                <table class="dashboard-table">
+                  <thead>
+                    <tr>
+                      <th>Fullname</th>
+                      <th>Year</th>
+                      <th>Month</th>
+                      <th>Date filled</th>
+                      <th>Empty</th>
+                      <th>Overdue</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for report in all_reports %}
+                      <tr>
+                        <td>
+                          <a href="{{ url('profiles_view_profile',
+                                          report.user|get_display_name) }}">
+                            {{ report.user.get_full_name() }}
+                          </a>
+                        </td>
+                        <td>{{ report.month.strftime("%Y") }}</td>
+                        <td>
+                          <a href="{{ report|get_report_view_url }}">
+                            {{ report.month.strftime("%B") }}
+                          </a>
+                        </td>
+                        <td>{{ report.updated_on|format_datetime }}</td>
+                        <td>{{ report.empty }}</td>
+                        <td>{{ report.overdue }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              {% else %}
+                <div class="row">
+                  <div class="twelve columns no-bugs">
+                    <p>No Reports found!</p>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+          <!-- end all reports block -->
         </div>
-        <!-- end all reports block -->
       </div>
-    </div>
+    {% endif %}
     <!-- end reports block -->
 
 
@@ -193,12 +215,12 @@
           <dd class="active">
             <a id="dashboard-br-mine-button" href="javascript:void(0)">Mine</a>
           </dd>
-          {% if mentees_budget_requests != None %}
+          {% if mentees_budget_requests is defined %}
             <dd>
               <a id="dashboard-br-mentees-button" href="javascript:void(0)">My mentees</a>
             </dd>
           {% endif %}
-          {% if all_budget_requests != None %}
+          {% if all_budget_requests is defined %}
             <dd>
               <a id="dashboard-br-all-button" href="javascript:void(0)">All</a>
             </dd>
@@ -207,6 +229,7 @@
       </div>
     </div>
     <div class="row">
+
       <div id="dashboard-br-my-block">
         {% if my_budget_requests %}
           <table class="dashboard-table">
@@ -251,98 +274,101 @@
         {% endif %}
       </div> <!-- end my_budget_requests -->
 
-      <div id="dashboard-br-mentees-block" class="hidden">
-        {% if mentees_budget_requests %}
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th class="dashboard-clickable type-int">ID</th>
-                <th class="dashboard-clickable type-int">Creator</th>
-                <th>Summary</th>
-                <th class="dashboard-clickable type-string">Whiteboard</th>
-                <th class="dashboard-clickable type-string">Status</th>
-                <th class="dashboard-clickable type-string">Last updated</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for bug in mentees_budget_requests %}
-                <tr class='my-budget-request'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>{{ bug.summary }}</td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+      {% if mentees_budget_requests is defined %}
+        <div id="dashboard-br-mentees-block" class="hidden">
+          {% if mentees_budget_requests %}
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th class="dashboard-clickable type-int">ID</th>
+                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th>Summary</th>
+                  <th class="dashboard-clickable type-string">Whiteboard</th>
+                  <th class="dashboard-clickable type-string">Status</th>
+                  <th class="dashboard-clickable type-string">Last updated</th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% else %}
-          <div class="row">
-            <div class="twelve columns no-bugs">
-              <p>No Bugs found!</p>
+              </thead>
+              <tbody>
+                {% for bug in mentees_budget_requests %}
+                  <tr class='my-budget-request'>
+                    <td>
+                      <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                        {{ bug.bug_id }}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      bug.creator|get_display_name) }}">
+                        {{ bug.creator|get_display_name }}
+                      </a>
+                    </td>
+                    <td>{{ bug.summary }}</td>
+                    <td>{{ bug.whiteboard }}</td>
+                    <td>{{ bug.status }}</td>
+                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="row">
+              <div class="twelve columns no-bugs">
+                <p>No Bugs found!</p>
+              </div>
             </div>
-          </div>
-        {% endif %}
-      </div> <!-- end mentees_budget_requests -->
+          {% endif %}
+        </div> <!-- end mentees_budget_requests -->
+      {% endif %}
 
-
-      <div id="dashboard-br-all-block" class="hidden">
-        {% if all_budget_requests %}
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th class="dashboard-clickable type-int">ID</th>
-                <th class="dashboard-clickable type-int">Creator</th>
-                <th>Summary</th>
-                <th class="dashboard-clickable type-string">Whiteboard</th>
-                <th class="dashboard-clickable type-string">Status</th>
-                <th class="dashboard-clickable type-string">Last updated</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for bug in all_budget_requests %}
-                <tr class='my-budget-request'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>{{ bug.summary }}</td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+      {% if all_budget_requests is defined %}
+        <div id="dashboard-br-all-block" class="hidden">
+          {% if all_budget_requests %}
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th class="dashboard-clickable type-int">ID</th>
+                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th>Summary</th>
+                  <th class="dashboard-clickable type-string">Whiteboard</th>
+                  <th class="dashboard-clickable type-string">Status</th>
+                  <th class="dashboard-clickable type-string">Last updated</th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% else %}
-          <div class="row">
-            <div class="twelve columns no-bugs">
-              <p>No Bugs found!</p>
+              </thead>
+              <tbody>
+                {% for bug in all_budget_requests %}
+                  <tr class='my-budget-request'>
+                    <td>
+                      <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                        {{ bug.bug_id }}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      bug.creator|get_display_name) }}">
+                        {{ bug.creator|get_display_name }}
+                      </a>
+                    </td>
+                    <td>{{ bug.summary }}</td>
+                    <td>{{ bug.whiteboard }}</td>
+                    <td>{{ bug.status }}</td>
+                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="row">
+              <div class="twelve columns no-bugs">
+                <p>No Bugs found!</p>
+              </div>
             </div>
+          {% endif %}
+          <div class="align-right">
+            <a href="https://bugzilla.mozilla.org/buglist.cgi?list_id=2655390;resolution=---;classification=Other;query_format=advanced;component=Budget%20Requests;product=Mozilla%20Reps"
+               class="small white button nice radius" target="_blank">See all bugs</a>
           </div>
-        {% endif %}
-        <div class="align-right">
-          <a href="https://bugzilla.mozilla.org/buglist.cgi?list_id=2655390;resolution=---;classification=Other;query_format=advanced;component=Budget%20Requests;product=Mozilla%20Reps"
-             class="small white button nice radius" target="_blank">See all bugs</a>
-        </div>
-      </div> <!-- end all_budget_requests -->
+        </div> <!-- end all_budget_requests -->
+      {% endif %}
     </div>
 
     <!-- New Budget Request -->
@@ -370,12 +396,12 @@
           <dd class="active">
             <a id="dashboard-sr-mine-button" href="javascript:void(0)">Mine</a>
           </dd>
-          {% if mentees_swag_requests != None %}
+          {% if mentees_swag_requests is defined %}
             <dd>
               <a id="dashboard-sr-mentees-button" href="javascript:void(0)">My mentees</a>
             </dd>
           {% endif %}
-          {% if all_swag_requests != None %}
+          {% if all_swag_requests is defined %}
             <dd>
               <a id="dashboard-sr-all-button" href="javascript:void(0)">All</a>
             </dd>
@@ -384,6 +410,7 @@
       </div>
     </div>
     <div class="row">
+
       <div id="dashboard-sr-my-block">
         {% if my_swag_requests %}
           <table class="dashboard-table">
@@ -428,98 +455,101 @@
         {% endif %}
       </div> <!-- end my_swag_requests -->
 
-      <div id="dashboard-sr-mentees-block" class="hidden">
-        {% if mentees_swag_requests %}
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th class="dashboard-clickable type-int">ID</th>
-                <th class="dashboard-clickable type-int">Creator</th>
-                <th>Summary</th>
-                <th class="dashboard-clickable type-string">Whiteboard</th>
-                <th class="dashboard-clickable type-string">Status</th>
-                <th class="dashboard-clickable type-string">Last updated</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for bug in mentees_swag_requests %}
-                <tr class='my-swag-request'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>{{ bug.summary }}</td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+      {% if mentees_swag_requests is defined %}
+        <div id="dashboard-sr-mentees-block" class="hidden">
+          {% if mentees_swag_requests %}
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th class="dashboard-clickable type-int">ID</th>
+                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th>Summary</th>
+                  <th class="dashboard-clickable type-string">Whiteboard</th>
+                  <th class="dashboard-clickable type-string">Status</th>
+                  <th class="dashboard-clickable type-string">Last updated</th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% else %}
-          <div class="row">
-            <div class="twelve columns no-bugs">
-              <p>No Bugs found!</p>
+              </thead>
+              <tbody>
+                {% for bug in mentees_swag_requests %}
+                  <tr class='my-swag-request'>
+                    <td>
+                      <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                        {{ bug.bug_id }}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      bug.creator|get_display_name) }}">
+                        {{ bug.creator|get_display_name }}
+                      </a>
+                    </td>
+                    <td>{{ bug.summary }}</td>
+                    <td>{{ bug.whiteboard }}</td>
+                    <td>{{ bug.status }}</td>
+                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="row">
+              <div class="twelve columns no-bugs">
+                <p>No Bugs found!</p>
+              </div>
             </div>
-          </div>
-        {% endif %}
-      </div> <!-- end mentees_swag_requests -->
+          {% endif %}
+        </div> <!-- end mentees_swag_requests -->
+      {% endif %}
 
-
-      <div id="dashboard-sr-all-block" class="hidden">
-        {% if all_swag_requests %}
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th class="dashboard-clickable type-int">ID</th>
-                <th class="dashboard-clickable type-int">Creator</th>
-                <th>Summary</th>
-                <th class="dashboard-clickable type-string">Whiteboard</th>
-                <th class="dashboard-clickable type-string">Status</th>
-                <th class="dashboard-clickable type-string">Last updated</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for bug in all_swag_requests %}
-                <tr class='my-swag-request'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>{{ bug.summary }}</td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+      {% if all_swag_requests is defined %}
+        <div id="dashboard-sr-all-block" class="hidden">
+          {% if all_swag_requests %}
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th class="dashboard-clickable type-int">ID</th>
+                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th>Summary</th>
+                  <th class="dashboard-clickable type-string">Whiteboard</th>
+                  <th class="dashboard-clickable type-string">Status</th>
+                  <th class="dashboard-clickable type-string">Last updated</th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% else %}
-          <div class="row">
-            <div class="twelve columns no-bugs">
-              <p>No Bugs found!</p>
+              </thead>
+              <tbody>
+                {% for bug in all_swag_requests %}
+                  <tr class='my-swag-request'>
+                    <td>
+                      <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                        {{ bug.bug_id }}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      bug.creator|get_display_name) }}">
+                        {{ bug.creator|get_display_name }}
+                      </a>
+                    </td>
+                    <td>{{ bug.summary }}</td>
+                    <td>{{ bug.whiteboard }}</td>
+                    <td>{{ bug.status }}</td>
+                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="row">
+              <div class="twelve columns no-bugs">
+                <p>No Bugs found!</p>
+              </div>
             </div>
+          {% endif %}
+          <div class="align-right">
+            <a href="https://bugzilla.mozilla.org/buglist.cgi?list_id=2655390;resolution=---;classification=Other;query_format=advanced;component=Swag%20Requests;product=Mozilla%20Reps"
+               class="small white button nice radius" target="_blank">See all bugs</a>
           </div>
-        {% endif %}
-        <div class="align-right">
-          <a href="https://bugzilla.mozilla.org/buglist.cgi?list_id=2655390;resolution=---;classification=Other;query_format=advanced;component=Swag%20Requests;product=Mozilla%20Reps"
-             class="small white button nice radius" target="_blank">See all bugs</a>
-        </div>
-      </div> <!-- end all_swag_requests -->
+        </div> <!-- end all_swag_requests -->
+      {% endif %}
     </div>
 
     <!-- New Swag Request -->
@@ -536,7 +566,7 @@
 
 
     <!-- community it requests block -->
-    {% if my_cit_requests != None %}
+    {% if my_cit_requests is defined %}
       <div class="row dashboard-box">
         <div class="seven columns">
           <h5>Community IT Requests</h5>
@@ -591,7 +621,7 @@
     <!-- end community it requests block -->
 
     <!-- mentorship requests block -->
-    {% if my_mentorship_requests != None %}
+    {% if my_mentorship_requests is defined %}
       <div class="row dashboard-box">
         <div class="seven columns">
           <h5>Mentorship</h5>
@@ -640,13 +670,13 @@
             </div>
           </div>
         {% endif %}
-      </div> <!-- end my_mentorship_requests -->
-    </div>
+        </div> <!-- end my_mentorship_requests -->
+      </div>
     {% endif %}
     <!-- end mentorship requests block -->
 
     <!-- planning requests block -->
-    {% if my_mentorship_requests != None %}
+    {% if my_planning_requests is defined %}
       <div class="row dashboard-box">
         <div class="seven columns">
           <h5>Planning</h5>
@@ -701,95 +731,101 @@
     <!-- end planning requests block -->
 
     <!-- Admin block -->
-    <div class="row dashboard-box">
-      <div class="seven columns">
-        <h5>Administration</h5>
+    {% if is_admin is defined %}
+      <div class="row dashboard-box">
+        <div class="seven columns">
+          <h5>Administration</h5>
+        </div>
       </div>
-    </div>
-    <dl class="tabs">
-      {% if reps_without_mentors %}
-        <dd><a href="#nomentors" class="active">No mentors</a></dd>
-      {% endif %}
-      {% if reps_without_profile %}
-        <dd><a href="#emptyprofiles">Empty profiles</a></dd>
-      {% endif %}
-    </dl>
-    <ul class="tabs-content">
-      {% if reps_without_mentors %}
-        <li id="nomentorsTab" class="active">Reps without mentors set are displayed here:
-          <div class="row">
-            <div>
-              <table class="dashboard-table">
-                <thead>
-                  <tr>
-                    <th class="dashboard-clickable type-string">Username</th>
-                    <th class="dashboard-clickable type-string">Full Name</th>
-                    <th class="dashboard-clickable type-string">Account created on</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for rep in reps_without_mentors %}
+      <dl class="tabs">
+        {% if reps_without_mentors is defined %}
+          <dd><a href="#nomentors" class="active">No mentors</a></dd>
+        {% endif %}
+        {% if reps_without_profile is defined %}
+          <dd><a href="#emptyprofiles"
+                 {% if reps_without_mentors is not defined %} class="active" {% endif %}>
+              Empty profiles</a></dd>
+        {% endif %}
+      </dl>
+      <ul class="tabs-content">
+        {% if reps_without_mentors is defined %}
+          <li id="nomentorsTab" class="active">Reps without mentors set are displayed here:
+            <div class="row">
+              <div>
+                <table class="dashboard-table">
+                  <thead>
                     <tr>
-                      <td>
-                        <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                          {{ rep|get_display_name }}
-                        </a>
-                      </td>
-                      <td>
-                        <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                          {{ rep.get_full_name() }}
-                        </a>
-                      </td>
-                      <td>
-                        {{ rep.date_joined|format_datetime }}
-                      </td>
+                      <th class="dashboard-clickable type-string">Username</th>
+                      <th class="dashboard-clickable type-string">Full Name</th>
+                      <th class="dashboard-clickable type-string">Account created on</th>
                     </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {% for rep in reps_without_mentors %}
+                      <tr>
+                        <td>
+                          <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                            {{ rep|get_display_name }}
+                          </a>
+                        </td>
+                        <td>
+                          <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                            {{ rep.get_full_name() }}
+                          </a>
+                        </td>
+                        <td>
+                          {{ rep.date_joined|format_datetime }}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        </li>
-      {% endif %}
-      {% if reps_without_profile %}
-        <li id="emptyprofilesTab">Reps that are invited but not filled their profiles are displayed here:
-          <div class="row">
-            <div>
-              <table class="dashboard-table">
-                <thead>
-                  <tr>
-                    <th class="dashboard-clickable type-string">Bugzilla Mail</th>
-                    <th class="dashboard-clickable type-string">Invited by</th>
-                    <th class="dashboard-clickable type-string">Date Invited</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for rep in reps_without_profile %}
+          </li>
+        {% endif %}
+        {% if reps_without_profile is defined %}
+          <li id="emptyprofilesTab"
+              {% if reps_without_mentors is not defined %} class="active" {% endif %}>
+            Reps that are invited but not filled their profiles are displayed here:
+            <div class="row">
+              <div>
+                <table class="dashboard-table">
+                  <thead>
                     <tr>
-                      <td>
-                        <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                          {{ rep.email }}
-                        </a>
-                      </td>
-                      <td>
-                        <a href="{{ url('profiles_view_profile',
-                                        rep.userprofile.added_by|get_display_name) }}">
-                          {{ rep.userprofile.added_by|get_display_name }}
-                        </a>
-                      </td>
-                      <td>
-                        {{ rep.date_joined|format_datetime }}
-                      </td>
-                  </tr>
-                 {% endfor %}
-                </tbody>
-              </table>
+                      <th class="dashboard-clickable type-string">Bugzilla Mail</th>
+                      <th class="dashboard-clickable type-string">Invited by</th>
+                      <th class="dashboard-clickable type-string">Date Invited</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for rep in reps_without_profile %}
+                      <tr>
+                        <td>
+                          <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                            {{ rep.email }}
+                          </a>
+                        </td>
+                        <td>
+                          <a href="{{ url('profiles_view_profile',
+                                          rep.userprofile.added_by|get_display_name) }}">
+                            {{ rep.userprofile.added_by|get_display_name }}
+                          </a>
+                        </td>
+                        <td>
+                          {{ rep.date_joined|format_datetime }}
+                        </td>
+                    </tr>
+                   {% endfor %}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        </li>
-      {% endif %}
-    </ul>
-    <!-- End Admin block -->
+          </li>
+        {% endif %}
+      </ul>
+      <!-- End Admin block -->
+    {% endif %}
   </div>
 </div>
 {% endblock %}
