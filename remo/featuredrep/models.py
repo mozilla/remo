@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+from remo.base.models import UTCDateTimeField
 
 class FeaturedRep(models.Model):
     """Featured Rep model.
@@ -10,8 +11,8 @@ class FeaturedRep(models.Model):
 
     """
     user = models.ForeignKey(User)
-    created_on = models.DateTimeField(auto_now_add=True)
-    updated_on = models.DateTimeField(auto_now=True)
+    created_on = UTCDateTimeField(auto_now_add=True)
+    updated_on = UTCDateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name='reps_featured')
     text = models.TextField(blank=False, null=False)
 

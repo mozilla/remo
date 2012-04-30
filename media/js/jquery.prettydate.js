@@ -32,7 +32,7 @@ $.prettyDate = {
 			params = [ params ];
 		}
 		$.each(params, function(i, n) {
-			source = source.replace(new RegExp("\\{" + i + "\\}", "g"), n);
+			source = source.replace(new RegExp('\\{' + i + '\\}', 'g'), n);
 		});
 		return source;
 	},
@@ -60,7 +60,7 @@ $.prettyDate = {
 	// Takes an ISO time and returns a string representing how
 	// long ago the date represents.
 	format: function(time, isUTC) {
-		var date = $.prettyDate.fromUTC(new Date((time || "").replace(/-/g,"/").replace(/[TZ]/g," ")), isUTC),
+		var date = $.prettyDate.fromUTC(new Date((time || '').replace(/-/g,'/').replace(/[TZ]/g,' ')), isUTC),
 			diff = ($.prettyDate.now().getTime() - date.getTime()) / 1000,
 			day_diff = Math.floor(diff / 86400);
 
@@ -82,14 +82,14 @@ $.prettyDate = {
 };
 
 $.prettyDate.messages = {
-	now: "just now",
-	minute: "1 minute ago",
-	minutes: $.prettyDate.template("{0} minutes ago"),
-	hour: "1 hour ago",
-	hours: $.prettyDate.template("{0} hours ago"),
-	yesterday: "Yesterday",
-	days: $.prettyDate.template("{0} days ago"),
-	weeks: $.prettyDate.template("{0} weeks ago")
+	now: 'just now',
+	minute: '1 minute ago',
+	minutes: $.prettyDate.template('{0} minutes ago'),
+	hour: '1 hour ago',
+	hours: $.prettyDate.template('{0} hours ago'),
+	yesterday: 'Yesterday',
+	days: $.prettyDate.template('{0} days ago'),
+	weeks: $.prettyDate.template('{0} weeks ago')
 };
 
 $.fn.prettyDate = function(options) {
@@ -98,7 +98,7 @@ $.fn.prettyDate = function(options) {
 			return $(this).attr(options.attribute);
 		},
 		interval: 10000,
-		attribute: "title",
+		attribute: 'title',
 		isUTC: false
 	}, options);
 	var elements = this;
