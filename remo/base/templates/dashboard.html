@@ -74,12 +74,12 @@
                 <table class="dashboard-table">
                   <thead>
                     <tr>
-                      <th>Fullname</th>
-                      <th>Year</th>
-                      <th>Month</th>
-                      <th>Date filled</th>
-                      <th>Empty</th>
-                      <th>Overdue</th>
+                      <th class="dashboard-clickable type-string">Fullname</th>
+                      <th class="dashboard-clickable type-int">Year</th>
+                      <th class="dashboard-clickable type-string">Month</th>
+                      <th class="dashboard-clickable type-string">Date filled</th>
+                      <th class="dashboard-clickable type-string">Empty</th>
+                      <th class="dashboard-clickable type-string">Overdue</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -158,12 +158,12 @@
                 <table class="dashboard-table">
                   <thead>
                     <tr>
-                      <th>Fullname</th>
-                      <th>Year</th>
-                      <th>Month</th>
-                      <th>Date filled</th>
-                      <th>Empty</th>
-                      <th>Overdue</th>
+                      <th class="dashboard-clickable type-string">Fullname</th>
+                      <th class="dashboard-clickable type-int">Year</th>
+                      <th class="dashboard-clickable type-string">Month</th>
+                      <th class="dashboard-clickable type-string">Date filled</th>
+                      <th class="dashboard-clickable type-string">Empty</th>
+                      <th class="dashboard-clickable type-string">Overdue</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -181,7 +181,10 @@
                             {{ report.month.strftime("%B") }}
                           </a>
                         </td>
-                        <td>{{ report.updated_on|format_datetime }}</td>
+                        <td title="{{ report.updated_on|format_datetime }}"
+                            data-time="{{ report.updated_on|format_datetime_iso }}">
+                          {{ report.updated_on|format_datetime }}
+                        </td>
                         <td>{{ report.empty }}</td>
                         <td>{{ report.overdue }}</td>
                       </tr>
@@ -260,7 +263,11 @@
                   <td>{{ bug.summary }}</td>
                   <td>{{ bug.whiteboard }}</td>
                   <td>{{ bug.status }}</td>
-                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                    {{ bug.bug_last_change_time|format_datetime }}
+                  </td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -305,7 +312,11 @@
                     <td>{{ bug.summary }}</td>
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
-                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                    <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                      {{ bug.bug_last_change_time|format_datetime }}
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -351,7 +362,11 @@
                     <td>{{ bug.summary }}</td>
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
-                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                    <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                      {{ bug.bug_last_change_time|format_datetime }}
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -441,7 +456,11 @@
                   <td>{{ bug.summary }}</td>
                   <td>{{ bug.whiteboard }}</td>
                   <td>{{ bug.status }}</td>
-                  <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                    {{ bug.bug_last_change_time|format_datetime }}
+                  </td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -486,7 +505,11 @@
                     <td>{{ bug.summary }}</td>
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
-                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                    <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                      {{ bug.bug_last_change_time|format_datetime }}
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -532,7 +555,11 @@
                     <td>{{ bug.summary }}</td>
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
-                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                    <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                      {{ bug.bug_last_change_time|format_datetime }}
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -603,7 +630,11 @@
                     <td>{{ bug.summary }}</td>
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
-                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                    <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                        data-time="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                      {{ bug.bug_last_change_time|format_datetime }}
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -658,7 +689,11 @@
                     <td>{{ bug.summary }}</td>
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
-                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                    <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                      {{ bug.bug_last_change_time|format_datetime }}
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -713,7 +748,11 @@
                     <td>{{ bug.summary }}</td>
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
-                    <td>{{ bug.bug_last_change_time|format_datetime }}</td>
+                    <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                      {{ bug.bug_last_change_time|format_datetime }}
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -773,7 +812,8 @@
                             {{ rep.get_full_name() }}
                           </a>
                         </td>
-                        <td>
+                        <td title="{{ rep.date_joined|format_datetime }}"
+                            data-time="{{ rep.date_joined|format_datetime_iso }}">
                           {{ rep.date_joined|format_datetime }}
                         </td>
                       </tr>
@@ -812,10 +852,11 @@
                             {{ rep.userprofile.added_by|get_display_name }}
                           </a>
                         </td>
-                        <td>
+                        <td title="{{ rep.date_joined|format_datetime }}"
+                            data-time="{{ rep.date_joined|format_datetime_iso }}">
                           {{ rep.date_joined|format_datetime }}
                         </td>
-                    </tr>
+                      </tr>
                    {% endfor %}
                   </tbody>
                 </table>

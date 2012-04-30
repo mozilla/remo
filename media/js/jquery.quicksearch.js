@@ -19,10 +19,10 @@
                                 return;
                         },
                         show: function () {
-                                this.style.display = "";
+                                this.style.display = '';
                         },
                         hide: function () {
-                                this.style.display = "none";
+                                this.style.display = 'none';
                         },
                         prepareQuery: function (val) {
                                 return val.toLowerCase().split(' ');
@@ -87,7 +87,7 @@
 
                 this.stripe = function () {
 
-                        if (typeof options.stripeRows === "object" && options.stripeRows !== null)
+                        if (typeof options.stripeRows === 'object' && options.stripeRows !== null)
                         {
                                 var joined = options.stripeRows.join(' ');
                                 var stripeRows_length = options.stripeRows.length;
@@ -101,13 +101,13 @@
                 };
 
                 this.strip_html = function (input) {
-                        var output = input.replace(new RegExp('<[^<]+\>', 'g'), "");
+                        var output = input.replace(new RegExp('<[^<]+\>', 'g'), '');
                         output = $.trim(output.toLowerCase());
                         return output;
                 };
 
                 this.results = function (bool) {
-                        if (typeof options.noResults === "string" && options.noResults !== "") {
+                        if (typeof options.noResults === 'string' && options.noResults !== '') {
                                 if (bool) {
                                         $(options.noResults).hide();
                                 } else {
@@ -118,7 +118,7 @@
                 };
 
                 this.loader = function (bool) {
-                        if (typeof options.loader === "string" && options.loader !== "") {
+                        if (typeof options.loader === 'string' && options.loader !== '') {
                                  (bool) ? $(options.loader).show() : $(options.loader).hide();
                         }
                         return this;
@@ -128,11 +128,11 @@
 
                         jq_results = $(target);
 
-                        if (typeof options.noResults === "string" && options.noResults !== "") {
+                        if (typeof options.noResults === 'string' && options.noResults !== '') {
                                 jq_results = jq_results.not(options.noResults);
                         }
 
-                        var t = (typeof options.selector === "string") ? jq_results.find(options.selector) : $(target).not(options.noResults);
+                        var t = (typeof options.selector === 'string') ? jq_results.find(options.selector) : $(target).not(options.noResults);
                         cache = t.map(function () {
                                 return e.strip_html(this.innerHTML);
                         });
@@ -142,10 +142,10 @@
                         });
 
                         /*
-                         * Modified fix for sync-ing "val".
+                         * Modified fix for sync-ing 'val'.
                          * Original fix https://github.com/michaellwest/quicksearch/commit/4ace4008d079298a01f97f885ba8fa956a9703d1
                          * */
-                        val = val || this.val() || "";
+                        val = val || this.val() || '';
 
                         return this.go();
                 };
