@@ -13,8 +13,8 @@ def convertMetersToLatLon(mx, my):
     "Converts XY point from Spherical Mercator EPSG:900913 to lat/lon in WGS84 Datum"
     originShift = 2 * math.pi * 6378137 / 2.0
 
-    lon = (mx / originShift) * 180.0
-    lat = (my / originShift) * 180.0
+    lat = (mx / originShift) * 180.0
+    lon = (my / originShift) * 180.0
 
     lat = (180 / math.pi *
            (2 * math.atan(math.exp(lat * math.pi / 180.0)) -
@@ -30,7 +30,7 @@ def convertLatLonToMeters(lat, lon):
     my = math.log( math.tan((90 + lat) * math.pi / 360.0 )) / (math.pi / 180.0)
 
     my = my * originShift / 180.0
-    return mx, my
+    return my, mx
 
 
 class Migration(SchemaMigration):
