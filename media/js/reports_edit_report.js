@@ -2,14 +2,14 @@ $(document).ready(function() {
     $('.eventblock').formset({
         formCssClass: 'dynamic-event-form',
         prefix: 'reportevent_set',
-        addBtnObj: $("#reports-add-event-button"),
+        addBtnObj: $('#reports-add-event-button'),
         addDeleteButton: null
     });
 
     $('.linkblock').formset({
         formCssClass: 'dynamic-link-form',
         prefix: 'reportlink_set',
-        addBtnObj: $("#reports-add-link-button"),
+        addBtnObj: $('#reports-add-link-button'),
         addDeleteButton: null
     });
 

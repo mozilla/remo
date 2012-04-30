@@ -18,7 +18,6 @@ function initialize_map() {
 
     // When user clicks on map and a search filter exists, remove filter.
     map.on('click', function(e) {
-        console.log('foo');
         var val = $('input#searchfield').val();
         if (val != '') {
             search_string = '';
@@ -34,8 +33,8 @@ function initialize_map() {
 function add_pointers() {
     // Add user pointers on map.
     $('.profiles-li-item').each(function(index, item) {
-        lat = $(item).data('lat')
-        lon = $(item).data('lon')
+        lat = $(item).data('lat');
+        lon = $(item).data('lon');
         var markerLocation = new L.LatLng(lat, lon);
         var marker = new L.Marker(markerLocation);
 
@@ -84,8 +83,8 @@ function redraw_grid() {
 
 function calculate_number_of_reps() {
     // Count and display the number of visible reps.
-    number_of_reps = $(".profiles-li-item[style!='display: none;']").length
-    $("#profiles-number-of-reps").html(number_of_reps);
+    number_of_reps = $('.profiles-li-item[style!="display: none;"]').length
+    $('#profiles-number-of-reps').html(number_of_reps);
 }
 
 $(document).ready(function () {

@@ -221,7 +221,11 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
               <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
                 {{ comment.user.get_full_name() }}
               </a>
-              <span class="grayed"> at {{ comment.created_on }}</span><br>
+              <span class="grayed"
+                    data-time="{{ comment.created_on|format_datetime_iso }}"
+                    title="{{ comment.created_on }}">
+                at {{ comment.created_on }}
+              </span><br>
               {{ comment.comment }}
             </div>
           {% endfor %}
@@ -246,4 +250,8 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
     </div>
   </div>
 {% endif %}
+{% endblock %}
+
+{% block bottomextra %}
+  {{ js('profiles_view_report') }}
 {% endblock %}

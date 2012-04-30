@@ -102,7 +102,7 @@ jQuery(document).ready(function ($) {
     /* DISABLED BUTTONS ------------- */
     /* Gives elements with a class of 'disabled' a return: false; */
     // auto fade out success messages
-    $(".success").delay(5000).fadeOut('slow');
+    $('.success').delay(5000).fadeOut('slow');
 
 });
 

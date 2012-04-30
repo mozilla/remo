@@ -35,6 +35,12 @@ def format_datetime(obj, type=None):
     return obj.strftime("%Y-%m-%d %H:%M")
 
 
+@register.filter
+def format_datetime_iso(obj):
+    """Return datetime obj ISO formatted."""
+    return obj.isoformat()
+
+
 @register.function
 def get_static_map_url(width, height, lon, lat, zoom=4):
     """Return static map url."""
