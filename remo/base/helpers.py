@@ -4,6 +4,7 @@ import binascii
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.markup.templatetags import markup
+from django.core.urlresolvers import reverse
 from jingo import register
 from jinja2 import Markup
 
@@ -45,6 +46,15 @@ def get_static_map_url(width, height, lon, lat, zoom=4):
     return URL % {'api_key': api_key, 'width': width, 'height': height,
                   'marker_id': marker_id, 'lat': lat, 'lon': lon,
                   'zoom': zoom}
+
+
+@register.function
+def get_next_url(session):
+    """Return next_url stored in session or Dashboard."""
+    if 'next_url' in session:
+        return session.pop('next_url')
+
+    return reverse('dashboard')
 
 
 def pad_string(str, block_size):

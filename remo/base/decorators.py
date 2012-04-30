@@ -1,6 +1,7 @@
 from functools import wraps
 
 from django.contrib import messages
+from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 
 
@@ -57,6 +58,7 @@ def permission_check(permissions=[], display_name_field=None):
                     return redirect('main')
             else:
                 messages.warning(request, 'Please login.')
+                request.session['next_url'] = request.get_full_path()
                 return redirect('main')
 
         return wrapper
