@@ -21,6 +21,9 @@ MINIFY_BUNDLES = {
             )
     },
     'js': {
+        'less': (
+            'js/less-1.3.0.min.js',
+            ),
         'common': (
             'js/jquery.min.js',
             'js/modernizr.foundation.js',
