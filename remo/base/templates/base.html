@@ -72,7 +72,7 @@
                     <form method="POST" action="{{ url('browserid_verify') }}">
                       {{ csrf() }} {{ browserid_form }}
                       <input type="hidden" name="next"
-                             value="{{ next_url|default(request.get_full_path()) }}" />
+                             value="{{ get_next_url(request.session) }}" />
                     </form>
                   {% else %}
                     <a href="{{ url('profiles_view_my_profile') }}">

@@ -25,8 +25,7 @@ from remo.reports.utils import get_reports_for_year
 def main(request):
     """Main page of the website."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
-    return render(request, 'main.html', {'featuredrep': featured_rep,
-                                         'next_url': reverse('dashboard')})
+    return render(request, 'main.html', {'featuredrep': featured_rep})
 
 
 @never_cache
@@ -56,15 +55,17 @@ def dashboard(request):
     my_q_assigned = (my_q | Q(assigned_to=user))
     my_mentees = User.objects.filter(userprofile__mentor=user)
 
-    my_budget_requests = budget_requests.filter(my_q)
-    my_swag_requests = swag_requests.filter(my_q)
+    args['my_budget_requests'] = budget_requests.filter(my_q)
+    args['my_swag_requests'] = swag_requests.filter(my_q)
 
     if user.groups.filter(name='Mentor').exists():
         args['mentees_budget_requests'] = (budget_requests.
                                            filter(creator__in=my_mentees))
-        args['mentees_swag_requests'] = swag_requests.filter(creator__in=my_mentees)
+        args['mentees_swag_requests'] = swag_requests.filter(
+            creator__in=my_mentees)
         my_mentorship_requests = mentorship_requests.filter(my_q)
-        args['my_mentorship_requests'] = my_mentorship_requests.order_by('whiteboard')
+        my_mentorship_requests = my_mentorship_requests.order_by('whiteboard')
+        args['my_mentorship_requests'] = my_mentorship_requests
         args['mentees_reports_list'] = (Report.objects.filter(mentor=user).
                                         order_by('-created_on')[:20])
         args['mentees_reports_grid'] = get_mentee_reports_for_month(user)
