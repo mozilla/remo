@@ -230,6 +230,10 @@ li.last {
     border-right:none;
 }
 
+.active-nav {
+    font-weight: bold;
+}
+
 /* -----------------------------------------
    Main Page Styles
 ----------------------------------------- */

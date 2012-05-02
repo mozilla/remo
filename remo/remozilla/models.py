@@ -5,6 +5,7 @@ from django.dispatch import receiver
 
 from remo.base.models import UTCDateTimeField
 
+
 class Bug(models.Model):
     """Bug model definition."""
     created_on = UTCDateTimeField(auto_now_add=True)
