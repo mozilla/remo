@@ -239,7 +239,7 @@
             <thead>
               <tr>
                 <th class="dashboard-clickable type-int">ID</th>
-                <th class="dashboard-clickable type-int">Creator</th>
+                <th class="dashboard-clickable type-string">Creator</th>
                 <th>Summary</th>
                 <th class="dashboard-clickable type-string">Whiteboard</th>
                 <th class="dashboard-clickable type-string">Status</th>
@@ -264,7 +264,7 @@
                   <td>{{ bug.whiteboard }}</td>
                   <td>{{ bug.status }}</td>
                   <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                      data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
                       data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
                     {{ bug.bug_last_change_time|format_datetime }}
                   </td>
@@ -288,7 +288,7 @@
               <thead>
                 <tr>
                   <th class="dashboard-clickable type-int">ID</th>
-                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th class="dashboard-clickable type-string">Creator</th>
                   <th>Summary</th>
                   <th class="dashboard-clickable type-string">Whiteboard</th>
                   <th class="dashboard-clickable type-string">Status</th>
@@ -313,7 +313,7 @@
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
                     <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
                         data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
                       {{ bug.bug_last_change_time|format_datetime }}
                     </td>
@@ -338,7 +338,7 @@
               <thead>
                 <tr>
                   <th class="dashboard-clickable type-int">ID</th>
-                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th class="dashboard-clickable type-string">Creator</th>
                   <th>Summary</th>
                   <th class="dashboard-clickable type-string">Whiteboard</th>
                   <th class="dashboard-clickable type-string">Status</th>
@@ -363,7 +363,7 @@
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
                     <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
                         data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
                       {{ bug.bug_last_change_time|format_datetime }}
                     </td>
@@ -432,7 +432,7 @@
             <thead>
               <tr>
                 <th class="dashboard-clickable type-int">ID</th>
-                <th class="dashboard-clickable type-int">Creator</th>
+                <th class="dashboard-clickable type-string">Creator</th>
                 <th>Summary</th>
                 <th class="dashboard-clickable type-string">Whiteboard</th>
                 <th class="dashboard-clickable type-string">Status</th>
@@ -457,7 +457,7 @@
                   <td>{{ bug.whiteboard }}</td>
                   <td>{{ bug.status }}</td>
                   <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                      data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
                       data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
                     {{ bug.bug_last_change_time|format_datetime }}
                   </td>
@@ -481,7 +481,7 @@
               <thead>
                 <tr>
                   <th class="dashboard-clickable type-int">ID</th>
-                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th class="dashboard-clickable type-string">Creator</th>
                   <th>Summary</th>
                   <th class="dashboard-clickable type-string">Whiteboard</th>
                   <th class="dashboard-clickable type-string">Status</th>
@@ -506,7 +506,7 @@
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
                     <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
                         data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
                       {{ bug.bug_last_change_time|format_datetime }}
                     </td>
@@ -531,7 +531,7 @@
               <thead>
                 <tr>
                   <th class="dashboard-clickable type-int">ID</th>
-                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th class="dashboard-clickable type-string">Creator</th>
                   <th>Summary</th>
                   <th class="dashboard-clickable type-string">Whiteboard</th>
                   <th class="dashboard-clickable type-string">Status</th>
@@ -556,7 +556,7 @@
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
                     <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
                         data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
                       {{ bug.bug_last_change_time|format_datetime }}
                     </td>
@@ -606,7 +606,7 @@
               <thead>
                 <tr>
                   <th class="dashboard-clickable type-int">ID</th>
-                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th class="dashboard-clickable type-string">Creator</th>
                   <th>Summary</th>
                   <th class="dashboard-clickable type-string">Whiteboard</th>
                   <th class="dashboard-clickable type-string">Status</th>
@@ -632,7 +632,7 @@
                     <td>{{ bug.status }}</td>
                     <td title="{{ bug.bug_last_change_time|format_datetime }}"
                         data-time="{{ bug.bug_last_change_time|format_datetime_iso }}"
-                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}">
                       {{ bug.bug_last_change_time|format_datetime }}
                     </td>
                   </tr>
@@ -665,7 +665,7 @@
               <thead>
                 <tr>
                   <th class="dashboard-clickable type-int">ID</th>
-                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th class="dashboard-clickable type-string">Creator</th>
                   <th>Summary</th>
                   <th class="dashboard-clickable type-string">Whiteboard</th>
                   <th class="dashboard-clickable type-string">Status</th>
@@ -690,7 +690,7 @@
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
                     <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
                         data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
                       {{ bug.bug_last_change_time|format_datetime }}
                     </td>
@@ -724,7 +724,7 @@
               <thead>
                 <tr>
                   <th class="dashboard-clickable type-int">ID</th>
-                  <th class="dashboard-clickable type-int">Creator</th>
+                  <th class="dashboard-clickable type-string">Creator</th>
                   <th>Summary</th>
                   <th class="dashboard-clickable type-string">Whiteboard</th>
                   <th class="dashboard-clickable type-string">Status</th>
@@ -749,7 +749,7 @@
                     <td>{{ bug.whiteboard }}</td>
                     <td>{{ bug.status }}</td>
                     <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                        data-order-by="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                        data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
                         data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
                       {{ bug.bug_last_change_time|format_datetime }}
                     </td>

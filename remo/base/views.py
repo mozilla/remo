@@ -35,15 +35,20 @@ def dashboard(request):
     user = request.user
     args = {}
     budget_requests = Bug.objects.filter(component='Budget Requests')
-    budget_requests = budget_requests.exclude(status='RESOLVED')
+    budget_requests = budget_requests.exclude(Q(status='RESOLVED')|
+                                              Q(status='VERIFIED'))
     swag_requests = Bug.objects.filter(component='Swag Requests')
-    swag_requests = swag_requests.exclude(status='RESOLVED')
+    swag_requests = swag_requests.exclude(Q(status='RESOLVED')|
+                                          Q(status='VERIFIED'))
     mentorship_requests = Bug.objects.filter(component='Mentorship')
-    mentorship_requests = mentorship_requests.exclude(status='RESOLVED')
+    mentorship_requests = mentorship_requests.exclude(Q(status='RESOLVED')|
+                                                      Q(status='VERIFIED'))
     cit_requests = Bug.objects.filter(component='Community IT Requests')
-    cit_requests = cit_requests.exclude(status='RESOLVED')
+    cit_requests = cit_requests.exclude(Q(status='RESOLVED')|
+                                        Q(status='VERIFIED'))
     planning_requests = Bug.objects.filter(component='Planning')
-    planning_requests = planning_requests.exclude(status='RESOLVED')
+    planning_requests = planning_requests.exclude(Q(status='RESOLVED')|
+                                                  Q(status='VERIFIED'))
 
     today = date.today()
     if user.groups.filter(name='Rep').exists():

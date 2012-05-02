@@ -1,5 +1,6 @@
 import base64
 import binascii
+import time
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -39,6 +40,12 @@ def format_datetime(obj, type=None):
 def format_datetime_iso(obj):
     """Return datetime obj ISO formatted."""
     return obj.isoformat()
+
+
+@register.filter
+def format_datetime_unix(obj):
+    """Return unix representation of obj."""
+    return time.mktime(obj.timetuple())
 
 
 @register.function
