@@ -11,7 +11,7 @@ from remo.base.utils import go_back_n_months
 class Command(BaseCommand):
     """Command to send reminder to all Reps to fill their reports."""
     help = 'Send email reminder to all Reps to fill their reports.'
-    SUBJECT = '[Info] You can now file your Mozilla Reps monthly report'
+    SUBJECT = '[Info] You can now file your Mozilla Reps monthly report for %s'
     EMAIL_TEMPLATE = 'emails/first_email_notification.txt'
 
     def handle(self, *args, **options):
@@ -23,6 +23,8 @@ class Command(BaseCommand):
         reps = rep_group.user_set.exclude(
             userprofile__registration_complete=False)
         date = go_back_n_months(datetime.datetime.today(), 1)
-        data = {'year': date.year, 'month': number2month(date.month)}
+        month = number2month(date.month)
+        subject = self.SUBJECT % month
+        data = {'year': date.year, 'month': month}
 
-        send_remo_mail(reps, self.SUBJECT, self.EMAIL_TEMPLATE, data)
+        send_remo_mail(reps, subject, self.EMAIL_TEMPLATE, data)

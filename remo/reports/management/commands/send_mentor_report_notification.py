@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     """
     help = 'Send email reminder to Mentors about Reps without reports.'
-    SUBJECT = '[Report] Your mentees with no reports for previous month'
+    SUBJECT = '[Report] Your mentees with no reports for %s'
     EMAIL_TEMPLATE = 'emails/mentor_notification.txt'
 
     def handle(self, *args, **options):
@@ -32,8 +32,9 @@ class Command(BaseCommand):
 
         mentors = [rep.userprofile.mentor for rep in reps_without_report]
 
-        data = {'year': date.year, 'month': number2month(date.month),
+        month = number2month(date.month)
+        subject = self.SUBJECT % month
+        data = {'year': date.year, 'month': month,
                 'reps_without_report': reps_without_report}
 
-        send_remo_mail(mentors, self.SUBJECT,
-                       self.EMAIL_TEMPLATE, data)
+        send_remo_mail(mentors, subject, self.EMAIL_TEMPLATE, data)
