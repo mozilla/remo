@@ -1,5 +1,6 @@
 import base64
 import binascii
+import re
 import time
 
 from django.conf import settings
@@ -113,4 +114,14 @@ def mailhide(value):
 
 @register.filter
 def get_bugzilla_url(bug_id):
+    """Return bugzilla url for bug_id."""
     return u'https://bugzilla.mozilla.org/show_bug.cgi?id=%d' % bug_id
+
+
+@register.function
+def active(request, pattern):
+    """Return 'active-nav' string when pattern matches request's full path."""
+    if re.match(pattern, request.get_full_path()):
+        return 'active-nav'
+
+    return None
