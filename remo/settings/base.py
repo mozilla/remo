@@ -8,7 +8,6 @@ MINIFY_BUNDLES = {
     'css': {
         'common': (
             'css/remo/foundation.css',
-            'css/remo/tabzilla.css',
             ),
         'common_ie': (
             'css/remo/ie.css',
@@ -30,7 +29,6 @@ MINIFY_BUNDLES = {
             'js/foundation.js',
             'js/webtrends.js',
             'js/activate.browserid.js',
-            'js/tabzilla.js',
             'js/jquery.prettydate.js',
              # Our app.js is always last to override stuff
             'js/app.js',
