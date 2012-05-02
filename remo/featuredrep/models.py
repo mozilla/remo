@@ -3,6 +3,7 @@ from django.db import models
 
 from remo.base.models import UTCDateTimeField
 
+
 class FeaturedRep(models.Model):
     """Featured Rep model.
 
