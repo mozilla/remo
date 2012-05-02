@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
     """
     help = 'Send email reminder to Reps who haven\'t yet filled their reports.'
-    SUBJECT = '[Reminder] Please file your Mozilla Reps monthly report'
+    SUBJECT = '[Reminder] Please file your Mozilla Reps monthly report for %s'
     EMAIL_TEMPLATE = 'emails/third_email_notification.txt'
 
     def handle(self, *args, **options):
@@ -30,7 +30,8 @@ class Command(BaseCommand):
         reps_without_report = reps.exclude(reports__month__year=date.year,
                                            reports__month__month=date.month)
 
-        data = {'year': date.year, 'month': number2month(date.month)}
+        month = number2month(date.month)
+        subject = self.SUBJECT % month
+        data = {'year': date.year, 'month': month}
 
-        send_remo_mail(reps_without_report, self.SUBJECT,
-                       self.EMAIL_TEMPLATE, data)
+        send_remo_mail(reps_without_report, subject, self.EMAIL_TEMPLATE, data)
