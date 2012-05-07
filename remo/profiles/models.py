@@ -69,7 +69,7 @@ class UserProfile(models.Model):
     private_email = models.EmailField(blank=False, null=True, default='')
     mozillians_profile_url = models.URLField(
         validators=[
-            RegexValidator(regex=r'^http(s)?://(www.)?mozillians.org/',
+            RegexValidator(regex=r'^http(s)?://(www\.)?mozillians.org/',
                            message='Please provide a valid Mozillians url.')])
     twitter_account = models.CharField(
         max_length=16, default='', blank=True,
@@ -82,12 +82,12 @@ class UserProfile(models.Model):
     linkedin_url = models.URLField(
         blank=True, null=False, default='',
         validators=[
-            RegexValidator(regex=r'("^$")|(^http(s)?://(www.)?linkedin.com/)',
+            RegexValidator(regex=r'("^$")|(^http(s)?://(.*?)linkedin.com/)',
                            message='Please provide a valid LinkedIn url.')])
     facebook_url = models.URLField(
         blank=True, null=False, default='',
         validators=[
-            RegexValidator(regex=r'("^$")|(^http(s)?://(www.)?facebook.com/)',
+            RegexValidator(regex=r'("^$")|(^http(s)?://(.*?)facebook.com/)',
                            message='Please provide a valid Facebook url.')])
     diaspora_url = models.URLField(blank=True, null=False, default='')
     personal_website_url = models.URLField(blank=True, null=False, default='')
