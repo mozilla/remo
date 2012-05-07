@@ -440,6 +440,10 @@ ul.orbit-bullets li.active {
     margin-bottom: 20px !important;
 }
 
+.custom.dropdown > a {
+    background-color: transparent !important;
+}
+
 .more-info {
     color: #888;
     font-size: 10px;
