@@ -433,6 +433,10 @@ ul.orbit-bullets li.active {
     border-radius: 0px !important;
 }
 
+.long {
+    height: 200px;
+}
+
 .input-text {
     margin: 20px 0px !important;
     background: none !important;
