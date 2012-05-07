@@ -95,6 +95,10 @@ hr {
     margin: 5px 0 18px;
 }
 
+a {
+    color: rgb(41, 131, 200) !important;
+}
+
 a:link, a:visited{
     text-decoration:none;
     -moz-transition:color .3s ease-in;
@@ -106,6 +110,7 @@ a:hover, a:active{
     -moz-transition:color .3s ease-out;
     -webkit-transition:color .3s ease-out;
     transition:color .3s ease-out;
+    color: rgb(32, 103, 158) !important;
 }
 
 h1, h2, h3, h4, h5, h6, .huge, .large {
