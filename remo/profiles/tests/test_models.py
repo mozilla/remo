@@ -108,7 +108,8 @@ class UserProfileTest(TestCase):
 
     def test_valid_facebook_urls(self):
         """Test that we accept only valid facebook urls."""
-        facebook_urls = ['http://www.facebook.com/', 'http://facebook.com/',
+        facebook_urls = ['http://www.facebook.com/',
+                         'http://facebook.com/', 'http://img.facebook.com/',
                          'https://facebook.com/', 'https://www.facebook.com/']
 
         for facebook_url in facebook_urls:
@@ -129,6 +130,7 @@ class UserProfileTest(TestCase):
     def test_valid_linkedin_urls(self):
         """Test that we accept only valid linkedin urls."""
         linkedin_urls = ['http://www.linkedin.com/', 'http://linkedin.com/',
+                         'http://gr.linkedin.com/',
                          'https://www.linkedin.com/', '']
 
         for linkedin_url in linkedin_urls:
