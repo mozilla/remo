@@ -12,7 +12,10 @@ from django.views.decorators.cache import cache_control, never_cache
 from django_arecibo.tasks import post
 
 import utils
+
 from remo.base.decorators import permission_check
+from remo.base.forms import EmailMenteesForm
+from remo.base.tasks import send_mail_task
 from remo.featuredrep.models import FeaturedRep
 from remo.remozilla.models import Bug
 from remo.reports.models import Report
@@ -73,6 +76,11 @@ def dashboard(request):
         args['mentees_reports_list'] = (Report.objects.filter(mentor=user).
                                         order_by('-created_on')[:20])
         args['mentees_reports_grid'] = get_mentee_reports_for_month(user)
+        args['mentees_emails'] = (
+            my_mentees.values_list('first_name', 'last_name', 'email') or
+            None)
+        args['email_mentees_form'] = EmailMenteesForm(
+            initial={'email_of_mentor': user.email})
 
     if user.groups.filter(Q(name='Admin') | Q(name='Council')).exists():
         args['all_budget_requests'] = budget_requests.all()[:20]
@@ -128,3 +136,24 @@ def login_failed(request):
                                'email to login.'))
 
     return redirect('main')
+
+
+@permission_check(permissions=['profiles.create_user'])
+def email_mentees(request):
+    """Email my mentees view."""
+    if request.method == 'POST':
+        email_form = EmailMenteesForm(request.POST)
+        if email_form.is_valid():
+            from_email = '%s <%s>' % (request.user.get_full_name(),
+                                      request.user.email)
+            mentees = (User.objects.filter(userprofile__mentor=request.user).
+                       values_list('email', flat=True))
+            send_mail_task.delay(sender=from_email,
+                                  recipients=mentees,
+                                  subject=email_form.cleaned_data['subject'],
+                                  message=email_form.cleaned_data['body'])
+            messages.success(request, 'Email sent successfully.')
+        else:
+            messages.error(request, 'Email not sent. Invalid data.')
+
+    return redirect('dashboard')

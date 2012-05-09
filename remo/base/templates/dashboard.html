@@ -111,6 +111,12 @@
                   </div>
                 </div>
               {% endif %}
+              {% if mentees_emails is not none %}
+                <div class="align-right">
+                  <a href="#" data-reveal-id="mail-modal"
+                     class="small white button nice radius">Mail my mentees</a>
+                </div>
+              {% endif %}
             </div>
           {% endif %}
           <!-- end mentees list block -->
@@ -141,6 +147,12 @@
                   <div class="twelve columns no-bugs">
                     <p>No Reports found!</p>
                   </div>
+                </div>
+              {% endif %}
+              {% if mentees_emails is not none %}
+                <div class="align-right">
+                  <a href="#" data-reveal-id="mail-modal"
+                     class="small white button nice radius">Mail my mentees</a>
                 </div>
               {% endif %}
             </div>
@@ -869,6 +881,37 @@
     {% endif %}
   </div>
 </div>
+
+<!-- Mail my mentees Reveal Modal -->
+{% if mentees_email is not none %}
+  <div id="mail-modal" class="reveal-modal">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">Mail your mentees</p>
+    <h4>Copy and paste addresses:</h4>
+    <p>
+      {% for first_name, last_name, email in mentees_emails %}
+        '{{ first_name }} {{ last_name }}'
+        &lt;{{ email }}&gt;{% if not loop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+    <h4>or mail all your mentees directly:</h4>
+    <form id="email-mentees-form" method="post"
+          action="{{ url('email_mentees') }}" class="custom">
+      {{ csrf() }}
+      {{ email_mentees_form }}
+
+      <div class="row">
+        <div id="send-mail" class="twelve columns align-right">
+          <button type="submit" class="medium blue button nice radius">
+            Send email
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endif %}
+<!-- Mail my mentees Reveal Modal End -->
+
 {% endblock %}
 
 {% block bottomextra %}
