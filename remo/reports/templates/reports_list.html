@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% block pagetitle %}Mozilla Reps - Reports{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="twelve columns">
+    <h4>Reports</h4>
+  </div>
+</div>
+
+{#
+<!-- Search box -->
+<div class="row">
+  <div class="ten columns" id="search">
+    <form class="nice" id="searchform">
+      <span class="pictogram-search">
+        s
+      </span>
+      <input type="text" placeholder="Search using any keyword" id="searchfield"
+             class="input-text big">
+    </form>
+  </div>
+    <div class="two columns align-right" id="search-reports">
+      <a href="#"
+         target="_blank"
+         class="small blue button nice radius">
+        Search
+      </a>
+    </div>
+</div>
+#}
+
+<!-- Reports are here -->
+{% if number_of_reports > 0 %}
+  <div class="row">
+    <div class="twelve columns" id="reports-list">
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>
+              {% if sort_key == 'reporter_asc' %}
+                <a href="?page=1&sort_key=reporter_desc">
+                  Reporter <span class="reports-order-pictogram">[</span>
+                </a>
+              {% elif sort_key == 'reporter_desc' %}
+                <a href="?page=1&sort_key=reporter_asc">
+                  Reporter <span class="reports-order-pictogram">]</span>
+                </a>
+              {% else %}
+                <a href="?page=1&sort_key=reporter_asc">
+                  Reporter
+                </a>
+              {% endif %}
+            </th>
+            <th>
+              {% if sort_key == 'mentor_asc' %}
+                <a href="?page=1&sort_key=mentor_desc">
+                  Mentor <span class="reports-order-pictogram">[</span>
+                </a>
+              {% elif sort_key == 'mentor_desc' %}
+                <a href="?page=1&sort_key=mentor_asc">
+                  Mentor <span class="reports-order-pictogram">]</span>
+                </a>
+              {% else %}
+                <a href="?page=1&sort_key=mentor_asc">
+                  Mentor
+                </a>
+              {% endif %}
+            </th>
+            <th>Year</th>
+            <th>
+              {% if sort_key == 'month_asc' %}
+                <a href="?page=1&sort_key=month_desc">
+                  Month <span class="reports-order-pictogram">[</span>
+                </a>
+              {% elif sort_key == 'month_desc' %}
+                <a href="?page=1&sort_key=month_asc">
+                  Month <span class="reports-order-pictogram">]</span>
+                </a>
+              {% else %}
+                <a href="?page=1&sort_key=month_asc">
+                  Month
+                </a>
+              {% endif %}
+            </th>
+            <th>
+              {% if sort_key == 'updated_on_asc' %}
+                <a href="?page=1&sort_key=updated_on_desc">
+                  Date filled <span class="reports-order-pictogram">[</span>
+                </a>
+              {% elif sort_key == 'updated_on_desc' %}
+                <a href="?page=1&sort_key=updated_on_asc">
+                  Date filled <span class="reports-order-pictogram">]</span>
+                </a>
+              {% else %}
+                <a href="?page=1&sort_key=updated_on_asc">
+                  Date filled
+                </a>
+              {% endif %}
+            </th>
+
+            <th class="align-center">
+              {% if sort_key == 'empty_asc' %}
+                <a href="?page=1&sort_key=empty_desc">
+                  Empty <span class="reports-order-pictogram">[</span>
+                </a>
+              {% elif sort_key == 'empty_desc' %}
+                <a href="?page=1&sort_key=empty_asc">
+                  Empty <span class="reports-order-pictogram">]</span>
+                </a>
+              {% else %}
+                <a href="?page=1&sort_key=empty_asc">
+                  Empty
+                </a>
+              {% endif %}
+            </th>
+            <th class="align-center">
+              {% if sort_key == 'overdue_asc' %}
+                <a href="?page=1&sort_key=overdue_desc">
+                  Overdue <span class="reports-order-pictogram">]</span>
+                </a>
+              {% elif sort_key == 'overdue_desc' %}
+                <a href="?page=1&sort_key=overdue_asc">
+                  Overdue <span class="reports-order-pictogram">[</span>
+                </a>
+              {% else %}
+                <a href="?page=1&sort_key=overdue_asc">
+                  Overdue
+                </a>
+              {% endif %}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for report in reports.object_list %}
+            <tr>
+              <td>
+                <a href="{{ url('profiles_view_profile',
+                         report.user|get_display_name) }}">
+                  {{ report.user.get_full_name() }}
+                </a>
+              </td>
+              <td>
+                <a href="{{ url('profiles_view_profile',
+                         report.mentor|get_display_name) }}">
+                  {{ report.mentor.get_full_name() }}
+                </a>
+              </td>
+              <td>{{ report.month.strftime("%Y") }}</td>
+              <td>
+                <a href="{{ report|get_report_view_url }}">
+                  {{ report.month.strftime("%B") }}
+                </a>
+              </td>
+              <td title="{{ report.updated_on|format_datetime }}"
+                  data-time="{{ report.updated_on|format_datetime_iso }}">
+                {{ report.updated_on|format_datetime }}
+              </td>
+              <td class="reports-list-pictogram">
+                {% if report.empty %}%{% endif %}
+              </td>
+              <td class="reports-list-pictogram">
+                {% if report.overdue %}%{% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="twelve columns" id="reports-pagination">
+      <ul class="pagination">
+        {% if reports.has_previous() %}
+          <li class="unavailable">
+            <a href="?page={{ reports.previous_page_number() }}&sort_key={{ sort_key }}">
+              &laquo;
+            </a>
+          </li>
+        {% else %}
+          <li class="unavailable">
+            <a href="">&laquo;</a>
+          </li>
+        {% endif %}
+        {% for i in range(1, reports.paginator.num_pages + 1) %}
+          <li {% if i == reports.number %} class="current" {% endif %}>
+            <a href="?page={{ i }}&sort_key={{ sort_key }}">{{ i }}</a>
+          </li>
+        {% endfor %}
+        {% if reports.has_previous() %}
+          <li class="unavailable">
+            <a href="?page={{ reports.next_page_number() }}&sort_key={{ sort_key }}">
+              &raquo;
+            </a>
+          </li>
+        {% else %}
+          <li class="unavailable">
+            <a href="">&raquo;</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+<div class="row">
+  <div class="twelve columns no-bugs">
+    {% if number_of_reports == 0 %}
+      <p>No Reports found!</p>
+    {% else %}
+      <p>{{ number_of_reports }} reports found</p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

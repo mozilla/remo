@@ -20,6 +20,9 @@ urlpatterns = patterns('',
     url(r'^u/', include('remo.profiles.user_urls')),
     url(r'^people/', include('remo.profiles.people_urls')),
 
+    # reports
+    url(r'^reports/', include('remo.reports.report_urls')),
+
     # featuredrep
     url(r'^featured/', include('remo.featuredrep.urls')),
 

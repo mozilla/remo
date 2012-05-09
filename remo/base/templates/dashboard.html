@@ -78,8 +78,8 @@
                       <th class="dashboard-clickable type-int">Year</th>
                       <th class="dashboard-clickable type-string">Month</th>
                       <th class="dashboard-clickable type-string">Date filled</th>
-                      <th class="dashboard-clickable type-string">Empty</th>
-                      <th class="dashboard-clickable type-string">Overdue</th>
+                      <th class="dashboard-clickable type-string align-center">Empty</th>
+                      <th class="dashboard-clickable type-string align-center">Overdue</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -98,8 +98,12 @@
                           </a>
                         </td>
                         <td>{{ report.updated_on|format_datetime }}</td>
-                        <td>{{ report.empty }}</td>
-                        <td>{{ report.overdue }}</td>
+                        <td class="dashboard-list-pictogram">
+                          {% if report.empty %}%{% endif %}
+                        </td>
+                        <td class="dashboard-list-pictogram">
+                          {% if report.overdue %}%{% endif %}
+                        </td>
                       </tr>
                     {% endfor %}
                   </tbody>
@@ -162,8 +166,8 @@
                       <th class="dashboard-clickable type-int">Year</th>
                       <th class="dashboard-clickable type-string">Month</th>
                       <th class="dashboard-clickable type-string">Date filled</th>
-                      <th class="dashboard-clickable type-string">Empty</th>
-                      <th class="dashboard-clickable type-string">Overdue</th>
+                      <th class="dashboard-clickable type-string align-center">Empty</th>
+                      <th class="dashboard-clickable type-string align-center">Overdue</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -185,8 +189,12 @@
                             data-time="{{ report.updated_on|format_datetime_iso }}">
                           {{ report.updated_on|format_datetime }}
                         </td>
-                        <td>{{ report.empty }}</td>
-                        <td>{{ report.overdue }}</td>
+                        <td class="dashboard-list-pictogram">
+                          {% if report.empty %}%{% endif %}
+                        </td>
+                        <td class="dashboard-list-pictogram">
+                          {% if report.overdue %}%{% endif%}
+                        </td>
                       </tr>
                     {% endfor %}
                   </tbody>
