@@ -1,5 +1,6 @@
 import base64
 
+from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from jinja2 import Markup
@@ -46,6 +47,36 @@ class ViewsTest(TestCase):
         response = c.get(reverse('dashboard'))
         eq_(response.status_code, 200)
         self.assertTemplateUsed(response, 'dashboard.html')
+
+    def test_email_my_mentees_mentor(self):
+        """Email mentees when mentor."""
+        c = Client()
+        c.login(username='mentor', password='passwd')
+        data = {'subject': 'This is subject',
+                'body': ('This is my body',
+                         'Multiline ofcourse')}
+        response = c.post(reverse('email_mentees'), data, follow=True)
+        self.assertTemplateUsed(response, 'dashboard.html')
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'success')
+        eq_(len(mail.outbox), 1)
+
+    def test_email_my_mentees_rep(self):
+        """Email mentees when rep.
+
+        Must fail since Rep doesn't have mentees."""
+        c = Client()
+        c.login(username='rep', password='passwd')
+        data = {'subject': 'This is subject',
+                'body': ('This is my body',
+                         'Multiline ofcourse')}
+        response = c.post(reverse('email_mentees'), data, follow=True)
+        self.assertTemplateUsed(response, 'main.html')
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'error')
+        eq_(len(mail.outbox), 0)
 
     def test_view_about_page(self):
         """Get about page."""
