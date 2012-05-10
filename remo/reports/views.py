@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
@@ -11,6 +12,22 @@ import forms
 import remo.base.utils as utils
 from remo.base.decorators import permission_check
 from models import Report, ReportComment
+
+LIST_REPORTS_DEFAULT_SORT = 'updated_on_desc'
+LIST_REPORTS_VALID_SHORTS = {
+    'updated_on_desc': '-updated_on',
+    'updated_on_asc': 'updated_on',
+    'reporter_desc': '-user__last_name,user__first_name',
+    'reporter_asc': 'user__last_name,user__first_name',
+    'mentor_desc': 'mentor__last_name,mentor__first_name',
+    'mentor_asc': 'mentor__last_name,mentor__first_name',
+    'empty_desc': '-empty',
+    'empty_asc': 'empty',
+    'overdue_desc': '-overdue',
+    'overdue_asc': 'overdue',
+    'month_desc': '-month',
+    'month_asc': 'month'}
+LIST_REPORTS_NUMBER_OF_REPORTS_PER_PAGE = 25
 
 
 @permission_check()
@@ -193,3 +210,34 @@ def edit_report(request, display_name, year, month):
                    'year': year,
                    'month': month,
                    'created': created})
+
+
+def list_reports(request):
+    report_list = Report.objects.all()
+    number_of_reports = report_list.count()
+
+    sort_key = request.GET.get('sort_key', LIST_REPORTS_DEFAULT_SORT)
+    if sort_key not in LIST_REPORTS_VALID_SHORTS:
+        sort_key = LIST_REPORTS_DEFAULT_SORT
+
+    sort_by = LIST_REPORTS_VALID_SHORTS[sort_key]
+    report_list = report_list.order_by(*sort_by.split(','))
+
+    paginator = Paginator(report_list, LIST_REPORTS_NUMBER_OF_REPORTS_PER_PAGE)
+
+    # Make sure page request is an int. If not, deliver first page.
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # If page request (9999) is out of range, deliver last page of results.
+    try:
+        reports = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        reports = paginator.page(paginator.num_pages)
+
+    return render(request, 'reports_list.html',
+                  {'reports': reports,
+                   'number_of_reports': number_of_reports,
+                   'sort_key': sort_key})
