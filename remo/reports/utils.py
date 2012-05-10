@@ -7,9 +7,13 @@ from remo.base.utils import go_fwd_n_months, number2month
 from remo.reports.models import Report
 from remo.reports.helpers import get_mentees, get_report_view_url
 
+REPORTS_PERMISSION_LEVEL = {'owner': 3,
+                            'authenticated': 2,
+                            'anonymous': 1}
 
-def get_reports_for_year(user, start_year, end_year=None,
-                         allow_empty=False, private=True):
+
+def get_reports_for_year(user, start_year, end_year=None, allow_empty=False,
+                         permission=REPORTS_PERMISSION_LEVEL['anonymous']):
     """Return a list of reports for year."""
     reports_list = {}
     tmp_date = datetime.today()
@@ -29,19 +33,22 @@ def get_reports_for_year(user, start_year, end_year=None,
         reports_list[year] = []
 
         for month in range(1, 13):
-            month_details = {'name': number2month(month, full_name=False),
-                             'fullname': number2month(month, full_name=True)}
-            if reports.filter(month__month=month).exists():
-                report = reports.get(month__month=month)
+            month = datetime(year=year, month=month, day=1)
+            month_details = {'name': number2month(month.month,
+                                                  full_name=False),
+                             'fullname': number2month(month.month,
+                                                      full_name=True)}
+            if (reports.filter(month=month).exists() and
+                ((permission > 1 and month == today) or (month < today))):
+                report = reports.get(month=month)
                 month_details['report'] = report
                 month_details['class'] = 'exists'
                 month_details['link'] = get_report_view_url(report)
             else:
                 month_details['report'] = None
-                dateobj = datetime(year=year, month=month, day=1)
 
-                if (private or month_first_report > dateobj or
-                    dateobj >= today):
+                if (permission < 3 or month_first_report > month or
+                    month > today):
                     month_details['class'] = 'unavailable'
                     month_details['link'] = '#'
                 else:
@@ -51,7 +58,6 @@ def get_reports_for_year(user, start_year, end_year=None,
                                            'year': year,
                                            'month': month_details['fullname']})
                     month_details['link'] = link
-
 
             reports_list[year].append(month_details)
 
@@ -68,8 +74,7 @@ def get_mentee_reports_for_month(user, dateobj=None):
         dateobj = go_back_n_months(date.today(), first_day=True)
 
     mentees = get_mentees(user)
-    mentees_list = {'month': dateobj.strftime("%B %Y"),
-                    'reports': []}
+    mentees_list = {'month': dateobj.strftime("%B %Y"), 'reports': []}
 
     for mentee in mentees:
         report = get_object_or_none(Report, user=mentee, month=dateobj)
