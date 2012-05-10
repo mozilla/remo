@@ -14,7 +14,7 @@ from product_details import product_details
 import forms
 from remo.base.decorators import permission_check
 from remo.remozilla.tasks import fetch_bugs
-from remo.reports.utils import get_reports_for_year
+from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
@@ -139,11 +139,17 @@ def view_profile(request, display_name):
             (request.user.is_authenticated() and
              user in request.user.mentees.all()) or
             user == request.user):
-            reports = get_reports_for_year(user, start_year=2011,
-                                           end_year=today.year, private=False)
+            reports = get_reports_for_year(
+                user, start_year=2011, end_year=today.year,
+                permission=REPORTS_PERMISSION_LEVEL['owner'])
+        elif request.user.is_authenticated():
+            reports = get_reports_for_year(
+                user, start_year=2011, end_year=today.year,
+                permission=REPORTS_PERMISSION_LEVEL['authenticated'])
         else:
-            reports = get_reports_for_year(user, start_year=2011,
-                                           end_year=today.year, private=True)
+            reports = get_reports_for_year(
+                user, start_year=2011, end_year=today.year,
+                permission=REPORTS_PERMISSION_LEVEL['anonymous'])
 
         data['monthly_reports'] = reports
 

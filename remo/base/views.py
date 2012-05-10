@@ -20,7 +20,7 @@ from remo.featuredrep.models import FeaturedRep
 from remo.remozilla.models import Bug
 from remo.reports.models import Report
 from remo.reports.utils import get_mentee_reports_for_month
-from remo.reports.utils import get_reports_for_year
+from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
 
 
 @cache_control(private=True, no_cache=True)
@@ -54,9 +54,9 @@ def dashboard(request):
 
     today = date.today()
     if user.groups.filter(name='Rep').exists():
-        args['monthly_reports'] = get_reports_for_year(user, start_year=2011,
-                                               end_year=today.year,
-                                               private=False)
+        args['monthly_reports'] = get_reports_for_year(
+            user, start_year=2011, end_year=today.year,
+            permission=REPORTS_PERMISSION_LEVEL['owner'])
 
     my_q = (Q(cc=user) | Q(creator=user))
     my_q_assigned = (my_q | Q(assigned_to=user))

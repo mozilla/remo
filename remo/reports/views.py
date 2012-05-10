@@ -156,9 +156,7 @@ def edit_report(request, display_name, year, month):
     today = datetime.datetime.today()
 
     # check if it's too early to file this report
-    if (((year_month.month > today.month) or
-         (year_month.month == today.month and today.day < 23)) and
-        year_month.year >= today.year):
+    if (year_month.month > today.month and year_month.year >= today.year):
         messages.error(request, 'I\'m sorry, are you from the future?')
         if request.user == user:
             return redirect('profiles_view_my_profile')
