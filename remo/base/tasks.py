@@ -1,5 +1,5 @@
 from celery.decorators import task
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 
 @task()
@@ -12,4 +12,6 @@ def send_mail_task(sender, recipients, subject, message):
     # Make sure subject is one line.
     subject = subject.replace('\n', ' ')
 
-    send_mail(subject, message, sender, recipients)
+    email = EmailMessage(subject=subject, body=message, from_email=sender,
+                         to=recipients, cc=[sender])
+    email.send()

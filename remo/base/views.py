@@ -149,9 +149,9 @@ def email_mentees(request):
             mentees = (User.objects.filter(userprofile__mentor=request.user).
                        values_list('email', flat=True))
             send_mail_task.delay(sender=from_email,
-                                  recipients=mentees,
-                                  subject=email_form.cleaned_data['subject'],
-                                  message=email_form.cleaned_data['body'])
+                                 recipients=mentees,
+                                 subject=email_form.cleaned_data['subject'],
+                                 message=email_form.cleaned_data['body'])
             messages.success(request, 'Email sent successfully.')
         else:
             messages.error(request, 'Email not sent. Invalid data.')

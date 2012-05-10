@@ -61,6 +61,8 @@ class ViewsTest(TestCase):
             pass
         eq_(m.tags, u'success')
         eq_(len(mail.outbox), 1)
+        eq_(len(mail.outbox[0].to), 2)
+        eq_(len(mail.outbox[0].cc), 1)
 
     def test_email_my_mentees_rep(self):
         """Email mentees when rep.
