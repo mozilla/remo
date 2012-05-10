@@ -95,7 +95,7 @@ hr {
 }
 
 a {
-    color: rgb(41, 131, 200) !important;
+    color: rgb(41, 131, 200);
 }
 
 a:link, a:visited{
@@ -109,7 +109,7 @@ a:hover, a:active{
     -moz-transition:color .3s ease-out;
     -webkit-transition:color .3s ease-out;
     transition:color .3s ease-out;
-    color: rgb(32, 103, 158) !important;
+    color: rgb(32, 103, 158);
 }
 
 h1, h2, h3, h4, h5, h6, .huge, .large {
@@ -400,6 +400,10 @@ ul.orbit-bullets li.active {
 
 .align-right {
     text-align:right !important;
+}
+
+.align-center {
+    text-align:center !important;
 }
 
 #save-profile {
@@ -818,4 +822,25 @@ ul.mreports li.editable a {
 
 .report-delete-comment:hover {
     color: #888;
+}
+
+.reports-list-pictogram, .dashboard-list-pictogram {
+    font-family: "ModernPictogramsNormal";
+    font-size: 20px;
+    text-align: center;
+}
+
+.reports-order-pictogram {
+    font-family: "ModernPictogramsNormal";
+    font-size: 16px;
+    text-align: center;
+    padding-left: 5px;
+}
+
+#search-reports {
+    margin-top: 15px;
+}
+
+#reports-pagination > ul.pagination {
+    float: right;
 }

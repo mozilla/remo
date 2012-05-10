@@ -8,6 +8,7 @@ from test_utils import TestCase
 
 from remo.base.utils import go_back_n_months
 from remo.reports.models import Report, ReportComment
+from remo.reports.views import LIST_REPORTS_VALID_SHORTS
 
 
 class ViewsTest(TestCase):
@@ -42,6 +43,21 @@ class ViewsTest(TestCase):
                      'reportlink_set-0-link': 'http://example.com/link',
                      'reportlink_set-0-description': 'This is description',
                      'reportlink_set-0-DELETE': False}
+
+    def test_view_reports_list(self):
+        """Test view report list page."""
+        c = Client()
+        response = c.get(reverse('reports_list_reports'))
+        self.assertTemplateUsed(response, 'reports_list.html')
+
+        for sort_key in LIST_REPORTS_VALID_SHORTS:
+            response = c.get(reverse('reports_list_reports') +
+                             '&sort_key=%s' % sort_key)
+            self.assertTemplateUsed(response, 'reports_list.html')
+
+        # Test pagination.
+        response = c.get(reverse('reports_list_reports') + '&page=1')
+        self.assertTemplateUsed(response, 'reports_list.html')
 
     def test_view_current_report_page(self):
         """Test view report page."""
