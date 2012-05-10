@@ -142,10 +142,12 @@
                 </a>
               </td>
               <td>
-                <a href="{{ url('profiles_view_profile',
-                         report.mentor|get_display_name) }}">
-                  {{ report.mentor.get_full_name() }}
-                </a>
+                {% if report.mentor %}
+                  <a href="{{ url('profiles_view_profile',
+                           report.mentor|get_display_name) }}">
+                    {{ report.mentor.get_full_name() }}
+                  </a>
+                {% endif %}
               </td>
               <td>{{ report.month.strftime("%Y") }}</td>
               <td>
