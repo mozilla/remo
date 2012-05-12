@@ -1,76 +1,45 @@
-/* --------------------------------------------------
-   Table of Contents
------------------------------------------------------
-:: Fonts
-:: Shared Styles
-:: Header Styles
-:: Main Page Styles
-:: People Page Styles
-:: View Profile Styles
-:: Edit Profile Styles
-:: Point Map Styles
-:: Delete Profile Styles
-:: Footer Styles
-:: Error Styles
-:: Pictogram Styles
-:: Planet feed Styles
-:: Logo gray Styles
-:: Featured rep Styles
-:: About page Styles
-:: Dashboard Styles
-:: Reports Styles
-*/
+/* --------------------
+    Imports
+-------------------- */
+
+@import "fonts.less";
 
 
-/* -----------------------------------------
-   Fonts
------------------------------------------ */
+/* --------------------
+    Generic Mixins
+-------------------- */
 
-@font-face {
-    font-family: 'MetaBlack';
-    src: url('/media/fonts/MetaWebPro-Black.eot');
-    src: local('☺'), url('/media/fonts/MetaWebPro-Black.woff') format('woff');
-    font-weight: bold;
+.top-margined {
+    margin-top: 20px;
 }
 
-@font-face {
-    font-family: 'MetaNormal';
-    src: local('☺'), url('/media/fonts/MetaWebPro-Normal.woff') format('woff');
-    font-weight: bold;
+.align-right {
+    text-align:right !important;
 }
 
-@font-face {
-    font-family: 'ModernPictogramsNormal';
-    src: url('/media/fonts/modernpics-webfont.eot');
-    src: url('/media/fonts/modernpics-webfont.eot?#iefix') format('embedded-opentype'),
-         url('/media/fonts/modernpics-webfont.woff') format('woff'),
-         url('/media/fonts/modernpics-webfont.ttf') format('truetype'),
-         url('/media/fonts/modernpics-webfont.svg#ModernPictogramsNormal') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
+.grayed {
+    color: #888;
 }
 
-@font-face {
+.pictogram {
+    .top-margined;
+    text-align:center;
+    font-family: "ModernPictogramsNormal";
+    font-size: 30px;
+    color: #aaa;
+    cursor: default;
+}
+
+.opensans {
     font-family: 'Open Sans';
-    src: url('//www.mozilla.org/img/fonts/OpenSans-Regular-webfont.eot');
-    src: url('//www.mozilla.org/img/fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('//www.mozilla.org/img/fonts/OpenSans-Regular-webfont.woff') format('woff'),
-         url('//www.mozilla.org/img/fonts/OpenSans-Regular-webfont.ttf') format('truetype'),
-         url('//www.mozilla.org/img/fonts/OpenSans-Regular-webfont.svg#OpenSansRegular') format('svg');
-    font-weight: 400;
-    font-style: normal;
 }
 
-@font-face {
-    font-family: 'Open Sans';
-    src: url('//www.mozilla.org/img/fonts/OpenSans-Semibold-webfont.eot');
-    src: url('//www.mozilla.org/img/fonts/OpenSans-Semibold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('//www.mozilla.org/img/fonts/OpenSans-Semibold-webfont.woff') format('woff'),
-         url('//www.mozilla.org/img/fonts/OpenSans-Semibold-webfont.ttf') format('truetype'),
-         url('//www.mozilla.org/img/fonts/OpenSans-Semibold-webfont.svg#OpenSansSemibold') format('svg');
-    font-weight: 600;
-    font-style: normal;
+.opensanslight {
+    font-family: 'Open Sans Light';
+}
+
+.metabold {
+    font-family: 'MetaBold' !important;
 }
 
 /* -----------------------------------------
@@ -95,7 +64,7 @@ hr {
 }
 
 a {
-    color: rgb(41, 131, 200);
+    color: rgb(41, 131, 200) !important;
 }
 
 a:link, a:visited{
@@ -109,11 +78,11 @@ a:hover, a:active{
     -moz-transition:color .3s ease-out;
     -webkit-transition:color .3s ease-out;
     transition:color .3s ease-out;
-    color: rgb(32, 103, 158);
+    color: rgb(32, 103, 158) !important;
 }
 
 h1, h2, h3, h4, h5, h6, .huge, .large {
-    font-family: 'Open Sans',sans-serif;
+    font-family: 'Open Sans Light',sans-serif;
     display: block;
     font-weight: 300;
     margin: 0px 0px 12px;
@@ -155,7 +124,7 @@ h4 {
 }
 
 .required-field {
-    color: #888;
+    .grayed;
     font-family: 'ModernPictogramsNormal';
     font-size: 12px;
     float: right;
@@ -190,22 +159,22 @@ h4 {
 
 #logo-box {
     margin-top: 10px !important;
-}
-
-#logo-box h3 {
-    font-family: 'MetaNormal' !important;
-    margin-top: 5px !important;
+    h3 {
+        font-family: 'MetaNormal' !important;
+        margin-top: 5px !important;
+    }
 }
 
 #logo-box img {
     height:40px;
     float:left;
     padding: 3px;
+    padding-right: 6px;
 }
 
 #navigation-box .nav-bar {
     float: right !important;
-    font-family: 'Open Sans' !important;
+    font-family: 'Open Sans Light' !important;
 }
 
 #navigation-box ul {
@@ -235,7 +204,7 @@ li.last {
 }
 
 .active-nav {
-    font-weight: bold;
+    .opensans;
 }
 
 /* -----------------------------------------
@@ -269,10 +238,9 @@ li.last {
 
 ul.orbit-bullets li {
     background: url('/media/img/foundation/orbit/bullets.png') no-repeat 4px 0 !important;
-}
-
-ul.orbit-bullets li.active {
-    background-position: -8px 0 !important;
+    &.active {
+        background-position: -8px 0 !important;
+    }
 }
 
 #planet {
@@ -313,7 +281,7 @@ ul.orbit-bullets li.active {
 
 .view-change {
     text-align: center;
-    margin-top: 20px;
+    .top-margined;
 }
 
 .grid-profile {
@@ -357,7 +325,7 @@ ul.orbit-bullets li.active {
 }
 
 .reps-number {
-    color: #888;
+    .grayed;
     margin-bottom: 20px;
     text-align: center;
 }
@@ -366,12 +334,8 @@ ul.orbit-bullets li.active {
    View Profile Styles
 ----------------------------------------- */
 
-.grayed {
-    color: #888;
-}
-
 .profile-item {
-    margin-top: 20px;
+    .top-margined;
 }
 
 .smallmap-profile-container {
@@ -392,18 +356,10 @@ ul.orbit-bullets li.active {
 }
 
 .profile-image {
-    margin-top: 20px;
+    .grayed;
+    .top-margined;
     text-align: center;
-    color: #888;
     font-size: 10px;
-}
-
-.align-right {
-    text-align:right !important;
-}
-
-.align-center {
-    text-align:center !important;
 }
 
 #save-profile {
@@ -436,10 +392,6 @@ ul.orbit-bullets li.active {
     border-radius: 0px !important;
 }
 
-.long {
-    height: 200px;
-}
-
 .input-text {
     margin: 20px 0px !important;
     background: none !important;
@@ -457,14 +409,14 @@ ul.orbit-bullets li.active {
 }
 
 .more-info {
-    color: #888;
+    .grayed;
     font-size: 10px;
     text-align: right;
     margin-top: -12px;
 }
 
 .edit-profile-item {
-    margin-top: 20px;
+    .top-margined;
 }
 
 /* -----------------------------------------
@@ -513,39 +465,18 @@ ul.orbit-bullets li.active {
     padding: 48px 0;
     font-size: 14px;
     line-height: 18px;
+    a { color: rgb(103,167,208); }
+    a:link { color: rgb(103,167,208); }
+    a:visited { color: rgb(103,167,208); }
+    a:hover { color: rgb(83,147,188); }
+    a:active { color: rgb(83,147,188); }
+    nav { font-family: 'Open Sans', sans-serif; }
+    ul li {
+        font-family: 'Open Sans', sans-serif;
+        list-style-type: none;
+        margin: 0 0 2px 0;
+    }
 }
-
-#colophon a {
-        color: rgb(103,167,208);
-}
-
-#colophon a:link {
-        color: rgb(103,167,208);
-}
-
-#colophon a:visited {
-        color: rgb(103,167,208);
-}
-
-#colophon a:hover {
-        color: rgb(83,147,188);
-}
-
-#colophon a:active {
-        color: rgb(83,147,188);
-}
-
-
-#colophon nav {
-    font-family: 'Open Sans', sans-serif;
-}
-
-#colophon ul li {
-    font-family: 'Open Sans', sans-serif;
-    list-style-type: none;
-    margin: 0 0 2px 0;
-}
-
 
 /* -----------------------------------------
    Error Styles
@@ -560,34 +491,20 @@ small.error {
 ----------------------------------------- */
 
 .pictogram-button {
-    margin-top: 20px;
-    text-align:center;
-    font-family: "ModernPictogramsNormal";
-    font-size: 30px;
+    .pictogram;
     color: #ccc;
     cursor: pointer;
 }
 
-.pictogram {
-    margin-top: 20px;
-    text-align:center;
-    font-family: "ModernPictogramsNormal";
-    font-size: 30px;
-    color: #aaa;
-    cursor: default;
-}
-
 .pictogram-button.active, .pictogram-button:hover {
-    color: #888;
+    .grayed;
 }
 
 .pictogram-search {
+    .pictogram;
+    margin-top: 0px;
     float:left;
-    font-family: "ModernPictogramsNormal";
-    font-size: 30px;
-    text-align:center;
     color: #ccc;
-    cursor: default;
 }
 
 /* -----------------------------------------
@@ -604,8 +521,8 @@ small.error {
 ----------------------------------------- */
 
 #gray-logo {
+    .top-margined;
     text-align: center;
-    margin-top: 20px;
     width: 100px;
     margin: 0 auto;
 }
@@ -631,7 +548,7 @@ small.error {
 }
 
 .featured-button {
-    margin-top: 20px;
+    .top-margined;
     margin-bottom: 20px;
 }
 
@@ -660,7 +577,7 @@ select#id_user {
     margin-top: 40px !important;
 }
 #about-navigation li {
-    font-family: "Open Sans";
+    .opensans;
     font-size: 16px;
     margin-top: 20px !important;
 }
@@ -690,7 +607,7 @@ select#id_user {
 }
 
 .dashboard-box {
-    margin-top: 20px;
+    .top-margined;
 }
 
 dl.sub-nav dd.active a {
@@ -705,7 +622,7 @@ dl.sub-nav {
 }
 
 .no-bugs {
-    color: #888;
+    .grayed;
     margin-bottom: 5px;
     text-align: center;
 }
@@ -716,26 +633,24 @@ dl.sub-nav {
     padding: 10px !important;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    &.notfilled {
+        background: -moz-linear-gradient(top, #da8589 0%, #B50A11 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#da8589), color-stop(100%,#B50A11));
+        h6 {
+            color: white;
+            text-shadow: none;
+        }
+    }
+    &:hover {
+        -moz-transition:box-shadow .1s ease-out;
+        -webkit-transition:box-shadow .1s ease-out;
+        transition:box-shadow .1s ease-out;
+        box-shadow: 0 2px 5px gray;
+        -webkit-box-shadow: 0 2px 5px gray;
+        -moz-box-shadow: 0 2px 5px gray;
+    }
 }
 
-.dashboard-mentee.notfilled {
-    background: -moz-linear-gradient(top, #da8589 0%, #B50A11 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#da8589), color-stop(100%,#B50A11));
-}
-
-.dashboard-mentee.notfilled h6 {
-    color: white;
-    text-shadow: none;
-}
-
-.dashboard-mentee:hover {
-    -moz-transition:box-shadow .1s ease-out;
-    -webkit-transition:box-shadow .1s ease-out;
-    transition:box-shadow .1s ease-out;
-    box-shadow: 0 2px 5px gray;
-    -webkit-box-shadow: 0 2px 5px gray;
-    -moz-box-shadow: 0 2px 5px gray;
-}
 
 /* -----------------------------------------
    Reports Styles
@@ -748,12 +663,11 @@ ul.mreports {
     border: 1px solid #ddd;
     border-radius: 2px;
     overflow: hidden;
-}
-
-ul.mreports li {
-    margin: 0;
-    padding: 0 4px 0 0;
-    float: left;
+    li {
+        margin: 0;
+        padding: 0 4px 0 0;
+        float: left;
+    }
 }
 
 ul.mreports li a, ul.mreports li span {
@@ -794,11 +708,11 @@ ul.mreports li.editable a {
 }
 
 .report-instructions {
-    margin-top: 20px;
+    .top-margined;
 }
 
 .report-box {
-    margin-top: 20px;
+    .top-margined;
 }
 
 .report-item textarea, select, p {
@@ -821,7 +735,7 @@ ul.mreports li.editable a {
 }
 
 .report-delete-comment:hover {
-    color: #888;
+    .grayed;
 }
 
 .reports-list-pictogram, .dashboard-list-pictogram {
