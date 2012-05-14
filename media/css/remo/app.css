@@ -830,6 +830,11 @@ ul.mreports li.editable a {
     text-align: center;
 }
 
+.reports-list-small-pictogram {
+    font-family: "ModernPictogramsNormal";
+    font-size: 12px;
+}
+
 .reports-order-pictogram {
     font-family: "ModernPictogramsNormal";
     font-size: 16px;

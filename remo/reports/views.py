@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -210,8 +211,43 @@ def edit_report(request, display_name, year, month):
                    'created': created})
 
 
-def list_reports(request):
+def list_reports(request, mentor=None, rep=None):
     report_list = Report.objects.all()
+    pageheader = 'Reports'
+
+    if mentor or rep:
+        display_name = mentor or rep
+        user = get_object_or_404(User,
+                                 userprofile__display_name__iexact=display_name)
+
+    if mentor:
+        report_list = report_list.filter(mentor=user)
+        pageheader = 'Reports mentored by %s' % user.get_full_name()
+    elif rep:
+        report_list = report_list.filter(user=user)
+        pageheader = 'Reports of %s' % user.get_full_name()
+
+    if 'query' in request.GET:
+        query = request.GET['query'].strip()
+        if re.match(r'\d{4}(-\d{2}(-\d{2})?)?$', query):
+            # User is searching a full date
+            query = query.split('-')
+            report_list = report_list.filter(updated_on__year=query[0])
+            if len(query) >= 2:
+                report_list = report_list.filter(updated_on__month=query[1])
+            if len(query) == 3:
+                report_list = report_list.filter(updated_on__day=query[2])
+
+        else:
+            report_list = report_list.filter(
+                Q(recruits_comments__icontains=query)|
+                Q(past_items__icontains=query)|
+                Q(future_items__icontains=query)|
+                Q(flags__icontains=query)|
+                Q(reportevent__description__icontains=query)|
+                Q(reportlink__description__icontains=query))
+
+    report_list = report_list.distinct()
     number_of_reports = report_list.count()
 
     sort_key = request.GET.get('sort_key', LIST_REPORTS_DEFAULT_SORT)
@@ -238,4 +274,6 @@ def list_reports(request):
     return render(request, 'reports_list.html',
                   {'reports': reports,
                    'number_of_reports': number_of_reports,
-                   'sort_key': sort_key})
+                   'sort_key': sort_key,
+                   'pageheader': pageheader,
+                   'query': request.GET.get('query', '')})
