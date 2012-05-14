@@ -93,7 +93,7 @@ def dashboard(request):
 
     if user.groups.filter(name='Admin').exists():
         args['is_admin'] = True
-        reps = User.objects.filter(groups__name="Rep")
+        reps = User.objects.filter(groups__name='Rep')
         args['reps_without_mentors'] = reps.filter(
             userprofile__registration_complete=True, userprofile__mentor=None)
         args['reps_without_profile'] = reps.filter(
