@@ -217,8 +217,8 @@ def list_reports(request, mentor=None, rep=None):
 
     if mentor or rep:
         display_name = mentor or rep
-        user = get_object_or_404(User,
-                                 userprofile__display_name__iexact=display_name)
+        user = get_object_or_404(
+            User, userprofile__display_name__iexact=display_name)
 
     if mentor:
         report_list = report_list.filter(mentor=user)
