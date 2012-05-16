@@ -87,3 +87,6 @@ SECRET_KEY = ''
 # Arecibo
 # ARECIBO_PUBLIC_ACCOUNT_NUMBER = ''
 # ARECIBO_SERVER_URL = ''
+
+# LESS COMPILER
+# LESS_BIN = '/path/to/lessc'
