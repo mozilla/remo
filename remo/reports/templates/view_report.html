@@ -39,21 +39,22 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
             Date filled
           </span>&nbsp;
           {{ report.created_on.strftime('%Y-%m-%d') }}
+          <!-- the span below visible only to mentors, council and admins -->
+          {% if view_status and (report.overdue or report.empty) %}
+            <span class="report-item">
+              {% if report.overdue %}
+                <span class="red radius label">
+                  Overdue
+                </span>&nbsp;
+              {% endif %}
+              {% if report.empty %}
+                <span class="red radius label">
+                  Empty
+                </span>&nbsp;
+              {% endif %}
+            </span>
+          {% endif %}
         </p>
-        <!-- the p below visible only to mentors council and admins -->
-        {% if view_status and (report.overdue or report.empty) %}
-          <p class="report-item">
-            <span class="white radius label">
-              Status
-            </span>&nbsp;
-            {% if report.overdue %}
-              Overdue
-            {% endif %}
-            {% if report.empty %}
-              Empty
-            {% endif %}
-          </p>
-        {% endif %}
       </div>
     </div>
   </div>
