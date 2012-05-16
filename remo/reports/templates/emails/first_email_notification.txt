@@ -15,9 +15,15 @@ information to share a given month. That's OK! Don't worry about
 filing an empty Monthly Report. Just submitting it shows that you're
 still active in the program!
 
+Also, make sure to install the Mozilla Reps Companion [1] to your
+Firefox to easily submit your next monthly, as well as to have
+quick-access to other Mozilla Reps tools and documentation.
+
 As always, if you have any questions or any assistance filing your
 report, don't hesitate to contact your mentor or fellow Mozilla Reps.
 
 Cheers!
 
 The Mozilla Reps Council
+
+[1] https://addons.mozilla.org/addon/mozilla-reps-companion
