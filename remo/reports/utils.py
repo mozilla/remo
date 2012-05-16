@@ -12,6 +12,12 @@ REPORTS_PERMISSION_LEVEL = {'owner': 3,
                             'anonymous': 1}
 
 
+def get_month_first_report(user):
+    """Return the month that we should get the first report from a Rep."""
+    date_joined = user.userprofile.date_joined_program
+    return go_fwd_n_months(date_joined, first_day=True)
+
+
 def get_reports_for_year(user, start_year, end_year=None, allow_empty=False,
                          permission=REPORTS_PERMISSION_LEVEL['anonymous']):
     """Return a list of reports for year."""
@@ -20,9 +26,7 @@ def get_reports_for_year(user, start_year, end_year=None, allow_empty=False,
     up = user.userprofile
     today = datetime(year=tmp_date.year, month=tmp_date.month, day=1)
     date_joined = up.date_joined_program
-    tmp_date = go_fwd_n_months(date_joined)
-    month_first_report = datetime(year=tmp_date.year,
-                                  day=1, month=tmp_date.month)
+    month_first_report = get_month_first_report(user)
 
     if not end_year:
         end_year = start_year
@@ -71,21 +75,28 @@ def get_mentee_reports_for_month(user, dateobj=None):
 
     """
     if not dateobj:
-        dateobj = go_back_n_months(date.today(), first_day=True)
+        one_month_before = go_back_n_months(date.today(), first_day=True)
+    else:
+        one_month_before = dateobj
+    two_months_before = go_back_n_months(one_month_before, first_day=True)
 
     mentees = get_mentees(user)
-    mentees_list = {'month': dateobj.strftime("%B %Y"), 'reports': []}
+    mentees_list = {'month': one_month_before.strftime("%B %Y"), 'reports': []}
 
     for mentee in mentees:
-        report = get_object_or_none(Report, user=mentee, month=dateobj)
-        if report is None:
+        month_first_report = get_month_first_report(mentee)
+        current_report = get_object_or_none(Report, user=mentee,
+                                            month=one_month_before)
+        previous_report = get_object_or_none(Report, user=mentee,
+                                             month=two_months_before)
+        if not previous_report and two_months_before >= month_first_report:
             status = 'notfilled'
-        elif report.overdue:
-            status = 'overdue'
+        elif current_report and current_report.empty:
+            status = 'empty'
         else:
             status = ''
 
         mentees_list['reports'].append({'user': mentee, 'status': status,
-                                        'report': report})
+                                        'report': current_report})
 
     return mentees_list
