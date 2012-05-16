@@ -245,7 +245,15 @@ def list_reports(request, mentor=None, rep=None):
                 Q(future_items__icontains=query)|
                 Q(flags__icontains=query)|
                 Q(reportevent__description__icontains=query)|
-                Q(reportlink__description__icontains=query))
+                Q(reportlink__description__icontains=query)|
+                Q(user__first_name__icontains=query)|
+                Q(user__last_name__icontains=query)|
+                Q(user__userprofile__local_name__icontains=query)|
+                Q(user__userprofile__display_name__icontains=query)|
+                Q(mentor__first_name__icontains=query)|
+                Q(mentor__last_name__icontains=query)|
+                Q(mentor__userprofile__local_name__icontains=query)|
+                Q(mentor__userprofile__display_name__icontains=query))
 
     report_list = report_list.distinct()
     number_of_reports = report_list.count()
