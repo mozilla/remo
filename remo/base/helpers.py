@@ -125,3 +125,9 @@ def active(request, pattern):
         return 'active-nav'
 
     return None
+
+
+@register.function
+def get_development_environent():
+    """Return settings.TEMPLATE_DEBUG."""
+    return getattr(settings, 'TEMPLATE_DEBUG', False)

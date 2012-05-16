@@ -13,7 +13,7 @@ MINIFY_BUNDLES = {
             'css/remo/ie.css',
             ),
         'remo': (
-            'css/remo/app.css',
+            'css/remo/app.less',
             ),
         'leaflet': (
             'leaflet/leaflet.css',

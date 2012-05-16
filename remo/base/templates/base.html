@@ -38,8 +38,12 @@
   <![endif]-->
   {% block headextra %} {% endblock %}
   <!-- our css is always last to override stuff -->
-  {{ css('remo') }}
-  {{ js('less') }}
+  {% if get_development_environent() %}
+    <link href="/media/css/remo/app.less" rel="stylesheet/less">
+    {{ js('less') }}
+  {% else %}
+    {{ css('remo') }}
+  {% endif %}
 </head>
 
 <body>
@@ -95,7 +99,7 @@
                 <a href="{{ url('main') }}">
                   <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
                        alt="Mozilla Reps logo">
-                  <h3>mozilla reps</h3>
+                  <h3><span class="metabold">mozilla</span> reps</h3>
                 </a>
               </div>
               <div class="row show-on-phones">

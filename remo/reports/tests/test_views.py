@@ -3,6 +3,7 @@ import datetime
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test.client import Client
+from funfactory.helpers import urlparams
 from nose.tools import eq_, nottest
 from test_utils import TestCase
 
@@ -51,12 +52,12 @@ class ViewsTest(TestCase):
         self.assertTemplateUsed(response, 'reports_list.html')
 
         for sort_key in LIST_REPORTS_VALID_SHORTS:
-            response = c.get(reverse('reports_list_reports') +
-                             '&sort_key=%s' % sort_key)
+            response = c.get(urlparams(reverse('reports_list_reports'),
+                                       sort_key=sort_key))
             self.assertTemplateUsed(response, 'reports_list.html')
 
         # Test pagination.
-        response = c.get(reverse('reports_list_reports') + '&page=1')
+        response = c.get(urlparams(reverse('reports_list_reports'), page=1))
         self.assertTemplateUsed(response, 'reports_list.html')
 
     def test_view_current_report_page(self):
