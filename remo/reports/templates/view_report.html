@@ -82,7 +82,6 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
 </div>
 
 <div class="row">
-
   <!-- Past and future Items -->
   <div class="six columns">
     <div class="row report-box">
@@ -94,13 +93,32 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
           <span class="white radius label">
             Past items
           </span>&nbsp;
-          {{ report.past_items|restructuredtext }}
+          {% if report.past_items %}
+            {{ report.past_items|restructuredtext }}
+          {% else %}
+            <span class="grayed">
+              No past items reported for this month.
+            </span>
+          {% endif %}
         </p>
+      </div>
+    </div>
+    <div class="row report-box">
+      <div class="one columns pictogram">
+        &nbsp;
+      </div>
+      <div class="eleven columns report-item">
         <p class="report-item">
           <span class="white radius label">
-            Future plans
+            Future items
           </span>&nbsp;
-          {{ report.future_items|restructuredtext }}
+          {% if report.future_items %}
+            {{ report.future_items|restructuredtext }}
+          {% else %}
+            <span class="grayed">
+              No future items reported for this month.
+            </span>
+          {% endif %}
         </p>
       </div>
     </div>
@@ -117,11 +135,17 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
           <span class="white radius label">
             Recruit efforts
           </span>&nbsp;
-          {{ report.recruits_comments|restructuredtext }}
+          {% if report.recruits_comments %}
+            {{ report.recruits_comments|restructuredtext }}
+          {% else %}
+            <span class="grayed">
+              No recruit efforts reported for this month.
+            </span>
+          {% endif %}
         </p>
       </div>
     </div>
-    <div class="row">
+    <div class="row report-box">
       <div class="one columns pictogram">
         !
       </div>
@@ -130,7 +154,13 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
           <span class="white radius label">
             Flags
           </span>&nbsp;
-          {{ report.flags|restructuredtext }}
+          {% if report.flags %}
+            {{ report.flags|restructuredtext }}
+          {% else %}
+            <span class="grayed">
+              No flags reported for this month.
+            </span>
+          {% endif %}
         </p>
       </div>
     </div>
@@ -138,7 +168,6 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
 </div>
 
 <div class="row">
-
   <!-- Events -->
   <div class="six columns">
     <div class="row report-box">
