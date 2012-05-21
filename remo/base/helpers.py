@@ -63,12 +63,14 @@ def get_static_map_url(width, height, lon, lat, zoom=4):
 
 
 @register.function
-def get_next_url(session):
+def get_next_url(request):
     """Return next_url stored in session or Dashboard."""
-    if 'next_url' in session:
-        return session.pop('next_url')
+    if 'next_url' in request.session:
+        return request.session.pop('next_url')
+    elif request.get_full_path() == '/':
+        return reverse('dashboard')
 
-    return reverse('dashboard')
+    return request.get_full_path()
 
 
 def pad_string(str, block_size):
