@@ -13,7 +13,8 @@ from remo.profiles.models import User
 
 class ViewsTest(TestCase):
     """Tests related to Profiles Views."""
-    fixtures = ['demo_users.json']
+    fixtures = ['demo_users.json',
+                'demo_bugs.json']
 
     def setUp(self):
         """Setup tests."""
