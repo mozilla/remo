@@ -28,7 +28,6 @@ def permission_check(permissions=[], display_name_field=None):
     """
 
     def decorator(func):
-
         @wraps(func)
         def wrapper(request, *args, **kwargs):
 
