@@ -36,21 +36,17 @@ def dashboard(request):
     """Dashboard view."""
     user = request.user
     args = {}
-    budget_requests = Bug.objects.filter(component='Budget Requests')
-    budget_requests = budget_requests.exclude(Q(status='RESOLVED')|
-                                              Q(status='VERIFIED'))
-    swag_requests = Bug.objects.filter(component='Swag Requests')
-    swag_requests = swag_requests.exclude(Q(status='RESOLVED')|
-                                          Q(status='VERIFIED'))
-    mentorship_requests = Bug.objects.filter(component='Mentorship')
-    mentorship_requests = mentorship_requests.exclude(Q(status='RESOLVED')|
-                                                      Q(status='VERIFIED'))
-    cit_requests = Bug.objects.filter(component='Community IT Requests')
-    cit_requests = cit_requests.exclude(Q(status='RESOLVED')|
-                                        Q(status='VERIFIED'))
-    planning_requests = Bug.objects.filter(component='Planning')
-    planning_requests = planning_requests.exclude(Q(status='RESOLVED')|
-                                                  Q(status='VERIFIED'))
+    q_closed = Q(status='RESOLVED')| Q(status='VERIFIED')
+    budget_requests = (Bug.objects.filter(component='Budget Requests').
+                       exclude(q_closed))
+    swag_requests = (Bug.objects.filter(component='Swag Requests').
+                     exclude(q_closed))
+    mentorship_requests = (Bug.objects.filter(component='Mentorship').
+                           exclude(q_closed))
+    cit_requests = (Bug.objects.filter(component='Community IT Requests').
+                    exclude(q_closed))
+    planning_requests = (Bug.objects.filter(component='Planning').
+                         exclude(q_closed))
 
     today = date.today()
     if user.groups.filter(name='Rep').exists():
@@ -62,19 +58,22 @@ def dashboard(request):
     my_q_assigned = (my_q | Q(assigned_to=user))
     my_mentees = User.objects.filter(userprofile__mentor=user)
 
-    args['my_budget_requests'] = budget_requests.filter(my_q)
-    args['my_swag_requests'] = swag_requests.filter(my_q)
+    args['my_budget_requests'] = budget_requests.filter(my_q).distinct()
+    args['my_swag_requests'] = swag_requests.filter(my_q).distinct()
 
     if user.groups.filter(name='Mentor').exists():
         args['mentees_budget_requests'] = (budget_requests.
-                                           filter(creator__in=my_mentees))
-        args['mentees_swag_requests'] = swag_requests.filter(
-            creator__in=my_mentees)
+                                           filter(creator__in=my_mentees).
+                                           distinct())
+        args['mentees_swag_requests'] = (swag_requests.
+                                         filter(creator__in=my_mentees).
+                                         distinct())
         my_mentorship_requests = mentorship_requests.filter(my_q)
         my_mentorship_requests = my_mentorship_requests.order_by('whiteboard')
-        args['my_mentorship_requests'] = my_mentorship_requests
+        args['my_mentorship_requests'] = my_mentorship_requests.distinct()
         args['mentees_reports_list'] = (Report.objects.filter(mentor=user).
-                                        order_by('-created_on')[:20])
+                                        order_by('-created_on')[:20].
+                                        distinct())
         args['mentees_reports_grid'] = get_mentee_reports_for_month(user)
         args['mentees_emails'] = (
             my_mentees.values_list('first_name', 'last_name', 'email') or
@@ -89,7 +88,9 @@ def dashboard(request):
         args['my_planning_requests'] = planning_requests
         args['all_reports'] = Report.objects.all().order_by('-created_on')[:20]
     else:
-        args['my_planning_requests'] = planning_requests.filter(my_q_assigned)
+        args['my_planning_requests'] = (planning_requests.
+                                        filter(my_q_assigned).
+                                        distinct())
 
     if user.groups.filter(name='Admin').exists():
         args['is_admin'] = True
