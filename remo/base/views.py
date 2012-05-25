@@ -68,7 +68,7 @@ def dashboard(request):
         args['mentees_swag_requests'] = (swag_requests.
                                          filter(creator__in=my_mentees).
                                          distinct())
-        my_mentorship_requests = mentorship_requests.filter(my_q)
+        my_mentorship_requests = mentorship_requests.filter(my_q_assigned)
         my_mentorship_requests = my_mentorship_requests.order_by('whiteboard')
         args['my_mentorship_requests'] = my_mentorship_requests.distinct()
         args['mentees_reports_list'] = (Report.objects.filter(mentor=user).
