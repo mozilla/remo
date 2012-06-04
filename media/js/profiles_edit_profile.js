@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var map = new L.Map('map_point');
+    var map = new L.Map('map_point', { minZoom: 1 });
     var cloudmade = new L.TileLayer(('http://{s}.tile.cloudmade.com/' +
                                      'b465ca1b6fe040dba7eec0291ecb7a8c/' +
                                      '997/256/{z}/{x}/{y}.png'), { maxZoom: 18 });
