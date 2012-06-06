@@ -36,6 +36,9 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': '/'}, name='logout'),
 
+    # API
+    url(r'^api/', include('remo.api.urls')),
+
     url(r'^', include('remo.base.urls')),
 )
 
