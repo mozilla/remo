@@ -67,8 +67,11 @@ INSTALLED_APPS = ['south'] + \
                      'remo.featuredrep',
                      'remo.remozilla',
                      'remo.reports',
+                     'remo.api',
 
                      'django_browserid',
+                     'tastypie',
+
                      ]
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated

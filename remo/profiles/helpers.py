@@ -22,6 +22,11 @@ def get_avatar_url(user, size=50):
                               settings.MEDIA_URL,
                               'img/remo/remo_avatar.png'])
 
+    if size == -1:
+        # return url with size information
+        return libravatar_url(email=user.email,
+                              default=default_img_url)
+
     return libravatar_url(email=user.email,
                           default=default_img_url,
                           size=size)

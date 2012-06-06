@@ -13,7 +13,6 @@ from product_details import product_details
 
 import forms
 from remo.base.decorators import permission_check
-from remo.remozilla.tasks import fetch_bugs
 from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
@@ -176,9 +175,6 @@ def invite(request):
                                             email=email)
             user.userprofile.added_by = request.user
             user.userprofile.save()
-
-            # Fetch bugs from day 0 to correlate new user with bugs.
-            fetch_bugs.delay(days=10000)
 
             messages.success(request, ('User was successfully invited, '
                                        'now shoot some mails!'))
