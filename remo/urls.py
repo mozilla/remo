@@ -7,6 +7,7 @@ patch()
 handler404 = 'remo.base.views.custom_404'
 handler500 = 'remo.base.views.custom_500'
 
+
 urlpatterns = patterns('',
     # 'me' urls
     url(r'^me/$', 'remo.profiles.views.view_my_profile',
@@ -35,7 +36,9 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': '/'}, name='logout'),
 
-    url(r'^$', 'remo.base.views.main', name='main'),
+    # API
+    url(r'^api/', include('remo.api.urls')),
+
     url(r'^', include('remo.base.urls')),
 )
 
