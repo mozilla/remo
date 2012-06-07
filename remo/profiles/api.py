@@ -55,7 +55,7 @@ class RepResource(ModelResource):
         resource_name = 'rep'
         authentication = Authentication()
         authorization = ReadOnlyAuthorization()
-        serializer = Serializer(formats=['xml', 'json'])
+        serializer = Serializer(formats=['json', 'jsonp'])
         allowed_methods = ['get']
         fields = ['email', 'first_name', 'last_name']
         filtering = {'first_name': ALL,
