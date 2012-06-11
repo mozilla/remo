@@ -29,9 +29,11 @@ class ProfileResource(ModelResource):
         allowed_methods = ['get']
         fields = ['city', 'region', 'country', 'display_name', 'local_name',
                   'lon', 'lat', 'mozillians_profile_url', 'twitter_account',
-                  'facebook_url', 'diaspora_url', 'personal_blog_feed']
+                  'facebook_url', 'diaspora_url', 'personal_blog_feed',
+                  'irc_name']
         filtering = {'display_name': ALL,
-                     'local_name': ALL}
+                     'local_name': ALL,
+                     'irc_name': ALL}
 
     def dehydrate_profile_url(self, bundle):
         """Calculate and return full url to Rep profile."""
@@ -81,7 +83,8 @@ class RepResource(ModelResource):
             qset = (Q(first_name__icontains=query)|
                     Q(last_name__icontains=query)|
                     Q(userprofile__display_name__icontains=query)|
-                    Q(userprofile__local_name__icontains=query))
+                    Q(userprofile__local_name__icontains=query)|
+                    Q(userprofile__irc_name__icontains=query))
             base_object_list = base_object_list.filter(qset).distinct()
 
         return base_object_list
