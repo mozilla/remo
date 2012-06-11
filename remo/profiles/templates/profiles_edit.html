@@ -136,6 +136,12 @@
             </small>
           {% endif %}
           {{ profileform.mentor }}
+          <div class="required-field"></div>
+          {% if profileform.mentor.errors %}
+            <small class="error">
+              {{ profileform.mentor.errors }}
+            </small>
+          {% endif %}
         </div>
       </div>
     </div>

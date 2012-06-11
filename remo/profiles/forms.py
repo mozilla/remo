@@ -81,10 +81,9 @@ class ChangeProfileForm(forms.ModelForm):
         """Convert mentor field from number to User."""
         value = self.cleaned_data['mentor']
         if value == u'None':
-            value = None
-        else:
-            value = User.objects.get(pk=value)
+            raise ValidationError('Please select a mentor.')
 
+        value = User.objects.get(pk=value)
         return value
 
     class Meta:
