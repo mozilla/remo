@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_control, never_cache
 
@@ -125,6 +126,10 @@ def view_profile(request, display_name):
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
     usergroups = user.groups.filter(Q(name='Mentor')|Q(name='Council'))
+
+    if (not user.userprofile.registration_complete and
+        not request.user.has_perm('profiles.can_edit_profiles')):
+            raise Http404
 
     data = {'pageuser': user,
             'user_profile': user.userprofile,
