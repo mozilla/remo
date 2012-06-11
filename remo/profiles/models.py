@@ -104,7 +104,7 @@ class UserProfile(models.Model):
                                               (True, 'Female'),
                                               (False, 'Male')),
                                      default=None)
-    mentor = models.ForeignKey(User, null=True, blank=True,
+    mentor = models.ForeignKey(User, null=True, blank=False,
                                related_name='mentees',
                                validators=[_validate_mentor])
     functional_areas = models.ManyToManyField(FunctionalArea, blank=True,
