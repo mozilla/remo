@@ -275,3 +275,34 @@ class ViewsTest(TestCase):
         response = c.get(reverse('profiles_list_profiles'), follow=True)
         d = pq(response.content)
         eq_(len(d('#profiles-number-of-reps')), 1)
+
+    def test_view_incomplete_profile_page(self):
+        """Test permission to view incomplete profile pages.
+
+        Only users with profiles.can_edit_profiles permission can view
+        profiles of users with incomplete profiles.
+
+        """
+        c = Client()
+
+        # Test as anonymous.
+        url = reverse('profiles_view_profile',
+                      kwargs={'display_name': 'rep2'})
+
+        response = c.get(url, follow=True)
+        self.assertTemplateUsed(response, '404.html',
+                                'Anonymous can view the page')
+
+        # Test as logged in w/o permissions.
+        c.login(username='rep', password='passwd')
+        response = c.get(url, follow=True)
+        self.assertTemplateUsed(response, '404.html',
+                                'Rep without permission can view the page')
+
+        # Test as admin.
+        c.login(username='admin', password='passwd')
+        response = c.get(url, follow=True)
+        self.assertTemplateUsed(response, 'profiles_view.html',
+                                'Admin can\'t view the page')
+
+
