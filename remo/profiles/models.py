@@ -141,6 +141,14 @@ class UserProfile(models.Model):
         return age
 
 
+class UserAvatar(models.Model):
+    """User Avatar Model."""
+    user = models.OneToOneField(User)
+    avatar_url = models.URLField(max_length=400, default='')
+    last_update = models.DateTimeField(default=(datetime.datetime.utcnow() -
+                                                datetime.timedelta(hours=25)))
+
+
 @receiver(pre_save, sender=UserProfile)
 def userprofile_set_date_joined_program_pre_save(sender, instance, **kwargs):
     """Set date_joined_program to today when empty."""
