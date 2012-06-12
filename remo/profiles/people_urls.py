@@ -11,7 +11,9 @@ urlpatterns = patterns('',
     url(r'^invite/$', 'remo.profiles.views.invite', name='profiles_invite'),
     url(r'^invite$', 'django.views.generic.simple.redirect_to',
         {'url': 'invite/', 'permanent': True}),
-    # This url is intentionally left without a $
-    url(r'^', 'remo.profiles.views.list_profiles',
+    url(r'^$', 'remo.profiles.views.list_profiles',
         name='profiles_list_profiles'),
+    # This url is intentionally left without a $
+    url(r'^', 'remo.profiles.views.redirect_list_profiles',
+        name='profiles_list_profiles_redirect'),
 )

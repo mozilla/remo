@@ -23,6 +23,16 @@ MINIFY_BUNDLES = {
         'less': (
             'js/less-1.3.0.min.js',
             ),
+        'common-dbg': (
+            'js/jquery-1.7.1.js',
+            'js/modernizr.foundation.js',
+            'js/foundation.js',
+            'js/webtrends.js',
+            'js/activate.browserid.js',
+            'js/jquery.prettydate.js',
+             # Our app.js is always last to override stuff
+            'js/app.js',
+            ),
         'common': (
             'js/jquery.min.js',
             'js/modernizr.foundation.js',
@@ -34,7 +44,7 @@ MINIFY_BUNDLES = {
             'js/app.js',
             ),
         'profiles_people': (
-            'js/jquery.quicksearch.js',
+            'js/jquery.tmpl.js',
             'js/profiles_people.js'
             ),
         'leaflet': (

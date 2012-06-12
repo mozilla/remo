@@ -94,12 +94,12 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           <h6 class="profile-item">
             {% for group in usergroups %}
               {% if group.name == "Mentor" %}
-                <a href="{{ url('profiles_list_profiles') }}Group:{{ group.name }}">
+                <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
                   Reps Mentor
                 </a>
               {% endif %}
               {% if group.name == "Council" %}
-                <a href="{{ url('profiles_list_profiles') }}Group:{{ group.name }}">
+                <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
                   Reps Council
                 </a> member
               {% endif %}
@@ -119,15 +119,15 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             Location
           </span>
           &nbsp;
-          <a href="{{ url('profiles_list_profiles') }}{{ user_profile.city }}">
+          <a href="{{ url('profiles_list_profiles') }}city/{{ user_profile.city }}/">
             {{ user_profile.city }}
           </a>
           -
-          <a href="{{ url('profiles_list_profiles') }}{{ user_profile.region }}">
+          <a href="{{ url('profiles_list_profiles') }}region/{{ user_profile.region }}/">
             {{ user_profile.region }}
           </a>
           -
-          <a href="{{ url('profiles_list_profiles') }}{{ user_profile.country }}">
+          <a href="{{ url('profiles_list_profiles') }}country/{{ user_profile.country }}/">
             {{ user_profile.country }}
           </a>
         </p>
@@ -296,7 +296,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             </span>
             &nbsp;
             {% for area in user_profile.functional_areas.all() %}
-              <a href="{{ url('profiles_list_profiles') }}Area:'{{ area.name }}'">
+              <a href="{{ url('profiles_list_profiles') }}area/{{ area.name }}/">
                  {{ area.name }}</a>{% if not loop.last %}, {% endif %}
             {% endfor %}
           </p>
