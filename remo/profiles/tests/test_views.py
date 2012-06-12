@@ -1,14 +1,13 @@
 import datetime
 import time
 
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from nose.tools import eq_
 from test_utils import TestCase
 
 from pyquery import PyQuery as pq
-
-from remo.profiles.models import User
 
 
 class ViewsTest(TestCase):
@@ -304,5 +303,3 @@ class ViewsTest(TestCase):
         response = c.get(url, follow=True)
         self.assertTemplateUsed(response, 'profiles_view.html',
                                 'Admin can\'t view the page')
-
-
