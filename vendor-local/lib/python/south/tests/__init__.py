@@ -2,6 +2,7 @@
 import unittest
 import os
 import sys
+from functools import wraps
 from django.conf import settings
 from south.hacks import hacks
 
@@ -46,6 +47,28 @@ class Monkeypatcher(unittest.TestCase):
         if getattr(self, 'installed_apps', None):
             hacks.reset_installed_apps()
 
+# Make sure skipUnless is available.
+try:
+    # skipUnless added in Python 2.7;
+    from unittest import skipUnless
+except ImportError:
+    try: 
+        # django.utils.unittest added in Django 1.3;
+        from django.utils.unittest import skipUnless
+    except ImportError:
+        def skipUnless(condition, message):
+            def decorator(testfunc):
+                @wraps(testfunc)
+                def wrapper(self):
+                    if condition:
+                        # Apply method
+                        testfunc(self)
+                    else:
+                        # The skip exceptions are not available either...
+                        print "Skipping", testfunc.__name__,"--", message
+                return wrapper
+            return decorator
+
 
 # Try importing all tests if asked for (then we can run 'em)
 try:
@@ -55,7 +78,9 @@ except:
 
 if not skiptest:
     from south.tests.db import *
+    from south.tests.db_mysql import *
     from south.tests.logic import *
     from south.tests.autodetection import *
     from south.tests.logger import *
     from south.tests.inspector import *
+    from south.tests.freezer import *

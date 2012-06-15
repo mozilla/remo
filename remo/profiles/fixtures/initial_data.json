@@ -41,14 +41,14 @@
             "is_active": true,
             "is_superuser": true,
             "is_staff": true,
-            "last_login": "2012-01-30 03:56:09",
+            "last_login": "2012-01-30 03:56:09+00:00",
             "groups": [
                 1
             ],
             "user_permissions": [],
             "password": "!",
             "email": "giorgos@mozilla.com",
-            "date_joined": "2012-01-30 03:56:09"
+            "date_joined": "2012-01-30 03:56:09+00:00"
         }
     },
     {

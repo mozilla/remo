@@ -1,46 +1,5 @@
 [
     {
-        "pk": 1,
-        "model": "auth.group",
-        "fields": {
-            "name": "Admin",
-            "permissions": [
-                52,
-                53,
-                66,
-                67
-            ]
-        }
-    },
-    {
-        "pk": 2,
-        "model": "auth.group",
-        "fields": {
-            "name": "Council",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 3,
-        "model": "auth.group",
-        "fields": {
-            "name": "Rep",
-            "permissions": []
-        }
-    },
-    {
-        "pk": 4,
-        "model": "auth.group",
-        "fields": {
-            "name": "Mentor",
-            "permissions": [
-                52,
-                66,
-                67
-            ]
-        }
-    },
-    {
         "pk": 4,
         "model": "auth.user",
         "fields": {
@@ -50,15 +9,15 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2012-01-23 05:29:21",
+            "last_login": "2012-01-23 05:29:21+00:00",
             "groups": [
                 1,
                 4
             ],
             "user_permissions": [],
-            "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
+            "password": "md5$2$f74916608ad95265f58a739d6ffba15f",
             "email": "admin@example.com",
-            "date_joined": "2012-01-23 05:29:21"
+            "date_joined": "2012-01-23 05:29:21+00:00"
         }
     },
     {
@@ -71,14 +30,14 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2012-01-23 05:30:50",
+            "last_login": "2012-01-23 05:30:50+00:00",
             "groups": [
                 2
             ],
             "user_permissions": [],
-            "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
+            "password": "md5$2$f74916608ad95265f58a739d6ffba15f",
             "email": "counselor@example.com",
-            "date_joined": "2012-01-23 05:30:50"
+            "date_joined": "2012-01-23 05:30:50+00:00"
         }
     },
     {
@@ -91,14 +50,14 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2012-01-23 05:31:21",
+            "last_login": "2012-01-23 05:31:21+00:00",
             "groups": [
                 4
             ],
             "user_permissions": [],
-            "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
+            "password": "md5$2$f74916608ad95265f58a739d6ffba15f",
             "email": "mentor@example.com",
-            "date_joined": "2012-01-23 05:31:21"
+            "date_joined": "2012-01-23 05:31:21+00:00"
         }
     },
     {
@@ -111,14 +70,14 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2012-01-23 05:31:39",
+            "last_login": "2012-01-23 05:31:39+00:00",
             "groups": [
                 3
             ],
             "user_permissions": [],
-            "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
+            "password": "md5$2$f74916608ad95265f58a739d6ffba15f",
             "email": "rep@example.com",
-            "date_joined": "2012-01-23 05:31:39"
+            "date_joined": "2012-01-23 05:31:39+00:00"
         }
     },
     {
@@ -131,14 +90,14 @@
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2012-01-23 05:31:58",
+            "last_login": "2012-01-23 05:31:58+00:00",
             "groups": [
                 3
             ],
             "user_permissions": [],
-            "password": "sha512$d44da6cf71972df0f663$f356d471158267d8e86075949546fc99b24787214b761c259d1b386a6196065626e4cd5d7ccba57ffb559935d1784872a1b01b20673f20fc884f466452e2b9ef",
+            "password": "md5$2$f74916608ad95265f58a739d6ffba15f",
             "email": "rep2@example.com",
-            "date_joined": "2012-01-23 05:31:58"
+            "date_joined": "2012-01-23 05:31:58+00:00"
         }
     },
     {

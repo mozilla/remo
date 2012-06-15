@@ -13,10 +13,10 @@
             "component": "",
             "summary": "",
             "bug_id": 1199,
-            "created_on": "2012-03-13 07:45:41",
+            "created_on": "2012-03-13 07:45:41+00:00",
             "assigned_to": null,
             "bug_last_change_time": null,
-            "updated_on": "2012-03-13 07:45:41",
+            "updated_on": "2012-03-13 07:45:41+00:00",
             "resolution": "",
             "bug_creation_time": null
         }
@@ -25,7 +25,7 @@
         "pk": 1,
         "model": "remozilla.status",
         "fields": {
-            "last_updated": "2012-03-13 06:31:04"
+            "last_updated": "2012-03-13 06:31:04+00:00"
         }
     }
 ]

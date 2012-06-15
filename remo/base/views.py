@@ -72,8 +72,8 @@ def dashboard(request):
         my_mentorship_requests = my_mentorship_requests.order_by('whiteboard')
         args['my_mentorship_requests'] = my_mentorship_requests.distinct()
         args['mentees_reports_list'] = (Report.objects.filter(mentor=user).
-                                        order_by('-created_on')[:20].
-                                        distinct())
+                                        order_by('-created_on').
+                                        distinct()[:20])
         args['mentees_reports_grid'] = get_mentee_reports_for_month(user)
         args['mentees_emails'] = (
             my_mentees.values_list('first_name', 'last_name', 'email') or

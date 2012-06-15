@@ -178,6 +178,10 @@ class AutoChanges(BaseChanges):
                 old_fields, old_meta, old_m2ms = self.split_model_def(self.old_orm[key], self.old_defs[key])
                 new_fields, new_meta, new_m2ms = self.split_model_def(self.current_model_from_key(key), self.new_defs[key])
                 
+                # Do nothing for models which are now not managed.
+                if new_meta.get("managed", "True") == "False":
+                    continue
+                
                 # Find fields that have vanished.
                 for fieldname in old_fields:
                     if fieldname not in new_fields:
@@ -404,7 +408,7 @@ class ManualChanges(BaseChanges):
             try:
                 model_name, field_name = field_desc.split(".")
             except (TypeError, ValueError):
-                print "%r is not a valid field description." % field_desc
+                raise ValueError("%r is not a valid field description." % field_desc)
             model = models.get_model(self.migrations.app_label(), model_name)
             real_fields, meta, m2m_fields = self.split_model_def(model, model_defs[model_key(model)])
             yield ("AddField", {

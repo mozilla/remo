@@ -103,7 +103,7 @@ class ChangeDateJoinedForm(forms.ModelForm):
     """Form to change userprofile date_joined_program field."""
     date_joined_program = forms.DateField(
         required=False,
-        widget=SelectDateWidget(years=range(2011, datetime.now().year+1),
+        widget=SelectDateWidget(years=range(2011, datetime.today().year+1),
                                 required=False))
 
     class Meta:

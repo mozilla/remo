@@ -4,8 +4,16 @@ Hacks for the Django 1.0/1.0.2 releases.
 
 from django.conf import settings
 from django.db import models
+from django.db.backends.creation import BaseDatabaseCreation
 from django.db.models.loading import AppCache, cache
+from django.core import management
+from django.core.management.commands.flush import Command as FlushCommand
 from django.utils.datastructures import SortedDict
+
+class SkipFlushCommand(FlushCommand):
+    def handle_noargs(self, **options):
+        # no-op to avoid calling flush
+        return
 
 class Hacks:
     
@@ -72,4 +80,24 @@ class Hacks:
         Rebuilds AppCache with the real model definitions.
         """
         cache._populate()
-    
+
+    def patch_flush_during_test_db_creation(self):
+        """
+        Patches BaseDatabaseCreation.create_test_db to not flush database
+        """
+
+        def patch(f):
+            def wrapper(*args, **kwargs):
+                # hold onto the original and replace flush command with a no-op
+                original_flush_command = management._commands['flush']
+                try:
+                    management._commands['flush'] = SkipFlushCommand()
+                    # run create_test_db
+                    f(*args, **kwargs)
+                finally:
+                    # unpatch flush back to the original
+                    management._commands['flush'] = original_flush_command
+            return wrapper
+            
+        BaseDatabaseCreation.create_test_db = patch(BaseDatabaseCreation.create_test_db)
+

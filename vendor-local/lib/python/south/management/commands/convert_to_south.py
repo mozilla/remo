@@ -53,7 +53,7 @@ class Command(BaseCommand):
         model_list = models.get_models(app_module)
         if not model_list:
             print "This application has no models; this command is for applications that already have models syncdb'd."
-            print "Make some models, and then use ./manage.py startmigration %s --initial instead." % app
+            print "Make some models, and then use ./manage.py schemamigration %s --initial instead." % app
             return
         
         # Ask South if it thinks it's already got migrations
