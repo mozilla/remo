@@ -1,4 +1,4 @@
-from copy import copy
+from copy import copy, deepcopy
 from cStringIO import StringIO
 import datetime
 import inspect
@@ -70,7 +70,7 @@ class Migrator(object):
             '%s\n'
             ' ! The South developers regret this has happened, and would\n'
             ' ! like to gently persuade you to consider a slightly\n'
-            ' ! easier-to-deal-with DBMS.\n'
+            ' ! easier-to-deal-with DBMS (one that supports DDL transactions)\n'
             ' ! NOTE: The error which caused the migration to fail is further up.'
         ) % extra_info
 
@@ -84,18 +84,26 @@ class Migrator(object):
             south.db.db.rollback_transaction()
             if not south.db.db.has_ddl_transactions:
                 print self.run_migration_error(migration)
+            print "Error in migration: %s" % migration
             raise
         else:
-            south.db.db.commit_transaction()
+            try:
+                south.db.db.commit_transaction()
+            except:
+                print "Error during commit in migration: %s" % migration
+                raise
+                
 
     def run(self, migration):
         # Get the correct ORM.
         south.db.db.current_orm = self.orm(migration)
-        # If the database doesn't support running DDL inside a transaction
-        # *cough*MySQL*cough* then do a dry run first.
-        if not south.db.db.has_ddl_transactions:
-            dry_run = DryRunMigrator(migrator=self, ignore_fail=False)
-            dry_run.run_migration(migration)
+        # If we're not already in a dry run, and the database doesn't support
+        # running DDL inside a transaction, *cough*MySQL*cough* then do a dry
+        # run first.
+        if not isinstance(getattr(self, '_wrapper', self), DryRunMigrator):
+            if not south.db.db.has_ddl_transactions:
+                dry_run = DryRunMigrator(migrator=self, ignore_fail=False)
+                dry_run.run_migration(migration)
         return self.run_migration(migration)
 
     def done_migrate(self, migration, database):
@@ -138,6 +146,7 @@ class MigratorWrapper(object):
                            for k in self.__class__.__dict__.iterkeys()
                            if not k.startswith('__')])
         self._migrator.__dict__.update(attributes)
+        self._migrator.__dict__['_wrapper'] = self
 
     def __getattr__(self, name):
         return getattr(self._migrator, name)
@@ -154,6 +163,8 @@ class DryRunMigrator(MigratorWrapper):
                 print " - Migration '%s' is marked for no-dry-run." % migration
             return
         south.db.db.dry_run = True
+        # preserve the constraint cache as it can be mutated by the dry run
+        constraint_cache = deepcopy(south.db.db._constraint_cache)
         if self._ignore_fail:
             south.db.db.debug, old_debug = False, south.db.db.debug
         pending_creates = south.db.db.get_pending_creates()
@@ -171,6 +182,9 @@ class DryRunMigrator(MigratorWrapper):
                 south.db.db.debug = old_debug
             south.db.db.clear_run_data(pending_creates)
             south.db.db.dry_run = False
+            # restore the preserved constraint cache from before dry run was
+            # executed
+            south.db.db._constraint_cache = constraint_cache
 
     def run_migration(self, migration):
         try:
@@ -254,7 +268,11 @@ class Forwards(Migrator):
     def record(migration, database):
         # Record us as having done this
         record = MigrationHistory.for_migration(migration, database)
-        record.applied = datetime.datetime.utcnow()
+        try:
+            from django.utils.timezone import now
+            record.applied = now()
+        except ImportError:
+            record.applied = datetime.datetime.utcnow()
         if database != DEFAULT_DB_ALIAS:
             record.save(using=database)
         else:

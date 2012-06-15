@@ -7,7 +7,6 @@ from django.dispatch import receiver
 
 from south.signals import post_migrate
 
-from remo.base.models import UTCDateTimeField
 from remo.base.utils import go_back_n_months
 
 OVERDUE_DAY = 7
@@ -16,8 +15,8 @@ OVERDUE_DAY = 7
 class Report(models.Model):
     """Report Model."""
     user = models.ForeignKey(User, related_name='reports')
-    created_on = UTCDateTimeField(auto_now_add=True)
-    updated_on = UTCDateTimeField(auto_now=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     mentor = models.ForeignKey(User, null=True, default=None,
                                related_name='reports_mentored')
     month = models.DateField()
@@ -82,7 +81,7 @@ class ReportComment(models.Model):
     """Comments in Report."""
     user = models.ForeignKey(User)
     report = models.ForeignKey(Report)
-    created_on = UTCDateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
 
     class Meta:

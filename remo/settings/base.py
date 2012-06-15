@@ -61,6 +61,7 @@ INSTALLED_APPS = ['south'] + \
                      # Application base, containing global templates.
                      'django.contrib.messages',
                      'django.contrib.markup',
+                     'jingo_minify',
 
                      'remo.base',
                      'remo.profiles',
@@ -78,6 +79,7 @@ INSTALLED_APPS = ['south'] + \
 # apps here:
 JINGO_EXCLUDE_APPS = [
     'admin',
+    'registration',
 ]
 
 # Tells the extract script what files to look for L10n in and what function
@@ -139,3 +141,5 @@ CLOUDMADE_MARKER_PURPLE = 'fc2feea1e8e84d0192c32a2b867073a3'
 CLOUDMADE_MARKER = '9d7b9835ddd64784ade32d16a7968e90'
 CLOUDMADE_MARKER_75 = '43d850f01ff24721bbdc7a9fa31bd829'
 CLOUDMADE_MARKER_85 = '507f4f059b1b4e2b939afd14d327ccbb'
+
+USE_TZ = True

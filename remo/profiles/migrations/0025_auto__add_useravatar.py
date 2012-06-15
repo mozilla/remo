@@ -7,19 +7,19 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding model 'UserAvatar'
         db.create_table('profiles_useravatar', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
             ('avatar_url', self.gf('django.db.models.fields.URLField')(max_length=400)),
-            ('last_update', self.gf('django.db.models.fields.DateTimeField')(default=0)),
+            ('last_update', self.gf('django.db.models.fields.DateTimeField')(default='1970-01-01 00:00')),
         ))
         db.send_create_signal('profiles', ['UserAvatar'])
 
 
     def backwards(self, orm):
-        
+
         # Deleting model 'UserAvatar'
         db.delete_table('profiles_useravatar')
 

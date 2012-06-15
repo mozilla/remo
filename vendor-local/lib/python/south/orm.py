@@ -4,14 +4,13 @@ Roughly emulates the real Django ORM, to a point.
 """
 
 import inspect
-import datetime
 
 from django.db import models
 from django.db.models.loading import cache
 from django.core.exceptions import ImproperlyConfigured
 
 from south.db import db
-from south.utils import ask_for_it_by_name
+from south.utils import ask_for_it_by_name, datetime_utils
 from south.hacks import hacks
 from south.exceptions import UnfreezeMeLater, ORMBaseNotIncluded, ImpossibleORMUnfreeze
 
@@ -206,7 +205,7 @@ class _FakeORM(object):
         fake_locals['_'] = lambda x: x
         
         # Datetime; there should be no datetime direct accesses
-        fake_locals['datetime'] = datetime
+        fake_locals['datetime'] = datetime_utils
         
         # Now, go through the requested imports and import them.
         for name, value in extra_imports.items():

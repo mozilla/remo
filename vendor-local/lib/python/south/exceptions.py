@@ -3,6 +3,8 @@ from traceback import format_exception
 class SouthError(RuntimeError):
     pass
 
+class SouthWarning(RuntimeWarning):
+    pass
 
 class BrokenMigration(SouthError):
     def __init__(self, migration, exc_info):
@@ -135,3 +137,15 @@ class UnfreezeMeLater(Exception):
 class ImpossibleORMUnfreeze(SouthError):
     """Raised if the ORM can't manage to unfreeze all the models in a linear fashion."""
     pass
+
+class ConstraintDropped(SouthWarning):
+    def __init__(self, constraint, table, column=None):
+        self.table = table
+        if column:
+            self.column = ".%s" % column
+        else:
+            self.column = ""
+        self.constraint = constraint
+    
+    def __str__(self):
+        return "Constraint %(constraint)s was dropped from %(table)s%(column)s -- was this intended?" % self.__dict__  

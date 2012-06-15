@@ -102,7 +102,7 @@ class Command(BaseCommand):
         sys.exit(code)
 
 
-MIGRATION_TEMPLATE = """# encoding: utf-8
+MIGRATION_TEMPLATE = """# -*- coding: utf-8 -*-
 import datetime
 from south.db import db
 from south.v2 import DataMigration
@@ -112,13 +112,13 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-
+        # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
 
     def backwards(self, orm):
         "Write your backwards methods here."
 
-
     models = %(frozen_models)s
 
     %(complete_apps)s
+    symmetrical = True
 """

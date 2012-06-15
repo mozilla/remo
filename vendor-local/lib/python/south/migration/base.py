@@ -11,7 +11,7 @@ from django.conf import settings
 from south import exceptions
 from south.migration.utils import depends, dfs, flatten, get_app_label
 from south.orm import FakeORM
-from south.utils import memoize, ask_for_it_by_name
+from south.utils import memoize, ask_for_it_by_name, datetime_utils
 from south.migration.utils import app_label_to_app_module
 
 
@@ -271,6 +271,9 @@ class Migration(object):
     def __repr__(self):
         return u'<Migration: %s>' % unicode(self)
 
+    def __eq__(self, other):
+        return self.app_label() == other.app_label() and self.name() == other.name()
+
     def app_label(self):
         return self.migrations.app_label()
 
@@ -298,7 +301,7 @@ class Migration(object):
                 raise exceptions.BrokenMigration(self, sys.exc_info())
         # Override some imports
         migration._ = lambda x: x  # Fake i18n
-        migration.datetime = datetime
+        migration.datetime = datetime_utils
         return migration
     migration = memoize(migration)
 
@@ -411,6 +414,8 @@ class Migration(object):
             return False
 
     def prev_orm(self):
+        if getattr(self.migration_class(), 'symmetrical', False):
+            return self.orm()
         previous = self.previous()
         if previous is None:
             # First migration? The 'previous ORM' is empty.

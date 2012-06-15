@@ -2,6 +2,8 @@ import json
 from datetime import datetime
 from urllib import quote
 
+import django.utils.timezone as timezone
+
 from celery.decorators import task
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -34,7 +36,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
     Bugzilla users with users on this website, when possible.
 
     """
-    now = datetime.now()
+    now = timezone.now()
     if not days:
         days = (now - get_last_updated_date()).days + 1
 
