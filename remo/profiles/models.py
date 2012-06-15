@@ -1,6 +1,8 @@
 import datetime
 import re
 
+import django.utils.timezone as timezone
+
 from django.contrib.auth.models import Group, User, Permission
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -145,15 +147,16 @@ class UserAvatar(models.Model):
     """User Avatar Model."""
     user = models.OneToOneField(User)
     avatar_url = models.URLField(max_length=400, default='')
-    last_update = models.DateTimeField(default=(datetime.datetime.utcnow() -
-                                                datetime.timedelta(hours=25)))
+    last_update = models.DateTimeField(default=(timezone.now() -
+                                                datetime.timedelta(hours=25)),
+                                       auto_now=True)
 
 
 @receiver(pre_save, sender=UserProfile)
 def userprofile_set_date_joined_program_pre_save(sender, instance, **kwargs):
     """Set date_joined_program to today when empty."""
     if not instance.date_joined_program:
-        instance.date_joined_program = datetime.datetime.now()
+        instance.date_joined_program = datetime.date.today()
 
 
 @receiver(pre_save, sender=UserProfile)

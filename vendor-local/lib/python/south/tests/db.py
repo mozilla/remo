@@ -1,7 +1,10 @@
+import datetime
 import unittest
 
-from south.db import db
+from south.db import db, generic
 from django.db import connection, models
+
+from south.tests import skipUnless        
 
 # Create a list of error classes from the various database libraries
 errors = []
@@ -11,6 +14,12 @@ try:
 except ImportError:
     pass
 errors = tuple(errors)
+
+try:
+    from south.db import mysql
+except ImportError:
+    mysql = None
+
 
 class TestOperations(unittest.TestCase):
 
@@ -42,22 +51,25 @@ class TestOperations(unittest.TestCase):
         # Make sure we can't do the same query on an empty table
         try:
             cursor.execute("SELECT * FROM nottheretest1")
-            self.fail("Non-existent table could be selected!")
         except:
             pass
+        else:
+            self.fail("Non-existent table could be selected!")
     
     def test_delete(self):
         """
         Test deletion of tables.
         """
+        cursor = connection.cursor()
         db.create_table("test_deltable", [('email_confirmed', models.BooleanField(default=False))])
         db.delete_table("test_deltable")
         # Make sure it went
         try:
-            cursor.execute("SELECT * FROM test1")
-            self.fail("Just-deleted table could be selected!")
+            cursor.execute("SELECT * FROM test_deltable")
         except:
             pass
+        else:
+            self.fail("Just-deleted table could be selected!")
     
     def test_nonexistent_delete(self):
         """
@@ -65,9 +77,10 @@ class TestOperations(unittest.TestCase):
         """
         try:
             db.delete_table("test_nonexistdeltable")
-            self.fail("Non-existent table could be deleted!")
         except:
             pass
+        else:
+            self.fail("Non-existent table could be deleted!")
     
     def test_foreign_keys(self):
         """
@@ -82,6 +95,22 @@ class TestOperations(unittest.TestCase):
             ('UNIQUE', models.ForeignKey(Test)),
         ])
         db.execute_deferred_sql()
+        
+    @skipUnless(db.supports_foreign_keys, 'Foreign keys can only be deleted on '
+                                          'engines that support them.')
+    def test_recursive_foreign_key_delete(self):
+        """
+        Test that recursive foreign keys are deleted correctly (see #1065)
+        """
+        Test = db.mock_model(model_name='Test', db_table='test_rec_fk_del',
+                             db_tablespace='', pk_field_name='id',
+                             pk_field_type=models.AutoField, pk_field_args=[])
+        db.create_table('test_rec_fk_del', [
+            ('id', models.AutoField(primary_key=True, auto_created=True)),
+            ('fk', models.ForeignKey(Test)),
+        ])
+        db.execute_deferred_sql()
+        db.delete_foreign_key('test_rec_fk_del', 'fk_id')
     
     def test_rename(self):
         """
@@ -98,9 +127,10 @@ class TestOperations(unittest.TestCase):
         db.start_transaction()
         try:
             cursor.execute("SELECT spam FROM test_rn")
-            self.fail("Just-renamed column could be selected!")
         except:
             pass
+        else:
+            self.fail("Just-renamed column could be selected!")
         db.rollback_transaction()
         db.delete_table("test_rn")
         db.start_transaction()
@@ -123,9 +153,10 @@ class TestOperations(unittest.TestCase):
         db.start_transaction()
         try:
             cursor.execute("SELECT eggs FROM test_drn")
-            self.fail("Dry-renamed new column could be selected!")
         except:
             pass
+        else:
+            self.fail("Dry-renamed new column could be selected!")
         db.rollback_transaction()
         db.delete_table("test_drn")
         db.start_transaction()
@@ -145,9 +176,10 @@ class TestOperations(unittest.TestCase):
         db.start_transaction()
         try:
             cursor.execute("SELECT spam FROM testtr")
-            self.fail("Just-renamed column could be selected!")
         except:
             pass
+        else:
+            self.fail("Just-renamed column could be selected!")
         db.rollback_transaction()
         db.delete_table("testtr2")
         db.start_transaction()
@@ -156,7 +188,6 @@ class TestOperations(unittest.TestCase):
         """
         Test that % in a default gets escaped to %%.
         """
-        cursor = connection.cursor()
         try:
             db.create_table("testpind", [('cf', models.CharField(max_length=255, default="It should be 2%!"))])
         except IndexError:
@@ -205,28 +236,21 @@ class TestOperations(unittest.TestCase):
     
     def test_primary_key_implicit(self):
         """
-        Tests changing primary key implicitly.
+        Tests that changing primary key implicitly fails.
         """
-        
-        # This is ONLY important for SQLite. It's not a feature we support, but
-        # not implementing it means SQLite fails (due to the table-copying weirdness).
-        if db.backend_name != "sqlite3":
-            return
-        
         db.create_table("test_pki", [
             ('id', models.IntegerField(primary_key=True)),
             ('new_pkey', models.IntegerField()),
             ('eggs', models.IntegerField(unique=True)),
         ])
         db.execute_deferred_sql()
-        # Remove the default primary key, and make eggs it
+        # Fiddle with alter_column to attempt to make it remove the primary key
         db.alter_column("test_pki", "id", models.IntegerField())
         db.alter_column("test_pki", "new_pkey", models.IntegerField(primary_key=True))
-        # Try inserting a now-valid row pair
+        # Try inserting a should-be-valid row pair
         db.execute("INSERT INTO test_pki (id, new_pkey, eggs) VALUES (1, 2, 3)")
-        db.execute("INSERT INTO test_pki (id, new_pkey, eggs) VALUES (1, 3, 4)")
+        db.execute("INSERT INTO test_pki (id, new_pkey, eggs) VALUES (2, 2, 4)")
         db.delete_table("test_pki")
-        
     
     def test_add_columns(self):
         """
@@ -248,6 +272,27 @@ class TestOperations(unittest.TestCase):
         self.assertEquals(val, None)
         db.delete_column("test_addc", "add1")
         db.delete_table("test_addc")
+
+    def test_add_nullbool_column(self):
+        """
+        Test adding NullBoolean columns
+        """
+        db.create_table("test_addnbc", [
+            ('spam', models.BooleanField(default=False)),
+            ('eggs', models.IntegerField()),
+        ])
+        # Add a column
+        db.add_column("test_addnbc", "add1", models.NullBooleanField())
+        # Add a column with a default
+        db.add_column("test_addnbc", "add2", models.NullBooleanField(default=True))
+        # insert some data so we can test the default values of the added column
+        db.execute("INSERT INTO test_addnbc (eggs) VALUES (1)")
+        # try selecting from the new columns to make sure they were properly created
+        false, null, true = db.execute("SELECT spam,add1,add2 FROM test_addnbc")[0][0:3]
+        self.assertTrue(true)
+        self.assertEquals(null, None)
+        self.assertEquals(false, False)
+        db.delete_table("test_addnbc")
     
     def test_alter_columns(self):
         """
@@ -261,6 +306,17 @@ class TestOperations(unittest.TestCase):
         db.alter_column("test_alterc", "eggs", models.FloatField())
         db.delete_table("test_alterc")
     
+    def test_alter_char_default(self):
+        """
+        Test altering column defaults with char fields
+        """
+        db.create_table("test_altercd", [
+            ('spam', models.CharField(max_length=30)),
+            ('eggs', models.IntegerField()),
+        ])
+        # Change spam default
+        db.alter_column("test_altercd", "spam", models.CharField(max_length=30, default="loof"))
+        
     def test_mysql_defaults(self):
         """
         Test MySQL default handling for BLOB and TEXT.
@@ -359,14 +415,20 @@ class TestOperations(unittest.TestCase):
         db.create_unique("test_unique", ["spam"])
         db.commit_transaction()
         db.start_transaction()
+
+        # Special preparations for Sql Server
+        if db.backend_name == "pyodbc":
+            db.execute("SET IDENTITY_INSERT test_unique2 ON;")
         
         # Test it works
+        TRUE = (True,)
+        FALSE = (False,)
         db.execute("INSERT INTO test_unique2 (id) VALUES (1)")
         db.execute("INSERT INTO test_unique2 (id) VALUES (2)")
-        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (true, 0, 1)")
-        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (false, 1, 2)")
+        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (%s, 0, 1)", TRUE)
+        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (%s, 1, 2)", FALSE)
         try:
-            db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (true, 2, 1)")
+            db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (%s, 2, 1)", FALSE)
         except:
             db.rollback_transaction()
         else:
@@ -379,10 +441,10 @@ class TestOperations(unittest.TestCase):
         db.start_transaction()
         
         # Test similarly
-        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (true, 0, 1)")
-        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (false, 1, 2)")
+        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (%s, 0, 1)", TRUE)
+        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (%s, 1, 2)", FALSE)
         try:
-            db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (true, 1, 1)")
+            db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (%s, 1, 1)", TRUE)
         except:
             db.rollback_transaction()
         else:
@@ -394,10 +456,10 @@ class TestOperations(unittest.TestCase):
         db.create_unique("test_unique", ["spam", "eggs", "ham_id"])
         db.start_transaction()
         # Test similarly
-        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (true, 0, 1)")
-        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (false, 1, 1)")
+        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (%s, 0, 1)", TRUE)
+        db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (%s, 1, 1)", FALSE)
         try:
-            db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (true, 0, 1)")
+            db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (%s, 0, 1)", TRUE)
         except:
             db.rollback_transaction()
         else:
@@ -405,9 +467,51 @@ class TestOperations(unittest.TestCase):
         db.delete_unique("test_unique", ["spam", "eggs", "ham_id"])
         db.start_transaction()
     
+    def test_alter_unique(self):
+        """
+        Tests that unique constraints are not affected when
+        altering columns (that's handled by create_/delete_unique)
+        """
+        db.create_table("test_alter_unique", [
+            ('spam', models.IntegerField()),
+            ('eggs', models.IntegerField(unique=True)),
+        ])
+        db.execute_deferred_sql()
+        
+        # Make sure the unique constraint is created
+        db.execute('INSERT INTO test_alter_unique (spam, eggs) VALUES (0, 42)')
+        db.commit_transaction()
+        db.start_transaction()
+        try:
+            db.execute("INSERT INTO test_alter_unique (spam, eggs) VALUES (1, 42)")
+        except:
+            pass
+        else:
+            self.fail("Could insert the same integer twice into a unique field.")
+        db.rollback_transaction()
+
+        # Alter without unique=True (should not affect anything)
+        db.alter_column("test_alter_unique", "eggs", models.IntegerField())
+
+        # Insertion should still fail
+        db.start_transaction()
+        try:
+            db.execute("INSERT INTO test_alter_unique (spam, eggs) VALUES (1, 42)")
+        except:
+            pass
+        else:
+            self.fail("Could insert the same integer twice into a unique field after alter_column with unique=False.")
+        db.rollback_transaction()
+        
+        # Delete the unique index/constraint
+        if db.backend_name != "sqlite3":
+            db.delete_unique("test_alter_unique", ["eggs"])
+        db.delete_table("test_alter_unique")
+        db.start_transaction()
+
     def test_capitalised_constraints(self):
         """
-        Under PostgreSQL at least, capitalised constrains must be quoted.
+        Under PostgreSQL at least, capitalised constraints must be quoted.
         """
         db.create_table("test_capconst", [
             ('SOMECOL', models.PositiveIntegerField(primary_key=True)),
@@ -422,7 +526,62 @@ class TestOperations(unittest.TestCase):
         db.create_table("test_textdef", [
             ('textcol', models.TextField(blank=True)),
         ])
-    
+
+    def test_text_to_char(self):
+        """
+        On Oracle, you can't simply ALTER TABLE MODIFY a textfield to a charfield
+        """
+        value = "kawabanga"
+        db.create_table("test_text_to_char", [
+            ('textcol', models.TextField()),
+        ])
+        db.execute("INSERT INTO test_text_to_char VALUES (%s)", [value])
+        db.alter_column("test_text_to_char", "textcol", models.CharField(max_length=100))
+        after = db.execute("select * from test_text_to_char")[0][0]
+        self.assertEqual(value, after, "Change from text to char altered value [ %s != %s ]" % (`value`,`after`))
+
+    def test_char_to_text(self):
+        """
+        On Oracle, you can't simply ALTER TABLE MODIFY a charfield to a textfield either
+        """
+        value = "agnabawak"
+        db.create_table("test_char_to_text", [
+            ('textcol', models.CharField(max_length=100)),
+        ])
+        db.execute("INSERT INTO test_char_to_text VALUES (%s)", [value])
+        db.alter_column("test_char_to_text", "textcol", models.TextField())
+        after = db.execute("select * from test_char_to_text")[0][0]
+        after = unicode(after) # Oracle text fields return a sort of lazy string -- force evaluation
+        self.assertEqual(value, after, "Change from char to text altered value [ %s != %s ]" % (`value`,`after`))
+
+    def test_datetime_default(self):
+        """
+        Test that defaults are created correctly for datetime columns
+        """
+        end_of_world = datetime.datetime(2012, 12, 21, 0, 0, 1)
+
+        try:
+            from django.utils import timezone
+        except ImportError:
+            pass
+        else:
+            from django.conf import settings
+            if getattr(settings, 'USE_TZ', False):
+                end_of_world = end_of_world.replace(tzinfo=timezone.utc)
+
+        db.create_table("test_datetime_def", [
+            ('col0', models.IntegerField(null=True)),
+            ('col1', models.DateTimeField(default=end_of_world)),
+            ('col2', models.DateTimeField(null=True)),
+        ])
+        db.alter_column("test_datetime_def", "col2", models.DateTimeField(default=end_of_world))
+        db.add_column("test_datetime_def", "col3", models.DateTimeField(default=end_of_world))
+        db.execute("insert into test_datetime_def (col0) values (null)")
+        ends = db.execute("select col1,col2,col3 from test_datetime_def")[0]
+        self.failUnlessEqual(len(ends), 3)
+        for e in ends:
+            self.failUnlessEqual(e, end_of_world)
+        
     def test_add_unique_fk(self):
         """
         Test adding a ForeignKey with unique=True or a OneToOneField
@@ -435,3 +594,222 @@ class TestOperations(unittest.TestCase):
         db.add_column("test_add_unique_fk", "mock2", models.OneToOneField(db.mock_model('Mock', 'mock'), null=True))
         
         db.delete_table("test_add_unique_fk")
+        
+    def test_column_constraint(self):
+        """
+        Tests that the value constraint of PositiveIntegerField is enforced on
+        the database level.
+        """
+        if not db.has_check_constraints:
+            return
+        
+        db.create_table("test_column_constraint", [
+            ('spam', models.PositiveIntegerField()),
+        ])
+        db.execute_deferred_sql()
+        
+        # Make sure we can't insert negative values
+        db.commit_transaction()
+        db.start_transaction()
+        try:
+            db.execute("INSERT INTO test_column_constraint VALUES (-42)")
+        except:
+            pass
+        else:
+            self.fail("Could insert a negative value into a PositiveIntegerField.")
+        db.rollback_transaction()
+        
+        # remove constraint
+        db.alter_column("test_column_constraint", "spam", models.IntegerField())
+        # make sure the insertion works now
+        db.execute('INSERT INTO test_column_constraint VALUES (-42)')
+        db.execute('DELETE FROM test_column_constraint')
+        
+        # add it back again
+        db.alter_column("test_column_constraint", "spam", models.PositiveIntegerField())
+        # it should fail again
+        db.start_transaction()
+        try:
+            db.execute("INSERT INTO test_column_constraint VALUES (-42)")
+        except:
+            pass
+        else:
+            self.fail("Could insert a negative value after changing an IntegerField to a PositiveIntegerField.")
+        db.rollback_transaction()
+        
+        db.delete_table("test_column_constraint")
+        db.start_transaction()
+
+    def test_sql_defaults(self):
+        """
+        Test that sql default value is correct for non-string field types.
+        Datetimes are handled in test_datetime_default.
+        """
+
+        class CustomField(models.CharField):
+            __metaclass__ = models.SubfieldBase
+            description = 'CustomField'
+            def get_default(self):
+                if self.has_default():
+                    if callable(self.default):
+                        return self.default()
+                    return self.default
+                return super(CustomField, self).get_default()
+            def get_prep_value(self, value):
+                if not value:
+                    return value
+                return ','.join(map(str, value))
+            def to_python(self, value):
+                if not value or isinstance(value, list):
+                    return value
+                return map(int, value.split(','))
+
+        false_value = db.has_booleans and 'False' or '0'
+        defaults = (
+            (models.CharField(default='sukasuka'), 'DEFAULT \'sukasuka'),
+            (models.BooleanField(default=False), 'DEFAULT %s' % false_value),
+            (models.IntegerField(default=42), 'DEFAULT 42'),
+            (CustomField(default=[2012, 2018, 2021, 2036]), 'DEFAULT \'2012,2018,2021,2036')
+        )
+        for field, sql_test_str in defaults:
+            sql = db.column_sql('fish', 'YAAAAAAZ', field)
+            if sql_test_str not in sql:
+                self.fail("default sql value was not properly generated for field %r.\nSql was %s" % (field, sql))
+
+
+class TestCacheGeneric(unittest.TestCase):
+    base_ops_cls = generic.DatabaseOperations
+    def setUp(self):
+        class CacheOps(self.base_ops_cls):
+            def __init__(self):
+                self._constraint_cache = {}
+                self.cache_filled = 0
+                self.settings = {'NAME': 'db'}
+
+            def _fill_constraint_cache(self, db, table):
+                self.cache_filled += 1
+                self._constraint_cache.setdefault(db, {})
+                self._constraint_cache[db].setdefault(table, {})
+
+            @generic.invalidate_table_constraints
+            def clear_con(self, table):
+                pass
+
+            @generic.copy_column_constraints
+            def cp_column(self, table, column_old, column_new):
+                pass
+
+            @generic.delete_column_constraints
+            def rm_column(self, table, column):
+                pass
+
+            @generic.copy_column_constraints
+            @generic.delete_column_constraints
+            def mv_column(self, table, column_old, column_new):
+                pass
+
+            def _get_setting(self, attr):
+                return self.settings[attr]
+        self.CacheOps = CacheOps
+
+    def test_cache(self):
+        ops = self.CacheOps()
+        self.assertEqual(0, ops.cache_filled)
+        self.assertFalse(ops.lookup_constraint('db', 'table'))
+        self.assertEqual(1, ops.cache_filled)
+        self.assertFalse(ops.lookup_constraint('db', 'table'))
+        self.assertEqual(1, ops.cache_filled)
+        ops.clear_con('table')
+        self.assertEqual(1, ops.cache_filled)
+        self.assertFalse(ops.lookup_constraint('db', 'table'))
+        self.assertEqual(2, ops.cache_filled)
+        self.assertFalse(ops.lookup_constraint('db', 'table', 'column'))
+        self.assertEqual(2, ops.cache_filled)
+
+        cache = ops._constraint_cache
+        cache['db']['table']['column'] = 'constraint'
+        self.assertEqual('constraint', ops.lookup_constraint('db', 'table', 'column'))
+        self.assertEqual([('column', 'constraint')], ops.lookup_constraint('db', 'table'))
+        self.assertEqual(2, ops.cache_filled)
+
+        # invalidate_table_constraints
+        ops.clear_con('new_table')
+        self.assertEqual('constraint', ops.lookup_constraint('db', 'table', 'column'))
+        self.assertEqual(2, ops.cache_filled)
+
+        self.assertFalse(ops.lookup_constraint('db', 'new_table'))
+        self.assertEqual(3, ops.cache_filled)
+
+        # delete_column_constraints
+        cache['db']['table']['column'] = 'constraint'
+        self.assertEqual('constraint', ops.lookup_constraint('db', 'table', 'column'))
+        ops.rm_column('table', 'column')
+        self.assertEqual([], ops.lookup_constraint('db', 'table', 'column'))
+        self.assertEqual([], ops.lookup_constraint('db', 'table', 'noexist_column'))
+
+        # copy_column_constraints
+        cache['db']['table']['column'] = 'constraint'
+        self.assertEqual('constraint', ops.lookup_constraint('db', 'table', 'column'))
+        ops.cp_column('table', 'column', 'column_new')
+        self.assertEqual('constraint', ops.lookup_constraint('db', 'table', 'column_new'))
+        self.assertEqual('constraint', ops.lookup_constraint('db', 'table', 'column'))
+
+        # copy + delete
+        cache['db']['table']['column'] = 'constraint'
+        self.assertEqual('constraint', ops.lookup_constraint('db', 'table', 'column'))
+        ops.mv_column('table', 'column', 'column_new')
+        self.assertEqual('constraint', ops.lookup_constraint('db', 'table', 'column_new'))
+        self.assertEqual([], ops.lookup_constraint('db', 'table', 'column'))
+        return
+
+    def test_valid(self):
+        ops = self.CacheOps()
+        # none of these should vivify a table into a valid state
+        self.assertFalse(ops._is_valid_cache('db', 'table'))
+        self.assertFalse(ops._is_valid_cache('db', 'table'))
+        ops.clear_con('table')
+        self.assertFalse(ops._is_valid_cache('db', 'table'))
+        ops.rm_column('table', 'column')
+        self.assertFalse(ops._is_valid_cache('db', 'table'))
+
+        # these should change the cache state
+        ops.lookup_constraint('db', 'table')
+        self.assertTrue(ops._is_valid_cache('db', 'table'))
+        ops.lookup_constraint('db', 'table', 'column')
+        self.assertTrue(ops._is_valid_cache('db', 'table'))
+        ops.clear_con('table')
+        self.assertFalse(ops._is_valid_cache('db', 'table'))
+
+    def test_valid_implementation(self):
+        # generic fills the cache on a per-table basis
+        ops = self.CacheOps()
+        self.assertFalse(ops._is_valid_cache('db', 'table'))
+        self.assertFalse(ops._is_valid_cache('db', 'other_table'))
+        ops.lookup_constraint('db', 'table')
+        self.assertTrue(ops._is_valid_cache('db', 'table'))
+        self.assertFalse(ops._is_valid_cache('db', 'other_table'))
+        ops.lookup_constraint('db', 'other_table')
+        self.assertTrue(ops._is_valid_cache('db', 'table'))
+        self.assertTrue(ops._is_valid_cache('db', 'other_table'))
+        ops.clear_con('table')
+        self.assertFalse(ops._is_valid_cache('db', 'table'))
+        self.assertTrue(ops._is_valid_cache('db', 'other_table'))
+
+if mysql:
+    class TestCacheMysql(TestCacheGeneric):
+        base_ops_cls = mysql.DatabaseOperations
+
+        def test_valid_implementation(self):
+            # mysql fills the cache on a per-db basis
+            ops = self.CacheOps()
+            self.assertFalse(ops._is_valid_cache('db', 'table'))
+            self.assertFalse(ops._is_valid_cache('db', 'other_table'))
+            ops.lookup_constraint('db', 'table')
+            self.assertTrue(ops._is_valid_cache('db', 'table'))
+            self.assertTrue(ops._is_valid_cache('db', 'other_table'))
+            ops.lookup_constraint('db', 'other_table')
+            self.assertTrue(ops._is_valid_cache('db', 'table'))
+            self.assertTrue(ops._is_valid_cache('db', 'other_table'))
+            ops.clear_con('table')
+            self.assertFalse(ops._is_valid_cache('db', 'table'))
+            self.assertTrue(ops._is_valid_cache('db', 'other_table'))

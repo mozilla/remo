@@ -3,8 +3,8 @@
         "pk": 1,
         "model": "featuredrep.featuredrep",
         "fields": {
-            "updated_on": "2012-02-08 14:30:54",
-            "created_on": "2012-02-08 14:30:54",
+            "updated_on": "2012-02-08 14:30:54+00:00",
+            "created_on": "2012-02-08 14:30:54+00:00",
             "user": 5,
             "created_by": 4,
             "text": "Test text"

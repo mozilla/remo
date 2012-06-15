@@ -7,22 +7,12 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
-        # Changing field 'FeaturedRep.created_on'
-        db.alter_column('featuredrep_featuredrep', 'created_on', self.gf('remo.base.models.UTCDateTimeField')(auto_now_add=True))
 
-        # Changing field 'FeaturedRep.updated_on'
-        db.alter_column('featuredrep_featuredrep', 'updated_on', self.gf('remo.base.models.UTCDateTimeField')(auto_now=True))
-
+        pass
 
     def backwards(self, orm):
-        
-        # Changing field 'FeaturedRep.created_on'
-        db.alter_column('featuredrep_featuredrep', 'created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True))
 
-        # Changing field 'FeaturedRep.updated_on'
-        db.alter_column('featuredrep_featuredrep', 'updated_on', self.gf('django.db.models.fields.DateTimeField')(auto_now=True))
-
+        pass
 
     models = {
         'auth.group': {
@@ -64,10 +54,10 @@ class Migration(SchemaMigration):
         'featuredrep.featuredrep': {
             'Meta': {'ordering': "['-updated_on']", 'object_name': 'FeaturedRep'},
             'created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'reps_featured'", 'to': "orm['auth.User']"}),
-            'created_on': ('remo.base.models.UTCDateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'created_on': ('remo.base.models.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'text': ('django.db.models.fields.TextField', [], {}),
-            'updated_on': ('remo.base.models.UTCDateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'updated_on': ('remo.base.models.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         }
     }

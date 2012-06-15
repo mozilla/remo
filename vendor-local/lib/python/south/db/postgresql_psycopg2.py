@@ -1,6 +1,7 @@
-
-from django.db import connection, models
+import uuid
+from django.db.backends.util import truncate_name
 from south.db import generic
+
 
 class DatabaseOperations(generic.DatabaseOperations):
 
@@ -10,6 +11,24 @@ class DatabaseOperations(generic.DatabaseOperations):
     
     backend_name = "postgres"
 
+    def create_index_name(self, table_name, column_names, suffix=""):
+        """
+        Generate a unique name for the index
+
+        Django's logic for naming field indexes is different in the
+        postgresql_psycopg2 backend, so we follow that for single-column
+        indexes.
+        """
+
+        if len(column_names) == 1:
+            return truncate_name(
+                '%s_%s%s' % (table_name, column_names[0], suffix),
+                self._get_connection().ops.max_name_length()
+            )
+        return super(DatabaseOperations, self).create_index_name(table_name, column_names, suffix)
+
+    @generic.copy_column_constraints
+    @generic.delete_column_constraints
     def rename_column(self, table_name, old, new):
         if old == new:
             # Short-circuit out
@@ -19,7 +38,8 @@ class DatabaseOperations(generic.DatabaseOperations):
             self.quote_name(old),
             self.quote_name(new),
         ))
-    
+
+    @generic.invalidate_table_constraints
     def rename_table(self, old_table_name, table_name):
         "will rename the table and an associated ID sequence and primary key index"
         # First, rename the table
@@ -29,7 +49,7 @@ class DatabaseOperations(generic.DatabaseOperations):
         self.commit_transaction()
         self.start_transaction()
         try:
-            generic.DatabaseOperations.rename_table(self, old_table_name+"_id_seq", table_name+"_id_seq")
+            generic.DatabaseOperations.rename_table(self, old_table_name + "_id_seq", table_name + "_id_seq")
         except:
             if self.debug:
                 print "   ~ No such sequence (ignoring error)"
@@ -42,7 +62,7 @@ class DatabaseOperations(generic.DatabaseOperations):
         # the table that are used by django (e.g. foreign keys). Until
         # figure out how, you need to do this yourself.
         try:
-            generic.DatabaseOperations.rename_table(self, old_table_name+"_pkey", table_name+ "_pkey")
+            generic.DatabaseOperations.rename_table(self, old_table_name + "_pkey", table_name + "_pkey")
         except:
             if self.debug:
                 print "   ~ No such primary key (ignoring error)"
@@ -51,18 +71,19 @@ class DatabaseOperations(generic.DatabaseOperations):
             self.commit_transaction()
         self.start_transaction()
 
-
     def rename_index(self, old_index_name, index_name):
         "Rename an index individually"
         generic.DatabaseOperations.rename_table(self, old_index_name, index_name)
 
-    def _db_type_for_alter_column(self, field):
-        """
-        Returns a field's type suitable for ALTER COLUMN.
-        Strips CHECKs from PositiveSmallIntegerField) and PositiveIntegerField
-        @param field: The field to generate type for
-        """
-        super_result = super(DatabaseOperations, self)._db_type_for_alter_column(field)
-        if isinstance(field, models.PositiveSmallIntegerField) or isinstance(field, models.PositiveIntegerField):
-            return super_result.split(" ")[0]
-        return super_result
+    def _default_value_workaround(self, value):
+        "Support for UUIDs on psql"
+        if isinstance(value, uuid.UUID):
+            return str(value)
+        else:
+            return super(DatabaseOperations, self)._default_value_workaround(value)
+
+    def _db_type_for_alter_column(self, field): 
+        return self._db_positive_type_for_alter_column(DatabaseOperations, field)
+
+    def _alter_add_column_mods(self, field, name, params, sqls):
+        return self._alter_add_positive_check(DatabaseOperations, field, name, params, sqls)

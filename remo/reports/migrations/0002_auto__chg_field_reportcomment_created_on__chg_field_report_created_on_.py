@@ -7,28 +7,12 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
-        # Changing field 'ReportComment.created_on'
-        db.alter_column('reports_reportcomment', 'created_on', self.gf('remo.base.models.UTCDateTimeField')(auto_now_add=True))
 
-        # Changing field 'Report.created_on'
-        db.alter_column('reports_report', 'created_on', self.gf('remo.base.models.UTCDateTimeField')(auto_now_add=True))
-
-        # Changing field 'Report.updated_on'
-        db.alter_column('reports_report', 'updated_on', self.gf('remo.base.models.UTCDateTimeField')(auto_now=True))
-
+        pass
 
     def backwards(self, orm):
-        
-        # Changing field 'ReportComment.created_on'
-        db.alter_column('reports_reportcomment', 'created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True))
 
-        # Changing field 'Report.created_on'
-        db.alter_column('reports_report', 'created_on', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True))
-
-        # Changing field 'Report.updated_on'
-        db.alter_column('reports_report', 'updated_on', self.gf('django.db.models.fields.DateTimeField')(auto_now=True))
-
+        pass
 
     models = {
         'auth.group': {
@@ -69,7 +53,7 @@ class Migration(SchemaMigration):
         },
         'reports.report': {
             'Meta': {'ordering': "['-month']", 'unique_together': "(['user', 'month'],)", 'object_name': 'Report'},
-            'created_on': ('remo.base.models.UTCDateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'created_on': ('remo.base.models.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'empty': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'flags': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'future_items': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
@@ -79,13 +63,13 @@ class Migration(SchemaMigration):
             'overdue': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'past_items': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'recruits_comments': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
-            'updated_on': ('remo.base.models.UTCDateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'updated_on': ('remo.base.models.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'reports'", 'to': "orm['auth.User']"})
         },
         'reports.reportcomment': {
             'Meta': {'ordering': "['id']", 'object_name': 'ReportComment'},
             'comment': ('django.db.models.fields.TextField', [], {}),
-            'created_on': ('remo.base.models.UTCDateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'created_on': ('remo.base.models.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'report': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['reports.Report']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
