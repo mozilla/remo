@@ -15,6 +15,7 @@ from product_details import product_details
 
 import forms
 from remo.base.decorators import permission_check
+from remo.profiles.models import UserProfile
 from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
 from remo.profiles.models import FunctionalArea
 
@@ -24,7 +25,8 @@ USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
 
 @never_cache
 @permission_check(permissions=['profiles.can_edit_profiles'],
-                  display_name_field='display_name')
+                  filter_field='display_name', owner_field='user',
+                  model=UserProfile)
 def edit(request, display_name):
     """Edit user profile.
 
@@ -98,16 +100,12 @@ def edit(request, display_name):
 
     pageuser = get_object_or_404(User, userprofile__display_name=display_name)
 
-    countries = product_details.get_regions('en').values()
-    countries.sort()
-
     return render(request, 'profiles_edit.html',
                   {'userform': userform,
                    'profileform': profileform,
                    'datejoinedform': datejoinedform,
                    'pageuser': pageuser,
                    'group_bits': group_bits,
-                   'countries': countries,
                    'range_years': range(1950, datetime.today().year - 11)})
 
 

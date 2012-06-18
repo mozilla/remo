@@ -21,6 +21,10 @@ urlpatterns = patterns('',
     url(r'^u/', include('remo.profiles.user_urls')),
     url(r'^people/', include('remo.profiles.people_urls')),
 
+    # events
+    url(r'^e/', include('remo.events.e_urls')),
+    url(r'^events/', include('remo.events.event_urls')),
+
     # reports
     url(r'^reports/', include('remo.reports.report_urls')),
 
