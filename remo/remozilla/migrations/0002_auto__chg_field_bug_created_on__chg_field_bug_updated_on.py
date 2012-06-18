@@ -59,14 +59,14 @@ class Migration(SchemaMigration):
             'bug_last_change_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'cc': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'bugs_cced'", 'symmetrical': 'False', 'to': "orm['auth.User']"}),
             'component': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'created_on': ('remo.base.models.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'bugs_created'", 'null': 'True', 'to': "orm['auth.User']"}),
             'due_date': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'resolution': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '30'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '30'}),
             'summary': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '500'}),
-            'updated_on': ('remo.base.models.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'whiteboard': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '500'})
         },
         'remozilla.status': {
