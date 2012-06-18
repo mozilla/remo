@@ -54,10 +54,10 @@ class Migration(SchemaMigration):
         'featuredrep.featuredrep': {
             'Meta': {'ordering': "['-updated_on']", 'object_name': 'FeaturedRep'},
             'created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'reps_featured'", 'to': "orm['auth.User']"}),
-            'created_on': ('remo.base.models.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'text': ('django.db.models.fields.TextField', [], {}),
-            'updated_on': ('remo.base.models.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
         }
     }
