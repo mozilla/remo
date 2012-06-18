@@ -93,7 +93,7 @@ class ReportEvent(models.Model):
     report = models.ForeignKey(Report)
     name = models.CharField(max_length=300)
     description = models.TextField(default='')
-    link = models.URLField()
+    link = models.URLField(max_length=500)
     participation_type = models.PositiveSmallIntegerField(
         choices=((1, 'Organizer'),
                  (2, 'Mozilla presence Organizer'),
@@ -103,5 +103,5 @@ class ReportEvent(models.Model):
 class ReportLink(models.Model):
     """Link in Reports Model."""
     report = models.ForeignKey(Report)
-    description = models.CharField(max_length=300)
+    description = models.CharField(max_length=500)
     link = models.URLField()
