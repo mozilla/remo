@@ -3,6 +3,9 @@
 # package for developers (testing, docs, etc.), it goes in this file.
 
 -r ../vendor/src/funfactory/funfactory/requirements/compiled.txt
--r ../vendor/src/funfactory/funfactory/requirements/dev.txt
+
+# Commenting dev.txt from functory because it brings in prod.txt
+# -r ../vendor/src/funfactory/funfactory/requirements/dev.txt
+
 fudge
 pyquery

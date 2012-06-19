@@ -4,5 +4,5 @@ Components
 
 .. toctree::
    profiles
-   mentorship
+   reports
    events
