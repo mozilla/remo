@@ -130,6 +130,6 @@ def active(request, pattern):
 
 
 @register.function
-def get_development_environent():
+def get_development_environment():
     """Return settings.TEMPLATE_DEBUG."""
     return getattr(settings, 'TEMPLATE_DEBUG', False)

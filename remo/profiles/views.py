@@ -10,11 +10,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_control, never_cache
 
 from django_browserid.auth import default_username_algo
+from funfactory.helpers import urlparams
 from product_details import product_details
 
 import forms
 from remo.base.decorators import permission_check
 from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
+from remo.profiles.models import FunctionalArea
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
@@ -109,15 +111,21 @@ def edit(request, display_name):
                    'range_years': range(1950, datetime.today().year - 11)})
 
 
-@cache_control(private=True, max_age=60*10)
+def redirect_list_profiles(request):
+    profiles_url = reverse('profiles_list_profiles')
+    extra_path = '/' + request.path_info[len(profiles_url):]
+    return redirect(urlparams(profiles_url, hash=extra_path), permanent=True)
+
+
+@cache_control(private=True)
 def list_profiles(request):
     """List users in Rep Group."""
+    countries = product_details.get_regions('en').values()
+    countries.sort()
+
     return render(request, 'profiles_people.html',
-                  {'people': User.objects.\
-                   filter(userprofile__registration_complete=True,
-                          groups__name='Rep').order_by('userprofile__country',
-                                                       'last_name',
-                                                       'first_name')})
+                  {'countries': countries,
+                   'areas': FunctionalArea.objects.all()})
 
 
 @cache_control(private=True, max_age=60*5)

@@ -15,14 +15,17 @@
 <div class="row">
   <div class="ten columns" id="search">
     <form class="nice" id="searchform">
-      <span class="pictogram-search">
+      <span class="pictogram-search" id="search-icon">
         s
       </span>
-      <input type="text" placeholder="Filter using any keyword" id="searchfield"
-             class="input-text big">
+      <input type="text" placeholder="Loading..." id="searchfield"
+             class="input-text big" disabled="disabled">
     </form>
   </div>
   <div class="two columns view-change">
+    <span id="adv-search-icon" class="pictogram-button">
+      (
+    </span>
     <span id="listviewbutton" class="pictogram-button">
       3
     </span>
@@ -33,48 +36,43 @@
   </div>
 </div>
 
+<!-- Advanced search box -->
+<div class="row hidden" id="adv-search">
+  <div class="ten columns">
+    <div class="row">
+      <form class="custom" id="searchform">
+        <div class="four columns">
+          <select id="adv-search-group" class="expand">
+            <option value="">All Groups</option>
+            <option value="rep">Rep</option>
+            <option value="mentor">Mentor</option>
+            <option value="council">Council</option>
+          </select>
+        </div>
+        <div class="four columns">
+          <select id="adv-search-country" class="expand">
+            <option value="">All Countries</option>
+            {% for country in countries %}
+            <option value="{{ country|lower }}">{{ country }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="four columns">
+          <select id="adv-search-area" class="expand">
+            <option value="">All Areas</option>
+            {% for area in areas %}
+            <option value="{{ area|lower }}">{{ area }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- People are here -->
 <div class="row" id="profiles_gridview">
-  <ul class="block-grid mobile three-up" id="searchlist">
-    {% for person in people %}
-      <li id="li-person-{{ person.id }}" class="profiles-li-item"
-          data-lon="{{ person.userprofile.lon }}" data-lat="{{ person.userprofile.lat }}"
-          data-fullname="{{ person.get_full_name() }}">
-        <a href="{{ url('profiles_view_profile', person.userprofile.display_name) }}">
-          <div class="panel grid-profile">
-            <div class="row">
-              <div class="three phone-one columns grid-profile-image">
-                <img src="{{ person|get_avatar_url }}"
-                     class="profiles-people-avatar"
-                     alt="{{ person.get_full_name() }} avatar">
-              </div>
-              <div class="nine phone-three columns grid-profile-text">
-                <h6>{{ person.first_name }}</h6>
-                <h6>{{ person.last_name }}</h6>
-                {{ person.userprofile.city }}, {{ person.userprofile.country }}
-                <span class="hidden">{{ person.userprofile.display_name }}</span>
-                <span class="hidden">{{ person.userprofile.local_name }}</span>
-                <span class="hidden">{{ person.userprofile.region }}</span>
-                {% if user.is_authenticated() %}
-                    <span class="hidden">{{ person.userprofile.private_email }}</span>
-                    <span class="hidden">{{ person.email }}</span>
-                {% endif %}
-                <span class="hidden">{{ person.userprofile.irc_name }}</span>
-                <span class="hidden">{{ person.userprofile.twitter_account }}</span>
-                <span class="hidden">{{ person.userprofile.jabber_id }}</span>
-                <span class="hidden">{{ person.userprofile.get_gender_display() }}</span>
-                {% for group in person.groups.all() %}
-                  <span class="hidden">Group:{{ group.name }}</span>
-                {% endfor %}
-                {% for area in person.userprofile.functional_areas.all() %}
-                  <span class="hidden">Area:'{{ area.name}}'</span>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        </a>
-      </li>
-    {% endfor %}
+  <ul class="block-grid mobile three-up" id="grid-search-list">
   </ul>
 </div>
 <div id="profiles_listview">
@@ -94,56 +92,81 @@
             <th>Country</th>
           </tr>
         </thead>
-        <tbody>
-          {% for person in people %}
-            <tr id="tr-person-{{ person.id }}">
-              <td>
-                <a href="{{ url('profiles_view_profile', person.userprofile.display_name) }}">
-                  {{ person.get_full_name() }}
-                </a>
-              </td>
-              <td>
-                {{ person.userprofile.local_name }}
-              </td>
-              <td>
-                {{ person.userprofile.display_name }}
-              </td>
-              <td>
-                <a href="{{ url('profiles_list_profiles') }}{{ person.userprofile.city }}">
-                  {{ person.userprofile.city }}
-                </a>
-              </td>
-              <td>
-                <a href="{{ url('profiles_list_profiles') }}{{ person.userprofile.region }}">
-                  {{ person.userprofile.region }}
-                </a>
-              </td>
-              <td>
-                <a href="{{ url('profiles_list_profiles') }}{{ person.userprofile.country }}">
-                  {{ person.userprofile.country }}
-                </a>
-              </td>
-            </tr>
-          {% endfor %}
+        <tbody id="table-search-list">
         </tbody>
       </table>
     </div>
   </div>
 </div>
 {% if user.is_authenticated() %}
-  <div class="row">
-    <div class="twelve columns reps-number">
-      <p><span id="profiles-number-of-reps"></span> Reps were found.</p>
-    </div>
+<div class="row">
+  <div class="twelve columns reps-number">
+    <p><span id="profiles-number-of-reps">0</span>
+      Rep<span id="profiles-number-of-reps-plural">s</span> found.</p>
   </div>
+</div>
 {% endif %}
+
+<script id="gridItem" type="text/x-jquery-tmpl">
+  <li class="profiles-li-item"
+      data-lon="${ profile.lon }" data-lat="${ profile.lat }"
+      data-fullname="${ fullname }">
+    <a href="${ profile.profile_url }">
+      <div class="panel grid-profile">
+        <div class="row">
+          <div class="three phone-one columns grid-profile-image">
+            <img src="${ profile.avatar_url }"
+                 class="profiles-people-avatar"
+                 alt="${ fullname } avatar">
+          </div>
+          <div class="nine phone-three columns grid-profile-text">
+            <h6>${ first_name }</h6>
+            <h6>${ last_name }</h6>
+            ${ profile.city }, ${ profile.country }
+          </div>
+        </div>
+      </div>
+    </a>
+  </li>
+</script>
+
+<script id="listItem" type="text/x-jquery-tmpl">
+  <tr>
+    <td>
+      <a href="${ profile.profile_url }">
+        ${ fullname }
+      </a>
+    </td>
+    <td>
+      ${ profile.local_name }
+    </td>
+    <td>
+      ${ profile.display_name }
+    </td>
+    <td>
+      <a href="{{ url('profiles_list_profiles') }}city/${ profile.city }">
+        ${ profile.city }
+      </a>
+    </td>
+    <td>
+      <a href="{{ url('profiles_list_profiles') }}region/${ profile.region }">
+        ${ profile.region }
+      </a>
+    </td>
+    <td>
+      <a href="{{ url('profiles_list_profiles') }}country/${ profile.country }">
+        ${ profile.country }
+      </a>
+    </td>
+  </tr>
+</script>
 {% endblock %}
 
 {% block bottomextra %}
-  {{ css('leaflet') }}
-  <!--[if lte IE 8]>
-      <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
-  <![endif]-->
-  {{ js('leaflet') }}
-  {{ js('profiles_people') }}
+{{ css('leaflet') }}
+<!--[if lte IE 8]>
+    <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
+    <![endif]-->
+{{ js('leaflet') }}
+{{ js('profiles_people') }}
 {% endblock %}
