@@ -11,6 +11,50 @@ ReportLinkFormset = forms.models.inlineformset_factory(Report, ReportLink,
 class ReportForm(forms.ModelForm):
     """Form of a report."""
     delete_report = forms.BooleanField(required=False, initial=False)
+    past_items = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'id': 'past_items',
+                                     'class': 'flat',
+                                     'placeholder': ('Summary or list of Rep '
+                                                     'activities you were '
+                                                     'involved in this past '
+                                                     'month'),
+                                     'cols': '',
+                                     'rows': ''}))
+    future_items = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'id': 'future_items',
+                                     'class': 'flat',
+                                     'placeholder': ('What Rep activity/ies '
+                                                     'do you plan to be '
+                                                     'involved in next '
+                                                     'month?'),
+                                     'cols': '',
+                                     'rows': ''}))
+
+    recruits_comments = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'id': 'recruits_comments',
+                                     'class': 'flat',
+                                     'placeholder': ('Where you successful '
+                                                     'in recruiting new '
+                                                     'Mozillians? If so, for '
+                                                     'which project or '
+                                                     'community?'),
+                                     'cols': '',
+                                     'rows': ''}))
+    flags = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'id': 'flags',
+                                     'class': 'flat',
+                                     'placeholder': ('Notify your mentor '
+                                                     'about any help you '
+                                                     'might need or any '
+                                                     'suggestions you might '
+                                                     'have to improve the '
+                                                     'program'),
+                                     'cols': '',
+                                     'rows': ''}))
 
     def clean(self):
         cleaned_data = super(ReportForm, self).clean()
