@@ -91,13 +91,13 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
       <div class="eleven columns report-item">
         <p class="report-item">
           <span class="white radius label">
-            Past items
+            Past activities
           </span>&nbsp;
           {% if report.past_items %}
             {{ report.past_items|restructuredtext }}
           {% else %}
             <span class="grayed">
-              No past items reported for this month.
+              No activities reported for this month.
             </span>
           {% endif %}
         </p>
@@ -110,13 +110,13 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
       <div class="eleven columns report-item">
         <p class="report-item">
           <span class="white radius label">
-            Future items
+            Future activities
           </span>&nbsp;
           {% if report.future_items %}
             {{ report.future_items|restructuredtext }}
           {% else %}
             <span class="grayed">
-              No future items reported for this month.
+              No future activities planned this month.
             </span>
           {% endif %}
         </p>
@@ -139,30 +139,26 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
             {{ report.recruits_comments|restructuredtext }}
           {% else %}
             <span class="grayed">
-              No recruit efforts reported for this month.
+              No successful recruit efforts reported for this month.
             </span>
           {% endif %}
         </p>
       </div>
     </div>
     <div class="row report-box">
-      <div class="one columns pictogram">
-        !
-      </div>
-      <div class="eleven columns report-item">
-        <p class="report-item">
-          <span class="white radius label">
-            Flags
-          </span>&nbsp;
-          {% if report.flags %}
+      {% if report.flags %}
+        <div class="one columns pictogram">
+          !
+        </div>
+        <div class="eleven columns report-item">
+          <p class="report-item">
+            <span class="white radius label">
+              Flags
+            </span>&nbsp;
             {{ report.flags|restructuredtext }}
-          {% else %}
-            <span class="grayed">
-              No flags reported for this month.
-            </span>
-          {% endif %}
-        </p>
-      </div>
+          </p>
+        </div>
+      {% endif %}
     </div>
   </div>
 </div>

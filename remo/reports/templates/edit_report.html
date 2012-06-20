@@ -43,7 +43,7 @@ Mozilla Reps - Edit Report
           <p>All Mozillians are super busy and sometimes you need to
           take a break from Mozilla awesomeness and you'll find
           yourself with little or even no information to share in a given
-          month. That's OK! If you feel that this is the month, skip the 
+          month. That's OK! If you feel that this is the month, skip the
           fields and click directly 'Save report'</p>
           <p>In any doubt, please contact your mentor.</p>
         </div>
@@ -60,15 +60,13 @@ Mozilla Reps - Edit Report
           {
         </div>
         <div class="eleven columns report-item">
-          <textarea class="flat" placeholder="Past items summary" id="past_items"
-                    name="past_items">{{ report_form.past_items.value() }}</textarea>
+          {{ report_form.past_items }}
           {% if report_form.past_items.errors %}
             <small class="error">
               {{ report_form.past_items.errors }}
             </small>
           {% endif %}
-          <textarea class="flat" placeholder="Future plans summary"
-                    name="future_items">{{ report_form.future_items.value() }}</textarea>
+          {{ report_form.future_items }}
           {% if report_form.future_items.errors %}
             <small class="error">
               {{ report_form.future_items.errors }}
@@ -85,9 +83,7 @@ Mozilla Reps - Edit Report
           6
         </div>
         <div class="eleven columns report-item">
-          <textarea class="flat"
-                    placeholder="Share your efforts to get new people involved and recruited"
-                    name="recruits_comments">{{ report_form.recruits_comments.value() }}</textarea>
+          {{ report_form.recruits_comments }}
           {% if report_form.recruits_comments.errors %}
             <small class="error">
               {{ report_form.recruits_comments.errors }}
@@ -100,8 +96,7 @@ Mozilla Reps - Edit Report
           !
         </div>
         <div class="eleven columns report-item">
-          <textarea class="flat" placeholder="Notify your mentor about any help you need"
-                    name="flags">{{ report_form.flags.value() }}</textarea>
+          {{ report_form.flags }}
           {% if report_form.flags.errors %}
             <small class="error">
               {{ report_form.flags.errors }}
@@ -127,7 +122,7 @@ Mozilla Reps - Edit Report
           <div class="eleven columns report-item">
             <div class="row report-event">
               <!-- {{ form.name }} -->
-              <input type="text" placeholder="Name of Event"
+              <input type="text" placeholder="Event Name"
                      name="{{ form.name.html_name }}" value="{{ form.name.value() }}"
                      class="input-text big">
               {% if form.name.errors %}
@@ -187,7 +182,7 @@ Mozilla Reps - Edit Report
           </div>
           <div class="eleven columns report-item">
             <div class="row report-activity">
-              <input type="text" placeholder="Link to activity"
+              <input type="text" placeholder="Relevant Link"
                      name="{{ form.link.html_name }}"
                      value="{{ form.link.value() }}"
                      class="input-text big">
@@ -198,7 +193,7 @@ Mozilla Reps - Edit Report
               {% endif %}
 
               <textarea class="flat"
-                        placeholder="Describe activity briefly (e.g. blogpost, article, project, tweet)"
+                        placeholder="Please provide a brief description for the link above (e.g. blog post, presentation slides, etc)"
                         name="{{ form.description.html_name }}">{{ form.description.value() }}</textarea>
               {% if form.description.errors %}
                 <small class="error">
