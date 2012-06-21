@@ -17,6 +17,10 @@ practices and tools of mozillians around the world.
 To learn more about it and the release schedule visit `ReMo Portal project page
 <https://wiki.mozilla.org/ReMo/Website>`_.
 
+For comments and/or questions about ReMo Portal or this documentation
+please ping us on `#remo-dev
+<http://mibbit.com/?channel=%23remo-dev&server=irc.mozilla.org>`_.
+
 Contents
 --------
 
@@ -24,7 +28,6 @@ Contents
    :maxdepth: 2
 
    installation
-   components
 
 Indices and tables
 ------------------

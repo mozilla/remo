@@ -17,6 +17,11 @@ class python {
                 command => "pip install -r $PROJ_DIR/requirements/compiled.txt",
                 require => Exec['pip-install']
             }
+
+            exec { "pip-install-dev":
+                command => "pip install -r $PROJ_DIR/requirements/dev.txt",
+                require => Exec['pip-install']
+            }
         }
 
         ubuntu: {
@@ -27,6 +32,11 @@ class python {
 
             exec { "pip-install-compiled":
                 command => "pip install -r $PROJ_DIR/requirements/compiled.txt",
+                require => Package['python-pip']
+            }
+
+            exec { "pip-install-dev":
+                command => "pip install -r $PROJ_DIR/requirements/dev.txt",
                 require => Package['python-pip']
             }
         }

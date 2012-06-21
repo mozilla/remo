@@ -1,9 +1,11 @@
 import base64
 
+from django.conf import settings
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from jinja2 import Markup
+from nose.exc import SkipTest
 from nose.tools import eq_
 from test_utils import TestCase
 
@@ -96,6 +98,10 @@ class ViewsTest(TestCase):
 
     def test_mailhide_encryption(self):
         """Test email encryption function."""
+        if (getattr(settings, 'MAILHIDE_PUB_KEY', None) !=
+            '01Ni54q--g1yltekhaSmPYHQ=='):
+            raise SkipTest('Skipping test due to different MailHide pub key.')
+
         test_strings = [('foo@example.com', '3m5HgumLI4YSLSY-YP9HQA=='),
                         ('bar@example.net', '9o38o8PEvGrP6V5HSDg_FA=='),
                         ('test@mozilla.org', ('ABBkk5Aj2-PJ_izt9yU8pMzt'
@@ -109,6 +115,10 @@ class ViewsTest(TestCase):
 
     def test_mailhide_helper(self):
         """Test mailhide helper."""
+        if (getattr(settings, 'MAILHIDE_PUB_KEY', None) !=
+            '01Ni54q--g1yltekhaSmPYHQ=='):
+            raise SkipTest('Skipping test due to different MailHide pub key.')
+
         m1 = Markup(u'<a href="http://mailhide.recaptcha.net/d?k=01Ni54q--g1yl'
                     'tekhaSmPYHQ==&c=3m5HgumLI4YSLSY-YP9HQA==" onclick="window'
                     '.open(\'http://mailhide.recaptcha.net/d?k=01Ni54q--g1ylte'
