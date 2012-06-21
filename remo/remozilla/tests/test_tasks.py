@@ -1,5 +1,7 @@
 import json
 
+from django.conf import settings
+from nose.exc import SkipTest
 from nose.tools import eq_, raises
 from test_utils import TestCase
 
@@ -19,6 +21,10 @@ class FetchBugsTest(TestCase):
     @fudge.patch('requests.get')
     def test_connection_error(self, fake_requests_obj):
         """Test fetch_bugs connection error exception."""
+        if (not getattr(settings, 'REMOZILLA_USERNAME', None) or
+            not getattr(settings, 'REMOZILLA_PASSWORD', None)):
+            raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME '
+                           'or REMOZILLA_PASSWORD.')
         (fake_requests_obj.expects_call().raises(requests.ConnectionError))
         fetch_bugs()
 
@@ -26,6 +32,10 @@ class FetchBugsTest(TestCase):
     @fudge.patch('requests.get')
     def test_invalid_return_code(self, fake_requests_obj):
         """Test fetch_bugs invalid status code exception."""
+        if (not getattr(settings, 'REMOZILLA_USERNAME', None) or
+            not getattr(settings, 'REMOZILLA_PASSWORD', None)):
+            raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME '
+                           'or REMOZILLA_PASSWORD.')
         request = requests.Request()
         request.status_code = 500
         request.text = 'Foobar'
@@ -35,6 +45,10 @@ class FetchBugsTest(TestCase):
     @fudge.patch('requests.get')
     def test_with_valid_data(self, fake_requests_obj):
         """Test fetch_bugs valid bug data processing."""
+        if (not getattr(settings, 'REMOZILLA_USERNAME', None) or
+            not getattr(settings, 'REMOZILLA_PASSWORD', None)):
+            raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME.')
+
         previous_last_updated_time = get_last_updated_date()
 
         request = requests.Request()
