@@ -281,8 +281,9 @@
     {{ js('common') }}
   {% endif %}
 
+  <div id="webtrends-url" data-url="{{ js('tracker-full')|f|escape }}"></div>
+  {{ js('tracker') }}
   {% block bottomextra %} {% endblock %}
-  {% include "webtrends.html" %}
 </body>
 
 </html>

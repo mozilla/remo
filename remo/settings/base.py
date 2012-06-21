@@ -37,11 +37,16 @@ MINIFY_BUNDLES = {
             'js/jquery.min.js',
             'js/modernizr.foundation.js',
             'js/foundation.js',
-            'js/webtrends.js',
             'js/activate.browserid.js',
             'js/jquery.prettydate.js',
              # Our app.js is always last to override stuff
             'js/app.js',
+            ),
+        'tracker': (
+            'js/tracker.load.js',
+            ),
+        'tracker-full': (
+            'js/tracker.js',
             ),
         'profiles_people': (
             'js/jquery.tmpl.js',
