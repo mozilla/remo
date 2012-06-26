@@ -176,7 +176,7 @@ function send_query() {
         url: '/api/v1/rep/?limit=0&order_by=profile__country,last_name,first_name' + extra_q,
         success: update_results(value),
         error: request_timeout,
-        timeout: 1000
+        timeout: 5000
     });
 
     // Rebind events.
