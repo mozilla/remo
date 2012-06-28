@@ -1,5 +1,6 @@
 var markers_array = [];
 var map;
+var request;
 
 function initialize_map() {
     // Initialize map.
@@ -116,7 +117,7 @@ var update_results = function(query) {
     }
 }
 
-function request_timeout() {
+function request_error() {
     // Unset data-searching after half a second to deal with API timeouts.
     // console.log('Timeout');
     $('#searchfield').data('searching', undefined);
@@ -172,11 +173,16 @@ function send_query() {
         extra_q += '&group=' + group;
     }
 
-    $.ajax({
+    // Abort previous request
+    if (request) {
+        // console.log(request.state());
+        request.abort()
+        // console.log(request.state());
+    }
+    request = $.ajax({
         url: '/api/v1/rep/?limit=0&order_by=profile__country,last_name,first_name' + extra_q,
         success: update_results(value),
-        error: request_timeout,
-        timeout: 5000
+        error: request_error
     });
 
     // Rebind events.
@@ -216,7 +222,7 @@ function hash_set_value(key, value) {
         // console.log(i, keys[i], values[i])
         if (values[i].length > 0 ) {
             hash += keys[i] + '/' + values[i] + '/'
-	}
+        }
     }
     // console.log(hash);
 
