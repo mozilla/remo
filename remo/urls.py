@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.conf.urls.defaults import include, patterns, url
+from django.contrib import admin
 
 from funfactory.monkeypatches import patch
 patch()
@@ -7,6 +8,7 @@ patch()
 handler404 = 'remo.base.views.custom_404'
 handler500 = 'remo.base.views.custom_500'
 
+admin.autodiscover()
 
 urlpatterns = patterns('',
     # 'me' urls
@@ -40,6 +42,9 @@ urlpatterns = patterns('',
     url(r'^api/', include('remo.api.urls')),
 
     url(r'^', include('remo.base.urls')),
+
+    # Admin
+    url(r'^admin/', include(admin.site.urls)),
 )
 
 ## In DEBUG mode, serve media files through Django.

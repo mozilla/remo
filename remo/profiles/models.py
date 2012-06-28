@@ -154,6 +154,9 @@ class UserAvatar(models.Model):
                                                 datetime.timedelta(hours=25)),
                                        auto_now=True)
 
+    def __unicode__(self):
+        return "UserAvatar:%s" % self.user.userprofile.display_name
+
 
 @receiver(pre_save, sender=UserProfile)
 def userprofile_set_date_joined_program_pre_save(sender, instance, **kwargs):
