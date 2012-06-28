@@ -104,13 +104,20 @@ Build The Environment
 #. **Choose a HMAC_KEY.**
 
    For development purposes you can uncomment the key '2012-06-15'
-   with HMAC_KEYS dictionary in your local.py::
+   with HMAC_KEYS dictionary in your *local.py*::
 
     HMAC_KEYS = {
        '2012-06-15': 'some key',
     }
 
 
+#. **Set SITE_URL.**
+
+   For development purposes you can uncomment the line::
+
+     SITE_URL = 'http://127.0.0.1:8000'
+
+   in your *local.py* or BrowserID will fail to log you in.
 
 #. **Activate MailHide.**
 
