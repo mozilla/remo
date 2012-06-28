@@ -39,6 +39,12 @@ class Status(models.Model):
     """
     last_updated = models.DateTimeField()
 
+    def __unicode__(self):
+        return "Last update: %s" % self.last_updated.strftime('%H:%M %d %b %Y')
+
+    class Meta:
+        verbose_name_plural = 'statuses'
+
 
 @receiver(pre_save, sender=Bug)
 def set_uppercase_pre_save(sender, instance, **kwargs):

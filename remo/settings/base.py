@@ -73,6 +73,7 @@ ROOT_URLCONF = 'remo.urls'
 INSTALLED_APPS = ['south'] + \
                  list(INSTALLED_APPS) + [
                      # Application base, containing global templates.
+                     'django.contrib.admin',
                      'django.contrib.messages',
                      'django.contrib.markup',
                      'jingo_minify',
