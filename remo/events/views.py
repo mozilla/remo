@@ -1,6 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth import get_user
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import csrf_exempt
 
 from remo.base.decorators import permission_check
 from remo.base.utils import get_or_create_instance
@@ -85,3 +87,16 @@ def delete_event(request, slug):
 
     messages.success(request, 'Event successfully deleted.')
     return redirect('events_list_events')
+
+
+@csrf_exempt
+def count_converted_visitors(request, slug):
+    """Increase event subscribers."""
+    event = get_object_or_404(Event, slug=slug)
+
+    if request.method == 'POST':
+        event.converted_visitors += event.converted_visitors
+        event.save()
+        return HttpResponse('OK')
+
+    return redirect('events_view_event', slug=event.slug)

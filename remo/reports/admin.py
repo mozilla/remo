@@ -23,7 +23,6 @@ class ReportAdmin(admin.ModelAdmin):
     inlines = [ReportLinkInline, ReportEventInline, ReportCommentInline]
     list_display = ('__unicode__', 'display_name')
 
-
     def display_name(self, obj):
         return obj.user.userprofile.display_name
 

@@ -11,4 +11,7 @@ urlpatterns = patterns('remo.events.views',
         {'subscribe': True}, name='events_subscribe_to_event'),
     url(r'^(?P<slug>[a-z0-9-]+)/unsubscribe/$', 'manage_subscription',
         {'subscribe': False}, name='events_unsubscribe_from_event'),
+    url(r'^(?P<slug>[a-z0-9-]+)/plusoneconverted/$',
+        'count_converted_visitors',
+        name='events_count_converted_visitors'),
 )
