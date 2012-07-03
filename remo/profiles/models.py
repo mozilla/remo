@@ -112,8 +112,7 @@ class UserProfile(models.Model):
     mentor = models.ForeignKey(User, null=True, blank=False,
                                related_name='mentees',
                                validators=[_validate_mentor])
-    functional_areas = models.ManyToManyField(FunctionalArea, blank=True,
-                                              null=True)
+    functional_areas = models.ManyToManyField(FunctionalArea)
 
     class Meta:
         permissions = (
