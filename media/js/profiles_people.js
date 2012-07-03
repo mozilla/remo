@@ -5,15 +5,15 @@ var request;
 function initialize_map() {
     // Initialize map.
     map = new L.Map('map', { minZoom: 1 });
-    attribution = ('Map data &copy; <a href="http://openstreetmap.org">' +
-                   'OpenStreetMap</a> contributors, <a href="http://creativecommons.org/' +
-                   'licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © ' +
-                   '<a href="http://cloudmade.com">CloudMade</a>')
-    cloudmade = new L.TileLayer('http://{s}.tile.cloudmade.com/' +
-                                'b465ca1b6fe040dba7eec0291ecb7a8c/' +
-                                '997/256/{z}/{x}/{y}.png',
-                                { attribution: attribution, maxZoom: 18 });
-    center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
+    var attribution = ('Map data &copy; <a href="http://openstreetmap.org">' +
+                       'OpenStreetMap</a> contributors, <a href="http://creativecommons.org/' +
+                       'licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © ' +
+                       '<a href="http://cloudmade.com">CloudMade</a>')
+    var cloudmade = new L.TileLayer('http://{s}.tile.cloudmade.com/' +
+                                    'b465ca1b6fe040dba7eec0291ecb7a8c/' +
+                                    '997/256/{z}/{x}/{y}.png',
+                                    { attribution: attribution, maxZoom: 18 });
+    var center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
     map.setView(center, 2).addLayer(cloudmade);
 
     // When user clicks on map and a search filter exists, remove filter.
@@ -31,8 +31,8 @@ function initialize_map() {
 function add_pointers() {
     // Add user pointers on map.
     $('.profiles-li-item').each(function(index, item) {
-        lat = $(item).data('lat');
-        lon = $(item).data('lon');
+        var lat = $(item).data('lat');
+        var lon = $(item).data('lon');
         var markerLocation = new L.LatLng(lat, lon);
         var marker = new L.Marker(markerLocation);
 
@@ -54,15 +54,17 @@ function add_pointers() {
         map.addLayer(marker);
         markers_array.push(marker);
     })
-        }
+}
+
 
 function clear_map() {
     // Remove pointer layers from map.
     for (var marker in window.markers_array) {
         window.map.removeLayer(window.markers_array[marker]);
     }
-    window.markers_array = [];
+    markers_array = [];
 }
+
 
 function redraw_grid() {
     // Redraw Reps grid.
@@ -95,6 +97,7 @@ function set_number_of_reps(number_of_reps) {
     }
 }
 
+
 var update_results = function(query) {
     return function(data) {
         // console.log('Updating results');
@@ -117,12 +120,14 @@ var update_results = function(query) {
     }
 }
 
+
 function request_error() {
     // Unset data-searching after half a second to deal with API timeouts.
     // console.log('Timeout');
     $('#searchfield').data('searching', undefined);
     $('#search-icon').html('s');
 }
+
 
 function set_dropdown_value(name, value) {
     $(name).val(value);
@@ -132,7 +137,10 @@ function set_dropdown_value(name, value) {
 
 
 function send_query() {
-    value = $(location).attr('hash').substring(2);
+    var extra_q = ''
+    var csv = false;
+    var API_URL = '/api/v1/rep/?limit=0&order_by=profile__country,last_name,first_name';
+    var value = $(location).attr('hash').substring(2);
     // console.log('Value', value);
 
     // Make sure we are not firing the same same request twice.
@@ -148,50 +156,82 @@ function send_query() {
     // console.log('Sending', value);
 
     // Form query based on URL
-    extra_q = ''
-    country = hash_get_value('country');
+    var country = hash_get_value('country');
     set_dropdown_value('#adv-search-country', country);
     if (country) {
         extra_q += '&profile__country__iexact=' + country;
     }
 
-    area = hash_get_value('area');
+    var area = hash_get_value('area');
     set_dropdown_value('#adv-search-area', area);
     if (area) {
         extra_q += '&profile__functional_areas__name__iexact=' + area;
     }
 
-    search = hash_get_value('search');
+    var search = hash_get_value('search');
     $('#searchfield').val(search);
     if (search) {
         extra_q += '&query=' + search;
     }
 
-    group = hash_get_value('group');
+    var group = hash_get_value('group');
     set_dropdown_value('#adv-search-group', group);
     if (group) {
         extra_q += '&group=' + group;
     }
 
-    // Abort previous request
-    if (request) {
-        // console.log(request.state());
-        request.abort()
-        // console.log(request.state());
+    var format = hash_get_value('format');
+    if (format && format == 'csv') {
+        csv = true;
+        extra_q += '&format=csv';
     }
-    request = $.ajax({
-        url: '/api/v1/rep/?limit=0&order_by=profile__country,last_name,first_name' + extra_q,
-        success: update_results(value),
-        error: request_error
-    });
+
+    if (!csv) {
+        // Abort previous request
+        if (request) {
+            // console.log(request.state());
+            request.abort()
+            // console.log(request.state());
+        }
+        request = $.ajax({
+            url: API_URL + extra_q,
+            success: update_results(value),
+            error: request_error
+        });
+    }
+    else {
+        window.location = API_URL + extra_q;
+    }
 
     // Rebind events.
     bind_events();
+
+    if (csv) {
+        // Remove CSV export variable to also load results in the
+        // page. We do this change after bind_events() we can actually
+        // capture this event.
+        hash_set_value('format', '');
+
+        // Save current map zoom and center
+        var zoom = map.getZoom()
+        var center = map.getCenter();
+
+        // We shouldn't touch "private" variables but this is to force
+        // map to reload tiles. When a user hits the CSV export page,
+        // tile loading is interrupted by the change of
+        // window.location. By re-setting map's view (setView) we
+        // force tile loading.
+        map._zoom = -1;
+        map.setView(center, zoom);
+    }
 }
 
 function hash_set_value(key, value) {
     // Set value for key in hash
-    hash = $(location).attr('hash').substring(2).toLowerCase().replace(/\/$/, '');
+    var hash = $(location).attr('hash').substring(2).toLowerCase().replace(/\/$/, '');
+    var keys;
+    var values;
+
     // console.log(hash);
     if (hash.length > 0) {
         keys = hash.split('/').filter(function(element, index) { return (index % 2 == 0) });
@@ -231,10 +271,10 @@ function hash_set_value(key, value) {
 
 function hash_get_value(key) {
     // Get value for key in hash
-    hash = $(location).attr('hash').substring(2).toLowerCase();
-    keys = hash.split('/').filter(function(element, index) { return (index % 2 == 0) });
-    values = hash.split('/').filter(function(element, index) { return (index % 2 == 1) });
-    index_of_key = keys.indexOf(key)
+    var hash = $(location).attr('hash').substring(2).toLowerCase();
+    var keys = hash.split('/').filter(function(element, index) { return (index % 2 == 0) });
+    var values = hash.split('/').filter(function(element, index) { return (index % 2 == 1) });
+    var index_of_key = keys.indexOf(key)
     if (index_of_key > -1) {
         return values[index_of_key].toLowerCase();
     }
@@ -287,7 +327,7 @@ function unbind_events() {
 $(document).ready(function () {
     initialize_map();
 
-    view = hash_get_value('view');
+    var view = hash_get_value('view');
     if (view == 'list') {
         $('#profiles_gridview').hide();
         $('#profiles_listview').show();
@@ -318,6 +358,11 @@ $(document).ready(function () {
     // Advanced button click.
     $('#adv-search-icon').click(function() {
         $('#adv-search').slideToggle();
+    });
+
+    // Export to CSV click.
+    $('#csv-export-button').click(function() {
+        hash_set_value('format', 'csv');
     });
 
     // Set values to fields.

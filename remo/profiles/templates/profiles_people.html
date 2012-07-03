@@ -23,14 +23,14 @@
     </form>
   </div>
   <div class="two columns view-change">
-    <span id="adv-search-icon" class="pictogram-button">
+    <span id="adv-search-icon" title="Advanced Options" class="pictogram-button">
       (
     </span>
-    <span id="listviewbutton" class="pictogram-button">
+    <span id="listviewbutton" title="Grid View" class="pictogram-button">
       3
     </span>
     &nbsp;&nbsp;
-    <span id="gridviewbutton" class="pictogram-button">
+    <span id="gridviewbutton" title="List View" class="pictogram-button">
       4
     </span>
   </div>
@@ -38,10 +38,10 @@
 
 <!-- Advanced search box -->
 <div class="row hidden" id="adv-search">
-  <div class="ten columns">
+  <div class="twelve columns">
     <div class="row">
       <form class="custom" id="searchform">
-        <div class="four columns">
+        <div class="three columns">
           <select id="adv-search-group" class="expand">
             <option value="">All Groups</option>
             <option value="rep">Rep</option>
@@ -49,7 +49,7 @@
             <option value="council">Council</option>
           </select>
         </div>
-        <div class="four columns">
+        <div class="three columns">
           <select id="adv-search-country" class="expand">
             <option value="">All Countries</option>
             {% for country in countries %}
@@ -57,13 +57,17 @@
             {% endfor %}
           </select>
         </div>
-        <div class="four columns">
+        <div class="three columns">
           <select id="adv-search-area" class="expand">
             <option value="">All Areas</option>
             {% for area in areas %}
             <option value="{{ area|lower }}">{{ area }}</option>
             {% endfor %}
           </select>
+        </div>
+        <div class="three columns align-center">
+          <button id="csv-export-button"
+                  class="small white button nice radius">CSV Export</button>
         </div>
       </form>
     </div>
