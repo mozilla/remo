@@ -88,19 +88,6 @@ Build The Environment
      ~/remo$ vagrant ssh
 
 
-#. **Create an admin account.**
-
-   Within your vagrant machine, create your own admin account::
-
-    ~/project$ ./manage.py createsuperuser
-
-
-   .. note::
-
-      We are using `BrowserID <http://browserid.org>`_, so a valid
-      email address is required for your admin account.
-
-
 #. **Choose a HMAC_KEY.**
 
    For development purposes you can uncomment the key '2012-06-15'
@@ -137,6 +124,19 @@ Build The Environment
    `MailHide's website
    <http://www.google.com/recaptcha/mailhide/apikey>`_ for a valid
    pair of keys.
+
+
+#. **Create an admin account.**
+
+   Within your vagrant machine, create your own admin account::
+
+    ~/project$ ./manage.py createsuperuser
+
+
+   .. note::
+
+      We are using `BrowserID <http://browserid.org>`_, so a valid
+      email address is required for your admin account.
 
 
 #. **Update product_details package.**
