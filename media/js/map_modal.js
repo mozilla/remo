@@ -8,13 +8,13 @@ $(document).ready(function() {
 
     // Update modal's LatLon fields.
     map.on('click', function(event) {
-        $('input.point-lat-temp').val(event.latlng.lat);
-        $('input.point-long-temp').val(event.latlng.lng);
+        $('#lat-temp').val(event.latlng.lat);
+        $('#lon-temp').val(event.latlng.lng);
     });
 
     // Clicking "Use those" closes the modal and updates the hidden input fields.
     $('.use-these').click(function () {
-        $('input.point-lat').val($('input.point-lat-temp').val());
-        $('input.point-long').val($('input.point-long-temp').val());
+        $('#lat').val($('#lat-temp').val());
+        $('#lon').val($('#lon-temp').val());
     });
 });

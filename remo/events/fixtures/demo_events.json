@@ -1,0 +1,42 @@
+[
+    {
+        "pk": 2,
+        "model": "events.attendance",
+        "fields": {
+            "email": true,
+            "date_subscribed": "2012-06-25T08:44:50Z",
+            "user": 6,
+            "event": 3
+        }
+    },
+    {
+	"pk": 1,
+	"model": "events.metric",
+	"fields": {
+	     "event": 3,
+	     "title": "First metric",
+	     "outcome": "Successful outcome description"
+	}
+    },
+    {
+        "pk": 3,
+        "model": "events.event",
+        "fields": {
+            "virtual_event": false,
+            "end": "2012-06-25T08:31:43Z",
+            "name": "Test Event",
+            "country": "sdf",
+            "region": "sdf",
+            "description": "",
+            "venue": "sdf",
+            "start": "2012-06-25T08:31:43Z",
+            "mozilla_event": false,
+            "external_link": null,
+            "planning_pad_url": "http://etherpad.mozilla.org/test-event",
+            "owner": 7,
+            "extra_content": "",
+            "slug": "test-event",
+            "estimated_attendance": 10
+        }
+    }
+]

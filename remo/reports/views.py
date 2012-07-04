@@ -12,6 +12,7 @@ from django.views.decorators.cache import cache_control, never_cache
 import forms
 import remo.base.utils as utils
 from remo.base.decorators import permission_check
+from remo.profiles.models import UserProfile
 from models import Report, ReportComment
 
 LIST_REPORTS_DEFAULT_SORT = 'updated_on_desc'
@@ -148,7 +149,8 @@ def delete_report(request, display_name, year, month):
 
 @never_cache
 @permission_check(permissions=['reports.can_edit_reports'],
-                  display_name_field='display_name')
+                  filter_field='display_name', owner_field='user',
+                  model=UserProfile)
 def edit_report(request, display_name, year, month):
     """Edit report view."""
     user = get_object_or_404(User, userprofile__display_name=display_name)

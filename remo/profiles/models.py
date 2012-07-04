@@ -116,10 +116,8 @@ class UserProfile(models.Model):
                                               null=True)
 
     class Meta:
-        permissions = (
-            ('create_user', 'Can create new user'),
-            ('can_edit_profiles', 'Can edit profiles'),
-            )
+        permissions = (('create_user', 'Can create new user'),
+                       ('can_edit_profiles', 'Can edit profiles'))
 
     def clean(self, *args, **kwargs):
         """Ensure that added_by variable does not have the same value as

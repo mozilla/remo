@@ -10,7 +10,6 @@ ReportLinkFormset = forms.models.inlineformset_factory(Report, ReportLink,
 
 class ReportForm(forms.ModelForm):
     """Form of a report."""
-    delete_report = forms.BooleanField(required=False, initial=False)
     past_items = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'id': 'past_items',

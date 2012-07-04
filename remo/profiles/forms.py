@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.forms.extras.widgets import SelectDateWidget
 
 from happyforms import forms
+from product_details import product_details
 
 from remo.profiles.models import UserProfile
 
@@ -61,9 +62,14 @@ class ChangeProfileForm(forms.ModelForm):
     gender = forms.ChoiceField(required=False, choices=((None, "Gender"),
                                                         (True, "Female"),
                                                         (False, "Male")))
-    mentor = forms.ChoiceField(required=False, choices=[])
+    mentor = forms.ChoiceField(choices=[])
+    country = forms.ChoiceField(choices=[])
 
     def __init__(self, *args, **kwargs):
+        """Initialize form.
+
+        Dynamically set choices for mentor and country fields.
+        """
         super(ChangeProfileForm, self).__init__(*args, **kwargs)
         mentor_choices = ([(None, "Choose Mentor")] +
                           [(u.id, u.get_full_name()) for u in
@@ -71,6 +77,12 @@ class ChangeProfileForm(forms.ModelForm):
                                userprofile__registration_complete=True,
                                groups__name='Mentor')])
         self.fields['mentor'].choices = mentor_choices
+
+        countries = product_details.get_regions('en').values()
+        countries.sort()
+        country_choices = ([(None, "Country")] +
+                           [(country, country) for country in countries])
+        self.fields['country'].choices = country_choices
 
     def clean_twitter_account(self):
         """Make sure that twitter_account does not start with a '@'."""

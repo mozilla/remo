@@ -101,6 +101,26 @@
         }
     },
     {
+        "pk": 9,
+        "model": "auth.user",
+        "fields": {
+            "username": "rep3",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-01-23 05:31:58+00:00",
+            "groups": [
+                3
+            ],
+            "user_permissions": [],
+            "password": "md5$2$f74916608ad95265f58a739d6ffba15f",
+            "email": "rep3@example.com",
+            "date_joined": "2012-01-23 05:31:58+00:00"
+        }
+    },
+    {
         "pk": 4,
         "model": "profiles.userprofile",
         "fields": {
@@ -250,6 +270,37 @@
             "bio": "This is my bio",
             "gender":"False",
             "registration_complete":"False",
+            "date_joined_program": "2011-07-01"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "profiles.userprofile",
+        "fields": {
+            "city": "Koufonisia",
+            "twitter_account": "koufos",
+            "display_name": "koufos",
+            "private_email": "koufos@example.com",
+            "region": "Cyclades",
+            "country": "Greece",
+            "mozillians_profile_url":"http://mozillians.org/en-US/about/",
+            "wiki_profile_url": "https://wiki.mozilla.org/User:",
+            "irc_name": "koufos",
+            "irc_channels": "",
+            "lon": 23.41,
+            "lat": 23.52,
+            "linkedin_url": "",
+            "user": 9,
+            "birth_date": "1995-06-22",
+            "personal_website_url": "",
+            "diaspora_url": "",
+            "personal_blog_feed": "",
+            "facebook_url": "",
+            "mentor": 6,
+            "added_by": 4,
+            "bio": "",
+            "gender":"False",
+            "registration_complete":"True",
             "date_joined_program": "2011-07-01"
         }
     }

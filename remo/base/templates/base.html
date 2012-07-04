@@ -124,7 +124,7 @@
                      class="main {{ active(request, '^/people/') }}">People</a>
                 </li>
                 <li>
-                  <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
+                  <a href="{{ url('events_list_events') }}" class="main">Events</a>
                 </li>
                 <li>
                   <a href="#" class="main" data-reveal-id="labs-modal">Labs</a>
@@ -159,7 +159,7 @@
                      class="main {{ active(request, '^/people/') }}">People</a>
                 </li>
                 <li>
-                  <a href="https://wiki.mozilla.org/ReMo/Events" class="main">Events</a>
+                  <a href="{{ url('events_list_events') }}" class="main">Events</a>
                 </li>
               </ul>
             </div>
