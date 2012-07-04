@@ -29,6 +29,7 @@ MINIFY_BUNDLES = {
             'js/libs/foundation.js',
             'static/browserid/browserid.js',
             'js/libs/jquery.prettydate.js',
+            'js/remo/remolib.js',
              # Our app.js is always last to override stuff
             'js/remo/app.js',
             ),
@@ -38,6 +39,7 @@ MINIFY_BUNDLES = {
             'js/libs/foundation.js',
             'static/browserid/browserid.js',
             'js/libs/jquery.prettydate.js',
+            'js/remo/remolib.js',
              # Our app.js is always last to override stuff
             'js/remo/app.js',
             ),
@@ -76,6 +78,10 @@ MINIFY_BUNDLES = {
             'js/libs/jquery.zflickrfeed.js',
             'js/libs/jquery.tweet.js',
             'js/remo/events_view_event.js',
+            ),
+        'events_list': (
+            'js/libs/jquery.tmpl.js',
+            'js/remo/events_list.js',
             ),
     }
 }

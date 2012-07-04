@@ -16,13 +16,6 @@ function initialize_map() {
     map.addLayer(marker);
 }
 
-function pad2(number) {
-    // Pad numbers
-    // snippet from
-    // http://www.electrictoolbox.com/pad-number-two-digits-javascript/
-    return (number < 10 ? '0' : '') + number;
-}
-
 function format_hour(date_obj) {
     // Format date_obj to HH:MM.
     return pad2(date_obj.getHours()) + ':' + pad2(date_obj.getMinutes());
