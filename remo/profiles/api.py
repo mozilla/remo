@@ -135,7 +135,11 @@ class RepResource(ModelResource):
                      Q(userprofile__local_name__istartswith=query)|
                      Q(userprofile__irc_name__istartswith=query)|
                      Q(email__istartswith=query)|
-                     Q(userprofile__private_email__istartswith=query))
+                     Q(userprofile__private_email__istartswith=query)|
+                     Q(userprofile__country__istartswith=query)|
+                     Q(userprofile__region__istartswith=query)|
+                     Q(userprofile__city__istartswith=query)|
+                     Q(userprofile__functional_areas__name__istartswith=query))
 
             base_object_list = base_object_list.filter(qset).distinct()
 

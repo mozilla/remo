@@ -119,11 +119,11 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             Location
           </span>
           &nbsp;
-          <a href="{{ url('profiles_list_profiles') }}city/{{ user_profile.city }}/">
+          <a href="{{ url('profiles_list_profiles') }}search/{{ user_profile.city }}/">
             {{ user_profile.city }}
           </a>
           -
-          <a href="{{ url('profiles_list_profiles') }}region/{{ user_profile.region }}/">
+          <a href="{{ url('profiles_list_profiles') }}search/{{ user_profile.region }}/">
             {{ user_profile.region }}
           </a>
           -
