@@ -54,8 +54,8 @@ MINIFY_BUNDLES = {
         'leaflet': (
             'leaflet/leaflet.js',
             ),
-        'profiles_edit_profile': (
-            'js/profiles_edit_profile.js',
+        'map_modal': (
+            'js/map_modal.js',
             ),
         'base_dashboard': (
             'js/stupidtable.js',
@@ -84,6 +84,7 @@ INSTALLED_APPS = ['south'] + \
                      'remo.remozilla',
                      'remo.reports',
                      'remo.api',
+                     'remo.events',
 
                      'django_browserid',
                      'tastypie',
@@ -158,3 +159,5 @@ CLOUDMADE_MARKER_75 = '43d850f01ff24721bbdc7a9fa31bd829'
 CLOUDMADE_MARKER_85 = '507f4f059b1b4e2b939afd14d327ccbb'
 
 USE_TZ = True
+
+ETHERPAD_URL = 'http://etherpad.mozilla.org/'

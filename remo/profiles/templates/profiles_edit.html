@@ -168,28 +168,18 @@
               {{ profileform.region.errors }}
             </small>
           {% endif %}
-          <select name="country">
-            {% if not profileform.country.value() %}
-              <option selected="selected">Country</option>
-            {% endif%}
-            {% for country in countries %}
-              <option value="{{ country }}"
-                {% if profileform.country.value() == country %}selected="selected"{% endif %}>
-                {{ country }}
-              </option>
-            {% endfor %}
-          </select>
+          {{ profileform.country }}
           {% if profileform.country.errors %}
             <small class="error">
               {{ profileform.country.errors }}
             </small>
           {% endif %}
-          <input type="hidden" placeholder="Latitude"
+          <input type="hidden" id="lat"
                  value="{{ profileform.lat.value() }}"
-                 name="lat" class="input-text point-lat">
-          <input type="hidden" placeholder="Longitude"
+                 name="lat" class="input-text">
+          <input type="hidden" id="lon"
                  value="{{ profileform.lon.value() }}"
-                 name="lon" class="input-text point-long">
+                 name="lon" class="input-text">
           <div class="align-right">
             <a href="#" class="small white button nice radius"
                data-reveal-id="map-point">Point your marker in map</a>
@@ -449,8 +439,8 @@
   </div>
   <div class="row">
     <div class="six columns">
-      <input type="text" placeholder="Latitude" class="input-text point-lat-temp">
-      <input type="text" placeholder="Longitude" class="input-text point-long-temp">
+      <input type="text" placeholder="Latitude" class="input-text" id="lat-temp">
+      <input type="text" placeholder="Longitude" class="input-text" id="lon-temp">
     </div>
     <div class="six columns use-these">
       <a href="#" class="small blue button nice radius close-reveal-modal">
@@ -489,5 +479,5 @@
       <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
   <![endif]-->
   {{ js('leaflet') }}
-  {{ js('profiles_edit_profile') }}
+  {{ js('map_modal') }}
 {% endblock %}

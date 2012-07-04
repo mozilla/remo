@@ -16,7 +16,7 @@ class FirstNotificationTest(TestCase):
     def test_send_notification(self):
         """Test sending of first notification to Reps to fill reports."""
         management.call_command('send_first_report_notification', [], {})
-        eq_(len(mail.outbox), 1)
+        eq_(len(mail.outbox), 2)
 
 
 class SecondNotificationTest(TestCase):
@@ -31,7 +31,7 @@ class SecondNotificationTest(TestCase):
         (fake_requests_obj.expects_call().returns(fake_date))
 
         management.call_command('send_second_report_notification', [], {})
-        eq_(len(mail.outbox), 0)
+        eq_(len(mail.outbox), 1)
 
     @fudge.patch('datetime.datetime.today')
     def test_send_notification_without_reports_filled(self, fake_requests_obj):
@@ -43,7 +43,7 @@ class SecondNotificationTest(TestCase):
         # delete existing reports
         Report.objects.all().delete()
         management.call_command('send_second_report_notification', [], {})
-        eq_(len(mail.outbox), 1)
+        eq_(len(mail.outbox), 2)
 
 
 class ThirdNotificationTest(TestCase):
@@ -58,7 +58,7 @@ class ThirdNotificationTest(TestCase):
         (fake_requests_obj.expects_call().returns(fake_date))
 
         management.call_command('send_third_report_notification', [], {})
-        eq_(len(mail.outbox), 0)
+        eq_(len(mail.outbox), 1)
 
     @fudge.patch('datetime.datetime.today')
     def test_send_notification_without_reports_filled(self, fake_requests_obj):
@@ -70,7 +70,7 @@ class ThirdNotificationTest(TestCase):
         # delete existing reports
         Report.objects.all().delete()
         management.call_command('send_third_report_notification', [], {})
-        eq_(len(mail.outbox), 1)
+        eq_(len(mail.outbox), 2)
 
 
 class MentorNotificationTest(TestCase):
@@ -85,7 +85,7 @@ class MentorNotificationTest(TestCase):
         (fake_requests_obj.expects_call().returns(fake_date))
 
         management.call_command('send_mentor_report_notification', [], {})
-        eq_(len(mail.outbox), 0)
+        eq_(len(mail.outbox), 1)
 
     @fudge.patch('datetime.datetime.today')
     def test_send_notification_without_reports_filled(self, fake_requests_obj):
@@ -97,4 +97,4 @@ class MentorNotificationTest(TestCase):
         # delete existing reports
         Report.objects.all().delete()
         management.call_command('send_mentor_report_notification', [], {})
-        eq_(len(mail.outbox), 1)
+        eq_(len(mail.outbox), 2)
