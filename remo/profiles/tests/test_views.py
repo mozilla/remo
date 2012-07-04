@@ -41,7 +41,8 @@ class ViewsTest(TestCase):
                      'personal_blog_feed': u'http://example.com/',
                      'bio': u'bio foo',
                      'date_joined_program': '2011-07-01',
-                     'mentor': 6}
+                     'mentor': 6,
+                     'functional_areas': 3}
         self.user_url = reverse('profiles_view_profile',
                                 kwargs={'display_name': 'Koki'})
         self.user_edit_url = reverse('profiles_edit',
@@ -162,9 +163,13 @@ class ViewsTest(TestCase):
             datetime.date(*(time.strptime(temp_data['birth_date'],
                                           '%Y-%m-%d')[0:3])))
 
+        eq_(user.userprofile.functional_areas.all().count(), 1)
+        eq_(user.userprofile.functional_areas.all()[0].id, 3)
+
         # delete already checked items
         for item in ['email', 'first_name', 'last_name',
-                     'birth_date', 'mentor', 'date_joined_program']:
+                     'birth_date', 'mentor', 'date_joined_program',
+                     'functional_areas']:
             del(temp_data[item])
 
         # ensure that all user profile data was saved
@@ -175,7 +180,7 @@ class ViewsTest(TestCase):
         mandatory_fields = ['first_name', 'last_name', 'email',
                             'private_email', 'city', 'region',
                             'country', 'lon', 'lat', 'mozillians_profile_url',
-                            'irc_name', 'wiki_profile_url']
+                            'irc_name', 'wiki_profile_url', 'functional_areas']
         for field in mandatory_fields:
             # remove a mandatory field and ensure that edit fails
             temp_data = self.data.copy()

@@ -35,7 +35,7 @@ class APITest(TestCase):
         """Test custom filtering with ?query= ."""
         c = Client()
 
-        for query in ['md', 'meni', 'kouk']:
+        for query in ['rep@example', 'foci', 'koki']:
             url = urlparams(reverse('api_dispatch_list',
                                     kwargs={'api_name': 'v1',
                                             'resource_name': 'rep'}),
