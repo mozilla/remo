@@ -58,6 +58,8 @@ class Event(models.Model):
     hashtag = models.CharField(max_length=50, null=True, default='')
     attendees = models.ManyToManyField(User, related_name='events_attended',
                                        through='Attendance')
+    converted_visitors = models.PositiveIntegerField(editable=False,
+                                                     default=0)
 
     def __unicode__(self):
         return self.name
