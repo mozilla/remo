@@ -1,6 +1,26 @@
 [
     {
+        "pk": 1,
+        "model": "events.attendance",
+        "fields": {
+            "email": true,
+            "date_subscribed": "2012-06-25T08:44:50Z",
+            "user": 7,
+            "event": 3
+        }
+    },
+    {
         "pk": 2,
+        "model": "events.attendance",
+        "fields": {
+            "email": true,
+            "date_subscribed": "2012-06-25T08:44:50Z",
+            "user": 7,
+            "event": 4
+        }
+    },
+    {
+        "pk": 4,
         "model": "events.attendance",
         "fields": {
             "email": true,
@@ -10,34 +30,64 @@
         }
     },
     {
-	"pk": 1,
-	"model": "events.metric",
-	"fields": {
-	     "event": 3,
-	     "title": "First metric",
-	     "outcome": "Successful outcome description"
-	}
+        "pk": 1,
+        "model": "events.metric",
+        "fields": {
+             "event": 3,
+             "title": "First metric",
+             "outcome": "Successful outcome description"
+        }
     },
     {
         "pk": 3,
         "model": "events.event",
         "fields": {
-            "virtual_event": false,
-            "end": "2012-06-25T08:31:43Z",
+            "end": "2012-06-25T10:31:43Z",
             "name": "Test Event",
-            "country": "sdf",
-            "region": "sdf",
-            "description": "",
-            "venue": "sdf",
+            "city": "Athens",
+            "country": "Greece",
+            "region": "Attica",
+            "description": "This is description",
+            "venue": "Hackerspace.GR",
             "start": "2012-06-25T08:31:43Z",
-            "mozilla_event": false,
+            "mozilla_event": true,
             "external_link": null,
             "planning_pad_url": "http://etherpad.mozilla.org/test-event",
             "owner": 7,
-            "extra_content": "",
+            "extra_content": "This is extra content",
             "slug": "test-event",
             "estimated_attendance": 10,
-            "converted_visitors": 1
+            "converted_visitors": 1,
+            "lat": 38.01697,
+            "lon": 23.73140,
+            "hashtag": "#testevent",
+            "timezone": "Europe/Athens"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "events.event",
+        "fields": {
+            "end": "2012-06-28T10:31:43Z",
+            "name": "Multi Event",
+            "city": "Athens",
+            "country": "Greece",
+            "region": "Attica",
+            "description": "This is description",
+            "venue": "Hackerspace.GR",
+            "start": "2012-06-27T08:31:43Z",
+            "mozilla_event": true,
+            "external_link": null,
+            "planning_pad_url": "http://etherpad.mozilla.org/multi-event",
+            "owner": 7,
+            "extra_content": "This is extra content",
+            "slug": "multi-event",
+            "estimated_attendance": 10,
+            "converted_visitors": 1,
+            "lat": 38.01697,
+            "lon": 23.73140,
+            "hashtag": "#multievent",
+            "timezone": "Europe/Berlin"
         }
     }
 ]

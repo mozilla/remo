@@ -105,7 +105,7 @@
         "model": "auth.user",
         "fields": {
             "username": "rep3",
-            "first_name": "Foo",
+            "first_name": "Nick",
             "last_name": "Xul",
             "is_active": true,
             "is_superuser": false,

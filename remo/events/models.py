@@ -1,3 +1,4 @@
+from pytz import timezone
 from urlparse import urljoin
 
 from django.conf import settings
@@ -9,12 +10,7 @@ from django.dispatch import receiver
 from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
-EST_ATTENDANCE_CHOICES = ((10, '<10'),
-                          (50, '10-50'),
-                          (100, '50-100'),
-                          (500, '100-500'),
-                          (1000, '500-1000'),
-                          (2000, '>1000'))
+from remo.remozilla.models import Bug
 
 
 class Attendance(models.Model):
@@ -28,41 +24,57 @@ class Attendance(models.Model):
         return '%s %s' % (self.user, self.event)
 
 
-class Metric(models.Model):
-    """Metrics Model."""
-    event = models.ForeignKey('Event', related_name='metrics')
-    title = models.CharField(max_length=300)
-    outcome = models.CharField(max_length=300)
-
-
 class Event(models.Model):
     """Event Model."""
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100)
+    slug = models.SlugField(blank=True, max_length=100)
     start = models.DateTimeField()
     end = models.DateTimeField()
+    timezone = models.CharField(max_length=100)
     venue = models.CharField(max_length=50)
+    city = models.CharField(max_length=50, blank=False, default='')
     region = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
-    lat = models.FloatField(blank=True, null=True)
-    lon = models.FloatField(blank=True, null=True)
+    lat = models.FloatField()
+    lon = models.FloatField()
     external_link = models.URLField(max_length=300, null=True, blank=True)
     owner = models.ForeignKey(User, related_name='events_created')
-    planning_pad_url = models.URLField(max_length=300)
-    estimated_attendance = models.PositiveIntegerField(
-        choices=EST_ATTENDANCE_CHOICES)
+    planning_pad_url = models.URLField(blank=True, max_length=300)
+    estimated_attendance = models.PositiveIntegerField()
     description = models.TextField()
     extra_content = models.TextField(blank=True, default='')
     mozilla_event = models.BooleanField(default=False)
-    virtual_event = models.BooleanField(default=False)
     hashtag = models.CharField(max_length=50, null=True, default='')
     attendees = models.ManyToManyField(User, related_name='events_attended',
                                        through='Attendance')
-    converted_visitors = models.PositiveIntegerField(editable=False,
-                                                     default=0)
+    converted_visitors = models.PositiveIntegerField(editable=False, default=0)
+    swag_bug = models.ForeignKey(Bug, null=True, blank=True,
+                                 on_delete=models.SET_NULL,
+                                 related_name='event_swag_requests')
+    budget_bug = models.ForeignKey(Bug, null=True, blank=True,
+                                   on_delete=models.SET_NULL,
+                                   related_name='event_budget_requests')
 
     def __unicode__(self):
+        """Event unicode representation."""
         return self.name
+
+    def _make_local(self, obj):
+        """Return a datetime obj localized in self.timezone."""
+        if not obj:
+            return None
+        t = timezone(self.timezone)
+        return obj.astimezone(t)
+
+    @property
+    def local_start(self):
+        """Property to start datetime localized."""
+        return self._make_local(self.start)
+
+    @property
+    def local_end(self):
+        """Property to end datetime localized."""
+        return self._make_local(self.end)
 
     class Meta:
         ordering = ['-start']
@@ -71,19 +83,23 @@ class Event(models.Model):
                        ('can_delete_events', 'Can delete events'))
 
 
+class Metric(models.Model):
+    """Metrics Model."""
+    event = models.ForeignKey('Event', related_name='metrics')
+    title = models.CharField(max_length=300)
+    outcome = models.CharField(max_length=300)
+
+
 @receiver(pre_save, sender=Event)
 def create_slug(sender, instance, raw, **kwargs):
-    """Auto create unique slug for Event."""
+    """Auto create unique slug and calculate planning_pad_url."""
     if not instance.slug:
         instance.slug = slugify(instance.name, instance=instance)
 
-
-@receiver(pre_save, sender=Event)
-def create_planning_pad_url(sender, instance, raw, **kwargs):
-    """Auto planning pad url for Event."""
     if not instance.planning_pad_url:
-        instance.planning_pad_url = urljoin(settings.ETHERPAD_URL,
-                                            instance.slug)
+        url = urljoin(settings.ETHERPAD_URL,
+                      getattr(settings, 'ETHERPAD_PREFIX', '') + instance.slug)
+        instance.planning_pad_url = url
 
 
 @receiver(post_save, sender=Event)
