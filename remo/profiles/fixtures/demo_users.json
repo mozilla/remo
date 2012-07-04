@@ -147,7 +147,11 @@
             "bio": "",
             "registration_complete":"True",
             "gender":"True",
-            "date_joined_program": "2011-07-01"
+            "date_joined_program": "2011-07-01",
+            "functional_areas": [
+                3,
+                2
+            ]
         }
     },
     {
@@ -177,7 +181,11 @@
             "bio": "",
             "registration_complete":"True",
             "gender":"True",
-            "date_joined_program": "2011-07-01"
+            "date_joined_program": "2011-07-01",
+            "functional_areas": [
+                3,
+                2
+            ]
         }
     },
     {
@@ -208,7 +216,11 @@
             "bio": "",
             "gender":"False",
             "registration_complete":"True",
-            "date_joined_program": "2011-07-01"
+            "date_joined_program": "2011-07-01",
+            "functional_areas": [
+                3,
+                2
+            ]
         }
     },
     {
@@ -239,7 +251,11 @@
             "bio": "",
             "gender":"False",
             "registration_complete":"True",
-            "date_joined_program": "2011-07-01"
+            "date_joined_program": "2011-07-01",
+            "functional_areas": [
+                3,
+                2
+            ]
         }
     },
     {

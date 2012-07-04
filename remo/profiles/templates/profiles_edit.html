@@ -320,6 +320,11 @@
           <div class="align-right">
               <a href="#" class="small white button nice radius"
                  data-reveal-id="interests-modal">Mark your interests</a>
+              {% if profileform.functional_areas.errors %}
+                <small class="error">
+                  Please mark your interests
+                </small>
+              {% endif %}
           </div>
         </div>
       </div>
