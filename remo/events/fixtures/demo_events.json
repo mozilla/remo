@@ -36,7 +36,8 @@
             "owner": 7,
             "extra_content": "",
             "slug": "test-event",
-            "estimated_attendance": 10
+            "estimated_attendance": 10,
+            "converted_visitors": 1
         }
     }
 ]

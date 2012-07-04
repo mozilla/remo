@@ -4,6 +4,8 @@ from django.test.client import Client
 from nose.tools import eq_
 from test_utils import TestCase
 
+from remo.events.models import Event
+
 
 class ViewsTest(TestCase):
     """Tests related to Events Views."""
@@ -142,3 +144,11 @@ class ViewsTest(TestCase):
 
             # Reload events, since they get deleted.
             management.call_command('loaddata', 'demo_events')
+
+    def test_converted_visitors(self):
+        """Test converted visitors counter."""
+        c = Client()
+        c.post(reverse('events_count_converted_visitors',
+                       kwargs={'slug': 'test-event'}))
+        event = Event.objects.get(slug='test-event')
+        eq_(event.converted_visitors, 2)
