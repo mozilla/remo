@@ -144,7 +144,7 @@ ANON_ALWAYS = True
 
 LOGIN_REDIRECT_URL_FAILURE = '/login/failed/'
 
-FROM_EMAIL = 'reps@mozilla.com'
+FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
 
 ADMINS = (
     ('Mozilla Reps', 'reps@mozilla.com'),
