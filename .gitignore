@@ -20,3 +20,4 @@ tmp/*
 .vagrant
 .virtualenv
 /vendor-local/lib/python/*.egg-info/*
+media/static
