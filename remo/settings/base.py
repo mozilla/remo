@@ -161,3 +161,6 @@ CLOUDMADE_MARKER_85 = '507f4f059b1b4e2b939afd14d327ccbb'
 USE_TZ = True
 
 ETHERPAD_URL = 'http://etherpad.mozilla.org/'
+
+STATIC_ROOT = './media/static/'
+STATIC_URL = '/media/static/'
