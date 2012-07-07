@@ -27,7 +27,7 @@ MINIFY_BUNDLES = {
             'js/jquery-1.7.1.js',
             'js/modernizr.foundation.js',
             'js/foundation.js',
-            'js/activate.browserid.js',
+            'static/browserid/browserid.js',
             'js/jquery.prettydate.js',
              # Our app.js is always last to override stuff
             'js/app.js',
@@ -36,7 +36,7 @@ MINIFY_BUNDLES = {
             'js/jquery.min.js',
             'js/modernizr.foundation.js',
             'js/foundation.js',
-            'js/activate.browserid.js',
+            'static/browserid/browserid.js',
             'js/jquery.prettydate.js',
              # Our app.js is always last to override stuff
             'js/app.js',
