@@ -7,3 +7,6 @@
 [submodule "vendor-local/src/django-uuslug"]
 	path = vendor-local/src/django-uuslug
 	url = https://github.com/un33k/django-uuslug
+[submodule "vendor-local/src/markdown"]
+	path = vendor-local/src/markdown
+	url = git://github.com/waylan/Python-Markdown.git

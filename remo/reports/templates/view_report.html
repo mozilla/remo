@@ -94,7 +94,7 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
             Past activities
           </span>&nbsp;
           {% if report.past_items %}
-            {{ report.past_items|restructuredtext }}
+            {{ report.past_items|markdown }}
           {% else %}
             <span class="grayed">
               No activities reported for this month.
@@ -113,7 +113,7 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
             Future activities
           </span>&nbsp;
           {% if report.future_items %}
-            {{ report.future_items|restructuredtext }}
+            {{ report.future_items|markdown }}
           {% else %}
             <span class="grayed">
               No future activities planned this month.
@@ -136,7 +136,7 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
             Recruit efforts
           </span>&nbsp;
           {% if report.recruits_comments %}
-            {{ report.recruits_comments|restructuredtext }}
+            {{ report.recruits_comments|markdown }}
           {% else %}
             <span class="grayed">
               No successful recruit efforts reported for this month.
@@ -155,7 +155,7 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
             <span class="white radius label">
               Flags
             </span>&nbsp;
-            {{ report.flags|restructuredtext }}
+            {{ report.flags|markdown }}
           </p>
         </div>
       {% endif %}
