@@ -23,6 +23,12 @@ def restructuredtext(text):
 
 
 @register.filter
+def markdown(text):
+    """Return text rendered as Markdown."""
+    return Markup(markup.markdown(text))
+
+
+@register.filter
 def get_display_name(obj):
     """Return obj display_name if obj is User. Otherwise return None."""
     if isinstance(obj, User):
