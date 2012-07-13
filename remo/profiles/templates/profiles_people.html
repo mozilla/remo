@@ -26,11 +26,11 @@
     <span id="adv-search-icon" title="Advanced Options" class="pictogram-button">
       (
     </span>
-    <span id="listviewbutton" title="Grid View" class="pictogram-button">
+    <span id="gridviewbutton" title="Grid View" class="pictogram-button">
       3
     </span>
     &nbsp;&nbsp;
-    <span id="gridviewbutton" title="List View" class="pictogram-button">
+    <span id="listviewbutton" title="List View" class="pictogram-button">
       4
     </span>
   </div>
@@ -53,7 +53,7 @@
           <select id="adv-search-country" class="expand">
             <option value="">All Countries</option>
             {% for country in countries %}
-            <option value="{{ country|lower }}">{{ country }}</option>
+              <option value="{{ country|lower }}">{{ country }}</option>
             {% endfor %}
           </select>
         </div>
@@ -61,7 +61,7 @@
           <select id="adv-search-area" class="expand">
             <option value="">All Areas</option>
             {% for area in areas %}
-            <option value="{{ area|lower }}">{{ area }}</option>
+              <option value="{{ area|lower }}">{{ area }}</option>
             {% endfor %}
           </select>
         </div>
@@ -75,10 +75,17 @@
 </div>
 
 <!-- People are here -->
+<div class="row hidden" id="profiles_noresults">
+  <div class="twelve columns profiles-no-results">
+    Sorry, no Reps found.
+  </div>
+</div>
+
 <div class="row" id="profiles_gridview">
   <ul class="block-grid mobile three-up" id="grid-search-list">
   </ul>
 </div>
+
 <div id="profiles_listview">
   <div class="row show-on-phones mobile-list-warning">
     Please switch to grid view.
@@ -102,16 +109,18 @@
     </div>
   </div>
 </div>
+
 {% if user.is_authenticated() %}
-<div class="row">
-  <div class="twelve columns reps-number">
-    <p><span id="profiles-number-of-reps">0</span>
-      Rep<span id="profiles-number-of-reps-plural">s</span> found.</p>
+  <div id="profiles-reps-number" class="row">
+    <div class="twelve columns reps-number">
+      <p>
+        <span id="profiles-number-of-reps"></span>
+      </p>
+    </div>
   </div>
-</div>
 {% endif %}
 
-<script id="gridItem" type="text/x-jquery-tmpl">
+<script id="gridItem-tmpl" type="text/x-jquery-tmpl">
   <li class="profiles-li-item"
       data-lon="${ profile.lon }" data-lat="${ profile.lat }"
       data-fullname="${ fullname }">
@@ -134,7 +143,7 @@
   </li>
 </script>
 
-<script id="listItem" type="text/x-jquery-tmpl">
+<script id="listItem-tmpl" type="text/x-jquery-tmpl">
   <tr>
     <td>
       <a href="${ profile.profile_url }">
@@ -148,12 +157,12 @@
       ${ profile.display_name }
     </td>
     <td>
-      <a href="{{ url('profiles_list_profiles') }}city/${ profile.city }">
+      <a href="{{ url('profiles_list_profiles') }}search/${ profile.city }">
         ${ profile.city }
       </a>
     </td>
     <td>
-      <a href="{{ url('profiles_list_profiles') }}region/${ profile.region }">
+      <a href="{{ url('profiles_list_profiles') }}search/${ profile.region }">
         ${ profile.region }
       </a>
     </td>
