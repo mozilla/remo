@@ -1,25 +1,27 @@
-var markers_array = [];
-var map;
-var request;
+var ProfilesLib = {};
+ProfilesLib.markers_array = [];
+ProfilesLib.map = undefined;
+ProfilesLib.request = undefined;
+ProfilesLib.number_of_reps = 0;
 
 function initialize_map() {
     // Initialize map.
-    map = new L.Map('map', { minZoom: 1 });
+    ProfilesLib.map = new L.Map('map', { minZoom: 1 });
     var attribution = ('Map data &copy; <a href="http://openstreetmap.org">' +
                        'OpenStreetMap</a> contributors, <a href="http://creativecommons.org/' +
                        'licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © ' +
-                       '<a href="http://cloudmade.com">CloudMade</a>')
+                       '<a href="http://cloudmade.com">CloudMade</a>');
     var cloudmade = new L.TileLayer('http://{s}.tile.cloudmade.com/' +
                                     'b465ca1b6fe040dba7eec0291ecb7a8c/' +
                                     '997/256/{z}/{x}/{y}.png',
                                     { attribution: attribution, maxZoom: 18 });
     var center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
-    map.setView(center, 2).addLayer(cloudmade);
+    ProfilesLib.map.setView(center, 2).addLayer(cloudmade);
 
     // When user clicks on map and a search filter exists, remove filter.
-    map.on('click', function(e) {
+    ProfilesLib.map.on('click', function(e) {
         var val = $('#searchfield').val();
-        if (val != '') {
+        if (val !== '') {
             search_string = '';
             $('#searchfield').val(search_string);
             $('#searchfield').trigger('input');
@@ -41,7 +43,7 @@ function add_pointers() {
         marker.on('click', function(e) {
             var val = $('#searchfield').val();
             var fullname = $(item).data('fullname');
-            if (val != '') {
+            if (val !== '') {
                 search_string = '';
             }
             else {
@@ -51,18 +53,18 @@ function add_pointers() {
             $('#searchfield').trigger('input');
         });
 
-        map.addLayer(marker);
-        markers_array.push(marker);
-    })
+        ProfilesLib.map.addLayer(marker);
+        ProfilesLib.markers_array.push(marker);
+    });
 }
 
 
 function clear_map() {
     // Remove pointer layers from map.
-    for (var marker in window.markers_array) {
-        window.map.removeLayer(window.markers_array[marker]);
+    for (var marker in ProfilesLib.markers_array) {
+        ProfilesLib.map.removeLayer(ProfilesLib.markers_array[marker]);
     }
-    markers_array = [];
+    ProfilesLib.markers_array = [];
 }
 
 
@@ -77,23 +79,31 @@ function redraw_grid() {
     $('.block-grid.five-up>li').css({'clear': ''});
 
     $('.block-grid.two-up>li:visible').filter(
-        function (index) {return index % 2 == 0;}).css('clear', 'left')
+        function (index) {return index % 2 === 0;}).css('clear', 'left');
     $('.block-grid.three-up>li:visible').filter(
-        function (index) {return index % 3 == 0;}).css('clear', 'left')
+        function (index) {return index % 3 === 0;}).css('clear', 'left');
     $('.block-grid.four-up>li:visible').filter(
-        function (index) {return index % 4 == 0;}).css('clear', 'left')
+        function (index) {return index % 4 === 0;}).css('clear', 'left');
     $('.block-grid.five-up>li:visible').filter(
-        function (index) {return index % 5 == 0;}).css('clear', 'left')
+        function (index) {return index % 5 === 0;}).css('clear', 'left');
 }
 
 function set_number_of_reps(number_of_reps) {
     // Count and display the number of visible reps.
-    $('#profiles-number-of-reps').html(number_of_reps);
-    if (number_of_reps === 1) {
-        $('#profiles-number-of-reps-plural').html('');
+    ProfilesLib.number_of_reps = number_of_reps;
+
+    if (number_of_reps === 0) {
+        $('#profiles-reps-number').hide();
     }
     else {
-        $('#profiles-number-of-reps-plural').html('s');
+        $('#profiles-reps-number').show();
+        $('#profiles-number-of-reps').html(number_of_reps);
+        if (number_of_reps === 1) {
+            $('#profiles-number-of-reps-plural').html('');
+        }
+        else {
+            $('#profiles-number-of-reps-plural').html('s');
+        }
     }
 }
 
@@ -111,14 +121,19 @@ var update_results = function(query) {
         clear_map();
         $('#grid-search-list').empty();
         $('#table-search-list').empty();
-        $('#gridItem').tmpl(data.objects).appendTo('#grid-search-list');
-        redraw_grid();
+
         set_number_of_reps(data.meta.total_count);
-        $('#listItem').tmpl(data.objects).appendTo('#table-search-list');
-        $('#searchfield').data('searching', undefined);
+
+        var view = hash_get_value('view');
+        switch_views(view);
+
+        $('#gridItem-tmpl').tmpl(data.objects).appendTo('#grid-search-list');
+        redraw_grid();
+        $('#listItem-tmpl').tmpl(data.objects).appendTo('#table-search-list');
+        $('#searchfield-tmpl').data('searching', undefined);
         add_pointers();
-    }
-}
+    };
+};
 
 
 function request_error() {
@@ -137,7 +152,7 @@ function set_dropdown_value(name, value) {
 
 
 function send_query() {
-    var extra_q = ''
+    var extra_q = '';
     var csv = false;
     var API_URL = '/api/v1/rep/?limit=0&order_by=profile__country,last_name,first_name';
     var value = $(location).attr('hash').substring(2);
@@ -148,7 +163,10 @@ function send_query() {
         return;
     }
 
-    $('#searchfield').data('searching', value)
+    // Set icon.
+    $('#search-icon').html('{');
+
+    $('#searchfield').data('searching', value);
 
     // Unbind change events to avoid triggering twice the same action.
     unbind_events();
@@ -188,12 +206,12 @@ function send_query() {
 
     if (!csv) {
         // Abort previous request
-        if (request) {
+        if (ProfilesLib.request) {
             // console.log(request.state());
-            request.abort()
+            ProfilesLib.request.abort();
             // console.log(request.state());
         }
-        request = $.ajax({
+        ProfilesLib.request = $.ajax({
             url: API_URL + extra_q,
             success: update_results(value),
             error: request_error
@@ -213,16 +231,16 @@ function send_query() {
         hash_set_value('format', '');
 
         // Save current map zoom and center
-        var zoom = map.getZoom()
-        var center = map.getCenter();
+        var zoom = ProfilesLib.map.getZoom();
+        var center = ProfilesLib.map.getCenter();
 
         // We shouldn't touch "private" variables but this is to force
         // map to reload tiles. When a user hits the CSV export page,
         // tile loading is interrupted by the change of
         // window.location. By re-setting map's view (setView) we
         // force tile loading.
-        map._zoom = -1;
-        map.setView(center, zoom);
+        ProfilesLib.map._zoom = -1;
+        ProfilesLib.map.setView(center, zoom);
     }
 }
 
@@ -232,10 +250,14 @@ function hash_set_value(key, value) {
     var keys;
     var values;
 
-    // console.log(hash);
+    if (value === undefined) {
+        value = '';
+    }
+
+    // console.log('Hash:', hash);
     if (hash.length > 0) {
-        keys = hash.split('/').filter(function(element, index) { return (index % 2 == 0) });
-        values = hash.split('/').filter(function(element, index) { return (index % 2 == 1) });
+        keys = hash.split('/').filter(function(element, index) { return (index % 2 === 0); });
+        values = hash.split('/').filter(function(element, index) { return (index % 2 === 1); });
     }
     else {
         keys = [];
@@ -257,11 +279,11 @@ function hash_set_value(key, value) {
     // console.log(hash.split('/'));
     // console.log('Keys', keys);
     // console.log('Values', values);
-    hash = '/'
+    hash = '/';
     for (var i=0; i < keys.length; i++) {
         // console.log(i, keys[i], values[i])
         if (values[i].length > 0 ) {
-            hash += keys[i] + '/' + values[i] + '/'
+            hash += keys[i] + '/' + values[i] + '/';
         }
     }
     // console.log(hash);
@@ -272,14 +294,14 @@ function hash_set_value(key, value) {
 function hash_get_value(key) {
     // Get value for key in hash
     var hash = $(location).attr('hash').substring(2).toLowerCase();
-    var keys = hash.split('/').filter(function(element, index) { return (index % 2 == 0) });
-    var values = hash.split('/').filter(function(element, index) { return (index % 2 == 1) });
-    var index_of_key = keys.indexOf(key)
+    var keys = hash.split('/').filter(function(element, index) { return (index % 2 === 0); });
+    var values = hash.split('/').filter(function(element, index) { return (index % 2 === 1); });
+    var index_of_key = keys.indexOf(key);
     if (index_of_key > -1) {
         return values[index_of_key].toLowerCase();
     }
 
-    return undefined
+    return;
 }
 
 function bind_events() {
@@ -287,31 +309,44 @@ function bind_events() {
     // console.log('Binding events');
     // Update hash, on search input update.
     $('#searchfield').bind('propertychange keyup input paste', function(event) {
-        // Set icon.
-        $('#search-icon').html('{');
         hash_set_value('search', $('#searchfield').val());
     });
 
     // Set advanced search events.
     $('#adv-search-group').change(function() {
-        // Set icon.
-        $('#search-icon').html('{');
         hash_set_value('group', $('#adv-search-group').val());
     });
 
     $('#adv-search-country').change(function() {
-        // Set icon.
-        $('#search-icon').html('{');
         hash_set_value('country', $('#adv-search-country').val());
     });
 
     $('#adv-search-area').change(function() {
-        // Set icon.
-        $('#search-icon').html('{');
         hash_set_value('area', $('#adv-search-area').val());
     });
 
     $(window).bind('hashchange', function(e) { send_query(); });
+}
+
+function switch_views(view) {
+    unbind_events();
+    if (ProfilesLib.number_of_reps === 0) {
+        $('#profiles_gridview').hide();
+        $('#profiles_listview').hide();
+        $('#profiles_noresults').show();
+    }
+    else if (view === 'list') {
+        $('#profiles_noresults').hide();
+        $('#profiles_gridview').hide();
+        $('#profiles_listview').show();
+    }
+    else {
+        $('#profiles_noresults').hide();
+        $('#profiles_listview').hide();
+        $('#profiles_gridview').show();
+    }
+    hash_set_value('view', view);
+    bind_events();
 }
 
 function unbind_events() {
@@ -328,7 +363,7 @@ $(document).ready(function () {
     initialize_map();
 
     var view = hash_get_value('view');
-    if (view == 'list') {
+    if (view === 'list') {
         $('#profiles_gridview').hide();
         $('#profiles_listview').show();
     }
@@ -338,16 +373,11 @@ $(document).ready(function () {
     });
 
     $('#listviewbutton').bind('click', function () {
-        $('#profiles_listview').hide();
-        $('#profiles_gridview').show();
-        hash_set_value('view', 'grid');
-        redraw_grid();
+        switch_views('list');
     });
 
     $('#gridviewbutton').bind('click', function () {
-        $('#profiles_gridview').hide();
-        $('#profiles_listview').show();
-        hash_set_value('view', 'list');
+        switch_views('grid');
     });
 
     // Show advanced search options if used in url.
