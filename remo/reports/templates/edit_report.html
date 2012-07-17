@@ -5,13 +5,25 @@ Mozilla Reps - Edit Report
 {% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="twelve columns">
-    <h4>Editing Monthly Report</h4>
-  </div>
-</div>
 <form id="reportform" method="post" class="custom">
   {{ csrf() }}
+
+  <div class="row">
+    <div class="eight columns">
+      <h4>Editing Monthly Report</h4>
+    </div>
+    <div class="four columns hide-on-phones align-right">
+      {% if perms.reports.can_edit_reports %}
+        <a href="#" class="small red button nice radius"
+           data-reveal-id="delete-report">Delete Report</a>
+      {% endif %}
+      <a type="submit"
+         class="small green button nice radius reports-submit-button">
+        Save report
+      </a>
+    </div>
+  </div>
+
   <div class="row">
     <!-- Non-editable elements -->
     <div class="six columns">
@@ -39,7 +51,7 @@ Mozilla Reps - Edit Report
         <div class="one columns pictogram">
           =
         </div>
-        <div class="eleven columns report-instructions">
+        <div class="eleven columns">
           <p>All Mozillians are super busy and sometimes you need to
           take a break from Mozilla awesomeness and you'll find
           yourself with little or even no information to share in a given
@@ -216,7 +228,7 @@ Mozilla Reps - Edit Report
     {{ report_link_formset.management_form }}
   </div>
 
-  <div class="row">
+  <div class="row end-row">
     <div class="six columns">
     </div>
 
@@ -234,7 +246,7 @@ Mozilla Reps - Edit Report
             {{ report_form.empty }} Empty report
 
             {% if (not created) and (perms.reports.can_delete_reports) %}
-              <div class="align-right">
+              <div class="align-right show-on-phones top-margined">
                 <a href="#" class="small red button nice radius"
                    data-reveal-id="delete-report">Delete Report</a>
               </div>
@@ -248,10 +260,10 @@ Mozilla Reps - Edit Report
   </div>
 
   <!-- Report submit button -->
-  <div class="row report-box">
+  <div class="row report-box show-on-phones">
     <div id="save-report" class="twelve columns align-right">
-      <a id="reports-submit-button" type="submit"
-         class="medium blue button nice radius">
+      <a type="submit"
+         class="small green button nice radius reports-submit-button">
         Save report
       </a>
     </div>
