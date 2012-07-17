@@ -312,14 +312,17 @@
           V
         </div>
         <div class="eleven columns">
-          <br>
-          <textarea class="flat" placeholder="Bio - Write us a bit about yourself"
+          <textarea class="flat top-margined" placeholder="Bio - Write us a bit about yourself"
                     name="bio">{{ profileform.bio.value() }}</textarea>
           {% if profileform.bio.errors %}
             <small class="error">
               {{ profileform.bio.errors }}
             </small>
           {% endif %}
+          <p class="more-info">In this field you can use
+            <a href="http://en.wikipedia.org/wiki/Markdown"
+               target="_blank"> Markdown</a>
+             syntax.</p>
         </div>
       </div>
       <div class="row">
