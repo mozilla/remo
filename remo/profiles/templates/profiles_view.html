@@ -5,6 +5,14 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 {% endblock %}
 
 {% block content %}
+{% if user == pageuser or perms.profiles.can_edit_profiles %}
+  <div class="row hide-on-phones">
+    <div class="twelve columns align-right">
+      <a href="{{ url('profiles_edit', user_profile.display_name) }}"
+         class="small white button nice radius">Edit profile</a>
+    </div>
+  </div>
+{% endif %}
 <div class="row">
   <div class="six columns">
     <div class="row">
@@ -323,7 +331,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         </div>
       {% endif %}
       {% if user_profile.date_joined_program %}
-        <div class="row">
+        <div class="row end-row">
           <div class="one columns pictogram">
             %
           </div>
@@ -342,8 +350,8 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
   </div>
 </div>
 {% if user == pageuser or perms.profiles.can_edit_profiles %}
-  <div class="row">
-    <div id="save-profile" class="twelve columns align-right">
+  <div class="row end-row show-on-phones">
+    <div class="twelve columns align-right">
       <a href="{{ url('profiles_edit', user_profile.display_name) }}"
          class="small white button nice radius">Edit profile</a>
     </div>

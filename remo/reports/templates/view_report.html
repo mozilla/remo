@@ -6,9 +6,16 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
 
 {% block content %}
 <div class="row">
-  <div class="twelve columns">
+  <div class="eight columns">
     <h4>Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year }}</h4>
   </div>
+  {% if editable %}
+  <!-- Edit report -->
+  <div class="four columns align-right hide-on-phones">
+    <a href="{{ report|get_report_edit_url }}"
+       class="small white button nice radius">Edit report</a>
+  </div>
+{% endif %}
 </div>
 
 <div class="row">
@@ -216,7 +223,7 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
 {% if editable %}
   <!-- Edit report -->
   <div class="row">
-    <div id="edit-report" class="twelve columns align-right">
+    <div class="twelve columns align-right show-on-phones">
       <a href="{{ report|get_report_edit_url }}"
          class="small white button nice radius">Edit report</a>
     </div>

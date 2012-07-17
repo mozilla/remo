@@ -13,7 +13,7 @@ $(document).ready(function() {
         addDeleteButton: null
     });
 
-    $('#reports-submit-button').click(function(event) {
+    $('.reports-submit-button').click(function(event) {
         event.preventDefault();
         past_items = $.trim($('#past_items').val());
         future_items = $.trim($('#future_items').val());

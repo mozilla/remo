@@ -2,22 +2,32 @@
 {% block pagetitle %}Mozilla Reps - Edit Profile{% endblock %}
 
 {% block content %}
-<!-- Sample inputs -->
-<div class="row">
-  <div class="twelve columns">
-    <h4>
-      Editing profile of user {{ pageuser.userprofile.display_name }}
-      {% if pageuser == request.user %}
-        <small class="grayed">
-          (that's you!)
-        </small>
-      {% endif %}
-    </h4>
-  </div>
-</div>
 <form class="custom" method="post"
       action="{{ url('profiles_edit', pageuser.userprofile.display_name) }}">
   {{ csrf() }}
+  <div class="row">
+    <div class="eight columns">
+      <!-- Title -->
+      <h4>
+        Editing profile of user {{ pageuser.userprofile.display_name }}
+        {% if pageuser == request.user %}
+          <small class="grayed">
+            (that's you!)
+          </small>
+        {% endif %}
+      </h4>
+    </div>
+    <!-- Deleting and Saving -->
+    <div class="four columns hide-on-phones align-right">
+      {% if perms.profiles.can_edit_profiles %}
+      <a href="#" class="small red button nice radius"
+         data-reveal-id="delete-profile">Delete profile</a>
+      {% endif %}
+      <button type="submit" class="small green button nice radius">
+        Save profile
+      </button>
+    </div>
+  </div>
   <!-- Two column block -->
   <div class="row">
     <div class="six columns">
@@ -385,19 +395,17 @@
               Rep
             </label>
           </div>
-          <div class="row">
-            <div class="align-right">
-              <a href="#" class="small red button nice radius"
-                 data-reveal-id="delete-profile">Delete profile</a>
-            </div>
-          </div>
         </div>
       </div>
     {% endif %}
   </div>
-  <div class="row">
-    <div id="save-profile" class="twelve columns align-right">
-      <button type="submit" class="medium blue button nice radius">
+  <div class="row end-row show-on-phones">
+    <div class="twelve columns show-on-phones align-right">
+      {% if perms.profiles.can_edit_profiles %}
+      <a href="#" class="small red button nice radius"
+         data-reveal-id="delete-profile">Delete profile</a>
+      {% endif %}
+      <button id="save-profile" type="submit" class="small green button nice radius top-margined">
         Save profile
       </button>
     </div>
