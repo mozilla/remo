@@ -102,8 +102,13 @@
                   <h3><span class="metabold">mozilla</span> reps</h3>
                 </a>
               </div>
+              <!-- Mobile Logo -->
               <div class="row show-on-phones">
-                <h2>mozilla reps mobile</h2>
+                <a href="{{ url('main') }}">
+                  <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
+                       alt="Mozilla Reps logo">
+                  <h3><span class="metabold">mozilla</span> reps</h3>
+                </a>
               </div>
             </div>
 
@@ -127,13 +132,13 @@
                   <a href="{{ url('events_list_events') }}" class="main">Events</a>
                 </li>
                 <li>
-                  <a href="#" class="main" data-reveal-id="labs-modal">Labs</a>
-                </li>
-                <li>
                   <a href="http://planet.mozillareps.org" class="main">Planet</a>
                 </li>
                 <li>
                   <a href="https://wiki.mozilla.org/ReMo" class="main">Wiki</a>
+                </li>
+                <li>
+                  <a href="#" class="main" data-reveal-id="labs-modal">Labs</a>
                 </li>
                 <li class="last">
                   <a href="{{ url('faq') }}"
