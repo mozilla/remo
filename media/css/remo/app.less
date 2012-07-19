@@ -141,6 +141,16 @@ h4 {
     content: '\*';
 }
 
+.has-tip {
+    border-bottom: none;
+    font-weight: normal;
+    cursor: auto;
+    &:hover {
+        color:inherit;
+        border-bottom: none;
+    }
+}
+
 /* Setting tabzilla z-index to 30 so it is displayed below modals */
 #tabzilla {
     z-index: 30 !important;
@@ -372,7 +382,7 @@ ul.orbit-bullets li {
     width: 100%
 }
 
-.flat {
+textarea.flat {
     background: none !important;
     border: none !important;
     border-bottom: 1px solid #ccc !important;
@@ -387,21 +397,15 @@ ul.orbit-bullets li {
     float: right;
 }
 
-.input-text.big {
-    margin: 20px 0px;
-    width: 100%;
-    background: none !important;
-    border: none !important;
-    border-bottom: 1px solid #ccc !important;
-    border-radius: 0px !important;
-}
-
-.input-text {
+input.input-text {
     margin: 20px 0px !important;
     background: none !important;
     border: none !important;
     border-bottom: 1px solid #ccc !important;
     border-radius: 0px !important;
+    &.big {
+        width: 100%;
+    }
 }
 
 .custom.dropdown {
