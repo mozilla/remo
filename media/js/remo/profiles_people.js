@@ -3,6 +3,18 @@ ProfilesLib.markers_array = [];
 ProfilesLib.map = undefined;
 ProfilesLib.request = undefined;
 ProfilesLib.number_of_reps = 0;
+ProfilesLib.searchfield_elm = $('#searchfield');
+ProfilesLib.gridview_elm = $('#profiles_gridview');
+ProfilesLib.listview_elm = $('#profiles_listview');
+ProfilesLib.noresults_elm = $('#profiles_noresults');
+ProfilesLib.adv_search_country_elm = $('#adv-search-country');
+ProfilesLib.adv_search_group_elm = $('#adv-search-group');
+ProfilesLib.adv_search_area_elm = $('#adv-search-area');
+ProfilesLib.search_icon_elm = $('#search-icon');
+ProfilesLib.grid_search_list_elm = $('#grid-search-list');
+ProfilesLib.table_search_list_elm = $('#table-search-list');
+ProfilesLib.griditem_tmpl_elm = $('#gridItem-tmpl');
+ProfilesLib.listitem_tmpl_elm = $('#listItem-tmpl');
 
 function initialize_map() {
     // Initialize map.
@@ -20,11 +32,11 @@ function initialize_map() {
 
     // When user clicks on map and a search filter exists, remove filter.
     ProfilesLib.map.on('click', function(e) {
-        var val = $('#searchfield').val();
+        var val = ProfilesLib.searchfield_elm.val();
         if (val !== '') {
             search_string = '';
-            $('#searchfield').val(search_string);
-            $('#searchfield').trigger('input');
+            ProfilesLib.searchfield_elm.val(search_string);
+            ProfilesLib.searchfield_elm.trigger('input');
         }
     });
 }
@@ -41,7 +53,7 @@ function add_pointers() {
         // Clicking on a pointer makes others disappear if visible, or
         // otherwise appear.
         marker.on('click', function(e) {
-            var val = $('#searchfield').val();
+            var val = ProfilesLib.searchfield_elm.val();
             var fullname = $(item).data('fullname');
             if (val !== '') {
                 search_string = '';
@@ -49,8 +61,8 @@ function add_pointers() {
             else {
                 search_string = fullname;
             }
-            $('#searchfield').val(search_string);
-            $('#searchfield').trigger('input');
+            ProfilesLib.searchfield_elm.val(search_string);
+            ProfilesLib.searchfield_elm.trigger('input');
         });
 
         ProfilesLib.map.addLayer(marker);
@@ -90,6 +102,7 @@ function redraw_grid() {
 
 function set_number_of_reps(number_of_reps) {
     // Count and display the number of visible reps.
+    number_of_reps = parseInt(number_of_reps, 10);
     ProfilesLib.number_of_reps = number_of_reps;
 
     if (number_of_reps === 0) {
@@ -97,12 +110,11 @@ function set_number_of_reps(number_of_reps) {
     }
     else {
         $('#profiles-reps-number').show();
-        $('#profiles-number-of-reps').html(number_of_reps);
         if (number_of_reps === 1) {
-            $('#profiles-number-of-reps-plural').html('');
+            $('#profiles-number-of-reps').html(number_of_reps + ' Rep found.');
         }
         else {
-            $('#profiles-number-of-reps-plural').html('s');
+            $('#profiles-number-of-reps').html(number_of_reps + ' Reps found.');
         }
     }
 }
@@ -111,43 +123,45 @@ function set_number_of_reps(number_of_reps) {
 var update_results = function(query) {
     return function(data) {
         // console.log('Updating results');
-        $('#search-icon').html('s');
-
         if ($(location).attr('hash').substring(2) !== query) {
             // console.log('Values different', $(location).attr('hash').substring(2), query);
             return;
         }
 
+        ProfilesLib.search_icon_elm.html('s');
+
         clear_map();
-        $('#grid-search-list').empty();
-        $('#table-search-list').empty();
+        ProfilesLib.grid_search_list_elm.empty();
+        ProfilesLib.table_search_list_elm.empty();
 
         set_number_of_reps(data.meta.total_count);
 
         var view = hash_get_value('view');
         switch_views(view);
 
-        $('#gridItem-tmpl').tmpl(data.objects).appendTo('#grid-search-list');
+        ProfilesLib.griditem_tmpl_elm.tmpl(data.objects).appendTo('#grid-search-list');
         redraw_grid();
-        $('#listItem-tmpl').tmpl(data.objects).appendTo('#table-search-list');
-        $('#searchfield-tmpl').data('searching', undefined);
+        ProfilesLib.listitem_tmpl_elm.tmpl(data.objects).appendTo('#table-search-list');
+        ProfilesLib.searchfield_elm.data('searching', undefined);
         add_pointers();
     };
 };
 
 
-function request_error() {
+function request_error(query, status) {
     // Unset data-searching after half a second to deal with API timeouts.
-    // console.log('Timeout');
-    $('#searchfield').data('searching', undefined);
-    $('#search-icon').html('s');
+    // console.log('Request error:', status);
+    if (status !== 'abort') {
+        ProfilesLib.searchfield_elm.data('searching', undefined);
+        ProfilesLib.search_icon_elm.html('s');
+    }
 }
 
 
-function set_dropdown_value(name, value) {
-    $(name).val(value);
+function set_dropdown_value(elm, value) {
+    elm.val(value);
     // We have to force trigger 'change' for foundation to update.
-    $(name).trigger('change');
+    elm.trigger('change');
 }
 
 
@@ -159,14 +173,14 @@ function send_query() {
     // console.log('Value', value);
 
     // Make sure we are not firing the same same request twice.
-    if ($('#searchfield').data('searching') === value) {
+    if (ProfilesLib.searchfield_elm.data('searching') === value) {
         return;
     }
 
     // Set icon.
-    $('#search-icon').html('{');
+    ProfilesLib.search_icon_elm.html('{');
 
-    $('#searchfield').data('searching', value);
+    ProfilesLib.searchfield_elm.data('searching', value);
 
     // Unbind change events to avoid triggering twice the same action.
     unbind_events();
@@ -175,25 +189,25 @@ function send_query() {
 
     // Form query based on URL
     var country = hash_get_value('country');
-    set_dropdown_value('#adv-search-country', country);
+    set_dropdown_value(ProfilesLib.adv_search_country_elm, country);
     if (country) {
         extra_q += '&profile__country__iexact=' + country;
     }
 
     var area = hash_get_value('area');
-    set_dropdown_value('#adv-search-area', area);
+    set_dropdown_value(ProfilesLib.adv_search_area_elm, area);
     if (area) {
         extra_q += '&profile__functional_areas__name__iexact=' + area;
     }
 
     var search = hash_get_value('search');
-    $('#searchfield').val(search);
+    ProfilesLib.searchfield_elm.val(search);
     if (search) {
         extra_q += '&query=' + search;
     }
 
     var group = hash_get_value('group');
-    set_dropdown_value('#adv-search-group', group);
+    set_dropdown_value(ProfilesLib.adv_search_group_elm, group);
     if (group) {
         extra_q += '&group=' + group;
     }
@@ -214,7 +228,8 @@ function send_query() {
         ProfilesLib.request = $.ajax({
             url: API_URL + extra_q,
             success: update_results(value),
-            error: request_error
+            error: request_error,
+            timeout: 30000
         });
     }
     else {
@@ -308,21 +323,21 @@ function bind_events() {
     // Bind events
     // console.log('Binding events');
     // Update hash, on search input update.
-    $('#searchfield').bind('propertychange keyup input paste', function(event) {
-        hash_set_value('search', $('#searchfield').val());
+    ProfilesLib.searchfield_elm.bind('propertychange keyup input paste', function(event) {
+        hash_set_value('search', ProfilesLib.searchfield_elm.val());
     });
 
     // Set advanced search events.
-    $('#adv-search-group').change(function() {
-        hash_set_value('group', $('#adv-search-group').val());
+    ProfilesLib.adv_search_group_elm.change(function() {
+        hash_set_value('group', ProfilesLib.adv_search_group_elm.val());
     });
 
-    $('#adv-search-country').change(function() {
-        hash_set_value('country', $('#adv-search-country').val());
+    ProfilesLib.adv_search_country_elm.change(function() {
+        hash_set_value('country', ProfilesLib.adv_search_country_elm.val());
     });
 
-    $('#adv-search-area').change(function() {
-        hash_set_value('area', $('#adv-search-area').val());
+    ProfilesLib.adv_search_area_elm.change(function() {
+        hash_set_value('area', ProfilesLib.adv_search_area_elm.val());
     });
 
     $(window).bind('hashchange', function(e) { send_query(); });
@@ -331,19 +346,19 @@ function bind_events() {
 function switch_views(view) {
     unbind_events();
     if (ProfilesLib.number_of_reps === 0) {
-        $('#profiles_gridview').hide();
-        $('#profiles_listview').hide();
-        $('#profiles_noresults').show();
+        ProfilesLib.gridview_elm.hide();
+        ProfilesLib.listview_elm.hide();
+        ProfilesLib.noresults_elm.show();
     }
     else if (view === 'list') {
-        $('#profiles_noresults').hide();
-        $('#profiles_gridview').hide();
-        $('#profiles_listview').show();
+        ProfilesLib.noresults_elm.hide();
+        ProfilesLib.gridview_elm.hide();
+        ProfilesLib.listview_elm.show();
     }
     else {
-        $('#profiles_noresults').hide();
-        $('#profiles_listview').hide();
-        $('#profiles_gridview').show();
+        ProfilesLib.noresults_elm.hide();
+        ProfilesLib.listview_elm.hide();
+        ProfilesLib.gridview_elm.show();
     }
     hash_set_value('view', view);
     bind_events();
@@ -352,10 +367,10 @@ function switch_views(view) {
 function unbind_events() {
     // Unbind events
     // console.log('Unbinding events');
-    $('#searchfield').unbind('propertychange keyup input paste');
-    $('#adv-search-country').unbind('change');
-    $('#adv-search-group').unbind('change');
-    $('#adv-search-area').unbind('change');
+    ProfilesLib.searchfield_elm.unbind('propertychange keyup input paste');
+    ProfilesLib.adv_search_country_elm.unbind('change');
+    ProfilesLib.adv_search_group_elm.unbind('change');
+    ProfilesLib.adv_search_area_elm.unbind('change');
     $(window).unbind('hashchange');
 }
 
@@ -364,8 +379,8 @@ $(document).ready(function () {
 
     var view = hash_get_value('view');
     if (view === 'list') {
-        $('#profiles_gridview').hide();
-        $('#profiles_listview').show();
+        ProfilesLib.gridview_elm.hide();
+        ProfilesLib.listview_elm.show();
     }
 
     $('#searchform').submit(function (event) {
@@ -396,17 +411,17 @@ $(document).ready(function () {
     });
 
     // Set values to fields.
-    set_dropdown_value('#adv-search-group', hash_get_value('group'));
-    set_dropdown_value('#adv-search-area', hash_get_value('area'));
-    set_dropdown_value('#adv-search-country', hash_get_value('country'));
+    set_dropdown_value(ProfilesLib.adv_search_group_elm, hash_get_value('group'));
+    set_dropdown_value(ProfilesLib.adv_search_area_elm, hash_get_value('area'));
+    set_dropdown_value(ProfilesLib.adv_search_country_elm, hash_get_value('country'));
 
     // Bind events.
     bind_events();
 
     // Enable search field when ready.
-    $('#searchfield').attr('Placeholder', 'Filter using any keyword');
-    $('#searchfield').removeAttr('disabled');
-    $('#searchfield').val(hash_get_value('search'));
+    ProfilesLib.searchfield_elm.attr('Placeholder', 'Filter using any keyword');
+    ProfilesLib.searchfield_elm.removeAttr('disabled');
+    ProfilesLib.searchfield_elm.val(hash_get_value('search'));
 
     send_query();
 });

@@ -10,7 +10,7 @@
 -------------------- */
 
 .top-margined {
-    margin-top: 20px;
+    margin-top: 20px !important;
 }
 
 .align-right {
@@ -44,6 +44,14 @@
 
 .metabold {
     font-family: 'MetaBold' !important;
+}
+
+.has-tip {
+    font-weight: normal !important;
+}
+
+.tooltip {
+    color: #fff !important;
 }
 
 /* -----------------------------------------
@@ -149,6 +157,14 @@ h4 {
         color:inherit;
         border-bottom: none;
     }
+}
+
+.end-row {
+    padding-bottom: 80px !important;
+}
+
+textarea {
+    font-family: "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 
 /* Setting tabzilla z-index to 30 so it is displayed below modals */
@@ -312,11 +328,20 @@ ul.orbit-bullets li {
     display: none;
 }
 
-.smallmap {
+.map {
     width: 100%;
-    height: 300px;
     border: 1px solid #ccc;
     position: relative;
+}
+
+.map200 {
+    .map;
+    height: 200px;
+}
+
+.map300 {
+    .map;
+    height: 300px;
 }
 
 .view-change {
@@ -343,9 +368,12 @@ ul.orbit-bullets li {
     -moz-box-shadow: 0 2px 5px gray;
 }
 
-.grid-profile-image img {
-    -moz-border-radius: 5px;
-    border-radius: 5px;
+.grid-profile-image {
+    height: 50px !important;
+    img {
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+    }
 }
 
 .grid-profile-text img {
@@ -454,7 +482,7 @@ input.input-text {
     .grayed;
     font-size: 10px;
     text-align: right;
-    margin-top: -12px;
+    margin-top: -5px !important;
 }
 
 .edit-profile-item {
@@ -837,4 +865,206 @@ ul.mreports li.editable a {
 #searchfield {
     float: right !important;
     width: 95% !important;
+}
+
+/* -----------------------------------------
+   Event Styles
+----------------------------------------- */
+
+.event-single-date {
+    .top-margined;
+    padding: 10px !important;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.event-single-date-number {
+    .metabold;
+    margin-top: 10px;
+    font-size: 60px;
+    .grayed;
+    text-shadow: 1px 1px 0px rgba(200, 200, 200, 0.75);
+    min-width: 60px;
+}
+
+.event-single-title {
+    .opensans !important;
+}
+
+.event-single-date-month {
+    .opensans;
+    font-weight: bold;
+    font-size: 20px;
+    .grayed;
+    .align-right;
+    text-shadow: 1px 1px 0px rgba(200, 200, 200, 0.75);
+    min-width: 94px;
+}
+
+.event-single-date-month-second {
+    .event-single-date-month;
+    margin-top: 8px;
+}
+
+.event-single-date-day {
+    font-style: italic;
+    font-size: 15px;
+    margin-top: 10px;
+    .align-right;
+    .grayed;
+}
+
+.event-single-date-times {
+    .align-center;
+    border-left: 1px solid #ddd;
+    border-bottom: none !important;
+    text-align: left !important;
+}
+
+.event-single-date-time {
+    .opensanslight;
+    margin-left: 15px !important;
+    .grayed;
+    font-size: 20px;
+    text-align: left;
+}
+
+.event-single-date-time-start {
+    .event-single-date-time;
+}
+
+.event-single-date-time-end {
+    .event-single-date-time;
+    margin-top: 8px !important;
+}
+
+.event-single-date-day-first {
+    .event-single-date-time;
+    font-style: italic;
+    font-size: 15px;
+}
+
+.event-single-date-day-second {
+    .event-single-date-time;
+    margin-top: 8px !important;
+    font-style: italic;
+    font-size: 15px;
+}
+
+.event-single-date-multitimes-wrap {
+    border-bottom: none !important;
+    :hover {
+        color: black;
+    }
+    text-align: left !important;
+}
+
+.event-single-date-multitimes {
+    .pictogram;
+    font-size: 20px;
+    margin-top: -5px !important;
+    margin-right: -18px !important;
+    text-decoration: none;
+}
+
+.event-single-attendee {
+    padding: 10px !important;
+    margin-left: 10px !important;
+    margin-top: 15px !important;
+    cursor: pointer;
+    -moz-transition:box-shadow .1s ease-in;
+    -webkit-transition:box-shadow .1s ease-in;
+    transition:box-shadow .1s ease-in;
+}
+
+.event-single-attendee:hover {
+    -moz-transition:box-shadow .1s ease-out;
+    -webkit-transition:box-shadow .1s ease-out;
+    transition:box-shadow .1s ease-out;
+    box-shadow: 0 2px 5px gray;
+    -webkit-box-shadow: 0 2px 5px gray;
+    -moz-box-shadow: 0 2px 5px gray;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.event-single-attendee-text {
+    .grayed;
+    .align-right;
+    font-style: italic;
+    margin: 0px !important;
+}
+
+.event-single-signups-count {
+    .opensanslight;
+    margin-top: 25px !important;
+    font-size: 18px;
+}
+
+.event-single-info {
+    height: 200px;
+}
+
+.request-status {
+    .align-right;
+    .grayed;
+    float: right;
+    font-style: italic;
+}
+
+#flickr-mashup {
+    display: none;
+    overflow: hidden;
+}
+
+.flickrBody {
+    height: 200px;
+    width: 200%;
+}
+
+.flickrRow {
+    display: inline;
+    margin-right: 3px;
+    img {
+        height: 200px;
+    }
+}
+
+#tweet-mashup-container {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 10;
+    height: 190px;
+    width: 300px;
+    overflow: hidden;
+    background: black;
+    background: rgba(0,0,0,0.7);
+    padding: 5px;
+    display: none;
+}
+
+#tweet-mashup {
+    color: white;
+}
+
+#tweet-mashup-fade {
+    display: none;
+    position: absolute;
+    top: 0px;
+    right: 310px;
+    z-index: 10;
+    height: 200px;
+    width: 50px;
+    background: none;
+    background: -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.7));
+    background: -webkit-gradient(linear, left center, right center, from( rgba(0,0,0,0) ), to( rgba(0,0,0,0.7) ));
+}
+
+.tweet_avatar img {
+    float: left;
+    margin-right: 5px;
+    vertical-align: middle;
+    border-radius: 5px;
+    moz-border-radius: 5px;
 }

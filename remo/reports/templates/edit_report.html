@@ -133,7 +133,6 @@ Mozilla Reps - Edit Report
           </div>
           <div class="eleven columns report-item">
             <div class="row report-event">
-              <!-- {{ form.name }} -->
               <input type="text" placeholder="Event Name"
                      name="{{ form.name.html_name }}" value="{{ form.name.value() }}"
                      class="input-text big">
@@ -314,6 +313,5 @@ Mozilla Reps - Edit Report
 {% endblock %}
 
 {% block bottomextra %}
-  <script src="{{ MEDIA_URL }}js/jquery.formset.min.js" type="text/javascript"></script>
-  <script src="{{ MEDIA_URL }}js/reports_edit_report.js" type="text/javascript"></script>
+  {{ js('reports_edit_report') }}
 {% endblock %}

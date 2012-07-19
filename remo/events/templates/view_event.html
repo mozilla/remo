@@ -1,5 +1,412 @@
 {% extends "base.html" %}
 
-{% block content %}
-Placeholder
+{% block pagetitle %}
+Mozilla Reps - {{ event.name }}
 {% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="ten columns">
+    <h4 class="event-single-title">{{ event.name }}</h4>
+  </div>
+  <div id="" class="two columns align-right">
+    {% if perms.events.can_edit_events %}
+      <a href="{{ url('events_edit_event', slug=event.slug) }}"
+         class="small blue button nice radius">
+        Edit event
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="five columns">
+    <div class="row">
+      <div class="one columns pictogram">
+        }
+      </div>
+      <div class="eleven columns">
+        <div class="row">
+          <div class="ten columns end">
+            <div class="event-single-date panel row">
+              {% if not event|is_multiday %} {# this is single event #}
+                <div class="three columns">
+                  <div class="event-single-date-number">
+                    {{ event.local_start|strftime('%d') }}
+                  </div>
+                </div>
+                <div class="four columns">
+                  <div class="event-single-date-month">
+                    {{ event.local_start|strftime('%b %Y')|upper }}
+                  </div>
+                  <div class="event-single-date-day">
+                    {{ event.local_start|strftime('%A') }}
+                  </div>
+                </div>
+                <div class="two columns end">
+                  <div class="event-single-date-times tip-bottom"
+                       data-width="140"
+                       data-date-start="{{ event.start|format_datetime_iso }}"
+                       data-date-end="{{ event.end|format_datetime_iso }}"
+                       data-is-multidate="false"
+                       id="datetime-tip">
+                    <div class="event-single-date-time-start">
+                      {{ event.local_start|strftime('%H:%M') }}
+                    </div>
+                    <div class="event-single-date-time-end">
+                      {{ event.local_end|strftime('%H:%M') }}
+                    </div>
+                  </div>
+                </div>
+              {% else %}
+                {# Event is multiday #}
+                <div class="six columns">
+                  <div class="event-single-date-month">
+                    {{ event.local_start|strftime('%d %b %Y')|upper }}
+                  </div>
+                  <div class="event-single-date-month-second">
+                    {{ event.local_end|strftime('%d %b %Y')|upper }}
+                  </div>
+                </div>
+                <div class="four columns">
+                  <div class="event-single-date-times">
+                    <div class="event-single-date-day-first">
+                      {{ event.local_start|strftime('%A') }}
+                    </div>
+                    <div class="event-single-date-day-second">
+                      {{ event.local_end|strftime('%A') }}
+                    </div>
+                  </div>
+                </div>
+                <div class="two columns">
+                  <div class="event-single-date-multitimes-wrap tip-bottom"
+                       data-width="120"
+                       data-date-start="{{ event.start|format_datetime_iso }}"
+                       data-date-end="{{ event.end|format_datetime_iso }}"
+                       data-date-local-start="{{ event.local_start|format_datetime_iso }}"
+                       data-date-local-end="{{ event.local_end|format_datetime_iso }}"
+                       data-is-multidate="true"
+                       id="datetime-tip">
+                    <div class="event-single-date-multitimes">}</div>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="one columns pictogram">
+        J
+      </div>
+      <div class="eleven columns">
+        <!-- Display external URL if it exists -->
+        {% if event.external_link %}
+          <p class="profile-item">
+            <span class="white radius label">
+              URL
+            </span>
+            &nbsp;
+            {{ event.external_link|urlize(50) }}
+          </p>
+        {% endif %}
+        {% if event.hashtag %}
+          <p class="profile-item">
+            <span class="white radius label">
+              Hashtag
+            </span>
+            &nbsp;
+            {{ event.hashtag }}
+          </p>
+        {% endif %}
+        <!-- Description -->
+        <p class="profile-item">
+          <span class="white radius label">
+            Description
+          </span>
+          &nbsp;
+          {{ event.description }}
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="seven columns">
+    <div class="row">
+      <div class="one columns pictogram">
+        ,
+      </div>
+      <div class="eleven columns">
+        <div class="row">
+          <div class="five columns">
+            <p class="profile-item">
+              <span class="white radius label">
+                Venue
+              </span>
+              &nbsp;
+              {{ event.venue }}
+            </p>
+            <p class="profile-item">
+              <span class="white radius label">
+                City
+              </span>
+              &nbsp;
+              {{ event.city }}
+            </p>
+            <p class="profile-item">
+              <span class="white radius label">
+                Region
+              </span>
+              &nbsp;
+              {{ event.region }}
+            </p>
+            <p class="profile-item">
+              <span class="white radius label">
+                Country
+              </span>
+              &nbsp;
+              {{ event.country }}
+            </p>
+            <p class="profile-item">
+              <span class="white radius label">
+                Map Link
+              </span>
+              &nbsp;
+              <a href="{{ get_link_to_cloudmade(event.lat, event.lon) }}"
+                 target="_blank">
+                OSM
+              </a>
+              &nbsp;
+              -
+              &nbsp;
+              <a href="{{ get_link_to_gmaps(event.lat, event.lon, event.name) }}"
+                 target="_blank">
+                G Maps
+              </a>
+            </p>
+          </div>
+          <div class="seven columns smallmap-profile-container align-right">
+            <div id="map" class="map200"
+                 data-lat="{{ event.lat }}" data-lon="{{ event.lon }}">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Fixed mashup code -->
+
+<div class="row">
+  <div class="twelve columns hide-on-phones top-margined">
+    <div class="flickrFeed" >
+      <div id="flickr-mashup" data-hashtag="{{ event.hashtag }}">
+      </div>
+      <!-- Appended tweet-mashup code -->
+      <div id="tweet-mashup-container">
+        <div id="tweet-mashup" data-hashtag="{{ event.hashtag }}">
+        </div>
+      </div>
+      <div id="tweet-mashup-fade"></div>
+      <!-- end of appended code -->
+    </div>
+  </div>
+</div>
+
+
+<!-- END Mashup row -->
+
+
+<div class="row">
+  <div class="seven columns">
+    {% if event.extra_content %}
+      <div class="row">
+        <div class="one columns pictogram">
+          a
+        </div>
+        <div class="eleven columns">
+          <!-- Editable Content wiki like -->
+          <div class="markdown">
+            {{ event.extra_content|markdown }}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+  <div class="five columns">
+    <div class="row">
+      <div class="one columns pictogram">
+        g
+      </div>
+      <div class="eleven columns">
+        <!-- Listing of organizer and attendees -->
+        {% for attendee in get_sorted_attendance_list(event) %}
+          <a href="{{ url('profiles_view_profile', display_name=attendee|get_display_name) }}"
+             target="_blank">
+            <div class="event-single-attendee">
+              <div class="row">
+                <div class="three phone-one columns grid-profile-image">
+                  <img src="{{ attendee|get_avatar_url }}"
+                       class="profiles-people-avatar"
+                       alt="Avatar">
+                </div>
+                <div class="nine phone-three columns grid-profile-text">
+                  <h6>{{ attendee.get_full_name() }}</h6>
+                  <p class="event-single-attendee-text">
+                    {{ get_attendee_role_event(attendee, event) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+
+        {% if user.is_authenticated() %}
+          <p class="profile-item">
+            <span class="white radius label">
+              Estimated Attendance
+            </span>
+            &nbsp;
+            {{ event.estimated_attendance }}
+          </p>
+        {% endif %}
+
+        <!-- End of listing of organizer and attendees -->
+        <!-- Attend and de-attend button only visible to Reps -->
+        {% if perms.events.can_subscribe_to_events %}
+          {% if request.user not in event.attendees.all() %}
+            <div class="align-right top-margined">
+              <form method="post" action="{{ url('events_subscribe_to_event', slug=event.slug) }}">
+                {{ csrf() }}
+                <button class="small white button nice radius">
+                  I will attend this event
+                </button>
+              </form>
+            </div>
+          {% elif request.user != event.owner %}
+            <div class="align-right top-margined">
+              <form method="post" action="{{ url('events_unsubscribe_from_event', slug=event.slug) }}">
+                {{ csrf() }}
+                <button class="small red button nice radius">
+                  I will miss this event
+                </button>
+              </form>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if user.is_authenticated() %}
+  <div class="end-row row">
+    <div class="seven columns">
+      <div class="row">
+      </div>
+    </div>
+    <div class="five columns">
+      <!-- Tools section available to registered users -->
+      <div class="row">
+        <div class="one columns pictogram">
+          (
+        </div>
+        <div class="eleven columns">
+          {% if event.swag_bug %}
+            <p class="profile-item">
+              <span class="white radius label">
+                Swag request
+              </span>
+              &nbsp;
+              <a href="{{ event.swag_bug.bug_id|get_bugzilla_url }}" target="_blank">
+                {{ event.swag_bug.bug_id }}
+              </a>
+              <span class="request-status">
+                {{ event.swag_bug.whiteboard }}
+              </span>
+            </p>
+          {% endif %}
+          {% if event.budget_bug %}
+            <p class="profile-item">
+              <span class="white radius label">
+                Budget request
+              </span>
+              &nbsp;
+              <a href="{{ event.budget_bug.bug_id|get_bugzilla_url }}" target="_blank">
+                {{ event.budget_bug.bug_id }}
+              </a>
+              <span class="request-status">
+                {{ event.budget_bug.whiteboard }}
+              </span>
+            </p>
+          {% endif %}
+          <div class="top-margined">
+            Use etherpad to keep notes and plan about your event:
+            <div class="align-right top-margined">
+              <a href="{{ event.planning_pad_url }}"
+                 class="small white button nice radius"
+                 target="_blank">
+                Planning pad
+              </a>
+            </div>
+          </div>
+          <div class="row top-margined">
+            Use the sign-up form for new contributors of Get Involved
+            page, and keep track of the sign-ups for this event
+            automatically.
+            <div class="six columns event-single-signups-count">
+              Sign-ups count: {{ event.converted_visitors }}
+            </div>
+            <div class="six columns align-right top-margined">
+              <a href="#" class="small white button nice radius">
+                Get involved form
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics section (visible to: all authenticated) - repeat if needed-->
+      {% for metric in event.metrics.all() %}
+        <div class="row">
+          <div class="one columns pictogram">
+            6
+          </div>
+          <div class="eleven columns">
+            <p class="profile-item">
+              <span class="white radius label">
+                Metric #{{ loop.index }}
+              </span>
+              &nbsp;
+              {{ metric.title }}
+            </p>
+            <p class="profile-item">
+              <span class="white radius label">
+                Success scenario #{{ loop.index }}
+              </span>
+              &nbsp;
+              {{ metric.outcome }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}
+
+{% block bottomextra %}
+  {{ css('leaflet') }}
+  <!--[if lte IE 8]>
+    <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
+  <![endif]-->
+  {{ js('leaflet') }}
+  {{ js('events_view_event') }}
+{% endblock %}
+

@@ -26,29 +26,36 @@ def manage_subscription(request, slug, subscribe=True):
     already subscribed, else unsubscribe user.
 
     """
-    event = get_object_or_404(Event, slug=slug)
-    attendace, created = get_or_create_instance(Attendance,
-                                                user=get_user(request),
-                                                event=event)
+    if request.method == 'POST':
+        event = get_object_or_404(Event, slug=slug)
+        attendace, created = get_or_create_instance(Attendance,
+                                                    user=get_user(request),
+                                                    event=event)
 
-    if subscribe:
-        if not created:
-            messages.warning(request, ('You are already subscribed to '
-                                      'this event.'))
-            return redirect('events_view_event', slug=event.slug)
+        if subscribe:
+            if not created:
+                messages.warning(request, ('You are already subscribed to '
+                                           'this event.'))
+            else:
+                attendace.save()
+                messages.success(request, ('You have subscribed to '
+                                           'this event.'))
 
-        attendace.save()
-        messages.success(request, ('You have subscribed to this event.'))
-        return redirect('events_view_event', slug=event.slug)
+        else:
+            if created:
+                messages.warning(request, ('You are not subscribed '
+                                           'to this event.'))
 
-    else:
-        if created:
-            messages.warning(request, 'You are not subscribed to this event.')
-            return redirect('events_view_event', slug=event.slug)
+            elif request.user == event.owner:
+                messages.error(request, ('Event owner cannot unsubscribe '
+                                         'from event.'))
 
-        attendace.delete()
-        messages.success(request, ('You have unsubscribed from this event.'))
-        return redirect('events_view_event', slug=event.slug)
+            else:
+                attendace.delete()
+                messages.success(request, ('You have unsubscribed '
+                                           'from this event.'))
+
+    return redirect('events_view_event', slug=event.slug)
 
 
 def view_event(request, slug):
@@ -62,10 +69,21 @@ def view_event(request, slug):
 def edit_event(request, slug=None):
     """Edit event view."""
     event, created = get_or_create_instance(Event, slug=slug)
-    event_form = forms.EventForm(request.POST or None, instance=event)
+    if created:
+        event.owner = request.user
 
-    if event_form.is_valid():
+    if request.user.groups.filter(name='Admin').count():
+        event_form = forms.EventForm(request.POST or None,
+                                     editable_owner=True, instance=event)
+    else:
+        event_form = forms.EventForm(request.POST or None,
+                                     editable_owner=False, instance=event)
+    metrics_formset = forms.EventMetricsFormset(request.POST or None,
+                                                instance=event)
+
+    if (event_form.is_valid() and metrics_formset.is_valid()):
         event_form.save()
+        metrics_formset.save()
 
         if created:
             messages.success(request, 'Event successfully created.')
@@ -74,7 +92,11 @@ def edit_event(request, slug=None):
 
         return redirect('events_view_event', slug=event_form.instance.slug)
 
-    return render(request, 'edit_event.html', {'event_form': event_form})
+    return render(request, 'edit_event.html',
+                  {'creating': created,
+                   'event': event,
+                   'event_form': event_form,
+                   'metrics_formset': metrics_formset})
 
 
 @permission_check(permissions=['events.can_delete_events'],
@@ -82,10 +104,11 @@ def edit_event(request, slug=None):
                   filter_field='slug')
 def delete_event(request, slug):
     """Delete event view."""
-    event = get_object_or_404(Event, slug=slug)
-    event.delete()
+    if request.method == 'POST':
+        event = get_object_or_404(Event, slug=slug)
+        event.delete()
+        messages.success(request, 'Event successfully deleted.')
 
-    messages.success(request, 'Event successfully deleted.')
     return redirect('events_list_events')
 
 

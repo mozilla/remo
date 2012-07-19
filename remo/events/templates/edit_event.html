@@ -1,12 +1,321 @@
 {% extends "base.html" %}
 
 {% block pagetitle %}
-Edit event
+{% if creating %}
+  Mozilla Reps - Event Create
+{% else %}
+  Mozilla Reps - {{ event.name }} Edit
+{% endif %}
 {% endblock %}
 
 {% block content %}
-Placeholder
+<form class="custom" method="post">
+  {{ csrf() }}
+  <div class="row">
+    <div class="nine columns">
+      {% if creating %}
+        <h4>Creating new event</h4>
+      {% else %}
+        <h4>Editing {{ event.name }}</h4>
+      {% endif %}
+    </div>
+    <div id="" class="three columns align-right">
+      {% if not creating %}
+        <a href="#" class="small red button nice radius"
+            data-reveal-id="delete-event">Delete event</a>
+      {% endif %}
+      <button class="small green button nice radius">Save event</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          J <!-- Name and Description -->
+        </div>
+        <div class="eleven columns">
+          {{ field_with_attrs(event_form.name,
+                              placeholder='Event name',
+                              class='input-text big') }}
+          <div class="required-field"></div>
+          {{ field_errors(event_form.name) }}
+
+          {{ field_with_attrs(event_form.description,
+                              class='flat',
+                              placeholder='Description of event') }}
+          <p class="more-info">Minimum 50 characters.<br> Any practical
+          info should be added in the additional info section below.</p>
+          {{ field_errors(event_form.description) }}
+
+
+          {{ field_with_attrs(event_form.external_link,
+                              placeholder='External link',
+                              class='input-text big') }}
+          {{ field_errors(event_form.external_link) }}
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="one columns pictogram">
+          } <!-- Date and Times -->
+        </div>
+        <div class="eleven columns">
+          {{ event_form.start_form }}
+          {{ field_errors(event_form.start_form) }}
+          <div class="required-field"></div>
+          {{ event_form.end_form }}
+          {{ field_errors(event_form.end_form) }}
+          <div class="required-field"></div>
+          {{ event_form.timezone }}
+          {{ field_errors(event_form.timezone) }}
+          <div class="required-field"></div>
+          <!-- Dropdown for zone hour goes here -->
+          <p class="more-info">Please enter date and time local to the venue.</p>
+        </div>
+      </div>
+    </div>
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          , <!-- Location -->
+        </div>
+        <div class="eleven columns">
+          {{ field_with_attrs(event_form.venue,
+                              placeholder='Venue',
+                              class='input-text big') }}
+          <div class="required-field"></div>
+          {{ field_errors(event_form.venue) }}
+          <p class="more-info">If you don't know the name of venue yet, please type "TBD"</p>
+
+          <div class="align-right">
+            <a href="#" class="small white button nice radius"
+               data-reveal-id="map-point">Point event venue in map</a>
+          </div>
+          {{ event_form.lat }}
+          {{ event_form.lon }}
+          {{ field_errors(event_form.lat) }}
+          {{ field_errors(event_form.lon) }}
+
+          {{ field_with_attrs(event_form.city,
+                              placeholder='City',
+                              class='input-text big') }}
+          <div class="required-field"></div>
+          {{ field_errors(event_form.city) }}
+
+          {{ field_with_attrs(event_form.region,
+                              placeholder='Region',
+                              class='input-text big') }}
+          <div class="required-field"></div>
+          {{ field_errors(event_form.region) }}
+
+          {{ event_form.country }}
+          <div class="required-field"></div>
+          {{ field_errors(event_form.country) }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="one columns pictogram">
+          g <!-- People -->
+        </div>
+        <div class="eleven columns">
+          {{ event_form.owner_form }}
+          {{ field_errors(event_form.owner_form) }}
+          <p class="more-info">Please specify the event owner.</p>
+
+          <label for="mozilla-bit">
+            {{ event_form.mozilla_event }}
+            Is Mozilla organizing this event?
+          </label>
+          <p class="more-info">If this event is not directly organized by<br>
+          a Mozillian (e.g. FOSDEM, OSCON) please DO NOT check this box.</p>
+
+          {{ event_form.estimated_attendance }}
+          {{ field_errors(event_form.estimated_attendance) }}
+          <p class="more-info">Please specify the estimated attendance to this event.</p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row end-row">
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          a <!-- Editable Content wiki like -->
+        </div>
+        <div class="eleven columns profile-item">
+          {{ field_with_attrs(event_form.extra_content,
+                              class='flat event-single-info',
+                              placeholder='Additional info') }}
+          {{ field_errors(event_form.extra_content) }}
+          <p class="more-info">In this field you can use <a
+          href="http://en.wikipedia.org/wiki/Markdown" target="_blank">Markdown</a>
+          syntax to add extra content, like <br> schedule, booth times and location, instructions for participants etc.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="six columns">
+
+      <!-- Hashtag -->
+      <div class="row">
+        <div class="one columns pictogram">
+          Y
+        </div>
+        <div class="eleven columns">
+          {{ field_with_attrs(event_form.hashtag,
+                              placeholder='Event hashtag',
+                              class='input-text big') }}
+          {{ field_errors(event_form.hashtag) }}
+          <p class="more-info">Tag your pictures in Flickr and your tweets with this hashtag.</p>
+        </div>
+      </div>
+
+      <!-- Budget and Swag -->
+      <div class="row">
+        <div class="one columns pictogram">
+          (
+        </div>
+        <div class="eleven columns">
+          <div class="row">
+            <div class="{% if event.swag_bug %} twelve {% else %} six {% endif %} columns %}">
+              {{ field_with_attrs(event_form.swag_bug_form,
+                                  placeholder='Swag request',
+                                  class='input-text big') }}
+              {{ field_errors(event_form.swag_bug_form) }}
+              <p class="more-info">Swag Request bug number</p>
+            </div>
+            {% if not event.swag_bug %}
+              <div class="six columns align-right top-margined">
+                <a href="https://bugzilla.mozilla.org/form.reps.swag"
+                   target="_blank"
+                   class="small white button nice radius">
+                  New Swag Request
+                </a>
+              </div>
+            {% endif %}
+          </div>
+          <div class="row">
+            <div class="{% if event.budget_bug %} twelve {% else %} six {% endif %} columns">
+              {{ field_with_attrs(event_form.budget_bug_form,
+                                  placeholder='Budget request',
+                                  class='input-text big') }}
+              {{ field_errors(event_form.budget_bug_form) }}
+              <p class="more-info">Budget Request bug number</p>
+            </div>
+            {% if not event.budget_bug %}
+              <div class="six columns align-right top-margined">
+                <a href="https://bugzilla.mozilla.org/form.reps.budget"
+                   target="_blank"
+                   class="small white button nice radius">
+                  New Budget Request
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div id="metricsformset">
+        {% for form in metrics_formset %}
+          {{ form.id }}
+          {{ form.report }}
+          <div class="row {% if loop.last %} metricblock {% endif %}"
+               id="{{ form.prefix }}-row">
+            <div class="one columns pictogram">
+              6
+            </div>
+            <div class="eleven columns">
+              {{ field_with_attrs(form.title,
+                                  placeholder='Metric',
+                                  class='input-text big') }}
+              {{ field_errors(form.title) }}
+
+              {{ field_with_attrs(form.outcome,
+                                  placeholder='Success scenario',
+                                  class='input-text big') }}
+              {{ field_errors(form.outcome) }}
+
+              {{ form.DELETE }} Delete metric
+            </div>
+          </div>
+        {% endfor %}
+
+        <div class="align-right">
+          <a id="events-add-metric-button" href="javascript:void(0)"
+             class="small white button nice radius">Add another metric</a>
+        </div>
+        {% if metrics_formset.non_form_errors() %}
+          <small class="error">
+            {{ metrics_formset.non_form_errors() }}
+          </small>
+        {% endif %}
+
+      </div>
+      {{ metrics_formset.management_form }}
+
+    </div>
+  </div>
+</form>
+
+<!-- Modals section -->
+
+<!-- Map Point Reveal Modal -->
+<div id="map-point" class="reveal-modal">
+  <a class="close-reveal-modal">&#215;</a>
+  <div class="row">
+    <div class="twelve columns">
+      <p class="lead">
+        Please click the venue location in map
+      </p>
+      <div id="map_point" class="map300">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      <input type="text" placeholder="Latitude" class="input-text" id="lat-temp">
+      <input type="text" placeholder="Longitude" class="input-text" id="lon-temp">
+    </div>
+    <div class="six columns use-these">
+      <a href="#" class="small blue button nice radius close-reveal-modal">
+        Use these geo-coordinates &raquo;
+      </a>
+    </div>
+  </div>
+</div>
+
+{% if not creating %}
+  <!-- Delete Event Reveal Modal -->
+  <div id="delete-event" class="reveal-modal">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">
+      Are you sure you want to do that?
+    </p>
+    <h2>
+      Warning!
+    </h2>
+    <p>
+      By pressing the following button you will permanently and irreversibly delete this event.
+    </p>
+    <form method="post" action="{{ url('events_delete_event', slug=event.slug) }}">
+      {{ csrf() }}
+      <button class="large red button nice radius close-reveal-modal">
+        Delete event
+      </button>
+    </form>
+  </div>
+{% endif %}
+
 {% endblock %}
 
 {% block bottomextra %}
+  {{ css('leaflet') }}
+  {{ js('leaflet') }}
+  {{ js('map_modal') }}
+  {{ js('events_edit_event') }}
 {% endblock %}
+

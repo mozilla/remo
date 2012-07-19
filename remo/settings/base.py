@@ -21,48 +21,61 @@ MINIFY_BUNDLES = {
     },
     'js': {
         'less': (
-            'js/less-1.3.0.min.js',
+            'js/libs/less-1.3.0.min.js',
             ),
         'common-dbg': (
-            'js/jquery-1.7.1.js',
-            'js/modernizr.foundation.js',
-            'js/foundation.js',
+            'js/libs/jquery-1.7.1.js',
+            'js/libs/modernizr.foundation.js',
+            'js/libs/foundation.js',
             'static/browserid/browserid.js',
-            'js/jquery.prettydate.js',
+            'js/libs/jquery.prettydate.js',
              # Our app.js is always last to override stuff
-            'js/app.js',
+            'js/remo/app.js',
             ),
         'common': (
-            'js/jquery.min.js',
-            'js/modernizr.foundation.js',
-            'js/foundation.js',
+            'js/libs/jquery.min.js',
+            'js/libs/modernizr.foundation.js',
+            'js/libs/foundation.js',
             'static/browserid/browserid.js',
-            'js/jquery.prettydate.js',
+            'js/libs/jquery.prettydate.js',
              # Our app.js is always last to override stuff
-            'js/app.js',
+            'js/remo/app.js',
             ),
         'tracker': (
-            'js/tracker.load.js',
+            'js/remo/tracker.load.js',
             ),
         'tracker-full': (
-            'js/tracker.js',
-            ),
-        'profiles_people': (
-            'js/jquery.tmpl.js',
-            'js/profiles_people.js'
+            'js/libs/tracker.js',
             ),
         'leaflet': (
             'leaflet/leaflet.js',
             ),
         'map_modal': (
-            'js/map_modal.js',
+            'js/remo/map_modal.js',
             ),
         'base_dashboard': (
-            'js/stupidtable.js',
-            'js/dashboard.js'
+            'js/libs/stupidtable.js',
+            'js/remo/dashboard.js'
             ),
         'profiles_view_report': (
-            'js/profiles_view_report.js',
+            'js/remo/profiles_view_report.js',
+            ),
+        'profiles_people': (
+            'js/libs/jquery.tmpl.js',
+            'js/remo/profiles_people.js'
+            ),
+        'reports_edit_report': (
+            'js/libs/jquery.formset.js',
+            'js/remo/reports_edit_report.js'
+            ),
+        'events_edit_event': (
+            'js/libs/jquery.formset.js',
+            'js/remo/events_edit_event.js'
+            ),
+        'events_view_event': (
+            'js/libs/jquery.zflickrfeed.js',
+            'js/libs/jquery.tweet.js',
+            'js/remo/events_view_event.js',
             ),
     }
 }
@@ -161,6 +174,7 @@ CLOUDMADE_MARKER_85 = '507f4f059b1b4e2b939afd14d327ccbb'
 USE_TZ = True
 
 ETHERPAD_URL = 'http://etherpad.mozilla.org/'
+ETHERPAD_PREFIX = 'remo-'
 
 STATIC_ROOT = './media/static/'
 STATIC_URL = '/media/static/'
