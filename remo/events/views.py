@@ -95,7 +95,7 @@ def count_converted_visitors(request, slug):
     event = get_object_or_404(Event, slug=slug)
 
     if request.method == 'POST':
-        event.converted_visitors += event.converted_visitors
+        event.converted_visitors += 1
         event.save()
         return HttpResponse('OK')
 
