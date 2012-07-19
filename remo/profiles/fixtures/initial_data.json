@@ -350,5 +350,33 @@
         "fields": {
             "name": "WebFWD"
         }
+    },
+    {
+        "pk": 41,
+        "model": "profiles.functionalarea",
+        "fields": {
+            "name": "Hive Network"
+        }
+    },
+    {
+        "pk": 42,
+        "model": "profiles.functionalarea",
+        "fields": {
+            "name": "Open Badges"
+        }
+    },
+    {
+        "pk": 43,
+        "model": "profiles.functionalarea",
+        "fields": {
+            "name": "Hackasaurus"
+        }
+    },
+    {
+        "pk": 44,
+        "model": "profiles.functionalarea",
+        "fields": {
+            "name": "Webmaker"
+        }
     }
 ]
