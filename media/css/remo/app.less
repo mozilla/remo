@@ -156,6 +156,40 @@ h4 {
     z-index: 30 !important;
 }
 
+.markdown {
+    p {
+        margin: 0 auto !important;
+    }
+    h1 {
+        font-size: 28px;
+    }
+    h2 {
+        font-size: 24px;
+    }
+    h3 {
+        font-size: 22px;
+    }
+    h4 {
+        font-size: 20px;
+    }
+    ul {
+        margin-top: 4px;
+    }
+    li {
+        list-style: square;
+        margin-left: 12px;
+        margin-bottom: 4px;
+        ul li {
+            margin-left: 12px;
+            list-style: circle;
+            ul li {
+                margin-left: 12px;
+                list-style: square;
+            }
+        }
+    }
+}
+
 /* -----------------------------------------
    Header Styles
 ----------------------------------------- */
@@ -540,7 +574,7 @@ small.error {
     line-height: 24px;
     color: #777;
     text-align: left;
-    font-family: Helvetica,arial,sans-serif;
+    .opensanslight;
 }
 
 /* -----------------------------------------

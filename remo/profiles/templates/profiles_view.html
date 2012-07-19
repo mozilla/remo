@@ -72,11 +72,10 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         <div class="one columns pictogram">
           V
         </div>
-        <div class="eleven columns">
-          <br>
-          <p>
-            {{ user_profile.bio|markdown }}
-          </p>
+        <div class="eleven columns top-margined">
+            <div class="markdown">
+              {{ user_profile.bio|markdown }}
+            </div>
         </div>
       {% endif %}
     </div>
