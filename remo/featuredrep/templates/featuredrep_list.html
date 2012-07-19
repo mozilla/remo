@@ -60,7 +60,9 @@
             </a>
           </td>
           <td>
-            {{ feature.text|markdown }}
+            <div class="markdown">
+              {{ feature.text|markdown }}
+            </div>
           </td>
           <td>
             {{ feature.created_on.strftime('%d-%m-%Y') }}
