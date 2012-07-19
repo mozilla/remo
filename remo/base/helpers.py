@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.markup.templatetags import markup
 from django.core.urlresolvers import reverse
+from django.template.loader import render_to_string
 from jingo import register
 from jinja2 import Markup
 
@@ -53,6 +54,12 @@ def format_datetime_iso(obj):
 def format_datetime_unix(obj):
     """Return unix representation of obj."""
     return time.mktime(obj.timetuple())
+
+
+@register.filter
+def strftime(obj, style):
+    """Return string of datetime object formatted with style."""
+    return obj.strftime(style)
 
 
 @register.function
@@ -139,3 +146,26 @@ def active(request, pattern):
 def get_development_environment():
     """Return settings.TEMPLATE_DEBUG."""
     return getattr(settings, 'TEMPLATE_DEBUG', False)
+
+
+@register.function
+def field_with_attrs(bfield, **kwargs):
+    """Allows templates to dynamically add html attributes to bound
+    fields from django forms.
+
+    Taken from bedrock.
+    """
+    bfield.field.widget.attrs.update(kwargs)
+    return bfield
+
+
+@register.function
+def field_errors(field):
+    """Return string with rendered template with field errors."""
+    return Markup(render_to_string('form-error.html', {'field': field}))
+
+
+@register.function
+def get_full_name(user):
+    """Return user's fullname bugzilla style."""
+    return u'%s :%s' % (user.get_full_name(), user.userprofile.display_name)

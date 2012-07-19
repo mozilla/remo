@@ -1,0 +1,34 @@
+from datetime import datetime
+
+from nose.tools import eq_
+from test_utils import TestCase
+
+from ..models import Event
+from ..helpers import get_sorted_attendance_list, is_multiday
+
+
+class HelpersTest(TestCase):
+    """Tests related to Events' Helpers."""
+    fixtures = ['demo_users.json', 'demo_events.json']
+
+    def test_is_multiday(self):
+        """Test is_multiday filter."""
+        e = Event.objects.get(slug='multi-event')
+        eq_(is_multiday(e), True, 'Multiday event validates to False')
+
+        e = Event.objects.get(slug='test-event')
+        eq_(is_multiday(e), False, 'Single day event validates to True')
+
+    def test_attendance_list_sorting(self):
+        """Test sorting of event attendance list."""
+        e = Event.objects.get(slug='test-event')
+
+        sorted_list = get_sorted_attendance_list(e)
+        eq_(sorted_list[0], e.owner, 'Owner is not first.')
+
+        copy_list = sorted_list[1:]
+        sorted(copy_list, key=lambda x: '%s %s' % (x.last_name, x.first_name))
+
+        eq_(copy_list, sorted_list[1:],
+            'List is not properly sorted.')
+

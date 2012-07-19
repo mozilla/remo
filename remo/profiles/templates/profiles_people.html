@@ -5,8 +5,8 @@
 
 <!-- Map -->
 <div class="row show-on-desktop">
-  <div class="twelve columns" style='height:350px;'>
-    <div id="map" class="smallmap" style='height:350px;'>
+  <div class="twelve columns">
+    <div id="map" class="map300">
     </div>
   </div>
 </div>
@@ -112,10 +112,7 @@
 
 {% if user.is_authenticated() %}
   <div id="profiles-reps-number" class="row">
-    <div class="twelve columns reps-number">
-      <p>
-        <span id="profiles-number-of-reps"></span>
-      </p>
+    <div id="profiles-number-of-reps" class="twelve columns reps-number">
     </div>
   </div>
 {% endif %}

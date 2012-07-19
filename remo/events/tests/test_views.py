@@ -29,9 +29,9 @@ class ViewsTest(TestCase):
         c = Client()
 
         # Anonymous user.
-        response = c.get(reverse('events_subscribe_to_event',
-                                kwargs={'slug': 'test-event'}),
-                         follow=True)
+        response = c.post(reverse('events_subscribe_to_event',
+                                  kwargs={'slug': 'test-event'}),
+                          follow=True)
         self.assertTemplateUsed(response, 'main.html',
                                 ('Anonymous user is not returned to '
                                  'main.html to login'))
@@ -40,10 +40,10 @@ class ViewsTest(TestCase):
         eq_(m.tags, u'warning', 'Anonymous user does not get a warning.')
 
         # Logged in user.
-        c.login(username='rep', password='passwd')
-        response = c.get(reverse('events_subscribe_to_event',
-                                kwargs={'slug': 'test-event'}),
-                         follow=True)
+        c.login(username='rep3', password='passwd')
+        response = c.post(reverse('events_subscribe_to_event',
+                                  kwargs={'slug': 'test-event'}),
+                          follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
                                  'event page after subscribing.'))
@@ -52,9 +52,9 @@ class ViewsTest(TestCase):
         eq_(m.tags, u'success')
 
         # Subscribed tries again.
-        response = c.get(reverse('events_subscribe_to_event',
-                                kwargs={'slug': 'test-event'}),
-                         follow=True)
+        response = c.post(reverse('events_subscribe_to_event',
+                                  kwargs={'slug': 'test-event'}),
+                          follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
                                  'event page after subscribing.'))
@@ -67,9 +67,9 @@ class ViewsTest(TestCase):
         c = Client()
 
         # Anonymous user.
-        response = c.get(reverse('events_unsubscribe_from_event',
-                                kwargs={'slug': 'test-event'}),
-                         follow=True)
+        response = c.post(reverse('events_unsubscribe_from_event',
+                                  kwargs={'slug': 'test-event'}),
+                          follow=True)
         self.assertTemplateUsed(response, 'main.html',
                                 ('Anonymous user is not returned to '
                                  'main.html to login'))
@@ -79,9 +79,9 @@ class ViewsTest(TestCase):
 
         # Logged in user.
         c.login(username='mentor', password='passwd')
-        response = c.get(reverse('events_unsubscribe_from_event',
-                                kwargs={'slug': 'test-event'}),
-                         follow=True)
+        response = c.post(reverse('events_unsubscribe_from_event',
+                                  kwargs={'slug': 'test-event'}),
+                          follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
                                  'event page after unsubscribing.'))
@@ -90,9 +90,9 @@ class ViewsTest(TestCase):
         eq_(m.tags, u'success', 'User does not get a success message.')
 
         # Subscribed tries again.
-        response = c.get(reverse('events_unsubscribe_from_event',
-                                kwargs={'slug': 'test-event'}),
-                         follow=True)
+        response = c.post(reverse('events_unsubscribe_from_event',
+                                  kwargs={'slug': 'test-event'}),
+                          follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
                                  'event page after unsubscribing.'))
@@ -131,9 +131,9 @@ class ViewsTest(TestCase):
         # Mentor, Admin and Owner
         for user in ['mentor', 'admin', 'rep']:
             c.login(username=user, password='passwd')
-            response = c.get(reverse('events_delete_event',
-                                     kwargs={'slug': 'test-event'}),
-                             follow=True)
+            response = c.post(reverse('events_delete_event',
+                                      kwargs={'slug': 'test-event'}),
+                              follow=True)
             self.assertTemplateUsed(response, 'list_events.html',
                                     ('User %s not returned to '
                                      'main.html.' % user))

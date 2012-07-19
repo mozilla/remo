@@ -15,9 +15,10 @@ from product_details import product_details
 
 import forms
 from remo.base.decorators import permission_check
+from remo.events.utils import get_events_for_user
 from remo.profiles.models import UserProfile
-from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
 from remo.profiles.models import FunctionalArea
+from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
@@ -162,6 +163,10 @@ def view_profile(request, display_name):
                 permission=REPORTS_PERMISSION_LEVEL['anonymous'])
 
         data['monthly_reports'] = reports
+
+    today = date.today()
+    data['future_events'] = get_events_for_user(user, from_date=today)
+    data['past_events'] = get_events_for_user(user, to_date=today)
 
     return render(request, 'profiles_view.html', data)
 

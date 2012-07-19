@@ -18,7 +18,7 @@ $(document).ready(function() {
         past_items = $.trim($('#past_items').val());
         future_items = $.trim($('#future_items').val());
 
-        if (past_items == '' && future_items == '') {
+        if (past_items === '' && future_items === '') {
             $('#empty-report').reveal();
         }
         else {
@@ -32,5 +32,4 @@ $(document).ready(function() {
         $('#future_items').val('');
         $('#reportform').submit();
     });
-
 });
