@@ -359,7 +359,8 @@ Mozilla Reps - {{ event.name }}
               Sign-ups count: {{ event.converted_visitors }}
             </div>
             <div class="six columns align-right top-margined">
-              <a href="#" class="small white button nice radius">
+              <a href="{{ get_contribute_link(event) }}"
+                 class="small white button nice radius">
                 Get involved form
               </a>
             </div>
