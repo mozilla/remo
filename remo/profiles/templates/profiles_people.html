@@ -66,8 +66,10 @@
           </select>
         </div>
         <div class="three columns align-center">
-          <button id="csv-export-button"
-                  class="small white button nice radius">CSV Export</button>
+          {% if user.is_authenticated() %}
+            <button id="csv-export-button"
+                    class="small white button nice radius">CSV Export</button>
+          {% endif %}
         </div>
       </form>
     </div>
