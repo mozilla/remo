@@ -20,7 +20,7 @@
       {% endif %}
     </div>
     <div class="three columns align-right hide-on-phones">
-      {% if not creating %}
+      {% if not creating and perms.can_delete_events %}
         <a href="#" class="small red button nice radius"
             data-reveal-id="delete-event">Delete event</a>
       {% endif %}
@@ -273,7 +273,7 @@
     </div>
   </div>
   <div class="three columns align-right show-on-phones">
-    {% if not creating %}
+    {% if not creating and perms.can_delete_events %}
       <a href="#" class="small red button nice radius"
          data-reveal-id="delete-event">Delete event</a>
     {% endif %}
@@ -308,7 +308,7 @@
   </div>
 </div>
 
-{% if not creating %}
+{% if not creating and perms.can_delete_events %}
   <!-- Delete Event Reveal Modal -->
   <div id="delete-event" class="reveal-modal">
     <a class="close-reveal-modal">&#215;</a>
