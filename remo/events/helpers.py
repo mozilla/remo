@@ -67,3 +67,13 @@ def get_sorted_attendance_list(event):
     attendees.remove(event.owner)
     attendees.insert(0, event.owner)
     return attendees
+
+
+@register.function
+def get_contribute_link(event):
+    """Returns custom link to m.o/contribute."""
+
+    return (settings.CONTRIBUTE_URL %
+            {'callbackurl': (settings.SITE_URL +
+                             reverse('events_count_converted_visitors',
+                                     kwargs={'slug': event.slug}))})

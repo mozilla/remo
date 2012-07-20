@@ -1,10 +1,11 @@
-from datetime import datetime
+from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from nose.tools import eq_
 from test_utils import TestCase
 
 from ..models import Event
-from ..helpers import get_sorted_attendance_list, is_multiday
+from ..helpers import *
 
 
 class HelpersTest(TestCase):
@@ -32,3 +33,11 @@ class HelpersTest(TestCase):
         eq_(copy_list, sorted_list[1:],
             'List is not properly sorted.')
 
+    def test_contribute_link(self):
+        """Test /contribute link generation."""
+        e = Event.objects.get(slug='test-event')
+        url = (settings.CONTRIBUTE_URL %
+               {'callbackurl': (settings.SITE_URL +
+                                reverse('events_count_converted_visitors',
+                                        kwargs={'slug': e.slug}))})
+        eq_(get_contribute_link(e), url)
