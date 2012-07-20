@@ -19,7 +19,7 @@
         <h4>Editing {{ event.name }}</h4>
       {% endif %}
     </div>
-    <div id="" class="three columns align-right">
+    <div class="three columns align-right hide-on-phones">
       {% if not creating %}
         <a href="#" class="small red button nice radius"
             data-reveal-id="delete-event">Delete event</a>
@@ -258,6 +258,13 @@
       {{ metrics_formset.management_form }}
 
     </div>
+  </div>
+  <div class="three columns align-right show-on-phones">
+    {% if not creating %}
+      <a href="#" class="small red button nice radius"
+         data-reveal-id="delete-event">Delete event</a>
+    {% endif %}
+    <button id="save-event" type="submit" class="small green button nice radius top-margined">Save event</a>
   </div>
 </form>
 
