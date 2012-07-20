@@ -148,8 +148,8 @@ class EventForm(forms.ModelForm):
         # ValidationError({'start_form': ['Error message']}) doesn't
         # seem to work.
         if cdata['start'] >= cdata['end']:
-            self.errors['start_form'] =  (u'Start date should come '
-                                          'before end date.')
+            self.errors['start_form'] = (u'Start date should come '
+                                         'before end date.')
             raise ValidationError({'start_form': ['Error']})
 
         return cdata

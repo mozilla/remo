@@ -178,3 +178,6 @@ ETHERPAD_PREFIX = 'remo-'
 
 STATIC_ROOT = './media/static/'
 STATIC_URL = '/media/static/'
+
+CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
+                  'event/?callbackurl=%(callbackurl)s')
