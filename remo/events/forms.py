@@ -56,7 +56,9 @@ EventMetricsFormset = forms.models.inlineformset_factory(
 
 class EventForm(forms.ModelForm):
     """Form of an event."""
-    country = forms.ChoiceField(choices=[])
+    country = forms.ChoiceField(
+        choices=[],
+        error_messages={'required': 'Please select one option from the list.'})
     swag_bug_form = forms.CharField(required=False)
     budget_bug_form = forms.CharField(required=False)
     estimated_attendance = forms.ChoiceField(
@@ -84,7 +86,7 @@ class EventForm(forms.ModelForm):
         # Dynamic countries field.
         countries = product_details.get_regions('en').values()
         countries.sort()
-        country_choices = ([(None, "Country")] +
+        country_choices = ([('', "Country")] +
                            [(country, country) for country in countries])
         self.fields['country'].choices = country_choices
 

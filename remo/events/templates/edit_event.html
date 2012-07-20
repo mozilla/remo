@@ -44,6 +44,7 @@
           {{ field_with_attrs(event_form.description,
                               class='flat',
                               placeholder='Description of event') }}
+          <div class="required-field"></div>
           <p class="more-info">Minimum 50 characters.<br> Any practical
           info should be added in the additional info section below.</p>
           {{ field_errors(event_form.description) }}
@@ -94,15 +95,20 @@
           </div>
           {{ event_form.lat }}
           {{ event_form.lon }}
-          {{ field_errors(event_form.lat) }}
-          {{ field_errors(event_form.lon) }}
+
+          {# Avoid displaying two separate errors for lat and lon. #}
+          {% if event_form.lat.errors or event_form.lon.errors %}
+            <small class="error">
+              Please point venue in map.
+            </small>
+          {% endif %}
 
           {{ field_with_attrs(event_form.city,
                               placeholder='City',
                               class='input-text big') }}
           <div class="required-field"></div>
           {{ field_errors(event_form.city) }}
-
+          <div class="required-field"></div>
           {{ field_with_attrs(event_form.region,
                               placeholder='Region',
                               class='input-text big') }}
@@ -121,16 +127,18 @@
         <div class="eleven columns">
           {{ event_form.owner_form }}
           {{ field_errors(event_form.owner_form) }}
+          <div class="required-field"></div>
           <p class="more-info">Please specify the event owner.</p>
 
-          <label for="mozilla-bit">
-            {{ event_form.mozilla_event }}
-            Is Mozilla organizing this event?
-          </label>
+
+          {{ event_form.mozilla_event }}
+          Is Mozilla organizing this event?
+
           <p class="more-info">If this event is not directly organized by<br>
           a Mozillian (e.g. FOSDEM, OSCON) please DO NOT check this box.</p>
 
           {{ event_form.estimated_attendance }}
+          <div class="required-field"></div>
           {{ field_errors(event_form.estimated_attendance) }}
           <p class="more-info">Please specify the estimated attendance to this event.</p>
 
@@ -241,7 +249,12 @@
 
               {{ form.DELETE }} Delete metric
             </div>
+            {% if loop.index <= 2 %}
+              <div class="required-field"></div>
+            {% endif %}
           </div>
+
+
         {% endfor %}
 
         <div class="align-right">

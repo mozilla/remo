@@ -63,7 +63,9 @@ class ChangeProfileForm(forms.ModelForm):
                                                         (True, "Female"),
                                                         (False, "Male")))
     mentor = forms.ChoiceField(choices=[])
-    country = forms.ChoiceField(choices=[])
+    country = forms.ChoiceField(
+        choices=[],
+        error_messages={'required': 'Please select one option from the list.'})
 
     def __init__(self, *args, **kwargs):
         """Initialize form.
@@ -80,7 +82,7 @@ class ChangeProfileForm(forms.ModelForm):
 
         countries = product_details.get_regions('en').values()
         countries.sort()
-        country_choices = ([(None, "Country")] +
+        country_choices = ([('', "Country")] +
                            [(country, country) for country in countries])
         self.fields['country'].choices = country_choices
 
