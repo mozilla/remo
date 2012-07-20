@@ -166,7 +166,7 @@ def view_profile(request, display_name):
 
     today = date.today()
     data['future_events'] = get_events_for_user(user, from_date=today)
-    data['past_events'] = get_events_for_user(user, to_date=today)
+    data['past_events'] = get_events_for_user(user, to_date=today)[:10]
 
     return render(request, 'profiles_view.html', data)
 
