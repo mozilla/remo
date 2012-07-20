@@ -9,10 +9,10 @@ Mozilla Reps - {{ event.name }}
   <div class="ten columns">
     <h4 class="event-single-title">{{ event.name }}</h4>
   </div>
-  <div id="" class="two columns align-right">
+  <div class="two columns align-right hide-on-phones">
     {% if perms.events.can_edit_events %}
       <a href="{{ url('events_edit_event', slug=event.slug) }}"
-         class="small blue button nice radius">
+         class="small white button nice radius">
         Edit event
       </a>
     {% endif %}
@@ -227,7 +227,7 @@ Mozilla Reps - {{ event.name }}
         <div class="one columns pictogram">
           a
         </div>
-        <div class="eleven columns">
+        <div class="eleven columns top-margined">
           <!-- Editable Content wiki like -->
           <div class="markdown">
             {{ event.extra_content|markdown }}
@@ -398,6 +398,15 @@ Mozilla Reps - {{ event.name }}
     </div>
   </div>
 {% endif %}
+
+<div class="two columns align-right show-on-phones">
+  {% if perms.events.can_edit_events %}
+    <a href="{{ url('events_edit_event', slug=event.slug) }}"
+       class="small white button nice radius">
+      Edit event
+    </a>
+  {% endif %}
+</div>
 
 {% endblock %}
 
