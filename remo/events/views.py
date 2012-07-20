@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from remo.base.decorators import permission_check
@@ -11,6 +12,7 @@ import forms
 from models import Attendance, Event
 
 
+@cache_control(private=True)
 def list_events(request):
     """List events view."""
     events = Event.objects.all()
@@ -18,6 +20,7 @@ def list_events(request):
     return render(request, 'list_events.html', {'events': events})
 
 
+@never_cache
 @permission_check(permissions=['events.can_subscribe_to_events'])
 def manage_subscription(request, slug, subscribe=True):
     """Manage user's event subscription.
@@ -58,6 +61,7 @@ def manage_subscription(request, slug, subscribe=True):
     return redirect('events_view_event', slug=event.slug)
 
 
+@cache_control(private=True)
 def view_event(request, slug):
     """View event view."""
     event = get_object_or_404(Event, slug=slug)
@@ -65,6 +69,7 @@ def view_event(request, slug):
     return render(request, 'view_event.html', {'event': event})
 
 
+@never_cache
 @permission_check(permissions=['events.can_edit_events'])
 def edit_event(request, slug=None):
     """Edit event view."""
@@ -99,6 +104,7 @@ def edit_event(request, slug=None):
                    'metrics_formset': metrics_formset})
 
 
+@never_cache
 @permission_check(permissions=['events.can_delete_events'],
                   owner_field='owner', model=Event,
                   filter_field='slug')
@@ -112,6 +118,7 @@ def delete_event(request, slug):
     return redirect('events_list_events')
 
 
+@never_cache
 @csrf_exempt
 def count_converted_visitors(request, slug):
     """Increase event subscribers."""
