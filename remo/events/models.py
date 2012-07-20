@@ -44,7 +44,7 @@ class Event(models.Model):
     description = models.TextField()
     extra_content = models.TextField(blank=True, default='')
     mozilla_event = models.BooleanField(default=False)
-    hashtag = models.CharField(max_length=50, null=True, default='')
+    hashtag = models.CharField(max_length=50, blank=True, default='')
     attendees = models.ManyToManyField(User, related_name='events_attended',
                                        through='Attendance')
     converted_visitors = models.PositiveIntegerField(editable=False, default=0)
