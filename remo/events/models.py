@@ -78,7 +78,7 @@ class Event(models.Model):
         return self._make_local(self.end)
 
     class Meta:
-        ordering = ['-start']
+        ordering = ['start']
         permissions = (('can_subscribe_to_events', 'Can subscribe to events'),
                        ('can_edit_events', 'Can edit events'),
                        ('can_delete_events', 'Can delete events'))

@@ -101,7 +101,7 @@ function redraw_grid() {
 }
 
 function set_number_of_reps(number_of_reps) {
-    // Count and display the number of visible reps.
+    // Display the number of visible reps.
     number_of_reps = parseInt(number_of_reps, 10);
     ProfilesLib.number_of_reps = number_of_reps;
 
@@ -122,9 +122,7 @@ function set_number_of_reps(number_of_reps) {
 
 var update_results = function(query) {
     return function(data) {
-        // console.log('Updating results');
         if ($(location).attr('hash').substring(2) !== query) {
-            // console.log('Values different', $(location).attr('hash').substring(2), query);
             return;
         }
 
@@ -150,18 +148,10 @@ var update_results = function(query) {
 
 function request_error(query, status) {
     // Unset data-searching after half a second to deal with API timeouts.
-    // console.log('Request error:', status);
     if (status !== 'abort') {
         ProfilesLib.searchfield_elm.data('searching', undefined);
         ProfilesLib.search_icon_elm.html('s');
     }
-}
-
-
-function set_dropdown_value(elm, value) {
-    elm.val(value);
-    // We have to force trigger 'change' for foundation to update.
-    elm.trigger('change');
 }
 
 
@@ -170,7 +160,6 @@ function send_query() {
     var csv = false;
     var API_URL = '/api/v1/rep/?limit=0&order_by=profile__country,last_name,first_name';
     var value = $(location).attr('hash').substring(2);
-    // console.log('Value', value);
 
     // Make sure we are not firing the same same request twice.
     if (ProfilesLib.searchfield_elm.data('searching') === value) {
@@ -184,8 +173,6 @@ function send_query() {
 
     // Unbind change events to avoid triggering twice the same action.
     unbind_events();
-
-    // console.log('Sending', value);
 
     // Form query based on URL
     var country = hash_get_value('country');
@@ -221,9 +208,7 @@ function send_query() {
     if (!csv) {
         // Abort previous request
         if (ProfilesLib.request) {
-            // console.log(request.state());
             ProfilesLib.request.abort();
-            // console.log(request.state());
         }
         ProfilesLib.request = $.ajax({
             url: API_URL + extra_q,
@@ -259,69 +244,29 @@ function send_query() {
     }
 }
 
-function hash_set_value(key, value) {
-    // Set value for key in hash
-    var hash = $(location).attr('hash').substring(2).toLowerCase().replace(/\/$/, '');
-    var keys;
-    var values;
-
-    if (value === undefined) {
-        value = '';
+function switch_views(view) {
+    unbind_events();
+    if (ProfilesLib.number_of_reps === 0) {
+        $('#profiles_gridview').hide();
+        $('#profiles_listview').hide();
+        $('#profiles_noresults').show();
     }
-
-    // console.log('Hash:', hash);
-    if (hash.length > 0) {
-        keys = hash.split('/').filter(function(element, index) { return (index % 2 === 0); });
-        values = hash.split('/').filter(function(element, index) { return (index % 2 === 1); });
+    else if (view === 'list') {
+        $('#profiles_noresults').hide();
+        $('#profiles_gridview').hide();
+        $('#profiles_listview').show();
     }
     else {
-        keys = [];
-        values = [];
+        $('#profiles_noresults').hide();
+        $('#profiles_listview').hide();
+        $('#profiles_gridview').show();
     }
-
-    index_of_key = keys.indexOf(key);
-
-    if (index_of_key > -1) {
-        // console.log('Found', key);
-        values[index_of_key] = value;
-    }
-    else {
-        // console.log('Not Found', key);
-        keys.push(key);
-        values.push(value);
-    }
-
-    // console.log(hash.split('/'));
-    // console.log('Keys', keys);
-    // console.log('Values', values);
-    hash = '/';
-    for (var i=0; i < keys.length; i++) {
-        // console.log(i, keys[i], values[i])
-        if (values[i].length > 0 ) {
-            hash += keys[i] + '/' + values[i] + '/';
-        }
-    }
-    // console.log(hash);
-
-    $(location).attr('hash', hash);
-}
-
-function hash_get_value(key) {
-    // Get value for key in hash
-    var hash = $(location).attr('hash').substring(2).toLowerCase();
-    var keys = hash.split('/').filter(function(element, index) { return (index % 2 === 0); });
-    var values = hash.split('/').filter(function(element, index) { return (index % 2 === 1); });
-    var index_of_key = keys.indexOf(key);
-    if (index_of_key > -1) {
-        return values[index_of_key].toLowerCase();
-    }
-
-    return;
+    hash_set_value('view', view);
+    bind_events();
 }
 
 function bind_events() {
     // Bind events
-    // console.log('Binding events');
     // Update hash, on search input update.
     ProfilesLib.searchfield_elm.bind('propertychange keyup input paste', function(event) {
         hash_set_value('search', ProfilesLib.searchfield_elm.val());
@@ -343,6 +288,15 @@ function bind_events() {
     $(window).bind('hashchange', function(e) { send_query(); });
 }
 
+function unbind_events() {
+    // Unbind events
+    ProfilesLib.searchfield_elm.unbind('propertychange keyup input paste');
+    ProfilesLib.adv_search_country_elm.unbind('change');
+    ProfilesLib.adv_search_group_elm.unbind('change');
+    ProfilesLib.adv_search_area_elm.unbind('change');
+    $(window).unbind('hashchange');
+}
+
 function switch_views(view) {
     unbind_events();
     if (ProfilesLib.number_of_reps === 0) {
@@ -362,16 +316,6 @@ function switch_views(view) {
     }
     hash_set_value('view', view);
     bind_events();
-}
-
-function unbind_events() {
-    // Unbind events
-    // console.log('Unbinding events');
-    ProfilesLib.searchfield_elm.unbind('propertychange keyup input paste');
-    ProfilesLib.adv_search_country_elm.unbind('change');
-    ProfilesLib.adv_search_group_elm.unbind('change');
-    ProfilesLib.adv_search_area_elm.unbind('change');
-    $(window).unbind('hashchange');
 }
 
 $(document).ready(function () {

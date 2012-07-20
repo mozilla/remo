@@ -1,5 +1,135 @@
 {% extends "base.html" %}
 
+{% block pagetitle %}
+Mozilla Reps - Events
+{% endblock %}
+
 {% block content %}
-Placeholder
+<!-- Create new event row, visible only to reps,mentors,council,admins -->
+{% if perms.events.can_edit_events %}
+  <div class="row">
+    <div class="twelve columns align-right">
+      <a href="{{ url('events_new_event') }}" target="_blank"
+         class="small white button nice radius">Create event</a>
+    </div>
+  </div>
+{% endif %}
+
+<!-- Map -->
+<div class="row show-on-desktop">
+  <div class="twelve columns">
+    <div id="map" class="map300">
+    </div>
+  </div>
+</div>
+
+<!-- Search box -->
+<div class="row">
+  <form class="custom" id="events-searchform">
+    <div class="ten columns" id="search">
+      <span class="pictogram-search" id="search-icon">
+        {
+      </span>
+      <input type="text" placeholder="Loading..." id="searchfield"
+             class="input-text big" disabled="disabled">
+    </div>
+    <div class="two columns">
+      <select class="expand" id="events-period-selector">
+        <option value="all">All Events</option>
+        <option value="future">Future</option>
+        <option value="past">Past</option>
+      </select>
+    </div>
+  </form>
+</div>
+
+<!-- Events listing -->
+<div class="row">
+  <div class="twelve columns">
+    <!-- Table start -->
+    <table id="events-table">
+      <tbody id="events-table-body">
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row end-row">
+  <div id="events-number" class="twelve columns reps-number">
+  </div>
+</div>
+
+<script id="eventItem-tmpl" type="text/x-jquery-tmpl">
+  <tr class="event-item" data-lat="${ lat }"
+      data-lon="${ lon }" data-name="${ name }">
+    <td>
+      <div class="row">
+        <!-- Event Date -->
+        <div class="two columns events-table-date-container">
+          <div class="events-table-date panel">
+            <div class="{{ '{{if multiday}} events-table-date-day-multiple {{else}} events-table-date-day {{/if}}' }}">
+              ${ $item.getDay() }
+            </div>
+            <div class="{{ '{{if $item.is_multimonth()}} events-table-date-month-multiple {{else}} events-table-date-month {{/if}}' }}">
+              ${ $item.getMonth() }
+            </div>
+          </div>
+          <!-- Event name only in phones -->
+          <div class="events-table-name show-on-phones">
+            <a href="${ event_url }">
+              ${ name }
+            </a>
+          </div>
+        </div>
+        <!-- Event Info -->
+        <div class="nine columns events-table-info">
+          <div class="events-table-name hide-on-phones">
+            <a href="${ event_url }">
+              ${ name }
+            </a>
+          </div>
+          <div class="events-table-decription">
+            ${ description }
+          </div>
+          <div class="events-table-location">
+            <span class="events-table-venue">${ venue }</span> -
+            <a href="{{ url('events_list_events') }}search/${ city }">
+              ${ city }
+            </a> -
+            <a href="{{ url('events_list_events') }}search/${ region }">
+              ${ region }
+            </a> -
+            <a href="{{ url('events_list_events') }}search/${ country }">
+              ${ country }
+            </a>
+          </div>
+        </div>
+        <!-- Event Extra -->
+        <div class="two columns events-table-extra hide-on-phones">
+          <div class="events-table-owner">
+            <span class="events-table-owner-tag">
+              Owner
+            </span><br>
+            <a href="${ owner_profile_url }">
+              ${ owner_name }
+            </a>
+          </div>
+          <!-- Following div displayed only for authenticated users -->
+          <div class="events-table-expected">
+            ${ estimated_attendance } expected
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+</script>
+{% endblock %}
+
+{% block bottomextra %}
+{{ css('leaflet') }}
+<!--[if lte IE 8]>
+    <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
+    <![endif]-->
+{{ js('leaflet') }}
+{{ js('events_list') }}
 {% endblock %}
