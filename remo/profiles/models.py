@@ -15,6 +15,18 @@ from south.signals import post_migrate
 DISPLAY_NAME_MAX_LENGTH = 50
 
 
+# Monkey patch unicode(User)
+
+def user_unicode(self):
+    """Return user's full name and display name if available."""
+    if self.userprofile:
+        return u'%s :%s' % (self.get_full_name(),
+                            self.userprofile.display_name)
+    return self.get_full_name()
+
+User.__unicode__ = user_unicode
+
+
 def _validate_birth_date(data, **kwargs):
     """Validator to ensure age of at least 12 years old."""
     today = datetime.date.today()
