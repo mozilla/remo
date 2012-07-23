@@ -3,7 +3,7 @@ from urlparse import urljoin
 
 from django.conf import settings
 from django.contrib.auth.models import Group, User, Permission
-from django.core.validators import MinLengthValidator
+from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -42,7 +42,8 @@ class Event(models.Model):
     owner = models.ForeignKey(User, related_name='events_created')
     planning_pad_url = models.URLField(blank=True, max_length=300)
     estimated_attendance = models.PositiveIntegerField()
-    description = models.TextField(validators=[MinLengthValidator(50)])
+    description = models.TextField(validators=[MaxLengthValidator(500),
+                                               MinLengthValidator(20)])
     extra_content = models.TextField(blank=True, default='')
     mozilla_event = models.BooleanField(default=False)
     hashtag = models.CharField(max_length=50, blank=True, default='')
