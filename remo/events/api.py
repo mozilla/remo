@@ -7,11 +7,9 @@ from django.db.models import Q
 from tastypie import fields
 from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization
-from tastypie.constants import ALL, ALL_WITH_RELATIONS
+from tastypie.constants import ALL
 from tastypie.resources import ModelResource
 from tastypie.serializers import Serializer
-
-from remo.profiles.api import RepResource
 
 from helpers import is_multiday
 from models import Event
