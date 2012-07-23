@@ -12,7 +12,9 @@ This module implements the Requests API.
 """
 
 from . import sessions
+from .safe_mode import catch_exceptions_if_in_safe_mode
 
+@catch_exceptions_if_in_safe_mode
 def request(method, url, **kwargs):
     """Constructs and sends a :class:`Request <Request>`.
     Returns :class:`Response <Response>` object.
@@ -30,9 +32,10 @@ def request(method, url, **kwargs):
     :param proxies: (optional) Dictionary mapping protocol to the URL of the proxy.
     :param return_response: (optional) If False, an un-sent Request object will returned.
     :param session: (optional) A :class:`Session` object to be used for the request.
-    :param config: (optional) A configuration dictionary.
+    :param config: (optional) A configuration dictionary. See ``request.defaults`` for allowed keys and their default values.
     :param verify: (optional) if ``True``, the SSL cert will be verified. A CA_BUNDLE path can also be provided.
     :param prefetch: (optional) if ``True``, the response content will be immediately downloaded.
+    :param cert: (optional) if String, path to ssl client cert file (.pem). If Tuple, ('cert', 'key') pair.
     """
 
     s = kwargs.pop('session') if 'session' in kwargs else sessions.session()
@@ -44,7 +47,7 @@ def get(url, **kwargs):
     """Sends a GET request. Returns :class:`Response` object.
 
     :param url: URL for the new :class:`Request` object.
-    :param **kwargs: Optional arguments that ``request`` takes.
+    :param \*\*kwargs: Optional arguments that ``request`` takes.
     """
 
     kwargs.setdefault('allow_redirects', True)
@@ -55,7 +58,7 @@ def options(url, **kwargs):
     """Sends a OPTIONS request. Returns :class:`Response` object.
 
     :param url: URL for the new :class:`Request` object.
-    :param **kwargs: Optional arguments that ``request`` takes.
+    :param \*\*kwargs: Optional arguments that ``request`` takes.
     """
 
     kwargs.setdefault('allow_redirects', True)
@@ -66,10 +69,10 @@ def head(url, **kwargs):
     """Sends a HEAD request. Returns :class:`Response` object.
 
     :param url: URL for the new :class:`Request` object.
-    :param **kwargs: Optional arguments that ``request`` takes.
+    :param \*\*kwargs: Optional arguments that ``request`` takes.
     """
 
-    kwargs.setdefault('allow_redirects', True)
+    kwargs.setdefault('allow_redirects', False)
     return request('head', url, **kwargs)
 
 
@@ -78,7 +81,7 @@ def post(url, data=None, **kwargs):
 
     :param url: URL for the new :class:`Request` object.
     :param data: (optional) Dictionary or bytes to send in the body of the :class:`Request`.
-    :param **kwargs: Optional arguments that ``request`` takes.
+    :param \*\*kwargs: Optional arguments that ``request`` takes.
     """
 
     return request('post', url, data=data, **kwargs)
@@ -89,7 +92,7 @@ def put(url, data=None, **kwargs):
 
     :param url: URL for the new :class:`Request` object.
     :param data: (optional) Dictionary or bytes to send in the body of the :class:`Request`.
-    :param **kwargs: Optional arguments that ``request`` takes.
+    :param \*\*kwargs: Optional arguments that ``request`` takes.
     """
 
     return request('put', url, data=data, **kwargs)
@@ -100,7 +103,7 @@ def patch(url, data=None, **kwargs):
 
     :param url: URL for the new :class:`Request` object.
     :param data: (optional) Dictionary or bytes to send in the body of the :class:`Request`.
-    :param **kwargs: Optional arguments that ``request`` takes.
+    :param \*\*kwargs: Optional arguments that ``request`` takes.
     """
 
     return request('patch', url,  data=data, **kwargs)
@@ -110,7 +113,7 @@ def delete(url, **kwargs):
     """Sends a DELETE request. Returns :class:`Response` object.
 
     :param url: URL for the new :class:`Request` object.
-    :param **kwargs: Optional arguments that ``request`` takes.
+    :param \*\*kwargs: Optional arguments that ``request`` takes.
     """
 
     return request('delete', url, **kwargs)

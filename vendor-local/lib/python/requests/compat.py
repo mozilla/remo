@@ -72,6 +72,10 @@ is_osx = ('darwin' in str(sys.platform).lower())
 is_hpux = ('hpux' in str(sys.platform).lower())   # Complete guess.
 is_solaris = ('solar==' in str(sys.platform).lower())   # Complete guess.
 
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 # ---------
 # Specifics
@@ -83,20 +87,25 @@ if is_py2:
     from urlparse import urlparse, urlunparse, urljoin, urlsplit
     from urllib2 import parse_http_list
     import cookielib
-    from .packages.oreos.monkeys import SimpleCookie
+    from Cookie import Morsel
     from StringIO import StringIO
+    from .packages import chardet
 
-    str = unicode
     bytes = str
+    str = unicode
+    basestring = basestring
+
 
 
 elif is_py3:
     from urllib.parse import urlparse, urlunparse, urljoin, urlsplit, urlencode, quote, unquote
     from urllib.request import parse_http_list
     from http import cookiejar as cookielib
-    from http.cookies import SimpleCookie
+    from http.cookies import Morsel
     from io import StringIO
+    from .packages import chardet2 as chardet
 
     str = str
     bytes = bytes
+    basestring = (str,bytes)
 
