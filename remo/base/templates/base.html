@@ -129,7 +129,8 @@
                      class="main {{ active(request, '^/people/') }}">People</a>
                 </li>
                 <li>
-                  <a href="{{ url('events_list_events') }}" class="main">Events</a>
+                  <a href="{{ url('events_list_events') }}"
+                     class="main {{ active(request, '^/events/') }}">Events</a>
                 </li>
                 <li>
                   <a href="http://planet.mozillareps.org" class="main">Planet</a>
