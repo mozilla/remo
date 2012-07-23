@@ -9,12 +9,14 @@ requests (cookies, auth, proxies).
 
 """
 
+from copy import deepcopy
+from .compat import cookielib
+from .cookies import cookiejar_from_dict, remove_cookie_by_name
 from .defaults import defaults
 from .models import Request
 from .hooks import dispatch_hook
 from .utils import header_expand
 from .packages.urllib3.poolmanager import PoolManager
-
 
 def merge_kwargs(local_kwarg, default_kwarg):
     """Merges kwarg dictionaries.
@@ -40,7 +42,7 @@ def merge_kwargs(local_kwarg, default_kwarg):
     kwargs.update(local_kwarg)
 
     # Remove keys that are set to None.
-    for (k,v) in list(local_kwarg.items()):
+    for (k, v) in list(local_kwarg.items()):
         if v is None:
             del kwargs[k]
 
@@ -52,7 +54,7 @@ class Session(object):
 
     __attrs__ = [
         'headers', 'cookies', 'auth', 'timeout', 'proxies', 'hooks',
-        'params', 'config']
+        'params', 'config', 'verify', 'cert', 'prefetch']
 
 
     def __init__(self,
@@ -64,32 +66,37 @@ class Session(object):
         hooks=None,
         params=None,
         config=None,
-        verify=True):
+        prefetch=False,
+        verify=True,
+        cert=None):
 
         self.headers = headers or {}
-        self.cookies = cookies or {}
         self.auth = auth
         self.timeout = timeout
         self.proxies = proxies or {}
         self.hooks = hooks or {}
         self.params = params or {}
         self.config = config or {}
+        self.prefetch = prefetch
         self.verify = verify
+        self.cert = cert
 
         for (k, v) in list(defaults.items()):
-            self.config.setdefault(k, v)
+            self.config.setdefault(k, deepcopy(v))
 
+        self.init_poolmanager()
+
+        # Set up a CookieJar to be used by default
+        if isinstance(cookies, cookielib.CookieJar):
+            self.cookies = cookies
+        else:
+            self.cookies = cookiejar_from_dict(cookies)
+
+    def init_poolmanager(self):
         self.poolmanager = PoolManager(
             num_pools=self.config.get('pool_connections'),
             maxsize=self.config.get('pool_maxsize')
         )
-
-        # Set up a CookieJar to be used by default
-        self.cookies = {}
-
-        # Add passed cookies in.
-        if cookies is not None:
-            self.cookies.update(cookies)
 
     def __repr__(self):
         return '<requests-client at 0x%x>' % (id(self))
@@ -108,13 +115,14 @@ class Session(object):
         files=None,
         auth=None,
         timeout=None,
-        allow_redirects=False,
+        allow_redirects=True,
         proxies=None,
         hooks=None,
         return_response=True,
         config=None,
         prefetch=False,
-        verify=None):
+        verify=None,
+        cert=None):
 
         """Constructs and sends a :class:`Request <Request>`.
         Returns :class:`Response <Response>` object.
@@ -126,28 +134,26 @@ class Session(object):
         :param headers: (optional) Dictionary of HTTP Headers to send with the :class:`Request`.
         :param cookies: (optional) Dict or CookieJar object to send with the :class:`Request`.
         :param files: (optional) Dictionary of 'filename': file-like-objects for multipart encoding upload.
-        :param auth: (optional) Auth tuple to enable Basic/Digest/Custom HTTP Auth.
+        :param auth: (optional) Auth tuple or callable to enable Basic/Digest/Custom HTTP Auth.
         :param timeout: (optional) Float describing the timeout of the request.
-        :param allow_redirects: (optional) Boolean. Set to True if POST/PUT/DELETE redirect following is allowed.
+        :param allow_redirects: (optional) Boolean. Set to True by default.
         :param proxies: (optional) Dictionary mapping protocol to the URL of the proxy.
         :param return_response: (optional) If False, an un-sent Request object will returned.
-        :param config: (optional) A configuration dictionary.
+        :param config: (optional) A configuration dictionary. See ``request.defaults`` for allowed keys and their default values.
         :param prefetch: (optional) if ``True``, the response content will be immediately downloaded.
         :param verify: (optional) if ``True``, the SSL cert will be verified. A CA_BUNDLE path can also be provided.
+        :param cert: (optional) if String, path to ssl client cert file (.pem). If Tuple, ('cert', 'key') pair.
         """
 
         method = str(method).upper()
 
         # Default empty dicts for dict params.
-        cookies = {} if cookies is None else cookies
         data = {} if data is None else data
         files = {} if files is None else files
         headers = {} if headers is None else headers
         params = {} if params is None else params
         hooks = {} if hooks is None else hooks
-
-        if verify is None:
-            verify = self.verify
+        prefetch = self.prefetch or prefetch
 
         # use session's hooks as defaults
         for key, cb in list(self.hooks.items()):
@@ -172,15 +178,39 @@ class Session(object):
             allow_redirects=allow_redirects,
             proxies=proxies,
             config=config,
+            prefetch=prefetch,
             verify=verify,
+            cert=cert,
             _poolmanager=self.poolmanager
         )
 
+        # merge session cookies into passed-in ones
+        dead_cookies = None
+        # passed-in cookies must become a CookieJar:
+        if not isinstance(cookies, cookielib.CookieJar):
+            args['cookies'] = cookiejar_from_dict(cookies)
+            # support unsetting cookies that have been passed in with None values
+            # this is only meaningful when `cookies` is a dict ---
+            # for a real CookieJar, the client should use session.cookies.clear()
+            if cookies is not None:
+                dead_cookies = [name for name in cookies if cookies[name] is None]
+        # merge the session's cookies into the passed-in cookies:
+        for cookie in self.cookies:
+            args['cookies'].set_cookie(cookie)
+        # remove the unset cookies from the jar we'll be using with the current request
+        # (but not from the session's own store of cookies):
+        if dead_cookies is not None:
+            for name in dead_cookies:
+                remove_cookie_by_name(args['cookies'], name)
+
         # Merge local kwargs with session kwargs.
         for attr in self.__attrs__:
+            # we already merged cookies:
+            if attr == 'cookies':
+                continue
+
             session_val = getattr(self, attr, None)
             local_val = args.get(attr)
-
             args[attr] = merge_kwargs(local_val, session_val)
 
         # Arguments manipulation hook.
@@ -199,9 +229,6 @@ class Session(object):
         # Send the HTTP Request.
         r.send(prefetch=prefetch)
 
-        # Send any cookies back up the to the session.
-        self.cookies.update(r.response.cookies)
-
         # Return the response.
         return r.response
 
@@ -210,7 +237,7 @@ class Session(object):
         """Sends a GET request. Returns :class:`Response` object.
 
         :param url: URL for the new :class:`Request` object.
-        :param **kwargs: Optional arguments that ``request`` takes.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
         """
 
         kwargs.setdefault('allow_redirects', True)
@@ -221,7 +248,7 @@ class Session(object):
         """Sends a OPTIONS request. Returns :class:`Response` object.
 
         :param url: URL for the new :class:`Request` object.
-        :param **kwargs: Optional arguments that ``request`` takes.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
         """
 
         kwargs.setdefault('allow_redirects', True)
@@ -232,10 +259,10 @@ class Session(object):
         """Sends a HEAD request. Returns :class:`Response` object.
 
         :param url: URL for the new :class:`Request` object.
-        :param **kwargs: Optional arguments that ``request`` takes.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
         """
 
-        kwargs.setdefault('allow_redirects', True)
+        kwargs.setdefault('allow_redirects', False)
         return self.request('head', url, **kwargs)
 
 
@@ -244,7 +271,7 @@ class Session(object):
 
         :param url: URL for the new :class:`Request` object.
         :param data: (optional) Dictionary or bytes to send in the body of the :class:`Request`.
-        :param **kwargs: Optional arguments that ``request`` takes.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
         """
 
         return self.request('post', url, data=data, **kwargs)
@@ -255,7 +282,7 @@ class Session(object):
 
         :param url: URL for the new :class:`Request` object.
         :param data: (optional) Dictionary or bytes to send in the body of the :class:`Request`.
-        :param **kwargs: Optional arguments that ``request`` takes.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
         """
 
         return self.request('put', url, data=data, **kwargs)
@@ -266,7 +293,7 @@ class Session(object):
 
         :param url: URL for the new :class:`Request` object.
         :param data: (optional) Dictionary or bytes to send in the body of the :class:`Request`.
-        :param **kwargs: Optional arguments that ``request`` takes.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
         """
 
         return self.request('patch', url,  data=data, **kwargs)
@@ -276,10 +303,19 @@ class Session(object):
         """Sends a DELETE request. Returns :class:`Response` object.
 
         :param url: URL for the new :class:`Request` object.
-        :param **kwargs: Optional arguments that ``request`` takes.
+        :param \*\*kwargs: Optional arguments that ``request`` takes.
         """
 
         return self.request('delete', url, **kwargs)
+
+    def __getstate__(self):
+        return dict((attr, getattr(self, attr, None)) for attr in self.__attrs__)
+
+    def __setstate__(self, state):
+        for attr, value in state.items():
+            setattr(self, attr, value)
+
+        self.init_poolmanager()
 
 
 def session(**kwargs):

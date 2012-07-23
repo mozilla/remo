@@ -8,12 +8,13 @@ This module contains the set of Requests' exceptions.
 
 """
 
-class RequestException(Exception):
+class RequestException(RuntimeError):
     """There was an ambiguous exception that occurred while handling your
     request."""
 
 class HTTPError(RequestException):
     """An HTTP error occurred."""
+    response = None
 
 class ConnectionError(RequestException):
     """A Connection error occurred."""
@@ -29,3 +30,12 @@ class URLRequired(RequestException):
 
 class TooManyRedirects(RequestException):
     """Too many redirects."""
+
+class MissingSchema(RequestException, ValueError):
+    """The URL schema (e.g. http or https) is missing."""
+
+class InvalidSchema(RequestException, ValueError):
+    """See defaults.py for valid schemas."""
+
+class InvalidURL(RequestException, ValueError):
+    """ The URL provided was somehow invalid. """
