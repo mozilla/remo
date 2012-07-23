@@ -12,14 +12,14 @@
 <form class="custom" method="post">
   {{ csrf() }}
   <div class="row">
-    <div class="nine columns">
+    <div class="eight columns">
       {% if creating %}
         <h4>Creating new event</h4>
       {% else %}
         <h4>Editing {{ event.name }}</h4>
       {% endif %}
     </div>
-    <div class="three columns align-right hide-on-phones">
+    <div class="four columns align-right hide-on-phones">
       {% if not creating and perms.can_delete_events %}
         <a href="#" class="small red button nice radius"
             data-reveal-id="delete-event">Delete event</a>
