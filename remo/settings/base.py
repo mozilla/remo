@@ -55,6 +55,10 @@ MINIFY_BUNDLES = {
         'map_modal': (
             'js/remo/map_modal.js',
             ),
+        'base_main': (
+            'js/libs/FeedEk.js',
+            'js/remo/planet.js'
+            ),
         'base_dashboard': (
             'js/libs/stupidtable.js',
             'js/remo/dashboard.js'
