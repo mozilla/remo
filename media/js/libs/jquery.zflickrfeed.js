@@ -48,13 +48,13 @@
             $.getJSON(api, function(data){
 
                 // Process the feeds
-                _callback(e, data, options);
+                _callback(e, data, tags, options);
             });
         });
     };
 
     // Callback function to create HTML result
-    var _callback = function(e, data, options) {
+    var _callback = function(e, data, tags, options) {
         if (!data) {
             return false;
         }
@@ -88,7 +88,7 @@
 
             // Get individual feed
             var photo= feeds[i];
-            var link = '<a target="_blank" href="'+ photo.link + '">';
+            var link = '<a target="_blank" href=http://www.flickr.com/search/?w=all&q=' + tags + '&m=text">';
 
             // Add feed row
             html += '<li class="flickrRow '+ row +'">';
