@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 import django.utils.timezone as timezone
 
 from django.contrib.auth.models import User
@@ -16,16 +14,24 @@ class HelpersTest(TestCase):
         """Test cached avatar."""
         user = User.objects.get(email='rep@example.com')
 
-        # Force avatar update
-        now = timezone.now() - timedelta(seconds=1)
-        get_avatar_url(user)
-
+        # Check avatar db entry creation.
         ua = user.useravatar
         self.assertNotEqual(ua.avatar_url, u'', 'Avatar is empty.')
-        self.assertGreater(ua.last_update, now, 'Avatar was not updated.')
 
-        now = timezone.now()
+        # Check update.
+        old_date = timezone.datetime(year=1970, day=1, month=1,
+                                     tzinfo=timezone.utc)
+        ua.last_update = old_date
+        ua.save()
         get_avatar_url(user)
-        self.assertLess(ua.last_update, now,
-                        ('Avatar was updated when cached value '
-                         'should have been used.'))
+        self.assertGreater(ua.last_update, old_date, 'Avatar was not updated.')
+
+        # Check caching.
+        now = timezone.now()
+        last_update = ua.last_update
+        get_avatar_url(user)
+
+        get_avatar_url(user)
+        self.assertEqual(ua.last_update, last_update,
+                         ('Avatar was updated when cached value '
+                          'should have been used.'))
