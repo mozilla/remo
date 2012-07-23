@@ -40,16 +40,16 @@ def manage_subscription(request, slug, subscribe=True):
     """
     if request.method == 'POST':
         event = get_object_or_404(Event, slug=slug)
-        attendace, created = get_or_create_instance(Attendance,
-                                                    user=get_user(request),
-                                                    event=event)
+        attendance, created = get_or_create_instance(Attendance,
+                                                     user=get_user(request),
+                                                     event=event)
 
         if subscribe:
             if not created:
                 messages.warning(request, ('You are already subscribed to '
                                            'this event.'))
             else:
-                attendace.save()
+                attendance.save()
                 messages.success(request, ('You have subscribed to '
                                            'this event.'))
 
@@ -63,7 +63,7 @@ def manage_subscription(request, slug, subscribe=True):
                                          'from event.'))
 
             else:
-                attendace.delete()
+                attendance.delete()
                 messages.success(request, ('You have unsubscribed '
                                            'from this event.'))
 

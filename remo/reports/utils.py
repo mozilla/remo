@@ -4,8 +4,9 @@ from django.core.urlresolvers import reverse
 
 from remo.base.utils import get_object_or_none, go_back_n_months
 from remo.base.utils import go_fwd_n_months, number2month
-from remo.reports.models import Report
-from remo.reports.helpers import get_mentees, get_report_view_url
+
+from helpers import get_mentees, get_report_view_url
+from models import PARTICIPATION_TYPE_CHOICES, Report
 
 REPORTS_PERMISSION_LEVEL = {'owner': 3,
                             'authenticated': 2,
@@ -100,3 +101,10 @@ def get_mentee_reports_for_month(user, dateobj=None):
                                         'report': current_report})
 
     return mentees_list
+
+
+def participation_type_to_number(participation_type):
+    """Convert participation type text to PARTICIPATION_TYPE_CHOICES number."""
+    for number, name in PARTICIPATION_TYPE_CHOICES:
+        if participation_type == name:
+            return number
