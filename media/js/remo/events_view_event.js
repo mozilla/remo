@@ -84,7 +84,7 @@ function initialize_mashup() {
                 // No images, don't display tweets either.
                 return;
             }
-            flickr_mashup.show();
+            flickr_mashup.slideDown();
 
             $('#tweet-mashup').tweet({
                 query: $('#tweet-mashup').data('hashtag'),
@@ -97,8 +97,8 @@ function initialize_mashup() {
 
                 // If we have tweets.
                 if (ul.find('li').length > 0) {
-                    $('#tweet-mashup-container').show();
-                    $('#tweet-mashup-fade').show();
+                    $('#tweet-mashup-container').fadeIn();
+                    $('#tweet-mashup-fade').fadeIn();
 
                     ul.find('a').attr('target', '_blank');
                     var ticker = function() {
