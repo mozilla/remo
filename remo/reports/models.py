@@ -1,15 +1,22 @@
 import datetime
 
 from django.contrib.auth.models import Group, User, Permission
+from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
 from south.signals import post_migrate
 
-from remo.base.utils import go_back_n_months
+from remo.base.utils import get_object_or_none, go_back_n_months
+from remo.events.helpers import get_attendee_role_event
+from remo.events.models import Attendance as EventAttendance
+
 
 OVERDUE_DAY = 7
+PARTICIPATION_TYPE_CHOICES = ((1, 'Organizer'),
+                              (2, 'Mozilla\'s presence organizer'),
+                              (3, 'Attendee'))
 
 
 class Report(models.Model):
@@ -77,6 +84,45 @@ def report_set_overdue_pre_save(sender, instance, raw, **kwargs):
             instance.overdue = True
 
 
+@receiver(post_save, sender=EventAttendance)
+def report_add_event(sender, instance, raw, **kwargs):
+    """Add event to report."""
+    if raw:
+        return
+
+    date = datetime.datetime(year=instance.event.end.year,
+                             month=instance.event.end.month,
+                             day=1)
+    report, created = Report.objects.get_or_create(user=instance.user,
+                                                   month=date)
+    link = reverse('events_view_event', kwargs={'slug': instance.event.slug})
+
+    # Import here to avoid circular dependencies.
+    from utils import participation_type_to_number
+    participation_type = participation_type_to_number(
+        get_attendee_role_event(instance.user, instance.event))
+
+    report_event = get_object_or_none(ReportEvent, report=report, link=link)
+    if not report_event:
+        report_event = ReportEvent(report=report, link=link,
+                                   name=instance.event.name,
+                                   description=instance.event.description)
+
+    report_event.participation_type = participation_type
+    report_event.save()
+
+
+@receiver(post_delete, sender=EventAttendance)
+def report_remove_event(sender, instance, **kwargs):
+    """Remove event from report."""
+    date = datetime.datetime(year=instance.event.end.year,
+                             month=instance.event.end.month, day=1)
+    report = get_object_or_none(Report, user=instance.user, month=date)
+    link = reverse('events_view_event', kwargs={'slug': instance.event.slug})
+    if report:
+        report.reportevent_set.filter(link=link).delete()
+
+
 class ReportComment(models.Model):
     """Comments in Report."""
     user = models.ForeignKey(User)
@@ -95,9 +141,10 @@ class ReportEvent(models.Model):
     description = models.TextField(default='')
     link = models.URLField(max_length=500)
     participation_type = models.PositiveSmallIntegerField(
-        choices=((1, 'Organizer'),
-                 (2, 'Mozilla presence Organizer'),
-                 (3, 'Attendee')))
+        choices=PARTICIPATION_TYPE_CHOICES)
+
+    # class Meta:
+    #     unique_together = ['report', 'link']
 
 
 class ReportLink(models.Model):
