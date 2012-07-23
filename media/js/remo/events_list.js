@@ -193,7 +193,11 @@ function send_query() {
     }
 
     // Set icon.
-    EventsLib.search_icon_elm.html('{');
+    EventsLib.search_icon_elm.html('<div id="floatingCirclesG"><div class="f_circleG" id="frotateG_01">' +
+        '</div><div class="f_circleG" id="frotateG_02"></div><div class="f_circleG" id="frotateG_03">' +
+        '</div><div class="f_circleG" id="frotateG_04"></div><div class="f_circleG" id="frotateG_05">' +
+        '</div><div class="f_circleG" id="frotateG_06"></div><div class="f_circleG" id="frotateG_07">' +
+        '</div><div class="f_circleG" id="frotateG_08"></div></div>');
 
     EventsLib.searchfield_elm.data('searching', value);
 
