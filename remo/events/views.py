@@ -106,11 +106,18 @@ def edit_event(request, slug=None):
 
         return redirect('events_view_event', slug=event_form.instance.slug)
 
+    can_delete_event = False
+    if (not created and
+        (event.owner == request.user or
+         request.user.has_perm('events.can_delete_events'))):
+        can_delete_event = True
+
     return render(request, 'edit_event.html',
                   {'creating': created,
                    'event': event,
                    'event_form': event_form,
-                   'metrics_formset': metrics_formset})
+                   'metrics_formset': metrics_formset,
+                   'can_delete_event': can_delete_event})
 
 
 @never_cache

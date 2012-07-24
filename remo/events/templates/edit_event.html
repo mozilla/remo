@@ -2,9 +2,9 @@
 
 {% block pagetitle %}
 {% if creating %}
-  Mozilla Reps - Event Create
+  Mozilla Reps - Create Event
 {% else %}
-  Mozilla Reps - {{ event.name }} Edit
+  Mozilla Reps - Edit {{ event.name }}
 {% endif %}
 {% endblock %}
 
@@ -20,7 +20,7 @@
       {% endif %}
     </div>
     <div class="four columns align-right hide-on-phones">
-      {% if not creating and perms.can_delete_events %}
+      {% if can_delete_event %}
         <a href="#" class="small red button nice radius"
             data-reveal-id="delete-event">Delete event</a>
       {% endif %}
@@ -273,7 +273,7 @@
     </div>
   </div>
   <div class="three columns align-right show-on-phones">
-    {% if not creating and perms.can_delete_events %}
+    {% if can_delete_event %}
       <a href="#" class="small red button nice radius"
          data-reveal-id="delete-event">Delete event</a>
     {% endif %}
@@ -308,7 +308,7 @@
   </div>
 </div>
 
-{% if not creating and perms.can_delete_events %}
+{% if can_delete_event %}
   <!-- Delete Event Reveal Modal -->
   <div id="delete-event" class="reveal-modal">
     <a class="close-reveal-modal">&#215;</a>
