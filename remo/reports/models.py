@@ -3,7 +3,7 @@ import datetime
 from django.contrib.auth.models import Group, User, Permission
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models.signals import post_delete, post_save, pre_save
+from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
 from south.signals import post_migrate
@@ -87,7 +87,7 @@ def report_set_overdue_pre_save(sender, instance, raw, **kwargs):
 @receiver(post_save, sender=EventAttendance)
 def report_add_event(sender, instance, raw, **kwargs):
     """Add event to report."""
-    if raw:
+    if raw or not instance.user.groups.filter(name='Rep').exists():
         return
 
     date = datetime.datetime(year=instance.event.end.year,
@@ -112,7 +112,7 @@ def report_add_event(sender, instance, raw, **kwargs):
     report_event.save()
 
 
-@receiver(post_delete, sender=EventAttendance)
+@receiver(pre_delete, sender=EventAttendance)
 def report_remove_event(sender, instance, **kwargs):
     """Remove event from report."""
     date = datetime.datetime(year=instance.event.end.year,
