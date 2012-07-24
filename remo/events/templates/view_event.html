@@ -30,12 +30,12 @@ Mozilla Reps - {{ event.name }}
           <div class="ten columns end">
             <div class="event-single-date panel row">
               {% if not event|is_multiday %} {# this is single event #}
-                <div class="three columns">
+                <div class="three phone-one columns">
                   <div class="event-single-date-number">
                     {{ event.local_start|strftime('%d') }}
                   </div>
                 </div>
-                <div class="four columns">
+                <div class="four phone-two columns">
                   <div class="event-single-date-month">
                     {{ event.local_start|strftime('%b %Y')|upper }}
                   </div>
@@ -43,7 +43,7 @@ Mozilla Reps - {{ event.name }}
                     {{ event.local_start|strftime('%A') }}
                   </div>
                 </div>
-                <div class="two columns end">
+                <div class="two phone-one columns end">
                   <div class="event-single-date-times tip-bottom"
                        data-width="140"
                        data-date-start="{{ event.start|format_datetime_iso }}"
@@ -56,11 +56,12 @@ Mozilla Reps - {{ event.name }}
                     <div class="event-single-date-time-end">
                       {{ event.local_end|strftime('%H:%M') }}
                     </div>
+                    <div class="event-single-date-singletimes">}</div>
                   </div>
                 </div>
               {% else %}
                 {# Event is multiday #}
-                <div class="six columns">
+                <div class="six phone-two columns">
                   <div class="event-single-date-month">
                     {{ event.local_start|strftime('%d %b %Y')|upper }}
                   </div>
@@ -68,7 +69,7 @@ Mozilla Reps - {{ event.name }}
                     {{ event.local_end|strftime('%d %b %Y')|upper }}
                   </div>
                 </div>
-                <div class="four columns">
+                <div class="four phone-two columns">
                   <div class="event-single-date-times">
                     <div class="event-single-date-day-first">
                       {{ event.local_start|strftime('%A') }}
@@ -78,7 +79,7 @@ Mozilla Reps - {{ event.name }}
                     </div>
                   </div>
                 </div>
-                <div class="two columns">
+                <div class="two hide-on-phones columns">
                   <div class="event-single-date-multitimes-wrap tip-bottom"
                        data-width="120"
                        data-date-start="{{ event.start|format_datetime_iso }}"
@@ -167,7 +168,7 @@ Mozilla Reps - {{ event.name }}
               &nbsp;
               {{ event.country }}
             </p>
-            <p class="profile-item">
+            <p class="event-single-map-link">
               <span class="white radius label">
                 Map Link
               </span>
