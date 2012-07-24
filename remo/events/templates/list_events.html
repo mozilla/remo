@@ -10,13 +10,13 @@ Mozilla Reps - Events
   <div class="row">
     <div class="twelve columns align-right">
       <a href="{{ url('events_new_event') }}" target="_blank"
-         class="small white button nice radius">Create event</a>
+         class="small blue button nice radius">Create event</a>
     </div>
   </div>
 {% endif %}
 
 <!-- Map -->
-<div class="row show-on-desktop">
+<div class="row show-on-desktop {% if perms.events.can_edit_events %}top-margined{% endif %}">
   <div class="twelve columns">
     <div id="map" class="map300">
     </div>
