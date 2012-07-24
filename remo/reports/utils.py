@@ -43,8 +43,9 @@ def get_reports_for_year(user, start_year, end_year=None, allow_empty=False,
                                                   full_name=False),
                              'fullname': number2month(month.month,
                                                       full_name=True)}
+
             if (reports.filter(month=month).exists() and
-                ((permission > 1 and month == today) or (month < today))):
+                ((permission > 1 and month >= today) or (month < today))):
                 report = reports.get(month=month)
                 month_details['report'] = report
                 month_details['class'] = 'exists'
