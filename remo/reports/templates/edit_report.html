@@ -72,13 +72,17 @@ Mozilla Reps - Edit Report
           {
         </div>
         <div class="eleven columns report-item">
-          {{ report_form.past_items }}
+          <div class="has-tip tip-left" title="Past month activities">
+            {{ report_form.past_items }}
+          </div>
           {% if report_form.past_items.errors %}
             <small class="error">
               {{ report_form.past_items.errors }}
             </small>
           {% endif %}
-          {{ report_form.future_items }}
+          <div class="has-tip tip-left" title="Next month activities">
+            {{ report_form.future_items }}
+          </div>
           {% if report_form.future_items.errors %}
             <small class="error">
               {{ report_form.future_items.errors }}
@@ -95,7 +99,9 @@ Mozilla Reps - Edit Report
           6
         </div>
         <div class="eleven columns report-item">
-          {{ report_form.recruits_comments }}
+          <div class="has-tip tip-right" title="Recruits for this month">
+            {{ report_form.recruits_comments }}
+          </div>
           {% if report_form.recruits_comments.errors %}
             <small class="error">
               {{ report_form.recruits_comments.errors }}
@@ -108,7 +114,9 @@ Mozilla Reps - Edit Report
           !
         </div>
         <div class="eleven columns report-item">
-          {{ report_form.flags }}
+          <div class="has-tip tip-right" title="Flags for mentor">
+            {{ report_form.flags }}
+          </div>
           {% if report_form.flags.errors %}
             <small class="error">
               {{ report_form.flags.errors }}
@@ -135,22 +143,24 @@ Mozilla Reps - Edit Report
             <div class="row report-event">
               <input type="text" placeholder="Event Name"
                      name="{{ form.name.html_name }}" value="{{ form.name.value() }}"
-                     class="input-text big">
+                     class="input-text big has-tip tip-left" title="Event Name">
               {% if form.name.errors %}
                 <small class="error">
                   {{ form.name.errors }}
                 </small>
               {% endif %}
 
-              {{ form.participation_type }}
+              <div class="has-tip tip-left" title="Type of participation">
+                {{ form.participation_type }}
+              </div>
               {% if form.participation_type.errors %}
                 <small class="error">
                   {{ form.participation_type.errors }}
                 </small>
               {% endif %}
 
-              <textarea class="flat" placeholder="Describe the event briefly"
-                        name="{{ form.description.html_name }}">{{ form.description.value() }}</textarea>
+              <textarea class="flat has-tip tip-left" placeholder="Describe the event briefly"
+                        name="{{ form.description.html_name }}" title="Event description">{{ form.description.value() }}</textarea>
               {% if form.description.errors %}
                 <small class="error">
                   {{ form.description.errors }}
@@ -159,7 +169,8 @@ Mozilla Reps - Edit Report
 
               <input type="text" placeholder="Link to event"
                      name="{{ form.link.html_name }}" value="{{ form.link.value() }}"
-                     class="input-text big">
+                     class="input-text big has-tip tip-left"
+                     title="Event link">
               {% if form.link.errors %}
                 <small class="error">
                   {{ form.link.errors }}
@@ -196,16 +207,18 @@ Mozilla Reps - Edit Report
               <input type="text" placeholder="Relevant Link"
                      name="{{ form.link.html_name }}"
                      value="{{ form.link.value() }}"
-                     class="input-text big">
+                     class="input-text big has-tip tip-right"
+                     title="Activity Link">
               {% if form.link.errors %}
                 <small class="error">
                   {{ form.link.errors }}
                 </small>
               {% endif %}
 
-              <textarea class="flat"
+              <textarea class="flat has-tip tip-right"
                         placeholder="Please provide a brief description for the link above (e.g. blog post, presentation slides, etc)"
-                        name="{{ form.description.html_name }}">{{ form.description.value() }}</textarea>
+                        name="{{ form.description.html_name }}"
+                        title="Activity description">{{ form.description.value() }}</textarea>
               {% if form.description.errors %}
                 <small class="error">
                   {{ form.description.errors }}
