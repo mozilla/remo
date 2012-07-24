@@ -305,10 +305,8 @@
           {% endif %}
           <textarea class="flat has-tip tip-right"
                     placeholder="Please list the channels you use in IRC"
-                    name="irc_channels"
-                    title="List of IRC channels">
-            {{ profileform.irc_channels.value() }}
-          </textarea>
+                    title="List of IRC channels"
+                    name="irc_channels">{{ profileform.irc_channels.value() }}</textarea>
           {% if profileform.irc_channels.errors %}
             <small class="error">
               {{ profileform.irc_channels.errors }}
@@ -357,9 +355,7 @@
           <textarea class="flat has-tip tip-right"
                     placeholder="Bio - Write us a bit about yourself"
                     name="bio"
-                    title="Bio">
-            {{ profileform.bio.value() }}
-          </textarea>
+                    title="Bio">{{ profileform.bio.value() }}</textarea>
           {% if profileform.bio.errors %}
             <small class="error">
               {{ profileform.bio.errors }}
