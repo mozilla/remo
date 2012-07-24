@@ -158,17 +158,6 @@ def edit_report(request, display_name, year, month):
                                    month=utils.month2number(month), day=1)
     today = datetime.datetime.today()
 
-    # check if it's too early to file this report
-    if (year_month.month > today.month and year_month.year >= today.year):
-        messages.error(request, 'I\'m sorry, are you from the future?')
-        if request.user == user:
-            return redirect('profiles_view_my_profile')
-        else:
-            redirect_url = reverse('profiles_view_profile',
-                                   kwargs={'display_name': display_name})
-            return redirect(redirect_url)
-
-
     report, created = utils.get_or_create_instance(Report, user=user,
                                                    month=year_month)
 
