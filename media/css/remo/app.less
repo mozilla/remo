@@ -1021,6 +1021,10 @@ ul.mreports li.editable a {
    Event Styles
 ----------------------------------------- */
 
+.event-single-map-link {
+    margin-top: 50px !important;
+}
+
 .event-single-date {
     .top-margined;
     padding: 10px !important;
@@ -1034,7 +1038,7 @@ ul.mreports li.editable a {
     font-size: 60px;
     .grayed;
     text-shadow: 1px 1px 0px rgba(200, 200, 200, 0.75);
-    min-width: 60px;
+    min-width: 65px;
 }
 
 .event-single-title {
@@ -1060,6 +1064,7 @@ ul.mreports li.editable a {
     font-style: italic;
     font-size: 15px;
     margin-top: 10px;
+    margin-right: -5px;
     .align-right;
     .grayed;
 }
@@ -1069,6 +1074,7 @@ ul.mreports li.editable a {
     border-left: 1px solid #ddd;
     border-bottom: none !important;
     text-align: left !important;
+    min-width: 60px;
 }
 
 .event-single-date-time {
@@ -1099,6 +1105,36 @@ ul.mreports li.editable a {
     margin-top: 8px !important;
     font-style: italic;
     font-size: 15px;
+}
+
+.event-single-date-singletimes {
+    .pictogram;
+    font-size: 20px;
+    text-decoration: none;
+    position: absolute;
+    top: -24px;
+    right: -70px;
+    :hover {
+        color: black;
+    }
+}
+
+//Fixes for mobile
+
+@media only screen and (max-width: 767px) {
+    .event-single-date-day-first {
+        margin-top: 4px !important;
+    }
+    .event-single-date-day-second {
+        margin-top: 16px !important;
+    }
+    .event-single-date-number {
+        margin-top: -15px;
+        text-align: center;
+    }
+    .event-single-date-day {
+        margin-right: 0px;
+    }
 }
 
 .event-single-date-multitimes-wrap {
