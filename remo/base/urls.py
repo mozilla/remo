@@ -9,5 +9,7 @@ urlpatterns = patterns('',
         name='about'),
     url(r'faq/$', direct_to_template, {'template': 'faq.html'},
         name='faq'),
+    url(r'labs/$', direct_to_template, {'template': 'labs.html'},
+        name='labs'),
     url(r'^$', 'remo.base.views.main', name='main'),
 )
