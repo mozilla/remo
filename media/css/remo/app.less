@@ -1181,40 +1181,32 @@ ul.mreports li.editable a {
 }
 
 #tweet-mashup-container {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    z-index: 10;
-    height: 190px;
-    width: 300px;
+    width: 970px;
     overflow: hidden;
-    background: black;
-    background: rgba(0,0,0,0.7);
     padding: 5px;
+    height: 80px;
+    margin-top: 10px;
     display: none;
 }
 
 #tweet-mashup {
-    color: white;
-}
-
-#tweet-mashup-fade {
-    display: none;
-    position: absolute;
-    top: 0px;
-    right: 310px;
-    z-index: 10;
-    height: 200px;
-    width: 50px;
-    background: none;
-    background: -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.7));
-    background: -webkit-gradient(linear, left center, right center, from( rgba(0,0,0,0) ), to( rgba(0,0,0,0.7) ));
+    color: black;
+    width: 200%;
+    ul li {
+        display: inline-block;
+        margin-right: 5px;
+        padding-right: 3px;
+        width: 300px;
+        height: 70px;
+        white-space: wrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 
 .tweet_avatar img {
     float: left;
     margin-right: 5px;
-    vertical-align: middle;
     border-radius: 5px;
     moz-border-radius: 5px;
 }

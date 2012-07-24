@@ -70,6 +70,7 @@ function initialize_mashup() {
     // photos we also try to load related tweets.
     //
     var flickr_mashup = $('#flickr-mashup');
+    var tweet_mashup = $('#tweet-mashup');
     var hashtag = flickr_mashup.data('hashtag');
     if (hashtag) {
         flickr_mashup.flickrfeed('', flickr_mashup.data('hashtag').substr(1), {
@@ -85,33 +86,47 @@ function initialize_mashup() {
                 return;
             }
             flickr_mashup.slideDown();
+        });
 
-            $('#tweet-mashup').tweet({
-                query: $('#tweet-mashup').data('hashtag'),
-                page: 1,
-                avatar_size: 32,
-                count: 20,
-                loading_text: 'fetching tweets ...'
-            }).bind('loaded', function() {
-                var ul = $('ul.tweet_list');
+        tweet_mashup.tweet({
+            query: tweet_mashup.data('hashtag'),
+            page: 1,
+            avatar_size: 32,
+            count: 20,
+            retweets: false
+        }).bind('loaded', function() {
+            var ul = $('ul.tweet_list');
+            var li_elms = ul.find('li');
 
-                // If we have tweets.
-                if (ul.find('li').length > 0) {
-                    $('#tweet-mashup-container').fadeIn();
-                    $('#tweet-mashup-fade').fadeIn();
+            // Filter out unofficial retweets
+            var rt_regex = new RegExp('RT ');
+            li_elms = $(li_elms).filter(function() {
+                var match = rt_regex.test($(this).find('.tweet_text')[0].textContent);
+                if (match) {
+                    $(this).remove();
+                    return true;
+                }
+                return false;
+            });
 
-                    ul.find('a').attr('target', '_blank');
+            // If we have tweets.
+            if (li_elms.length > 0) {
+                $('#tweet-mashup-container').slideDown();
+
+                ul.find('a').attr('target', '_blank');
+                if (li_elms.length > 4) {
                     var ticker = function() {
                         setTimeout(function() {
-                            ul.find('li:first').animate( {marginTop: '-4em'}, 500, function() {
-                                $(this).detach().appendTo(ul).removeAttr('style');
-                            });
+                            ul.find('li:first').animate(
+                                {marginLeft: '-305px'}, 500, function() {
+                                    $(this).detach().appendTo(ul).removeAttr('style');
+                                });
                             ticker();
                         }, 5000);
                     };
                     ticker();
                 }
-            });
+            }
         });
     }
 }
