@@ -38,8 +38,9 @@ def manage_subscription(request, slug, subscribe=True):
     already subscribed, else unsubscribe user.
 
     """
+    event = get_object_or_404(Event, slug=slug)
+
     if request.method == 'POST':
-        event = get_object_or_404(Event, slug=slug)
         attendance, created = get_or_create_instance(Attendance,
                                                      user=get_user(request),
                                                      event=event)
