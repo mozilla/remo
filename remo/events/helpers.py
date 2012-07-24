@@ -39,7 +39,7 @@ def get_attendee_role_event(attendee, event):
         else:
             return 'Mozilla\'s presence organizer'
 
-    return 'Attendee'
+    return 'Rep attendee'
 
 
 @register.filter

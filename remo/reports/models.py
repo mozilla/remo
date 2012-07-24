@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import Group, User, Permission
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -16,7 +17,7 @@ from remo.events.models import Attendance as EventAttendance
 OVERDUE_DAY = 7
 PARTICIPATION_TYPE_CHOICES = ((1, 'Organizer'),
                               (2, 'Mozilla\'s presence organizer'),
-                              (3, 'Attendee'))
+                              (3, 'Rep attendee'))
 
 
 class Report(models.Model):
@@ -95,7 +96,8 @@ def report_add_event(sender, instance, raw, **kwargs):
                              day=1)
     report, created = Report.objects.get_or_create(user=instance.user,
                                                    month=date)
-    link = reverse('events_view_event', kwargs={'slug': instance.event.slug})
+    link = (settings.SITE_URL +
+            reverse('events_view_event', kwargs={'slug': instance.event.slug}))
 
     # Import here to avoid circular dependencies.
     from utils import participation_type_to_number
@@ -118,7 +120,9 @@ def report_remove_event(sender, instance, **kwargs):
     date = datetime.datetime(year=instance.event.end.year,
                              month=instance.event.end.month, day=1)
     report = get_object_or_none(Report, user=instance.user, month=date)
-    link = reverse('events_view_event', kwargs={'slug': instance.event.slug})
+    link = (settings.SITE_URL +
+            reverse('events_view_event', kwargs={'slug': instance.event.slug}))
+
     if report:
         report.reportevent_set.filter(link=link).delete()
 
