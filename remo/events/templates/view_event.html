@@ -28,70 +28,70 @@ Mozilla Reps - {{ event.name }}
       <div class="eleven columns">
         <div class="row">
           <div class="ten columns end">
-            <div class="event-single-date panel row">
-              {% if not event|is_multiday %} {# this is single event #}
-                <div class="three phone-one columns">
-                  <div class="event-single-date-number">
-                    {{ event.local_start|strftime('%d') }}
-                  </div>
-                </div>
-                <div class="four phone-two columns">
-                  <div class="event-single-date-month">
-                    {{ event.local_start|strftime('%b %Y')|upper }}
-                  </div>
-                  <div class="event-single-date-day">
-                    {{ event.local_start|strftime('%A') }}
-                  </div>
-                </div>
-                <div class="two phone-one columns end">
-                  <div class="event-single-date-times tip-bottom"
-                       data-width="140"
-                       data-date-start="{{ event.start|format_datetime_iso }}"
-                       data-date-end="{{ event.end|format_datetime_iso }}"
-                       data-is-multidate="false"
-                       id="datetime-tip">
-                    <div class="event-single-date-time-start">
-                      {{ event.local_start|strftime('%H:%M') }}
+            <div class="event-single-date panel">
+              <div class="row">{% if not event|is_multiday %} {# this is single event #}
+                  <div class="three phone-one columns">
+                    <div class="event-single-date-number">
+                      {{ event.local_start|strftime('%d') }}
                     </div>
-                    <div class="event-single-date-time-end">
-                      {{ event.local_end|strftime('%H:%M') }}
+                  </div>
+                  <div class="five phone-two columns">
+                    <div class="event-single-date-month">
+                      {{ event.local_start|strftime('%b %Y')|upper }}
                     </div>
-                    <div class="event-single-date-singletimes">}</div>
-                  </div>
-                </div>
-              {% else %}
-                {# Event is multiday #}
-                <div class="six phone-two columns">
-                  <div class="event-single-date-month">
-                    {{ event.local_start|strftime('%d %b %Y')|upper }}
-                  </div>
-                  <div class="event-single-date-month-second">
-                    {{ event.local_end|strftime('%d %b %Y')|upper }}
-                  </div>
-                </div>
-                <div class="four phone-two columns">
-                  <div class="event-single-date-times">
-                    <div class="event-single-date-day-first">
+                    <div class="event-single-date-day">
                       {{ event.local_start|strftime('%A') }}
                     </div>
-                    <div class="event-single-date-day-second">
-                      {{ event.local_end|strftime('%A') }}
+                  </div>
+                  <div class="four phone-one columns end">
+                    <div class="event-single-date-times tip-bottom"
+                         data-width="140"
+                         data-date-start="{{ event.start|format_datetime_iso }}"
+                         data-date-end="{{ event.end|format_datetime_iso }}"
+                         data-is-multidate="false"
+                         id="datetime-tip">
+                      <div class="event-single-date-time-start">
+                        {{ event.local_start|strftime('%H:%M') }}
+                      </div>
+                      <div class="event-single-date-time-end">
+                        {{ event.local_end|strftime('%H:%M') }}
+                      </div>
+                      <div class="event-single-date-singletimes">}</div>
                     </div>
                   </div>
-                </div>
-                <div class="two hide-on-phones columns">
-                  <div class="event-single-date-multitimes-wrap tip-bottom"
-                       data-width="120"
-                       data-date-start="{{ event.start|format_datetime_iso }}"
-                       data-date-end="{{ event.end|format_datetime_iso }}"
-                       data-date-local-start="{{ event.local_start|format_datetime_iso }}"
-                       data-date-local-end="{{ event.local_end|format_datetime_iso }}"
-                       data-is-multidate="true"
-                       id="datetime-tip">
-                    <div class="event-single-date-multitimes">}</div>
+                {% else %}
+                  {# Event is multiday #}
+                  <div class="six phone-two columns">
+                    <div class="event-single-date-month">
+                      {{ event.local_start|strftime('%d %b %Y')|upper }}
+                    </div>
+                    <div class="event-single-date-month-second">
+                      {{ event.local_end|strftime('%d %b %Y')|upper }}
+                    </div>
                   </div>
-                </div>
-              {% endif %}
+                  <div class="four phone-two columns">
+                    <div class="event-single-date-times">
+                      <div class="event-single-date-day-first">
+                        {{ event.local_start|strftime('%A') }}
+                      </div>
+                      <div class="event-single-date-day-second">
+                        {{ event.local_end|strftime('%A') }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="two hide-on-phones columns">
+                    <div class="event-single-date-multitimes-wrap tip-bottom"
+                         data-width="120"
+                         data-date-start="{{ event.start|format_datetime_iso }}"
+                         data-date-end="{{ event.end|format_datetime_iso }}"
+                         data-date-local-start="{{ event.local_start|format_datetime_iso }}"
+                         data-date-local-end="{{ event.local_end|format_datetime_iso }}"
+                         data-is-multidate="true"
+                         id="datetime-tip">
+                      <div class="event-single-date-multitimes">}</div>
+                    </div>
+                  </div>
+                {% endif %}</div>
             </div>
           </div>
         </div>
