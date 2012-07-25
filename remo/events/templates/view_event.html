@@ -62,10 +62,10 @@ Mozilla Reps - {{ event.name }}
                 {% else %}
                   {# Event is multiday #}
                   <div class="six phone-two columns">
-                    <div class="event-single-date-month">
+                    <div class="event-single-date-months">
                       {{ event.local_start|strftime('%d %b %Y')|upper }}
                     </div>
-                    <div class="event-single-date-month-second">
+                    <div class="event-single-date-months-second">
                       {{ event.local_end|strftime('%d %b %Y')|upper }}
                     </div>
                   </div>
