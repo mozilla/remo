@@ -1052,7 +1052,7 @@ ul.mreports li.editable a {
     .grayed;
     .align-right;
     text-shadow: 1px 1px 0px rgba(200, 200, 200, 0.75);
-    min-width: 94px;
+    min-width: 120px;
 }
 
 .event-single-date-month-second {
@@ -1064,7 +1064,6 @@ ul.mreports li.editable a {
     font-style: italic;
     font-size: 15px;
     margin-top: 10px;
-    margin-right: -5px;
     .align-right;
     .grayed;
 }
@@ -1112,8 +1111,8 @@ ul.mreports li.editable a {
     font-size: 20px;
     text-decoration: none;
     position: absolute;
-    top: -24px;
-    right: -70px;
+    top: -23px;
+    right: -5px;
     :hover {
         color: black;
     }
@@ -1132,8 +1131,11 @@ ul.mreports li.editable a {
         margin-top: -15px;
         text-align: center;
     }
-    .event-single-date-day {
-        margin-right: 0px;
+}
+
+@media only screen and (max-width: 1000px) {
+    .event-single-date-singletimes {
+        display: none;
     }
 }
 
