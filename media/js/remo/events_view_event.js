@@ -35,25 +35,16 @@ function set_time_tooltip() {
     user_end_date.setHours(end_date.getHours(),
                            end_date.getMinutes() - end_date.getTimezoneOffset());
 
-    if (item.data('is-multidate')) {
-        var local_start_date = new Date(item.data('date-local-start'));
-        var local_end_date = new Date(item.data('date-local-end'));
+    var local_start_date = new Date(item.data('date-local-start'));
+    var local_end_date = new Date(item.data('date-local-end'));
 
-        title = ('Event starts daily at ' +
-                 format_hour(local_start_date) +
-                 ' and ends ' +
-                 format_hour(local_end_date) +
-                 ' local time. ' +
-                 'That\'s ' + format_hour(user_start_date) + ' - ' +
-                 format_hour(user_end_date) + ' yours.');
-    }
-    else {
-        title = ('That\'s local times.<br/>Your time:<br/>' +
-                 format_hour(user_start_date) +
-                 ' - ' +
-                 format_hour(user_end_date) +
-                 '<br/>on ' + user_start_date.toDateString());
-    }
+    title = ('Event starts from ' +
+             format_hour(local_start_date) +
+             ' to ' +
+             format_hour(local_end_date) +
+             ' (local time) or ' +
+             'from ' + format_hour(user_start_date) + ' to ' +
+             format_hour(user_end_date) + ' (your time).');
 
     // We need to add title, add class and call tooltips() after we
     // have initialized the tooltip.
