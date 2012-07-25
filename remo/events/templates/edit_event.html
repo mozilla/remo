@@ -60,6 +60,61 @@
 
         </div>
       </div>
+    </div>
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          , <!-- Location -->
+        </div>
+        <div class="eleven columns">
+          {{ field_with_attrs(event_form.venue,
+                              placeholder='Venue',
+                              title='Event venue',
+                              class='input-text big has-tip tip-right') }}
+          <div class="required-field"></div>
+          {{ field_errors(event_form.venue) }}
+          <p class="more-info">If you don't know the name of venue yet, please type "TBD"</p>
+
+          <div class="align-right">
+            <a href="#" class="small white button nice radius"
+               data-reveal-id="map-point">Point event venue in map</a>
+          </div>
+          {{ event_form.lat }}
+          {{ event_form.lon }}
+
+          {# Avoid displaying two separate errors for lat and lon. #}
+          {% if event_form.lat.errors or event_form.lon.errors %}
+            <small class="error">
+              Please point venue in map.
+            </small>
+          {% endif %}
+
+          {{ field_with_attrs(event_form.city,
+                              placeholder='City',
+                              title='City',
+                              class='input-text big has-tip tip-right') }}
+          <div class="required-field"></div>
+          {{ field_errors(event_form.city) }}
+          <div class="required-field"></div>
+          {{ field_with_attrs(event_form.region,
+                              placeholder='Region',
+                              title='Region',
+                              class='input-text big has-tip tip-right') }}
+          <div class="required-field"></div>
+          {{ field_errors(event_form.region) }}
+
+          <div class="has-tip tip-right" title="Country">
+            {{ event_form.country }}
+          </div>
+          <div class="required-field"></div>
+          {{ field_errors(event_form.country) }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="six columns">
       <div class="row">
         <div class="one columns pictogram">
           } <!-- Date and Times -->
@@ -164,57 +219,9 @@
     <div class="six columns">
       <div class="row">
         <div class="one columns pictogram">
-          , <!-- Location -->
-        </div>
-        <div class="eleven columns">
-          {{ field_with_attrs(event_form.venue,
-                              placeholder='Venue',
-                              title='Event venue',
-                              class='input-text big has-tip tip-right') }}
-          <div class="required-field"></div>
-          {{ field_errors(event_form.venue) }}
-          <p class="more-info">If you don't know the name of venue yet, please type "TBD"</p>
-
-          <div class="align-right">
-            <a href="#" class="small white button nice radius"
-               data-reveal-id="map-point">Point event venue in map</a>
-          </div>
-          {{ event_form.lat }}
-          {{ event_form.lon }}
-
-          {# Avoid displaying two separate errors for lat and lon. #}
-          {% if event_form.lat.errors or event_form.lon.errors %}
-            <small class="error">
-              Please point venue in map.
-            </small>
-          {% endif %}
-
-          {{ field_with_attrs(event_form.city,
-                              placeholder='City',
-                              title='City',
-                              class='input-text big has-tip tip-right') }}
-          <div class="required-field"></div>
-          {{ field_errors(event_form.city) }}
-          <div class="required-field"></div>
-          {{ field_with_attrs(event_form.region,
-                              placeholder='Region',
-                              title='Region',
-                              class='input-text big has-tip tip-right') }}
-          <div class="required-field"></div>
-          {{ field_errors(event_form.region) }}
-
-          <div class="has-tip tip-right" title="Country">
-            {{ event_form.country }}
-          </div>
-          <div class="required-field"></div>
-          {{ field_errors(event_form.country) }}
-        </div>
-      </div>
-      <div class="row">
-        <div class="one columns pictogram">
           g <!-- People -->
         </div>
-        <div class="eleven columns">
+        <div class="eleven columns top-margined">
           <div class="has-tip tip-right" title="Event Owner">
             {{ event_form.owner_form }}
           </div>
