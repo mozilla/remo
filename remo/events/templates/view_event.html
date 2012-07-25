@@ -48,6 +48,8 @@ Mozilla Reps - {{ event.name }}
                          data-width="140"
                          data-date-start="{{ event.start|format_datetime_iso }}"
                          data-date-end="{{ event.end|format_datetime_iso }}"
+                         data-date-local-start="{{ event.local_start|format_datetime_iso }}"
+                         data-date-local-end="{{ event.local_end|format_datetime_iso }}"
                          data-is-multidate="false"
                          id="datetime-tip">
                       <div class="event-single-date-time-start">
