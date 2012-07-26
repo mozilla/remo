@@ -18,15 +18,9 @@ AES_IV_LENGTH = 16
 
 
 @register.filter
-def restructuredtext(text):
-    """Return text rendered as RestructuredText."""
-    return Markup(markup.restructuredtext(text))
-
-
-@register.filter
 def markdown(text):
     """Return text rendered as Markdown."""
-    return Markup(markup.markdown(text))
+    return Markup(markup.markdown(text, 'safe'))
 
 
 @register.filter
