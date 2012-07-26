@@ -43,6 +43,9 @@ MINIFY_BUNDLES = {
              # Our app.js is always last to override stuff
             'js/remo/app.js',
             ),
+        'common_ie': (
+            'js/libs/html5.js',
+            ),
         'tracker': (
             'js/remo/tracker.load.js',
             ),
