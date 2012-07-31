@@ -178,7 +178,7 @@ var update_results = function(query) {
 function UTCDateString(d){
     return (d.getUTCFullYear() + '-' +
             pad2(d.getUTCMonth() + 1) + '-' +
-            pad2(d.getUTCDate() +1 ));
+            pad2(d.getUTCDate()));
 }
 
 
