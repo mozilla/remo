@@ -1,6 +1,10 @@
 import calendar
 import datetime
 
+from django.db.models import get_app, get_models
+from django.contrib.auth.management import create_permissions
+from django.contrib.auth.models import Group, Permission
+
 
 def get_object_or_none(model_class, **kwargs):
     """Identical to get_object_or_404, except instead of returning Http404,
@@ -75,3 +79,19 @@ def number2month(month, full_name=True):
     else:
         format = '%b'
     return datetime.datetime(year=2000, day=1, month=month).strftime(format)
+
+
+def add_permissions_to_groups(app, permissions):
+    """Assign permissions to groups."""
+
+    # Make sure that all app permissions are created.
+    # Related to South bug http://south.aeracode.org/ticket/211
+    app_obj = get_app(app)
+    create_permissions(app_obj, get_models(app_mod=app_obj), verbosity=2)
+
+    for perm_name, groups in permissions.iteritems():
+        for group_name in groups:
+            group, created = Group.objects.get_or_create(name=group_name)
+            permission = Permission.objects.get(codename=perm_name,
+                                                content_type__app_label=app)
+            group.permissions.add(permission)

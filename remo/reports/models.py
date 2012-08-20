@@ -1,7 +1,7 @@
 import datetime
 
 from django.conf import settings
-from django.contrib.auth.models import Group, User, Permission
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save, pre_delete, pre_save
@@ -9,7 +9,8 @@ from django.dispatch import receiver
 
 from south.signals import post_migrate
 
-from remo.base.utils import get_object_or_none, go_back_n_months
+from remo.base.utils import (add_permissions_to_groups,
+                             get_object_or_none, go_back_n_months)
 from remo.events.helpers import get_attendee_role_event
 from remo.events.models import Attendance as EventAttendance
 
@@ -38,8 +39,10 @@ class Report(models.Model):
     class Meta:
         ordering=['-month']
         unique_together = ['user', 'month']
-        permissions = [('can_edit_reports', 'Can edit reports'),
-                       ('can_delete_reports', 'Can delete reports')]
+        permissions = (('can_edit_reports', 'Can edit reports'),
+                       ('can_delete_reports', 'Can delete reports'),
+                       ('can_delete_report_comments',
+                        'Can delete report comment'))
 
     def __unicode__(self):
         return self.month.strftime('%b %Y')
@@ -51,12 +54,11 @@ def report_set_groups(app, sender, signal, **kwargs):
     if (isinstance(app, basestring) and app != 'reports'):
         return True
 
-    for group_name in ['Admin', 'Mentor']:
-        for perm in ['can_edit_reports', 'can_delete_reports']:
-            group, created = Group.objects.get_or_create(name=group_name)
-            permission = Permission.objects.get(codename=perm,
-                                                content_type__name='report')
-            group.permissions.add(permission)
+    perms = {'can_edit_reports': ['Admin', 'Mentor'],
+             'can_delete_reports': ['Admin', 'Mentor'],
+             'can_delete_report_comments': ['Admin', 'Mentor']}
+
+    add_permissions_to_groups('reports', perms)
 
 
 @receiver(pre_save, sender=Report)
@@ -149,7 +151,6 @@ class ReportEvent(models.Model):
 
     # class Meta:
     #     unique_together = ['report', 'link']
-
 
 class ReportLink(models.Model):
     """Link in Reports Model."""

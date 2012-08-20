@@ -3,7 +3,7 @@ import re
 
 import django.utils.timezone as timezone
 
-from django.contrib.auth.models import Group, User, Permission
+from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
@@ -12,8 +12,9 @@ from django.dispatch import receiver
 
 from south.signals import post_migrate
 
-DISPLAY_NAME_MAX_LENGTH = 50
+from remo.base.utils import add_permissions_to_groups
 
+DISPLAY_NAME_MAX_LENGTH = 50
 
 # Monkey patch unicode(User)
 
@@ -128,7 +129,8 @@ class UserProfile(models.Model):
 
     class Meta:
         permissions = (('create_user', 'Can create new user'),
-                       ('can_edit_profiles', 'Can edit profiles'))
+                       ('can_edit_profiles', 'Can edit profiles'),
+                       ('can_delete_profiles', 'Can delete profiles'))
 
     def clean(self, *args, **kwargs):
         """Ensure that added_by variable does not have the same value as
@@ -243,13 +245,8 @@ def report_set_groups(app, sender, signal, **kwargs):
     if (isinstance(app, basestring) and app != 'profiles'):
         return True
 
-    for group_name in ['Admin', 'Mentor']:
-        group, created = Group.objects.get_or_create(name=group_name)
-        permission = Permission.objects.get(codename='create_user',
-                                            content_type__name='user profile')
-        group.permissions.add(permission)
+    perms = {'create_user': ['Admin', 'Mentor'],
+             'can_edit_profiles': ['Admin'],
+             'can_delete_profiles': ['Admin']}
 
-    group = Group.objects.get(name='Admin')
-    permission = Permission.objects.get(codename='can_edit_profiles',
-                                        content_type__name='user profile')
-    group.permissions.add(permission)
+    add_permissions_to_groups('profiles', perms)
