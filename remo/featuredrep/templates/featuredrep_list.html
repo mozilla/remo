@@ -22,7 +22,7 @@
   </div>
 </div>
 <!-- Adding new rep -->
-{% if perms.profiles.can_edit_profiles %}
+{% if perms.featuredrep.can_edit_featured %}
   <div class="row">
     <div class="twelve columns align-right">
       <a href="{{ url('featuredrep_add_featured') }}"
@@ -67,16 +67,21 @@
           <td>
             {{ feature.created_on.strftime('%d-%m-%Y') }}
           </td>
-          {% if perms.profiles.can_edit_profiles %}
+          {% if (perms.featuredrep.can_edit_featured or
+                 perms.featuredrep.can_delete_featured) %}
             <td>
-              <a href="{{ url('featuredrep_edit_featured', feature.id) }}"
-                 class="featured-edit pictogram-button">e</a>
-              <form id="deleteform-{{ feature.id }}" method="post"
-                    action="{{ url('featuredrep_delete_featured', feature.id) }}">
-                {{ csrf() }}
-                <a href="#" data-reveal-id="delete-feature"
-                   class="featured-delete pictogram-button">X</a>
-              </form>
+              {% if perms.featured.can_edit_featured %}
+                <a href="{{ url('featuredrep_edit_featured', feature.id) }}"
+                   class="featured-edit pictogram-button">e</a>
+              {% endif %}
+              {% if perms.profiles.can_delete_featured %}
+                <form id="deleteform-{{ feature.id }}" method="post"
+                      action="{{ url('featuredrep_delete_featured', feature.id) }}">
+                  {{ csrf() }}
+                  <a href="#" data-reveal-id="delete-feature"
+                     class="featured-delete pictogram-button">X</a>
+                </form>
+              {% endif %}
             </td>
           {% endif %}
         </tr>

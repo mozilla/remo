@@ -27,7 +27,6 @@ class HelpersTest(TestCase):
         self.assertGreater(ua.last_update, old_date, 'Avatar was not updated.')
 
         # Check caching.
-        now = timezone.now()
         last_update = ua.last_update
         get_avatar_url(user)
 

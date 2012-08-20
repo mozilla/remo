@@ -111,7 +111,7 @@ def view_report(request, display_name, year, month):
                    'report_comment_form': report_comment_form})
 
 
-@permission_check(permissions=['reports.can_delete_reports'])
+@permission_check(permissions=['reports.can_delete_report_comments'])
 def delete_report_comment(request, display_name, year, month, comment_id):
     """Delete report comment view."""
     if request.method == 'POST':
@@ -156,8 +156,6 @@ def edit_report(request, display_name, year, month):
     user = get_object_or_404(User, userprofile__display_name=display_name)
     year_month = datetime.datetime(year=int(year),
                                    month=utils.month2number(month), day=1)
-    today = datetime.datetime.today()
-
     report, created = utils.get_or_create_instance(Report, user=user,
                                                    month=year_month)
 

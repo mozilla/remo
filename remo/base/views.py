@@ -139,7 +139,7 @@ def login_failed(request):
     return redirect('main')
 
 
-@permission_check(permissions=['profiles.create_user'])
+@permission_check(group='Mentor')
 def email_mentees(request):
     """Email my mentees view."""
     if request.method == 'POST':

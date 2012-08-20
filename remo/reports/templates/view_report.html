@@ -249,7 +249,7 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
         <div class="eleven columns report-item">
           {% for comment in report.reportcomment_set.all() %}
             <div class="report-comment">
-              {% if perms.reports.can_delete_reports %}
+              {% if perms.reports.can_delete_report_comments %}
                 <form method="post" action="{{ comment|get_comment_delete_url }}">
                   {{ csrf() }}
                   <button type="submit" class="report-delete-comment">&#215;</button>
