@@ -19,9 +19,9 @@
     </div>
     <!-- Deleting and Saving -->
     <div class="four columns hide-on-phones align-right">
-      {% if perms.profiles.can_edit_profiles %}
-      <a href="#" class="small red button nice radius"
-         data-reveal-id="delete-profile">Delete profile</a>
+      {% if perms.profiles.can_delete_profiles %}
+        <a href="#" class="small red button nice radius"
+           data-reveal-id="delete-profile">Delete profile</a>
       {% endif %}
       <button type="submit" class="small green button nice radius">
         Save profile

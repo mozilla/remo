@@ -202,7 +202,7 @@ def invite(request):
     return render(request, 'profiles_invite.html', {'form': form})
 
 
-@permission_check(permissions=['profiles.can_edit_profiles'])
+@permission_check(permissions=['profiles.can_delete_profiles'])
 def delete_user(request, display_name):
     """Delete a user."""
     user = get_object_or_404(User, userprofile__display_name=display_name)

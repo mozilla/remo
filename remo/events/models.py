@@ -2,7 +2,7 @@ from pytz import timezone
 from urlparse import urljoin
 
 from django.conf import settings
-from django.contrib.auth.models import Group, User, Permission
+from django.contrib.auth.models import User
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models
 from django.db.models.signals import post_save, pre_save
@@ -11,6 +11,7 @@ from django.dispatch import receiver
 from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
+from remo.base.utils import add_permissions_to_groups
 from remo.remozilla.models import Bug
 
 
@@ -121,9 +122,4 @@ def event_set_groups(app, sender, signal, **kwargs):
              'can_delete_events': ['Admin', 'Council', 'Mentor'],
              'can_subscribe_to_events': ['Admin', 'Council', 'Mentor', 'Rep']}
 
-    for perm_name, groups in perms.iteritems():
-        for group_name in groups:
-            group, created = Group.objects.get_or_create(name=group_name)
-            permission = Permission.objects.get(codename=perm_name,
-                                                content_type__name='event')
-            group.permissions.add(permission)
+    add_permissions_to_groups('events', perms)

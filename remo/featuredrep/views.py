@@ -18,8 +18,8 @@ def list_featured(request):
 
 
 @never_cache
-@permission_check(permissions=['profiles.can_edit_profiles'])
-def alter_featured(request, feature_id=None):
+@permission_check(permissions=['featuredrep.can_edit_featured'])
+def edit_featured(request, feature_id=None):
     """Create or edit a Featured Rep.
 
     If feature_id == None then a new Featured Rep entry is created,
@@ -60,7 +60,7 @@ def alter_featured(request, feature_id=None):
                   {'form': form, 'post_to': post_to, 'reps': reps})
 
 
-@permission_check(permissions=['profiles.can_edit_profiles'])
+@permission_check(permissions=['featuredrep.can_delete_featured'])
 def delete_featured(request, feature_id):
     """Delete a Featured Rep entry."""
     if request.method == 'POST':

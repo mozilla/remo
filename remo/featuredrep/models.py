@@ -1,5 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.dispatch import receiver
+
+from south.signals import post_migrate
+
+from remo.base.utils import add_permissions_to_groups
 
 
 class FeaturedRep(models.Model):
@@ -18,3 +23,17 @@ class FeaturedRep(models.Model):
     class Meta:
         ordering = ['-updated_on']
         get_latest_by = 'updated_on'
+        permissions = (('can_edit_featured', 'Can edit featured reps'),
+                       ('can_delete_featured', 'Can delete featured reps'))
+
+
+@receiver(post_migrate)
+def featuredrep_set_groups(app, sender, signal, **kwargs):
+    """Set permissions to groups."""
+    if (isinstance(app, basestring) and app != 'featuredrep'):
+        return True
+
+    perms = {'can_edit_featured': ['Admin'],
+             'can_delete_featured': ['Admin']}
+
+    add_permissions_to_groups('featuredrep', perms)
