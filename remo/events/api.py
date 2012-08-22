@@ -11,11 +11,13 @@ from tastypie.constants import ALL
 from tastypie.resources import ModelResource
 from tastypie.serializers import Serializer
 
+from remo.api import ClientCachedResource
+
 from helpers import is_multiday
 from models import Event
 
 
-class EventResource(ModelResource):
+class EventResource(ClientCachedResource, ModelResource):
     """Event Resource."""
     local_start = fields.DateTimeField()
     local_end = fields.DateTimeField()
@@ -25,6 +27,7 @@ class EventResource(ModelResource):
     multiday = fields.BooleanField()
 
     class Meta:
+        cache_control = {"max_age": 1800, "s_maxage": 1800}
         queryset = Event.objects.all()
         resource_name = 'event'
         authentication = Authentication()
