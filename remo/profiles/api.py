@@ -12,6 +12,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
+from remo.api import ClientCachedResource
 from remo.base.serializers import CSVSerializer
 from remo.profiles.helpers import get_avatar_url
 from remo.profiles.models import UserProfile, FunctionalArea
@@ -82,13 +83,14 @@ class ProfileResource(ModelResource):
         return bundle.obj.user.groups.filter(name='Council').count() == 1
 
 
-class RepResource(ModelResource):
+class RepResource(ClientCachedResource, ModelResource):
     """Rep Resource."""
     fullname = fields.CharField(attribute='get_full_name')
     profile = fields.ToOneField(ProfileResource, attribute='userprofile',
                                 full=True, null=True)
 
     class Meta:
+        cache_control = {"max_age": 3600, "s_maxage": 3600}
         queryset = User.objects.filter(userprofile__registration_complete=True,
                                        groups__name='Rep')
         resource_name = 'rep'
@@ -96,17 +98,11 @@ class RepResource(ModelResource):
         authorization = ReadOnlyAuthorization()
         serializer = CSVSerializer(formats=['json', 'jsonp', 'csv'])
         allowed_methods = ['get']
-        fields = ['email', 'first_name', 'last_name']
+        fields = ['first_name', 'last_name']
         ordering = ['profile', 'first_name', 'last_name']
         filtering = {'first_name': ALL,
                      'last_name': ALL,
                      'profile': ALL_WITH_RELATIONS}
-
-    def dehydrate_email(self, bundle):
-        """Return email only if user is authenticated."""
-        if bundle.request.user.is_authenticated():
-            return bundle.obj.email
-        return None
 
     def apply_filters(self, request, applicable_filters):
         """Add special 'query' parameter to filter Reps.
