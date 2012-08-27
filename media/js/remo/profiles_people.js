@@ -10,11 +10,21 @@ ProfilesLib.noresults_elm = $('#profiles_noresults');
 ProfilesLib.adv_search_country_elm = $('#adv-search-country');
 ProfilesLib.adv_search_group_elm = $('#adv-search-group');
 ProfilesLib.adv_search_area_elm = $('#adv-search-area');
-ProfilesLib.search_icon_elm = $('#search-icon');
+ProfilesLib.search_ready_icon_elm = $('#search-ready-icon');
+ProfilesLib.search_loading_icon_elm = $('#search-loading-icon');
 ProfilesLib.grid_search_list_elm = $('#grid-search-list');
 ProfilesLib.table_search_list_elm = $('#table-search-list');
 ProfilesLib.griditem_tmpl_elm = $('#gridItem-tmpl');
 ProfilesLib.listitem_tmpl_elm = $('#listItem-tmpl');
+ProfilesLib.profiles_loading_wrapper_elm = $('#profiles-loading-wrapper');
+ProfilesLib.window_elm = $(window);
+ProfilesLib.location_elm = $(location);
+ProfilesLib.window_offset = 450;
+ProfilesLib.results_batch = 21;
+ProfilesLib.offset = 0;
+ProfilesLib.limited = true;
+ProfilesLib.allset = false;
+ProfilesLib.trigger_timeout = undefined;
 
 function initialize_map() {
     // Initialize map.
@@ -43,8 +53,14 @@ function initialize_map() {
 
 
 function add_pointers() {
+    // If results are limited read lat/lon values from .profile-pointer-item
+    var pointer_list = $('.profiles-li-item');
+    if (ProfilesLib.limited) {
+        pointer_list = $('.profile-pointer-item');
+    }
+
     // Add user pointers on map.
-    $('.profiles-li-item').each(function(index, item) {
+    pointer_list.each(function(index, item) {
         var lat = $(item).data('lat');
         var lon = $(item).data('lon');
         var markerLocation = new L.LatLng(lat, lon);
@@ -54,8 +70,8 @@ function add_pointers() {
         // otherwise appear.
         marker.on('click', function(e) {
             var val = ProfilesLib.searchfield_elm.val();
-            var fullname = $(item).data('fullname');
-            if (val !== '') {
+            var fullname = $(item).data('fullname').toLowerCase();
+            if (val === fullname) {
                 search_string = '';
             }
             else {
@@ -120,60 +136,94 @@ function set_number_of_reps(number_of_reps) {
 }
 
 
-var update_results = function(query) {
-    return function(data) {
-        if ($(location).attr('hash').substring(2) !== query) {
-            return;
-        }
+var update_results = function(data, query, newquery, update_pointers) {
+    if (ProfilesLib.location_elm.attr('hash').substring(2) !== query) {
+        return;
+    }
 
-        ProfilesLib.search_icon_elm.html('s');
+    ProfilesLib.search_loading_icon_elm.hide();
+    ProfilesLib.search_ready_icon_elm.show();
 
+    if (newquery) {
         clear_map();
         ProfilesLib.grid_search_list_elm.empty();
         ProfilesLib.table_search_list_elm.empty();
+    }
 
-        set_number_of_reps(data.meta.total_count);
+    if (data.meta.offset + ProfilesLib.results_batch >= data.meta.total_count) {
+        ProfilesLib.allset = true;
+        ProfilesLib.profiles_loading_wrapper_elm.hide();
+    }
+    else {
+        ProfilesLib.offset = parseInt(data.meta.offset, 10) + ProfilesLib.results_batch;
+    }
 
-        var view = hash_get_value('view');
-        switch_views(view);
+    set_number_of_reps(data.meta.total_count);
 
+    var view = hash_get_value('view');
+    switch_views(view);
+
+    if (view === 'list') {
+        ProfilesLib.listitem_tmpl_elm.tmpl(data.objects).appendTo('#table-search-list');
+    }
+    else {
         ProfilesLib.griditem_tmpl_elm.tmpl(data.objects).appendTo('#grid-search-list');
         redraw_grid();
-        ProfilesLib.listitem_tmpl_elm.tmpl(data.objects).appendTo('#table-search-list');
-        ProfilesLib.searchfield_elm.data('searching', undefined);
-        add_pointers();
-    };
+    }
+
+    ProfilesLib.searchfield_elm.data('searching', undefined);
+    if (update_pointers) {
+        setTimeout(function() { add_pointers(); }, 500);
+    }
 };
 
 
-function request_error(query, status) {
+function request_error() {
     // Unset data-searching after half a second to deal with API timeouts.
-    if (status !== 'abort') {
-        ProfilesLib.searchfield_elm.data('searching', undefined);
-        ProfilesLib.search_icon_elm.html('s');
-    }
+    ProfilesLib.searchfield_elm.data('searching', undefined);
+    ProfilesLib.search_loading_icon_elm.hide();
+    ProfilesLib.search_ready_icon_elm.show();
+    ProfilesLib.profiles_loading_wrapper_elm.hide();
 }
 
+function handle_xhr_response(value, newquery, update_pointers) {
+    return function(event) {
+        if (ProfilesLib.request.status === 200) {
+            update_results(JSON.parse(ProfilesLib.request.responseText), value, newquery, update_pointers);
+        }
+        else {
+            request_error();
+        }
+    };
+}
 
-function send_query() {
+function send_query(newquery) {
     var extra_q = '';
     var csv = false;
-    var API_URL = '/api/v1/rep/?limit=0&order_by=profile__country,last_name,first_name';
-    var value = $(location).attr('hash').substring(2);
+    var update_pointers = true;
+    if (newquery) {
+        ProfilesLib.allset = false;
+        ProfilesLib.offset = 0;
+        ProfilesLib.profiles_loading_wrapper_elm.show();
+    }
+    else {
+        newquery = false;
+    }
+    ProfilesLib.limited = false;
+    var API_URL = '/api/v1/rep/?order_by=profile__country,last_name,first_name&offset='+ ProfilesLib.offset;
+    var value = ProfilesLib.location_elm.attr('hash').substring(2);
+
 
     // Make sure we are not firing the same same request twice.
-    if (ProfilesLib.searchfield_elm.data('searching') === value) {
+    if ((ProfilesLib.searchfield_elm.data('searching') === API_URL && !newquery) || (!newquery && ProfilesLib.allset)) {
         return;
     }
 
     // Set icon.
-    ProfilesLib.search_icon_elm.html('<div id="floatingCirclesG"><div class="f_circleG" id="frotateG_01">' +
-        '</div><div class="f_circleG" id="frotateG_02"></div><div class="f_circleG" id="frotateG_03">' +
-        '</div><div class="f_circleG" id="frotateG_04"></div><div class="f_circleG" id="frotateG_05">' +
-        '</div><div class="f_circleG" id="frotateG_06"></div><div class="f_circleG" id="frotateG_07">' +
-        '</div><div class="f_circleG" id="frotateG_08"></div></div>');
+    ProfilesLib.search_ready_icon_elm.hide();
+    ProfilesLib.search_loading_icon_elm.show();
 
-    ProfilesLib.searchfield_elm.data('searching', value);
+    ProfilesLib.searchfield_elm.data('searching', API_URL);
 
     // Unbind change events to avoid triggering twice the same action.
     unbind_events();
@@ -209,20 +259,30 @@ function send_query() {
         extra_q += '&format=csv';
     }
 
+    if (!country && !area && !search && !group) {
+        ProfilesLib.limited = true;
+        extra_q += '&limit=' + ProfilesLib.results_batch;
+        if (ProfilesLib.offset !== 0) {
+            update_pointers = false;
+        }
+    }
+    else {
+        extra_q += '&limit=0';
+    }
+
     if (!csv) {
         // Abort previous request
         if (ProfilesLib.request) {
             ProfilesLib.request.abort();
         }
-        ProfilesLib.request = $.ajax({
-            url: API_URL + extra_q,
-            success: update_results(value),
-            error: request_error,
-            timeout: 30000
-        });
+        ProfilesLib.request = new XMLHttpRequest();
+        ProfilesLib.request.open('GET', API_URL + extra_q, true);
+        ProfilesLib.request.onload = handle_xhr_response(value, newquery, update_pointers);
+        ProfilesLib.request.onerror = request_error;
+        ProfilesLib.request.send();
     }
     else {
-        window.location = API_URL + extra_q;
+        ProfilesLib.location_elm = API_URL + extra_q;
     }
 
     // Rebind events.
@@ -289,7 +349,12 @@ function bind_events() {
         hash_set_value('area', ProfilesLib.adv_search_area_elm.val());
     });
 
-    $(window).bind('hashchange', function(e) { send_query(); });
+    ProfilesLib.window_elm.bind('hashchange', function(e) {
+        clearTimeout(ProfilesLib.trigger_timeout);
+        ProfilesLib.trigger_timeout = setTimeout(function() {
+            send_query(newquery=true);
+        }, 400);
+    });
 }
 
 function unbind_events() {
@@ -298,7 +363,7 @@ function unbind_events() {
     ProfilesLib.adv_search_country_elm.unbind('change');
     ProfilesLib.adv_search_group_elm.unbind('change');
     ProfilesLib.adv_search_area_elm.unbind('change');
-    $(window).unbind('hashchange');
+    ProfilesLib.window_elm.unbind('hashchange');
 }
 
 function switch_views(view) {
@@ -320,6 +385,26 @@ function switch_views(view) {
     }
     hash_set_value('view', view);
     bind_events();
+}
+
+function loader_canvas_icon_init() {
+    // Initialize bottom loader.
+    var cl = new CanvasLoader('profiles-loading');
+    cl.setColor('#888888'); // default is '#000000'
+    cl.setDiameter(24); // default is 40
+    cl.setDensity(30); // default is 40
+    cl.setRange(0.8); // default is 1.3
+    cl.setFPS(23); // default is 24
+    cl.show(); // Hidden by default
+
+    // Initialize search loader.
+    var sl = new CanvasLoader('search-loading-icon');
+    sl.setColor('#888888'); // default is '#000000'
+    sl.setDiameter(24); // default is 40
+    sl.setDensity(30); // default is 40
+    sl.setRange(0.8); // default is 1.3
+    sl.setFPS(23); // default is 24
+    sl.show(); // Hidden by default
 }
 
 $(document).ready(function () {
@@ -372,4 +457,14 @@ $(document).ready(function () {
     ProfilesLib.searchfield_elm.val(hash_get_value('search'));
 
     send_query();
+
+    // Set infinite scroll.
+    ProfilesLib.window_elm.scroll(function(){
+        if  (ProfilesLib.window_elm.scrollTop() >= $(document).height() -
+             ProfilesLib.window_elm.height() - ProfilesLib.window_offset){
+            send_query();
+        }
+    });
+
+    loader_canvas_icon_init();
 });

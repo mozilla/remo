@@ -2,7 +2,6 @@
 {% block pagetitle %}Mozilla Reps - People{% endblock %}
 
 {% block content %}
-
 <!-- Map -->
 <div class="row show-on-desktop">
   <div class="twelve columns">
@@ -15,17 +14,9 @@
 <div class="row">
   <div class="ten columns" id="search">
     <form class="nice" id="searchform">
-      <span class="pictogram-search" id="search-icon">
-        <div id="floatingCirclesG">
-          <div class="f_circleG" id="frotateG_01"></div>
-          <div class="f_circleG" id="frotateG_02"></div>
-          <div class="f_circleG" id="frotateG_03"></div>
-          <div class="f_circleG" id="frotateG_04"></div>
-          <div class="f_circleG" id="frotateG_05"></div>
-          <div class="f_circleG" id="frotateG_06"></div>
-          <div class="f_circleG" id="frotateG_07"></div>
-          <div class="f_circleG" id="frotateG_08"></div>
-        </div>
+      <span class="pictogram-search">
+        <div id="search-ready-icon">s</div>
+        <div id="search-loading-icon"></div>
       </span>
       <input type="text" placeholder="Loading..." id="searchfield"
              class="input-text big" disabled="disabled">
@@ -121,12 +112,27 @@
   </div>
 </div>
 
+<!-- Loader animation -->
+<div class="row" id="profiles-loading-wrapper">
+  <div class="twelve columns">
+    <div id="profiles-loading"></div>
+  </div>
+</div>
+
 {% if user.is_authenticated() %}
   <div id="profiles-reps-number" class="row">
     <div id="profiles-number-of-reps" class="twelve columns reps-number">
     </div>
   </div>
 {% endif %}
+
+{% for rep in reps %}
+  <div class="profile-pointer-item"
+       data-lat="{{ rep.userprofile.lat }}"
+       data-lon="{{ rep.userprofile.lon }}"
+       data-fullname="{{ rep.get_full_name() }}">
+  </div>
+{% endfor %}
 
 <script id="gridItem-tmpl" type="text/x-jquery-tmpl">
   <li class="profiles-li-item"
@@ -187,7 +193,7 @@
 {{ css('leaflet') }}
 <!--[if lte IE 8]>
     <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
-    <![endif]-->
+<![endif]-->
 {{ js('leaflet') }}
 {{ js('profiles_people') }}
 {% endblock %}
