@@ -46,6 +46,9 @@ MINIFY_BUNDLES = {
         'common_ie': (
             'js/libs/html5.js',
             ),
+        '404': (
+            'js/remo/404.js',
+            ),
         'tracker': (
             'js/remo/tracker.load.js',
             ),
