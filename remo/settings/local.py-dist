@@ -88,9 +88,5 @@ SECRET_KEY = 'some secret'
 # MAILHIDE_PUB_KEY = '02Ni54q--g1yltekhaSmPYHQ=='
 # MAILHIDE_PRIV_KEY = 'fe55a9921917184732077e3fed19d0be'
 
-# Arecibo
-# ARECIBO_PUBLIC_ACCOUNT_NUMBER = ''
-# ARECIBO_SERVER_URL = ''
-
 # LESS COMPILER
 # LESS_BIN = '/path/to/lessc'
