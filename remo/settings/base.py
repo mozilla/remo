@@ -74,6 +74,7 @@ MINIFY_BUNDLES = {
             ),
         'profiles_people': (
             'js/libs/jquery.tmpl.js',
+            'js/libs/heartcode-canvasloader-min.js',
             'js/remo/profiles_people.js'
             ),
         'reports_edit_report': (

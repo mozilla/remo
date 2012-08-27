@@ -122,8 +122,13 @@ def list_profiles(request):
     countries = product_details.get_regions('en').values()
     countries.sort()
 
+    reps = (User.objects
+            .filter(userprofile__registration_complete=True, groups__name='Rep')
+            .order_by('userprofile__country', 'last_name', 'first_name'))
+
     return render(request, 'profiles_people.html',
                   {'countries': countries,
+                   'reps': reps,
                    'areas': FunctionalArea.objects.all()})
 
 
