@@ -4,12 +4,22 @@ EventsLib.request = undefined;
 EventsLib.number_of_events = 0;
 EventsLib.searchform_elm = $('#searchform');
 EventsLib.searchfield_elm = $('#searchfield');
-EventsLib.search_icon_elm = $('#search-icon');
 EventsLib.events_table_body_elm = $('#events-table-body');
 EventsLib.eventsitem_tmpl_elm = $('#eventItem-tmpl');
 EventsLib.period_selector_elm = $('#events-period-selector');
 EventsLib.events_number_elm = $('#events-number');
 EventsLib.events_table_elm = $('#events-table');
+EventsLib.search_loading_icon_elm = $('#search-loading-icon');
+EventsLib.search_ready_icon_elm = $('#search-ready-icon');
+EventsLib.events_loading_wrapper_elm = $('#events-loading-wrapper');
+EventsLib.map_overlay_elm = $('#map-overlay');
+EventsLib.window_elm = $(window);
+EventsLib.location_elm = $(location);
+EventsLib.trigger_timeout = undefined;
+EventsLib.allset = false;
+EventsLib.offset = 0;
+EventsLib.window_offset = 450;
+EventsLib.results_batch = 21;
 
 function initialize_map() {
     // Initialize map.
@@ -57,7 +67,7 @@ function add_pointers() {
         marker.on('click', function(e) {
             var val = EventsLib.searchfield_elm.val();
             var name = $(item).data('name');
-            if (val !== '') {
+            if (val === name) {
                 search_string = '';
             }
             else {
@@ -82,14 +92,19 @@ function bind_events() {
         hash_set_value('period', EventsLib.period_selector_elm.val());
     });
 
-    $(window).bind('hashchange', function(e) { send_query(); });
+    EventsLib.window_elm.bind('hashchange', function(e) {
+        clearTimeout(EventsLib.trigger_timeout);
+        EventsLib.trigger_timeout = setTimeout(function() {
+            send_query(newquery=true);
+        }, 400);
+    });
 }
 
 function unbind_events() {
     // Unbind events
     EventsLib.searchfield_elm.unbind('propertychange keyup input paste');
     EventsLib.period_selector_elm.unbind('change');
-    $(window).unbind('hashchange');
+    EventsLib.window_elm.unbind('hashchange');
 }
 
 function set_number_of_events(number_of_events) {
@@ -115,64 +130,89 @@ function set_number_of_events(number_of_events) {
 
 function request_error(query, status) {
     // Unset data-searching after half a second to deal with API timeouts.
-    if (status !== 'abort') {
-        EventsLib.searchfield_elm.data('searching', undefined);
-        EventsLib.search_icon_elm.html('s');
-    }
+    EventsLib.searchfield_elm.data('searching', undefined);
+    EventsLib.search_loading_icon_elm.hide();
+    EventsLib.search_ready_icon_elm.show();
+    EventsLib.events_loading_wrapper_elm.hide();
 }
 
-
-var update_results = function(query) {
-    return function(data) {
-        if ($(location).attr('hash').substring(2) !== query) {
-            return;
+function handle_xhr_response(value, newquery, past_events) {
+    return function(event) {
+        if (EventsLib.request.status === 200) {
+            update_results(JSON.parse(EventsLib.request.responseText), value, newquery, past_events);
         }
+        else {
+            request_error();
+        }
+    };
+}
 
-        EventsLib.search_icon_elm.html('s');
+var update_results = function(data, query, newquery, past_events) {
+    if (EventsLib.location_elm.attr('hash').substring(2) !== query) {
+        return;
+    }
 
+    EventsLib.search_loading_icon_elm.hide();
+    EventsLib.search_ready_icon_elm.show();
+    EventsLib.events_loading_wrapper_elm.hide();
+
+    if (newquery) {
         clear_map();
         EventsLib.events_table_body_elm.empty();
-
         set_number_of_events(data.meta.total_count);
+    }
 
-        EventsLib.eventsitem_tmpl_elm.tmpl(data.objects, {
-            getDay: function() {
-                var s = new Date(this.data.local_start);
+    if (parseInt(data.meta.offset, 10) + EventsLib.results_batch >= data.meta.total_count) {
+        EventsLib.allset = true;
+    }
+    else {
+        EventsLib.offset = parseInt(data.meta.offset, 10) + EventsLib.results_batch;
+    }
 
-                if (this.data.multiday) {
-                    var e = new Date(this.data.local_end);
-                    return s.getDate() + '-' + e.getDate();
-                }
+    EventsLib.eventsitem_tmpl_elm.tmpl(data.objects, {
+        getDay: function() {
+            var s = new Date(this.data.local_start);
 
-                return s.getDate();
-            },
-            getMonth: function() {
-                var monthNames = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-                                   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
+            if (this.data.multiday) {
+                var e = new Date(this.data.local_end);
+                return s.getDate() + '-' + e.getDate();
+            }
 
-                if (this.data.multiday) {
-                    var s = new Date(this.data.local_start);
-                    var e = new Date(this.data.local_end);
+            return s.getDate();
+        },
+        getMonth: function() {
+            var monthNames = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+                               "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
 
-                    // Also check if multimonth
-                    if (this.is_multimonth()) {
-                        return monthNames[s.getMonth()] + '-' + monthNames[e.getMonth()];
-                    }
-                }
-                d = new Date(this.data.local_start);
-                return monthNames[d.getMonth()];
-
-            },
-            is_multimonth: function() {
+            if (this.data.multiday) {
                 var s = new Date(this.data.local_start);
                 var e = new Date(this.data.local_end);
-                return s.getMonth() != e.getMonth();
-            }
-        }).appendTo('#events-table-body');
 
-        EventsLib.searchfield_elm.data('searching', undefined);
+                // Also check if multimonth
+                if (this.is_multimonth()) {
+                    return monthNames[s.getMonth()] + '-' + monthNames[e.getMonth()];
+                }
+            }
+            d = new Date(this.data.local_start);
+            return monthNames[d.getMonth()];
+
+        },
+        is_multimonth: function() {
+            var s = new Date(this.data.local_start);
+            var e = new Date(this.data.local_end);
+            return s.getMonth() != e.getMonth();
+        }
+    }).appendTo('#events-table-body');
+
+    EventsLib.searchfield_elm.data('searching', undefined);
+
+    if (past_events && parseInt(data.meta.total_count, 10) > EventsLib.results_batch) {
+        EventsLib.map_overlay_elm.show();
+    }
+    else {
+        EventsLib.map_overlay_elm.hide();
         add_pointers();
-    };
+    }
 };
 
 function UTCDateString(d){
@@ -182,24 +222,30 @@ function UTCDateString(d){
 }
 
 
-function send_query() {
+function send_query(newquery) {
+    var past_events = true;
     var extra_q = '';
-    var API_URL = '/api/v1/event/?limit=0';
-    var value = $(location).attr('hash').substring(2);
+    var value = EventsLib.location_elm.attr('hash').substring(2);
 
-    // Make sure we are not firing the same same request twice.
-    if (EventsLib.searchfield_elm.data('searching') === value) {
+    if (newquery) {
+        EventsLib.allset = false;
+        EventsLib.offset = 0;
+    }
+    else {
+        newquery = false;
+    }
+    var API_URL = '/api/v1/event/?offset=' + EventsLib.offset;
+
+    if ((EventsLib.searchfield_elm.data('searching') === API_URL && !newquery) || (!newquery && EventsLib.allset)) {
         return;
     }
 
     // Set icon.
-    EventsLib.search_icon_elm.html('<div id="floatingCirclesG"><div class="f_circleG" id="frotateG_01">' +
-        '</div><div class="f_circleG" id="frotateG_02"></div><div class="f_circleG" id="frotateG_03">' +
-        '</div><div class="f_circleG" id="frotateG_04"></div><div class="f_circleG" id="frotateG_05">' +
-        '</div><div class="f_circleG" id="frotateG_06"></div><div class="f_circleG" id="frotateG_07">' +
-        '</div><div class="f_circleG" id="frotateG_08"></div></div>');
+    EventsLib.search_ready_icon_elm.hide();
+    EventsLib.search_loading_icon_elm.show();
+    EventsLib.events_loading_wrapper_elm.show();
 
-    EventsLib.searchfield_elm.data('searching', value);
+    EventsLib.searchfield_elm.data('searching', API_URL);
 
     // Unbind change events to avoid triggering twice the same action.
     unbind_events();
@@ -211,12 +257,16 @@ function send_query() {
         var today = new Date();
         var today_utc_string = UTCDateString(today);
         if (period === 'future') {
+            extra_q += '&limit=0';
             extra_q += '&start__gte=' + today_utc_string;
+            past_events = false;
         }
         else if (period === 'past') {
+            extra_q += '&limit=' + EventsLib.results_batch;
             extra_q += '&start__lt=' + today_utc_string;
         }
         else if (period === 'all') {
+            extra_q += '&limit=' + EventsLib.results_batch;
             extra_q += '&start__gt=1970-01-01';
         }
     }
@@ -232,15 +282,34 @@ function send_query() {
     if (EventsLib.request) {
         EventsLib.request.abort();
     }
-    EventsLib.request = $.ajax({
-        url: API_URL + extra_q,
-        success: update_results(value),
-        error: request_error,
-        timeout: 30000
-    });
+    EventsLib.request = new XMLHttpRequest();
+    EventsLib.request.open('GET', API_URL + extra_q, true);
+    EventsLib.request.onload = handle_xhr_response(value, newquery, past_events);
+    EventsLib.request.onerror = request_error;
+    EventsLib.request.send();
 
     // Rebind events.
     bind_events();
+}
+
+function loader_canvas_icon_init() {
+    // Initialize bottom loader.
+    var cl = new CanvasLoader('events-loading');
+    cl.setColor('#888888'); // default is '#000000'
+    cl.setDiameter(24); // default is 40
+    cl.setDensity(30); // default is 40
+    cl.setRange(0.8); // default is 1.3
+    cl.setFPS(23); // default is 24
+    cl.show(); // Hidden by default
+
+    // Initialize search loader.
+    var sl = new CanvasLoader('search-loading-icon');
+    sl.setColor('#888888'); // default is '#000000'
+    sl.setDiameter(24); // default is 40
+    sl.setDensity(30); // default is 40
+    sl.setRange(0.8); // default is 1.3
+    sl.setFPS(23); // default is 24
+    sl.show(); // Hidden by default
 }
 
 $(document).ready(function () {
@@ -268,4 +337,17 @@ $(document).ready(function () {
     EventsLib.searchfield_elm.val(hash_get_value('search'));
 
     send_query();
+
+    loader_canvas_icon_init();
+
+    // Leaflet is loaded, so move map overlay into map div.
+    EventsLib.map_overlay_elm.appendTo('#map');
+
+    // Set infinite scroll.
+    EventsLib.window_elm.scroll(function(){
+        if  (EventsLib.window_elm.scrollTop() >=
+             $(document).height() - EventsLib.window_elm.height() - EventsLib.window_offset) {
+            send_query(newquery=false);
+        }
+    });
 });

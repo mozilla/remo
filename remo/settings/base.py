@@ -92,6 +92,7 @@ MINIFY_BUNDLES = {
             ),
         'events_list': (
             'js/libs/jquery.tmpl.js',
+            'js/libs/heartcode-canvasloader-min.js',
             'js/remo/events_list.js',
             ),
     }
