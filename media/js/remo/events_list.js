@@ -211,7 +211,7 @@ var update_results = function(data, query, newquery, past_events) {
     }
     else {
         EventsLib.map_overlay_elm.hide();
-        add_pointers();
+        setTimeout(function() { add_pointers(); }, 500);
     }
 };
 
