@@ -204,7 +204,6 @@ function send_query(newquery) {
     if (newquery) {
         ProfilesLib.allset = false;
         ProfilesLib.offset = 0;
-        ProfilesLib.profiles_loading_wrapper_elm.show();
     }
     else {
         newquery = false;
@@ -219,9 +218,8 @@ function send_query(newquery) {
         return;
     }
 
-    // Set icon.
-    ProfilesLib.search_ready_icon_elm.hide();
-    ProfilesLib.search_loading_icon_elm.show();
+    // Show bottom loading icon.
+    ProfilesLib.profiles_loading_wrapper_elm.show();
 
     ProfilesLib.searchfield_elm.data('searching', API_URL);
 
@@ -350,6 +348,10 @@ function bind_events() {
     });
 
     ProfilesLib.window_elm.bind('hashchange', function(e) {
+        // Set icon.
+        ProfilesLib.search_ready_icon_elm.hide();
+        ProfilesLib.search_loading_icon_elm.show();
+
         clearTimeout(ProfilesLib.trigger_timeout);
         ProfilesLib.trigger_timeout = setTimeout(function() {
             send_query(newquery=true);
