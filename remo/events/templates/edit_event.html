@@ -120,7 +120,6 @@
           } <!-- Date and Times -->
         </div>
         <div class="eleven columns top-margined">
-
           <!-- NOTE: Supress the afterload JS that appends style attributes to tags bellow -->
 
           <!-- The real start and end time elements. -->
@@ -131,78 +130,91 @@
 
           <!-- Start Date -->
           <div class="row">
-            <div class="has-tip tip-left" title="Event start date">
-              <div id="start-month"
-                   class="six phone-two columns events-edit-date">
-                <!-- month -->
-              </div>
+            <div class="twelve columns">
+              <div class="has-tip tip-left" title="Event start date">
+                <div id="start-month"
+                     class="six phone-two columns events-edit-date">
+                  <!-- month -->
+                </div>
 
-              <div id="start-day"
-                   class="three phone-one columns events-edit-date">
-                <!-- day -->
-              </div>
+                <div id="start-day"
+                     class="three phone-one columns events-edit-date">
+                  <!-- day -->
+                </div>
 
-              <div id="start-year"
-                   class="three phone-one columns events-edit-date">
-                <!-- year -->
+                <div id="start-year"
+                     class="three phone-one columns events-edit-date">
+                  <!-- year -->
+                </div>
               </div>
             </div>
-
           </div>
 
           <!-- Start Hour -->
           <div class="row">
-            <div class="has-tip tip-left" title="Event start hour">
-              <div id="start-hour" class="three phone-one columns">
-                <!-- hour -->
-              </div>
+            <div class="twelve columns">
+              <div class="has-tip tip-left" title="Event start hour">
+                <div id="start-hour" class="three phone-one columns">
+                  <!-- hour -->
+                </div>
 
-              <div id="start-minute" class="three phone-one end columns">
-                <!-- minute -->
+                <div id="start-minute" class="three phone-one end columns">
+                  <!-- minute -->
+                </div>
               </div>
             </div>
           </div>
 
-          {{ field_errors(event_form.start_form) }}
           <div class="required-field"></div>
+
 
           <!-- End Date -->
           <div class="row">
-            <div class="has-tip tip-left" title="Event end date">
-              <div id="end-month"
-                   class="six phone-two columns events-edit-date ">
-                <!-- month -->
-              </div>
+            <div class="twelve columns">
+              <div class="has-tip tip-left" title="Event end date">
+                <div id="end-month"
+                     class="six phone-two columns events-edit-date ">
+                  <!-- month -->
+                </div>
 
-              <div id="end-day"
-                   class="three phone-one columns events-edit-date">
-                <!-- day -->
-              </div>
+                <div id="end-day"
+                     class="three phone-one columns events-edit-date">
+                  <!-- day -->
+                </div>
 
-              <div id="end-year"
-                   class="three phone-one columns events-edit-date">
-                <!-- year -->
+                <div id="end-year"
+                     class="three phone-one columns events-edit-date">
+                  <!-- year -->
+                </div>
               </div>
             </div>
           </div>
 
           <!-- End Hour -->
           <div class="row">
-            <div class="has-tip tip-left" title="Event end hour">
-              <div id="end-hour"
-                   class="three phone-one columns events-edit-date">
-                <!-- hour -->
-              </div>
+            <div class="twelve columns">
+              <div class="has-tip tip-left" title="Event end hour">
+                <div id="end-hour"
+                     class="three phone-one columns events-edit-date">
+                  <!-- hour -->
+                </div>
 
-              <div id="end-minute"
-                   class="three phone-one end columns events-edit-date">
-                <!-- minute -->
+                <div id="end-minute"
+                     class="three phone-one end columns events-edit-date">
+                  <!-- minute -->
+                </div>
               </div>
             </div>
           </div>
 
-          {{ field_errors(event_form.end_form) }}
           <div class="required-field"></div>
+
+          <div class="row">
+            <div class="twelve columns">
+              {{ field_errors(event_form.start_form) }}
+              {{ field_errors(event_form.end_form) }}
+            </div>
+          </div>
 
           <!-- Timezone -->
           <div class="has-tip tip-left" title="Event timezone">

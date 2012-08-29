@@ -1,3 +1,4 @@
+from datetime import datetime
 from happyforms import forms
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -54,6 +55,19 @@ EventMetricsFormset = forms.models.inlineformset_factory(
     Event, Metric, formset=MinBaseInlineFormSet, extra=2)
 
 
+def validate_datetime(data, **kwargs):
+    """Validate that /data/ is of type datetime.
+
+    Used to validate DateTime form fields, to ensure that user select
+    a valid date, thus a date that can be converted to a datetime
+    obj. Example of invalid date is 'Sept 31 2012'.
+
+    """
+
+    if not isinstance(data, datetime):
+        raise ValidationError('Date chosen is invalid.')
+    return data
+
 class EventForm(forms.ModelForm):
     """Form of an event."""
     country = forms.ChoiceField(
@@ -68,9 +82,11 @@ class EventForm(forms.ModelForm):
     timezone = forms.ChoiceField(choices= zip(common_timezones,
                                               common_timezones))
     start = forms.DateTimeField(required=False)
-    start_form = forms.DateTimeField(widget=SplitSelectDateTimeWidget())
+    start_form = forms.DateTimeField(widget=SplitSelectDateTimeWidget(),
+                                     validators=[validate_datetime])
     end = forms.DateTimeField(required=False)
-    end_form = forms.DateTimeField(widget=SplitSelectDateTimeWidget())
+    end_form = forms.DateTimeField(widget=SplitSelectDateTimeWidget(),
+                                   validators=[validate_datetime])
 
     def __init__(self, *args, **kwargs):
         """Initialize form.
