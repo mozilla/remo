@@ -66,7 +66,7 @@ function add_pointers() {
         // otherwise appear.
         marker.on('click', function(e) {
             var val = EventsLib.searchfield_elm.val();
-            var name = $(item).data('name');
+            var name = $(item).data('name').toString();
             if (val === name) {
                 search_string = '';
             }
@@ -93,6 +93,10 @@ function bind_events() {
     });
 
     EventsLib.window_elm.bind('hashchange', function(e) {
+        // Set icon.
+        EventsLib.search_ready_icon_elm.hide();
+        EventsLib.search_loading_icon_elm.show();
+
         clearTimeout(EventsLib.trigger_timeout);
         EventsLib.trigger_timeout = setTimeout(function() {
             send_query(newquery=true);
@@ -240,9 +244,7 @@ function send_query(newquery) {
         return;
     }
 
-    // Set icon.
-    EventsLib.search_ready_icon_elm.hide();
-    EventsLib.search_loading_icon_elm.show();
+    // Show bottom loading icon.
     EventsLib.events_loading_wrapper_elm.show();
 
     EventsLib.searchfield_elm.data('searching', API_URL);
