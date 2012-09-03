@@ -34,6 +34,7 @@ class EventResource(ClientCachedResource, ModelResource):
         authorization = ReadOnlyAuthorization()
         serializer = Serializer(formats=['json', 'jsonp'])
         allowed_methods = ['get']
+        ordering = ['start']
         fields = ['name', 'start', 'end', 'timezone',
                   'venue', 'city', 'region', 'country', 'lat', 'lon',
                   'external_link', 'description', 'mozilla_event', 'owner',
