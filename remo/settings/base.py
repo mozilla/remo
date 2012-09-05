@@ -199,3 +199,5 @@ STATIC_URL = '/media/static/'
 
 CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
                   'event/?callbackurl=%(callbackurl)s')
+
+BROWSERID_CREATE_USER = False
