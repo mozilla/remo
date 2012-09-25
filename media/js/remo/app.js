@@ -42,24 +42,12 @@ jQuery(document).ready(function ($) {
         $.foundation.customForms.appendCustomMarkup();
     }
 
-    /* ALERT BOXES ------------ */
-    $(".alert-box").delegate("a.close", "click", function(event) {
-        event.preventDefault();
-        $(this).closest(".alert-box").fadeOut(function(event){
-            $(this).remove();
-        });
-    });
-
-
     /* PLACEHOLDER FOR FORMS ------------- */
     /* Remove this and jquery.placeholder.min.js if you don't need :) */
-
     $('input, textarea').placeholder();
 
     /* TOOLTIPS ------------ */
     $(this).tooltips();
-
-
 
     /* UNCOMMENT THE LINE YOU WANT BELOW IF YOU WANT IE6/7/8 SUPPORT AND ARE USING .block-grids */
     $('.block-grid.two-up>li:nth-child(2n+1)').css({clear: 'left'});
@@ -67,10 +55,7 @@ jQuery(document).ready(function ($) {
     $('.block-grid.four-up>li:nth-child(4n+1)').css({clear: 'left'});
     $('.block-grid.five-up>li:nth-child(5n+1)').css({clear: 'left'});
 
-
-
     /* DROPDOWN NAV ------------- */
-
     var lockNavBar = false;
     $('.nav-bar a.flyout-toggle').live('click', function(e) {
         e.preventDefault();
@@ -98,11 +83,24 @@ jQuery(document).ready(function ($) {
         });
     }
 
-
     /* DISABLED BUTTONS ------------- */
     /* Gives elements with a class of 'disabled' a return: false; */
-    // auto fade out success messages
-    $('.success').delay(5000).fadeOut('slow');
+
+    /* ALERT BOXES ------------ */
+    var clearAlert = setTimeout(function(){
+        $(".alert-box.success").fadeOut('slow');
+    }, 5000);
+
+    $(document).on("click", ".success a.close", function(event){
+        clearTimeout(clearAlert);
+    });
+
+    $(document).on("click", ".alert-box a.close", function(event) {
+        event.preventDefault();
+        $(this).closest(".alert-box").fadeOut(function(event){
+            $(this).remove();
+        });
+    });
 
 });
 
