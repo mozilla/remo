@@ -164,20 +164,23 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           )
         </div>
         <div class="eleven columns">
-          <h6 class="profile-item">
-            {% for group in usergroups %}
-              {% if group.name == "Mentor" %}
-                <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
-                  Reps Mentor
-                </a>
+            <h6 class="profile-item">
+              {% if usergroups.count() %}
+                {{ pageuser.first_name }} is a
+                {% for group in usergroups %}
+                  {% if group.name == "Mentor" %}
+                    <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
+                      Reps Mentor
+                    </a>
+                  {% endif %}
+                  {% if group.name == "Council" %}
+                    <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
+                      Reps Council
+                    </a> member
+                  {% endif %}
+                  {% if not loop.last %} and a {% endif %}
+                {% endfor %}
               {% endif %}
-              {% if group.name == "Council" %}
-                <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
-                  Reps Council
-                </a> member
-              {% endif %}
-              {% if not loop.last %} - {% endif %}
-            {% endfor %}
           </h6>
         </div>
       </div>
