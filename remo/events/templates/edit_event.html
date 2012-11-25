@@ -282,6 +282,23 @@
     </div>
 
     <div class="six columns">
+      <!-- Planning pad -->
+      <div class="row">
+        <div class="one columns pictogram">
+          V
+        </div>
+        <div class="eleven columns">
+          {{ field_with_attrs(event_form.planning_pad_url,
+                              placeholder='Planning pad',
+                              title='Planning pad',
+                              class='input-text big has-tip tip-right') }}
+          {{ field_errors(event_form.planning_pad_url) }}
+          <p class="more-info">
+            Collaborative pad to plan your events with others.<br>
+            Leave blank to create one for you.
+          </p>
+        </div>
+      </div>
 
       <!-- Hashtag -->
       <div class="row">
