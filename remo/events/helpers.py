@@ -1,5 +1,8 @@
+import pytz
+from datetime import datetime
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 from jingo import register
 
 
@@ -77,3 +80,11 @@ def get_contribute_link(event):
             {'callbackurl': (settings.SITE_URL +
                              reverse('events_count_converted_visitors',
                                      kwargs={'slug': event.slug}))})
+
+
+@register.function
+def is_past_event(event):
+    """Checks if an event has already taken place."""
+
+    now = timezone.make_aware(datetime.now(), pytz.UTC)
+    return now > event.end
