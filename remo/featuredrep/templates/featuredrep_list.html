@@ -70,11 +70,11 @@
           {% if (perms.featuredrep.can_edit_featured or
                  perms.featuredrep.can_delete_featured) %}
             <td>
-              {% if perms.featured.can_edit_featured %}
+              {% if perms.featuredrep.can_edit_featured %}
                 <a href="{{ url('featuredrep_edit_featured', feature.id) }}"
                    class="featured-edit pictogram-button">e</a>
               {% endif %}
-              {% if perms.profiles.can_delete_featured %}
+              {% if perms.featuredrep.can_delete_featured %}
                 <form id="deleteform-{{ feature.id }}" method="post"
                       action="{{ url('featuredrep_delete_featured', feature.id) }}">
                   {{ csrf() }}
