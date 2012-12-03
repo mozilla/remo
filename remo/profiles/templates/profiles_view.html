@@ -398,6 +398,8 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           </div>
         </div>
       {% endif %}
+    {% endif %}
+    {% if user.is_authenticated() %}
       {% if user_profile.date_joined_program %}
         <div class="row">
           <div class="one columns pictogram">
@@ -409,7 +411,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
                 Date Joined
               </span>
               &nbsp;
-              {{ user_profile.date_joined_program.strftime('%d %B %Y') }}
+              {{ user_profile.date_joined_program|strftime('%d %B %Y') }}
             </p>
           </div>
         </div>
