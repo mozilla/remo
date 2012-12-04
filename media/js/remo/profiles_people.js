@@ -25,6 +25,7 @@ ProfilesLib.offset = 0;
 ProfilesLib.limited = true;
 ProfilesLib.allset = false;
 ProfilesLib.trigger_timeout = undefined;
+ProfilesLib.api_csv_url = undefined;
 
 function initialize_map() {
     // Initialize map.
@@ -199,7 +200,6 @@ function handle_xhr_response(value, newquery, update_pointers) {
 
 function send_query(newquery) {
     var extra_q = '';
-    var csv = false;
     var update_pointers = true;
     if (newquery) {
         ProfilesLib.allset = false;
@@ -251,12 +251,6 @@ function send_query(newquery) {
         extra_q += '&group=' + group;
     }
 
-    var format = hash_get_value('format');
-    if (format && format == 'csv') {
-        csv = true;
-        extra_q += '&format=csv';
-    }
-
     if (!country && !area && !search && !group) {
         ProfilesLib.limited = true;
         extra_q += '&limit=' + ProfilesLib.results_batch;
@@ -268,42 +262,22 @@ function send_query(newquery) {
         extra_q += '&limit=0';
     }
 
-    if (!csv) {
-        // Abort previous request
-        if (ProfilesLib.request) {
-            ProfilesLib.request.abort();
-        }
-        ProfilesLib.request = new XMLHttpRequest();
-        ProfilesLib.request.open('GET', API_URL + extra_q, true);
-        ProfilesLib.request.onload = handle_xhr_response(value, newquery, update_pointers);
-        ProfilesLib.request.onerror = request_error;
-        ProfilesLib.request.send();
+    // Abort previous request
+    if (ProfilesLib.request) {
+        ProfilesLib.request.abort();
     }
-    else {
-        ProfilesLib.location_elm = API_URL + extra_q;
-    }
+    ProfilesLib.request = new XMLHttpRequest();
+    ProfilesLib.request.open('GET', API_URL + extra_q, true);
+    ProfilesLib.request.onload = handle_xhr_response(value, newquery, update_pointers);
+    ProfilesLib.request.onerror = request_error;
+    ProfilesLib.request.send();
+
+    // Set the CSV url
+    ProfilesLib.api_csv_url = API_URL + extra_q + '&format=csv';
 
     // Rebind events.
     bind_events();
 
-    if (csv) {
-        // Remove CSV export variable to also load results in the
-        // page. We do this change after bind_events() we can actually
-        // capture this event.
-        hash_set_value('format', '');
-
-        // Save current map zoom and center
-        var zoom = ProfilesLib.map.getZoom();
-        var center = ProfilesLib.map.getCenter();
-
-        // We shouldn't touch "private" variables but this is to force
-        // map to reload tiles. When a user hits the CSV export page,
-        // tile loading is interrupted by the change of
-        // window.location. By re-setting map's view (setView) we
-        // force tile loading.
-        ProfilesLib.map._zoom = -1;
-        ProfilesLib.map.setView(center, zoom);
-    }
 }
 
 function switch_views(view) {
@@ -442,7 +416,7 @@ $(document).ready(function () {
 
     // Export to CSV click.
     $('#csv-export-button').click(function() {
-        hash_set_value('format', 'csv');
+        window.open(ProfilesLib.api_csv_url);
     });
 
     // Set values to fields.
