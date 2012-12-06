@@ -99,7 +99,18 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         <div class="eleven columns">
           <!-- If Rep has future events -->
           {% if future_events %}
-            <h5 class="profile-item">Upcoming Events</h5>
+            <div class="row">
+              <div class="six phone-two columns">
+                <h5 class="profile-item">Upcoming Events</h5>
+              </div>
+              <div class="six phone-two columns">
+                <div id="profile-events-upcoming">
+                  <a href="{{ url('events_list_events') }}period/future/search/{{ user_profile.display_name }}/">
+                    All upcoming events >
+                  </a>
+                </div>
+              </div>
+            </div>
             <table class="profile-events-table">
               <thead>
                 <tr>
@@ -127,7 +138,18 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 
           <!-- If Rep has past events -->
           {% if past_events %}
-            <h5 class="profile-item">Past Events</h5>
+            <div class="row">
+              <div class="six phone-two columns">
+                <h5 class="profile-item">Past Events</h5>
+              </div>
+              <div class="six phone-two columns">
+                <div id="profile-events-past">
+                  <a href="{{ url('events_list_events') }}period/past/search/{{ user_profile.display_name }}/">
+                    All past events >
+                  </a>
+                </div>
+              </div>
+            </div>
             <table class="profile-events-table">
               <thead>
                 <tr>
