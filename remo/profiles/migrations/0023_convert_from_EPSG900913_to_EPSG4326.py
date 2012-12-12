@@ -34,14 +34,15 @@ def convertLatLonToMeters(lat, lon):
 
 
 class Migration(SchemaMigration):
+    no_dry_run = True
 
     def forwards(self, orm):
-        for profile in UserProfile.objects.filter(registration_complete=True):
+        for profile in orm.UserProfile.objects.filter(registration_complete=True):
             (profile.lat, profile.lon) = convertMetersToLatLon(profile.lat, profile.lon)
             profile.save()
 
     def backwards(self, orm):
-        for profile in UserProfile.objects.filter(registration_complete=True):
+        for profile in orm.UserProfile.objects.filter(registration_complete=True):
             (profile.lat, profile.lon) = convertLatLonToMeters(profile.lat, profile.lon)
             profile.save()
 

@@ -126,6 +126,12 @@ class UserProfile(models.Model):
                                related_name='mentees',
                                validators=[_validate_mentor])
     functional_areas = models.ManyToManyField(FunctionalArea)
+    receive_email_on_add_report = models.BooleanField(null=False,
+                                                      blank=True,
+                                                      default=True)
+    receive_email_on_edit_report = models.BooleanField(null=False,
+                                                       blank=True,
+                                                       default=False)
 
     class Meta:
         permissions = (('create_user', 'Can create new user'),

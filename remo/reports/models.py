@@ -13,6 +13,7 @@ from remo.base.utils import (add_permissions_to_groups,
                              get_object_or_none, go_back_n_months)
 from remo.events.helpers import get_attendee_role_event
 from remo.events.models import Attendance as EventAttendance
+from remo.reports.tasks import send_remo_mail
 
 
 OVERDUE_DAY = 7
@@ -48,7 +49,7 @@ class Report(models.Model):
         return self.month.strftime('%b %Y')
 
 
-@receiver(post_migrate)
+@receiver(post_migrate, dispatch_uid='report_set_groups_signal')
 def report_set_groups(app, sender, signal, **kwargs):
     """Set permissions to groups."""
     if (isinstance(app, basestring) and app != 'reports'):
@@ -61,21 +62,24 @@ def report_set_groups(app, sender, signal, **kwargs):
     add_permissions_to_groups('reports', perms)
 
 
-@receiver(pre_save, sender=Report)
+@receiver(pre_save, sender=Report,
+          dispatch_uid='report_set_mentor_pre_save_signal')
 def report_set_mentor_pre_save(sender, instance, raw, **kwargs):
     """Set mentor from UserProfile only on first save."""
     if not instance.id and not raw:
         instance.mentor = instance.user.userprofile.mentor
 
 
-@receiver(pre_save, sender=Report)
+@receiver(pre_save, sender=Report,
+          dispatch_uid='report_set_month_day_pre_save_signal')
 def report_set_month_day_pre_save(sender, instance, **kwargs):
     """Set month day to the first day of the month."""
     instance.month = datetime.datetime(year=instance.month.year,
                                        month=instance.month.month, day=1)
 
 
-@receiver(pre_save, sender=Report)
+@receiver(pre_save, sender=Report,
+          dispatch_uid='report_set_overdue_pre_save_signal')
 def report_set_overdue_pre_save(sender, instance, raw, **kwargs):
     """Set overdue on Report object creation."""
     today = datetime.date.today()
@@ -87,7 +91,8 @@ def report_set_overdue_pre_save(sender, instance, raw, **kwargs):
             instance.overdue = True
 
 
-@receiver(post_save, sender=EventAttendance)
+@receiver(post_save, sender=EventAttendance,
+          dispatch_uid='report_add_event_signal')
 def report_add_event(sender, instance, raw, **kwargs):
     """Add event to report."""
     if raw or not instance.user.groups.filter(name='Rep').exists():
@@ -116,7 +121,30 @@ def report_add_event(sender, instance, raw, **kwargs):
     report_event.save()
 
 
-@receiver(pre_delete, sender=EventAttendance)
+@receiver(post_save, sender=Report,
+          dispatch_uid='email_mentor_on_add_report_signal')
+def email_mentor_on_add_report(sender, instance, created,  **kwargs):
+    """Email a mentor when a user adds or edits a report."""
+    subject = '[Report] Your mentee, %s %s a report for %s.'
+    email_template = 'emails/mentor_notification_report_added_or_edited.txt'
+    month_year = instance.month.strftime('%B %Y')
+    rep_user = instance.user
+    rep_profile = instance.user.userprofile
+    mentor = rep_profile.mentor.userprofile
+    ctx_data = {'rep_user': rep_user, 'rep_profile': rep_profile,
+                'new_report': created, 'month_year': month_year}
+    if created:
+        if mentor.receive_email_on_add_report:
+            subject = subject % (rep_profile.display_name, 'added', month_year)
+            send_remo_mail.delay([instance.mentor], subject, email_template, ctx_data)
+    else:
+        if mentor.receive_email_on_edit_report:
+            subject = subject % (rep_profile.display_name, 'edited', month_year)
+            send_remo_mail.delay([instance.mentor], subject, email_template, ctx_data)
+
+
+@receiver(pre_delete, sender=EventAttendance,
+          dispatch_uid='report_remove_event_signal')
 def report_remove_event(sender, instance, **kwargs):
     """Remove event from report."""
     date = datetime.datetime(year=instance.event.end.year,
