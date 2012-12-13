@@ -1,13 +1,15 @@
 import datetime
 
 from django.contrib.auth.models import User
+from django.core import mail
 from nose.tools import eq_
 from test_utils import TestCase
 
 import fudge
 
-from remo.reports.models import OVERDUE_DAY, Report
 from remo.base.utils import go_back_n_months
+from remo.profiles.models import UserProfile
+from remo.reports.models import OVERDUE_DAY, Report
 
 
 class ModelTest(TestCase):
@@ -80,3 +82,46 @@ class ModelTest(TestCase):
     def test_set_month_day(self):
         """Test that reports month always points to first day of the month."""
         eq_(self.report.month.day, 1)
+
+
+class MentorNotificationOnAddEditReport(TestCase):
+    """Test that a Mentor receives an email when a Mentee adds/edits a report"""
+    fixtures = ['demo_users.json', 'demo_reports.json']
+
+    def setUp(self):
+        self.date = datetime.datetime.now()
+        self.user = User.objects.get(username='rep')
+        self.new_report = Report(user=self.user, month=self.date)
+        self.edit_report = self.user.reports.all()[0]
+        self.user_profile = self.user.userprofile
+        self.mentor_profile = UserProfile.objects.get(user=self.user_profile.mentor)
+
+    def test_send_email_on_add_report(self):
+        """Test sending an email when a new report is added.
+           Default option: True"""
+        self.new_report.save()
+        eq_(len(mail.outbox), 1)
+
+    def test_send_email_on_add_report_with_receive_mail_False(self):
+        """Test sending an email when a new report is added
+           and Mentor has the option in his/her settings disabled."""
+        self.mentor_profile.receive_email_on_add_report = False
+        self.mentor_profile.save()
+
+        self.new_report.save()
+        eq_(len(mail.outbox), 0)
+
+    def test_send_email_on_edit_report_with_receive_mail_False(self):
+        """Test sending an email when a report is edited.
+           Default option: False"""
+        self.edit_report.save()
+        eq_(len(mail.outbox), 0)
+
+    def test_send_email_on_edit_report_with_receive_mail_True(self):
+        """Test sending an email when a report is edited
+           and Mentor has the option in his/her settings enabled."""
+        self.mentor_profile.receive_email_on_edit_report = True
+        self.mentor_profile.save()
+
+        self.edit_report.save()
+        eq_(len(mail.outbox), 1)
