@@ -46,7 +46,7 @@ class Status(models.Model):
         verbose_name_plural = 'statuses'
 
 
-@receiver(pre_save, sender=Bug)
+@receiver(pre_save, sender=Bug, dispatch_uid='set_uppercase_pre_save_signal')
 def set_uppercase_pre_save(sender, instance, **kwargs):
     """Convert status and resolution to uppercase prior to saving."""
     if instance.status:

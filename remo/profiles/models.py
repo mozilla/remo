@@ -175,14 +175,16 @@ class UserAvatar(models.Model):
         return "UserAvatar:%s" % self.user.userprofile.display_name
 
 
-@receiver(pre_save, sender=UserProfile)
+@receiver(pre_save, sender=UserProfile,
+          dispatch_uid='userprofile_set_date_joined_program_pre_save_signal')
 def userprofile_set_date_joined_program_pre_save(sender, instance, **kwargs):
     """Set date_joined_program to today when empty."""
     if not instance.date_joined_program:
         instance.date_joined_program = datetime.date.today()
 
 
-@receiver(pre_save, sender=UserProfile)
+@receiver(pre_save, sender=UserProfile,
+          dispatch_uid='userprofile_set_display_name_pre_save_signal')
 def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
     """Set display_name from user.email if display_name == ''.
 
@@ -219,7 +221,7 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
                 break
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=User, dispatch_uid='create_profile_signal')
 def create_profile(sender, instance, created, raw, **kwargs):
     """Create a matching profile whenever a user object is created.
 
@@ -230,7 +232,8 @@ def create_profile(sender, instance, created, raw, **kwargs):
         profile, new = UserProfile.objects.get_or_create(user=instance)
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=User,
+          dispatch_uid='user_set_inactive_post_save_signal')
 def user_set_inactive_post_save(sender, instance, raw, **kwargs):
     """Set user inactive if there is no associated UserProfile."""
     if instance.first_name and not raw:
@@ -238,14 +241,15 @@ def user_set_inactive_post_save(sender, instance, raw, **kwargs):
         instance.userprofile.save()
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=User,
+          dispatch_uid='auto_add_to_mentor_group_signal')
 def auto_add_to_mentor_group(sender, instance, created, raw, **kwargs):
     """Automatically add new users to Rep group."""
     if created and not raw:
         instance.groups.add(Group.objects.get(name='Rep'))
 
 
-@receiver(post_migrate)
+@receiver(post_migrate, dispatch_uid='report_set_groups_signal')
 def report_set_groups(app, sender, signal, **kwargs):
     """Set permissions to groups."""
     if (isinstance(app, basestring) and app != 'profiles'):
