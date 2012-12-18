@@ -35,7 +35,7 @@ class Event(models.Model):
     timezone = models.CharField(max_length=100)
     venue = models.CharField(max_length=50)
     city = models.CharField(max_length=50, blank=False, default='')
-    region = models.CharField(max_length=50)
+    region = models.CharField(max_length=50, null=False, blank=True, default='')
     country = models.CharField(max_length=50)
     lat = models.FloatField()
     lon = models.FloatField()
