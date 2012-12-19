@@ -33,7 +33,7 @@ class Event(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     timezone = models.CharField(max_length=100)
-    venue = models.CharField(max_length=50)
+    venue = models.CharField(max_length=150)
     city = models.CharField(max_length=50, blank=False, default='')
     region = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
