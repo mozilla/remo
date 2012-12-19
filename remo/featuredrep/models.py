@@ -27,7 +27,7 @@ class FeaturedRep(models.Model):
                        ('can_delete_featured', 'Can delete featured reps'))
 
 
-@receiver(post_migrate)
+@receiver(post_migrate, dispatch_uid='featuredrep_set_groups_signal')
 def featuredrep_set_groups(app, sender, signal, **kwargs):
     """Set permissions to groups."""
     if (isinstance(app, basestring) and app != 'featuredrep'):

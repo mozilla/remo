@@ -93,7 +93,7 @@ class Metric(models.Model):
     outcome = models.CharField(max_length=300)
 
 
-@receiver(pre_save, sender=Event)
+@receiver(pre_save, sender=Event, dispatch_uid='create_slug_signal')
 def create_slug(sender, instance, raw, **kwargs):
     """Auto create unique slug and calculate planning_pad_url."""
     if not instance.slug:
@@ -105,14 +105,15 @@ def create_slug(sender, instance, raw, **kwargs):
         instance.planning_pad_url = url
 
 
-@receiver(post_save, sender=Event)
+@receiver(post_save, sender=Event,
+          dispatch_uid='subscribe_owner_to_event_signal')
 def subscribe_owner_to_event(sender, instance, raw, **kwargs):
     """Auto subscribe owner to Event."""
     if not raw:
         Attendance.objects.get_or_create(event=instance, user=instance.owner)
 
 
-@receiver(post_migrate)
+@receiver(post_migrate, dispatch_uid='event_set_groups_signal')
 def event_set_groups(app, sender, signal, **kwargs):
     """Set permissions to groups."""
     if (isinstance(app, basestring) and app != 'events'):
