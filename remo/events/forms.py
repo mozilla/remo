@@ -200,9 +200,10 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['name', 'start', 'end', 'venue', 'region', 'owner',
-                  'country', 'city', 'lat', 'lon', 'external_link', 'timezone',
-                  'estimated_attendance', 'description', 'extra_content',
-                  'hashtag', 'mozilla_event', 'swag_bug', 'budget_bug']
+                  'country', 'city', 'lat', 'lon', 'external_link',
+                  'planning_pad_url', 'timezone', 'estimated_attendance',
+                  'description', 'extra_content', 'hashtag', 'mozilla_event',
+                  'swag_bug', 'budget_bug']
         widgets = {'lat': forms.HiddenInput(attrs={'id': 'lat'}),
                    'lon': forms.HiddenInput(attrs={'id': 'lon'}),
                    'start': SplitSelectDateTimeWidget(),
