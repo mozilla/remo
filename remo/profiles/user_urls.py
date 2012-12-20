@@ -8,4 +8,6 @@ urlpatterns = patterns('remo.profiles.views',
     url(r'^(?P<display_name>[A-Za-z0-9_]+)/delete/$',
         'delete_user', name='profiles_delete'),
     url(r'^(?P<display_name>[A-Za-z0-9_]+)/r/',
-        include('remo.reports.r_urls')))
+        include('remo.reports.r_urls')),
+    url(r'^(?P<display_name>[A-Za-z0-9_]+)/settings/$',
+        'edit_settings', name='profiles_edit_settings'))

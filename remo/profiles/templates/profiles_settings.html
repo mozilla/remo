@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}
+Mozilla Reps - Settings
+{% endblock %}
+
+{% block content %}
+{% if user_is_mentor(user) %}
+  <form class="custom" method="post"
+        action="{{ url('profiles_edit_settings',
+                       display_name=user.userprofile.display_name) }}">
+    {{ csrf() }}
+    <div class="row">
+      <div class="ten columns">
+        <h4>Settings</h4>
+      </div>
+      <div class="two columns align-right hide-on-phones">
+        <button id="save-settings" type="submit"
+                class="small green button nice radius">
+          Save
+        </button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="twelve columns">
+        <dl class="tabs">
+          <dd class="active"><a href="#mailPreferences">Mail Preferences</a>
+          </dd>
+        </dl>
+
+        <ul class="tabs-content">
+          <li class="active" id="mailPreferencesTab">
+            <div class="dashboard-box">
+              <div class="row">
+                <div class="twelve columns">
+                  {{ settingsform.receive_email_on_add_report }}
+                  {{ settingsform.receive_email_on_add_report.label }}
+                  <br>
+                  {{ settingsform.receive_email_on_edit_report }}
+                  {{ settingsform.receive_email_on_edit_report.label }}
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="two columns align-right show-on-phones">
+      <button id="save-settings" type="submit"
+              class="small green button nice radius top-margined">
+        Save
+      </button>
+    </div>
+  </form>
+{% else %}
+  <div class="row">
+    <div class="twelve columns">
+      <h5>There is nothing here for you yet.</h5>
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}

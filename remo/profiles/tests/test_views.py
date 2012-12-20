@@ -43,12 +43,16 @@ class ViewsTest(TestCase):
                      'date_joined_program': '2011-07-01',
                      'mentor': 6,
                      'functional_areas': 3}
+        self.settings_data = {'receive_email_on_add_report': False,
+                              'receive_email_on_edit_report': True}
         self.user_url = reverse('profiles_view_profile',
                                 kwargs={'display_name': 'Koki'})
         self.user_edit_url = reverse('profiles_edit',
                                      kwargs={'display_name': 'Koki'})
         self.user_delete_url = reverse('profiles_delete',
                                        kwargs={'display_name': 'Koki'})
+        self.user_edit_settings_url = reverse('profiles_edit_settings',
+                                              kwargs={'display_name': 'md'})
 
     def test_view_my_profile_page(self):
         """Get my profile page."""
@@ -308,3 +312,25 @@ class ViewsTest(TestCase):
         response = c.get(url, follow=True)
         self.assertTemplateUsed(response, 'profiles_view.html',
                                 'Admin can\'t view the page')
+
+    def test_view_edit_settings_page(self):
+        """Get edit settings page."""
+        c = Client()
+        c.login(username='mentor', password='passwd')
+        response = c.get(self.user_edit_settings_url)
+        self.assertTemplateUsed(response, 'profiles_settings.html')
+
+    def test_edit_settings(self):
+        """Test correct edit settings mail preferences."""
+        c = Client()
+        c.login(username='mentor', password='passwd')
+        response = c.post(self.user_edit_settings_url,
+                          self.settings_data, follow=True)
+        eq_(response.request['PATH_INFO'], reverse('dashboard'))
+
+        # ensure that settings data were saved
+        user = User.objects.get(username='mentor')
+        eq_(user.userprofile.receive_email_on_add_report,
+            self.settings_data['receive_email_on_add_report'])
+        eq_(user.userprofile.receive_email_on_edit_report,
+            self.settings_data['receive_email_on_edit_report'])
