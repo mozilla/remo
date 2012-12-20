@@ -279,11 +279,11 @@ Mozilla Reps - {{ event.name }}
               <form method="post" action="{{ url('events_subscribe_to_event', slug=event.slug) }}">
                 {{ csrf() }}
                 {% if is_past_event(event) %}
-                  <button type="button" class="small white button nice radius">
+                  <button class="small white button nice radius">
                     I attended this event
                   </button>
                 {% else %}
-                  <button type="button" class="small white button nice radius">
+                  <button class="small white button nice radius">
                     I will attend this event
                   </button>
                 {% endif %}
