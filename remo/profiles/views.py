@@ -214,6 +214,23 @@ def delete_user(request, display_name):
 
     if request.method == 'POST':
         user.delete()
-        messages.success(request, 'User was deleted')
+        messages.success(request, 'User was deleted.')
 
     return redirect('main')
+
+
+@never_cache
+@permission_check(filter_field='display_name', owner_field='user',
+                  model=UserProfile)
+def edit_settings(request, display_name):
+    """Edit user settings."""
+    user = get_object_or_404(User, userprofile__display_name=display_name)
+    form = forms.EditSettingsForm(request.POST or None,
+                                  instance=user.userprofile)
+    if request.method == 'POST':
+        if user.groups.filter(name='Mentor').exists() and form.is_valid():
+            form.save()
+            messages.success(request, 'Settings successfully edited.')
+            return redirect('dashboard')
+    return render(request, 'profiles_settings.html', {'user': user,
+                                                      'settingsform': form})

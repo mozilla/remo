@@ -123,3 +123,24 @@ class ChangeDateJoinedForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['date_joined_program']
+
+
+class EditSettingsForm(forms.ModelForm):
+    """Form to edit user settings regarding mail preferences."""
+    receive_email_on_add_report = forms.BooleanField(required=False,
+                                                     initial=True,
+                                                     label=('Receive email '
+                                                            'when a mentee '
+                                                            'files a new '
+                                                            'report'))
+    receive_email_on_edit_report = forms.BooleanField(required=False,
+                                                      initial=False,
+                                                      label=('Receive email '
+                                                             'when a mentee '
+                                                             'edits a report'))
+
+
+    class Meta:
+        model = UserProfile
+        fields = ['receive_email_on_add_report',
+                  'receive_email_on_edit_report']

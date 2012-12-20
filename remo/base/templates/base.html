@@ -82,6 +82,11 @@
                     <a href="{{ url('profiles_view_my_profile') }}">
                       {{ user.get_full_name()|default('user.userprofile.display_name') }}
                     </a>
+                    {% if user_is_mentor(user) %}
+                      [<a href="{{ url('profiles_edit_settings',
+                                       display_name=user.userprofile.display_name) }}"
+                                >Settings</a>]
+                    {% endif %}
                     [<a href="{{ url('logout') }}">Sign out</a>]
                   {% endif %}
                 </li>
