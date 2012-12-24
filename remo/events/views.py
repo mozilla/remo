@@ -1,8 +1,13 @@
+import pytz
+import uuid
+from datetime import datetime
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.csrf import csrf_exempt
 
@@ -147,3 +152,21 @@ def count_converted_visitors(request, slug):
         return HttpResponse('OK')
 
     return redirect('events_view_event', slug=event.slug)
+
+
+@never_cache
+def export_single_event_to_ical(request, slug):
+    """ICal export of single event."""
+    event = get_object_or_404(Event, slug=slug)
+    my_uuid = uuid.uuid4()
+    date_now = timezone.make_aware(datetime.now(), pytz.UTC)
+    ical = render(request, 'ical_template.ics', {'event': event,
+                                                 'uuid': my_uuid,
+                                                 'date_now': date_now,
+                                                 'host': settings.SITE_URL})
+    response = HttpResponse(ical, mimetype='text/calendar')
+    ical_filename = event.name + '.ics'
+    response['Filename'] = ical_filename
+    response['Content-Disposition'] = ('attachment; filename="%s"' %
+                                       (ical_filename))
+    return response
