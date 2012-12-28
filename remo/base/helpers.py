@@ -33,7 +33,7 @@ def get_display_name(obj):
 @register.filter
 def format_datetime(obj, type=None):
     """Return datetime obj formatted."""
-    if type=='full':
+    if type == 'full':
         return obj.strftime('%d %B %Y %H:%M')
     return obj.strftime('%Y-%m-%d %H:%M')
 
@@ -48,6 +48,12 @@ def format_datetime_iso(obj):
 def format_datetime_unix(obj):
     """Return unix representation of obj."""
     return time.mktime(obj.timetuple())
+
+
+@register.filter
+def format_datetime_utc(obj):
+    """Return datetime object UTC formatted."""
+    return obj.strftime('%Y%m%dT%H%M%S')
 
 
 @register.filter
@@ -107,7 +113,7 @@ def mailhide(value):
 
     args['public_key'] = settings.MAILHIDE_PUB_KEY
     args['encrypted_email'] = base64.urlsafe_b64encode(encrypted_value)
-    args['domain'] = value[value.index('@')+1:]
+    args['domain'] = value[value.index('@') + 1:]
     args['email'] = value[0]
 
     result = ("""<a href="http://mailhide.recaptcha.net/d?k=%(public_key)s&"""

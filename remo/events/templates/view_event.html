@@ -6,10 +6,14 @@ Mozilla Reps - {{ event.name }}
 
 {% block content %}
 <div class="row">
-  <div class="ten columns">
+  <div class="eight columns">
     <h4 class="event-single-title">{{ event.name }}</h4>
   </div>
-  <div class="two columns align-right hide-on-phones">
+  <div class="four columns align-right hide-on-phones">
+    <a href="{{ url('events_icalendar_event', slug=event.slug) }}"
+       class="small white button nice radius">
+      iCalendar
+    </a>
     {% if perms.events.can_edit_events %}
       <a href="{{ url('events_edit_event', slug=event.slug) }}"
          class="small white button nice radius">
@@ -405,9 +409,13 @@ Mozilla Reps - {{ event.name }}
 {% endif %}
 
 <div class="two columns align-right show-on-phones">
+  <a href="{{ url('events_icalendar_event', slug=event.slug) }}"
+     class="small white button nice radius">
+    iCalendar
+  </a>
   {% if perms.events.can_edit_events %}
     <a href="{{ url('events_edit_event', slug=event.slug) }}"
-       class="small white button nice radius">
+       class="top-margined small white button nice radius">
       Edit event
     </a>
   {% endif %}

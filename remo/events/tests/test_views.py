@@ -152,3 +152,11 @@ class ViewsTest(TestCase):
                        kwargs={'slug': 'test-event'}))
         event = Event.objects.get(slug='test-event')
         eq_(event.converted_visitors, 2)
+
+    def test_export_event_to_ical(self):
+        """Test ical export."""
+        c = Client()
+        response = c.get(reverse('events_icalendar_event',
+                                 kwargs={'slug': 'test-event'}))
+        self.assertTemplateUsed(response, 'ical_template.ics')
+        self.failUnless(response['Content-Type'].startswith('text/calendar'))
