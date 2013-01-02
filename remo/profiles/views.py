@@ -16,6 +16,7 @@ from product_details import product_details
 import forms
 from remo.base.decorators import permission_check
 from remo.events.utils import get_events_for_user
+from remo.featuredrep.models import FeaturedRep
 from remo.profiles.models import UserProfile
 from remo.profiles.models import FunctionalArea
 from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
@@ -172,6 +173,7 @@ def view_profile(request, display_name):
     today = date.today()
     data['future_events'] = get_events_for_user(user, from_date=today)
     data['past_events'] = get_events_for_user(user, to_date=today)[:10]
+    data['featured_rep'] = FeaturedRep.objects.filter(user=user)
 
     return render(request, 'profiles_view.html', data)
 
