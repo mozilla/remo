@@ -201,3 +201,5 @@ CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
                   'event/?callbackurl=%(callbackurl)s')
 
 BROWSERID_CREATE_USER = False
+
+REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'

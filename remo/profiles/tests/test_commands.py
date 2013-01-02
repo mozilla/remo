@@ -155,3 +155,18 @@ class FetchEmailsFromWikiTest(TestCase):
         eq_(lines[0], 'foo@example.com')
         eq_(lines[1], 'test@example.com')
         eq_(lines[2], '')
+
+class CronjobsTest(TestCase):
+    """Tests for cronjobs management command."""
+    fixtures = ['demo_users.json']
+
+    def test_new_reps_reminder(self):
+        """Test monthly email reminder for new reps."""
+
+        args = ['new_reps_reminder']
+        management.call_command('cron', *args)
+        eq_(len(mail.outbox), 1)
+
+        reminder = mail.outbox[0]
+        eq_(reminder.from_email, settings.FROM_EMAIL)
+        eq_(reminder.to, [settings.REPS_MENTORS_LIST])
