@@ -7,9 +7,8 @@
 #
 # Modified for reps.mozilla.org
 #
-
-
 import re
+import time
 
 from django.forms.extras.widgets import SelectDateWidget
 from django.forms.widgets import Widget, Select, MultiWidget
@@ -88,7 +87,12 @@ class SelectTimeWidget(Widget):
                 else:
                     self.meridiem_val = 'a.m.'
         except AttributeError:
-            hour_val = minute_val = second_val = 0
+            # convert unicode string to time object
+            t = time.strptime(value, '%H:%M:%S')
+            hour_val = t.tm_hour
+            minute_val = t.tm_min
+            second_val = t.tm_sec
+
             if isinstance(value, basestring):
                 match = RE_TIME.match(value)
                 if match:
