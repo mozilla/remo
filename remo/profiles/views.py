@@ -227,10 +227,9 @@ def edit_settings(request, display_name):
     user = get_object_or_404(User, userprofile__display_name=display_name)
     form = forms.EditSettingsForm(request.POST or None,
                                   instance=user.userprofile)
-    if request.method == 'POST':
-        if user.groups.filter(name='Mentor').exists() and form.is_valid():
-            form.save()
-            messages.success(request, 'Settings successfully edited.')
-            return redirect('dashboard')
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Settings successfully edited.')
+        return redirect('dashboard')
     return render(request, 'profiles_settings.html', {'user': user,
                                                       'settingsform': form})

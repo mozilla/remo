@@ -117,7 +117,7 @@ class ChangeDateJoinedForm(forms.ModelForm):
     """Form to change userprofile date_joined_program field."""
     date_joined_program = forms.DateField(
         required=False,
-        widget=SelectDateWidget(years=range(2011, datetime.today().year+1),
+        widget=SelectDateWidget(years=range(2011, datetime.today().year + 1),
                                 required=False))
 
     class Meta:
@@ -127,20 +127,18 @@ class ChangeDateJoinedForm(forms.ModelForm):
 
 class EditSettingsForm(forms.ModelForm):
     """Form to edit user settings regarding mail preferences."""
-    receive_email_on_add_report = forms.BooleanField(required=False,
-                                                     initial=True,
-                                                     label=('Receive email '
-                                                            'when a mentee '
-                                                            'files a new '
-                                                            'report'))
-    receive_email_on_edit_report = forms.BooleanField(required=False,
-                                                      initial=False,
-                                                      label=('Receive email '
-                                                             'when a mentee '
-                                                             'edits a report'))
-
+    receive_email_on_add_report = forms.BooleanField(
+            required=False, initial=True,
+            label=('Receive email when a mentee files a new report.'))
+    receive_email_on_edit_report = forms.BooleanField(
+            required=False, initial=False,
+            label=('Receive email when a mentee edits a report.'))
+    receive_email_on_add_comment = forms.BooleanField(
+            required=False, initial=True,
+            label=('Receive email when a user comments on a report.'))
 
     class Meta:
         model = UserProfile
         fields = ['receive_email_on_add_report',
-                  'receive_email_on_edit_report']
+                  'receive_email_on_edit_report',
+                  'receive_email_on_add_comment']
