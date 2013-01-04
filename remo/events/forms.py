@@ -8,8 +8,8 @@ from product_details import product_details
 
 from pytz import common_timezones, timezone
 
-from remo.base.helpers import get_full_name
 from datetimewidgets import SplitSelectDateTimeWidget
+from remo.base.helpers import get_full_name
 from remo.remozilla.models import Bug
 
 from models import Event, Metric
@@ -134,6 +134,7 @@ class EventForm(forms.ModelForm):
             start = make_naive(instance.local_start,
                                timezone(instance.timezone))
             self.fields['start_form'].initial = start
+
         if self.instance.end:
             end = make_naive(instance.local_end, timezone(instance.timezone))
             self.fields['end_form'].initial = end

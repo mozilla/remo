@@ -16,4 +16,6 @@ urlpatterns = patterns('remo.events.views',
         name='events_count_converted_visitors'),
     url(r'^(?P<slug>[a-z0-9-]+)/ical/$', 'export_single_event_to_ical',
         name='events_icalendar_event'),
+    url(r'^(?P<slug>[a-z0-9-]+)/emailattendees/$', 'email_attendees',
+        name='email_attendees'),
 )
