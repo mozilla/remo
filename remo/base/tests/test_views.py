@@ -1,6 +1,7 @@
 import base64
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test.client import Client
@@ -10,7 +11,6 @@ from nose.tools import eq_
 from test_utils import TestCase
 
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
-from remo.base.serializers import flatten_dict
 
 
 class ViewsTest(TestCase):
@@ -51,21 +51,45 @@ class ViewsTest(TestCase):
         eq_(response.status_code, 200)
         self.assertTemplateUsed(response, 'dashboard.html')
 
-    def test_email_my_mentees_mentor(self):
-        """Email mentees when mentor."""
+    def test_email_my_mentees_mentor_with_send_True(self):
+        """Email mentees when mentor and checkbox
+        is checked."""
         c = Client()
         c.login(username='mentor', password='passwd')
-        data = {'subject': 'This is subject',
-                'body': ('This is my body',
-                         'Multiline ofcourse')}
+        rep1 = User.objects.get(first_name='Nick')
+        data = {'%s %s <%s>' % (rep1.first_name,
+                                rep1.last_name,
+                                rep1.email): 'True',
+                'subject': 'This is subject',
+                'body': ('This is my body\n',
+                         'Multiline of course')}
         response = c.post(reverse('email_mentees'), data, follow=True)
         self.assertTemplateUsed(response, 'dashboard.html')
         for m in response.context['messages']:
             pass
         eq_(m.tags, u'success')
         eq_(len(mail.outbox), 1)
-        eq_(len(mail.outbox[0].to), 3)
+        eq_(len(mail.outbox[0].to), 1)
         eq_(len(mail.outbox[0].cc), 1)
+
+    def test_email_my_mentees_mentor_with_send_False(self):
+        """Email mentees when mentor and checkbox is
+        not checked."""
+        c = Client()
+        c.login(username='mentor', password='passwd')
+        rep1 = User.objects.get(first_name='Nick')
+        data = {'%s %s <%s>' % (rep1.first_name,
+                                rep1.last_name,
+                                rep1.email): 'False',
+                'subject': 'This is subject',
+                'body': ('This is my body\n',
+                         'Multiline of course')}
+        response = c.post(reverse('email_mentees'), data, follow=True)
+        self.assertTemplateUsed(response, 'dashboard.html')
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'error')
+        eq_(len(mail.outbox), 0)
 
     def test_email_my_mentees_rep(self):
         """Email mentees when rep.
@@ -151,20 +175,3 @@ class ViewsTest(TestCase):
 
         for string, markup in test_strings:
             eq_(mailhide(string), markup)
-
-
-class TestSerializers(TestCase):
-    """Test Serializers."""
-
-    def test_dictionary_convertion(self):
-        """Test flatten_dict()."""
-        foobar = {'key1': 'value1',
-                  'key2': {'skey1': 'svalue1'},
-                  'key3': ['svalue2', 'svalue3']}
-
-        expected_result = {'key1': 'value1',
-                           'key2.skey1': 'svalue1',
-                           'key3.0': 'svalue2',
-                           'key3.1': 'svalue3'}
-
-        eq_(flatten_dict(foobar), expected_result)

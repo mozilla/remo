@@ -976,18 +976,13 @@
   <div id="mail-modal" class="reveal-modal">
     <a class="close-reveal-modal">&#215;</a>
     <p class="lead">Mail your mentees</p>
-    <h4>Copy and paste addresses:</h4>
-    <p>
-      {% for first_name, last_name, email in mentees_emails %}
-        '{{ first_name }} {{ last_name }}'
-        &lt;{{ email }}&gt;{% if not loop.last %}, {% endif %}
-      {% endfor %}
-    </p>
-    <h4>or mail all your mentees directly:</h4>
     <form id="email-mentees-form" method="post"
           action="{{ url('email_mentees') }}" class="custom">
       {{ csrf() }}
-      {{ email_mentees_form }}
+      {% for field in email_mentees_form %}
+        {{field}} {{ field.label }}
+        <br>
+      {% endfor %}
 
       <div class="row">
         <div id="send-mail" class="twelve columns align-right">
