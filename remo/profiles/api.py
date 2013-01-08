@@ -1,3 +1,4 @@
+from datetime import date
 from urllib import unquote
 
 from django.conf import settings
@@ -165,3 +166,15 @@ class RepResource(ClientCachedResource, ModelResource):
             return obj_list.order_by(*order_by_values)
 
         return super(RepResource, self).apply_sorting(obj_list, options)
+
+    def create_response(self, request, data, **response_kwargs):
+        """Add HTTP header to specify the filename of CSV exports."""
+        response = super(RepResource, self).create_response(
+            request, data, **response_kwargs)
+
+        if self.determine_format(request) == 'text/csv':
+            today = date.today()
+            filename = today.strftime('reps-export-%y-%m-%d.csv')
+            response['Content-Disposition'] = 'filename="%s"' % filename
+
+        return response
