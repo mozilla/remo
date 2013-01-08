@@ -1,10 +1,13 @@
 import json
+from datetime import date
 
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from funfactory.helpers import urlparams
 from nose.tools import eq_
 from test_utils import TestCase
+
+import fudge
 
 
 class APITest(TestCase):
@@ -45,3 +48,21 @@ class APITest(TestCase):
             result = json.loads(response.content)
             eq_(len(result['objects']), 1,
                 'Query "%s" did not return 1 result' % query)
+
+    @fudge.patch('datetime.date.today')
+    def test_csv_export(self, fake_requests_obj):
+        """Test for valid filename in CSV export."""
+        # Act like it's March 2012.
+        fake_date = date(year=2012, month=3, day=1)
+        (fake_requests_obj.expects_call().returns(fake_date))
+
+        c = Client()
+        url = urlparams(reverse('api_dispatch_list',
+                                kwargs={'api_name': 'v1',
+                                        'resource_name': 'rep'}))
+
+        response = c.get(url, data={'format': 'csv'})
+
+        self.assertTrue('Content-Disposition' in response)
+        eq_(response['Content-Disposition'],
+            'filename="reps-export-12-03-01.csv"')
