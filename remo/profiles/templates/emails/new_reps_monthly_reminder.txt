@@ -1,0 +1,19 @@
+Hello mentors,
+
+{% if reps|length == 0 %}
+There where no Reps that created an account in our portal within {{ date }}.
+{% else %}
+Those are the new Reps that created an account in our portal within {{ date }}:
+
+{% for rep in reps %}
+   * {{ rep.user.first_name }} {{ rep.user.last_name }} - {{ rep.country }} - {{ SITE_URL }}{{ url('profiles_view_profile', rep.display_name) }} - mentored by {{ rep.mentor.first_name}} {{ rep.mentor.last_name}}
+{% endfor %}
+{% endif %}
+
+Total count of Reps till end of {{ date }}: {{ reps_num }}
+
+This email is for informational purposes only, so please do not send any welcoming notes here :)
+
+Cheers,
+
+Your beloved remobot
