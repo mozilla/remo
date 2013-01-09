@@ -132,6 +132,10 @@ class UserProfile(models.Model):
     receive_email_on_edit_report = models.BooleanField(null=False,
                                                        blank=True,
                                                        default=False)
+    receive_email_on_add_comment = models.BooleanField(null=False,
+                                                       blank=True,
+                                                       default=True)
+
 
     class Meta:
         permissions = (('create_user', 'Can create new user'),

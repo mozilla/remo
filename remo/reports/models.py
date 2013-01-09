@@ -38,7 +38,7 @@ class Report(models.Model):
     overdue = models.BooleanField(default=False)
 
     class Meta:
-        ordering=['-month']
+        ordering = ['-month']
         unique_together = ['user', 'month']
         permissions = (('can_edit_reports', 'Can edit reports'),
                        ('can_delete_reports', 'Can delete reports'),
@@ -123,7 +123,7 @@ def report_add_event(sender, instance, raw, **kwargs):
 
 @receiver(post_save, sender=Report,
           dispatch_uid='email_mentor_on_add_report_signal')
-def email_mentor_on_add_report(sender, instance, created,  **kwargs):
+def email_mentor_on_add_report(sender, instance, created, **kwargs):
     """Email a mentor when a user adds or edits a report."""
     subject = '[Report] Your mentee, %s %s a report for %s.'
     email_template = 'emails/mentor_notification_report_added_or_edited.txt'
@@ -136,11 +136,14 @@ def email_mentor_on_add_report(sender, instance, created,  **kwargs):
     if created:
         if mentor.receive_email_on_add_report:
             subject = subject % (rep_profile.display_name, 'added', month_year)
-            send_remo_mail.delay([instance.mentor], subject, email_template, ctx_data)
+            send_remo_mail.delay([instance.mentor], subject, email_template,
+                                 ctx_data)
     else:
         if mentor.receive_email_on_edit_report:
-            subject = subject % (rep_profile.display_name, 'edited', month_year)
-            send_remo_mail.delay([instance.mentor], subject, email_template, ctx_data)
+            subject = subject % (rep_profile.display_name, 'edited',
+                                 month_year)
+            send_remo_mail.delay([instance.mentor], subject, email_template,
+                                 ctx_data)
 
 
 @receiver(pre_delete, sender=EventAttendance,
@@ -168,6 +171,22 @@ class ReportComment(models.Model):
         ordering = ['id']
 
 
+@receiver(post_save, sender=ReportComment,
+          dispatch_uid='email_user_on_add_comment_signal')
+def email_user_on_add_comment(sender, instance, **kwargs):
+    """Email a user when a comment is added to a report."""
+    subject = '[Report] User %s commented on your report of %s'
+    email_template = 'emails/user_notification_on_add_comment.txt'
+    report = instance.report
+    owner = instance.report.user
+    ctx_data = {'report': report, 'owner': owner, 'user': instance.user,
+                'comment': instance.comment, 'created_on': instance.created_on}
+    if owner.userprofile.receive_email_on_add_comment:
+        subject = subject % (instance.user.get_full_name(),
+                             report.month.strftime('%B %Y'))
+        send_remo_mail.delay([owner], subject, email_template, ctx_data)
+
+
 class ReportEvent(models.Model):
     """Event in Report Model."""
     report = models.ForeignKey(Report)
@@ -179,6 +198,7 @@ class ReportEvent(models.Model):
 
     # class Meta:
     #     unique_together = ['report', 'link']
+
 
 class ReportLink(models.Model):
     """Link in Reports Model."""

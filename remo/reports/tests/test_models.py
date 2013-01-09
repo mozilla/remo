@@ -9,7 +9,7 @@ import fudge
 
 from remo.base.utils import go_back_n_months
 from remo.profiles.models import UserProfile
-from remo.reports.models import OVERDUE_DAY, Report
+from remo.reports.models import OVERDUE_DAY, Report, ReportComment
 
 
 class ModelTest(TestCase):
@@ -50,7 +50,7 @@ class ModelTest(TestCase):
 
         # act like it's OVERDUE_DAY + 1
         fake_date = datetime.datetime(year=today.year, month=today.month,
-                                      day=OVERDUE_DAY+1)
+                                      day=OVERDUE_DAY + 1)
         (fake_requests_obj.expects_call().returns(fake_date))
 
         month_year = go_back_n_months(today)
@@ -85,7 +85,9 @@ class ModelTest(TestCase):
 
 
 class MentorNotificationOnAddEditReport(TestCase):
-    """Test that a Mentor receives an email when a Mentee adds/edits a report"""
+    """Test that a Mentor receives an email when a Mentee
+    adds/edits a report.
+    """
     fixtures = ['demo_users.json', 'demo_reports.json']
 
     def setUp(self):
@@ -94,11 +96,13 @@ class MentorNotificationOnAddEditReport(TestCase):
         self.new_report = Report(user=self.user, month=self.date)
         self.edit_report = self.user.reports.all()[0]
         self.user_profile = self.user.userprofile
-        self.mentor_profile = UserProfile.objects.get(user=self.user_profile.mentor)
+        self.mentor_profile = UserProfile.objects.get(
+                user=self.user_profile.mentor)
 
     def test_send_email_on_add_report(self):
         """Test sending an email when a new report is added.
-           Default option: True"""
+           Default option: True
+        """
         self.new_report.save()
         eq_(len(mail.outbox), 1)
 
@@ -113,15 +117,51 @@ class MentorNotificationOnAddEditReport(TestCase):
 
     def test_send_email_on_edit_report_with_receive_mail_False(self):
         """Test sending an email when a report is edited.
-           Default option: False"""
+           Default option: False
+        """
         self.edit_report.save()
         eq_(len(mail.outbox), 0)
 
     def test_send_email_on_edit_report_with_receive_mail_True(self):
         """Test sending an email when a report is edited
-           and Mentor has the option in his/her settings enabled."""
+           and Mentor has the option in his/her settings enabled.
+        """
         self.mentor_profile.receive_email_on_edit_report = True
         self.mentor_profile.save()
 
         self.edit_report.save()
         eq_(len(mail.outbox), 1)
+
+
+class UserNotificationOnAddComment(TestCase):
+    """Test that a user receives an email when an authenticated user
+    adds a comment on a report.
+    """
+    fixtures = ['demo_users.json', 'demo_reports.json']
+
+    def setUp(self):
+        self.date = datetime.datetime.now()
+        self.user = User.objects.get(username='rep')
+        self.user_profile = self.user.userprofile
+        self.report = Report.objects.get(pk=1)
+        self.commenter = self.user.userprofile.mentor
+        self.new_comment = ReportComment(user=self.commenter,
+                                         created_on=self.date,
+                                         report=self.report)
+
+    def test_send_email_on_add_comment_with_receive_mail_True(self):
+        """Test sending email when a new comment is added.
+        Default option: True
+        """
+        self.new_comment.save()
+        eq_(len(mail.outbox), 1)
+
+    def test_send_email_on_add_comment_with_receive_mail_False(self):
+        """Test sending email when a new comment is added and
+        user has the option disabled in his/her settings.
+        """
+        self.user_profile.receive_email_on_add_comment = False
+        self.user_profile.save()
+
+        self.new_comment.save()
+        eq_(len(mail.outbox), 0)
