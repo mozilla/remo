@@ -157,13 +157,16 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
       <!--End of if_events -->
     {% endif %}
   </div>
+
   <div class="six columns">
-    {% if usergroups %}
+    <!-- The following div.row should be displayed if usergroups OR featuredrep -->
+    {% if usergroups or featured_rep.count() %}
       <div class="row">
         <div class="one columns pictogram">
           )
         </div>
         <div class="eleven columns">
+          {% if usergroups %}
             <h6 class="profile-item">
               {% if usergroups.count() %}
                 {{ pageuser.first_name }} is a
@@ -181,7 +184,26 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
                   {% if not loop.last %} and a {% endif %}
                 {% endfor %}
               {% endif %}
-          </h6>
+            </h6>
+          {% endif %}
+          {% if featured_rep.count() %}
+            <!-- Display the following(s) if featured Rep -->
+            <h6 class="profile-item">
+              Featured Rep for
+              {% for featured in featured_rep %}
+                <a href="#" 
+                   data-reveal-id="featured-modal-{{ featured.created_on|
+                                                     format_datetime_utc }}">
+                  {{ featured.created_on|strftime('%B %Y') }}
+                </a>
+                {% if not loop.last %}
+                  ,&nbsp;
+                {% else %}
+                  .
+                {% endif %}
+              {% endfor %}
+            </h6>
+          {% endif %}
         </div>
       </div>
     {% endif %}
@@ -427,5 +449,23 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
     </div>
   </div>
 {% endif %}
+
+<!-- Featured Rep text Reveal Modal -->
+{% for featured in featured_rep %}
+  <div class="reveal-modal" 
+       id="featured-modal-{{ featured.created_on|format_datetime_utc }}">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">
+      Featured for {{ featured.created_on|strftime('%B %Y') }}
+    </p>
+    <h2>
+      {{ featured.user.get_full_name() }}
+    </h2>
+    <!-- Make following p Markdown to match featured rep content -->
+    <p>
+      {{ featured.text|markdown }}
+    </p>
+  </div>
+{% endfor %}
 
 {% endblock %}
