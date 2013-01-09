@@ -16,11 +16,11 @@ class EmailMenteesForm(forms.Form):
         mentees = (User.objects.filter(userprofile__mentor=user).
                    values_list('first_name', 'last_name', 'email'))
         for first_name, last_name, email in mentees:
-            self.fields['%s %s <%s>' %
-                        (first_name, last_name, email)] = forms.BooleanField(
-                            initial=True, required=False,
-                            widget=forms.CheckboxInput(
-                                attrs={'class': 'input-text big'}))
+            field_name = '%s %s <%s>' % (first_name, last_name, email)
+            self.fields[field_name] = forms.BooleanField(
+                    label=field_name, initial=True, required=False,
+                    widget=forms.CheckboxInput(
+                        attrs={'class': 'input-text big'}))
         self.fields['subject'] = forms.CharField(label='',
             widget=forms.TextInput(attrs={'placeholder': 'Subject',
                                           'required': 'required',
