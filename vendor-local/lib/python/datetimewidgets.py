@@ -88,10 +88,15 @@ class SelectTimeWidget(Widget):
                     self.meridiem_val = 'a.m.'
         except AttributeError:
             # convert unicode string to time object
-            t = time.strptime(value, '%H:%M:%S')
-            hour_val = t.tm_hour
-            minute_val = t.tm_min
-            second_val = t.tm_sec
+            try:
+                t = time.strptime(value, '%H:%M:%S')
+                hour_val = t.tm_hour
+                minute_val = t.tm_min
+                second_val = t.tm_sec
+            except TypeError:
+                hour_val = 0
+                minute_val = 0
+                second_val = 0
 
             if isinstance(value, basestring):
                 match = RE_TIME.match(value)
