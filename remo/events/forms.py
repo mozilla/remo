@@ -68,6 +68,7 @@ def validate_datetime(data, **kwargs):
         raise ValidationError('Date chosen is invalid.')
     return data
 
+
 class EventForm(forms.ModelForm):
     """Form of an event."""
     country = forms.ChoiceField(
@@ -79,8 +80,8 @@ class EventForm(forms.ModelForm):
         choices=EST_ATTENDANCE_CHOICES,
         error_messages={'required': 'Please select one option from the list.'})
     owner = forms.IntegerField(required=False)
-    timezone = forms.ChoiceField(choices= zip(common_timezones,
-                                              common_timezones))
+    timezone = forms.ChoiceField(choices=zip(common_timezones,
+                                             common_timezones))
     start = forms.DateTimeField(required=False)
     start_form = forms.DateTimeField(widget=SplitSelectDateTimeWidget(),
                                      validators=[validate_datetime])
@@ -129,7 +130,6 @@ class EventForm(forms.ModelForm):
             end = make_naive(instance.local_end, timezone(instance.timezone))
             self.fields['end_form'].initial = end
 
-
         # Use of intermediate fields to translate between bug.id and
         # bug.bug_id
         if instance.budget_bug:
@@ -150,17 +150,18 @@ class EventForm(forms.ModelForm):
         else:
             cdata['owner'] = self.instance.owner
 
+        # Check if keys exists in cleaned data.
+        if (not self.cleaned_data.has_key('start_form') or
+            not self.cleaned_data.has_key('end_form')):
+                raise ValidationError('Please correct the form errors.')
         # Set timezone
         t = timezone(cdata['timezone'])
-        if 'start_form' in cdata:
-            start = make_naive(cdata['start_form'],
-                               timezone(settings.TIME_ZONE))
-            cdata['start'] = t.localize(start)
-
-        if 'end_form' in cdata:
-            end = make_naive(cdata['end_form'],
-                             timezone(settings.TIME_ZONE))
-            cdata['end'] = t.localize(end)
+        start = make_naive(cdata['start_form'],
+                           timezone(settings.TIME_ZONE))
+        cdata['start'] = t.localize(start)
+        end = make_naive(cdata['end_form'],
+                         timezone(settings.TIME_ZONE))
+        cdata['end'] = t.localize(end)
 
         # Directly write to self.errors as
         # ValidationError({'start_form': ['Error message']}) doesn't
