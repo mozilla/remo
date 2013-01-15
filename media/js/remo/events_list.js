@@ -167,7 +167,7 @@ var update_results = function(data, query, newquery, past_events) {
     }
 
     if ((parseInt(data.meta.limit, 10) === 0) ||
-        (parseInt(data.meta.offset, 10) + EventsLib.results_batch >= data.meta.total_count)) {
+        (parseInt(data.meta.offset, 10) + EventsLib.results_batch >= parseInt(data.meta.total_count, 10))) {
         EventsLib.allset = true;
     }
     else {
