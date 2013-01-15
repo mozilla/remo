@@ -151,7 +151,8 @@ var update_results = function(data, query, newquery, update_pointers) {
         ProfilesLib.table_search_list_elm.empty();
     }
 
-    if (data.meta.offset + ProfilesLib.results_batch >= data.meta.total_count) {
+    if ((parseInt(data.meta.limit, 10) === 0) ||
+        (parseInt(data.meta.offset, 10) + ProfilesLib.results_batch >= parseInt(data.meta.total_count, 10))) {
         ProfilesLib.allset = true;
         ProfilesLib.profiles_loading_wrapper_elm.hide();
     }
