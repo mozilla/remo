@@ -87,11 +87,11 @@ class ProfileResource(ModelResource):
         return get_avatar_url(bundle.obj.user, -1)
 
     def dehydrate_mentor(self, bundle):
-        """Calculate and return full avatar of Rep."""
+        """Calculate and return mentors."""
         return bundle.obj.user.groups.filter(name='Mentor').count() == 1
 
     def dehydrate_council(self, bundle):
-        """Calculate and return full avatar of Rep."""
+        """Calculate and return council members."""
         return bundle.obj.user.groups.filter(name='Council').count() == 1
 
 
