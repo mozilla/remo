@@ -165,7 +165,7 @@ def export_single_event_to_ical(request, slug):
                                                  'date_now': date_now,
                                                  'host': settings.SITE_URL})
     response = HttpResponse(ical, mimetype='text/calendar')
-    ical_filename = event.name + '.ics'
+    ical_filename = event.slug + '.ics'
     response['Filename'] = ical_filename
     response['Content-Disposition'] = ('attachment; filename="%s"' %
                                        (ical_filename))
