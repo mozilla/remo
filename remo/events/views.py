@@ -1,6 +1,6 @@
 import pytz
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user
@@ -91,6 +91,15 @@ def edit_event(request, slug=None):
     event, created = get_or_create_instance(Event, slug=slug)
     if created:
         event.owner = request.user
+    else:
+        # This is for backwards compatibility for all the events
+        # that were set before the change in the minutes section
+        # of the drop down widget to multiples of 5.
+        # Start time: Floor rounding
+        # End time: Ceilling rounding
+        event.start -= timedelta(minutes=event.start.minute % 5)
+        if (event.end.minute % 5) != 0:
+            event.end += timedelta(minutes=(5 - (event.end.minute % 5)))
 
     if request.user.groups.filter(name='Admin').count():
         event_form = forms.EventForm(request.POST or None,
