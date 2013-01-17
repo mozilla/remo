@@ -65,6 +65,16 @@ class ProfileResource(ModelResource):
                      'city': ALL,
                      'functional_areas': ALL_WITH_RELATIONS}
 
+    def dehydrate(self, bundle):
+        """Prepare bundle.data for CSV export."""
+        if bundle.request.method == 'GET':
+            req = bundle.request.GET
+            if req.get('format') == 'csv':
+                bundle.data.pop('functional_areas', None)
+                bundle.data.pop('personal_blog_feed', None)
+                bundle.data.pop('profile_url', None)
+        return bundle
+
     def dehydrate_profile_url(self, bundle):
         """Calculate and return full url to Rep profile."""
         return (settings.SITE_URL + reverse('profiles_view_profile',
@@ -153,6 +163,15 @@ class RepResource(ClientCachedResource, ModelResource):
                                     filter(groups__name='Rep'))
 
         return base_object_list
+
+    def dehydrate(self, bundle):
+        """Prepare bundle.data for CSV export."""
+        if bundle.request.method == 'GET':
+            req = bundle.request.GET
+            if req.get('format') == 'csv':
+                bundle.data.pop('fullname', None)
+                bundle.data.pop('resource_uri', None)
+        return bundle
 
     def apply_sorting(self, obj_list, options=None):
         """Add support for multiple order_by parameters."""
