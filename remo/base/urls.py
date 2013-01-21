@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'labs/$', direct_to_template, {'template': 'labs.html'},
         name='labs'),
     url(r'^$', 'remo.base.views.main', name='main'),
+    url(r'settings/$', 'remo.base.views.edit_settings', name='edit_settings'),
 )

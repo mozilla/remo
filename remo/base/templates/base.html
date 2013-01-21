@@ -83,9 +83,7 @@
                       <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
                         {{ user.get_full_name()|default('user.userprofile.display_name') }}
                       </a>
-                      [<a href="{{ url('profiles_edit_settings',
-                                        display_name=user.userprofile.display_name) }}"
-                                >Settings</a>]
+                      [<a href="{{ url('edit_settings') }}">Settings</a>]
                       [<a href="{{ url('logout') }}">Sign out</a>]
                     </div>
                     <div class="show-on-phones">
@@ -93,9 +91,7 @@
                         {{ user.get_full_name()|default('user.userprofile.display_name') }}
                       </a>
                       <div>
-                        <a href="{{ url('profiles_edit_settings',
-                                          display_name=user.userprofile.display_name) }}"
-                                  >Settings </a>|
+                        <a href="{{ url('edit_settings') }}">Settings </a>|
                         <a href="{{ url('logout') }}"> Sign out</a>
                       </div>
                     </div>
