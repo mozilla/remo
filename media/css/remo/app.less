@@ -1337,6 +1337,70 @@ form.custom#events-searchform div.custom.dropdown {
     text-align: center;
 }
 
+#adv-search-icon-events {
+    float: right;
+    margin-top: 17px !important;
+}
+
+@media only screen and (max-width: 767px) {
+    #adv-search-icon-events {
+        float: right;
+        margin-top: 8px !important;
+    }
+}
+
+#events-period-selector + .custom {
+    float: left;
+}
+
+input.datepicker {
+    margin: 0 auto !important;
+}
+
+@media only screen and (max-width: 767px) {
+    input.datepicker {
+        .top-margined;
+    }
+}
+
+.ui-datepicker {
+    z-index: 200px;
+}
+
+.ui-datepicker th {
+    padding: 0.4em 0.3em !important;
+}
+
+.ui-datepicker-header {
+    font-weight: bold;
+    border: 1px solid rgb(221, 221, 221);
+    border-bottom: none;
+    background: none repeat scroll 0% 0% rgb(245, 245, 245);
+}
+
+.ui-datepicker-next {
+    font-weight: bold;
+    text-align: center;
+    color: gray;
+    &:after {
+        content: ">";
+    }
+}
+
+.ui-datepicker-prev {
+    font-weight: bold;
+    text-align: center;
+    color: gray;
+    &:after {
+        content: "<";
+    }
+}
+@media only screen and (max-width: 767px) {
+    #icalendar-export-button {
+        .top-margined;
+    }
+}
+
 /* -----------------------------------------
    Labs Page Styles
 ----------------------------------------- */
