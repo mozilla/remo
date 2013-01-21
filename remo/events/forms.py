@@ -83,11 +83,7 @@ class EventForm(forms.ModelForm):
     timezone = forms.ChoiceField(choices=zip(common_timezones,
                                              common_timezones))
     start = forms.DateTimeField(required=False)
-    start_form = forms.DateTimeField(widget=SplitSelectDateTimeWidget(),
-                                     validators=[validate_datetime])
     end = forms.DateTimeField(required=False)
-    end_form = forms.DateTimeField(widget=SplitSelectDateTimeWidget(),
-                                   validators=[validate_datetime])
 
     def __init__(self, *args, **kwargs):
         """Initialize form.
@@ -121,6 +117,18 @@ class EventForm(forms.ModelForm):
                                               'class': 'input-text big'}))
 
         instance = self.instance
+        # Dynamically set the year portion of the datetime widget
+        now = datetime.now()
+        start_year = getattr(self.instance.start, 'year', now.year)
+        end_year = getattr(self.instance.end, 'year', now.year)
+        self.fields['start_form'] = forms.DateTimeField(
+                widget=SplitSelectDateTimeWidget(
+                    years=range(start_year, now.year + 10), minute_step=5),
+                validators=[validate_datetime])
+        self.fields['end_form'] = forms.DateTimeField(
+                widget=SplitSelectDateTimeWidget(
+                    years=range(end_year, now.year + 10), minute_step=5),
+                validators=[validate_datetime])
         # Make times local to venue
         if self.instance.start:
             start = make_naive(instance.local_start,
