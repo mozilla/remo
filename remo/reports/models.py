@@ -125,23 +125,24 @@ def report_add_event(sender, instance, raw, **kwargs):
           dispatch_uid='email_mentor_on_add_report_signal')
 def email_mentor_on_add_report(sender, instance, created, **kwargs):
     """Email a mentor when a user adds or edits a report."""
-    subject = '[Report] Your mentee, %s %s a report for %s.'
+    subject = '[Report] Your mentee, %s %s a report for %s %s.'
     email_template = 'emails/mentor_notification_report_added_or_edited.txt'
-    month_year = instance.month.strftime('%B %Y')
+    month = instance.month.strftime('%B')
+    year = instance.month.strftime('%Y')
     rep_user = instance.user
     rep_profile = instance.user.userprofile
     mentor = rep_profile.mentor.userprofile
     ctx_data = {'rep_user': rep_user, 'rep_profile': rep_profile,
-                'new_report': created, 'month_year': month_year}
+                'new_report': created, 'month': month, 'year': year}
     if created:
         if mentor.receive_email_on_add_report:
-            subject = subject % (rep_profile.display_name, 'added', month_year)
+            subject = subject % (rep_profile.display_name, 'added', month, year)
             send_remo_mail.delay([instance.mentor], subject, email_template,
                                  ctx_data)
     else:
         if mentor.receive_email_on_edit_report:
             subject = subject % (rep_profile.display_name, 'edited',
-                                 month_year)
+                                 month, year)
             send_remo_mail.delay([instance.mentor], subject, email_template,
                                  ctx_data)
 
