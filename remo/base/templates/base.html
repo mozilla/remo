@@ -79,13 +79,26 @@
                              value="{{ get_next_url(request) }}" />
                     </form>
                   {% else %}
-                    <a href="{{ url('profiles_view_my_profile') }}">
-                      {{ user.get_full_name()|default('user.userprofile.display_name') }}
-                    </a>
-                    [<a href="{{ url('profiles_edit_settings',
-                                      display_name=user.userprofile.display_name) }}"
-                              >Settings</a>]
-                    [<a href="{{ url('logout') }}">Sign out</a>]
+                    <div class="hide-on-phones">
+                      <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
+                        {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                      </a>
+                      [<a href="{{ url('profiles_edit_settings',
+                                        display_name=user.userprofile.display_name) }}"
+                                >Settings</a>]
+                      [<a href="{{ url('logout') }}">Sign out</a>]
+                    </div>
+                    <div class="show-on-phones">
+                      <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
+                        {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                      </a>
+                      <div>
+                        <a href="{{ url('profiles_edit_settings',
+                                          display_name=user.userprofile.display_name) }}"
+                                  >Settings </a>|
+                        <a href="{{ url('logout') }}"> Sign out</a>
+                      </div>
+                    </div>
                   {% endif %}
                 </li>
               </ul>
