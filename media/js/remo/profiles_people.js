@@ -210,6 +210,7 @@ function send_query(newquery) {
         newquery = false;
     }
     ProfilesLib.limited = false;
+    var API_CSV_URL = '/api/v1/rep/?order_by=profile__country,last_name,first_name&offset=0&limit=0';
     var API_URL = '/api/v1/rep/?order_by=profile__country,last_name,first_name&offset='+ ProfilesLib.offset;
     var value = ProfilesLib.location_elm.attr('hash').substring(2);
 
@@ -252,6 +253,8 @@ function send_query(newquery) {
         extra_q += '&group=' + group;
     }
 
+    csv_q = extra_q;
+
     if (!country && !area && !search && !group) {
         ProfilesLib.limited = true;
         extra_q += '&limit=' + ProfilesLib.results_batch;
@@ -274,7 +277,7 @@ function send_query(newquery) {
     ProfilesLib.request.send();
 
     // Set the CSV url
-    ProfilesLib.api_csv_url = API_URL + extra_q + '&format=csv';
+    ProfilesLib.api_csv_url = API_CSV_URL + csv_q + '&format=csv';
 
     // Rebind events.
     bind_events();
