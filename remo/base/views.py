@@ -9,10 +9,10 @@ from django.shortcuts import redirect, render
 from django.template import Context, RequestContext, loader
 from django.views.decorators.cache import cache_control, never_cache
 
+import forms
 import utils
 
 from remo.base.decorators import permission_check
-from remo.base.forms import EmailMenteesForm
 from remo.featuredrep.models import FeaturedRep
 from remo.remozilla.models import Bug
 from remo.reports.models import Report
@@ -75,7 +75,7 @@ def dashboard(request):
         args['mentees_emails'] = (
             my_mentees.values_list('first_name', 'last_name', 'email') or
             None)
-        args['email_mentees_form'] = EmailMenteesForm(user)
+        args['email_mentees_form'] = forms.EmailMenteesForm(user)
 
     if user.groups.filter(Q(name='Admin') | Q(name='Council')).exists():
         args['all_budget_requests'] = budget_requests.all()[:20]
@@ -136,10 +136,25 @@ def login_failed(request):
 def email_mentees(request):
     """Email my mentees view."""
     if request.method == 'POST':
-        email_form = EmailMenteesForm(request.user, request.POST)
+        email_form = forms.EmailMenteesForm(request.user, request.POST)
         if email_form.is_valid():
             email_form.send_mail(request)
         else:
             messages.error(request, 'Email not sent. Invalid data.')
 
     return redirect('dashboard')
+
+
+@never_cache
+@permission_check()
+def edit_settings(request):
+    """Edit user settings."""
+    user = request.user
+    form = forms.EditSettingsForm(request.POST or None,
+                                  instance=user.userprofile)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Settings successfully edited.')
+        return redirect('dashboard')
+    return render(request, 'settings.html', {'user': user,
+                                             'settingsform': form})
