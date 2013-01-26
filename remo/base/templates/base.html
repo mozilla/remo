@@ -73,23 +73,31 @@
                     <a id="browserid" href="#">Sign In</a>
                      or
                     <a href="#" data-reveal-id="join-modal">Join</a>
-                    <form method="POST" action="{{ url('browserid_verify') }}">
-                      {{ csrf() }} {{ browserid_form }}
+                    <form method="POST" action="{{ url('mozilla_browserid_verify') }}">
+                      {{ csrf() }} {{ browserid_form.as_p() }}
                       <input type="hidden" name="next"
                              value="{{ get_next_url(request) }}" />
                     </form>
                   {% else %}
                     <div class="hide-on-phones">
-                      <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
+                      {% if user_is_rep(user) %}
+                        <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
+                          {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                        </a>
+                      {% else %}
                         {{ user.get_full_name()|default('user.userprofile.display_name') }}
-                      </a>
+                      {% endif %}
                       [<a href="{{ url('edit_settings') }}">Settings</a>]
                       [<a href="{{ url('logout') }}">Sign out</a>]
                     </div>
                     <div class="show-on-phones">
-                      <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
+                      {% if user_is_rep(user) %}
+                        <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
+                          {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                        </a>
+                      {% else %}
                         {{ user.get_full_name()|default('user.userprofile.display_name') }}
-                      </a>
+                      {% endif %}
                       <div>
                         <a href="{{ url('edit_settings') }}">Settings </a>|
                         <a href="{{ url('logout') }}"> Sign out</a>

@@ -245,14 +245,6 @@ def user_set_inactive_post_save(sender, instance, raw, **kwargs):
         instance.userprofile.save()
 
 
-@receiver(post_save, sender=User,
-          dispatch_uid='auto_add_to_mentor_group_signal')
-def auto_add_to_mentor_group(sender, instance, created, raw, **kwargs):
-    """Automatically add new users to Rep group."""
-    if created and not raw:
-        instance.groups.add(Group.objects.get(name='Rep'))
-
-
 @receiver(post_migrate, dispatch_uid='report_set_groups_signal')
 def report_set_groups(app, sender, signal, **kwargs):
     """Set permissions to groups."""

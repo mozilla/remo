@@ -33,12 +33,12 @@ urlpatterns = patterns('',
     # featuredrep
     url(r'^featured/', include('remo.featuredrep.urls')),
 
-    # browserid
-    url(r'^browserid/', include('django_browserid.urls')),
+    # custom browserid
+    url(r'', include('remo.base.urls')),
 
     # login / logout
-    url(r'^login/failed/$', 'remo.base.views.login_failed',
-        name='login_failed'),
+    url(r'^login/failed/$',
+        'remo.base.views.login_failed', name='login_failed'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': '/'}, name='logout'),
 

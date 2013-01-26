@@ -169,3 +169,15 @@ def field_errors(field):
 def get_full_name(user):
     """Return user's fullname bugzilla style."""
     return u'%s :%s' % (user.get_full_name(), user.userprofile.display_name)
+
+
+@register.function
+def user_is_mozillian(user):
+    """Check is a user belongs to Mozillians's group."""
+    return user.groups.filter(name='Mozillians').exists()
+
+
+@register.function
+def user_is_rep(user):
+    """Check is a user belongs to Rep's group."""
+    return user.groups.filter(name='Rep').exists()

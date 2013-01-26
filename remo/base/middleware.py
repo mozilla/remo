@@ -16,7 +16,8 @@ class RegisterMiddleware(object):
 
     def process_request(self, request):
         if (request.user.is_authenticated() and not
-            request.user.userprofile.registration_complete):
+            request.user.userprofile.registration_complete and not
+                request.user.groups.filter(name='Mozillians').exists()):
 
             allow_urls = [
                 reverse('logout'),
@@ -25,7 +26,7 @@ class RegisterMiddleware(object):
                                 request.user.userprofile.display_name})]
 
             if (not request.path.startswith('/media') and
-                not filter(lambda x: request.path == x, allow_urls)):
+                    not filter(lambda x: request.path == x, allow_urls)):
                 messages.warning(request, 'Please complete your '
                                           'profile before proceeding.')
                 return redirect('profiles_edit',
