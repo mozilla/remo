@@ -6,8 +6,7 @@ Mozilla Reps - Settings
 
 {% block content %}
 <form class="custom" method="post"
-      action="{{ url('profiles_edit_settings',
-                      display_name=user.userprofile.display_name) }}">
+      action="{{ url('edit_settings') }}">
   {{ csrf() }}
   <div class="row">
     <div class="ten columns">

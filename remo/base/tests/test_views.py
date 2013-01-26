@@ -17,6 +17,12 @@ class ViewsTest(TestCase):
     """Test views."""
     fixtures = ['demo_users.json']
 
+    def setUp(self):
+        self.settings_data = {'receive_email_on_add_report': False,
+                              'receive_email_on_edit_report': True,
+                              'receive_email_on_add_comment': True}
+        self.user_edit_settings_url = reverse('edit_settings')
+
     def test_view_main_page(self):
         """Get main page."""
         c = Client()
@@ -175,3 +181,38 @@ class ViewsTest(TestCase):
 
         for string, markup in test_strings:
             eq_(mailhide(string), markup)
+
+    def test_view_edit_settings_page(self):
+        """Get edit settings page."""
+        c = Client()
+        c.login(username='mentor', password='passwd')
+        response = c.get(self.user_edit_settings_url)
+        self.assertTemplateUsed(response, 'settings.html')
+
+    def test_edit_settings_mentor(self):
+        """Test correct edit settings mail preferences as mentor."""
+        c = Client()
+        c.login(username='mentor', password='passwd')
+        response = c.post(self.user_edit_settings_url,
+                          self.settings_data, follow=True)
+        eq_(response.request['PATH_INFO'], reverse('dashboard'))
+
+        # Ensure that settings data were saved
+        user = User.objects.get(username='mentor')
+        eq_(user.userprofile.receive_email_on_add_report,
+            self.settings_data['receive_email_on_add_report'])
+        eq_(user.userprofile.receive_email_on_edit_report,
+            self.settings_data['receive_email_on_edit_report'])
+
+    def test_edit_settings_rep(self):
+        """Test correct edit settings mail preferences as rep."""
+        c = Client()
+        c.login(username='rep', password='passwd')
+        response = c.post(self.user_edit_settings_url,
+                          self.settings_data, follow=True)
+        eq_(response.request['PATH_INFO'], reverse('dashboard'))
+
+        # Ensure that settings data were saved
+        user = User.objects.get(username='rep')
+        eq_(user.userprofile.receive_email_on_add_comment,
+            self.settings_data['receive_email_on_add_comment'])

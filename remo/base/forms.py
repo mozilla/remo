@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from happyforms import forms
 
 from remo.base.tasks import send_mail_task
-
+from remo.profiles.models import UserProfile
 
 class EmailMenteesForm(forms.Form):
     """Form to email mentees."""
@@ -48,3 +48,22 @@ class EmailMenteesForm(forms.Form):
         else:
             messages.error(request, ('Email not sent. Please select at '
                                      'least one recipient.'))
+
+
+class EditSettingsForm(forms.ModelForm):
+    """Form to edit user settings regarding mail preferences."""
+    receive_email_on_add_report = forms.BooleanField(
+            required=False, initial=True,
+            label=('Receive email when a mentee files a new report.'))
+    receive_email_on_edit_report = forms.BooleanField(
+            required=False, initial=False,
+            label=('Receive email when a mentee edits a report.'))
+    receive_email_on_add_comment = forms.BooleanField(
+            required=False, initial=True,
+            label=('Receive email when a user comments on a report.'))
+
+    class Meta:
+        model = UserProfile
+        fields = ['receive_email_on_add_report',
+                  'receive_email_on_edit_report',
+                  'receive_email_on_add_comment']
