@@ -193,7 +193,7 @@ class RepResource(ClientCachedResource, ModelResource):
 
         if self.determine_format(request) == 'text/csv':
             today = date.today()
-            filename = today.strftime('reps-export-%y-%m-%d.csv')
+            filename = today.strftime('reps-export-%Y-%m-%d.csv')
             response['Content-Disposition'] = 'filename="%s"' % filename
 
         return response
