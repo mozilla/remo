@@ -1,9 +1,10 @@
 import datetime
 from pytz import timezone
 
-from django.core import management
-from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.core import management, mail
+from django.core.urlresolvers import reverse
 from django.test.client import Client
 from django.utils.timezone import make_aware
 from nose.tools import eq_
@@ -303,3 +304,38 @@ class ViewsTest(TestCase):
             invalid_data[field] = ''
             response = c.post(self.event_edit_url, invalid_data, follow=True)
             self.assertNotEqual(response.request['PATH_INFO'], self.event_url)
+
+    def test_email_event_attendees(self):
+        """Send email to selected event attendees."""
+        c = Client()
+        c.login(username='rep', password='passwd')
+
+        #Select 2 attendees from list.
+        reps = []
+        reps.append(User.objects.get(first_name='Koki'))
+        reps.append(User.objects.get(first_name='Menis'))
+
+        valid_data = dict()
+        for rep in reps:
+            field_name = '%s %s <%s>' % (rep.first_name,
+                                         rep.last_name,
+                                         rep.email)
+            valid_data[field_name] = 'True'
+
+        valid_data['subject'] = 'This is the mail subject'
+        valid_data['body'] = 'This is the mail subject'
+        valid_data['slug'] = 'test-event'
+
+        url = reverse('email_attendees', kwargs={'slug': 'test-event'})
+        response = c.post(url, valid_data, follow=True)
+        self.assertTemplateUsed(response, 'view_event.html')
+
+        for m in response.context['messages']:
+            pass
+
+        eq_(m.tags, u'success')
+        eq_(len(mail.outbox), 1)
+        
+        email = mail.outbox[0]
+        eq_(len(email.to), 2)
+        eq_(len(email.cc), 1)
