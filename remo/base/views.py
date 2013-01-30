@@ -75,7 +75,7 @@ def dashboard(request):
         args['mentees_emails'] = (
             my_mentees.values_list('first_name', 'last_name', 'email') or
             None)
-        args['email_mentees_form'] = forms.EmailMenteesForm(user)
+        args['email_mentees_form'] = forms.EmailUsersForm(my_mentees)
 
     if user.groups.filter(Q(name='Admin') | Q(name='Council')).exists():
         args['all_budget_requests'] = budget_requests.all()[:20]
@@ -136,7 +136,8 @@ def login_failed(request):
 def email_mentees(request):
     """Email my mentees view."""
     if request.method == 'POST':
-        email_form = forms.EmailMenteesForm(request.user, request.POST)
+        my_mentees = User.objects.filter(userprofile__mentor=request.user)
+        email_form = forms.EmailUsersForm(my_mentees, request.POST)
         if email_form.is_valid():
             email_form.send_mail(request)
         else:

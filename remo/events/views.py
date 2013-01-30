@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -14,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from funfactory.helpers import urlparams
 
 from remo.base.decorators import permission_check
+from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_or_create_instance
 
 import forms
@@ -80,8 +82,11 @@ def manage_subscription(request, slug, subscribe=True):
 def view_event(request, slug):
     """View event view."""
     event = get_object_or_404(Event, slug=slug)
+    attendees = event.attendees.all()
+    email_att_form = EmailUsersForm(attendees)
 
-    return render(request, 'view_event.html', {'event': event})
+    return render(request, 'view_event.html',
+                  {'event': event, 'email_attendees_form': email_att_form})
 
 
 @never_cache
@@ -179,3 +184,18 @@ def export_single_event_to_ical(request, slug):
     response['Content-Disposition'] = ('attachment; filename="%s"' %
                                        (ical_filename))
     return response
+
+
+@login_required
+def email_attendees(request, slug):
+    """Send email to event attendees."""
+    event = get_object_or_404(Event, slug=slug)
+    attendees = event.attendees.all()
+
+    if request.method == 'POST':
+        email_form = EmailUsersForm(attendees, request.POST)
+        if email_form.is_valid():
+            email_form.send_mail(request)
+        else:
+            messages.error(request, 'Email not sent. Invalid data.')
+    return redirect('events_view_event', slug=slug)

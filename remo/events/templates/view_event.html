@@ -277,9 +277,18 @@ Mozilla Reps - {{ event.name }}
 
         <!-- End of listing of organizer and attendees -->
         <!-- Attend and de-attend button only visible to Reps -->
+
+        <div class="row">
+        {% if request.user.is_authenticated() %}
+          <div class="six columns">
+            <a href="#" data-reveal-id="mail-modal"
+               class="small white button nice radius">Mail attendees
+            </a>
+          </div>
+        {% endif %}
         {% if perms.events.can_subscribe_to_events %}
           {% if request.user not in event.attendees.all() %}
-            <div class="align-right top-margined">
+            <div id="event-attend-button" class="six columns align-right">
               <form method="post" action="{{ url('events_subscribe_to_event', slug=event.slug) }}">
                 {{ csrf() }}
                 {% if is_past_event(event) %}
@@ -294,7 +303,7 @@ Mozilla Reps - {{ event.name }}
               </form>
             </div>
           {% elif request.user != event.owner %}
-            <div class="align-right top-margined">
+            <div id="event-attend-button" class="six columns align-right">
               <form method="post" action="{{ url('events_unsubscribe_from_event', slug=event.slug) }}">
                 {{ csrf() }}
                 <button class="small red button nice radius">
@@ -304,6 +313,7 @@ Mozilla Reps - {{ event.name }}
             </div>
           {% endif %}
         {% endif %}
+        </div>
       </div>
     </div>
   </div>
@@ -420,6 +430,29 @@ Mozilla Reps - {{ event.name }}
     </a>
   {% endif %}
 </div>
+
+<!-- Mail attendees Reveal Modal -->
+<div id="mail-modal" class="reveal-modal">
+  <a class="close-reveal-modal">&#215;</a>
+  <p class="lead">Mail event attendees</p>
+  <h4>Mail attendees:</h4>
+  <form id="email-attendees-form" method="post"
+        action="{{ url('email_attendees', slug=event.slug) }}" class="custom">
+    {{ csrf() }}
+    {% for field in email_attendees_form %}
+      {{ field }} {{ field.label }}
+      <br>
+    {% endfor %}
+    <div class="row">
+      <div id="send-mail" class="twelve columns align-right">
+        <button type="submit" class="medium blue button nice radius">
+          Send email
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+<!-- Mail attendees Reveal Modal End -->
 
 {% endblock %}
 

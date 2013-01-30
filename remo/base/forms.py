@@ -1,21 +1,21 @@
 from django.contrib import messages
-from django.contrib.auth.models import User
 from happyforms import forms
 
 from remo.base.tasks import send_mail_task
 from remo.profiles.models import UserProfile
 
-class EmailMenteesForm(forms.Form):
-    """Form to email mentees."""
-    def __init__(self, user, *args, **kwargs):
+
+class EmailUsersForm(forms.Form):
+    """Generic form to send email to multiple users."""
+    def __init__(self, users, *args, **kwargs):
         """Initialize form.
 
         Dynamically set fields for the recipients of the mail.
         """
-        super(EmailMenteesForm, self).__init__(*args, **kwargs)
-        mentees = (User.objects.filter(userprofile__mentor=user).
-                   values_list('first_name', 'last_name', 'email'))
-        for first_name, last_name, email in mentees:
+        super(EmailUsersForm, self).__init__(*args, **kwargs)
+        recipients = users.values_list('first_name', 'last_name', 'email')
+
+        for first_name, last_name, email in recipients:
             field_name = '%s %s <%s>' % (first_name, last_name, email)
             self.fields[field_name] = forms.BooleanField(
                     label=field_name, initial=True, required=False,
@@ -31,17 +31,17 @@ class EmailMenteesForm(forms.Form):
                                              'class': 'flat long'}))
 
     def send_mail(self, request):
-        """Send mail to mentees."""
-        mentees = []
+        """Send mail to recipients list."""
+        recipients_list = []
         for field in self.fields:
             if (isinstance(self.fields[field], forms.BooleanField) and
                 self.cleaned_data[field]):
-                mentees.append(field)
-        if mentees:
+                recipients_list.append(field)
+        if recipients_list:
             from_email = '%s <%s>' % (request.user.get_full_name(),
                                       request.user.email)
             send_mail_task.delay(sender=from_email,
-                                 recipients=mentees,
+                                 recipients=recipients_list,
                                  subject=self.cleaned_data['subject'],
                                  message=self.cleaned_data['body'])
             messages.success(request, 'Email sent successfully.')
