@@ -65,4 +65,25 @@ class APITest(TestCase):
 
         self.assertTrue('Content-Disposition' in response)
         eq_(response['Content-Disposition'],
-            'filename="reps-export-12-03-01.csv"')
+            'filename="reps-export-2012-03-01.csv"')
+
+    def test_rep_restricted_fields(self):
+        """Test authorization to restricted fields."""
+        # Unauthorized access
+        c = Client()
+        url = urlparams(reverse('api_dispatch_list',
+                                kwargs={'api_name': 'v1',
+                                        'resource_name': 'rep'}))
+        response = c.get(url, follow=True)
+        result = json.loads(response.content)
+
+        for profile in result['objects']:
+            self.assertFalse('email' in profile)
+
+        # Authorized access
+        c.login(username='rep', password='passwd')
+        response = c.get(url, follow=True)
+        result = json.loads(response.content)
+
+        for profile in result['objects']:
+            self.assertTrue('email' in profile)

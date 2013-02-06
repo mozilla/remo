@@ -14,6 +14,7 @@ from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
 from remo.api import ClientCachedResource
+from remo.api.authorisers import WebAuthorization
 from remo.base.serializers import CSVSerializer
 from remo.profiles.helpers import get_avatar_url
 from remo.profiles.models import UserProfile, FunctionalArea
@@ -101,15 +102,16 @@ class RepResource(ClientCachedResource, ModelResource):
                                 full=True, null=True)
 
     class Meta:
-        cache_control = {"max_age": 3600, "s_maxage": 3600}
+        cache_control = {'max_age': 3600, 'private': True}
         queryset = User.objects.filter(userprofile__registration_complete=True,
                                        groups__name='Rep')
         resource_name = 'rep'
         authentication = Authentication()
-        authorization = ReadOnlyAuthorization()
+        authorization = WebAuthorization()
         serializer = CSVSerializer(formats=['json', 'jsonp', 'csv'])
         allowed_methods = ['get']
-        fields = ['first_name', 'last_name']
+        fields = ['first_name', 'last_name', 'email']
+        restricted_fields = ['email']
         ordering = ['profile', 'first_name', 'last_name']
         filtering = {'first_name': ALL,
                      'last_name': ALL,
@@ -168,6 +170,10 @@ class RepResource(ClientCachedResource, ModelResource):
         """Prepare bundle.data for CSV export."""
         if bundle.request.method == 'GET':
             req = bundle.request.GET
+            if not req.get('restricted', False):
+                for field in self._meta.restricted_fields:
+                    bundle.data.pop(field)
+
             if req.get('format') == 'csv':
                 bundle.data.pop('fullname', None)
                 bundle.data.pop('resource_uri', None)
