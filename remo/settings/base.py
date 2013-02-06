@@ -21,6 +21,9 @@ MINIFY_BUNDLES = {
         'jqueryui': (
             'css/jquery-ui-1.10.0.custom.css',
             ),
+        'storyjs-css': (
+            'css/timeline/timeline.css',
+            ),
     },
     'js': {
         'less': (
@@ -95,6 +98,8 @@ MINIFY_BUNDLES = {
             ),
         'events_list': (
             'js/libs/jquery.tmpl.js',
+            'js/libs/timeline/timeline.js',
+            'js/libs/timeline/storyjs-embed.js',
             'js/libs/heartcode-canvasloader-min.js',
             'js/remo/events_list.js',
             ),
@@ -122,7 +127,7 @@ INSTALLED_APPS = ['south'] + \
                      'remo.reports',
                      'remo.api',
                      'remo.events',
-
+                     
                      'django_browserid',
                      'tastypie',
 
