@@ -1,4 +1,9 @@
+# Authentication tests based on airmozilla
+# https://github.com/mozilla/airmozilla/blob/master/airmozilla/auth/tests/test_views.py
+
 import base64
+import json
+import mock
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -7,10 +12,102 @@ from django.core.urlresolvers import reverse
 from django.test.client import Client
 from jinja2 import Markup
 from nose.exc import SkipTest
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 from test_utils import TestCase
 
+from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
+from remo.base.tests.browserid_mock import mock_browserid
+
+
+VOUCHED_MOZILLIAN = """
+{
+    "meta": {
+        "previous": null,
+        "total_count": 1,
+        "offset": 0,
+        "limit": 20,
+        "next": null
+    },
+    "objects":
+    [
+        {
+            "website": "",
+            "bio": "",
+            "groups": [
+                "foo bar"
+            ],
+            "skills": [],
+            "email": "vouched@mail.com",
+            "is_vouched": true
+        }
+    ]
+}
+"""
+
+NOT_VOUCHED_MOZILLIAN = """
+{
+  "meta": {
+    "previous": null,
+    "total_count": 1,
+    "offset": 0,
+    "limit": 20,
+    "next": null
+  },
+  "objects": [
+    {
+      "website": "",
+      "bio": "",
+      "groups": [
+        "no login"
+      ],
+      "skills": [],
+      "is_vouched": false,
+      "email": "not_vouched@mail.com"
+    }
+  ]
+}
+"""
+
+
+assert json.loads(VOUCHED_MOZILLIAN)
+assert json.loads(NOT_VOUCHED_MOZILLIAN)
+
+
+class MozillianResponse(object):
+    """Mozillians Response."""
+    def __init__(self, content=None, status_code=200):
+        self.content = content
+        self.status_code = status_code
+
+
+class MozilliansTest(TestCase):
+    """Test Moziilians."""
+    @mock.patch('requests.get')
+    def test_is_vouched(self, rget):
+        def mocked_get(url, **options):
+            if 'vouched' in url:
+                return MozillianResponse(VOUCHED_MOZILLIAN)
+            if 'not_vouched' in url:
+                return MozillianResponse(NOT_VOUCHED_MOZILLIAN)
+            if 'trouble' in url:
+                return MozillianResponse('Failed', status_code=500)
+            raise NotImplementedError(url)
+        rget.side_effect = mocked_get
+
+        ok_(mozillians.is_vouched('vouched@mail.com'))
+        ok_(not mozillians.is_vouched('not_vouched@mail.com'))
+
+        self.assertRaises(
+            mozillians.BadStatusCodeError,
+            mozillians.is_vouched,
+            'trouble@live.com')
+
+        try:
+            mozillians.is_vouched('trouble@live.com')
+            raise
+        except mozillians.BadStatusCodeError, msg:
+            ok_(settings.MOZILLIANS_API_KEY not in str(msg))
 
 
 class ViewsTest(TestCase):
@@ -22,6 +119,31 @@ class ViewsTest(TestCase):
                               'receive_email_on_edit_report': True,
                               'receive_email_on_add_comment': True}
         self.user_edit_settings_url = reverse('edit_settings')
+
+    def _login_attempt(self, email, assertion='assertion123'):
+        with mock_browserid(email):
+            r = self.client.post(
+                reverse('mozilla_browserid_verify'),
+                {'assertion': assertion})
+        return r
+
+    def test_bad_verification(self):
+        """Bad verification -> failure."""
+        response = self._login_attempt(None)
+        self.assertRedirects(response, reverse('login_failed'),
+                             target_status_code=302)
+
+    def test_invalid_login(self):
+        """Bad BrowserID form - no assertion -> failure."""
+        response = self._login_attempt(None, None)
+        self.assertRedirects(response, reverse('login_failed'),
+                             target_status_code=302)
+
+    def test_is_vouched(self):
+        """Login with vouched email."""
+        response = self._login_attempt('vouched@mail.com')
+        eq_(response.status_code, 302)
+        ok_(reverse('dashboard'))
 
     def test_view_main_page(self):
         """Get main page."""

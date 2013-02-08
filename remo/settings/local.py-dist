@@ -91,3 +91,7 @@ SESSION_COOKIE_SECURE=False
 
 # LESS COMPILER
 # LESS_BIN = '/path/to/lessc'
+
+# Mozillians configuration
+# MOZILLIANS_API_APPNAME = ''
+# MOZILLIANS_API_KEY = ''
