@@ -1,23 +1,80 @@
 from datetime import date
 
 from django import http
+from django_browserid import get_audience, verify
+from django_browserid.auth import default_username_algo
+from django_browserid.forms import BrowserIDForm
 from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib import auth, messages
+from django.contrib.auth.models import Group, User
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.template import Context, RequestContext, loader
 from django.views.decorators.cache import cache_control, never_cache
+from django.views.decorators.http import require_POST
 
 import forms
 import utils
 
 from remo.base.decorators import permission_check
+from remo.base.mozillians import is_vouched, BadStatusCodeError
 from remo.featuredrep.models import FeaturedRep
 from remo.remozilla.models import Bug
 from remo.reports.models import Report
 from remo.reports.utils import get_mentee_reports_for_month
 from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
+
+USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
+                        default_username_algo)
+
+
+@never_cache
+@require_POST
+def mozilla_browserid_verify(request):
+    """
+    Custom BrowserID verifier for ReMo users
+    and vouched mozillians.
+    """
+    form = BrowserIDForm(request.POST)
+    if form.is_valid():
+        assertion = form.cleaned_data['assertion']
+        audience = get_audience(request)
+        result = verify(assertion, audience)
+        try:
+            _is_valid_login = False
+            if result:
+                if User.objects.filter(email=result['email']).exists():
+                    _is_valid_login = True
+                else:
+                    data = is_vouched(result['email'])
+                    if data and data['is_vouched']:
+                        _is_valid_login = True
+                        user = User.objects.create_user(
+                            username=USERNAME_ALGO(data['email']),
+                            email=data['email'])
+
+                        first_name, last_name = (
+                            data['full_name'].split(' ', 1)
+                            if ' ' in data['full_name']
+                            else ('', data['full_name']))
+                        user.first_name = first_name
+                        user.last_name = last_name
+                        user.save()
+                        user.groups.add(Group.objects.get(name='Mozillians'))
+
+            if _is_valid_login:
+                user = auth.authenticate(assertion=assertion,
+                                         audience=audience)
+                auth.login(request, user)
+                return redirect('dashboard')
+
+        except BadStatusCodeError:
+            message = ('Email (%s) authenticated but unable to '
+                       'connect to Mozillians to see if you are vouched' %
+                       result['email'])
+            return login_failed(request, message)
+
+    return redirect(settings.LOGIN_REDIRECT_URL_FAILURE)
 
 
 @cache_control(private=True, no_cache=True)
@@ -117,7 +174,7 @@ def custom_500(request):
                           'user': request.user})))
 
 
-def login_failed(request):
+def login_failed(request, msg=None):
     """Login failed view.
 
     This view acts like a segway between a failed login attempt and
@@ -125,9 +182,11 @@ def login_failed(request):
     informs user login failed.
 
     """
-    messages.warning(request, ('Login failed. Please make sure that you are '
-                               'an accepted Rep and you use your Bugzilla '
-                               'email to login.'))
+    if not msg:
+        msg = ('Login failed. Please make sure that you are '
+               'an accepted Rep or a vouched Mozillian '
+               'and you use your Bugzilla email to login.')
+    messages.warning(request, msg)
 
     return redirect('main')
 

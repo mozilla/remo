@@ -2,6 +2,8 @@ from django.conf.urls.defaults import *
 from django.views.generic.simple import direct_to_template
 
 urlpatterns = patterns('',
+    url(r'^browserid/mozilla/$', 'remo.base.views.mozilla_browserid_verify',
+        name='mozilla_browserid_verify'),
     url(r'dashboard/$', 'remo.base.views.dashboard', name='dashboard'),
     url(r'dashboard/emailmentees/$', 'remo.base.views.email_mentees',
         name='email_mentees'),

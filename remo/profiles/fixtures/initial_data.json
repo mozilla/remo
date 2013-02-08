@@ -32,6 +32,14 @@
         }
     },
     {
+        "pk": 5,
+        "model": "auth.group",
+        "fields": {
+            "name": "Mozillians",
+            "permissions": []
+        }
+    },
+    {
         "pk": 1,
         "model": "auth.user",
         "fields": {

@@ -17,7 +17,11 @@ class InviteUserForm(forms.Form):
     def _validate_unique_email(data, **kwargs):
         # Django does not require unique emails but we do.
         if User.objects.filter(email=data).exists():
-            raise ValidationError('User already exists.')
+            user = User.objects.filter(email=data)
+            if user and user[0].groups.filter(name='Mozillians').exists():
+                user[0].delete()
+            else:
+                raise ValidationError('User already exists.')
 
         return data
 

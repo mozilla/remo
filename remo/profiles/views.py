@@ -14,6 +14,7 @@ from funfactory.helpers import urlparams
 from product_details import product_details
 
 import forms
+
 from remo.base.decorators import permission_check
 from remo.events.utils import get_events_for_user
 from remo.featuredrep.models import FeaturedRep
@@ -138,39 +139,38 @@ def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
-    usergroups = user.groups.filter(Q(name='Mentor')|Q(name='Council'))
+    if not user.groups.filter(name='Rep').exists():
+        raise Http404
 
     if (not user.userprofile.registration_complete and
         not request.user.has_perm('profiles.can_edit_profiles')):
             raise Http404
 
+    usergroups = user.groups.filter(Q(name='Mentor') | Q(name='Council'))
     data = {'pageuser': user,
             'user_profile': user.userprofile,
             'added_by': user.userprofile.added_by,
             'mentor': user.userprofile.mentor,
             'usergroups': usergroups}
 
-    if user.groups.filter(name='Rep').exists():
-        today = date.today()
-        if (request.user.groups.filter(name='Admin').exists() or
-            (request.user.is_authenticated() and
-             user in request.user.mentees.all()) or
-            user == request.user):
-            reports = get_reports_for_year(
-                user, start_year=2011, end_year=today.year,
-                permission=REPORTS_PERMISSION_LEVEL['owner'])
-        elif request.user.is_authenticated():
-            reports = get_reports_for_year(
-                user, start_year=2011, end_year=today.year,
-                permission=REPORTS_PERMISSION_LEVEL['authenticated'])
-        else:
-            reports = get_reports_for_year(
-                user, start_year=2011, end_year=today.year,
-                permission=REPORTS_PERMISSION_LEVEL['anonymous'])
-
-        data['monthly_reports'] = reports
-
     today = date.today()
+    if ((request.user.is_authenticated() and
+         user in request.user.mentees.all()) or
+        user == request.user):
+        reports = get_reports_for_year(
+            user, start_year=2011, end_year=today.year,
+            permission=REPORTS_PERMISSION_LEVEL['owner'])
+    elif request.user.is_authenticated():
+        reports = get_reports_for_year(
+            user, start_year=2011, end_year=today.year,
+            permission=REPORTS_PERMISSION_LEVEL['authenticated'])
+    else:
+        reports = get_reports_for_year(
+            user, start_year=2011, end_year=today.year,
+            permission=REPORTS_PERMISSION_LEVEL['anonymous'])
+
+    data['monthly_reports'] = reports
+
     data['future_events'] = get_events_for_user(user, from_date=today)
     data['past_events'] = get_events_for_user(user, to_date=today)[:10]
     data['featured_rep'] = FeaturedRep.objects.filter(user=user)
@@ -196,6 +196,9 @@ def invite(request):
             email = form.cleaned_data['email']
             user = User.objects.create_user(username=USERNAME_ALGO(email),
                                             email=email)
+            # Add new users to Rep group
+            user.groups.add(Group.objects.get(name='Rep'))
+
             if request.user.groups.filter(name='Mentor').exists():
                 user.userprofile.mentor = request.user
             user.userprofile.added_by = request.user

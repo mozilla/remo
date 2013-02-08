@@ -32,15 +32,19 @@ Mozilla Reps - Settings
           <div class="dashboard-box">
             <div class="row">
               <div class="twelve columns">
-                {{ settingsform.receive_email_on_add_comment }}
-                {{ settingsform.receive_email_on_add_comment.label }}
-                <br>
-                {% if user_is_mentor(user) %}
-                  {{ settingsform.receive_email_on_add_report }}
-                  {{ settingsform.receive_email_on_add_report.label }}
+                {% if user_is_mozillian(user) %}
+                  <p>Nothing to see here yet!</p>
+                {% else %}
+                  {{ settingsform.receive_email_on_add_comment }}
+                  {{ settingsform.receive_email_on_add_comment.label }}
                   <br>
-                  {{ settingsform.receive_email_on_edit_report }}
-                  {{ settingsform.receive_email_on_edit_report.label }}
+                  {% if user_is_mentor(user) %}
+                    {{ settingsform.receive_email_on_add_report }}
+                    {{ settingsform.receive_email_on_add_report.label }}
+                    <br>
+                    {{ settingsform.receive_email_on_edit_report }}
+                    {{ settingsform.receive_email_on_edit_report.label }}
+                  {% endif %}
                 {% endif %}
               </div>
             </div>
