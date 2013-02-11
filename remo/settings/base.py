@@ -17,7 +17,10 @@ MINIFY_BUNDLES = {
             ),
         'leaflet': (
             'leaflet/leaflet.css',
-            )
+            ),
+        'jqueryui': (
+            'css/jquery-ui-1.10.0.custom.css',
+            ),
     },
     'js': {
         'less': (
@@ -94,6 +97,9 @@ MINIFY_BUNDLES = {
             'js/libs/jquery.tmpl.js',
             'js/libs/heartcode-canvasloader-min.js',
             'js/remo/events_list.js',
+            ),
+        'jqueryui': (
+            'js/libs/jquery-ui-1.10.0.custom.js',
             ),
     }
 }

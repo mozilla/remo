@@ -13,6 +13,11 @@ EventsLib.search_loading_icon_elm = $('#search-loading-icon');
 EventsLib.search_ready_icon_elm = $('#search-ready-icon');
 EventsLib.events_loading_wrapper_elm = $('#events-loading-wrapper');
 EventsLib.map_overlay_elm = $('#map-overlay');
+EventsLib.datepicker_start_elm = $('#date-start');
+EventsLib.datepicker_end_elm = $('#date-end');
+EventsLib.adv_search_elm = $('#adv-search');
+EventsLib.adv_search_icon_elm = $('#adv-search-icon-events');
+EventsLib.datepicker_elm = $('.datepicker');
 EventsLib.window_elm = $(window);
 EventsLib.location_elm = $(location);
 EventsLib.trigger_timeout = undefined;
@@ -255,6 +260,16 @@ function send_query(newquery) {
 
     // Period selector.
     var period = hash_get_value('period');
+    var start_date = undefined;
+    var end_date = undefined;
+
+    if (period === 'future') {
+        start_date = new Date();
+    }
+    if (period === 'past') {
+        end_date = new Date();
+    }
+
     set_dropdown_value(EventsLib.period_selector_elm, period);
     if (period) {
         var today = new Date();
@@ -271,6 +286,29 @@ function send_query(newquery) {
         else if (period === 'all') {
             extra_q += '&limit=' + EventsLib.results_batch;
             extra_q += '&start__gt=1970-01-01';
+        }
+        else if (period === 'custom') {
+            var start_date = EventsLib.datepicker_start_elm.datepicker('getDate');
+            var end_date = EventsLib.datepicker_end_elm.datepicker('getDate');
+
+            extra_q += '&limit=0';
+
+            if (start_date) {
+                var start_utc_string = UTCDateString(start_date);
+                extra_q += '&start__gte=' + start_utc_string;
+            }
+
+            if (end_date) {
+                var end_utc_string = UTCDateString(end_date);
+                extra_q += '&end__lte=' + end_utc_string;
+            }
+        }
+
+        EventsLib.datepicker_start_elm.datepicker('setDate', start_date);
+        EventsLib.datepicker_end_elm.datepicker('setDate', end_date);
+
+        if (period === 'custom') {
+            EventsLib.adv_search_elm.show();
         }
     }
 
@@ -327,6 +365,31 @@ $(document).ready(function () {
         period = 'future';
         hash_set_value('period', period);
     }
+
+    // Advanced button click.
+    EventsLib.adv_search_icon_elm.click(function() {
+        var visible = EventsLib.adv_search_elm.is(':visible');
+        if (!visible && (period !== 'custom')) {
+            hash_set_value('period', 'custom');
+        }
+        EventsLib.adv_search_elm.slideToggle();
+    });
+
+    //Initiate datepicker
+    EventsLib.datepicker_elm.datepicker({
+        onSelect: function( selectedDate ) {
+            var period = hash_get_value('period');
+            if (period !== 'custom') {
+                hash_set_value('period', 'custom');
+            }
+            send_query(newquery=true);
+        },
+        dateFormat: 'yy-mm-dd'
+    });
+
+    EventsLib.datepicker_elm.click(function(){
+        $(this).datepicker('show');
+    });
 
     // Set values to fields.
     set_dropdown_value(EventsLib.period_selector_elm, period);
