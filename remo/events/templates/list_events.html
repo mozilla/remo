@@ -41,13 +41,35 @@ Mozilla Reps - Events
              class="input-text big" disabled="disabled">
     </div>
     <div class="three columns">
-      <select class="expand" id="events-period-selector">
+      <select id="events-period-selector">
         <option value="all">All Events</option>
         <option value="future">Current and Future</option>
         <option value="past">Past</option>
+        <option value="custom">Custom</option>
       </select>
+      <span id="adv-search-icon-events" title="Advanced Options" class="pictogram-button">
+        (
+      </span>
     </div>
   </form>
+</div>
+
+<!-- Advanced search box -->
+<div class="row hidden" id="adv-search">
+  <div class="twelve columns">
+    <div class="row">
+      <form class="custom" id="searchform">
+        <div class="three columns">
+          <input type="text" class="datepicker input-text big" 
+                 id="date-start" placeholder="Start Range Date"/>
+        </div>
+        <div class="three pull-six columns">
+          <input type="text" class="datepicker input-text big" 
+                 id="date-end" placeholder="End Range Date"/>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <!-- Events listing -->
@@ -141,9 +163,11 @@ Mozilla Reps - Events
 
 {% block bottomextra %}
 {{ css('leaflet') }}
+{{ css('jqueryui') }}
 <!--[if lte IE 8]>
     <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
     <![endif]-->
 {{ js('leaflet') }}
+{{ js('jqueryui') }}
 {{ js('events_list') }}
 {% endblock %}
