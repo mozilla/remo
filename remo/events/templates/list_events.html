@@ -5,27 +5,50 @@ Mozilla Reps - Events
 {% endblock %}
 
 {% block content %}
-<!-- Create new event row, visible only to reps,mentors,council,admins -->
-{% if perms.events.can_edit_events %}
-  <div class="row">
-    <div class="twelve columns align-right">
+
+<div class="row">
+  <div class="twelve columns align-right">
+    {% if perms.events.can_edit_events %}
       <a href="{{ url('events_new_event') }}" target="_blank"
-         class="small blue button nice radius">Create event</a>
+         class="small blue button nice radius" id="events-create-button">Create event</a>
+    {% endif %}
+    <div class="hide-on-phones">
+      <dl id="events-viz-switcher" class="sub-nav dashboard-filter">
+        <dd class="active">
+          <a id="events-map-button" href="javascript:void(0)">
+            Map
+          </a>
+        </dd>
+        <dd>
+          <a id="events-timeline-button" href="javascript:void(0)">
+            Timeline
+          </a>
+        </dd>
+      </dl>
     </div>
   </div>
-{% endif %}
+</div>
 
-<!-- Map -->
+
+<!-- Map & Vizualization -->
 <div class="row show-on-desktop {% if perms.events.can_edit_events %}top-margined{% endif %}">
   <div class="twelve columns">
-    <div id="map" class="map300">
+    <div id="map" class="map300"></div>
+    <div class="hide-on-phones">
+      <div id="event-timeline"></div>
     </div>
   </div>
 </div>
 
 <div id="map-overlay" class="hidden">
   <div id="map-overlay-text">
-    Please refine search to view events on map.
+    Please refine search to view events.
+  </div>
+</div>
+
+<div id="timeline-overlay" class="hidden">
+  <div id="timeline-overlay-text">
+    Please refine search to view timeline.
   </div>
 </div>
 
@@ -164,6 +187,7 @@ Mozilla Reps - Events
 {% block bottomextra %}
 {{ css('leaflet') }}
 {{ css('jqueryui') }}
+{{ css('storyjs-css') }}
 <!--[if lte IE 8]>
     <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
     <![endif]-->
