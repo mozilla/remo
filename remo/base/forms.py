@@ -18,17 +18,17 @@ class EmailUsersForm(forms.Form):
         for first_name, last_name, email in recipients:
             field_name = '%s %s <%s>' % (first_name, last_name, email)
             self.fields[field_name] = forms.BooleanField(
-                    label=field_name, initial=True, required=False,
-                    widget=forms.CheckboxInput(
-                        attrs={'class': 'input-text big'}))
+                label=field_name, initial=True, required=False,
+                widget=forms.CheckboxInput(
+                    attrs={'class': 'input-text big'}))
         self.fields['subject'] = forms.CharField(label='',
             widget=forms.TextInput(attrs={'placeholder': 'Subject',
                                           'required': 'required',
                                           'class': 'input-text big'}))
         self.fields['body'] = forms.CharField(label='',
             widget=forms.Textarea(attrs={'placeholder': 'Body of email',
-                                             'required': 'required',
-                                             'class': 'flat long'}))
+                                         'required': 'required',
+                                         'class': 'flat long'}))
 
     def send_mail(self, request):
         """Send mail to recipients list."""
@@ -53,17 +53,24 @@ class EmailUsersForm(forms.Form):
 class EditSettingsForm(forms.ModelForm):
     """Form to edit user settings regarding mail preferences."""
     receive_email_on_add_report = forms.BooleanField(
-            required=False, initial=True,
-            label=('Receive email when a mentee files a new report.'))
+        required=False, initial=True,
+        label=('Receive email when a mentee files a new report.'))
     receive_email_on_edit_report = forms.BooleanField(
-            required=False, initial=False,
-            label=('Receive email when a mentee edits a report.'))
+        required=False, initial=False,
+        label=('Receive email when a mentee edits a report.'))
     receive_email_on_add_comment = forms.BooleanField(
-            required=False, initial=True,
-            label=('Receive email when a user comments on a report.'))
+        required=False, initial=True,
+        label=('Receive email when a user comments on a report.'))
 
     class Meta:
         model = UserProfile
         fields = ['receive_email_on_add_report',
                   'receive_email_on_edit_report',
                   'receive_email_on_add_comment']
+
+
+class TrackFunctionalAreasForm(forms.ModelForm):
+    """Form for tracking interests in functional areas for Mozillians."""
+    class Meta:
+        model = UserProfile
+        fields = ['tracked_functional_areas']
