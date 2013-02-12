@@ -275,7 +275,7 @@ var update_results = function(data, query, newquery, past_events) {
     var valid_period = $.inArray(period, ['custom', 'future']);
     var enable = (parseInt(data.meta.total_count, 10)<100 && valid_period>=0);
 
-    setTimeout(initialize_timeline(data, enable), 1000);
+    initialize_timeline(data, enable);
 
     if (past_events && parseInt(data.meta.total_count, 10) > EventsLib.results_batch) {
         EventsLib.map_overlay_elm.show();
