@@ -753,7 +753,7 @@
   opacity: 0.15;
 }
 .vco-skinny.vco-notouch .vco-slider .nav-previous .icon {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -208px 0;
   width: 24px;
@@ -762,7 +762,7 @@
   margin-left: 10px;
 }
 .vco-skinny.vco-notouch .vco-slider .nav-next .icon {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -232px 0;
   width: 24px;
@@ -927,7 +927,7 @@
 }
 .vco-slider .nav-previous .icon {
   margin-left: 15px;
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -160px 0;
   width: 24px;
@@ -945,7 +945,7 @@
 }
 .vco-slider .nav-next .icon {
   margin-left: 61px;
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -184px 0;
   width: 24px;
@@ -1226,12 +1226,12 @@
   opacity: 0.25;
 }
 .vco-slider .slider-item .content .storify .created-at {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -328px -96px;
 }
 .vco-slider .slider-item .content .twitter .created-at {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -256px -24px;
 }
@@ -1308,7 +1308,7 @@
   color: #0088cc;
 }
 .vco-slider .slider-item .content .googleplus .created-at {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -208px -72px;
 }
@@ -1529,7 +1529,7 @@
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  background-image: url(loading.gif?v3.4);
+  background-image: url(/media/css/timeline/loading.gif?v3.4);
   width: 28px;
   height: 28px;
 }
@@ -1542,7 +1542,7 @@
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -160px -160px;
   width: 48px;
@@ -1679,22 +1679,22 @@
   box-shadow: none;
 }
 .vco-storyjs .thumbnail.thumb-plaintext {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -280px -48px;
 }
 .vco-storyjs .thumbnail.thumb-quote {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -232px -48px;
 }
 .vco-storyjs .thumbnail.thumb-document {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -256px -48px;
 }
 .vco-storyjs .thumbnail.thumb-photo {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -280px -24px;
   border: 0;
@@ -1703,67 +1703,67 @@
   border: 0px none #cccccc !important;
 }
 .vco-storyjs .thumbnail.thumb-twitter {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -256px -24px;
 }
 .vco-storyjs .thumbnail.thumb-vimeo {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -328px -48px;
 }
 .vco-storyjs .thumbnail.thumb-youtube {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -328px -72px;
 }
 .vco-storyjs .thumbnail.thumb-video {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -328px -24px;
 }
 .vco-storyjs .thumbnail.thumb-audio {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -304px -24px;
 }
 .vco-storyjs .thumbnail.thumb-map {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -208px -48px;
 }
 .vco-storyjs .thumbnail.thumb-website {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -232px -24px;
 }
 .vco-storyjs .thumbnail.thumb-link {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -184px -72px;
 }
 .vco-storyjs .thumbnail.thumb-wikipedia {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -184px -48px;
 }
 .vco-storyjs .thumbnail.thumb-storify {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -328px -96px;
 }
 .vco-storyjs .thumbnail.thumb-googleplus {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -208px -72px;
 }
 .vco-storyjs thumbnail.thumb-instagram {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -208px -96px;
 }
 .vco-storyjs thumbnail.thumb-instagram-full {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -232px -96px;
   width: 48px;
@@ -1771,7 +1771,7 @@
 }
 .vco-storyjs .thumb-storify-full {
   height: 12px;
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -280px -96px;
   width: 48px;
@@ -1790,17 +1790,17 @@
   opacity: 0.5;
 }
 .vco-storyjs .twitter .thumbnail-inline {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -160px -96px;
 }
 .vco-storyjs .storify .thumbnail-inline {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -184px -96px;
 }
 .vco-storyjs .googleplus .thumbnail-inline {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -208px -96px;
 }
@@ -1858,7 +1858,7 @@
   opacity: 1;
 }
 .vco-notouch .vco-navigation .timenav .content .marker .flag:hover {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: 0 -53px;
   width: 153px;
@@ -1866,7 +1866,7 @@
 }
 .vco-notouch .vco-navigation .timenav .content .marker .flag-small:hover {
   height: 56px;
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: 0 -53px;
   width: 153px;
@@ -1879,7 +1879,7 @@
   margin-top: 5px;
 }
 .vco-notouch .vco-navigation .timenav .content .marker .flag-small.flag-small-last:hover {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: 0 -109px;
   width: 153px;
@@ -1931,21 +1931,21 @@
   opacity: 0.5;
 }
 .vco-timeline .vco-navigation .vco-toolbar .zoom-in .icon {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -256px 0;
   width: 24px;
   height: 24px;
 }
 .vco-timeline .vco-navigation .vco-toolbar .zoom-out .icon {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -280px 0;
   width: 24px;
   height: 24px;
 }
 .vco-timeline .vco-navigation .vco-toolbar .back-home .icon {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -328px 0;
   width: 24px;
@@ -1980,21 +1980,21 @@
   opacity: 1;
 }
 .vco-timeline .vco-navigation .vco-toolbar.touch .zoom-in .icon {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -208px -160px;
   width: 40px;
   height: 40px;
 }
 .vco-timeline .vco-navigation .vco-toolbar.touch .zoom-out .icon {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -256px -160px;
   width: 40px;
   height: 40px;
 }
 .vco-timeline .vco-navigation .vco-toolbar.touch .back-home .icon {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -304px -160px;
   width: 40px;
@@ -2053,7 +2053,7 @@
   top: -1px;
   left: 50%;
   z-index: 202;
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -160px -48px;
   width: 24px;
@@ -2151,14 +2151,14 @@
   z-index: 200;
 }
 .vco-timeline .vco-navigation .timenav .content .marker.active .flag {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: 0 -53px;
   width: 153px;
   height: 53px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker.active .flag-small {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: 0 -109px;
   width: 153px;
@@ -2280,7 +2280,7 @@
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag {
   height: 56px;
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: 0 0;
   width: 153px;
@@ -2293,7 +2293,7 @@
   margin-top: 5px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: 0 -135px;
   width: 153px;
@@ -2312,82 +2312,82 @@
   margin-top: 6px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-plaintext {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -280px -130px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-quote {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -232px -130px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-document {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -256px -130px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-photo {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -280px -120px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-twitter {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -256px -120px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-vimeo {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -328px -130px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-youtube {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -304px -130px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-video {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -328px -120px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-audio {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -304px -120px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-map {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -208px -120px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-website {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -232px -120px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-link {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -232px -120px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-wikipedia {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -184px -120px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-storify {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -184px -130px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content .thumbnail.thumb-googleplus {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -208px -130px;
 }
 .vco-timeline .vco-navigation .timenav .content .marker .flag-small .flag-content thumbnail.thumb-instagram {
-  background-image: url(timeline.png?v4.3);
+  background-image: url(/media/css/timeline/timeline.png?v4.3);
   background-repeat: no-repeat;
   background-position: -208px -96px;
 }
