@@ -18,6 +18,8 @@ EventsLib.datepicker_end_elm = $('#date-end');
 EventsLib.adv_search_elm = $('#adv-search');
 EventsLib.adv_search_icon_elm = $('#adv-search-icon-events');
 EventsLib.datepicker_elm = $('.datepicker');
+EventsLib.timeline_overlay_elm = $('#timeline-overlay');
+EventsLib.event_timeline_elm = $('#event-timeline');
 EventsLib.window_elm = $(window);
 EventsLib.location_elm = $(location);
 EventsLib.trigger_timeout = undefined;
@@ -84,6 +86,55 @@ function add_pointers() {
         EventsLib.map.addLayer(marker);
         EventsLib.markers_array.push(marker);
     });
+}
+
+function dateFormatter(date) {
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+    return year + ',' + month + ',' + day;
+}
+
+function initialize_timeline(events, enable) {
+    var event_timeline = {};
+    var timeline = {};
+    timeline.headline = 'Events';
+    timeline.type = 'default';
+
+    if (enable && events.objects.length > 0) {
+        var dates = [];
+        events.objects.forEach(function(item) {
+            var start = Date.parse(item.start);
+            var date_start = new Date(start);
+            var end  = Date.parse(item.end);
+            var date_end = new Date(end);
+
+            var elm = {};
+            elm.startDate = dateFormatter(date_start);
+            elm.endDate = dateFormatter(date_end);
+            elm.headline = item.name;
+
+            dates.push(elm);
+        });
+
+        timeline.date = dates;
+        event_timeline.timeline = timeline;
+
+        EventsLib.event_timeline_elm.empty();
+        EventsLib.timeline_overlay_elm.appendTo(EventsLib.event_timeline_elm);
+        EventsLib.timeline_overlay_elm.hide();
+        createStoryJS({type:       'timeline',
+                       width:      '980',
+                       height:     '300',
+                       source:     event_timeline,
+                       embed_id:   'event-timeline',
+                       debug:      true});
+    }
+    else {
+        EventsLib.event_timeline_elm.empty();
+        EventsLib.timeline_overlay_elm.appendTo(EventsLib.event_timeline_elm);
+        EventsLib.timeline_overlay_elm.show();
+    }
 }
 
 function bind_events() {
@@ -161,6 +212,7 @@ var update_results = function(data, query, newquery, past_events) {
         return;
     }
 
+
     EventsLib.search_loading_icon_elm.hide();
     EventsLib.search_ready_icon_elm.show();
     EventsLib.events_loading_wrapper_elm.hide();
@@ -215,6 +267,15 @@ var update_results = function(data, query, newquery, past_events) {
     }).appendTo('#events-table-body');
 
     EventsLib.searchfield_elm.data('searching', undefined);
+
+    // Check if query result has less than 100 events
+    // and period is either 'custom' or 'future'
+
+    var period = hash_get_value('period');
+    var valid_period = $.inArray(period, ['custom', 'future']);
+    var enable = (parseInt(data.meta.total_count, 10)<100 && valid_period>=0);
+
+    setTimeout(initialize_timeline(data, enable), 1000);
 
     if (past_events && parseInt(data.meta.total_count, 10) > EventsLib.results_batch) {
         EventsLib.map_overlay_elm.show();
@@ -354,6 +415,25 @@ function loader_canvas_icon_init() {
 }
 
 $(document).ready(function () {
+
+    EventsLib.event_timeline_elm.hide();
+
+    $('#events-map-button').click(function () {
+        EventsLib.event_timeline_elm.fadeOut('fast');
+        $('#map').fadeIn('slow');
+
+        $(this).parent().addClass('active');
+        $('#events-timeline-button').parent().removeClass('active');
+    });
+
+    $('#events-timeline-button').click(function () {
+        $('#map').fadeOut('fast');
+        EventsLib.event_timeline_elm.fadeIn('slow');
+
+        $(this).parent().addClass('active');
+        $('#events-map-button').parent().removeClass('active');
+    });
+
     initialize_map();
 
     EventsLib.searchform_elm.submit(function (event) {
