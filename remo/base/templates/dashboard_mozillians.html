@@ -1,0 +1,334 @@
+{% extends "dashboard.html" %}
+
+{% block mozillian_interests %}
+<div class="two columns align-right">
+  <a href="#" class="small white button nice radius"
+      data-reveal-id="interests-modal">Edit interests</a>
+  {% if interestform.tracked_functional_areas.errors %}
+    <small class="error top-margined">
+      Please mark your interests.
+    </small>
+  {% endif %}
+</div>
+{% endblock %}
+
+
+{% block body_content %}
+{% if not tracked_interests %}
+  <div class="dashboard-box">
+    <div class="row">
+      <div class="twelve columns">
+        <p>
+          To track activities of Reps, click on "Edit interests" to select interests.
+        </p>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <dl class="tabs top-margined">
+    {% for key, reps in tracked_interests|dictsort %}
+      <dd>
+        <a href="#{{ key }}" {% if loop.first %}class="active"{% endif %}>
+           {{ key }}
+        </a>
+      </dd>
+    {% endfor %}
+  </dl>
+  <ul class="tabs-content">
+    {% for key, reps in tracked_interests|dictsort %}
+      <li {% if loop.first %}class="active"{% endif %} id="{{ key }}Tab">
+      <!-- people block -->
+      <div class="dashboard-box">
+        <div class="row">
+          <div class="seven columns">
+            <h5>People</h5>
+          </div>
+          <div class="five columns">
+            <dl class="sub-nav dashboard-filter">
+              <dt>Filter:</dt>
+              <dd class="active">
+                <a class="dashboard-mozillians-reps-grid-button" href="javascript:void(0)">
+                   Reps Grid
+                </a>
+              </dd>
+              <dd>
+                <a class="dashboard-mozillians-reps-reports-button" href="javascript:void(0)">
+                   Reps Reports
+                </a>
+              </dd>
+            </dl>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- people grid block -->
+          <div class="dashboard-mozillians-reps-grid-block">
+            {% if reps %}
+              <ul class="block-grid four-up">
+                {% for rep in reps %}
+                  <li>
+                    <a href="{{ url('profiles_view_profile', rep|get_display_name)}}">
+                      <div class="panel dashboard-mentee">
+                        <img src="{{ rep|get_avatar_url(50) }}"
+                             class="profiles-people-avatar"
+                             alt="avatar">
+                        <h6>{{ rep.get_full_name() }}</h6>
+                      </div>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+              <div class="align-right">
+                <a href="#" data-reveal-id="mail-reps-modal"
+                   class="small white button nice radius">Mail reps</a>
+              </div>
+            {% else %}
+              <div class="row">
+                <div class="twelve columns no-bugs">
+                  <p>No reps found with the specified interest!</p>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          <!-- end people grid block -->
+
+          <!-- reports list block -->
+          <div class="dashboard-mozillians-reps-reports-block hidden">
+            {% if reps_reports[key] %}
+              <table class="dashboard-table">
+                <thead>
+                  <tr>
+                    <th class="dashboard-clickable type-string">Fullname</th>
+                    <th class="dashboard-clickable type-int">Year</th>
+                    <th class="dashboard-clickable type-string">Month</th>
+                    <th class="dashboard-clickable type-string">Date filled</th>
+                    <th class="dashboard-clickable type-string align-center">Empty</th>
+                    <th class="dashboard-clickable type-string align-center">Overdue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for report in reps_reports[key] %}
+                    <tr>
+                      <td>
+                        <a href="{{ url('profiles_view_profile',
+                                    report.user|get_display_name) }}">
+                           {{ report.user.get_full_name() }}
+                        </a>
+                      </td>
+                      <td>{{ report.month.strftime('%Y') }}</td>
+                      <td>
+                        <a href="{{ report|get_report_view_url }}">
+                           {{ report.month.strftime('%B') }}
+                        </a>
+                      </td>
+                      <td>{{ report.updated_on|format_datetime }}</td>
+                      <td class="dashboard-list-pictogram">
+                        {% if report.empty %}%{% endif %}
+                      </td>
+                      <td class="dashboard-list-pictogram">
+                        {% if report.overdue %}%{% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <div class="row">
+                <div class="twelve columns no-bugs">
+                  <p>No Reports found!</p>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        <!-- end reports list block -->
+        </div>
+      </div>
+      <!-- end people block -->
+
+      <!-- events block -->
+      <div class="dashboard-box">
+        <div class="row">
+          <div class="seven columns">
+            <h5>Events</h5>
+          </div>
+          <div class="five columns">
+            <dl class="sub-nav dashboard-filter">
+              <dt>Filter:</dt>
+                <dd class="active">
+                  <a class="dashboard-events-future-button" href="javascript:void(0)">
+                    Current & Future events
+                  </a>
+                </dd>
+                <dd>
+                  <a class="dashboard-events-past-button" href="javascript:void(0)">
+                    Past events
+                  </a>
+                </dd>
+            </dl>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Current and future events block -->
+          <div class="dashboard-events-future-block">
+            {% if reps_current_events[key] %}
+              <table class="dashboard-table">
+                <thead>
+                  <tr>
+                    <th class="dashboard-clickable type-string">Event Name</th>
+                    <th class="dashboard-clickable type-string">Start Date</th>
+                    <th class="dashboard-clickable type-string">End Date</th>
+                    <th class="dashboard-clickable type-string">City</th>
+                    <th class="dashboard-clickable type-string align-center">Country</th>
+                    <th class="dashboard-clickable type-string align-center">Owner</th>
+                    <th class="dashboard-clickable type-int align-center">Contribute Signups</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for event in reps_current_events[key] %}
+                    <tr>
+                      <td>
+                        <a href="{{ url('events_view_event', slug=event.slug) }}">
+                           {{ event.name }}
+                        </a>
+                      </td>
+                      <td>{{ event.start|format_datetime }}</td>
+                      <td>{{ event.end|format_datetime }}</td>
+                      <td>{{ event.city }}</td>
+                      <td>{{ event.country }}</td>
+                      <td>
+                        <a href="{{ url('profiles_view_profile',
+                                        event.owner|get_display_name) }}">
+                           {{ event.owner.get_full_name() }}
+                        </a>
+                      </td>
+                      <td>{{ event.converted_visitors }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <div class="row">
+                <div class="twelve columns no-bugs">
+                  <p>No events found for the specified interest!</p>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          <!-- end Current and future events block -->
+
+          <!-- Past events block-->
+          <div class="dashboard-events-past-block hidden">
+            {% if reps_past_events[key] %}
+              <table class="dashboard-table">
+                <thead>
+                  <tr>
+                    <th class="dashboard-clickable type-string">Event Name</th>
+                    <th class="dashboard-clickable type-string">Start Date</th>
+                    <th class="dashboard-clickable type-string">End Date</th>
+                    <th class="dashboard-clickable type-string">City</th>
+                    <th class="dashboard-clickable type-string align-center">Country</th>
+                    <th class="dashboard-clickable type-string align-center">Owner</th>
+                    <th class="dashboard-clickable type-int align-center">Contribute Signups</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for event in reps_past_events[key] %}
+                    <tr>
+                      <td>
+                        <a href="{{ url('events_view_event', slug=event.slug) }}">
+                           {{ event.name }}
+                        </a>
+                      </td>
+                      <td>{{ event.start|format_datetime }}</td>
+                      <td>{{ event.end|format_datetime }}</td>
+                      <td>{{ event.city }}</td>
+                      <td>{{ event.country }}</td>
+                      <td>
+                        <a href="{{ url('profiles_view_profile',
+                                        event.owner|get_display_name) }}">
+                           {{ event.owner.get_full_name() }}
+                        </a>
+                      </td>
+                      <td>{{ event.converted_visitors }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <div class="row">
+                <div class="twelve columns no-bugs">
+                  <p>No events found for the specified interest!</p>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          <!-- end Past events block -->
+        </div>
+        <!-- end events block -->
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% endblock %}
+
+{% block modals %}
+<!-- mail reps reveal modal -->
+{% if mentees_emails is not none %}
+  <div id="mail-reps-modal" class="reveal-modal">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">Mail Reps</p>
+    <h6>Comming soon!</h6>
+    <form id="email-mentees-form" method="post"
+          action="{{ url('email_mentees') }}" class="custom">
+      {{ csrf() }}
+      {% for field in email_mentees_form %}
+        {{field}} {{ field.label }}
+        <br>
+      {% endfor %}
+
+      </div>
+    </form>
+  </div>
+{% endif %}
+<!-- mail reps reveal modal end -->
+
+<!-- interests modal -->
+<form class="custom" method="post"
+      action="{{ url('dashboard') }}">
+  {{ csrf() }}
+  <div id="interests-modal" class="reveal-modal">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">
+      Specify your interests in Functional areas you want to track
+    </p>
+    <h3>
+      Functional Areas
+    </h3>
+    <ul class="block-grid three-up">
+      {% for choice in interestform.tracked_functional_areas.field.choices %}
+        <li>
+        <label for="{{ choice.1 }}-bit">
+          <input type="checkbox" name="tracked_functional_areas"
+                 value="{{ choice.0 }}"
+            {% if choice.0 in interestform.tracked_functional_areas.value() %}
+              checked="checked"
+            {% endif %}/>
+          {{ choice.1 }}
+        </li>
+      {% endfor %}
+    </ul>
+    <button type="submit"
+            class="small green button nice radius close-reveal-modal">
+      choose these areas &raquo;
+    </button>
+    </a>
+  </div>
+</form>
+<!-- interests modal end -->
+{% endblock %}  
+
+{% block bottomextra %}
+  {{ js('base_dashboard_mozillians') }}
+{% endblock %}

@@ -3,7 +3,7 @@ import re
 
 import django.utils.timezone as timezone
 
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
@@ -17,6 +17,7 @@ from remo.base.utils import add_permissions_to_groups
 DISPLAY_NAME_MAX_LENGTH = 50
 
 # Monkey patch unicode(User)
+
 
 def user_unicode(self):
     """Return user's full name and display name if available."""
@@ -125,7 +126,10 @@ class UserProfile(models.Model):
     mentor = models.ForeignKey(User, null=True, blank=False,
                                related_name='mentees',
                                validators=[_validate_mentor])
-    functional_areas = models.ManyToManyField(FunctionalArea)
+    functional_areas = models.ManyToManyField(
+        FunctionalArea, related_name='users_matching')
+    tracked_functional_areas = models.ManyToManyField(
+        FunctionalArea, related_name='users_tracking')
     receive_email_on_add_report = models.BooleanField(null=False,
                                                       blank=True,
                                                       default=True)
@@ -135,7 +139,6 @@ class UserProfile(models.Model):
     receive_email_on_add_comment = models.BooleanField(null=False,
                                                        blank=True,
                                                        default=True)
-
 
     class Meta:
         permissions = (('create_user', 'Can create new user'),

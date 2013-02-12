@@ -165,19 +165,19 @@ class ViewsTest(TestCase):
         c.login(username='rep', password='passwd')
         response = c.get(reverse('dashboard'))
         eq_(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'dashboard_reps.html')
 
         # Get as logged in mentor.
         c.login(username='mentor', password='passwd')
         response = c.get(reverse('dashboard'))
         eq_(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'dashboard_reps.html')
 
         # Get as logged in counselor.
         c.login(username='counselor', password='passwd')
         response = c.get(reverse('dashboard'))
         eq_(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'dashboard_reps.html')
 
     def test_email_my_mentees_mentor_with_send_True(self):
         """Email mentees when mentor and checkbox
@@ -192,7 +192,7 @@ class ViewsTest(TestCase):
                 'body': ('This is my body\n',
                          'Multiline of course')}
         response = c.post(reverse('email_mentees'), data, follow=True)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'dashboard_reps.html')
         for m in response.context['messages']:
             pass
         eq_(m.tags, u'success')
@@ -213,7 +213,7 @@ class ViewsTest(TestCase):
                 'body': ('This is my body\n',
                          'Multiline of course')}
         response = c.post(reverse('email_mentees'), data, follow=True)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'dashboard_reps.html')
         for m in response.context['messages']:
             pass
         eq_(m.tags, u'error')

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from django import http
 from django_browserid import get_audience, verify
@@ -18,6 +18,7 @@ import utils
 
 from remo.base.decorators import permission_check
 from remo.base.mozillians import is_vouched, BadStatusCodeError
+from remo.events.models import Event
 from remo.featuredrep.models import FeaturedRep
 from remo.remozilla.models import Bug
 from remo.reports.models import Report
@@ -90,6 +91,43 @@ def dashboard(request):
     """Dashboard view."""
     user = request.user
     args = {}
+
+    # Mozillians block
+    if user.groups.filter(name='Mozillians').exists():
+        interestform = forms.TrackFunctionalAreasForm(
+            request.POST or None, instance=user.userprofile)
+        if request.method == 'POST' and interestform.is_valid():
+            interestform.save()
+            messages.success(request, 'Interests successfully saved')
+            return redirect('dashboard')
+
+        # Get the reps who match the specified interests
+        interests = user.userprofile.tracked_functional_areas.all()
+        tracked_interests = {}
+        reps_reports = {}
+        reps_past_events = {}
+        reps_current_events = {}
+        now = datetime.now()
+        for interest in interests:
+            # Get the Reps with the specified interest
+            reps = User.objects.filter(
+                userprofile__functional_areas__name=interest)
+            tracked_interests[interest] = reps
+            # Get the reports of the Reps with the specified interest
+            reps_reports[interest] = Report.objects.filter(
+                user__in=reps).order_by('created_on')[:20]
+            # Get the events created by the reps with the specified interest
+            events = Event.objects.filter(owner__in=reps)
+            reps_past_events[interest] = events.filter(start__lt=now)[:50]
+            reps_current_events[interest] = events.filter(start__gt=now)
+        args['interestform'] = interestform
+        args['reps_reports'] = reps_reports
+        args['reps_past_events'] = reps_past_events
+        args['reps_current_events'] = reps_current_events
+        args['tracked_interests'] = tracked_interests
+        return render(request, 'dashboard_mozillians.html', args)
+
+    # Reps block
     q_closed = Q(status='RESOLVED') | Q(status='VERIFIED')
     budget_requests = (Bug.objects.filter(component='Budget Requests').
                        exclude(q_closed))
@@ -153,7 +191,7 @@ def dashboard(request):
         args['reps_without_profile'] = reps.filter(
             userprofile__registration_complete=False)
 
-    return render(request, 'dashboard.html', args)
+    return render(request, 'dashboard_reps.html', args)
 
 
 def custom_404(request):
