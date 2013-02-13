@@ -170,7 +170,7 @@ class RepResource(ClientCachedResource, ModelResource):
         """Prepare bundle.data for CSV export."""
         if bundle.request.method == 'GET':
             req = bundle.request.GET
-            if not req.get('restricted', False):
+            if not req.get('restricted', 'False') == 'True':
                 for field in self._meta.restricted_fields:
                     bundle.data.pop(field)
 
