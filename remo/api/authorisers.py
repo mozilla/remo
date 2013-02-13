@@ -9,7 +9,7 @@ class WebAuthorization(ReadOnlyAuthorization):
 
         if request.user.is_authenticated():
             data = request.GET.copy()
-            data['restricted'] = True
+            data['restricted'] = 'True'
             request.GET = data
 
         return True
