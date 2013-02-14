@@ -74,6 +74,9 @@ MOZILLIANS_API_KEY='demo'
 MOZILLIANS_API_APPNAME='demo'
 SETTINGS
 
+echo "Update product_details"
+python manage.py update_product_details
+
 echo "Database name: ${JOB_NAME}"
 echo "Dropping database if it exists"
 echo "DROP DATABASE IF EXISTS test_${JOB_NAME};"|mysql -u $DB_USER -h $DB_HOST
