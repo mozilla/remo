@@ -9,3 +9,4 @@
 
 fudge
 pyquery
+mock

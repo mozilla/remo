@@ -37,7 +37,6 @@ pip install -q -r requirements/dev.txt
 cat > settings/local.py <<SETTINGS
 from settings.base import *
 
-ROOT_URLCONF = 'workspace.urls'
 LOG_LEVEL = logging.ERROR
 # Database name has to be set because of sphinx
 DATABASES = {
@@ -61,6 +60,17 @@ SECRET_KEY = 'jenkins secret'
 HMAC_KEYS = {
     '2013-01-01': '2d03c44177c32011u7e4c2fbf40asd5277doiu6ad8e14e373b92c603b164e288d',
 }
+from django_sha2 import get_password_hashers
+PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
+
+# Demo Keys don't work really.
+MAILHIDE_PUB_KEY = '02Ni54q--g1yltekhaSm23HQ=='
+MAILHIDE_PRIV_KEY = 'fe55a9921917184732012e3fed19d0be'
+
+REMOZILLA_USERNAME='demo'
+REMOZILLA_PASSWORD='demo'
+MOZILLIANS_API_KEY='demo'
+MOZILLIANS_API_APPNAME='demo'
 SETTINGS
 
 echo "Creating database if we need it..."
