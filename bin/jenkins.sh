@@ -56,6 +56,11 @@ DATABASES = {
 
 INSTALLED_APPS += ('django_nose',)
 CELERY_ALWAYS_EAGER = True
+
+SECRET_KEY = 'jenkins secret'
+HMAC_KEYS = {
+    '2013-01-01': '2d03c44177c32011u7e4c2fbf40asd5277doiu6ad8e14e373b92c603b164e288d',
+}
 SETTINGS
 
 echo "Creating database if we need it..."
