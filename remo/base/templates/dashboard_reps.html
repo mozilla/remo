@@ -109,7 +109,7 @@
           {% if mentees_emails is not none %}
             <div class="align-right">
               <a href="#" data-reveal-id="mail-modal"
-                 class="small white button nice radius">Mail my mentees</a>
+                 class="small white button nice radius">Email my mentees</a>
             </div>
           {% endif %}
         </div>
@@ -147,7 +147,7 @@
           {% if mentees_emails is not none %}
             <div class="align-right">
               <a href="#" data-reveal-id="mail-modal"
-                 class="small white button nice radius">Mail my mentees</a>
+                 class="small white button nice radius">Email my mentees</a>
             </div>
           {% endif %}
         </div>
@@ -966,7 +966,7 @@
 {% if mentees_emails is not none %}
   <div id="mail-modal" class="reveal-modal">
     <a class="close-reveal-modal">&#215;</a>
-    <p class="lead">Mail your mentees</p>
+    <p class="lead">Email your mentees</p>
     <form id="email-mentees-form" method="post"
           action="{{ url('email_mentees') }}" class="custom">
       {{ csrf() }}
