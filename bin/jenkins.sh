@@ -20,6 +20,7 @@ if [ ! -d "$VENV/bin" ]; then
   source $VENV/bin/activate
   pip install --upgrade pip
   pip install coverage
+  pip install django_coverage
 fi
 
 git submodule sync -q
@@ -53,7 +54,7 @@ DATABASES = {
     }
 }
 
-INSTALLED_APPS += ('django_nose',)
+INSTALLED_APPS += ('django_nose', 'django_coverage')
 CELERY_ALWAYS_EAGER = True
 
 SECRET_KEY = 'jenkins secret'
@@ -82,7 +83,9 @@ echo "CREATE DATABASE IF NOT EXISTS ${JOB_NAME}"|mysql -u $DB_USER -h $DB_HOST
 
 echo "Starting tests..."
 export FORCE_DB=1
-coverage run manage.py test --noinput --with-xunit
-coverage xml $(find apps lib -name '*.py')
-
+if [ -z $COVERAGE ]; then
+    python manage.py test --noinput --with-xunit --logging-clear-handlers
+else
+    python manage.py test_coverage --noinput
+fi
 echo "FIN"
