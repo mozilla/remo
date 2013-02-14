@@ -80,12 +80,12 @@
               </ul>
               <div class="align-right">
                 <a href="#" data-reveal-id="mail-reps-modal"
-                   class="small white button nice radius">Mail reps</a>
+                   class="small white button nice radius">Email Reps</a>
               </div>
             {% else %}
               <div class="row">
                 <div class="twelve columns no-bugs">
-                  <p>No reps found with the specified interest!</p>
+                  <p>No Reps found with the specified interest!</p>
                 </div>
               </div>
             {% endif %}
@@ -278,7 +278,7 @@
 {% if mentees_emails is not none %}
   <div id="mail-reps-modal" class="reveal-modal">
     <a class="close-reveal-modal">&#215;</a>
-    <p class="lead">Mail Reps</p>
+    <p class="lead">Email Reps</p>
     <h6>Comming soon!</h6>
     <form id="email-mentees-form" method="post"
           action="{{ url('email_mentees') }}" class="custom">
