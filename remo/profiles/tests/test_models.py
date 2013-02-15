@@ -44,10 +44,6 @@ class UserTest(TestCase):
         eq_(self.new_user.userprofile.display_name,
             'x' * (DISPLAY_NAME_MAX_LENGTH - 1))
 
-    def test_new_user_joins_rep_group(self):
-        """Test that new users join the Rep group automatically."""
-        eq_(self.new_user.groups.filter(name='Rep').count(), 1)
-
     def test_new_user_conflicting_display_names(self):
         """Test that display_name automatic calculation function will
         append _'s to conflicting display names and that will stop and
@@ -59,7 +55,7 @@ class UserTest(TestCase):
         # display_name with appended _'s.
         new_user2 = User.objects.create_user(
             username='conflicting',
-            email= 'x' * (DISPLAY_NAME_MAX_LENGTH - 1) + '@bar.example.com')
+            email='x' * (DISPLAY_NAME_MAX_LENGTH - 1) + '@bar.example.com')
 
         eq_(new_user2.userprofile.display_name,
             'x' * (DISPLAY_NAME_MAX_LENGTH - 1) + '_')
