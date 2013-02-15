@@ -22,3 +22,4 @@ tmp/*
 /vendor-local/lib/python/*.egg-info/*
 media/static
 media/css/remo/app.less.css
+venv

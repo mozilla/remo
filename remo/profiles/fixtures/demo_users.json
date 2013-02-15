@@ -11,8 +11,7 @@
             "is_staff": false,
             "last_login": "2012-01-23 05:29:21+00:00",
             "groups": [
-                1,
-                4
+                1
             ],
             "user_permissions": [],
             "password": "md5$2$f74916608ad95265f58a739d6ffba15f",
@@ -52,6 +51,7 @@
             "is_staff": false,
             "last_login": "2012-01-23 05:31:21+00:00",
             "groups": [
+                3,
                 4
             ],
             "user_permissions": [],
@@ -152,7 +152,8 @@
                 3,
                 2
             ],
-            "receive_email_on_add_comment": "True"
+            "receive_email_on_add_comment": "True",
+            "tracked_functional_areas": []
         }
     },
     {
@@ -225,7 +226,8 @@
             ],
             "receive_email_on_add_report": "True",
             "receive_email_on_edit_report": "False",
-            "receive_email_on_add_comment": "True"
+            "receive_email_on_add_comment": "True",
+            "tracked_functional_areas": []
         }
     },
     {
@@ -261,7 +263,8 @@
                 3,
                 2
             ],
-            "receive_email_on_add_comment": "True"
+            "receive_email_on_add_comment": "True",
+            "tracked_functional_areas": []
         }
     },
     {
@@ -326,6 +329,15 @@
             "registration_complete":"True",
             "date_joined_program": "2011-07-01",
             "receive_email_on_add_comment": "True"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "profiles.useravatar",
+        "fields": {
+            "user": 7,
+            "avatar_url": "http://example.com",
+            "last_update": "2012-01-23 05:31:39+00:00"
         }
     }
 ]

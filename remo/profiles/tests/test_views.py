@@ -101,6 +101,7 @@ class ViewsTest(TestCase):
 
         u = User.objects.get(email='foobar@example.com')
         eq_(u.userprofile.added_by, User.objects.get(username='mentor'))
+        eq_(u.groups.filter(name='Rep').exists(), True)
 
     def test_edit_profile_permissions(self):
         """Test user permissions to edit profiles."""

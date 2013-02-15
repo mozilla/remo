@@ -49,12 +49,12 @@ class APITest(TestCase):
             eq_(len(result['objects']), 1,
                 'Query "%s" did not return 1 result' % query)
 
-    @fudge.patch('datetime.date.today')
+    @fudge.patch('remo.profiles.api.date')
     def test_csv_export(self, fake_requests_obj):
         """Test for valid filename in CSV export."""
         # Act like it's March 2012.
         fake_date = date(year=2012, month=3, day=1)
-        (fake_requests_obj.expects_call().returns(fake_date))
+        (fake_requests_obj.provides('today').returns(fake_date))
 
         c = Client()
         url = urlparams(reverse('api_dispatch_list',

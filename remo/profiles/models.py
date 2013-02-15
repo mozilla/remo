@@ -248,8 +248,8 @@ def user_set_inactive_post_save(sender, instance, raw, **kwargs):
         instance.userprofile.save()
 
 
-@receiver(post_migrate, dispatch_uid='report_set_groups_signal')
-def report_set_groups(app, sender, signal, **kwargs):
+@receiver(post_migrate, dispatch_uid='profiles_set_groups_signal')
+def profiles_set_groups(app, sender, signal, **kwargs):
     """Set permissions to groups."""
     if (isinstance(app, basestring) and app != 'profiles'):
         return True
