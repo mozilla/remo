@@ -112,7 +112,7 @@ function initialize_timeline(events, enable) {
             var elm = {};
             elm.startDate = dateFormatter(date_start);
             elm.endDate = dateFormatter(date_end);
-            elm.headline = item.name;
+            elm.headline = '<a href="'+item.event_url+'">'+item.name+'</a>';
 
             dates.push(elm);
         });
