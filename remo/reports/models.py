@@ -86,8 +86,9 @@ def report_set_overdue_pre_save(sender, instance, raw, **kwargs):
     previous_month = go_back_n_months(today, first_day=True)
 
     if not instance.id and not raw:
-        if (previous_month > instance.month or
-            (previous_month == instance.month and today.day > OVERDUE_DAY)):
+        if (previous_month > instance.month
+            or (previous_month == instance.month
+                and today.day > OVERDUE_DAY)):
             instance.overdue = True
 
 
@@ -131,16 +132,17 @@ def email_mentor_on_add_report(sender, instance, created, **kwargs):
     year = instance.month.strftime('%Y')
     rep_user = instance.user
     rep_profile = instance.user.userprofile
-    mentor = rep_profile.mentor.userprofile
+    mentor_profile = instance.mentor.userprofile
     ctx_data = {'rep_user': rep_user, 'rep_profile': rep_profile,
                 'new_report': created, 'month': month, 'year': year}
     if created:
-        if mentor.receive_email_on_add_report:
-            subject = subject % (rep_profile.display_name, 'added', month, year)
+        if mentor_profile.receive_email_on_add_report:
+            subject = subject % ((rep_profile.display_name,
+                                  'added', month, year))
             send_remo_mail.delay([instance.mentor], subject, email_template,
                                  ctx_data)
     else:
-        if mentor.receive_email_on_edit_report:
+        if mentor_profile.receive_email_on_edit_report:
             subject = subject % (rep_profile.display_name, 'edited',
                                  month, year)
             send_remo_mail.delay([instance.mentor], subject, email_template,
