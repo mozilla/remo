@@ -650,8 +650,8 @@ function createStoryJS(c, src) {
 	
 	/* Load CSS
 	================================================== */
-	LoadLib.css(storyjs_e_config.css, onloaded_css);
-	
+	onloaded_css();
+
 	/* Load FONT
 	================================================== */
 	if (storyjs_e_config.font == "default") {
@@ -714,7 +714,7 @@ function createStoryJS(c, src) {
 	================================================== */
 	
 	function onloaded_jquery() {
-		LoadLib.js(storyjs_e_config.js, onloaded_js);
+	         onloaded_js();
 	}
 	function onloaded_js() {
 		ready.js = true;

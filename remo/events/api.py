@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 
+from jinja2 import escape
 from tastypie import fields
 from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization
@@ -41,6 +42,10 @@ class EventResource(ClientCachedResource, ModelResource):
                   'estimated_attendance']
         filtering = {'name': ALL, 'city': ALL, 'region': ALL, 'country': ALL,
                      'start': ALL, 'end': ALL}
+
+    def dehydrate_name(self, bundle):
+        """Sanitize event name."""
+        return unicode(escape(bundle.obj.name))
 
     def dehydrate_owner_name(self, bundle):
         """Return owner fullname."""
