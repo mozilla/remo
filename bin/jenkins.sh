@@ -74,12 +74,12 @@ MOZILLIANS_API_KEY='demo'
 MOZILLIANS_API_APPNAME='demo'
 SETTINGS
 
-echo "Update product_details"
-python manage.py update_product_details
-
 echo "Database name: ${JOB_NAME}"
 echo "Creating database if we need it..."
 echo "CREATE DATABASE IF NOT EXISTS ${JOB_NAME}"|mysql -u $DB_USER -h $DB_HOST
+
+echo "Update product_details"
+python manage.py update_product_details
 
 echo "Starting tests..."
 export FORCE_DB=1
