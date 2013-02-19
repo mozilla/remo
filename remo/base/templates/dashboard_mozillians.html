@@ -28,15 +28,15 @@
   <dl class="tabs top-margined">
     {% for key, reps in tracked_interests|dictsort %}
       <dd>
-        <a href="#{{ key }}" {% if loop.first %}class="active"{% endif %}>
-           {{ key }}
+        <a href="#{{ key|replace(" ", "") }}"
+           {% if loop.first %} class="active"{% endif %}>{{ key }}
         </a>
       </dd>
     {% endfor %}
   </dl>
   <ul class="tabs-content">
     {% for key, reps in tracked_interests|dictsort %}
-      <li {% if loop.first %}class="active"{% endif %} id="{{ key }}Tab">
+      <li {% if loop.first %}class="active"{% endif %} id="{{ key|replace(" ", "") }}Tab">
       <!-- people block -->
       <div class="dashboard-box">
         <div class="row">
