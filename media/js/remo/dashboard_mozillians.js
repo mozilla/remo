@@ -16,16 +16,16 @@ $(document).ready(function () {
     });
 
     $('.dashboard-events-future-button').click(function () {
-        $('.dashboard-events-future-block').show('fast');
-        $('.dashboard-events-past-block').hide('fast');
+        $('.dashboard-events-future-block').removeClass('hidden');
+        $('.dashboard-events-past-block').addClass('hidden');
 
         $('.dashboard-events-future-button').parent().addClass('active');
         $('.dashboard-events-future-button').parent().siblings().removeClass('active');
     });
 
     $('.dashboard-events-past-button').click(function () {
-        $('.dashboard-events-past-block').show('fast');
-        $('.dashboard-events-future-block').hide('fast');
+        $('.dashboard-events-past-block').removeClass('hidden');
+        $('.dashboard-events-future-block').addClass('hidden');
 
         $('.dashboard-events-past-button').parent().addClass('active');
         $('.dashboard-events-past-button').parent().siblings().removeClass('active');
