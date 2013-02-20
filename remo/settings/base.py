@@ -131,11 +131,9 @@ INSTALLED_APPS = ['south'] + \
                      'remo.reports',
                      'remo.api',
                      'remo.events',
-                     
-                     'django_browserid',
-                     'tastypie',
 
-                     ]
+                     'django_browserid',
+                     'tastypie']
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:
@@ -221,3 +219,6 @@ REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
 
 # Mozillians API
 MOZILLIANS_API_BASE = 'https://mozillians.org'
+
+ALLOWED_HOSTS = ['reps.mozilla.org']
+JINGO_MINIFY_USE_STATIC = False
