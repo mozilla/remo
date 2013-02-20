@@ -110,7 +110,7 @@ def dashboard(request):
         now = datetime.now()
         for interest in interests:
             # Get the Reps with the specified interest
-            reps = User.objects.filter(
+            reps = User.objects.filter(groups__name='Rep').filter(
                 userprofile__functional_areas__name=interest)
             tracked_interests[interest] = reps
             # Get the reports of the Reps with the specified interest
