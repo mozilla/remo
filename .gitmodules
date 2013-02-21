@@ -1,12 +1,16 @@
 [submodule "vendor"]
+        ignore = dirty
 	path = vendor
 	url = git://github.com/mozilla/playdoh-lib.git
 [submodule "vendor-local/src/happyforms"]
+        ignore = dirty
 	path = vendor-local/src/happyforms
 	url = https://github.com/mozilla/happyforms
 [submodule "vendor-local/src/django-uuslug"]
+        ignore = dirty
 	path = vendor-local/src/django-uuslug
 	url = https://github.com/un33k/django-uuslug
 [submodule "vendor-local/src/markdown"]
+        ignore = dirty
 	path = vendor-local/src/markdown
 	url = git://github.com/waylan/Python-Markdown.git
