@@ -4,6 +4,7 @@ import datetime
 from django.db.models import get_app, get_models
 from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Group, Permission
+from django.core.exceptions import ValidationError
 
 
 def get_object_or_none(model_class, **kwargs):
@@ -95,3 +96,17 @@ def add_permissions_to_groups(app, permissions):
             permission = Permission.objects.get(codename=perm_name,
                                                 content_type__app_label=app)
             group.permissions.add(permission)
+
+
+def validate_datetime(data, **kwargs):
+    """Validate that /data/ is of type datetime.
+
+    Used to validate DateTime form fields, to ensure that user select
+    a valid date, thus a date that can be converted to a datetime
+    obj. Example of invalid date is 'Sept 31 2012'.
+
+    """
+
+    if not isinstance(data, datetime.datetime):
+        raise ValidationError('Date chosen is invalid.')
+    return data

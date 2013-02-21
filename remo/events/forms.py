@@ -10,6 +10,7 @@ from pytz import common_timezones, timezone
 
 from datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.helpers import get_full_name
+from remo.base.utils import validate_datetime
 from remo.remozilla.models import Bug
 
 from models import Event, Metric
@@ -53,20 +54,6 @@ class MinBaseInlineFormSet(forms.models.BaseInlineFormSet):
 
 EventMetricsFormset = forms.models.inlineformset_factory(
     Event, Metric, formset=MinBaseInlineFormSet, extra=2)
-
-
-def validate_datetime(data, **kwargs):
-    """Validate that /data/ is of type datetime.
-
-    Used to validate DateTime form fields, to ensure that user select
-    a valid date, thus a date that can be converted to a datetime
-    obj. Example of invalid date is 'Sept 31 2012'.
-
-    """
-
-    if not isinstance(data, datetime):
-        raise ValidationError('Date chosen is invalid.')
-    return data
 
 
 class EventForm(forms.ModelForm):
@@ -122,13 +109,13 @@ class EventForm(forms.ModelForm):
         start_year = getattr(self.instance.start, 'year', now.year)
         end_year = getattr(self.instance.end, 'year', now.year)
         self.fields['start_form'] = forms.DateTimeField(
-                widget=SplitSelectDateTimeWidget(
-                    years=range(start_year, now.year + 10), minute_step=5),
-                validators=[validate_datetime])
+            widget=SplitSelectDateTimeWidget(
+                years=range(start_year, now.year + 10), minute_step=5),
+            validators=[validate_datetime])
         self.fields['end_form'] = forms.DateTimeField(
-                widget=SplitSelectDateTimeWidget(
-                    years=range(end_year, now.year + 10), minute_step=5),
-                validators=[validate_datetime])
+            widget=SplitSelectDateTimeWidget(
+                years=range(end_year, now.year + 10), minute_step=5),
+            validators=[validate_datetime])
         # Make times local to venue
         if self.instance.start:
             start = make_naive(instance.local_start,
@@ -161,7 +148,7 @@ class EventForm(forms.ModelForm):
 
         # Check if keys exists in cleaned data.
         if (not self.cleaned_data.has_key('start_form') or
-            not self.cleaned_data.has_key('end_form')):
+                not self.cleaned_data.has_key('end_form')):
                 raise ValidationError('Please correct the form errors.')
         # Set timezone
         t = timezone(cdata['timezone'])
