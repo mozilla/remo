@@ -43,6 +43,7 @@
   {% else %}
     {{ css('remo') }}
   {% endif %}
+  {% include "includes/google_analytics.html" %}
 </head>
 
 <body>
@@ -291,9 +292,6 @@
   {% else %}
     {{ js('common') }}
   {% endif %}
-
-  <div id="webtrends-url" data-url="{{ js('tracker-full')|f|escape }}"></div>
-  {{ js('tracker') }}
   {% block bottomextra %} {% endblock %}
 </body>
 
