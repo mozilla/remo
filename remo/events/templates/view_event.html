@@ -160,13 +160,15 @@ Mozilla Reps - {{ event.name }}
               &nbsp;
               {{ event.city }}
             </p>
-            <p class="profile-item">
-              <span class="white radius label">
-                Region
-              </span>
-              &nbsp;
-              {{ event.region }}
-            </p>
+            {% if event.region %}
+              <p class="profile-item">
+                <span class="white radius label">
+                  Region
+                </span>
+                &nbsp;
+                {{ event.region }}
+              </p>
+            {% endif %}
             <p class="profile-item">
               <span class="white radius label">
                 Country
