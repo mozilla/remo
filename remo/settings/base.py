@@ -55,12 +55,6 @@ MINIFY_BUNDLES = {
         '404': (
             'js/remo/404.js',
             ),
-        'tracker': (
-            'js/remo/tracker.load.js',
-            ),
-        'tracker-full': (
-            'js/libs/tracker.js',
-            ),
         'leaflet': (
             'leaflet/leaflet.js',
             ),
