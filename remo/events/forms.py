@@ -13,7 +13,7 @@ from remo.base.helpers import get_full_name
 from remo.base.utils import validate_datetime
 from remo.remozilla.models import Bug
 
-from models import Event, Metric
+from models import Event, Metric, EventComment
 
 EST_ATTENDANCE_CHOICES = (('', 'Estimated attendance'),
                           (10, '1-10'),
@@ -205,3 +205,11 @@ class EventForm(forms.ModelForm):
                    'lon': forms.HiddenInput(attrs={'id': 'lon'}),
                    'start': SplitSelectDateTimeWidget(),
                    'end': SplitSelectDateTimeWidget()}
+
+
+class EventCommentForm(forms.ModelForm):
+    """Form of an event comment."""
+
+    class Meta:
+        model = EventComment
+        fields = ['comment']

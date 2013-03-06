@@ -61,12 +61,16 @@ class EditSettingsForm(forms.ModelForm):
     receive_email_on_add_comment = forms.BooleanField(
         required=False, initial=True,
         label=('Receive email when a user comments on a report.'))
+    receive_email_on_add_event_comment = forms.BooleanField(
+        required=False, initial=True,
+        label=('Receive email when a user comments on an event.'))
 
     class Meta:
         model = UserProfile
         fields = ['receive_email_on_add_report',
                   'receive_email_on_edit_report',
-                  'receive_email_on_add_comment']
+                  'receive_email_on_add_comment',
+                  'receive_email_on_add_event_comment']
 
 
 class TrackFunctionalAreasForm(forms.ModelForm):

@@ -19,7 +19,7 @@ from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_or_create_instance
 
 import forms
-from models import Attendance, Event
+from models import Attendance, Event, EventComment
 
 
 @never_cache
@@ -85,8 +85,45 @@ def view_event(request, slug):
     attendees = event.attendees.all()
     email_att_form = EmailUsersForm(attendees)
 
+    if request.method == 'POST':
+        if not request.user.is_authenticated():
+            messages.error(request, 'Permission Denied')
+            return redirect('main')
+
+        event_comment = EventComment(event=event, user=request.user)
+        event_comment_form = forms.EventCommentForm(request.POST,
+                                                    instance=event_comment)
+        if event_comment_form.is_valid():
+            event_comment_form.save()
+            messages.success(request, 'Comment saved')
+
+            # provide new clean form
+            event_comment_form = forms.EventCommentForm()
+    else:
+        event_comment_form = forms.EventCommentForm()
+
+    event_url = reverse('events_view_event', kwargs={'slug': slug})
+
     return render(request, 'view_event.html',
-                  {'event': event, 'email_attendees_form': email_att_form})
+                  {'event': event, 'email_attendees_form': email_att_form,
+                   'comments': event.eventcomment_set.all(),
+                   'event_comment_form': event_comment_form,
+                   'event_comment_form_url': event_url})
+
+
+@permission_check(permissions=['events.can_delete_event_comments'],
+                  filter_field='pk', owner_field='user',
+                  model=EventComment)
+def delete_event_comment(request, slug, pk):
+    if request.method == 'POST':
+        if pk:
+            event_comment = get_object_or_404(EventComment, pk=pk)
+            event_comment.delete()
+            messages.success(request, 'Comment successfully deleted.')
+
+    event_url = reverse('events_view_event', kwargs={'slug': slug})
+
+    return redirect(event_url)
 
 
 @never_cache

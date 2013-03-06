@@ -885,19 +885,21 @@ ul.mreports li.editable a {
     color: #dd4433 !important;
 }
 
-.report-box {
+.report-box, .event-box {
     .top-margined;
 }
 
-.report-item textarea, select, p {
+.report-item textarea, .report-item select,
+.report-item p, .event-item select,
+.event-item textarea, .event-item p {
     margin-top: 20px !important;
 }
 
-.report-comment {
+.report-comment, .event-comment {
     margin-top: 20px !important;
 }
 
-.report-delete-comment {
+.report-delete-comment, .event-delete-comment {
     background: none;
     border: none;
     font-size: 22px;
@@ -908,7 +910,7 @@ ul.mreports li.editable a {
     cursor: pointer;
 }
 
-.report-delete-comment:hover {
+.report-delete-comment:hover, .event-delete-comment:hover {
     .grayed;
 }
 

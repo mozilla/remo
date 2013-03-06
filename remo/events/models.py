@@ -4,6 +4,7 @@ from urlparse import urljoin
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.validators import MaxLengthValidator, MinLengthValidator
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -13,6 +14,7 @@ from uuslug import uuslug as slugify
 
 from remo.base.utils import add_permissions_to_groups
 from remo.remozilla.models import Bug
+from remo.reports.tasks import send_remo_mail
 
 
 class Attendance(models.Model):
@@ -83,7 +85,19 @@ class Event(models.Model):
         ordering = ['start']
         permissions = (('can_subscribe_to_events', 'Can subscribe to events'),
                        ('can_edit_events', 'Can edit events'),
-                       ('can_delete_events', 'Can delete events'))
+                       ('can_delete_events', 'Can delete events'),
+                       ('can_delete_event_comments', 'Can delete event comments'))
+
+
+class EventComment(models.Model):
+    """Comments in Event."""
+    user = models.ForeignKey(User)
+    event = models.ForeignKey(Event)
+    created_on = models.DateTimeField(auto_now_add=True)
+    comment = models.TextField()
+
+    class Meta:
+        ordering = ['id']
 
 
 class Metric(models.Model):
@@ -121,6 +135,25 @@ def event_set_groups(app, sender, signal, **kwargs):
 
     perms = {'can_edit_events': ['Admin', 'Council', 'Mentor', 'Rep'],
              'can_delete_events': ['Admin', 'Council', 'Mentor'],
-             'can_subscribe_to_events': ['Admin', 'Council', 'Mentor', 'Rep']}
+             'can_delete_event_comments': ['Admin'],
+             'can_subscribe_to_events': ['Admin', 'Council', 'Mentor', 'Rep',
+                                         'Mozillians']}
 
     add_permissions_to_groups('events', perms)
+
+
+@receiver(post_save, sender=EventComment,
+          dispatch_uid='email_event_owner_on_add_comment_signal')
+def email_event_owner_on_add_comment(sender, instance, **kwargs):
+    """Email event owner when a comment is added to event."""
+    subject = '[Event] User %s commented on event "%s"'
+    email_template = 'email/owner_notification_on_add_comment.txt'
+    event = instance.event
+    owner = instance.event.owner
+    event_url = reverse('events_view_event', kwargs={'slug': event.slug})
+    ctx_data = {'event': event, 'owner': owner, 'user': instance.user,
+                'comment': instance.comment, 'event_url': event_url}
+    if owner.userprofile.receive_email_on_add_event_comment:
+        subject = subject % (instance.user.get_full_name(),
+                             instance.event.name)
+        send_remo_mail.delay([owner], subject, email_template, ctx_data)
