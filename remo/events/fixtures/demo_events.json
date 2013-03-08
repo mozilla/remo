@@ -45,6 +45,11 @@
             "end": "2012-06-25T10:31:43Z",
             "name": "Test Event",
             "city": "Athens",
+            "categories": [
+                4,
+                6,
+                12
+            ],
             "country": "Greece",
             "region": "Attica",
             "description": "This is description",
@@ -71,6 +76,11 @@
             "end": "2012-06-28T10:31:43Z",
             "name": "Multi Event",
             "city": "Athens",
+            "categories": [
+                4,
+                6,
+                12
+            ],
             "country": "Greece",
             "region": "Attica",
             "description": "This is description",

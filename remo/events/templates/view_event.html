@@ -108,6 +108,17 @@ Mozilla Reps - {{ event.name }}
         J
       </div>
       <div class="eleven columns">
+        <!-- Event categories -->
+        <p class="profile-item">
+          <span class="white radius label">
+            Category
+          </span>
+          &nbsp;
+          {% for category in event.categories.all() %}
+            <a href="{{ category.name|get_event_category_link }}">
+              {{ category.name }}</a>{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        </p>
         <!-- Display external URL if it exists -->
         {% if event.external_link %}
           <p class="profile-item">
