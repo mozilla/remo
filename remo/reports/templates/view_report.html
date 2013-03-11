@@ -259,9 +259,13 @@ Mozilla Reps - Report of {{ pageuser.get_full_name() }} for {{ month }} {{ year 
                 Comment {{ loop.index }}
               </span>&nbsp;
               <span class="grayed">by </span>
-              <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
+              {% if user_is_mozillian(comment.user) %}
                 {{ comment.user.get_full_name() }}
-              </a>
+              {% else %}
+                <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
+                  {{ comment.user.get_full_name() }}
+                </a>
+              {% endif %}
               <span class="grayed"
                     data-time="{{ comment.created_on|format_datetime_iso }}"
                     title="{{ comment.created_on }}">

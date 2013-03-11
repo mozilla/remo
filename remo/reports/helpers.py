@@ -27,7 +27,7 @@ def get_report_view_url(obj):
 @register.filter
 def get_comment_delete_url(obj):
     """Return the delete url of a comment."""
-    up = obj.user.userprofile
+    up = obj.report.user.userprofile
     month_name = number2month(obj.report.month.month)
     return reverse('reports_delete_report_comment',
                    kwargs={'display_name': up.display_name,
