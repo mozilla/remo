@@ -4,13 +4,13 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
 
-@task()
+@task
 def send_remo_mail(user_list, subject, email_template, data=None):
     """Send to user_list emails based rendered using email_template
     and populated with data.
 
     """
-    if not data:
+    if data is None:
         data = {}
 
     data.update({'SITE_URL': settings.SITE_URL,
