@@ -15,6 +15,7 @@ EventsLib.events_loading_wrapper_elm = $('#events-loading-wrapper');
 EventsLib.map_overlay_elm = $('#map-overlay');
 EventsLib.datepicker_start_elm = $('#date-start');
 EventsLib.datepicker_end_elm = $('#date-end');
+EventsLib.multi_e_ical_elm = $('#icalendar-export-button');
 EventsLib.adv_search_elm = $('#adv-search');
 EventsLib.adv_search_icon_elm = $('#adv-search-icon-events');
 EventsLib.datepicker_elm = $('.datepicker');
@@ -128,13 +129,39 @@ function initialize_timeline(events, enable) {
                        height:     '300',
                        source:     event_timeline,
                        embed_id:   'event-timeline',
-                       debug:      true});
+                       debug:      false});
     }
     else {
         EventsLib.event_timeline_elm.empty();
         EventsLib.timeline_overlay_elm.appendTo(EventsLib.event_timeline_elm);
         EventsLib.timeline_overlay_elm.show();
     }
+}
+
+function ical_url(period, start, end, search) {
+    var search_term = function(key, value) {
+      return key + '/' + value + '/';
+    };
+
+    var url = '/events/';
+    url += search_term('period', period);
+
+    if (period === 'custom') {
+      if (start) {
+        url += search_term('start', start);
+      }
+      if (end) {
+        url += search_term('end', end);
+      }
+    }
+
+    if (search) {
+      url += search_term('search', search);
+    }
+
+    url += 'ical/';
+
+    return url;
 }
 
 function bind_events() {
@@ -145,7 +172,18 @@ function bind_events() {
     });
 
     EventsLib.period_selector_elm.change(function() {
-        hash_set_value('period', EventsLib.period_selector_elm.val());
+        var period = EventsLib.period_selector_elm.val();
+        hash_set_value('period', period);
+        if (period === 'custom') {
+            var start_date = EventsLib.datepicker_start_elm.datepicker('getDate');
+            var end_date = EventsLib.datepicker_end_elm.datepicker('getDate');
+            if (start_date) {
+              hash_set_value('start', $.datepicker.formatDate('yy-mm-dd', start_date));
+            }
+            if (end_date) {
+              hash_set_value('end', $.datepicker.formatDate('yy-mm-dd', end_date));
+            }
+        }
     });
 
     EventsLib.window_elm.bind('hashchange', function(e) {
@@ -329,11 +367,22 @@ function send_query(newquery) {
     var start_date = undefined;
     var end_date = undefined;
 
+    var start = hash_get_value('start');
+    var end = hash_get_value('end');
+
     if (period === 'future') {
         start_date = new Date();
     }
     if (period === 'past') {
         end_date = new Date();
+    }
+    if (period !== 'custom') {
+        if (start) {
+          hash_set_value('start', '');
+        }
+        if (end) {
+          hash_set_value('end', '');
+        }
     }
 
     set_dropdown_value(EventsLib.period_selector_elm, period);
@@ -354,6 +403,13 @@ function send_query(newquery) {
             extra_q += '&start__gt=1970-01-01';
         }
         else if (period === 'custom') {
+            if (start) {
+                EventsLib.datepicker_start_elm.datepicker('setDate', start);
+            }
+            if (end) {
+                EventsLib.datepicker_end_elm.datepicker('setDate', end);
+            }
+
             start_date = EventsLib.datepicker_start_elm.datepicker('getDate');
             end_date = EventsLib.datepicker_end_elm.datepicker('getDate');
 
@@ -384,6 +440,9 @@ function send_query(newquery) {
     if (search) {
         extra_q += '&query=' + search;
     }
+
+    // Update iCAL url
+    EventsLib.multi_e_ical_elm.attr('href', ical_url(period, start, end, search));
 
     // Abort previous request
     if (EventsLib.request) {
@@ -454,19 +513,36 @@ $(document).ready(function () {
     // Advanced button click.
     EventsLib.adv_search_icon_elm.click(function() {
         var visible = EventsLib.adv_search_elm.is(':visible');
-        if (!visible && (period !== 'custom')) {
-            hash_set_value('period', 'custom');
-        }
         EventsLib.adv_search_elm.slideToggle();
     });
 
     //Initiate datepicker
     EventsLib.datepicker_elm.datepicker({
-        onSelect: function( selectedDate ) {
+        onSelect: function(selectedDate) {
             var period = hash_get_value('period');
+
             if (period !== 'custom') {
                 hash_set_value('period', 'custom');
             }
+
+            if (this.id == 'date-start') {
+                if (EventsLib.datepicker_start_elm.val() === '') {
+                  hash_set_value('start', '');
+                }
+                else{
+                  hash_set_value('start', selectedDate);
+                }
+            }
+
+            if (this.id == 'date-end') {
+                if (EventsLib.datepicker_end_elm.val() === '') {
+                  hash_set_value('end', '');
+                }
+                else{
+                  hash_set_value('end', selectedDate);
+                }
+            }
+
             send_query(newquery=true);
         },
         dateFormat: 'yy-mm-dd'
@@ -475,6 +551,16 @@ $(document).ready(function () {
     EventsLib.datepicker_elm.click(function(){
         $(this).datepicker('show');
     });
+
+    var start_date = hash_get_value('start');
+    var end_date = hash_get_value('end');
+
+    if (start_date) {
+        EventsLib.datepicker_start_elm.datepicker('setDate', start_date);
+    }
+    if (end_date) {
+        EventsLib.datepicker_end_elm.datepicker('setDate', end_date);
+    }
 
     // Set values to fields.
     set_dropdown_value(EventsLib.period_selector_elm, period);

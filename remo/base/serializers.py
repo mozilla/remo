@@ -1,6 +1,14 @@
 import codecs
 import csv
 import cStringIO
+import pytz
+
+from datetime import datetime
+
+from django.conf import settings
+from django.template import Context
+from django.template.loader import get_template
+from django.utils import timezone
 from tastypie.serializers import Serializer
 
 
@@ -128,3 +136,26 @@ class CSVSerializer(Serializer):
 
         raw_data.seek(0)
         return raw_data
+
+
+class iCalSerializer(Serializer):
+    """Extend tastypie's serializer to export to iCal format."""
+    formats = ['json', 'jsonp', 'xml', 'yaml', 'html', 'ical']
+    content_types = {'json': 'application/json',
+                     'jsonp': 'text/javascript',
+                     'xml': 'application/xml',
+                     'yaml': 'text/yaml',
+                     'html': 'text/html',
+                     'ical': 'text/calendar'}
+
+    def to_ical(self, data, options=None):
+        """Convert data to iCal."""
+        options = options or {}
+
+        events = [event.obj for event in data['objects']]
+
+        date_now = timezone.make_aware(datetime.now(), pytz.UTC)
+        ical = get_template('multi_event_ical_template.ics')
+
+        return ical.render(Context({'events': events, 'date_now': date_now,
+                                    'host': settings.SITE_URL}))
