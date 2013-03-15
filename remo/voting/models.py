@@ -1,5 +1,5 @@
-from django.contrib.auth.models import User, Group
 from django.core.validators import MaxLengthValidator, MinLengthValidator
+from django.contrib.auth.models import Group, User
 from django.db import models
 
 from uuslug import uuslug as slugify
@@ -11,7 +11,7 @@ class Poll(models.Model):
     slug = models.SlugField(blank=True, max_length=100)
     start = models.DateTimeField()
     end = models.DateTimeField()
-    valid_groups = models.ForeignKey(Group)
+    valid_groups = models.ForeignKey(Group, related_name='valid_polls')
     created_on = models.DateField(auto_now_add=True)
     description = models.TextField(validators=[MaxLengthValidator(500),
                                                MinLengthValidator(20)])
