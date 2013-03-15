@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
 
-@task()
+@task
 def send_generic_mail(recipient_list, subject, email_template, data={}):
     """Send email to recipient_list rendered using email_template and populated
     with data.

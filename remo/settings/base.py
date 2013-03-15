@@ -158,7 +158,7 @@ JINGO_EXCLUDE_APPS = [
 #    ('media/js/**.js', 'javascript'),
 # ]
 
-LOGGING = dict(loggers=dict(playdoh = {'level': logging.DEBUG}))
+LOGGING = dict(loggers=dict(playdoh={'level': logging.DEBUG}))
 
 # Set profile module
 AUTH_PROFILE_MODULE = 'profiles.UserProfile'

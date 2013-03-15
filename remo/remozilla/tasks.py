@@ -28,7 +28,7 @@ URL = ('https://api-dev.bugzilla.mozilla.org/latest/bug/'
        'include_fields={fields}&changed_after={timedelta}d')
 
 
-@task()
+@task
 def fetch_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
 

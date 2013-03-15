@@ -44,6 +44,7 @@ class PollAdmin(admin.ModelAdmin):
     search_fields = ['name']
     list_display = ['name', 'start', 'end', 'valid_groups']
     date_hierarchy = 'start'
+    readonly_fields = ['task_start_id', 'task_end_id', 'last_notification']
 
 
 class VoteAdmin(admin.ModelAdmin):

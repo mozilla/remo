@@ -1,20 +1,25 @@
 from celery.task import task
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
 
 @task
-def send_remo_mail(user_list, subject, email_template, data=None):
+def send_voting_mail(voting_id, subject, email_template):
     """Send to user_list emails based rendered using email_template
     and populated with data.
 
     """
-    if not data:
-        data = {}
+    # avoid circular dependencies
+    from remo.voting.models import Poll
 
-    data.update({'SITE_URL': settings.SITE_URL,
-                 'FROM_EMAIL': settings.FROM_EMAIL})
+    poll = Poll.objects.get(pk=voting_id)
+    user_list = User.objects.filter(groups=poll.valid_groups)
+
+    data = {'SITE_URL': settings.SITE_URL,
+            'FROM_EMAIL': settings.FROM_EMAIL,
+            'poll': poll}
 
     for user in user_list:
         ctx_data = {'user': user,

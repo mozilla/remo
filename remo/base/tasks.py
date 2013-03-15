@@ -2,7 +2,7 @@ from celery.task import task
 from django.core.mail import EmailMessage
 
 
-@task()
+@task
 def send_mail_task(sender, recipients, subject, message):
     """Send email from /sender/ to /recipients/ with /subject/ and
     /message/ as body.

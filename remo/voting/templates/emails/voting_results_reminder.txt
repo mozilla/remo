@@ -1,0 +1,10 @@
+Hello {{ user.first_name }},
+
+This email was generated automatically to inform you that the
+voting results for "{{ poll.name }}" are in!
+
+You can find them here: {{ SITE_URL }}{{ url('voting_view_voting', slug=poll.slug) }}
+
+Cheers!
+
+Your lovely ReMo bot.
