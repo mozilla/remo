@@ -42,8 +42,3 @@ def get_avatar_url(user, size=50):
         avatar_url = urlparams(avatar_url, size=size)
 
     return avatar_url
-
-
-@register.function
-def user_is_mentor(user):
-    return user.groups.filter(name='Mentor').exists()
