@@ -1,12 +1,12 @@
 import pytz
-import uuid
+
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, never_cache
@@ -209,12 +209,11 @@ def count_converted_visitors(request, slug):
 def export_single_event_to_ical(request, slug):
     """ICal export of single event."""
     event = get_object_or_404(Event, slug=slug)
-    my_uuid = uuid.uuid4()
     date_now = timezone.make_aware(datetime.now(), pytz.UTC)
-    ical = render(request, 'ical_template.ics', {'event': event,
-                                                 'uuid': my_uuid,
-                                                 'date_now': date_now,
-                                                 'host': settings.SITE_URL})
+    ical = render(request, 'multi_event_ical_template.ics',
+                  {'events': [event],
+                   'date_now': date_now,
+                   'host': settings.SITE_URL})
     response = HttpResponse(ical, mimetype='text/calendar')
     ical_filename = event.slug + '.ics'
     response['Filename'] = ical_filename
@@ -236,3 +235,31 @@ def email_attendees(request, slug):
         else:
             messages.error(request, 'Email not sent. Invalid data.')
     return redirect('events_view_event', slug=slug)
+
+
+def multiple_event_ical(request, period, start=None, end=None, search=None):
+    """Redirect iCal URL to API query."""
+
+    # Create API query
+    url = reverse('api_dispatch_list', kwargs={'api_name': 'v1',
+                                               'resource_name': 'event'})
+    now = timezone.make_aware(datetime.now(), pytz.UTC)
+
+    if period == 'all':
+        url = urlparams(url, start__gt='1970-01-01')
+    elif period == 'future':
+        url = urlparams(url, start__gte=now.strftime("%Y-%m-%d"))
+    elif period == 'past':
+        url = urlparams(url, start__lt=now.strftime("%Y-%m-%d"))
+    elif period == 'custom':
+        if start:
+            url = urlparams(url, start__gte=start)
+        if end:
+            url = urlparams(url, end__lte=end)
+    else:
+        raise Http404
+
+    if search:
+        url = urlparams(url, query=search)
+
+    return redirect(urlparams(url, format='ical', offset=0, limit=0))

@@ -208,8 +208,70 @@ class ViewsTest(TestCase):
         c = Client()
         response = c.get(reverse('events_icalendar_event',
                                  kwargs={'slug': 'test-event'}))
-        self.assertTemplateUsed(response, 'ical_template.ics')
+        self.assertTemplateUsed(response, 'multi_event_ical_template.ics')
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
+
+    def test_multi_event_ical_export(self):
+        """Test multiple event ical export."""
+        c = Client()
+
+        # Export all events to iCal
+        period = 'all'
+        response = c.get(reverse('multiple_event_ical',
+                                 kwargs={'period': period}), follow=True)
+        self.failUnless(response['Content-Type'].startswith('text/calendar'))
+        eq_(len(response.context['events']), 2)
+
+        # Export past events to iCal
+        period = 'past'
+        response = c.get(reverse('multiple_event_ical',
+                                 kwargs={'period': period}), follow=True)
+        self.failUnless(response['Content-Type'].startswith('text/calendar'))
+        eq_(len(response.context['events']), 2)
+
+        # Export future events to iCal
+        period = 'future'
+        response = c.get(reverse('multiple_event_ical',
+                                 kwargs={'period': period}), follow=True)
+        self.failUnless(response['Content-Type'].startswith('text/calendar'))
+        eq_(len(response.context['events']), 0)
+
+        # Export custom date range events to iCal
+        period = 'custom'
+        response = c.get(reverse('multiple_event_ical',
+                                 kwargs={'period': period}), follow=True)
+        self.failUnless(response['Content-Type'].startswith('text/calendar'))
+
+        # Test 'start' and 'end' terms
+        start = '2012-06-25'
+        end = '2012-06-26'
+
+        response = c.get(reverse('multiple_event_ical',
+                                 kwargs={'period': 'custom/start/%s' % start}),
+                         follow=True)
+
+        self.failUnless(response['Content-Type'].startswith('text/calendar'))
+        eq_(len(response.context['events']), 2)
+
+        response = c.get(reverse('multiple_event_ical',
+                                 kwargs={'period': 'custom/end/%s' % end}),
+                         follow=True)
+        self.failUnless(response['Content-Type'].startswith('text/calendar'))
+
+        response = c.get(reverse('multiple_event_ical',
+                                 kwargs={'period': 'custom/start/%s/end/%s' %
+                                         (start, end)}),
+                         follow=True)
+        self.failUnless(response['Content-Type'].startswith('text/calendar'))
+        eq_(len(response.context['events']), 1)
+
+        # Test 'search' query
+        term = 'Test event'
+        response = c.get(reverse('multiple_event_ical',
+                                 kwargs={'period': 'custom/search/%s' % term}),
+                         follow=True)
+        self.failUnless(response['Content-Type'].startswith('text/calendar'))
+        eq_(len(response.context['events']), 1)
 
     def test_edit_event(self):
         """Edit event page"""
@@ -223,6 +285,9 @@ class ViewsTest(TestCase):
 
         # Ensure event data are saved
         event = Event.objects.get(name='Test edit event')
+
+        # Ensure times_edited field increments
+        eq_(event.times_edited, 1)
 
         # Test fields with the same name in POST data and models
         excluded = ['planning_pad_url', 'lat', 'lon', 'mozilla_event']

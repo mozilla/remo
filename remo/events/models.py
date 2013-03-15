@@ -59,6 +59,7 @@ class Event(models.Model):
     budget_bug = models.ForeignKey(Bug, null=True, blank=True,
                                    on_delete=models.SET_NULL,
                                    related_name='event_budget_requests')
+    times_edited = models.PositiveIntegerField(default=0, editable=False)
 
     def __unicode__(self):
         """Event unicode representation."""
@@ -70,6 +71,11 @@ class Event(models.Model):
             return None
         t = timezone(self.timezone)
         return obj.astimezone(t)
+
+    def save(self, *args, **kwargs):
+        """Overrides save() method to increment number of event edits."""
+        self.times_edited += 1
+        super(Event, self).save(*args, **kwargs)
 
     @property
     def local_start(self):

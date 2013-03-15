@@ -2,8 +2,9 @@ BEGIN:VCALENDAR
 PRODID:-//reps.mozilla.com Events//
 VERSION:2.0
 METHOD:PUBLISH
+{% for event in events %}
 BEGIN:VEVENT
-UID:{{ uuid }}
+UID:{{ event.id }}
 CLASS:PUBLIC
 DTSTAMP:{{ date_now|format_datetime_utc }}
 DTSTART;TZID={{ event.timezone }}:{{ event.start|format_datetime_utc }}
@@ -12,5 +13,7 @@ LOCATION:{{ event.venue}}, {{ event.city }}, {{ event.country }}
 SUMMARY:{{ event.name }}
 DESCRIPTION:{{ event.description }}
 URL:{{ host }}{{ url('events_view_event', slug=event.slug) }}
+SEQUENCE:{{ event.times_edited }}
 END:VEVENT
+{% endfor %}
 END:VCALENDAR

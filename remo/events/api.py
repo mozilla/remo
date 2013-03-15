@@ -1,3 +1,4 @@
+from datetime import date
 from urllib import unquote
 
 from django.conf import settings
@@ -10,9 +11,9 @@ from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.constants import ALL
 from tastypie.resources import ModelResource
-from tastypie.serializers import Serializer
 
 from remo.api import ClientCachedResource
+from remo.base.serializers import iCalSerializer
 
 from helpers import is_multiday
 from models import Event
@@ -33,7 +34,7 @@ class EventResource(ClientCachedResource, ModelResource):
         resource_name = 'event'
         authentication = Authentication()
         authorization = ReadOnlyAuthorization()
-        serializer = Serializer(formats=['json', 'jsonp'])
+        serializer = iCalSerializer(formats=['json', 'jsonp', 'ical'])
         allowed_methods = ['get']
         ordering = ['start']
         fields = ['name', 'start', 'end', 'timezone',
@@ -106,3 +107,15 @@ class EventResource(ClientCachedResource, ModelResource):
             base_object_list = base_object_list.filter(qset).distinct()
 
         return base_object_list
+
+    def create_response(self, request, data, **response_kwargs):
+        """Add HTTP header to specify the filename of iCal exports."""
+        response = super(EventResource, self).create_response(
+            request, data, **response_kwargs)
+
+        if self.determine_format(request) == 'text/calendar':
+            today = date.today()
+            filename = today.strftime('ical-export-%Y-%m-%d.ics')
+            response['Content-Disposition'] = 'filename="%s"' % filename
+
+        return response
