@@ -5,11 +5,14 @@ from django.template.loader import render_to_string
 
 
 @task()
-def send_remo_mail(user_list, subject, email_template, data = {}):
+def send_remo_mail(user_list, subject, email_template, data=None):
     """Send to user_list emails based rendered using email_template
     and populated with data.
 
     """
+    if data is None:
+        data = {}
+
     data.update({'SITE_URL': settings.SITE_URL,
                  'FROM_EMAIL': settings.FROM_EMAIL})
 
