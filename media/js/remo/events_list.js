@@ -292,6 +292,11 @@ function UTCDateString(d){
             pad2(d.getUTCDate()));
 }
 
+function LocalDateString(d){
+    return (d.getFullYear() + '-' +
+            pad2(d.getMonth() + 1) + '-' +
+            pad2(d.getDate()));
+}
 
 function send_query(newquery) {
     var past_events = true;
@@ -349,18 +354,18 @@ function send_query(newquery) {
             extra_q += '&start__gt=1970-01-01';
         }
         else if (period === 'custom') {
-            var start_date = EventsLib.datepicker_start_elm.datepicker('getDate');
-            var end_date = EventsLib.datepicker_end_elm.datepicker('getDate');
+            start_date = EventsLib.datepicker_start_elm.datepicker('getDate');
+            end_date = EventsLib.datepicker_end_elm.datepicker('getDate');
 
             extra_q += '&limit=0';
 
             if (start_date) {
-                var start_utc_string = UTCDateString(start_date);
+                var start_utc_string = LocalDateString(start_date);
                 extra_q += '&start__gte=' + start_utc_string;
             }
 
             if (end_date) {
-                var end_utc_string = UTCDateString(end_date);
+                var end_utc_string = LocalDateString(end_date);
                 extra_q += '&end__lte=' + end_utc_string;
             }
         }
