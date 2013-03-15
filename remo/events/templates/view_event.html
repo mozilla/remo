@@ -420,6 +420,64 @@ Mozilla Reps - {{ event.name }}
   </div>
 {% endif %}
 
+{% if user.is_authenticated() %}
+  <!-- Comments -->
+  <div class="row">
+    <div class="twelve columns">
+      <div class="row event-box">
+        <div class="one columns pictogram">
+          b
+        </div>
+        <div class="eleven columns event-item">
+          {% if comments|length > 0 %}
+            {% for comment in comments %}
+              <div class="event-comment">
+                {% if perms.events.can_delete_event_comments or comment.user == request.user %}
+                  <form method="post" action="{{ comment|get_event_comment_delete_url }}">
+                    {{ csrf() }}
+                    <button type="submit" class="event-delete-comment">&#215;</button>
+                  </form>
+                {% endif %}
+                <span class="white radius label">
+                  Comment {{ loop.index }}
+                </span>&nbsp;
+                <span class="grayed">by </span>
+                {% if user_is_mozillian(comment.user) %}
+                  {{ comment.user.get_full_name() }}
+                {% else %}
+                  <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
+                    {{ comment.user.get_full_name() }}
+                  </a>
+                {% endif %}
+                <span class="grayed"
+                      data-time="{{ comment.created_on|format_datetime_iso }}"
+                      title="{{ comment.created_on }}">
+                      at {{ comment.created_on }}
+                </span><br>
+                {{ comment.comment }}
+              </div>
+            {% endfor %}
+          {% endif %}
+          <div id="event-comment-post">
+            <form method="post" actions="{{ event_comment_form_url }}"
+                  class="custom">
+              {{ csrf() }}
+              <textarea name="comment" class="flat"
+                        placeholder="Add comment to this event"
+                        name="past-items"></textarea>
+              <div id="post-comment" class="align-right">
+                <button type="submit" class="small white button nice radius">
+                  Post comment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
 <div class="two columns align-right show-on-phones">
   <a href="{{ url('events_icalendar_event', slug=event.slug) }}"
      class="small white button nice radius">

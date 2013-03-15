@@ -335,7 +335,102 @@ class ViewsTest(TestCase):
 
         eq_(m.tags, u'success')
         eq_(len(mail.outbox), 1)
-        
+
         email = mail.outbox[0]
         eq_(len(email.to), 2)
         eq_(len(email.cc), 1)
+
+    def test_post_comment_on_event(self):
+        """Test post comment on event."""
+        c = Client()
+        comment = 'This is a new comment'
+        # Test anonymous user
+        event_view_url = reverse('events_view_event',
+                                 kwargs={'slug': 'test-event'})
+        response = c.post(event_view_url, {'comment': comment}, follow=True)
+        self.assertTemplateUsed(response, 'main.html')
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'error')
+
+        # Test authenticated user
+        c.login(username='rep3', password='passwd')
+
+        response = c.post(event_view_url, {'comment': comment}, follow=True)
+        self.assertTemplateUsed(response, 'view_event.html')
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'success')
+        eq_(response.context['request'].POST['comment'], comment)
+
+        event = Event.objects.get(slug='test-event')
+        if event.owner.userprofile.receive_email_on_add_event_comment:
+            eq_(len(mail.outbox), 1)
+
+    def test_post_delete_event_comment(self):
+        """Test delete event comment."""
+        c = Client()
+        comment_delete = reverse('events_delete_event_comment',
+                                kwargs={'slug': 'multi-event',
+                                        'pk': '1'})
+
+        # Test anonymous user
+        response = c.post(comment_delete, follow=True)
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'warning')
+
+        self.assertTemplateUsed(response, 'main.html')
+
+        # Test authenticated user without delete permission
+        # Rep
+        c.login(username='rep3', password='passwd')
+        response = c.post(comment_delete, follow=True)
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'error')
+
+        self.assertTemplateUsed(response, 'main.html')
+
+        # Mentor
+        c.login(username='mentor', password='passwd')
+        response = c.post(comment_delete, follow=True)
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'error')
+
+        self.assertTemplateUsed(response, 'main.html')
+
+        # Counselor
+        c.login(username='counselor', password='passwd')
+        response = c.post(comment_delete, follow=True)
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'error')
+
+        self.assertTemplateUsed(response, 'main.html')
+
+        # Test authenticated user with delete permission
+        # Comment owner
+        c.login(username='rep', password='passwd')
+        response = c.post(comment_delete, follow=True)
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'success')
+
+        self.assertTemplateUsed(response, 'view_event.html')
+
+    def test_post_delete_event_comment_admin(self):
+        """Test admin delete event comment."""
+        c = Client()
+        comment_delete = reverse('events_delete_event_comment',
+                                 kwargs={'slug': 'multi-event',
+                                         'pk': '1'})
+        # Admin
+        c.login(username='admin', password='passwd')
+        response = c.post(comment_delete, follow=True)
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'success')
+
+        self.assertTemplateUsed(response, 'view_event.html')

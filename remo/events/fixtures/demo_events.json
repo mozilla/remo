@@ -89,5 +89,15 @@
             "hashtag": "#multievent",
             "timezone": "Europe/Berlin"
         }
+    },
+    {
+        "pk": 1,
+        "model": "events.eventcomment",
+        "fields": {
+            "event": 4,
+            "comment": "This is a comment on event with pk #1",
+            "created_on": "2012-03-07 08:14:17",
+            "user": 7
+        }
     }
 ]

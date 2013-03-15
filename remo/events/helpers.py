@@ -88,3 +88,12 @@ def is_past_event(event):
 
     now = timezone.make_aware(datetime.now(), pytz.UTC)
     return now > event.end
+
+
+@register.filter
+def get_event_comment_delete_url(obj):
+    """Return the delete url of an event comment."""
+
+    return reverse('events_delete_event_comment',
+                   kwargs={'slug': obj.event.slug,
+                           'pk': obj.id})
