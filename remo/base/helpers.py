@@ -173,11 +173,23 @@ def get_full_name(user):
 
 @register.function
 def user_is_mozillian(user):
-    """Check is a user belongs to Mozillians's group."""
+    """Check if a user belongs to Mozillians's group."""
     return user.groups.filter(name='Mozillians').exists()
 
 
 @register.function
 def user_is_rep(user):
-    """Check is a user belongs to Rep's group."""
+    """Check if a user belongs to Rep's group."""
     return user.groups.filter(name='Rep').exists()
+
+
+@register.function
+def user_is_mentor(user):
+    """Check if a user belongs to Mentor's group."""
+    return user.groups.filter(name='Mentor').exists()
+
+
+@register.function
+def user_is_admin(user):
+    """Check if a user belongs to Admin's group."""
+    return user.groups.filter(name='Admin').exists()

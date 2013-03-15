@@ -125,6 +125,7 @@ INSTALLED_APPS = ['south'] + \
                      'remo.reports',
                      'remo.api',
                      'remo.events',
+                     'remo.voting',
 
                      'django_browserid',
                      'tastypie']
