@@ -299,11 +299,28 @@ li.last {
     100% { transform: scale(1); }
 }
 
+@keyframes bounce-flip {
+    0% {
+        transform: scale(1);
+        transform: rotateY(0deg);
+    }
+    30% { transform: scale(1.1); }
+    50% {
+        transform: scale(1.2);
+        transform: rotateY(180deg);
+    }
+    70% { transform: scale(1.1); }
+    100% {
+        transform: scale(1);
+        transform: rotateY(0deg);
+    }
+}
+
 #logo-box img:hover {
-    animation-name: heartbeat;
-    animation-duration: 900ms;
-    transform-origin:70% 70%;
-    animation-iteration-count: 2;
+    animation-name: bounce-flip;
+    animation-duration: 1s;
+    transform-origin:50% 50%;
+    animation-iteration-count: 1;
     animation-timing-function: linear;
 }
 
