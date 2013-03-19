@@ -51,7 +51,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     # Voting
-    url(r'^votings/', include('remo.voting.voting_urls')),
+    url(r'^voting/', include('remo.voting.voting_urls')),
     url(r'^v/', include('remo.voting.v_urls')),
 )
 
