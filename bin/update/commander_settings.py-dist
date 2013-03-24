@@ -1,14 +1,18 @@
-SRC_DIR = ''
-WWW_DIR = ''
+# Config for remo - example
+SRC_DIR = '/data/reps-dev/src/reps-dev.allizom.org/reps/'
+WWW_DIR = '/data/reps-dev/www/reps-dev.allizom.org/reps/'
 
-CRON_NAME = ''
+#CRON_NAME = ''
 
-DEPLOY_SCRIPT = ''
-REMOTE_UPDATE_SCRIPT = ''
+DEPLOY_SCRIPT = '/data/reps-dev/deploy -n reps-dev.allizom.org'
+REMOTE_UPDATE_SCRIPT = '/data/bin/update-www.sh reps-dev.allizom.org'
 
-WEB_HOSTGROUP = ''
-CELERY_HOSTGROUP = ''
-CELERY_SERVICE = ''
+WEB_HOSTGROUP = 'reps-dev'
+CELERY_HOSTGROUP = 'reps-celery-dev'
+CELERY_SERVICE = 'celeryd-reps-dev'
 
-UPDATE_REF = 'origin/master'
-SSH_KEY = None
+UPDATE_REF = ''
+SSH_KEY = '/root/.ssh/id_rsa'
+
+REMOTE_WSGI = '/data/www/reps-dev.allizom.org/reps/wsgi/playdoh.wsgi'
+REMOTE_HOSTNAME = 'reps-dev.allizom.org'
