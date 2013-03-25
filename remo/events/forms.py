@@ -200,7 +200,7 @@ class EventForm(forms.ModelForm):
                   'country', 'city', 'lat', 'lon', 'external_link',
                   'planning_pad_url', 'timezone', 'estimated_attendance',
                   'description', 'extra_content', 'hashtag', 'mozilla_event',
-                  'swag_bug', 'budget_bug']
+                  'swag_bug', 'budget_bug', 'categories']
         widgets = {'lat': forms.HiddenInput(attrs={'id': 'lat'}),
                    'lon': forms.HiddenInput(attrs={'id': 'lon'}),
                    'start': SplitSelectDateTimeWidget(),

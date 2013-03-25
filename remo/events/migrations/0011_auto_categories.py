@@ -8,15 +8,18 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Event.times_edited'
-        db.add_column('events_event', 'times_edited',
-                      self.gf('django.db.models.fields.PositiveIntegerField')(default=0),
-                      keep_default=False)
+        # Adding M2M table for field categories on 'Event'
+        db.create_table('events_event_categories', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('event', models.ForeignKey(orm['events.event'], null=False)),
+            ('functionalarea', models.ForeignKey(orm['profiles.functionalarea'], null=False))
+        ))
+        db.create_unique('events_event_categories', ['event_id', 'functionalarea_id'])
 
 
     def backwards(self, orm):
-        # Deleting field 'Event.times_edited'
-        db.delete_column('events_event', 'times_edited')
+        # Removing M2M table for field categories on 'Event'
+        db.delete_table('events_event_categories')
 
 
     models = {
@@ -68,6 +71,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['start']", 'object_name': 'Event'},
             'attendees': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'events_attended'", 'symmetrical': 'False', 'through': "orm['events.Attendance']", 'to': "orm['auth.User']"}),
             'budget_bug': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'event_budget_requests'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['remozilla.Bug']"}),
+            'categories': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'events_categories'", 'symmetrical': 'False', 'to': "orm['profiles.FunctionalArea']"}),
             'city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
             'converted_visitors': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             'country': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
@@ -106,6 +110,11 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'outcome': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '300'})
+        },
+        'profiles.functionalarea': {
+            'Meta': {'ordering': "['name']", 'object_name': 'FunctionalArea'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'remozilla.bug': {
             'Meta': {'ordering': "['-bug_last_change_time']", 'object_name': 'Bug'},

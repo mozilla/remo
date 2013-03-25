@@ -3,6 +3,8 @@ from datetime import datetime
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+
+from funfactory.helpers import urlparams
 from jingo import register
 
 
@@ -97,3 +99,10 @@ def get_event_comment_delete_url(obj):
     return reverse('events_delete_event_comment',
                    kwargs={'slug': obj.event.slug,
                            'pk': obj.id})
+
+@register.filter
+def get_event_category_link(category):
+    """Returns events list page of given category."""
+
+    url = reverse('events_list_events')
+    return urlparams(url, '/category/%s/' % category.lower())
