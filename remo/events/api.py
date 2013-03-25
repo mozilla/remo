@@ -9,7 +9,7 @@ from jinja2 import escape
 from tastypie import fields
 from tastypie.authentication import Authentication
 from tastypie.authorization import ReadOnlyAuthorization
-from tastypie.constants import ALL
+from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
 from remo.api import ClientCachedResource
@@ -27,6 +27,9 @@ class EventResource(ClientCachedResource, ModelResource):
     owner_profile_url = fields.CharField()
     event_url = fields.CharField()
     multiday = fields.BooleanField()
+    categories = fields.ToManyField('remo.profiles.api.FunctionalAreasResource',
+                                    attribute='categories',
+                                    full=True, null=True)
 
     class Meta:
         cache_control = {"max_age": 1800, "s_maxage": 1800}
@@ -42,7 +45,7 @@ class EventResource(ClientCachedResource, ModelResource):
                   'external_link', 'description', 'mozilla_event', 'owner',
                   'estimated_attendance']
         filtering = {'name': ALL, 'city': ALL, 'region': ALL, 'country': ALL,
-                     'start': ALL, 'end': ALL}
+                     'start': ALL, 'end': ALL, 'categories': ALL_WITH_RELATIONS}
 
     def dehydrate_name(self, bundle):
         """Sanitize event name."""

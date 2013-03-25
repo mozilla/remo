@@ -83,6 +83,14 @@ Mozilla Reps - Events
     <div class="row">
       <form class="custom" id="searchform">
         <div class="three columns">
+          <select id="adv-search-categories" class="expand">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+              <option value="{{ category.name|lower }}">{{ category.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="three columns">
           <input type="text" class="datepicker input-text big"
                  id="date-start" placeholder="Start Range Date"/>
         </div>

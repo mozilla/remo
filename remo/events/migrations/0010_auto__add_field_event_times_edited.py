@@ -92,6 +92,14 @@ class Migration(SchemaMigration):
             'timezone': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'venue': ('django.db.models.fields.CharField', [], {'max_length': '150'})
         },
+        'events.eventcomment': {
+            'Meta': {'ordering': "['id']", 'object_name': 'EventComment'},
+            'comment': ('django.db.models.fields.TextField', [], {}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'event': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['events.Event']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+        },
         'events.metric': {
             'Meta': {'object_name': 'Metric'},
             'event': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'metrics'", 'to': "orm['events.Event']"}),

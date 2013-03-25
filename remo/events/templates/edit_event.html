@@ -318,6 +318,24 @@
         </div>
       </div>
 
+      <!-- Categories -->
+      <div class="row">
+        <div class="one columns pictogram">
+          j
+        </div>
+        <div class="eleven columns">
+          <div class="align-right top-margined">
+            <a href="#" class="small white button nice radius"
+               data-reveal-id="category-modal">Select event category</a>
+               {% if event_form.categories.errors %}
+                <small class="error">
+                  Please mark event category
+                </small>
+               {% endif %}
+          </div>
+        </div>
+      </div>
+
       <!-- Budget and Swag -->
       <div class="row">
         <div class="one columns pictogram">
@@ -421,6 +439,33 @@
       Save event
     </button>
   </div>
+
+  <!-- Category modal -->
+  <div id="category-modal" class="reveal-modal">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">
+      Select the event category
+    </p>
+    <h3>
+      Event categories
+    </h3>
+    <ul class="block-grid three-up">
+      {% for choice in event_form.categories.field.choices %}
+        <li>
+          <label for="{{ choice.1 }}-bit">
+            <input type="checkbox" name="categories" value="{{ choice.0 }}"
+                   {% if choice.0 in selected_categories %}
+                     checked="checked"
+                   {% endif %}/>
+            {{ choice.1 }}
+        </li>
+      {% endfor %}
+    </ul>
+    <a href="#" class="small blue button nice radius close-reveal-modal">
+      Choose these categories &raquo;
+    </a>
+  </div>
+
 </form>
 
 <!-- Modals section -->

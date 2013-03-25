@@ -17,6 +17,7 @@ from funfactory.helpers import urlparams
 from remo.base.decorators import permission_check
 from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_or_create_instance
+from remo.profiles.models import FunctionalArea
 
 import forms
 from models import Attendance, Event, EventComment
@@ -33,7 +34,9 @@ def redirect_list_events(request):
 def list_events(request):
     """List events view."""
     events = Event.objects.all()
-    return render(request, 'list_events.html', {'events': events})
+    categories = FunctionalArea.objects.all()
+    return render(request, 'list_events.html',
+                  {'events': events, 'categories': categories})
 
 
 @never_cache
@@ -169,10 +172,13 @@ def edit_event(request, slug=None):
          request.user.has_perm('events.can_delete_events'))):
         can_delete_event = True
 
+    selected_categories = map(int, event_form['categories'].value())
+
     return render(request, 'edit_event.html',
                   {'creating': created,
                    'event': event,
                    'event_form': event_form,
+                   'selected_categories': selected_categories,
                    'metrics_formset': metrics_formset,
                    'can_delete_event': can_delete_event})
 

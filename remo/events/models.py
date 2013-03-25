@@ -13,6 +13,7 @@ from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
 from remo.base.utils import add_permissions_to_groups
+from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
 from remo.reports.tasks import send_remo_mail
 
@@ -60,6 +61,8 @@ class Event(models.Model):
                                    on_delete=models.SET_NULL,
                                    related_name='event_budget_requests')
     times_edited = models.PositiveIntegerField(default=0, editable=False)
+    categories = models.ManyToManyField(FunctionalArea,
+                                        related_name='events_categories')
 
     def __unicode__(self):
         """Event unicode representation."""

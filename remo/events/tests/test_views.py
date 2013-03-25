@@ -22,6 +22,7 @@ class ViewsTest(TestCase):
             'name': u'Test edit event',
             'description': u'This is a description',
             'external_link': '',
+            'categories': [3, 4, 5, 12, 18, 20],
             'venue': u'Hackerspace.GR',
             'lat': 38.01697,
             'lon': 23.7314,
@@ -290,7 +291,7 @@ class ViewsTest(TestCase):
         eq_(event.times_edited, 1)
 
         # Test fields with the same name in POST data and models
-        excluded = ['planning_pad_url', 'lat', 'lon', 'mozilla_event']
+        excluded = ['planning_pad_url', 'lat', 'lon', 'mozilla_event', 'categories']
         for field in set(self.data).difference(set(excluded)):
             if getattr(event, field, None):
                 eq_(str(getattr(event, field)), self.data[field])
@@ -298,6 +299,8 @@ class ViewsTest(TestCase):
         # Test excluded fields
         pad_url = self.pad_url + self.pad_prefix + event.slug
         mozilla_event = {'on': True, 'off': False}
+
+        eq_(self.data['categories'], [c.id for c in event.categories.all()])
 
         eq_(event.planning_pad_url, pad_url)
         eq_(event.lat, self.data['lat'])
