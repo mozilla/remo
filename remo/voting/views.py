@@ -1,11 +1,13 @@
 import pytz
 from datetime import datetime
 
+from django.db.models import Q
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from remo.base.decorators import permission_check
+from remo.base.utils import get_or_create_instance
 from remo.voting.models import Poll, Vote
 
 import forms
@@ -15,7 +17,7 @@ import forms
 def list_votings(request):
     """List votings view."""
     user = request.user
-    now = datetime.now()
+    now = datetime.utcnow()
     polls = Poll.objects.all()
     if not user.groups.filter(name='Admin').exists():
         polls = Poll.objects.filter(valid_groups__in=user.groups.all())
@@ -34,15 +36,54 @@ def list_votings(request):
 @permission_check(group='Admin')
 def edit_voting(request, slug=None):
     """Create/Edit voting view."""
-    return render(request, 'edit_voting.html')
+    poll, created = get_or_create_instance(Poll, slug=slug)
+    poll_form = forms.PollForm(request.POST or None, instance=poll)
+    range_poll_formset = forms.RangePollFormset(request.POST or None,
+                                                instance=poll)
+    radio_poll_formset = forms.RadioPollFormset(request.POST or None,
+                                                instance=poll)
+    can_delete_voting = False
+
+    if created:
+        poll.created_by = request.user
+    else:
+        can_delete_voting = True
+
+    if (poll_form.is_valid() and range_poll_formset.is_valid()
+            and radio_poll_formset.is_valid()):
+        poll_form.save()
+        range_poll_formset.save_all()
+        radio_poll_formset.save_all()
+
+        if created:
+            messages.success(request, 'Voting successfully created.')
+        else:
+            messages.success(request, 'Voting successfully edited.')
+
+        return redirect('voting_edit_voting', slug=poll.slug)
+
+    return render(request, 'edit_voting.html',
+                  {'creating': created,
+                   'poll': poll,
+                   'poll_form': poll_form,
+                   'range_poll_formset': range_poll_formset,
+                   'radio_poll_formset': radio_poll_formset,
+                   'can_delete_voting': can_delete_voting})
 
 
 @permission_check()
 def view_voting(request, slug):
     """View voting and cast a vote view."""
     user = request.user
-    now = timezone.make_aware(datetime.now(), pytz.UTC)
+    now = timezone.make_aware(datetime.utcnow(), pytz.UTC)
     poll = get_object_or_404(Poll, slug=slug)
+    # If the user does not belong to a valid poll group
+    if not (user.groups.filter(Q(id=poll.valid_groups.id) |
+                               Q(name='Admin')).exists()):
+        messages.error(request, ('You do not have the permissions to '
+                                 'vote on this voting.'))
+        return redirect('voting_list_votings')
+
     range_poll_choice_forms = {}
     radio_poll_choice_forms = {}
 
@@ -52,10 +93,14 @@ def view_voting(request, slug):
     if now > poll.end:
         return render(request, 'view_voting.html', data)
     if now < poll.start:
-        messages.warning(request, ('This vote has not yet begun. '
-                                   'You can cast your vote on %s UTC.'
-                                   % poll.start.strftime('%Y %B %d, %H:%M')))
-        return redirect('voting_list_votings')
+        # Admin can edit future votings
+        if user.groups.filter(name='Admin').exists():
+            return redirect('voting_edit_voting', slug=poll.slug)
+        else:
+            messages.warning(request, ('This vote has not yet begun. '
+                                       'You can cast your vote on %s UTC.' %
+                                       poll.start.strftime('%Y %B %d, %H:%M')))
+            return redirect('voting_list_votings')
 
     # avoid multiple votes from the same user
     if Vote.objects.filter(poll=poll, user=user).exists():
@@ -97,3 +142,12 @@ def view_voting(request, slug):
     data['radio_poll_choice_forms'] = radio_poll_choice_forms
 
     return render(request, 'vote_voting.html', data)
+
+
+@permission_check(group='Admin')
+def delete_voting(request, slug):
+    """Delete voting view."""
+    voting = get_object_or_404(Poll, slug=slug)
+    voting.delete()
+    messages.success(request, ('Voting successfully deleted.'))
+    return redirect('voting_list_votings')
