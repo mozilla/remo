@@ -10,10 +10,45 @@
     <div class="two columns align-right">
       <a href="{{ url('voting_new_voting') }}" target="_blank"
          class="small blue button nice radius"
-         id="voting-create-button">Create vote</a>
+         id="voting-create-button">Create voting</a>
     </div>
   {% endif %}
 </div>
+
+{% macro display_polls(polls) -%}
+  <table class="dashboard-table">
+    <thead>
+      <tr>
+        <th class="dashboard-clickable type-string">Name</th>
+        <th class="dashboard-clickable type-string">Start Date</th>
+        <th class="dashboard-clickable type-string">End Date</th>
+        <th class="dashboard-clickable type-string">Eligible Groups</th>
+        <th class="dashboard-clickable type-string align-center">Voted</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for poll in polls %}
+        <tr>
+          <td>
+            <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
+              {{ poll.name }}
+            </a>
+          </td>
+          <td title="{{ poll.start|format_datetime }}"
+              data-time="{{ poll.start|format_datetime_iso }}">
+            {{ poll.start|format_datetime }}
+          </td>
+          <td title="{{ poll.end|format_datetime }}"
+              data-time="{{ poll.end|format_datetime_iso }}">
+            {{ poll.end|format_datetime }}
+          </td>
+          <td>{{ poll.valid_groups }}</td>
+          <td class="align-center">{{ poll|get_users_voted }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{%- endmacro%}
 
 <div class="row">
   <div class="twelve columns">
@@ -28,38 +63,7 @@
         </div>
 
         <div class="row">
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th class="dashboard-clickable type-string">Name</th>
-                <th class="dashboard-clickable type-string">Start Date</th>
-                <th class="dashboard-clickable type-string">End Date</th>
-                <th class="dashboard-clickable type-string">Eligible Groups</th>
-                <th class="dashboard-clickable type-string align-center">Voted</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for poll in current_polls %}
-                <tr>
-                  <td>
-                    <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
-                      {{ poll.name }}
-                    </a>
-                  </td>
-                  <td title="{{ poll.start|format_datetime }}"
-                      data-time="{{ poll.start|format_datetime_iso }}">
-                    {{ poll.start|format_datetime }}
-                  </td>
-                  <td title="{{ poll.end|format_datetime }}"
-                      data-time="{{ poll.end|format_datetime_iso }}">
-                    {{ poll.end|format_datetime }}
-                  </td>
-                  <td>{{ poll.valid_groups }}</td>
-                  <td class="align-center">{{ poll|get_users_voted }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          {{ display_polls(current_polls) }}
         </div>
       </div>
     {% endif %}
@@ -75,38 +79,7 @@
         </div>
 
         <div class="row">
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th class="dashboard-clickable type-string">Name</th>
-                <th class="dashboard-clickable type-string">Start Date</th>
-                <th class="dashboard-clickable type-string">End Date</th>
-                <th class="dashboard-clickable type-string">Eligible Groups</th>
-                <th class="dashboard-clickable type-string align-center">Voted</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for poll in future_polls %}
-                <tr>
-                  <td>
-                    <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
-                      {{ poll.name }}
-                    </a>
-                  </td>
-                  <td title="{{ poll.start|format_datetime }}"
-                      data-time="{{ poll.start|format_datetime_iso }}">
-                    {{ poll.start|format_datetime }}
-                  </td>
-                  <td title="{{ poll.end|format_datetime }}"
-                      data-time="{{ poll.end|format_datetime_iso }}">
-                    {{ poll.end|format_datetime }}
-                  </td>
-                  <td>{{ poll.valid_groups }}</td>
-                  <td class="align-center">{{ poll|get_users_voted }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          {{ display_polls(future_polls) }}
         </div>
       </div>
     {% endif %}
@@ -122,38 +95,7 @@
         </div>
 
         <div class="row">
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th class="dashboard-clickable type-string">Name</th>
-                <th class="dashboard-clickable type-string">Start Date</th>
-                <th class="dashboard-clickable type-string">End Date</th>
-                <th class="dashboard-clickable type-string">Eligible Groups</th>
-                <th class="dashboard-clickable type-string align-center">Voted</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for poll in past_polls %}
-                <tr>
-                  <td>
-                    <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
-                      {{ poll.name }}
-                    </a>
-                  </td>
-                  <td title="{{ poll.start|format_datetime }}"
-                      data-time="{{ poll.start|format_datetime_iso }}">
-                    {{ poll.start|format_datetime }}
-                  </td>
-                  <td title="{{ poll.end|format_datetime }}"
-                      data-time="{{ poll.end|format_datetime_iso }}">
-                    {{ poll.end|format_datetime }}
-                  </td>
-                  <td>{{ poll.valid_groups }}</td>
-                  <td class="align-center">{{ poll|get_users_voted }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          {{ display_polls(past_polls) }}
         </div>
       </div>
     {% endif %}

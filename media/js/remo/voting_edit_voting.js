@@ -20,6 +20,6 @@ $(document).ready(function() {
         });
     });
 
-    // Dynamically add Metric forms
-    $('form.custom').on('click', '#events-add-metric-button', append_to_formset);
+    $('form.custom').on('click', '.voting-add-answer-button, .voting-add-radiopoll-button, .voting-add-nominee-button, .voting-add-rangepoll-button', append_to_formset);
+
 });

@@ -1,18 +1,4 @@
 $(document).ready(function() {
-    $('.eventblock').formset({
-        formCssClass: 'dynamic-event-form',
-        prefix: 'reportevent_set',
-        addBtnObj: $('#reports-add-event-button'),
-        addDeleteButton: null
-    });
-
-    $('.linkblock').formset({
-        formCssClass: 'dynamic-link-form',
-        prefix: 'reportlink_set',
-        addBtnObj: $('#reports-add-link-button'),
-        addDeleteButton: null
-    });
-
     $('.reports-submit-button').click(function(event) {
         event.preventDefault();
         past_items = $.trim($('#past_items').val());
@@ -32,4 +18,9 @@ $(document).ready(function() {
         $('#future_items').val('');
         $('#reportform').submit();
     });
+
+    $('form.custom').on(
+        'click', '#reports-add-link-button,#reports-add-event-button',
+        append_to_formset);
+
 });
