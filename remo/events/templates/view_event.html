@@ -109,16 +109,18 @@ Mozilla Reps - {{ event.name }}
       </div>
       <div class="eleven columns">
         <!-- Event categories -->
-        <p class="profile-item">
-          <span class="white radius label">
-            Category
-          </span>
-          &nbsp;
-          {% for category in event.categories.all() %}
-            <a href="{{ category.name|get_event_category_link }}">
-              {{ category.name }}</a>{% if not loop.last %}, {% endif %}
-          {% endfor %}
-        </p>
+        {% if event.categories.count() %}
+          <p class="profile-item">
+            <span class="white radius label">
+              Category
+            </span>
+            &nbsp;
+            {% for category in event.categories.all() %}
+              <a href="{{ category.name|get_event_category_link }}">
+                {{ category.name }}</a>{% if not loop.last %}, {% endif %}
+            {% endfor %}
+          </p>
+        {% endif %}
         <!-- Display external URL if it exists -->
         {% if event.external_link %}
           <p class="profile-item">
@@ -535,4 +537,3 @@ Mozilla Reps - {{ event.name }}
   {{ js('leaflet') }}
   {{ js('events_view_event') }}
 {% endblock %}
-
