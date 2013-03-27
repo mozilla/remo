@@ -111,13 +111,13 @@ def dashboard(request):
         for interest in interests:
             # Get the Reps with the specified interest
             reps = User.objects.filter(groups__name='Rep').filter(
-                userprofile__functional_areas__name=interest)
+                userprofile__functional_areas=interest)
             tracked_interests[interest] = reps
             # Get the reports of the Reps with the specified interest
             reps_reports[interest] = Report.objects.filter(
                 user__in=reps).order_by('created_on')[:20]
-            # Get the events created by the reps with the specified interest
-            events = Event.objects.filter(owner__in=reps)
+            # Get the events with the specified category
+            events = Event.objects.filter(categories=interest)
             reps_past_events[interest] = events.filter(start__lt=now)[:50]
             reps_current_events[interest] = events.filter(start__gt=now)
         args['interestform'] = interestform
