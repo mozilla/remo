@@ -1,14 +1,13 @@
 Hey there {{ user.first_name|capitalize }},
 
-This email was generated automatically to inform you that a report 
+This email was generated automatically to inform you that a report
 has been {% if new_report %}added{% else -%}
-edited{% endif %} by {{ rep_user.get_full_name() -}}
-[1] for the month of {{ month }} {{ year }} [2].
+edited{% endif %} by {{ rep_user.get_full_name() }} [1] for the month of {{ month }} {{ year }} [2].
 
 Cheers!
 
 Your lovely ReMo bot.
 
 [1] {{ SITE_URL }}{{ url('profiles_view_profile', rep_profile.display_name) }}
-[2] {{ SITE_URL }}{{ url('reports_view_report', 
+[2] {{ SITE_URL }}{{ url('reports_view_report',
                           rep_profile.display_name, year, month) }}
