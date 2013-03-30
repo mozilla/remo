@@ -1,13 +1,276 @@
 {% extends "base.html" %}
 
 {% block pagetitle %}
-Add/Edit Voting
+{% if creating %}
+  Mozilla Reps - Create Voting
+{% else %}
+  Mozilla Reps - Edit {{ poll.name }}
+{% endif %}
 {% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="twelve columns">
-    <h6>Nothing to see here yet!</h6>
+<form class="custom" method="post">
+  {{ csrf() }}
+  <div class="row">
+    <div class="eight columns">
+      {% if creating %}
+        <h4>Creating new voting</h4>
+      {% else %}
+        <h4>Editing {{ poll.name }}</h4>
+      {% endif %}
+    </div>
+    <div class="four columns align-right hide-on-phones">
+      {% if can_delete_voting %}
+        <a href="#" class="small red button nice radius"
+           data-reveal-id="delete-voting">Delete voting</a>
+      {% endif %}
+      <button class="small green button nice radius">Save voting</button>
+    </div>
   </div>
-</div>
+
+  <div class="row">
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          J <!-- Name and Description -->
+        </div>
+        <div class="eleven columns">
+          {{ field_with_attrs(poll_form.name,
+                              placeholder='Voting name',
+                              class='input-text big has-tip tip-left',
+                              title='Voting name') }}
+          <div class="required-field"></div>
+          {{ field_errors(poll_form.name) }}
+
+          {{ field_with_attrs(poll_form.description,
+                              class='flat has-tip tip-left',
+                              title='Voting description',
+                              placeholder='Description of voting') }}
+          <div class="required-field"></div>
+          <p class="more-info">Minimum 20 characters.</p>
+          {{ field_errors(poll_form.description) }}
+
+          <!-- Poll range voting -->
+          <div id="pollrangeformset">
+            {% for poll_range in poll_range_formset.forms %}
+              <div class="row {% if loop.last %} pollrangeblock {% endif %}"
+                   {% if loop.last %}
+                     data-pollRangePrefix={{ poll_range.prefix }}
+                   {% endif %}
+                   id="{{ poll_range.prefix }}-row">
+                {{ field_with_attrs(poll_range.name,
+                                    placeholder='Range Poll Name',
+                                    title='Range Poll Name',
+                                    class='input-text big has-tip tip-right') }}
+                <div class="required-field"></div>
+                <p class="more-info">Create at least one range poll.</p>
+                {{ field_errors(poll_range.name) }}
+                {% if poll_range.nested %}
+                  {% for formset in poll_range.nested %}
+                    <div class="pollrangevotesblock"
+                         data-nominee={{ formset.prefix }}>
+                      {{ formset.management_form }}
+                      {% for form in formset.forms %}
+                        {{ form.id }}
+                        {{ form.nominee }}
+                        {% if loop.first %}
+                          <div class="required-field"></div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  {% endfor %}
+                  <div class="align-left">
+                    <a id="voting-add-poll-range-votes-button" href="#"
+                       class="small white button nice radius">Add Nominee
+                    </a>
+                    <a id="voting-delete-poll-range-votes-button" href="#" 
+                       class="small white button nice radius">Delete Nominee
+                    </a>
+                 </div>
+                {% endif %}
+                </br>
+              </div>
+            {% endfor %}
+          </div>
+          {{ poll_range_formset.management_form }}
+
+          <!-- Poll radio voting -->
+          <div id="pollradioformset">
+            {% for poll_radio in poll_radio_formset.forms %}
+              <div class="row pollradioblock"
+                   id="{{ poll_radio.prefix }}-row">
+                {{ field_with_attrs(poll_radio.title,
+                                    placeholder='Radio Poll Title',
+                                    title='Radio Poll Title',
+                                    class='input-text big has-tip tip-right') }}
+                <div class="required-field"></div>
+                {{ field_errors(poll_radio.title) }}
+                {% if poll_radio.nested %}
+                  {% for formset in poll_radio.nested %}
+                    <div class="pollradiochoicesblock"
+                         data-choice={{ formset.prefix }}>
+                      {{ formset.management_form }}
+                      {% for form in formset.forms %}
+                        {{ form.id }}
+                        {{ field_with_attrs(form.answer,
+                                            placeholder='Poll Radio Answer',
+                                            title='Poll Radio Answer',
+                                            class='input-text big has-tip tip-right') }}
+                        {% if loop.first %}
+                          <div class="required-field"></div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  {% endfor %}
+                  <div class="align-left">
+                    <a id="voting-add-poll-radio-choices-button" href="#"
+                       class="small white button nice radius">Add Choice
+                    </a>
+                    <a id="voting-delete-poll-radio-choices-button" href="#"
+                       class="small white button nice radius" >Delete Answer
+                    </a>
+                 </div>
+                {% endif %}
+                </br>
+              </div>
+            {% endfor %}
+          </div>
+          {{ poll_radio_formset.management_form }}
+
+        </div>
+      </div>
+    </div>
+
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          } <!-- Date and Times -->
+        </div>
+        <div class="eleven columns">
+          <!-- Start and end time elements -->
+          <div class="hidden">
+            {{ poll_form.start_form }}
+            {{ poll_form.end_form }}
+          </div>
+
+          <!--Start Date -->
+          <div class="row">
+            <div class="twelve columns profile-item">
+              <div class="has-tip tip-right" title="Voting start date">
+                <div id="start-month" class="six phone-two columns voting-edit-date">
+                  <!-- month -->
+                </div>
+
+                <div id="start-day" class="three phone-one columns voting-edit-date">
+                  <!-- day -->
+                </div>
+
+                <div id="start-year" class="three phone-one columns voting-edit-date">
+                  <!-- year -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Start Hour -->
+          <div class="row">
+            <div class="twelve columns">
+              <div class="has-tip tip-right" title="Voting start hour">
+                <div id="start-hour" class="three phone-one columns">
+                  <!-- hour -->
+                </div>
+
+                <div id="start-minute" class="three phone-one end columns">
+                  <!-- minute -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="required-field"></div>
+
+          <!-- End date -->
+          <div class="row">
+            <div class="twelve columns">
+              <div class="has-tip tip-right" title="Voting end date">
+                <div id="end-month" class="six phone-two columns voting-edit-date ">
+                  <!-- month -->
+                </div>
+
+                <div id="end-day" class="three phone-one columns voting-edit-date">
+                  <!-- day -->
+                </div>
+
+                <div id="end-year" class="three phone-one columns voting-edit-date">
+                  <!-- year -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- End Hour -->
+          <div class="row">
+            <div class="twelve columns">
+              <div class="has-tip tip-right" title="Voting end hour">
+                <div id="end-hour"
+                     class="three phone-one columns voting-edit-date">
+                  <!-- hour -->
+                </div>
+
+                <div id="end-minute" class="three phone-one end columns voting-edit-date">
+                  <!-- minute -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="required-field"></div>
+
+          <div class="row">
+            <div class="twelve columns">
+              {{ field_errors(poll_form.start_form) }}
+              {{ field_errors(poll_form.end_form) }}
+            </div>
+          </div>
+          
+          <!-- Eligible groups -->
+          <div class="has-tip tip-right" title="Eligiamte Group">
+            {{ poll_form.valid_groups }}
+          </div>
+          <div class="required-field"></div>
+          {{ field_errors(poll_form.valid_groups) }}
+
+        </div>
+      </div>
+    </div>
+    <!-- End of first split block -->
+  </div>
+</form>
+
+<!-- Delete voting modal -->
+{% if can_delete_voting %}
+  <div id="delete-voting" class="reveal-modal">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">
+      Are you sure you want to do that?
+    </p>
+    <h2>
+      Warning
+    </h2>
+    <p>
+      By pressing the following button you will permantly and
+      irreversibly delete this voting.
+    </p>
+    <form method="post" action="{{ url('voting_delete_voting', slug=voting.slug) }}">
+      {{ csrf() }}
+      <button class="large red button nice radius close-reveal-modal">
+        Delete Voting
+      </button>
+    </form>
+  </div>
+{% endif %}
+{% endblock%}
+
+{% block bottomextra %}
+  {{ css('leaflet') }}
+  {{ js('leaflet') }}
+  {{ js('voting_edit_voting') }}
 {% endblock %}

@@ -77,6 +77,10 @@ MINIFY_BUNDLES = {
             'js/libs/stupidtable.js',
             'js/remo/voting_list.js',
             ),
+        'voting_edit_voting': (
+            'js/libs/stupidtable.js',
+            'js/remo/voting_edit_voting.js'
+            ),
         'profiles_view_report': (
             'js/remo/profiles_view_report.js',
             ),
