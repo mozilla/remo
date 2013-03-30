@@ -2,11 +2,11 @@ from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.contrib.auth.models import Group, User
 from django.db import models
 
-from uuslug import uuslug as slugify
+from uuslug import uuslug
 
 
 class Poll(models.Model):
-    """Poll Abstract Model."""
+    """Poll Model."""
     name = models.CharField(max_length=100)
     slug = models.SlugField(blank=True, max_length=100)
     start = models.DateTimeField()
@@ -15,7 +15,7 @@ class Poll(models.Model):
     created_on = models.DateField(auto_now_add=True)
     description = models.TextField(validators=[MaxLengthValidator(500),
                                                MinLengthValidator(20)])
-    created_by = models.ForeignKey(User, related_name='polls_range_created')
+    created_by = models.ForeignKey(User, related_name='range_polls_created')
     users_voted = models.ManyToManyField(User, related_name='polls_voted',
                                          through='Vote')
 
@@ -27,50 +27,56 @@ class Poll(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.slug = slugify(self.name)
+            self.slug = uuslug(self.name, instance=self)
         super(Poll, self).save(*args, **kwargs)
 
 
 class Vote(models.Model):
     """Vote model."""
     user = models.ForeignKey(User)
-    ranged_poll = models.ForeignKey('Poll')
+    poll = models.ForeignKey(Poll)
     date_voted = models.DateField(auto_now_add=True)
 
     def __unicode__(self):
-        return '%s %s' % (self.user, self.ranged_poll)
+        return '%s %s' % (self.user, self.poll)
 
 
-class PollRange(models.Model):
-    """Poll Model for range voting."""
+class RangePoll(models.Model):
+    """Range Poll Model."""
     name = models.CharField(max_length=500, default='')
-    poll = models.ForeignKey('Poll')
+    poll = models.ForeignKey(Poll, related_name='range_polls')
 
     def __unicode__(self):
         return self.name
 
 
-class PollRangeVotes(models.Model):
-    """ Poll Range model to count votes."""
+class RangePollChoice(models.Model):
+    """Range Poll Choice Model."""
     votes = models.IntegerField(default=0)
-    poll_range = models.ForeignKey('PollRange')
+    range_poll = models.ForeignKey(RangePoll, related_name='choices')
     nominee = models.ForeignKey(User)
 
+    class Meta:
+        ordering = ['-votes', 'nominee__last_name', 'nominee__first_name']
 
-class PollRadio(models.Model):
-    """Poll Model for radio (Boolean) voting."""
-    title = models.CharField(max_length=500)
-    poll = models.ForeignKey('Poll')
+
+class RadioPoll(models.Model):
+    """Radio Poll Model."""
+    question = models.CharField(max_length=500)
+    poll = models.ForeignKey(Poll, related_name='radio_polls')
 
     def __unicode__(self):
-        return self.title
+        return self.question
 
 
-class PollChoices(models.Model):
-    """Poll Model with available choices for radio voting."""
+class RadioPollChoice(models.Model):
+    """Radio Poll Choice Model."""
     answer = models.CharField(max_length=500)
     votes = models.IntegerField(default=0)
-    radio_poll = models.ForeignKey('PollRadio')
+    radio_poll = models.ForeignKey(RadioPoll, related_name='answers')
 
     def __unicode__(self):
         return self.answer
+
+    class Meta:
+        ordering = ['-votes']
