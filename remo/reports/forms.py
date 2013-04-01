@@ -35,7 +35,7 @@ class ReportForm(forms.ModelForm):
         required=False,
         widget=forms.Textarea(attrs={'id': 'recruits_comments',
                                      'class': 'flat',
-                                     'placeholder': ('Where you successful '
+                                     'placeholder': ('Were you successful '
                                                      'in recruiting new '
                                                      'Mozillians? If so, for '
                                                      'which project or '
