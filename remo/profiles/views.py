@@ -169,10 +169,10 @@ def view_profile(request, display_name):
             user, start_year=2011, end_year=today.year,
             permission=REPORTS_PERMISSION_LEVEL['anonymous'])
 
+    past_user_events = get_events_for_user(user, to_date=today)
     data['monthly_reports'] = reports
-
     data['future_events'] = get_events_for_user(user, from_date=today)
-    data['past_events'] = get_events_for_user(user, to_date=today)[:10]
+    data['past_events'] = past_user_events.reverse()[:10]
     data['featured_rep'] = FeaturedRep.objects.filter(user=user)
 
     return render(request, 'profiles_view.html', data)
