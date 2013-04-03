@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}
+View Voting
+{% endblock %}
+
+{% block content %}
+<form class="custom" method="post">
+  {{ csrf() }}
+  <div class="row">
+    <div class="eight columns">
+      <h4 class="event-single-title">{{ poll.name }}</h4>
+    </div>
+    <div class="four columns align-right hide-on-phones">
+      {% if user_is_admin(user) %}
+        <a href="{{ url('voting_edit_voting', slug=poll.slug) }}"
+           class="small red button nice radius">
+          Edit voting
+        </a>
+      {% endif %}
+      <button class="small green button nice radius">Vote</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          }
+        </div>
+        <div class="eleven columns">
+          <div class="row">
+            <div class="ten columns end">
+              <div class="event-single-date panel">
+                <div class="row">{% if not poll|is_multiday %} {# this is single voting #}
+                    <div class="three phone-one columns">
+                      <div class="event-single-date-number">
+                        {{ poll.start|strftime('%d') }}
+                      </div>
+                    </div>
+                    <div class="five phone-two columns">
+                      <div class="event-single-date-month">
+                        {{ poll.start|strftime('%b %Y')|upper }}
+                      </div>
+                      <div class="event-single-date-day">
+                        {{ poll.start|strftime('%A') }}
+                      </div>
+                    </div>
+                    <div class="four phone-one columns end">
+                      <div class="event-single-date-times tip-bottom"
+                           data-width="140"
+                           data-date-start="{{ poll.start|format_datetime_iso }}"
+                           data-date-end="{{ poll.end|format_datetime_iso }}"
+                           data-is-multidate="false"
+                           id="datetime-tip">
+                        <div class="event-single-date-time-start">
+                          {{ poll.local_start|strftime('%H:%M') }}
+                        </div>
+                        <div class="event-single-date-time-end">
+                          {{ poll.local_end|strftime('%H:%M') }}
+                        </div>
+                        <div class="event-single-date-singletimes">}</div>
+                      </div>
+                    </div>
+                  {% else %}
+                    {# Voting is multiday #}
+                    <div class="six phone-two columns">
+                      <div class="event-single-date-months">
+                        {{ poll.start|strftime('%d %b %Y')|upper }}
+                      </div>
+                      <div class="event-single-date-months-second">
+                        {{ poll.end|strftime('%d %b %Y')|upper }}
+                      </div>
+                    </div>
+                    <div class="four phone-two columns">
+                      <div class="event-single-date-times">
+                        <div class="event-single-date-day-first">
+                          {{ poll.start|strftime('%A') }}
+                        </div>
+                        <div class="event-single-date-day-second">
+                          {{ poll.end|strftime('%A') }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="two hide-on-phones columns">
+                      <div class="event-single-date-multitimes-wrap tip-bottom"
+                           data-width="120"
+                           data-date-start="{{ poll.start|format_datetime_iso }}"
+                           data-date-end="{{ poll.end|format_datetime_iso }}"
+                           data-is-multidate="true"
+                           id="datetime-tip">
+                        <div class="event-single-date-multitimes">}</div>
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="eleven columns">
+          <!-- Description -->
+          <p class="profile-item">
+            <span class="white radius label">
+              Description
+            </span>
+            &nbsp;
+            {{ poll.description }}
+          </p>
+          <p class="profile-item">
+            {% for range_poll, choice_form in range_poll_choice_forms.items() %}
+              <span class="white radius label">
+                Range poll vote {{ range_poll.name }}
+              </span>
+              &nbsp;
+              <br>
+              {% for choice in choice_form %}
+                {{ choice.label }} {{ choice }}
+                {{ field_errors(choice) }}
+              {% endfor %}
+            {%endfor%}
+          </p>
+          <p class="profile-item">
+            {% for radio_poll, choice_form in radio_poll_choice_forms.items() %}
+              <span class="white radius label">
+                Radio poll vote {{ radio_poll.question }}
+              </span>
+              &nbsp;
+              <br>
+              {% for choice in choice_form %}
+                {{ choice }}
+                {{ field_errors(choice) }}
+              {% endfor %}
+            {% endfor %}
+          </p>
+        </div>
+      </div>
+
+    </div>
+    <div class="six columns">
+      <div class="row">
+        <div class="one columns pictogram">
+          a <!-- Editable Content wiki like -->
+        </div>
+        <div class="eleven columns">
+          <p>
+            Some additional info.
+            Instructions on how to vote when there is a range poll.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</form> 
+{% endblock %}
