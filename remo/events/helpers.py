@@ -43,6 +43,8 @@ def get_attendee_role_event(attendee, event):
             return 'Organizer'
         else:
             return 'Mozilla\'s presence organizer'
+    elif attendee.groups.filter(name='Mozillian').exists():
+        return 'Mozillian attendee'
 
     return 'Rep attendee'
 
@@ -99,6 +101,7 @@ def get_event_comment_delete_url(obj):
     return reverse('events_delete_event_comment',
                    kwargs={'slug': obj.event.slug,
                            'pk': obj.id})
+
 
 @register.filter
 def get_event_category_link(category):
