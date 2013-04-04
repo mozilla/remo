@@ -234,7 +234,23 @@ Mozilla Reps - {{ event.name }}
   </div>
 </div>
 <!-- END Mashup code -->
-
+{% macro display_attendee(attendee) -%}
+  <div class="event-single-attendee">
+    <div class="row">
+      <div class="three phone-one columns grid-profile-image">
+        <img src="{{ attendee|get_avatar_url }}"
+             class="profiles-people-avatar"
+             alt="Avatar">
+      </div>
+      <div class="nine phone-three columns grid-profile-text">
+        <h6>{{ attendee.get_full_name() }}</h6>
+        <p class="event-single-attendee-text">
+          {{ get_attendee_role_event(attendee, event) }}
+        </p>
+      </div>
+    </div>
+  </div>
+{%- endmacro %}
 <div class="row">
   <div class="seven columns">
     {% if event.extra_content %}
@@ -260,24 +276,14 @@ Mozilla Reps - {{ event.name }}
       <div class="eleven columns">
         <!-- Listing of organizer and attendees -->
         {% for attendee in get_sorted_attendance_list(event) %}
-          <a href="{{ url('profiles_view_profile', display_name=attendee|get_display_name) }}"
-             target="_blank">
-            <div class="event-single-attendee">
-              <div class="row">
-                <div class="three phone-one columns grid-profile-image">
-                  <img src="{{ attendee|get_avatar_url }}"
-                       class="profiles-people-avatar"
-                       alt="Avatar">
-                </div>
-                <div class="nine phone-three columns grid-profile-text">
-                  <h6>{{ attendee.get_full_name() }}</h6>
-                  <p class="event-single-attendee-text">
-                    {{ get_attendee_role_event(attendee, event) }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </a>
+          {% if user_is_rep(attendee) %}
+            <a href="{{ url('profiles_view_profile', display_name=attendee|get_display_name) }}"
+               target="_blank">
+              {{ display_attendee(attendee) }}
+            </a>
+          {% else %}
+              {{ display_attendee(attendee) }}
+          {% endif %}
         {% endfor %}
 
         {% if user.is_authenticated() %}
