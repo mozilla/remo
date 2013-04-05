@@ -148,6 +148,14 @@ Build The Environment
      ~/project$ ./manage.py update_product_details
 
 
+#. **Collect static files.**
+
+   Various packages provide static files. We need to collect them in
+   the STATIC_DIR::
+
+     ~/project$ ./manage.py collectstatic
+
+
 #. **Load demo data (optional).**
 
    Depending on what you are going to develop you may need to have
@@ -160,6 +168,10 @@ Build The Environment
    To load *demo reports* run::
 
      ~/project$ ./manage.py loaddata demo_reports
+
+   To load *demo events* run::
+
+     ~/project$ ./manage.py loaddata demo_events
 
    To fetch *bugzilla bugs* run::
 
