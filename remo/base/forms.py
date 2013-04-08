@@ -1,11 +1,12 @@
+import happyforms
 from django.contrib import messages
-from happyforms import forms
+from django import forms
 
 from remo.base.tasks import send_mail_task
 from remo.profiles.models import UserProfile
 
 
-class EmailUsersForm(forms.Form):
+class EmailUsersForm(happyforms.Form):
     """Generic form to send email to multiple users."""
     def __init__(self, users, *args, **kwargs):
         """Initialize form.
@@ -50,7 +51,7 @@ class EmailUsersForm(forms.Form):
                                      'least one recipient.'))
 
 
-class EditSettingsForm(forms.ModelForm):
+class EditSettingsForm(happyforms.ModelForm):
     """Form to edit user settings regarding mail preferences."""
     receive_email_on_add_report = forms.BooleanField(
         required=False, initial=True,
@@ -73,7 +74,7 @@ class EditSettingsForm(forms.ModelForm):
                   'receive_email_on_add_event_comment']
 
 
-class TrackFunctionalAreasForm(forms.ModelForm):
+class TrackFunctionalAreasForm(happyforms.ModelForm):
     """Form for tracking interests in functional areas for Mozillians."""
     class Meta:
         model = UserProfile

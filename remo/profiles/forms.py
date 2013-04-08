@@ -1,17 +1,18 @@
+import happyforms
 import re
 from datetime import datetime
 
+from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms.extras.widgets import SelectDateWidget
 
-from happyforms import forms
 from product_details import product_details
 
 from remo.profiles.models import UserProfile
 
 
-class InviteUserForm(forms.Form):
+class InviteUserForm(happyforms.Form):
     """Form to invite a new user."""
 
     def _validate_unique_email(data, **kwargs):
@@ -29,7 +30,7 @@ class InviteUserForm(forms.Form):
                              validators=[_validate_unique_email])
 
 
-class ChangeUserForm(forms.ModelForm):
+class ChangeUserForm(happyforms.ModelForm):
     """Form to change user details."""
     email = forms.EmailField()
 
@@ -61,7 +62,7 @@ class ChangeUserForm(forms.ModelForm):
         return self._clean_names(data)
 
 
-class ChangeProfileForm(forms.ModelForm):
+class ChangeProfileForm(happyforms.ModelForm):
     """Form to change userprofile details."""
     gender = forms.ChoiceField(required=False, choices=((None, "Gender"),
                                                         (True, "Female"),
@@ -117,7 +118,7 @@ class ChangeProfileForm(forms.ModelForm):
                   'functional_areas')
 
 
-class ChangeDateJoinedForm(forms.ModelForm):
+class ChangeDateJoinedForm(happyforms.ModelForm):
     """Form to change userprofile date_joined_program field."""
     date_joined_program = forms.DateField(
         required=False,

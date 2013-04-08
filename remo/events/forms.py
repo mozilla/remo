@@ -1,5 +1,6 @@
+import happyforms
 from datetime import datetime
-from happyforms import forms
+from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -56,7 +57,7 @@ EventMetricsFormset = forms.models.inlineformset_factory(
     Event, Metric, formset=MinBaseInlineFormSet, extra=2)
 
 
-class EventForm(forms.ModelForm):
+class EventForm(happyforms.ModelForm):
     """Form of an event."""
     country = forms.ChoiceField(
         choices=[],
@@ -207,7 +208,7 @@ class EventForm(forms.ModelForm):
                    'end': SplitSelectDateTimeWidget()}
 
 
-class EventCommentForm(forms.ModelForm):
+class EventCommentForm(happyforms.ModelForm):
     """Form of an event comment."""
 
     class Meta:
