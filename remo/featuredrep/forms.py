@@ -1,9 +1,9 @@
-from happyforms import forms
+import happyforms
 
 from models import FeaturedRep
 
 
-class FeaturedRepForm(forms.ModelForm):
+class FeaturedRepForm(happyforms.ModelForm):
     """Form to create a new FeaturedRep object."""
 
     class Meta:

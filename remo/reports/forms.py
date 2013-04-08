@@ -1,4 +1,5 @@
-from happyforms import forms
+import happyforms
+from django import forms
 
 from models import Report, ReportComment, ReportEvent, ReportLink
 
@@ -8,7 +9,7 @@ ReportLinkFormset = forms.models.inlineformset_factory(Report, ReportLink,
                                                        extra=1)
 
 
-class ReportForm(forms.ModelForm):
+class ReportForm(happyforms.ModelForm):
     """Form of a report."""
     past_items = forms.CharField(
         required=False,
@@ -71,7 +72,7 @@ class ReportForm(forms.ModelForm):
                   'future_items', 'flags', 'overdue']
 
 
-class ReportCommentForm(forms.ModelForm):
+class ReportCommentForm(happyforms.ModelForm):
     """Form of a report comment."""
 
     class Meta:
@@ -79,7 +80,7 @@ class ReportCommentForm(forms.ModelForm):
         fields = ['comment']
 
 
-class ReportEventForm(forms.ModelForm):
+class ReportEventForm(happyforms.ModelForm):
     """Form of report event."""
 
     class Meta:
@@ -87,7 +88,7 @@ class ReportEventForm(forms.ModelForm):
         fields = ['name', 'description', 'link', 'participation_type']
 
 
-class ReportLinkForm(forms.ModelForm):
+class ReportLinkForm(happyforms.ModelForm):
     """Form of report link."""
 
     class Meta:
