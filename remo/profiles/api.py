@@ -39,11 +39,13 @@ class ProfileResource(ModelResource):
     """Profile Resource."""
     profile_url = fields.CharField()
     avatar_url = fields.CharField()
-    mentor = fields.BooleanField()
-    council = fields.BooleanField()
+    is_mentor = fields.BooleanField()
+    is_council = fields.BooleanField()
     functional_areas = fields.ToManyField(FunctionalAreasResource,
                                           attribute='functional_areas',
                                           full=True, null=True)
+    mentor = fields.ToOneField('remo.profiles.api.RepResource', 
+                               attribute='mentor')
 
     class Meta:
         queryset = UserProfile.objects.filter(registration_complete=True)
@@ -86,12 +88,12 @@ class ProfileResource(ModelResource):
         """Calculate and return full avatar of Rep."""
         return get_avatar_url(bundle.obj.user, -1)
 
-    def dehydrate_mentor(self, bundle):
-        """Calculate and return full avatar of Rep."""
+    def dehydrate_is_mentor(self, bundle):
+        """Calculate and return if user is mentor."""
         return bundle.obj.user.groups.filter(name='Mentor').count() == 1
 
-    def dehydrate_council(self, bundle):
-        """Calculate and return full avatar of Rep."""
+    def dehydrate_is_council(self, bundle):
+        """Calculate and return if user is counselor."""
         return bundle.obj.user.groups.filter(name='Council').count() == 1
 
 
