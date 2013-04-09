@@ -4,7 +4,7 @@ from urllib import quote
 
 import django.utils.timezone as timezone
 
-from celery.decorators import task
+from celery.task import task
 from django.conf import settings
 from django.contrib.auth.models import User
 
@@ -71,9 +71,8 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 if cc_user:
                     bug.cc.add(cc_user)
 
-            bug.assigned_to = get_object_or_none(User,
-                                                 email=(bdata['assigned_to']\
-                                                        ['name']))
+            bug.assigned_to = (
+                get_object_or_none(User, email=(bdata['assigned_to']['name'])))
             bug.status = bdata['status']
             bug.resolution = bdata.get('resolution', '')
             bug.due_date = bdata.get('cf_due_date', None)
