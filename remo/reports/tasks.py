@@ -1,15 +1,18 @@
-from celery.decorators import task
+from celery.task import task
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
 
 @task()
-def send_remo_mail(user_list, subject, email_template, data = {}):
+def send_remo_mail(user_list, subject, email_template, data=None):
     """Send to user_list emails based rendered using email_template
     and populated with data.
 
     """
+    if not data:
+        data = {}
+
     data.update({'SITE_URL': settings.SITE_URL,
                  'FROM_EMAIL': settings.FROM_EMAIL})
 
