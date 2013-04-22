@@ -1,0 +1,201 @@
+[
+    {
+        "pk": 2, 
+        "model": "voting.poll", 
+        "fields": {
+            "end": "2013-04-01T19:00:00Z", 
+            "name": "Past Test Voting", 
+            "start": "2013-03-01T08:00:00Z", 
+            "created_by": 4, 
+            "valid_groups": 3, 
+            "created_on": "2013-04-23", 
+            "slug": "past-test-voting", 
+            "description": "Past test voting fixture."
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "voting.poll", 
+        "fields": {
+            "end": "2018-09-04T07:00:00Z", 
+            "name": "Future test voting", 
+            "start": "2018-09-01T07:00:00Z", 
+            "created_by": 4, 
+            "valid_groups": 5, 
+            "created_on": "2013-04-23", 
+            "slug": "future-test-voting", 
+            "description": "Future test voting starting on 09/01/2018."
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "voting.poll", 
+        "fields": {
+            "end": "2013-05-31T19:00:00Z", 
+            "name": "Current Test Voting", 
+            "start": "2013-04-01T07:00:00Z", 
+            "created_by": 4, 
+            "valid_groups": 3, 
+            "created_on": "2013-04-22", 
+            "slug": "current-test-voting", 
+            "description": "Voting example with two range polls and one radio poll."
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "voting.rangepoll", 
+        "fields": {
+            "poll": 1, 
+            "name": "Range Poll Example 1"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "voting.rangepoll", 
+        "fields": {
+            "poll": 1, 
+            "name": "Range Poll Example 2"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "voting.rangepoll", 
+        "fields": {
+            "poll": 2, 
+            "name": "Past Range Poll 1"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 3, 
+            "nominee": 6, 
+            "range_poll": 3
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 2, 
+            "nominee": 7, 
+            "range_poll": 3
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 1, 
+            "nominee": 5, 
+            "range_poll": 3
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 0, 
+            "nominee": 6, 
+            "range_poll": 1
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 0, 
+            "nominee": 7, 
+            "range_poll": 1
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 0, 
+            "nominee": 4, 
+            "range_poll": 2
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 0, 
+            "nominee": 5, 
+            "range_poll": 2
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 0, 
+            "nominee": 9, 
+            "range_poll": 1
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "voting.radiopoll", 
+        "fields": {
+            "poll": 1, 
+            "question": "Radio Poll Example 2 - Question 1"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "voting.radiopoll", 
+        "fields": {
+            "poll": 2, 
+            "question": "Past Radio Poll Question 1"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "voting.radiopollchoice", 
+        "fields": {
+            "answer": "Past Radio Poll Answer 2", 
+            "radio_poll": 2, 
+            "votes": 3
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "voting.radiopollchoice", 
+        "fields": {
+            "answer": "Past Radio Poll Answer 1", 
+            "radio_poll": 2, 
+            "votes": 1
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "voting.radiopollchoice", 
+        "fields": {
+            "answer": "Radio Poll Example 2 - Answer 1", 
+            "radio_poll": 1, 
+            "votes": 0
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "voting.radiopollchoice", 
+        "fields": {
+            "answer": "Radio Poll Example 2 - Answer 2", 
+            "radio_poll": 1, 
+            "votes": 0
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "voting.radiopollchoice", 
+        "fields": {
+            "answer": "Past Radio Poll Answer 3", 
+            "radio_poll": 2, 
+            "votes": 0
+        }
+    }
+]
