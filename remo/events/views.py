@@ -211,7 +211,7 @@ def count_converted_visitors(request, slug):
     return redirect('events_view_event', slug=event.slug)
 
 
-@never_cache
+@cache_control(max_age=1800, s_maxage=1800)
 def export_single_event_to_ical(request, slug):
     """ICal export of single event."""
     event = get_object_or_404(Event, slug=slug)
