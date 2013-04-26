@@ -1,6 +1,7 @@
 import pytz
 from datetime import datetime
 
+from django.db.models import Q
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -43,6 +44,13 @@ def view_voting(request, slug):
     user = request.user
     now = timezone.make_aware(datetime.now(), pytz.UTC)
     poll = get_object_or_404(Poll, slug=slug)
+    # If the user does not belong to a valid poll group
+    if not (user.groups.filter(Q(id=poll.valid_groups.id) |
+                               Q(name='Admin')).exists()):
+        messages.error(request, ('You do not have the permissions to '
+                                 'vote on this voting.'))
+        return redirect('voting_list_votings')
+
     range_poll_choice_forms = {}
     radio_poll_choice_forms = {}
 
