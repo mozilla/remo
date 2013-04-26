@@ -77,6 +77,9 @@ MINIFY_BUNDLES = {
             'js/libs/stupidtable.js',
             'js/remo/voting_list.js',
             ),
+        'voting_edit_voting': (
+            'js/remo/voting_edit_voting.js',
+            ),
         'profiles_view_report': (
             'js/remo/profiles_view_report.js',
             ),
@@ -86,12 +89,10 @@ MINIFY_BUNDLES = {
             'js/remo/profiles_people.js'
             ),
         'reports_edit_report': (
-            'js/libs/jquery.formset.js',
-            'js/remo/reports_edit_report.js'
+            'js/remo/reports_edit_report.js',
             ),
         'events_edit_event': (
-            'js/libs/jquery.formset.js',
-            'js/remo/events_edit_event.js'
+            'js/remo/events_edit_event.js',
             ),
         'events_view_event': (
             'js/libs/jquery.zflickrfeed.js',
@@ -157,7 +158,7 @@ JINGO_EXCLUDE_APPS = [
 #    ('media/js/**.js', 'javascript'),
 # ]
 
-LOGGING = dict(loggers=dict(playdoh = {'level': logging.DEBUG}))
+LOGGING = dict(loggers=dict(playdoh={'level': logging.DEBUG}))
 
 # Set profile module
 AUTH_PROFILE_MODULE = 'profiles.UserProfile'

@@ -21,10 +21,5 @@ $(document).ready(function() {
     });
 
     // Dynamically add Metric forms
-    $('.metricblock').formset({
-        formCssClass: 'dynamic-metric-form',
-        prefix: 'metrics',
-        addBtnObj: $('#events-add-metric-button'),
-        addDeleteButton: null
-    });
+    $('form.custom').on('click', '#events-add-metric-button', append_to_formset);
 });
