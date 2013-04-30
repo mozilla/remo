@@ -29,13 +29,17 @@ class UserAvatarAdmin(admin.ModelAdmin):
 
 class FunctionalAreaAdmin(admin.ModelAdmin):
     """FunctionalArea Admin."""
-    list_display = ('name', 'registered_reps', 'registered_mozillians')
+    list_display = ('name', 'registered_reps', 'registered_mozillians',
+                    'registered_events')
 
     def registered_reps(self, obj):
         return obj.users_matching.count()
 
     def registered_mozillians(self, obj):
         return obj.users_tracking.count()
+
+    def registered_events(self, obj):
+        return obj.events_categories.count()
 
 
 admin.site.register(User, UserAdmin)
