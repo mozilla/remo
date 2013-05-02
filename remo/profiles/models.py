@@ -13,6 +13,7 @@ from django.dispatch import receiver
 from south.signals import post_migrate
 
 from remo.base.utils import add_permissions_to_groups
+from remo.reports.tasks import send_remo_mail
 
 DISPLAY_NAME_MAX_LENGTH = 50
 
@@ -229,6 +230,21 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
 
             else:
                 break
+
+
+@receiver(pre_save, sender=UserProfile,
+          dispatch_uid='userprofile_email_mentor_notification')
+def email_mentor_notification(sender, instance, raw, **kwargs):
+    """Notify mentor when his/her mentee changes mentor on his/her profile."""
+    if UserProfile.objects.filter(user=instance.user).exists() and not raw:
+        user_profile = UserProfile.objects.get(user=instance.user)
+        if user_profile.mentor and user_profile.mentor != instance.mentor:
+            subject = '[Reps] Change of mentor.'
+            email_template = 'emails/mentor_change_notification.txt'
+            ctx_data = {'rep_user': instance.user,
+                        'new_mentor': instance.mentor}
+            send_remo_mail.delay([user_profile.mentor], subject,
+                                 email_template, ctx_data)
 
 
 @receiver(post_save, sender=User, dispatch_uid='create_profile_signal')
