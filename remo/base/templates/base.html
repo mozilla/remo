@@ -286,12 +286,12 @@
 
   <!-- Included JS Files -->
   <script src="https://browserid.org/include.js" type="text/javascript"></script>
-  <script src="//www.mozilla.org/tabzilla/tabzilla.js"></script>
   {% if get_development_environment() %}
     {{ js('common-dbg') }}
   {% else %}
     {{ js('common') }}
   {% endif %}
+  <script src="//www.mozilla.org/tabzilla/tabzilla.js"></script>
   {% block bottomextra %} {% endblock %}
 </body>
 
