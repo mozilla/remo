@@ -31,30 +31,22 @@
         "pk": 1, 
         "model": "voting.poll", 
         "fields": {
-            "end": "2013-05-31T19:00:00Z", 
+            "end": "2018-05-31T19:00:00Z", 
             "name": "Current Test Voting", 
             "start": "2013-04-01T07:00:00Z", 
             "created_by": 4, 
             "valid_groups": 3, 
             "created_on": "2013-04-22", 
             "slug": "current-test-voting", 
-            "description": "Voting example with two range polls and one radio poll."
-        }
-    }, 
-    {
-        "pk": 1, 
-        "model": "voting.rangepoll", 
-        "fields": {
-            "poll": 1, 
-            "name": "Range Poll Example 1"
+            "description": "Voting example with  one radio poll."
         }
     }, 
     {
         "pk": 2, 
         "model": "voting.rangepoll", 
         "fields": {
-            "poll": 1, 
-            "name": "Range Poll Example 2"
+            "poll": 2, 
+            "name": "Past Range Poll 1"
         }
     }, 
     {
@@ -63,6 +55,14 @@
         "fields": {
             "poll": 2, 
             "name": "Past Range Poll 1"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "voting.rangepoll", 
+        "fields": {
+            "poll": 1, 
+            "name": "Current Range Poll 1"
         }
     }, 
     {
@@ -75,12 +75,39 @@
         }
     }, 
     {
+        "pk": 5, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 3, 
+            "nominee": 6, 
+            "range_poll": 2
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 2, 
+            "nominee": 7, 
+            "range_poll": 2
+        }
+    }, 
+    {
         "pk": 8, 
         "model": "voting.rangepollchoice", 
         "fields": {
             "votes": 2, 
             "nominee": 7, 
             "range_poll": 3
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "voting.rangepollchoice", 
+        "fields": {
+            "votes": 1, 
+            "nominee": 5, 
+            "range_poll": 2
         }
     }, 
     {
@@ -93,7 +120,7 @@
         }
     }, 
     {
-        "pk": 3, 
+        "pk": 1, 
         "model": "voting.rangepollchoice", 
         "fields": {
             "votes": 0, 
@@ -102,38 +129,11 @@
         }
     }, 
     {
-        "pk": 4, 
-        "model": "voting.rangepollchoice", 
-        "fields": {
-            "votes": 0, 
-            "nominee": 7, 
-            "range_poll": 1
-        }
-    }, 
-    {
-        "pk": 1, 
-        "model": "voting.rangepollchoice", 
-        "fields": {
-            "votes": 0, 
-            "nominee": 4, 
-            "range_poll": 2
-        }
-    }, 
-    {
         "pk": 2, 
         "model": "voting.rangepollchoice", 
         "fields": {
             "votes": 0, 
-            "nominee": 5, 
-            "range_poll": 2
-        }
-    }, 
-    {
-        "pk": 5, 
-        "model": "voting.rangepollchoice", 
-        "fields": {
-            "votes": 0, 
-            "nominee": 9, 
+            "nominee": 7, 
             "range_poll": 1
         }
     }, 

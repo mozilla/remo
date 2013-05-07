@@ -130,114 +130,109 @@ Mozilla Reps - Edit Report
   <div class="row">
     <!-- Events -->
     <div class="six columns" >
-      <div id="eventformset">
-      {% for form in report_event_formset %}
-        {{ form.id }}
-        {{ form.report }}
-        <div class="row report-box {% if loop.last %} eventblock {% endif %}"
-             id="{{ form.prefix }}-row" >
-          <div class="one columns pictogram">
-            u
-          </div>
-          <div class="eleven columns report-item">
-            <div class="row report-event">
-              <input type="text" placeholder="Event Name"
-                     name="{{ form.name.html_name }}" value="{{ form.name.value() }}"
-                     class="input-text big has-tip tip-left" title="Event Name">
-              {% if form.name.errors %}
-                <small class="error">
-                  {{ form.name.errors }}
-                </small>
-              {% endif %}
+      <div class="formset" data-prefix="{{ report_event_formset.prefix }}">
+        {% for form in report_event_formset %}
+          {{ form.id }}
+          <div class="row report-box copyblock">
+            <div class="one columns pictogram">
+              u
+            </div>
+            <div class="eleven columns report-item">
+              <div class="row report-event">
+                <input type="text" placeholder="Event Name"
+                       name="{{ form.name.html_name }}" value="{{ form.name.value() }}"
+                       class="input-text big has-tip tip-left" title="Event Name">
+                {% if form.name.errors %}
+                  <small class="error">
+                    {{ form.name.errors }}
+                  </small>
+                {% endif %}
 
-              <div class="has-tip tip-left" title="Type of participation">
-                {{ form.participation_type }}
+                <div class="has-tip tip-left" title="Type of participation">
+                  {{ form.participation_type }}
+                </div>
+                {% if form.participation_type.errors %}
+                  <small class="error">
+                    {{ form.participation_type.errors }}
+                  </small>
+                {% endif %}
+
+                <textarea class="flat has-tip tip-left" placeholder="Describe the event briefly"
+                          name="{{ form.description.html_name }}" title="Event description">{{ form.description.value() }}</textarea>
+                {% if form.description.errors %}
+                  <small class="error">
+                    {{ form.description.errors }}
+                  </small>
+                {% endif %}
+
+                <input type="text" placeholder="Link to event"
+                       name="{{ form.link.html_name }}" value="{{ form.link.value() }}"
+                       class="input-text big has-tip tip-left"
+                       title="Event link">
+                {% if form.link.errors %}
+                  <small class="error">
+                    {{ form.link.errors }}
+                  </small>
+                {% endif %}
+
+                {{ form.DELETE }} Delete event
               </div>
-              {% if form.participation_type.errors %}
-                <small class="error">
-                  {{ form.participation_type.errors }}
-                </small>
-              {% endif %}
-
-              <textarea class="flat has-tip tip-left" placeholder="Describe the event briefly"
-                        name="{{ form.description.html_name }}" title="Event description">{{ form.description.value() }}</textarea>
-              {% if form.description.errors %}
-                <small class="error">
-                  {{ form.description.errors }}
-                </small>
-              {% endif %}
-
-              <input type="text" placeholder="Link to event"
-                     name="{{ form.link.html_name }}" value="{{ form.link.value() }}"
-                     class="input-text big has-tip tip-left"
-                     title="Event link">
-              {% if form.link.errors %}
-                <small class="error">
-                  {{ form.link.errors }}
-                </small>
-              {% endif %}
-
-              {{ form.DELETE }} Delete event
             </div>
           </div>
+        {% endfor %}
+        <div class="align-right">
+          <a id="reports-add-event-button" href="javascript:void(0)"
+             class="small white button nice radius">Add another event
+          </a>
         </div>
-      {% endfor %}
-
-      <div class="align-right">
-        <a id="reports-add-event-button" href="javascript:void(0)"
-           class="small white button nice radius">Add another event
-        </a>
       </div>
-    </div>
       {{ report_event_formset.management_form }}
     </div>
 
     <!-- Activities and Links -->
     <div class="six columns">
-      <div id="linkformset">
+      <div class="formset" data-prefix="{{ report_link_formset.prefix }}">
         {% for form in report_link_formset %}
-        {{ form.id }}
-        {{ form.report }}
-        <div class="row report-box {% if loop.last %} linkblock {% endif %}">
-          <div class="one columns pictogram">
-            a
-          </div>
-          <div class="eleven columns report-item">
-            <div class="row report-activity">
-              <input type="text" placeholder="Relevant Link"
-                     name="{{ form.link.html_name }}"
-                     value="{{ form.link.value() }}"
-                     class="input-text big has-tip tip-right"
-                     title="Activity Link">
-              {% if form.link.errors %}
-                <small class="error">
-                  {{ form.link.errors }}
-                </small>
-              {% endif %}
+          {{ form.id }}
+          <div class="row report-box copyblock">
+            <div class="one columns pictogram">
+              a
+            </div>
+            <div class="eleven columns report-item">
+              <div class="row report-activity">
+                <input type="text" placeholder="Relevant Link"
+                       name="{{ form.link.html_name }}"
+                       value="{{ form.link.value() }}"
+                       class="input-text big has-tip tip-right"
+                       title="Activity Link">
+                {% if form.link.errors %}
+                  <small class="error">
+                    {{ form.link.errors }}
+                  </small>
+                {% endif %}
 
-              <textarea class="flat has-tip tip-right"
-                        placeholder="Please provide a brief description for the link above (e.g. blog post, presentation slides, etc)"
-                        name="{{ form.description.html_name }}"
-                        title="Activity description">{{ form.description.value() }}</textarea>
-              {% if form.description.errors %}
-                <small class="error">
-                  {{ form.description.errors }}
-                </small>
-              {% endif %}
+                <textarea class="flat has-tip tip-right"
+                          placeholder="Please provide a brief description for the link above (e.g. blog post, presentation slides, etc)"
+                          name="{{ form.description.html_name }}"
+                          title="Activity description">{{ form.description.value() }}</textarea>
+                {% if form.description.errors %}
+                  <small class="error">
+                    {{ form.description.errors }}
+                  </small>
+                {% endif %}
 
-              {{ form.DELETE }} Delete activity
+                {{ form.DELETE }} Delete activity
+              </div>
             </div>
           </div>
-        </div>
         {% endfor %}
         <div class="align-right">
           <a id="reports-add-link-button" href="javascript:void(0)"
              class="small white button nice radius">Add another activity</a>
         </div>
-
       </div>
+      {{ report_link_formset.management_form }}
     </div>
-    {{ report_link_formset.management_form }}
   </div>
 
   <div class="row">
