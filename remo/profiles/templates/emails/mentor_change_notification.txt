@@ -1,0 +1,14 @@
+Hello!
+
+This email was generated automatically to inform you
+that {{ rep_user.get_full_name() }} [1] is now mentored
+by {{ new_mentor.get_full_name() }} [2].
+
+Cheers!
+
+Your lovely ReMo bot.
+
+[1] {{ SITE_URL }}{{ url('profiles_view_profile',
+                          rep_user.userprofile.display_name) }}
+[2] {{ SITE_URL }}{{ url('profiles_view_profile',
+                          new_mentor.userprofile.display_name) }}
