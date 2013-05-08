@@ -141,6 +141,27 @@
         }
     },
     {
+        "pk": 11,
+        "model": "auth.user",
+        "fields": {
+            "username": "mentor2",
+            "first_name": "John",
+            "last_name": "Smith",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-01-23 05:32:58+00:00",
+            "groups": [
+                3,
+                4
+            ],
+            "user_permissions": [],
+            "password": "md5$2$f74916608ad95265f58a739d6ffba15f",
+            "email": "mentor2@example.com",
+            "date_joined": "2012-01-23 05:32:58+00:00"
+        }
+    },
+    {
         "pk": 4,
         "model": "profiles.userprofile",
         "fields": {
@@ -391,6 +412,42 @@
             "birth_date": null,
             "diaspora_url": "",
             "personal_blog_feed": ""
+        }
+    },
+    {
+        "pk": 11,
+        "model": "profiles.userprofile",
+        "fields": {
+            "city": "New York City",
+            "twitter_account": "johnsmith",
+            "display_name": "js",
+            "private_email": "johnsmith@example.com",
+            "region": "NY",
+            "country": "USA",
+            "mozillians_profile_url":"http://mozillians.org/en-US/about/",
+            "wiki_profile_url": "https://wiki.mozilla.org/User:",
+            "irc_name": "js",
+            "irc_channels": "",
+            "lon": 13.41,
+            "lat": 52.52,
+            "linkedin_url": "",
+            "user": 11,
+            "birth_date": "1990-03-09",
+            "personal_website_url": "",
+            "diaspora_url": "https://joindiaspora.com/",
+            "personal_blog_feed": "",
+            "facebook_url": "",
+            "mentor": 4,
+            "added_by": 4,
+            "bio": "",
+            "gender":"False",
+            "registration_complete":"True",
+            "date_joined_program": "2011-07-01",
+            "functional_areas": [
+                3,
+                2
+            ],
+            "tracked_functional_areas": []
         }
     },
     {
