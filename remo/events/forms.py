@@ -107,15 +107,18 @@ class EventForm(happyforms.ModelForm):
         instance = self.instance
         # Dynamically set the year portion of the datetime widget
         now = datetime.now()
-        start_year = getattr(self.instance.start, 'year', now.year)
-        end_year = getattr(self.instance.end, 'year', now.year)
+        start_year = min(getattr(self.instance.start, 'year', now.year),
+                         now.year - 1)
+        end_year = min(getattr(self.instance.end, 'year', now.year),
+                       now.year - 1)
+
         self.fields['start_form'] = forms.DateTimeField(
             widget=SplitSelectDateTimeWidget(
-                years=range(start_year, now.year + 10), minute_step=5),
+                years=range(start_year, start_year + 10), minute_step=5),
             validators=[validate_datetime])
         self.fields['end_form'] = forms.DateTimeField(
             widget=SplitSelectDateTimeWidget(
-                years=range(end_year, now.year + 10), minute_step=5),
+                years=range(end_year, end_year + 10), minute_step=5),
             validators=[validate_datetime])
         # Make times local to venue
         if self.instance.start:
@@ -148,8 +151,7 @@ class EventForm(happyforms.ModelForm):
             cdata['owner'] = self.instance.owner
 
         # Check if keys exists in cleaned data.
-        if (not self.cleaned_data.has_key('start_form') or
-                not self.cleaned_data.has_key('end_form')):
+        if not ('start_form' or 'end_form' in self.cleaned_data):
                 raise ValidationError('Please correct the form errors.')
         # Set timezone
         t = timezone(cdata['timezone'])
