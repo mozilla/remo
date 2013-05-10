@@ -162,13 +162,9 @@ class EventForm(happyforms.ModelForm):
                          timezone(settings.TIME_ZONE))
         cdata['end'] = t.localize(end)
 
-        # Directly write to self.errors as
-        # ValidationError({'start_form': ['Error message']}) doesn't
-        # seem to work.
         if cdata['start'] >= cdata['end']:
-            self.errors['start_form'] = (u'Start date should come '
-                                         'before end date.')
-            raise ValidationError({'start_form': ['Error']})
+            msg = 'Start date should come before end date.'
+            self._errors['start_form'] = self.error_class([msg])
 
         return cdata
 
