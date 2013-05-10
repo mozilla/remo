@@ -382,40 +382,38 @@
       </div>
 
       <!-- Metrics -->
-      <div id="metricsformset">
+      <div class="formset" data-prefix="{{ metrics_formset.prefix }}">
         {% for form in metrics_formset %}
           {{ form.id }}
-          {{ form.report }}
-          <div class="row {% if loop.last %} metricblock {% endif %}"
-               id="{{ form.prefix }}-row">
-            <div class="one columns pictogram">
-              6
-            </div>
-            <div class="eleven columns">
-              {{ field_with_attrs(form.title,
-                                  placeholder='Metric',
-                                  title='Metric',
-                                  class='input-text big has-tip tip-right') }}
-              {{ field_errors(form.title) }}
+          <div class="row copyblock">
+            <div class="row">
+              <div class="one columns pictogram">
+                6
+              </div>
+              <div class="eleven columns">
+                {{ field_with_attrs(form.title,
+                                    placeholder='Metric',
+                                    title='Metric',
+                                    class='input-text big has-tip tip-right') }}
+                {{ field_errors(form.title) }}
 
-              {{ field_with_attrs(form.outcome,
-                                  placeholder='Success scenario',
-                                  title='Success scenario',
-                                  class='input-text big has-tip tip-right') }}
-              {{ field_errors(form.outcome) }}
+                {{ field_with_attrs(form.outcome,
+                                    placeholder='Success scenario',
+                                    title='Success scenario',
+                                    class='input-text big has-tip tip-right') }}
+                {{ field_errors(form.outcome) }}
 
-              {{ form.DELETE }} Delete metric
+                {{ form.DELETE }} Delete metric
+              </div>
             </div>
-            {% if loop.index <= 2 %}
-              <div class="required-field"></div>
-            {% endif %}
           </div>
-
-
+          {% if loop.index <= 2 %}
+            <div class="required-field"></div>
+          {% endif %}
         {% endfor %}
 
         <div class="align-right">
-          <a id="events-add-metric-button" href="javascript:void(0)"
+          <a id="events-add-metric-button" href="#"
              class="small white button nice radius">Add another metric</a>
         </div>
         {% if metrics_formset.non_form_errors() %}
@@ -423,7 +421,6 @@
             {{ metrics_formset.non_form_errors() }}
           </small>
         {% endif %}
-
       </div>
       {{ metrics_formset.management_form }}
 

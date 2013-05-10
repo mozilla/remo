@@ -54,7 +54,7 @@ class RangePollChoice(models.Model):
     """Range Poll Choice Model."""
     votes = models.IntegerField(default=0)
     range_poll = models.ForeignKey(RangePoll, related_name='choices')
-    nominee = models.ForeignKey(User)
+    nominee = models.ForeignKey(User, limit_choices_to={'groups__name': 'Rep'})
 
     class Meta:
         ordering = ['-votes', 'nominee__last_name', 'nominee__first_name']
