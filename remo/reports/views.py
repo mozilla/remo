@@ -1,19 +1,26 @@
 import datetime
 import re
 
+from urlparse import urljoin
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_control, never_cache
 
 import forms
 import remo.base.utils as utils
+
 from remo.base.decorators import permission_check
+from remo.events.helpers import get_attendee_role_event
 from remo.profiles.models import UserProfile
-from models import Report, ReportComment
+from models import Report, ReportComment, ReportEvent, ReportLink
+from utils import participation_type_to_number
 
 LIST_REPORTS_DEFAULT_SORT = 'updated_on_desc'
 LIST_REPORTS_VALID_SHORTS = {
@@ -159,6 +166,11 @@ def edit_report(request, display_name, year, month):
     report, created = utils.get_or_create_instance(Report, user=user,
                                                    month=year_month)
 
+    ReportLinkFormset = inlineformset_factory(Report, ReportLink,
+                                              extra=1)
+    ReportEventFormset = inlineformset_factory(Report, ReportEvent,
+                                               extra=1)
+
     if request.method == 'POST':
         # Make sure that users without permission do not modify
         # overdue field.
@@ -167,8 +179,8 @@ def edit_report(request, display_name, year, month):
             data['overdue'] = report.overdue
 
         report_form = forms.ReportForm(data, instance=report)
-        report_event_formset = forms.ReportEventFormset(data, instance=report)
-        report_link_formset = forms.ReportLinkFormset(data, instance=report)
+        report_event_formset = ReportEventFormset(data, instance=report)
+        report_link_formset = ReportLinkFormset(data, instance=report)
 
         if (report_form.is_valid() and report_event_formset.is_valid() and
             report_link_formset.is_valid()):
@@ -186,9 +198,27 @@ def edit_report(request, display_name, year, month):
                                             'year': year,
                                             'month': month}))
     else:
+        initial = []
+        if created:
+            events = user.events_attended.filter(start__year=year_month.year,
+                                                 start__month=year_month.month)
+            for event in events:
+                participation_type = participation_type_to_number(
+                    get_attendee_role_event(user, event))
+                event_url = reverse('events_view_event',
+                                    kwargs={'slug': event.slug})
+                initial.append({'name': event.name,
+                                'description': event.description,
+                                'link': urljoin(settings.SITE_URL, event_url),
+                                'participation_type': participation_type})
+
+            ReportEventFormset = inlineformset_factory(Report, ReportEvent,
+                                                       extra=events.count()+1)
+
         report_form = forms.ReportForm(instance=report)
-        report_event_formset = forms.ReportEventFormset(instance=report)
-        report_link_formset = forms.ReportLinkFormset(instance=report)
+        report_link_formset = ReportLinkFormset(instance=report)
+        report_event_formset = ReportEventFormset(instance=report,
+                                                  initial=initial)
 
     return render(request, 'edit_report.html',
                   {'report_form': report_form,
