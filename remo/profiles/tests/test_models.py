@@ -340,4 +340,4 @@ class EmailMentorNotification(TestCase):
         new_mentor = User.objects.get(username='mentor2')
         self.user_profile.mentor = new_mentor
         self.user_profile.save()
-        eq_(len(mail.outbox), 1)
+        eq_(len(mail.outbox), 3)
