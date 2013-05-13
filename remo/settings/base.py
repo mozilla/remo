@@ -1,5 +1,6 @@
 # This is your project's main settings file that can be committed to your
 # repo. If you need to override a setting locally, use settings_local.py
+import djcelery
 from funfactory.settings_base import *
 
 # Bundles is a dictionary of two dictionaries, css and js, which list css files
@@ -133,7 +134,8 @@ INSTALLED_APPS = ['south'] + \
                      'remo.voting',
 
                      'django_browserid',
-                     'tastypie']
+                     'tastypie',
+                     'djcelery']
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:
@@ -141,6 +143,9 @@ JINGO_EXCLUDE_APPS = [
     'admin',
     'registration',
 ]
+
+# Enable django-celery
+djcelery.setup_loader()
 
 # Tells the extract script what files to look for L10n in and what function
 # handles the extraction. The Tower library expects this.
@@ -158,7 +163,7 @@ JINGO_EXCLUDE_APPS = [
 #    ('media/js/**.js', 'javascript'),
 # ]
 
-LOGGING = dict(loggers=dict(playdoh = {'level': logging.DEBUG}))
+LOGGING = dict(loggers=dict(playdoh={'level': logging.DEBUG}))
 
 # Set profile module
 AUTH_PROFILE_MODULE = 'profiles.UserProfile'

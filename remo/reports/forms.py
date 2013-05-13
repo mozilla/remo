@@ -3,11 +3,6 @@ from django import forms
 
 from models import Report, ReportComment, ReportEvent, ReportLink
 
-ReportEventFormset = forms.models.inlineformset_factory(Report, ReportEvent,
-                                                        extra=1)
-ReportLinkFormset = forms.models.inlineformset_factory(Report, ReportLink,
-                                                       extra=1)
-
 
 class ReportForm(happyforms.ModelForm):
     """Form of a report."""

@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.auth.models import User
+from django.core import mail
 from django.core.exceptions import ValidationError
 from nose.tools import eq_, raises
 from test_utils import TestCase
@@ -320,3 +321,23 @@ class PermissionTest(TestCase):
         user = User.objects.get(username='rep')
         for permission in self.permissions:
             eq_(user.has_perm(permission), False)
+
+
+class EmailMentorNotification(TestCase):
+    """Test that a mentor receives an email when a Mentee
+    changes  mentor  on his/her profile.
+    """
+
+    fixtures = ['demo_users.json']
+
+    def setUp(self):
+        """Setup tests."""
+        self.user = User.objects.get(username='rep3')
+        self.user_profile = self.user.get_profile()
+
+    def test_send_email_on_mentor_change(self):
+        """Test that old mentor gets an email."""
+        new_mentor = User.objects.get(username='mentor2')
+        self.user_profile.mentor = new_mentor
+        self.user_profile.save()
+        eq_(len(mail.outbox), 1)

@@ -1,0 +1,11 @@
+Hey {{ user.first_name }},
+
+According to our records you still haven't voted for "{{ poll.name }}".
+Voting is an important participatory procedure in Mozilla Reps.
+
+Please go to {{ SITE_URL }}{{ url('voting_view_voting', slug=poll.slug) }}
+and cast your vote now.
+
+Cheers!
+
+Your lovely ReMo bot.
