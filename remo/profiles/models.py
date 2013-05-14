@@ -241,10 +241,12 @@ def email_mentor_notification(sender, instance, raw, **kwargs):
         if user_profile.mentor and user_profile.mentor != instance.mentor:
             subject = '[Reps] Change of mentor.'
             email_template = 'emails/mentor_change_notification.txt'
+            recipients = [user_profile.mentor, user_profile.user,
+                          instance.mentor]
             ctx_data = {'rep_user': instance.user,
                         'new_mentor': instance.mentor}
-            send_remo_mail.delay([user_profile.mentor], subject,
-                                 email_template, ctx_data)
+            send_remo_mail.delay(recipients, subject, email_template,
+                                 ctx_data)
 
 
 @receiver(post_save, sender=User, dispatch_uid='create_profile_signal')
