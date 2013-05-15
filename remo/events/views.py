@@ -131,9 +131,11 @@ def delete_event_comment(request, slug, pk):
 
 @never_cache
 @permission_check(permissions=['events.can_edit_events'])
-def edit_event(request, slug=None):
+def edit_event(request, slug=None, clone=None):
     """Edit event view."""
+
     event, created = get_or_create_instance(Event, slug=slug)
+
     if created:
         event.owner = request.user
     else:
@@ -152,12 +154,13 @@ def edit_event(request, slug=None):
     else:
         event_form = forms.EventForm(request.POST or None,
                                      editable_owner=False, instance=event)
+
     metrics_formset = forms.EventMetricsFormset(request.POST or None,
                                                 instance=event)
 
-    if (event_form.is_valid() and metrics_formset.is_valid()):
-        event_form.save()
-        metrics_formset.save()
+    if (event_form.is_valid() and metrics_formset.is_valid() and request.POST):
+        event_form.save(clone=clone)
+        metrics_formset.save(clone=clone)
 
         if created:
             messages.success(request, 'Event successfully created.')
