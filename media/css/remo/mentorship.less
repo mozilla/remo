@@ -1,0 +1,44 @@
+.node, .leaf {
+  font: 8px sans-serif;
+  & circle {
+    fill: #fff;
+    stroke-width: 1.5px;
+  }
+  & text {
+    fill: #aaa !important;
+  }
+}
+
+.node circle {
+  stroke: red;
+}
+
+.leaf circle {
+  stroke: steelblue;
+}
+
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1px;
+}
+
+.focus text {
+    stroke: #ccc;
+    stroke-width: 0.2px;
+    fill: black !important;
+}
+
+.focus.leaf text {
+    font: 13px sans-serif;
+}
+
+.path {
+    stroke: steelblue;
+}
+
+#profiles-loading {
+  text-align: center !important;
+  color: #888;
+  margin-top: 100px;
+}
