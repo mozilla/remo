@@ -42,22 +42,7 @@
         <div class="row">
           <div class="seven columns">
             <h5>People</h5>
-          </div>
-          <div class="five columns">
-            <dl class="sub-nav dashboard-filter">
-              <dt>Filter:</dt>
-              <dd class="active">
-                <a class="dashboard-mozillians-reps-grid-button" href="javascript:void(0)">
-                   Reps Grid
-                </a>
-              </dd>
-              <dd>
-                <a class="dashboard-mozillians-reps-reports-button" href="javascript:void(0)">
-                   Reps Reports
-                </a>
-              </dd>
-            </dl>
-          </div>
+          </div>  
         </div>
 
         <div class="row">
@@ -91,19 +76,31 @@
             {% endif %}
           </div>
           <!-- end people grid block -->
+        </div>
+      </div>
+      <!-- end people block -->
+
+      <div class="dashboard-box">
+        <div class="row">
+          <div class="seven columns">
+            <h5>Reports</h5>
+          </div>  
+        </div>
+
+        <div class="row">
 
           <!-- reports list block -->
-          <div class="dashboard-mozillians-reps-reports-block hidden">
+          <div class="dashboard-mozillians-reps-reports-block">
             {% if reps_reports[key] %}
               <table class="dashboard-table">
                 <thead>
                   <tr>
-                    <th class="dashboard-clickable type-string">Fullname</th>
-                    <th class="dashboard-clickable type-int">Year</th>
-                    <th class="dashboard-clickable type-string">Month</th>
-                    <th class="dashboard-clickable type-string">Date filled</th>
-                    <th class="dashboard-clickable type-string align-center">Empty</th>
-                    <th class="dashboard-clickable type-string align-center">Overdue</th>
+                    <th class="dashboard-clickable type-string">Name</th>
+                    <th class="dashboard-clickable type-string">Last Report</th>
+                    <th class="dashboard-clickable type-string">Reports Completed</th>
+                    <th class="dashboard-clickable type-string">Reports Completed <br /> (previous 6 months)</th>
+                    <th class="dashboard-clickable type-string">Events</th>
+                    <th class="dashboard-clickable type-string">Events <br /> (previous 6 months)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -115,19 +112,15 @@
                            {{ report.user.get_full_name() }}
                         </a>
                       </td>
-                      <td>{{ report.month.strftime('%Y') }}</td>
                       <td>
                         <a href="{{ report|get_report_view_url }}">
-                           {{ report.month.strftime('%B') }}
+                           {{ report.month.strftime('%B %Y') }}
                         </a>
                       </td>
-                      <td>{{ report.updated_on|format_datetime }}</td>
-                      <td class="dashboard-list-pictogram">
-                        {% if report.empty %}%{% endif %}
-                      </td>
-                      <td class="dashboard-list-pictogram">
-                        {% if report.overdue %}%{% endif %}
-                      </td>
+                      <td><span class="has-tip tip-right" title="22 reports (2 overdue, 1 empty)">93%</span></td>
+                      <td><span class="has-tip tip-right" title="6 reports (0 overdue, 0 empty)">100%</span≥</td>
+                      <td>23</td>
+                      <td><span class="has-tip tip-right" title="5 contribute signups">7</span></td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -141,15 +134,13 @@
             {% endif %}
           </div>
         <!-- end reports list block -->
-        </div>
       </div>
-      <!-- end people block -->
 
       <!-- events block -->
       <div class="dashboard-box">
         <div class="row">
           <div class="seven columns">
-            <h5>Events</h5>
+            <h4>Events</h4>
           </div>
           <div class="five columns">
             <dl class="sub-nav dashboard-filter">
@@ -165,6 +156,20 @@
                   </a>
                 </dd>
             </dl>
+          </div>
+        </div>
+
+        <!-- Event metics block -->
+        <div class="row">
+          <div class="seven columns">
+            <div class="dashboard-events-contributor-signups five columns">
+              <h4>28 <small>contributor signups</small></h4>
+            </div>
+            <div class="dashboard-events-attendees five columns">
+              <h4>63 <small>attendees on average 
+                <a href="#" data-reveal-id="event-attendance-modal" class="dashboard-clickable pictogram">7</a>
+              </small></h4>
+            </div>
           </div>
         </div>
 
@@ -188,6 +193,7 @@
                   {% for event in reps_current_events[key] %}
                     <tr>
                       <td>
+                        <span class="dashboard-clickable pictogram dashboard-events-expander-button">&#62;</span>
                         <a href="{{ url('events_view_event', slug=event.slug) }}">
                            {{ event.name }}
                         </a>
@@ -205,6 +211,27 @@
                       <td>{{ event.converted_visitors }}</td>
                     </tr>
                   {% endfor %}
+                  <tr class="dashboard-events-details-row hidden">
+                    <th></th>
+                    <th>Bug</th>
+                    <th>Summary</th>
+                    <th>Status</th>
+                    <th>Whiteboard</th>
+                  </tr>
+                  <tr class="dashboard-events-details-row hidden">
+                    <td></td>
+                    <td><a href="#">123456</a></td>
+                    <td>Budget request - Firefox OS hackathon</td>
+                    <td>ASSIGNED</td>                    
+                    <td>Approved</td>                   
+                  </tr>
+                  <tr class="dashboard-events-details-row hidden">
+                    <td></td>
+                    <td><a href="#">123457</a></td>
+                    <td>Swag request - Firefox OS hackathon</td>
+                    <td>ASSIGNED</td>                    
+                    <td>Order Shipped</td>                   
+                  </tr>
                 </tbody>
               </table>
             {% else %}
@@ -327,6 +354,69 @@
   </div>
 </form>
 <!-- interests modal end -->
+
+<!-- event attendance reveal modal -->
+<div id="event-attendance-modal" class="reveal-modal">
+  <a class="close-reveal-modal">&#215;</a>
+  <p class="lead">Attendance size at events</p>
+  <h6>Chart soon!</h6>
+  <table class="dashboard-table">
+    <thead>
+      <tr>
+        <th class="">Attendance</th>
+        <th class="">Number of events</th>
+        <th class="">Percentage of events</th>
+        <th class="">Number of contribute signups</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>1-10</th>
+        <th>3</th>
+        <th>17%</th>
+        <th>0</th>
+      </tr>
+      <tr>
+        <th>11-50</th>
+        <th>4</th>
+        <th>22%</th>
+        <th>2</th>
+      </tr>
+      <tr>
+        <th>51-100</th>
+        <th>8</th>
+        <th>44%</th>
+        <th>3</th>
+      </tr>
+      <tr>
+        <th>101-500</th>
+        <th>2</th>
+        <th>11%</th>
+        <th>4</th>
+      </tr>
+      <tr>
+        <th>501-1000</th>
+        <th>0</th>
+        <th>0%</th>
+        <th>7</th>
+      </tr>
+      <tr>
+        <th>1001+</th>
+        <th>1</th>
+        <th>6%</th>
+        <th>05</th>
+      </tr>
+      <tr>
+        <th>Total</th>
+        <th>18</th>
+        <th>100%</th>
+        <th>21</th>
+      </tr>
+    </tbody> 
+  </table>
+
+</div>
+<!-- event attendance reveal modal -->
 {% endblock %}  
 
 {% block bottomextra %}

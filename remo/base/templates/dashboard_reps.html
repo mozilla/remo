@@ -65,8 +65,7 @@
             <table class="dashboard-table">
               <thead>
                 <tr>
-                  <th class="dashboard-clickable type-string">Fullname</th>
-                  <th class="dashboard-clickable type-int">Year</th>
+                  <th class="dashboard-clickable type-string">Name</th>
                   <th class="dashboard-clickable type-string">Month</th>
                   <th class="dashboard-clickable type-string">Date filled</th>
                   <th class="dashboard-clickable type-string align-center">Empty</th>
@@ -82,7 +81,6 @@
                         {{ report.user.get_full_name() }}
                       </a>
                     </td>
-                    <td>{{ report.month.strftime("%Y") }}</td>
                     <td>
                       <a href="{{ report|get_report_view_url }}">
                         {{ report.month.strftime("%B") }}
@@ -165,8 +163,7 @@
             <table class="dashboard-table">
               <thead>
                 <tr>
-                  <th class="dashboard-clickable type-string">Fullname</th>
-                  <th class="dashboard-clickable type-int">Year</th>
+                  <th class="dashboard-clickable type-string">Name</th>
                   <th class="dashboard-clickable type-string">Month</th>
                   <th class="dashboard-clickable type-string">Date filled</th>
                   <th class="dashboard-clickable type-string align-center">Empty</th>
@@ -182,7 +179,6 @@
                         {{ report.user.get_full_name() }}
                       </a>
                     </td>
-                    <td>{{ report.month.strftime("%Y") }}</td>
                     <td>
                       <a href="{{ report|get_report_view_url }}">
                         {{ report.month.strftime("%B") }}
@@ -887,7 +883,7 @@
               <thead>
                 <tr>
                   <th class="dashboard-clickable type-string">Username</th>
-                  <th class="dashboard-clickable type-string">Full Name</th>
+                  <th class="dashboard-clickable type-string">Name</th>
                   <th class="dashboard-clickable type-string">Account created on</th>
                 </tr>
               </thead>

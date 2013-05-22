@@ -31,6 +31,17 @@ $(document).ready(function () {
         $('.dashboard-events-past-button').parent().siblings().removeClass('active');
     });
 
+    $('.dashboard-events-expander-button').click(function () {
+        // TODO Toggle the icon between > and V when clicked
+        $('.dashboard-events-expander-button').toggle(function() {
+            $('.dashboard-events-expander-button').html('&#62;');
+        }, function () {
+            $('.dashboard-events-expander-button').html('/');
+        });
+
+        $('.dashboard-events-details-row').toggleClass('hidden');
+    });
+
 
 
     $('table').each(function(index, item) { $(item).stupidtable(); });
