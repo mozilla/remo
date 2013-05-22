@@ -15,6 +15,10 @@ Mozilla Reps - {{ event.name }}
       iCalendar
     </a>
     {% if perms.events.can_edit_events %}
+      <a href="{{ url('events_clone_event', slug=event.slug) }}"
+         class="small white button nice radius">
+        Clone
+      </a>
       <a href="{{ url('events_edit_event', slug=event.slug) }}"
          class="small white button nice radius">
         Edit event
@@ -503,6 +507,10 @@ Mozilla Reps - {{ event.name }}
     iCalendar
   </a>
   {% if perms.events.can_edit_events %}
+    <a href="{{ url('events_clone_event', slug=event.slug) }}"
+       class="top-margined small white button nice radius">
+      Clone
+    </a>
     <a href="{{ url('events_edit_event', slug=event.slug) }}"
        class="top-margined small white button nice radius">
       Edit event

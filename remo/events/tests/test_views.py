@@ -338,6 +338,26 @@ class ViewsTest(TestCase):
         end = datetime.datetime(year, month, day, hour, minute)
         eq_(make_aware(end, zone), event.end)
 
+        # Test event cloning
+        c = Client()
+        c.login(username='rep3', password='passwd')
+
+        event_clone_url = reverse('events_clone_event',
+                                  kwargs={'slug': 'test-event'})
+        new_event_url = reverse('events_view_event',
+                                kwargs={'slug': 'test-edit-event'})
+
+        response = c.post(event_clone_url, self.data, follow=True)
+        cloned_event = Event.objects.get(slug='test-edit-event')
+
+        # Test if cloned event is created with the correct slug
+        # metrics and categories
+        eq_(response.request['PATH_INFO'], new_event_url)
+        eq_(Event.objects.all().count(), 3)
+        eq_(Metric.objects.all().count(), 7)
+        eq_(cloned_event.metrics.all().count(), 3)
+        eq_(cloned_event.categories.all().count(), 6)
+
     def test_required_fields(self):
         """Test required fields error handling"""
         c = Client()

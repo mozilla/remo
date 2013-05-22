@@ -52,6 +52,22 @@ class MinBaseInlineFormSet(forms.models.BaseInlineFormSet):
 
         return super(MinBaseInlineFormSet, self).clean()
 
+    def save_existing(self, form, instance, commit=True):
+        """Override save_existing on cloned event to save metrics"""
+        if self.clone:
+            form.instance.id = None
+            return self.save_new(form)
+        else:
+            return (super(MinBaseInlineFormSet, self).
+                    save_existing(form, instance, commit))
+
+    def save(self, *args, **kwargs):
+        """Override save on cloned events."""
+        self.clone = kwargs.pop('clone', None)
+        if self.clone:
+            for form in self.initial_forms:
+                form.changed_data.append('id')
+        return super(MinBaseInlineFormSet, self).save()
 
 EventMetricsFormset = forms.models.inlineformset_factory(
     Event, Metric, formset=MinBaseInlineFormSet, extra=2)
@@ -192,6 +208,16 @@ class EventForm(happyforms.ModelForm):
         """Clean budget_bug_form field."""
         data = self.cleaned_data['budget_bug_form']
         return self._clean_bug(data, 'Budget Requests')
+
+    def save(self, *args, **kwargs):
+        """Override save on clone event."""
+        clone = kwargs.pop('clone', None)
+        if clone:
+            self.instance.pk = None
+            self.instance.slug = None
+            self.instance.metrics = []
+
+        return super(EventForm, self).save()
 
     class Meta:
         model = Event
