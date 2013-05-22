@@ -59,11 +59,13 @@ Build The Environment
 
      ~$ git clone --recursive http://github.com/mozilla/remo
 
+
    .. note::
 
-      Note the `--recursive` flag in the clone command. We make heavy
-      use of *git submodules* and this flag clones the required
-      submodules along with remo code.
+      Make sure you use ``--recursive`` when checking the repo out!
+      If you didn't, you can load all the submodules with ``git
+      submodule update --init --recursive``.
+
 
 #. **Fire up vagrant.**
 
