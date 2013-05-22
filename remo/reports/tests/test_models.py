@@ -18,7 +18,7 @@ class ModelTest(TestCase):
 
     def setUp(self):
         """Setup tests."""
-        self.user = User.objects.get(username="rep")
+        self.user = User.objects.get(username='rep')
         self.month_year = datetime.date(year=2012, month=1, day=10)
         self.report = Report(user=self.user, month=self.month_year)
         self.report.save()
@@ -33,7 +33,7 @@ class ModelTest(TestCase):
         # Change user mentor and re-save the report. Report should
         # point to the first mentor.
         old_mentor = self.user.userprofile.mentor
-        self.user.userprofile.mentor = User.objects.get(username="counselor")
+        self.user.userprofile.mentor = User.objects.get(username='counselor')
         self.user.save()
 
         self.report.save()
@@ -97,7 +97,7 @@ class MentorNotificationOnAddEditReport(TestCase):
         self.edit_report = self.user.reports.all()[0]
         self.user_profile = self.user.userprofile
         self.mentor_profile = UserProfile.objects.get(
-                user=self.user_profile.mentor)
+            user=self.user_profile.mentor)
 
     def test_send_email_on_add_report(self):
         """Test sending an email when a new report is added.

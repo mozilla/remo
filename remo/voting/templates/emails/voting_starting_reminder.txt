@@ -1,0 +1,17 @@
+Hello {{ user.first_name }},
+
+This email was generated automatically to inform you that
+voting "{{ poll.name }}" is now open for you to vote.
+
+Please go to {{ SITE_URL }}{{ url('voting_view_voting', slug=poll.slug) }}
+and cast your vote.
+
+Note that you can vote until {{ poll.end.strftime('%Y %B %d, %H:%M') }} PDT.
+
+The summary of this voting is:
+
+{{ poll.description }}
+
+Cheers!
+
+Your lovely ReMo bot.

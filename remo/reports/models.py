@@ -92,36 +92,6 @@ def report_set_overdue_pre_save(sender, instance, raw, **kwargs):
             instance.overdue = True
 
 
-@receiver(post_save, sender=EventAttendance,
-          dispatch_uid='report_add_event_signal')
-def report_add_event(sender, instance, raw, **kwargs):
-    """Add event to report."""
-    if raw or not instance.user.groups.filter(name='Rep').exists():
-        return
-
-    date = datetime.datetime(year=instance.event.end.year,
-                             month=instance.event.end.month,
-                             day=1)
-    report, created = Report.objects.get_or_create(user=instance.user,
-                                                   month=date)
-    link = (settings.SITE_URL +
-            reverse('events_view_event', kwargs={'slug': instance.event.slug}))
-
-    # Import here to avoid circular dependencies.
-    from utils import participation_type_to_number
-    participation_type = participation_type_to_number(
-        get_attendee_role_event(instance.user, instance.event))
-
-    report_event = get_object_or_none(ReportEvent, report=report, link=link)
-    if not report_event:
-        report_event = ReportEvent(report=report, link=link,
-                                   name=instance.event.name,
-                                   description=instance.event.description)
-
-    report_event.participation_type = participation_type
-    report_event.save()
-
-
 @receiver(post_save, sender=Report,
           dispatch_uid='email_mentor_on_add_report_signal')
 def email_mentor_on_add_report(sender, instance, created, **kwargs):
