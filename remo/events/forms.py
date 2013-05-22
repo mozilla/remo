@@ -167,8 +167,8 @@ class EventForm(happyforms.ModelForm):
             cdata['owner'] = self.instance.owner
 
         # Check if keys exists in cleaned data.
-        if not ('start_form' or 'end_form' in self.cleaned_data):
-                raise ValidationError('Please correct the form errors.')
+        if not all(k in cdata for k in ('start_form', 'end_form')):
+            raise ValidationError('Please correct the form errors.')
         # Set timezone
         t = timezone(cdata['timezone'])
         start = make_naive(cdata['start_form'],

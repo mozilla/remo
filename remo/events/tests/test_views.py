@@ -291,7 +291,8 @@ class ViewsTest(TestCase):
         eq_(event.times_edited, 1)
 
         # Test fields with the same name in POST data and models
-        excluded = ['planning_pad_url', 'lat', 'lon', 'mozilla_event', 'categories']
+        excluded = ['planning_pad_url', 'lat', 'lon', 'mozilla_event',
+                    'categories']
         for field in set(self.data).difference(set(excluded)):
             if getattr(event, field, None):
                 eq_(str(getattr(event, field)), self.data[field])
@@ -300,7 +301,8 @@ class ViewsTest(TestCase):
         pad_url = self.pad_url + self.pad_prefix + event.slug
         mozilla_event = {'on': True, 'off': False}
 
-        eq_(self.data['categories'], [c.id for c in event.categories.all()])
+        eq_(self.data['categories'], [cat.id
+                                      for cat in event.categories.all()])
 
         eq_(event.planning_pad_url, pad_url)
         eq_(event.lat, self.data['lat'])
@@ -459,8 +461,8 @@ class ViewsTest(TestCase):
         """Test delete event comment."""
         c = Client()
         comment_delete = reverse('events_delete_event_comment',
-                                kwargs={'slug': 'multi-event',
-                                        'pk': '1'})
+                                 kwargs={'slug': 'multi-event',
+                                         'pk': '1'})
 
         # Test anonymous user
         response = c.post(comment_delete, follow=True)
