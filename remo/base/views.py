@@ -148,7 +148,8 @@ def dashboard(request):
 
     my_q = (Q(cc=user) | Q(creator=user))
     my_q_assigned = (my_q | Q(assigned_to=user))
-    my_mentees = User.objects.filter(userprofile__mentor=user)
+    my_mentees = User.objects.filter(userprofile__mentor=user,
+                                     userprofile__registration_complete=True)
 
     args['my_budget_requests'] = budget_requests.filter(my_q).distinct()
     args['my_swag_requests'] = swag_requests.filter(my_q).distinct()
