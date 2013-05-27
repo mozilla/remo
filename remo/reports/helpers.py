@@ -39,4 +39,5 @@ def get_comment_delete_url(obj):
 @register.filter
 def get_mentees(user):
     return [mentee_profile.user for mentee_profile in
-            user.mentees.order_by('user__last_name', 'user__first_name')]
+            user.mentees.exclude(registration_complete=False)
+                        .order_by('user__last_name', 'user__first_name')]
