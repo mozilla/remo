@@ -56,47 +56,42 @@ def edit(request, display_name):
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
 
-    if request.method == 'POST':
-        userform = forms.ChangeUserForm(request.POST, instance=user)
-        profileform = forms.ChangeProfileForm(request.POST,
-                                              instance=user.userprofile)
-        datejoinedform = forms.ChangeDateJoinedForm(request.POST,
-                                                    instance=user.userprofile)
+    userform = forms.ChangeUserForm(request.POST or None, instance=user)
+    profileform = forms.ChangeProfileForm(request.POST or None,
+                                          instance=user.userprofile)
+    datejoinedform = forms.ChangeDateJoinedForm(request.POST,
+                                                instance=user.userprofile)
 
-        if (userform.is_valid() and profileform.is_valid() and
-            date_joined_form_validation(datejoinedform)):
-            userform.save()
-            profileform.save()
+    if (userform.is_valid() and profileform.is_valid() and
+        date_joined_form_validation(datejoinedform)):
+        userform.save()
+        profileform.save()
 
-            if request.user.has_perm('profiles.can_edit_profiles'):
-                # Update date joined
-                datejoinedform.save()
+        if request.user.has_perm('profiles.can_edit_profiles'):
+            # Update date joined
+            datejoinedform.save()
 
-                # Update groups.
-                groups = {'Mentor': 'mentor_group',
-                          'Admin': 'admin_group',
-                          'Council': 'council_group',
-                          'Rep': 'rep_group'}
+            # Update groups.
+            groups = {'Mentor': 'mentor_group',
+                      'Admin': 'admin_group',
+                      'Council': 'council_group',
+                      'Rep': 'rep_group'}
 
-                for group_db, group_html in groups.items():
-                    if request.POST.get(group_html, None):
-                        user.groups.add(Group.objects.get(name=group_db))
-                    else:
-                        user.groups.remove(Group.objects.get(name=group_db))
+            for group_db, group_html in groups.items():
+                if request.POST.get(group_html, None):
+                    user.groups.add(Group.objects.get(name=group_db))
+                else:
+                    user.groups.remove(Group.objects.get(name=group_db))
 
-            messages.success(request, 'Profile successfully edited.')
+        messages.success(request, 'Profile successfully edited.')
 
-            if request.user == user:
-                return redirect('profiles_view_my_profile')
-            else:
-                redirect_url = reverse('profiles_view_profile',
-                                       kwargs={'display_name':
-                                               user.userprofile.display_name})
-                return redirect(redirect_url)
-    else:
-        userform = forms.ChangeUserForm(instance=user)
-        profileform = forms.ChangeProfileForm(instance=user.userprofile)
-        datejoinedform = forms.ChangeDateJoinedForm(instance=user.userprofile)
+        if request.user == user:
+            return redirect('profiles_view_my_profile')
+        else:
+            redirect_url = reverse('profiles_view_profile',
+                                   kwargs={'display_name':
+                                           user.userprofile.display_name})
+            return redirect(redirect_url)
 
     group_bits = map(lambda x: user.groups.filter(name=x).exists(),
                      ['Admin', 'Council', 'Mentor', 'Rep'])
@@ -189,27 +184,23 @@ def view_my_profile(request):
 @permission_check(permissions=['profiles.create_user'])
 def invite(request):
     """Invite a user."""
-    if request.POST:
-        form = forms.InviteUserForm(request.POST)
+    form = forms.InviteUserForm(request.POST or None)
 
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            user = User.objects.create_user(username=USERNAME_ALGO(email),
-                                            email=email)
-            # Add new users to Rep group
-            user.groups.add(Group.objects.get(name='Rep'))
+    if form.is_valid():
+        email = form.cleaned_data['email']
+        user = User.objects.create_user(username=USERNAME_ALGO(email),
+                                        email=email)
+        # Add new users to Rep group
+        user.groups.add(Group.objects.get(name='Rep'))
 
-            if request.user.groups.filter(name='Mentor').exists():
-                user.userprofile.mentor = request.user
-            user.userprofile.added_by = request.user
-            user.userprofile.save()
+        if request.user.groups.filter(name='Mentor').exists():
+            user.userprofile.mentor = request.user
+        user.userprofile.added_by = request.user
+        user.userprofile.save()
 
-            messages.success(request, ('User was successfully invited, '
-                                       'now shoot some mails!'))
-            return redirect('profiles_invite')
-
-    else:
-        form = forms.InviteUserForm()
+        messages.success(request, ('User was successfully invited, '
+                                   'now shoot some mails!'))
+        return redirect('profiles_invite')
 
     return render(request, 'profiles_invite.html', {'form': form})
 
