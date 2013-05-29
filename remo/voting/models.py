@@ -10,8 +10,10 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.timezone import make_aware
 
+from south.signals import post_migrate
 from uuslug import uuslug
 
+from remo.base.utils import add_permissions_to_groups
 from remo.voting.tasks import send_voting_mail
 
 
@@ -34,6 +36,9 @@ class Poll(models.Model):
                                    editable=False, default='')
     last_notification = models.DateTimeField(null=True)
 
+    class Meta:
+        ordering = ['-created_on']
+
     @property
     def is_future_voting(self):
         now = make_aware(datetime.utcnow(), pytz.UTC)
@@ -50,9 +55,6 @@ class Poll(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    class Meta:
-        ordering = ['-created_on']
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -151,3 +153,16 @@ def poll_delete_reminder(sender, instance, **kwargs):
             celery_control.revoke(instance.task_start_id)
         if instance.task_end_id:
             celery_control.revoke(instance.task_end_id)
+
+
+@receiver(post_migrate, sender=Poll, dispatch_uid='voting_set_groups_signal')
+def voting_set_groups(app, sender, signal, **kwargs):
+    """Set permissions to groups."""
+    if (isinstance(app, basestring) and app != 'voting'):
+        return True
+
+    permissions = (('voting.add_poll', ['Admin']),
+                   ('voting.delete_poll', ['Admin']),
+                   ('voting.change_poll', ['Admin']))
+
+    add_permissions_to_groups('voting', permissions)

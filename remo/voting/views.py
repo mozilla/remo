@@ -35,7 +35,7 @@ def list_votings(request):
                    'future_polls': future_polls})
 
 
-@permission_check(group='Admin')
+@permission_check(permissions=['voting.add_poll', 'voting.change_poll'])
 def edit_voting(request, slug=None):
     """Create/Edit voting view."""
     poll, created = get_or_create_instance(Poll, slug=slug)
@@ -173,7 +173,7 @@ def view_voting(request, slug):
     return render(request, 'vote_voting.html', data)
 
 
-@permission_check(group='Admin')
+@permission_check(permissions=['voting.delete_poll'])
 def delete_voting(request, slug):
     """Delete voting view."""
     if request.method == 'POST':
