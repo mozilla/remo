@@ -33,23 +33,19 @@ def edit_featured(request, feature_id=None):
         feature = FeaturedRep(created_by=request.user)
         post_to = reverse('featuredrep_add_featured')
 
-    if request.method == 'POST':
-        form = forms.FeaturedRepForm(request.POST, instance=feature)
+    form = forms.FeaturedRepForm(request.POST or None, instance=feature)
 
-        if form.is_valid():
-            form.save()
+    if form.is_valid():
+        form.save()
 
-            if feature_id:
-                messages.success(request, 'New featured rep article created '
-                                          '&#9786;')
-            else:
-                messages.success(request, 'Featured rep article successfuly '
-                                          'edited &#9786;')
+        if feature_id:
+            messages.success(request, 'New featured rep article created '
+                                      '&#9786;')
+        else:
+            messages.success(request, 'Featured rep article successfuly '
+                                      'edited &#9786;')
 
-            return redirect('featuredrep_list_featured')
-
-    else:
-        form = forms.FeaturedRepForm(instance=feature)
+        return redirect('featuredrep_list_featured')
 
     # List only user that belong in Rep group and have completed
     # registration.
