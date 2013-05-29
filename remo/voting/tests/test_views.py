@@ -2,6 +2,7 @@ import pytz
 from datetime import datetime
 
 from django.conf import settings
+from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from django.utils.timezone import make_aware
@@ -92,6 +93,11 @@ class ViewsTest(TestCase):
         self.future_voting_edit_url = (
             reverse('voting_edit_voting',
                     kwargs={'slug': 'future-test-voting'}))
+        # Give permissions to admin group
+        group = Group.objects.get(name='Admin')
+        permissions = Permission.objects.filter(name__icontains='poll')
+        for perm in permissions:
+            group.permissions.add(perm)
 
     def test_view_list_votings(self):
         """Get list votings page."""
