@@ -3,13 +3,18 @@ import re
 from datetime import datetime
 
 from django import forms
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms.extras.widgets import SelectDateWidget
 
+from django_browserid.auth import default_username_algo
 from product_details import product_details
 
 from remo.profiles.models import UserProfile
+
+USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
+                        default_username_algo)
 
 
 class InviteUserForm(happyforms.Form):
@@ -60,6 +65,14 @@ class ChangeUserForm(happyforms.ModelForm):
 
         data = self.cleaned_data['last_name']
         return self._clean_names(data)
+
+    def save(self):
+        """Override save method to update user's
+        username hash on the database.
+
+        """
+        self.instance.username = USERNAME_ALGO(self.instance.email)
+        super(ChangeUserForm, self).save()
 
 
 class ChangeProfileForm(happyforms.ModelForm):

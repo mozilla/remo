@@ -63,7 +63,7 @@ def edit(request, display_name):
                                                 instance=user.userprofile)
 
     if (userform.is_valid() and profileform.is_valid() and
-        date_joined_form_validation(datejoinedform)):
+            date_joined_form_validation(datejoinedform)):
         userform.save()
         profileform.save()
 
@@ -120,7 +120,8 @@ def list_profiles(request):
     countries.sort()
 
     reps = (User.objects
-            .filter(userprofile__registration_complete=True, groups__name='Rep')
+            .filter(userprofile__registration_complete=True,
+                    groups__name='Rep')
             .order_by('userprofile__country', 'last_name', 'first_name'))
 
     return render(request, 'profiles_people.html',
@@ -138,7 +139,7 @@ def view_profile(request, display_name):
         raise Http404
 
     if (not user.userprofile.registration_complete and
-        not request.user.has_perm('profiles.can_edit_profiles')):
+            not request.user.has_perm('profiles.can_edit_profiles')):
             raise Http404
 
     usergroups = user.groups.filter(Q(name='Mentor') | Q(name='Council'))
@@ -151,7 +152,7 @@ def view_profile(request, display_name):
     today = date.today()
     if ((request.user.is_authenticated() and
          user in request.user.mentees.all()) or
-        user == request.user):
+            user == request.user):
         reports = get_reports_for_year(
             user, start_year=2011, end_year=today.year,
             permission=REPORTS_PERMISSION_LEVEL['owner'])
