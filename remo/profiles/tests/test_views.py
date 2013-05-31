@@ -138,7 +138,8 @@ class ViewsTest(TestCase):
         eq_(response.request['PATH_INFO'], self.user_url)
 
         c = Client()
-        c.login(username='rep', password='passwd')
+        user = User.objects.get(pk=7)
+        c.login(username=user.username, password='passwd')
         response = c.post(self.user_edit_url, self.data, follow=True)
         eq_(response.request['PATH_INFO'], reverse('profiles_view_my_profile'))
 
@@ -151,8 +152,8 @@ class ViewsTest(TestCase):
         response = c.post(self.user_edit_url, self.data, follow=True)
         eq_(response.request['PATH_INFO'], reverse('profiles_view_my_profile'))
 
-        # ensure that all user data was saved
-        user = User.objects.get(username='rep')
+        # ensure that all user data was saved for user with username 'rep
+        user = User.objects.get(pk=7)
         eq_(user.email, self.data['email'])
         eq_(user.first_name, self.data['first_name'])
         eq_(user.last_name, self.data['last_name'])
