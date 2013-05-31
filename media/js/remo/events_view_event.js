@@ -57,8 +57,7 @@ function initialize_mashup() {
     // Setup flickr and twitter mashups.
     //
     // We first fetch photos from flickr and randomize them, so on
-    // each page load users see a different set of photos. If we have
-    // photos we also try to load related tweets.
+    // each page load users see a different set of photos.
     //
     var flickr_mashup = $('#flickr-mashup');
     var tweet_mashup = $('#tweet-mashup');
@@ -72,11 +71,9 @@ function initialize_mashup() {
             randomize: true
         }).bind('loaded', function() {
             // Check if images exist
-            if ($('.flickrRow').length === 0) {
-                // No images, don't display tweets either.
-                return;
+            if ($('.flickrRow').length !== 0) {
+                flickr_mashup.slideDown();
             }
-            flickr_mashup.slideDown();
         });
 
         tweet_mashup.tweet({
