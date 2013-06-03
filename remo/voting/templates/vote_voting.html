@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block pagetitle %}
-View Voting
+Mozilla Reps - {{ poll.name }} - Vote
 {% endblock %}
 
 {% block content %}
@@ -28,7 +28,7 @@ View Voting
         <div class="one columns pictogram">
           }
         </div>
-        <div class="eleven columns">
+        <div class="nine pull-two columns">
           <div class="row">
             <div class="ten columns end">
               <div class="event-single-date panel">
@@ -99,7 +99,11 @@ View Voting
           </div>
         </div>
       </div>
+
       <div class="row">
+        <div class="one columns pictogram">
+          J
+        </div>
         <div class="eleven columns">
           <!-- Description -->
           <p class="profile-item">
@@ -109,49 +113,90 @@ View Voting
             &nbsp;
             {{ poll.description }}
           </p>
-          <p class="profile-item">
-            {% for range_poll, choice_form in range_poll_choice_forms.items() %}
-              <span class="white radius label">
-                Range poll vote {{ range_poll.name }}
-              </span>
-              &nbsp;
-              <br>
-              {% for choice in choice_form %}
-                {{ choice.label }} {{ choice }}
-                {{ field_errors(choice) }}
-              {% endfor %}
-            {%endfor%}
-          </p>
-          <p class="profile-item">
-            {% for radio_poll, choice_form in radio_poll_choice_forms.items() %}
-              <span class="white radius label">
-                Radio poll vote {{ radio_poll.question }}
-              </span>
-              &nbsp;
-              <br>
-              {% for choice in choice_form %}
-                {{ choice }}
-                {{ field_errors(choice) }}
-              {% endfor %}
-            {% endfor %}
-          </p>
         </div>
       </div>
 
-    </div>
-    <div class="six columns">
+      {% if range_poll_choice_forms %}
       <div class="row">
         <div class="one columns pictogram">
           a <!-- Editable Content wiki like -->
         </div>
         <div class="eleven columns">
-          <p>
-            Some additional info.
-            Instructions on how to vote when there is a range poll.
+          <p class="profile-item">
+            Range voting is a voting method for elections under which voters score each
+            candidate, the scores are added up, and the candidate(s) with the highest score win.
+          </p>
+          <p class="profile-item">
+            For each candiate select from the drop down menu a score from 0 to the highest number.
+            There is no quota, and you can freely assign different or same scores to different candidates.
+          </p>
+          <p class="profile-item">
+            More info can be found in the Wikipedia article on
+             <a href="http://en.wikipedia.org/wiki/Range_voting" target="_blank">Range Voting</a>.
           </p>
         </div>
       </div>
+      {% endif %}
+
+    </div>
+
+    <div class="six columns">
+      {% if range_poll_choice_forms %}
+        <div class="row">
+          <div class="one columns pictogram">
+            g
+          </div>
+          <div class="eleven columns">
+            <p class="profile-item">
+              {% for range_poll, choice_form in range_poll_choice_forms.items() %}
+                <span class="white radius label">
+                  Range vote for {{ range_poll.name }}
+                </span>
+                {% for choice in choice_form %}
+                  <div class="row">
+                    <div class="ten columns">
+                      <h5>{{ choice.label }}</h5>
+                    </div>
+                    <div class="two columns">
+                      {{ choice }}
+                    </div>
+                  </div>
+                  {{ field_errors(choice) }}
+                {% endfor %}
+              {%endfor%}
+            </p>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if radio_poll_choice_forms %}
+      <div class="row">
+        <div class="one columns pictogram">
+          4
+        </div>
+        <div class="eleven columns">
+          <p class="profile-item">
+            {% for radio_poll, choice_form in radio_poll_choice_forms.items() %}
+              <span class="white radius label">
+                Vote for {{ radio_poll.question }}
+              </span>
+              {% for choice in choice_form %}
+              <div class="row top-margined">
+                {{ choice }}
+                {{ field_errors(choice) }}
+              </div>
+              {% endfor %}
+            {% endfor %}
+          </p>
+        </div>
+      </div>
+      {% endif %}
+
     </div>
   </div>
 </form> 
+{% endblock %}
+
+{% block bottomextra %}
+  {{ js('voting_view_voting') }}
 {% endblock %}

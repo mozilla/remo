@@ -80,6 +80,9 @@ MINIFY_BUNDLES = {
         'voting_edit_voting': (
             'js/remo/voting_edit_voting.js',
             ),
+        'voting_view_voting': (
+            'js/remo/voting_view_voting.js',
+            ),
         'profiles_view_report': (
             'js/remo/profiles_view_report.js',
             ),
