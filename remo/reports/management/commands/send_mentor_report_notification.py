@@ -30,7 +30,7 @@ class Command(BaseCommand):
         reps_without_report = reps.exclude(reports__month__year=date.year,
                                            reports__month__month=date.month)
 
-        mentors = [rep.userprofile.mentor for rep in reps_without_report]
+        mentors = [rep.userprofile.mentor.id for rep in reps_without_report]
 
         month = number2month(date.month)
         subject = self.SUBJECT % month
