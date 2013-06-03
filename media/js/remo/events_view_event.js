@@ -16,11 +16,6 @@ function initialize_map() {
     map.addLayer(marker);
 }
 
-function format_hour(date_obj) {
-    // Format date_obj to HH:MM.
-    return pad2(date_obj.getHours()) + ':' + pad2(date_obj.getMinutes());
-}
-
 function set_time_tooltip() {
     // Set time tooltip to display the time to your browser's timezone.
     var title = '';
