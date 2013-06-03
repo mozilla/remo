@@ -54,16 +54,16 @@ View Voting
                            data-is-multidate="false"
                            id="datetime-tip">
                         <div class="event-single-date-time-start">
-                          {{ poll.local_start|strftime('%H:%M') }}
+                          {{ poll.start|strftime('%H:%M') }}
                         </div>
                         <div class="event-single-date-time-end">
-                          {{ poll.local_end|strftime('%H:%M') }}
+                          {{ poll.end|strftime('%H:%M') }}
                         </div>
                         <div class="event-single-date-singletimes">}</div>
                       </div>
                     </div>
                   {% else %}
-                    {# Voting is multiday #}
+                    <!-- Voting is multiday -->
                     <div class="six phone-two columns">
                       <div class="event-single-date-months">
                         {{ poll.start|strftime('%d %b %Y')|upper }}
