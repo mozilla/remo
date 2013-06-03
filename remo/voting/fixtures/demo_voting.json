@@ -31,7 +31,7 @@
         "pk": 1, 
         "model": "voting.poll", 
         "fields": {
-            "end": "2013-05-31T19:00:00Z", 
+            "end": "2018-05-31T19:00:00Z", 
             "name": "Current Test Voting", 
             "start": "2013-04-01T07:00:00Z", 
             "created_by": 4, 
