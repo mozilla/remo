@@ -26,7 +26,7 @@
   </title>
   <link rel="shortcut icon" href="{{ MEDIA_URL }}img/remo/shortcut.ico" />
   <!-- Included CSS Files -->
-  <link href="//www.mozilla.org/media/css/tabzilla-min.css" rel="stylesheet" />
+  <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet" />
   {{ css('common') }}
   <!--[if lt IE 9]>
       {{ css('common_ie') }}
@@ -291,7 +291,7 @@
   {% else %}
     {{ js('common') }}
   {% endif %}
-  <script src="//www.mozilla.org/tabzilla/tabzilla.js"></script>
+  <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
   {% block bottomextra %} {% endblock %}
 </body>
 
