@@ -40,7 +40,7 @@
             if (!$e.hasClass('flickrFeed')) $e.addClass('flickrFeed');
 
             // Define Flickr feed API address
-            var api = 'http://api.flickr.com/services/feeds/photos_public.gne?lang=en-us&format=json&jsoncallback=?';
+            var api = 'https://secure.flickr.com/services/feeds/photos_public.gne?lang=en-us&format=json&jsoncallback=?';
             if (userid !== '') api += '&id=' + userid;
             if (tags !== '') api += '&tags=' + tags;
 
