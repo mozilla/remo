@@ -1,7 +1,10 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.utils.timezone import utc
 
 
 class Bug(models.Model):
@@ -37,7 +40,8 @@ class Status(models.Model):
     the time-stamp of the last successful sync with Bugzilla.
 
     """
-    last_updated = models.DateTimeField()
+    last_updated = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0,
+                                                         tzinfo=utc))
 
     def __unicode__(self):
         return "Last update: %s" % self.last_updated.strftime('%H:%M %d %b %Y')
