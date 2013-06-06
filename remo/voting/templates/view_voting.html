@@ -1,23 +1,23 @@
 {% extends "base.html" %}
 
 {% block pagetitle %}
-View Voting
+Mozilla Reps - {{ poll.name }} - Results
 {% endblock %}
 
 {% block content %}
 <div class="row">
   <div class="eight columns">
-    <h4 class="event-single-title">{{ poll.name }}</h4>
+    <h4 class="event-single-title">{{ poll.name }} - Results</h4>
   </div>
 </div>
 
 <div class="row">
-  <div class="five columns">
+  <div class="six columns">
     <div class="row">
       <div class="one columns pictogram">
         }
       </div>
-      <div class="eleven columns">
+      <div class="nine pull-two columns">
         <div class="row">
           <div class="ten columns end">
             <div class="event-single-date panel">
@@ -89,6 +89,9 @@ View Voting
       </div>
     </div>
     <div class="row">
+      <div class="one columns pictogram">
+        J
+      </div>
       <div class="eleven columns">
         <!-- Description -->
         <p class="profile-item">
@@ -98,55 +101,84 @@ View Voting
           &nbsp;
           {{ poll.description }}
         </p>
-        <!-- Poll Range Section -->
-        {% for range_poll in poll.range_polls.all() %}
-          <p class="profile-item">
-            <span class="white radius label">
-              Range voting title
-            </span>
-            &nbsp;
-            {{ range_poll.name }}
-          </p>
-          <!-- Results -->
-          <p class="profile-item">
-            <span class="white radius label">
-              Range voting results
-            </span>
-            &nbsp;
-            {% for choice in range_poll.choices.all() %}
-              <p class="profile-item">
-                {{ choice.nominee.get_full_name() }}
-                {{ choice.votes }}
-              </p>
-            {% endfor %}
-            </p>
-        {% endfor %}
-        <!-- Radio Poll Section -->
-        {% for radio_poll in poll.radio_polls.all() %}
-          <p class="profile-item">
-            <span class="white radius label">
-              Radio voting title
-            </span>
-            &nbsp;
-            {{ radio_poll.question }}
-          </p>
-          <!-- Results -->
-          <p class="profile-item">
-            <span class="white radius label">
-              Radio voting results
-            </span>
-            &nbsp;
-            {% for choice in radio_poll.answers.all() %}
-              <p class="profile-item">
-                {{ choice.answer }} 
-                {{ choice.votes }}
-              </p>
-            {% endfor %}
-          </p>
-        {% endfor %}
       </div>
     </div>
+  </div>
+
+  <div class="six columns">
+
+    {% if poll.range_polls.exists() %}
+      <div class="row">
+        <div class="one columns pictogram">
+          g
+        </div>
+        <div class="eleven columns">
+          <!-- Poll Range Section -->
+          {% for range_poll in poll.range_polls.all() %}
+            <p class="profile-item">
+              &nbsp;
+              <span class="white radius label">
+                {{ range_poll.name }}
+              </span>
+            </p>
+            <!-- Results -->
+            <p class="profile-item">
+              {% for choice in range_poll.choices.all() %}
+                <p class="profile-item">
+                  <div class="row">
+                    <div class="eleven columns">
+                      <h5>{{ choice.nominee.get_full_name() }}</h5>
+                    </div>
+                    <div class="one columns">
+                      <h4>{{ choice.votes }}</h4>
+                    </div>
+                  </div>
+                </p>
+              {% endfor %}
+              </p>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if poll.radio_polls.exists() %}
+      <div class="row">
+        <div class="one columns pictogram">
+          4
+        </div>
+        <div class="eleven columns">
+          <!-- Radio Poll Section -->
+          {% for radio_poll in poll.radio_polls.all() %}
+            <p class="profile-item">
+              &nbsp;
+              <span class="white radius label">
+                {{ radio_poll.question }}
+              </span>
+            </p>
+            <!-- Results -->
+            <p class="profile-item">
+              {% for choice in radio_poll.answers.all() %}
+                <p class="profile-item">
+                  <div class="row">
+                    <div class="eleven columns">
+                      <h5>{{ choice.answer }} </h5>
+                    </div>
+                    <div class="one columns">
+                      <h4>{{ choice.votes }}</h4>
+                    </div>
+                  </div>
+                </p>
+              {% endfor %}
+            </p>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
 
   </div>
 </div>
+{% endblock %}
+
+{% block bottomextra %}
+  {{ js('voting_view_voting') }}
 {% endblock %}

@@ -110,3 +110,8 @@ function append_to_formset(event) {
 
     total_forms_obj.val(parseInt(total_forms_obj.val(), 10) + 1);
 };
+
+function format_hour(date_obj) {
+    // Format date_obj to HH:MM.
+    return pad2(date_obj.getHours()) + ':' + pad2(date_obj.getMinutes());
+}

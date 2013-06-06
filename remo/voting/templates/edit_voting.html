@@ -50,93 +50,6 @@
           <p class="more-info">Minimum 20 characters.</p>
           {{ field_errors(poll_form.description) }}
 
-          {% if not current_voting_edit %}
-            <!-- Range poll voting -->
-            <div class="formset" data-prefix="{{ range_poll_formset.prefix }}">
-              {% for range_poll_form in range_poll_formset %}
-                {{ range_poll_form.id }}
-                <div class="row copyblock">
-                  {{ field_with_attrs(range_poll_form.name,
-                                      placeholder='Range Poll Name',
-                                      title='Range Poll Name',
-                                      class='input-text big has-tip tip-left') }}
-                  <div class="required-field"></div>
-                  {{ field_errors(range_poll_form.name) }}
-                  {% if range_poll_form.nested %}
-                    <div class="formset"
-                         data-prefix="{{ range_poll_form.nested[0].prefix }}">
-                      {% for nominee_form in range_poll_form.nested[0] %}
-                        {{ nominee_form.id }}
-                        <div class="row copyblock">
-                          <div class="has-tip tip-left" title="Select Nominee">
-                            {{ nominee_form.nominee }}
-                          </div>
-                          {{ field_errors(nominee_form.nominee) }}
-                          <div class="required-field"></div>
-                          {{ nominee_form.DELETE }} Delete Nominee
-                        </div>
-                      {% endfor %}
-                      <div class="align-left">
-                        <a class="voting-add-nominee-button small white button nice radius"
-                           href="#">Add Nominee
-                        </a>
-                      </div>
-                    </div>
-                    {{ range_poll_form.nested[0].management_form }}
-                  {% endif %}
-                </div>
-              {% endfor %}
-              <div class="align-left">
-                <a class="voting-add-rangepoll-button small white button nice radius"
-                   href="#">Add Range Poll
-                </a>
-              </div>
-            </div>
-            {{ range_poll_formset.management_form }}
-
-            <!-- Radio poll voting -->
-            <div class="formset" data-prefix="{{ radio_poll_formset.prefix }}">
-              {% for radio_poll_form in radio_poll_formset %}
-                {{ radio_poll_form.id }}
-                <div class="row copyblock">
-                  {{ field_with_attrs(radio_poll_form.question,
-                                      placeholder='Radio Poll Title',
-                                      title='Radio Poll Title',
-                                      class='input-text big has-tip tip-left') }}
-                  <div class="required-field"></div>
-                  {{ field_errors(radio_poll_form.question) }}
-                  {% if radio_poll_form.nested %}
-                    <div class="formset" data-prefix="{{ radio_poll_form.nested[0].prefix }}">
-                      {% for answer_form in radio_poll_form.nested[0] %}
-                        {{ answer_form.id }}
-                        <div class="row copyblock">
-                          {{ field_with_attrs(answer_form.answer,
-                                              placeholder='Radio Poll Answer',
-                                              title='Radio Poll Answer',
-                                              class='input-text big has-tip tip-left') }}
-                          <div class="required-field"></div>
-                          {{ field_errors(answer_form.answer) }}
-                          {{ answer_form.DELETE }} Delete answer
-                        </div>
-                      {% endfor %}
-                      <div class="align-left">
-                        <a class="voting-add-answer-button small white button nice radius"
-                           href="#">Add Choice
-                        </a>
-                      </div>
-                    </div>
-                    {{ radio_poll_form.nested[0].management_form }}
-                  {% endif %}
-                </div>
-              {% endfor %}
-              <div class="align-left">
-                <a class="voting-add-radiopoll-button small white button nice radius"
-                   href="#">Add Radio Poll
-                </a>
-              </div>
-            </div>
-            {{ radio_poll_formset.management_form }}
-          {% endif %}
         </div>
       </div>
     </div>
@@ -277,9 +190,18 @@
                 {{ field_errors(poll_form.end_form) }}
               </div>
             </div>
-            <!-- Eligible groups -->
-            <div class="has-tip tip-right" title="Eligible Group">
-              {{ poll_form.valid_groups }}
+          </div>
+        </div>
+
+        <div class="row"> <!-- Eligible groups -->
+          <div class="one columns pictogram">
+            n
+          </div>
+          <div class="eleven columns">
+            <div class="profile-item">
+              <div class="has-tip tip-right" title="Eligible voting Group">
+                {{ poll_form.valid_groups }}
+              </div>
             </div>
             <div class="required-field"></div>
             {{ field_errors(poll_form.valid_groups) }}
@@ -287,8 +209,128 @@
         </div>
       </div>
     </div>
-    <!-- End of first split block -->
   </div>
+
+  {% if not current_voting_edit %}
+    <div class="row">
+      <div class="six columns">
+
+        <div class="row">
+          <div class="one columns pictogram">
+            g
+          </div>
+          <div class="eleven columns">
+
+            <!-- Range poll voting -->
+            <div class="formset" data-prefix="{{ range_poll_formset.prefix }}">
+              {% for range_poll_form in range_poll_formset %}
+                {{ range_poll_form.id }}
+                <div class="row copyblock">
+                  <div class="eleven columns poll-block">
+                    {{ field_with_attrs(range_poll_form.name,
+                                        placeholder='Range Poll Name',
+                                        title='Range Poll Name',
+                                        class='input-text big has-tip tip-left') }}
+                    <div class="required-field"></div>
+                    {{ field_errors(range_poll_form.name) }}
+                    {% if range_poll_form.nested %}
+                      <div class="formset"
+                           data-prefix="{{ range_poll_form.nested[0].prefix }}">
+                        {% for nominee_form in range_poll_form.nested[0] %}
+                          {{ nominee_form.id }}
+                          <div class="row copyblock">
+                            <div class="has-tip tip-left" title="Select Nominee">
+                              {{ nominee_form.nominee }}
+                            </div>
+                            {{ field_errors(nominee_form.nominee) }}
+                            <div class="required-field"></div>
+                            <div class="align-right">
+                              Delete {{ nominee_form.DELETE }}
+                            </div>
+                          </div>
+                        {% endfor %}
+                        <div class="top-margined align-right">
+                          <a class="voting-add-nominee-button small white button nice radius"
+                             href="#">Add Nominee
+                          </a>
+                        </div>
+                      </div>
+                      {{ range_poll_form.nested[0].management_form }}
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+              <div class="align-right">
+                <a class="voting-add-rangepoll-button small blue button nice radius"
+                   href="#">Add Range Poll
+                </a>
+              </div>
+            </div>
+            {{ range_poll_formset.management_form }}
+          </div>
+        </div>
+      </div>
+
+      <div class="six columns">
+
+        <div class="row">
+          <div class="one columns pictogram">
+            4
+          </div>
+          <div class="eleven columns">
+
+            <!-- Radio poll voting -->
+            <div class="formset" data-prefix="{{ radio_poll_formset.prefix }}">
+              {% for radio_poll_form in radio_poll_formset %}
+                {{ radio_poll_form.id }}
+                <div class="row copyblock">
+                  <div class="eleven columns poll-block">
+                    {{ field_with_attrs(radio_poll_form.question,
+                                        placeholder='Radio Poll Title',
+                                        title='Radio Poll Title',
+                                        class='input-text big has-tip tip-left') }}
+                    <div class="required-field"></div>
+                    {{ field_errors(radio_poll_form.question) }}
+                    {% if radio_poll_form.nested %}
+                      <div class="formset" data-prefix="{{ radio_poll_form.nested[0].prefix }}">
+                        {% for answer_form in radio_poll_form.nested[0] %}
+                          {{ answer_form.id }}
+                          <div class="row copyblock">
+                            {{ field_with_attrs(answer_form.answer,
+                                                placeholder='Radio Poll Answer',
+                                                title='Radio Poll Answer',
+                                                class='input-text big has-tip tip-left') }}
+                            <div class="required-field"></div>
+                            {{ field_errors(answer_form.answer) }}
+                            <div class="align-right">
+                              Delete {{ answer_form.DELETE }}
+                            </div>
+                          </div>
+                        {% endfor %}
+                        <div class="top-margined align-right">
+                          <a class="voting-add-answer-button small white button nice radius"
+                             href="#">Add Choice
+                          </a>
+                        </div>
+                      </div>
+                      {{ radio_poll_form.nested[0].management_form }}
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+              <div class="align-right">
+                <a class="voting-add-radiopoll-button small blue button nice radius"
+                   href="#">Add Radio Poll
+                </a>
+              </div>
+            </div>
+            {{ radio_poll_formset.management_form }}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
 </form>
 
 <!-- Delete voting modal -->
