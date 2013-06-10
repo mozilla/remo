@@ -24,6 +24,9 @@ MINIFY_BUNDLES = {
         'storyjs-css': (
             'css/timeline/timeline.css',
             ),
+        'mentorship-diagram-css': (
+            'css/remo/mentorship.less',
+            ),
     },
     'js': {
         'less': (
@@ -104,6 +107,11 @@ MINIFY_BUNDLES = {
             'js/libs/timeline/storyjs-embed.js',
             'js/libs/heartcode-canvasloader-min.js',
             'js/remo/events_list.js',
+            ),
+        'mentorship_diagram': (
+            'js/libs/d3.v3.js',
+            'js/libs/heartcode-canvasloader-min.js',
+            'js/remo/mentorship_diagram.js',
             ),
         'jqueryui': (
             'js/libs/jquery-ui-1.10.0.custom.js',
