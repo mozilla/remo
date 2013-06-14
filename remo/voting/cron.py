@@ -31,7 +31,8 @@ def poll_vote_reminder():
 
         if (now - last_notification_pdt).seconds > NOTIFICATION_INTERVAL:
             valid_users = User.objects.filter(groups=poll.valid_groups)
-            recipients = valid_users.exclude(pk__in=poll.users_voted.all())
+            recipients = (valid_users.exclude(pk__in=poll.users_voted.all())
+                                     .values_list('id', flat=True))
             subject = ('[Reminder][Voting] Please cast your vote '
                        'for "%s" now!' % poll.name)
             template_reminder = 'emails/voting_vote_reminder.txt'

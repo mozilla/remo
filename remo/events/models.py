@@ -38,7 +38,8 @@ class Event(models.Model):
     timezone = models.CharField(max_length=100)
     venue = models.CharField(max_length=150)
     city = models.CharField(max_length=50, blank=False, default='')
-    region = models.CharField(max_length=50, null=False, blank=True, default='')
+    region = models.CharField(max_length=50, null=False, blank=True,
+                              default='')
     country = models.CharField(max_length=50)
     lat = models.FloatField()
     lon = models.FloatField()
@@ -95,7 +96,8 @@ class Event(models.Model):
         permissions = (('can_subscribe_to_events', 'Can subscribe to events'),
                        ('can_edit_events', 'Can edit events'),
                        ('can_delete_events', 'Can delete events'),
-                       ('can_delete_event_comments', 'Can delete event comments'))
+                       ('can_delete_event_comments',
+                        'Can delete event comments'))
 
 
 class EventComment(models.Model):
@@ -165,4 +167,4 @@ def email_event_owner_on_add_comment(sender, instance, **kwargs):
     if owner.userprofile.receive_email_on_add_event_comment:
         subject = subject % (instance.user.get_full_name(),
                              instance.event.name)
-        send_remo_mail.delay([owner], subject, email_template, ctx_data)
+        send_remo_mail.delay([owner.id], subject, email_template, ctx_data)

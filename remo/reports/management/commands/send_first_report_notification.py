@@ -20,8 +20,9 @@ class Command(BaseCommand):
 
         """
         rep_group = Group.objects.get(name='Rep')
-        reps = rep_group.user_set.exclude(
-            userprofile__registration_complete=False)
+        reps = (rep_group.user_set
+                .exclude(userprofile__registration_complete=False)
+                .values_list('id', flat=True))
         date = go_back_n_months(datetime.datetime.today(), 1)
         month = number2month(date.month)
         subject = self.SUBJECT % month
