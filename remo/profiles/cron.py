@@ -15,7 +15,7 @@ def new_reps_reminder():
 
     prev = go_back_n_months(date.today())
     prev_date = prev.strftime('%B %Y')
-    
+
     reps = UserProfile.objects
     reps_num = reps.count()
     new_reps = reps.filter(date_joined_program__month=prev.month)

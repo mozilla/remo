@@ -11,7 +11,6 @@ from south.signals import post_migrate
 
 from remo.base.utils import (add_permissions_to_groups,
                              get_object_or_none, go_back_n_months)
-from remo.events.helpers import get_attendee_role_event
 from remo.events.models import Attendance as EventAttendance
 from remo.reports.tasks import send_remo_mail
 
@@ -109,13 +108,13 @@ def email_mentor_on_add_report(sender, instance, created, **kwargs):
         if mentor_profile.receive_email_on_add_report:
             subject = subject % ((rep_profile.display_name,
                                   'added', month, year))
-            send_remo_mail.delay([instance.mentor], subject, email_template,
+            send_remo_mail.delay([instance.mentor.id], subject, email_template,
                                  ctx_data)
     else:
         if mentor_profile.receive_email_on_edit_report:
             subject = subject % (rep_profile.display_name, 'edited',
                                  month, year)
-            send_remo_mail.delay([instance.mentor], subject, email_template,
+            send_remo_mail.delay([instance.mentor.id], subject, email_template,
                                  ctx_data)
 
 
@@ -157,7 +156,7 @@ def email_user_on_add_comment(sender, instance, **kwargs):
     if owner.userprofile.receive_email_on_add_comment:
         subject = subject % (instance.user.get_full_name(),
                              report.month.strftime('%B %Y'))
-        send_remo_mail.delay([owner], subject, email_template, ctx_data)
+        send_remo_mail.delay([owner.id], subject, email_template, ctx_data)
 
 
 class ReportEvent(models.Model):
