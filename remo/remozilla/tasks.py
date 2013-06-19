@@ -20,7 +20,7 @@ COMPONENTS = ['Budget Requests', 'Community IT Requests', 'Mentorship',
 BUGZILLA_FIELDS = [u'is_confirmed', u'summary', u'creator', u'creation_time',
                    u'component', u'whiteboard', u'op_sys', u'cc', u'id',
                    u'status', u'assigned_to', u'resolution',
-                   u'last_change_time', u'cf_due_date']
+                   u'last_change_time', u'cf_due_date', u'flags', u'comments']
 
 URL = ('https://api-dev.bugzilla.mozilla.org/latest/bug/'
        '?username={username}&password={password}&'
@@ -79,6 +79,17 @@ def fetch_bugs(components=COMPONENTS, days=None):
             if 'last_change_time' in bdata:
                 bug.bug_last_change_time = datetime.strptime(
                     bdata['last_change_time'], '%Y-%m-%dT%H:%M:%SZ')
+
+            flags = bdata.get('flags', [])
+
+            if flags and flags[0].get('name', False):
+                bug.status = flags[0]['status']
+                bug.flag_name = flags[0]['name']
+
+            comments = bdata.get('comments', [])
+            if comments and comments[0].get('text', False):
+                bug.first_comment = comments[0]['text']
+
             bug.save()
 
     set_last_updated_date(now)
