@@ -111,7 +111,7 @@ Mozilla Reps - {{ poll.name }} - Vote
               Description
             </span>
             &nbsp;
-            {{ poll.description }}
+            {{ poll.description|jinja_linebreaks|markdown }}
           </p>
         </div>
       </div>

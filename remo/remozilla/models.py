@@ -3,6 +3,8 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
+from remo.remozilla import signals
+
 
 class Bug(models.Model):
     """Bug model definition."""
@@ -22,6 +24,16 @@ class Bug(models.Model):
     status = models.CharField(max_length=30, default='')
     resolution = models.CharField(max_length=30, default='')
     due_date = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=30, default='')
+    flag_name = models.CharField(max_length=30, default='')
+    first_comment = models.TextField(default='')
+
+    def save(self, *args, **kwargs):
+        if (getattr(self, 'status', False) == '?'
+            and getattr(self, 'flag_name', False) == 'remo-review'
+                and self.component in ('Budget Requests', 'Swag Requests')):
+            signals.create_radio_poll_signal.send(sender=self, bug=self)
+        super(Bug, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return u'%d' % self.bug_id
