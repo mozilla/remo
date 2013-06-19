@@ -19,9 +19,6 @@ from remo.remozilla.signals import create_radio_poll_signal
 from remo.voting.tasks import send_voting_mail
 
 
-COUNCIL_VOTING_PERIOD = 3
-
-
 class Poll(models.Model):
     """Poll Model."""
     name = models.CharField(max_length=300)
@@ -41,6 +38,7 @@ class Poll(models.Model):
                                    editable=False, default='')
     last_notification = models.DateTimeField(null=True)
     bug = models.ForeignKey(Bug, null=True, blank=True)
+    automated_poll = models.BooleanField(default=False)
 
     @property
     def is_future_voting(self):
@@ -176,11 +174,12 @@ def voting_set_groups(app, sender, signal, **kwargs):
 
 @receiver(create_radio_poll_signal,
           dispatch_uid='voting_create_radio_poll_signal')
-def create_radio_poll(sender, bug, **kwargs):
+def create_radio_poll(sender, **kwargs):
     """Create radio polls automatically when a new budget or
     swag request is submitted.
 
     """
+    bug = kwargs.get('bug')
 
     if not Poll.objects.filter(bug=bug).exists():
         date_now = make_aware(datetime.now(),
@@ -189,8 +188,8 @@ def create_radio_poll(sender, bug, **kwargs):
 
         poll = Poll(name=bug.summary, description=bug.first_comment,
                     valid_groups=Group.objects.get(name='Council'),
-                    start=date_now, bug=bug, created_by=remobot,
-                    end=(date_now + timedelta(days=COUNCIL_VOTING_PERIOD)))
+                    start=date_now, end=(date_now + timedelta(days=3)),
+                    bug=bug, created_by=remobot, automated_poll=True)
         poll.save()
 
         radio_poll = RadioPoll(poll=poll, question='Budget Approval')

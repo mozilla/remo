@@ -82,12 +82,12 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
             flags = bdata.get('flags', [])
 
-            if flags[0].get('name', False):
+            if flags and flags[0].get('name', False):
                 bug.status = flags[0]['status']
                 bug.flag_name = flags[0]['name']
 
             comments = bdata.get('comments', [])
-            if comments[0].get('text', False):
+            if comments and comments[0].get('text', False):
                 bug.first_comment = comments[0]['text']
 
             bug.save()
