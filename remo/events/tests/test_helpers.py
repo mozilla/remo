@@ -15,10 +15,12 @@ class HelpersTest(TestCase):
     def test_is_multiday(self):
         """Test is_multiday filter."""
         e = Event.objects.get(slug='multi-event')
-        eq_(is_multiday(e), True, 'Multiday event validates to False')
+        eq_(is_multiday(e.local_start, e.local_end), True,
+            'Multiday event validates to False')
 
         e = Event.objects.get(slug='test-event')
-        eq_(is_multiday(e), False, 'Single day event validates to True')
+        eq_(is_multiday(e.local_start, e.local_end), False,
+            'Single day event validates to True')
 
     def test_attendance_list_sorting(self):
         """Test sorting of event attendance list."""

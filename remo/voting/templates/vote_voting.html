@@ -32,7 +32,8 @@ Mozilla Reps - {{ poll.name }} - Vote
           <div class="row">
             <div class="ten columns end">
               <div class="event-single-date panel">
-                <div class="row">{% if not poll|is_multiday %} {# this is single voting #}
+                <div class="row">{% if not is_multiday(poll.start, poll.end) %}
+                    {# this is single voting #}
                     <div class="three phone-one columns">
                       <div class="event-single-date-number">
                         {{ poll.start|strftime('%d') }}
@@ -194,7 +195,7 @@ Mozilla Reps - {{ poll.name }} - Vote
 
     </div>
   </div>
-</form> 
+</form>
 {% endblock %}
 
 {% block bottomextra %}

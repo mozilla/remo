@@ -77,7 +77,7 @@ class EventResource(ClientCachedResource, ModelResource):
 
     def dehydrate_multiday(self, bundle):
         """Return True if event is multiday, False otherwise."""
-        return is_multiday(bundle.obj)
+        return is_multiday(bundle.obj.local_start, bundle.obj.local_end)
 
     def apply_filters(self, request, applicable_filters):
         """Add special 'query' parameter to filter Events.
