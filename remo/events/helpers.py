@@ -49,17 +49,16 @@ def get_attendee_role_event(attendee, event):
     return 'Rep attendee'
 
 
-@register.filter
-def is_multiday(event):
-    """Return True is event is multiday.
+@register.function
+def is_multiday(start, end):
+    """Return True if event is multiday.
 
     Fancy way to compare 'year', 'month' and 'day' attributes of two objects
     and return True only if all pairs match.
     """
 
     return not reduce(lambda x, y: x == y == True,
-                      map(lambda x: (getattr(event.end, x) ==
-                                     getattr(event.start, x)),
+                      map(lambda x: (getattr(end, x) == getattr(start, x)),
                           ['year', 'month', 'day']))
 
 

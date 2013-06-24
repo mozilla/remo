@@ -37,7 +37,8 @@ Mozilla Reps - {{ event.name }}
         <div class="row">
           <div class="ten columns end">
             <div class="event-single-date panel">
-              <div class="row">{% if not event|is_multiday %} {# this is single event #}
+              <div class="row">{% if not is_multiday(event.local_start, event.local_end) %}
+                  {# this is single event #}
                   <div class="three phone-one columns">
                     <div class="event-single-date-number">
                       {{ event.local_start|strftime('%d') }}
