@@ -1,11 +1,36 @@
+import csv
+
+from datetime import datetime
+from itertools import izip_longest
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 
 from remo.profiles.models import FunctionalArea, UserAvatar, UserProfile
 
 # Unregister User from Administration to attach UserProfileInline
 admin.site.unregister(User)
+
+
+def export_mentorship_csv(modeladmin, request, queryset):
+    """Export mentorship csv from admin site."""
+    today = datetime.now().strftime('%Y-%m-%d-%H:%M')
+    filename = 'mentorship-%s.csv' % today
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = ('attachment; filename="%s"' %
+                                       filename)
+    mentorship = []
+
+    for user in queryset.filter(groups__name='Mentor'):
+        column = [user.get_full_name().encode('utf-8')]
+        column += [u.user.get_full_name().encode('utf-8')
+                   for u in user.mentees.all()]
+        mentorship.append(column)
+    writer = csv.writer(response)
+    writer.writerows(izip_longest(*mentorship, fillvalue=None))
+    return response
 
 
 class UserProfileInline(admin.StackedInline):
@@ -17,6 +42,7 @@ class UserProfileInline(admin.StackedInline):
 class UserAdmin(UserAdmin):
     """User Admin."""
     inlines = [UserProfileInline]
+    actions = [export_mentorship_csv]
 
 
 class UserAvatarAdmin(admin.ModelAdmin):
