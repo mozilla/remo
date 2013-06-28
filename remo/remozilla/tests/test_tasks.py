@@ -51,8 +51,8 @@ class FetchBugsTest(TestCase):
 
         previous_last_updated_time = get_last_updated_date()
 
-        request = requests.Request()
-        request.status_code = 200
+        first_request = requests.Request()
+        first_request.status_code = 200
         bug_data = {'bugs': [{'id': 7788,
                               'summary':'This is summary',
                               'creator': {'name': 'rep@example.com'},
@@ -69,7 +69,7 @@ class FetchBugsTest(TestCase):
                               'summary':'New summary',
                               'creator': {'name': 'not_a_rep@example.com'},
                               'creation_time': '2012-12-5T11:30:23Z',
-                              'component':'Budget Requests',
+                              'component':'Swag requests',
                               'cc': [{'name': 'mentor@example.com'},
                                      {'name': 'not_a_rep@example.com'}],
                               'assigned_to':{'name':'mentor@example.com'},
@@ -77,11 +77,31 @@ class FetchBugsTest(TestCase):
                               'resolution':'invalid',
                               'cf_due_date': None}]}
 
-        request.text = json.dumps(bug_data)
-        (fake_requests_obj.expects_call().returns(request))
-        fetch_bugs()
+        first_request.text = json.dumps(bug_data)
 
-        eq_(Bug.objects.all().count(), len(bug_data['bugs']))
+        second_request = requests.Request()
+        second_request.status_code = 200
+        bug_data['bugs'][0]['component'] = 'Planning'
+        bug_data['bugs'][0]['id'] = 7789
+        bug_data['bugs'][1]['component'] = 'Planning'
+        bug_data['bugs'][1]['id'] = 1200
+        second_request.text = json.dumps(bug_data)
+
+        empty_request = requests.Request()
+        empty_request.status_code = 200
+        empty_request.text = json.dumps({'bugs': []})
+
+        fake_requests_obj.expects_call()
+        fake_requests_obj.returns(first_request)
+        fake_requests_obj.next_call().returns(empty_request)
+        fake_requests_obj.next_call().returns(second_request)
+        fake_requests_obj.next_call().returns(empty_request)
+
+        fetch_bugs(components=['Planning', 'Swag Requests'])
+
+        eq_(Bug.objects.all().count(), 4)
+        eq_(Bug.objects.filter(component='Planning').count(), 2)
+        eq_(Bug.objects.filter(component='Swag Requests').count(), 2)
 
         # refresh status_obj
         self.assertGreater(get_last_updated_date(), previous_last_updated_time)
