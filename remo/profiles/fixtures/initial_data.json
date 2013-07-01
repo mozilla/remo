@@ -230,14 +230,7 @@
         "pk": 22,
         "model": "profiles.functionalarea",
         "fields": {
-            "name": "Mobile"
-        }
-    },
-    {
-        "pk": 23,
-        "model": "profiles.functionalarea",
-        "fields": {
-            "name": "Pancake"
+            "name": "Firefox Mobile"
         }
     },
     {
@@ -279,7 +272,7 @@
         "pk": 29,
         "model": "profiles.functionalarea",
         "fields": {
-            "name": "Research and B2G"
+            "name": "Firefox OS"
         }
     },
     {
@@ -374,17 +367,31 @@
         }
     },
     {
-        "pk": 43,
-        "model": "profiles.functionalarea",
-        "fields": {
-            "name": "Hackasaurus"
-        }
-    },
-    {
         "pk": 44,
         "model": "profiles.functionalarea",
         "fields": {
             "name": "Webmaker"
+        }
+    },
+    {
+        "pk": 45,
+        "model": "profiles.functionalarea",
+        "fields": {
+            "name": "Students"
+        }
+    },
+    {
+        "pk": 46,
+        "model": "profiles.functionalarea",
+        "fields": {
+            "name": "Technical Evangelism"
+        }
+    },
+    {
+        "pk": 47,
+        "model": "profiles.functionalarea",
+        "fields": {
+            "name": "WoMoz"
         }
     }
 ]
