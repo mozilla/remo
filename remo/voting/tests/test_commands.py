@@ -1,7 +1,6 @@
 import datetime
 import pytz
 
-from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core import mail, management
 from django.utils import timezone
@@ -22,8 +21,7 @@ class VotingTestCommands(TestCase):
         """Initial data for the tests."""
         self.user = User.objects.get(username='admin')
         self.group = Group.objects.get(name='Admin')
-        self._now = timezone.make_aware(datetime.datetime.now(),
-                                        pytz.timezone(settings.TIME_ZONE))
+        self._now = timezone.make_aware(datetime.datetime.utcnow(), pytz.UTC)
         self.now = self._now.replace(microsecond=0)
         self.start = self.now
         self.end = self.now + datetime.timedelta(days=5)
@@ -31,7 +29,7 @@ class VotingTestCommands(TestCase):
                            valid_groups=self.group, created_by=self.user)
         self.voting.save()
 
-    @fudge.patch('remo.voting.cron.datetime.datetime.now')
+    @fudge.patch('remo.voting.cron.datetime.datetime.utcnow')
     def test_email_users_without_a_vote(self, fake_requests_obj):
         """Test sending an email to users who have not cast
         their vote yet.

@@ -8,7 +8,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import F
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
-from django.utils.timezone import make_aware
+from django.utils.timezone import make_aware, make_naive, utc
 
 from datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.utils import validate_datetime
@@ -73,7 +73,7 @@ class PollEditForm(happyforms.ModelForm):
 
         instance = self.instance
         # Set the year portion of the widget
-        now = datetime.now()
+        now = datetime.utcnow()
         end_year = min(getattr(self.instance.end, 'year', now.year),
                        now.year - 1)
         self.fields['end_form'] = forms.DateTimeField(
@@ -81,21 +81,24 @@ class PollEditForm(happyforms.ModelForm):
                 years=range(end_year, now.year + 10), minute_step=5),
             validators=[validate_datetime])
         if self.instance.end:
-            self.fields['end_form'].initial = instance.end
+            # Convert to server timezone
+            naive_time = make_naive(instance.end, pytz.UTC)
+            server_time = make_aware(naive_time,
+                                     pytz.timezone(settings.TIME_ZONE))
+            self.fields['end_form'].initial = server_time
 
     def clean(self):
         """Clean form."""
         super(PollEditForm, self).clean()
 
         cdata = self.cleaned_data
-        date_now = make_aware(datetime.now(),
-                              pytz.timezone(settings.TIME_ZONE))
+        date_now = make_aware(datetime.utcnow(), pytz.UTC)
 
         # Check if key exists
         if not 'end_form' in cdata:
             raise ValidationError('Please correct the form errors.')
 
-        cdata['end'] = cdata['end_form']
+        cdata['end'] = cdata['end_form'].replace(tzinfo=utc)
 
         if cdata['end_form'] < date_now:
             msg = 'End date should not be in the past.'
@@ -125,7 +128,7 @@ class PollAddForm(PollEditForm):
 
         instance = self.instance
         # Set the year portion of the widget
-        now = datetime.now()
+        now = datetime.utcnow()
         start_year = min(getattr(self.instance.start, 'year', now.year),
                          now.year - 1)
         self.fields['start_form'] = forms.DateTimeField(
@@ -133,21 +136,23 @@ class PollAddForm(PollEditForm):
                 years=range(start_year, now.year + 10), minute_step=5),
             validators=[validate_datetime])
         if self.instance.start:
-            self.fields['start_form'].initial = instance.start
+            naive_time = make_naive(instance.start, pytz.UTC)
+            server_time = make_aware(naive_time,
+                                     pytz.timezone(settings.TIME_ZONE))
+            self.fields['start_form'].initial = server_time
 
     def clean(self):
         """Clean form."""
         super(PollAddForm, self).clean()
 
         cdata = self.cleaned_data
-        date_now = make_aware(datetime.now(),
-                              pytz.timezone(settings.TIME_ZONE))
+        date_now = make_aware(datetime.utcnow(), pytz.UTC)
 
         # Check if key exists
         if not 'start_form' in cdata:
             raise ValidationError('Please correct the form errors.')
 
-        cdata['start'] = cdata['start_form']
+        cdata['start'] = cdata['start_form'].replace(tzinfo=utc)
 
         if cdata['start_form'] >= cdata['end_form']:
             msg = 'Start date should come before end date.'
