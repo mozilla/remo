@@ -136,7 +136,8 @@ INSTALLED_APPS = ['south'] + \
                      'remo.voting',
 
                      'django_browserid',
-                     'tastypie']
+                     'tastypie',
+                     'waffle']
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:
@@ -180,7 +181,8 @@ MIDDLEWARE_CLASSES = filter(
     MIDDLEWARE_CLASSES)
 
 MIDDLEWARE_CLASSES += ('django.contrib.messages.middleware.MessageMiddleware',
-                       'remo.base.middleware.RegisterMiddleware')
+                       'remo.base.middleware.RegisterMiddleware',
+                       'waffle.middleware.WaffleMiddleware')
 
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django_browserid.context_processors.browserid_form',
