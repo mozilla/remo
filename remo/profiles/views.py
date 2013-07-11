@@ -59,7 +59,7 @@ def edit(request, display_name):
     userform = forms.ChangeUserForm(request.POST or None, instance=user)
     profileform = forms.ChangeProfileForm(request.POST or None,
                                           instance=user.userprofile)
-    datejoinedform = forms.ChangeDateJoinedForm(request.POST,
+    datejoinedform = forms.ChangeDateJoinedForm(request.POST or None,
                                                 instance=user.userprofile)
 
     if (userform.is_valid() and profileform.is_valid() and
