@@ -34,7 +34,7 @@ def get_avatar_url(user, size=50):
     now = timezone.now()
 
     if (user_avatar.last_update < now - timedelta(days=7)) or created:
-        user_avatar.avatar_url = libravatar_url(email=user.email)
+        user_avatar.avatar_url = libravatar_url(email=user.email, https=True)
         user_avatar.save()
 
     avatar_url = urlparams(user_avatar.avatar_url, default=default_img_url)
