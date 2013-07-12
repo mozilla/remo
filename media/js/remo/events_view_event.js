@@ -1,9 +1,11 @@
+var CLOUDMADE_API_KEY = $('body').data('cloudmade-api-key');
+
 function initialize_map() {
     // Initialize map.
     var map = new L.Map('map', { minZoom: 1 });
-    var cloudmade = new L.TileLayer('http://{s}.tile.cloudmade.com/' +
-                                    'b465ca1b6fe040dba7eec0291ecb7a8c/' +
-                                    '997/256/{z}/{x}/{y}.png',
+    var cloudmade = new L.TileLayer('https://ssl_tiles.cloudmade.com/' +
+                                    CLOUDMADE_API_KEY +
+                                    '/997/256/{z}/{x}/{y}.png',
                                     { attribution: '', maxZoom: 18 });
     var map_elm = $('#map');
     var lat = map_elm.data('lat');
