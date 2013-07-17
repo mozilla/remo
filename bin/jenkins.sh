@@ -84,8 +84,10 @@ python manage.py update_product_details
 echo "Starting tests..."
 export FORCE_DB=1
 if [ -z $COVERAGE ]; then
-    python manage.py test --noinput --with-xunit --logging-clear-handlers
+    python manage.py test -v 2 --noinput --with-xunit --logging-clear-handlers
 else
-    python manage.py test_coverage --noinput
+    python manage.py test -v 2 --noinput --with-coverage --logging-clear-handlers
+    echo "Exporting coverage XML..."
+    coverage xml $(find remo -name '*.py' -a ! -path '*/migrations/*')
 fi
 echo "FIN"
