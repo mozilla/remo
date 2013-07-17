@@ -222,7 +222,8 @@ class ViewsTest(TestCase):
     def test_email_my_mentees_rep(self):
         """Email mentees when rep.
 
-        Must fail since Rep doesn't have mentees."""
+        Must fail since Rep doesn't have mentees.
+        """
         c = Client()
         c.login(username='rep', password='passwd')
         data = {'subject': 'This is subject',
@@ -234,6 +235,21 @@ class ViewsTest(TestCase):
             pass
         eq_(m.tags, u'error')
         eq_(len(mail.outbox), 0)
+
+    def test_email_reps_as_mozillian(self):
+        """Email all the reps associated with a functional area."""
+
+        c = Client()
+        c.login(username='mozillian1', password='passwd')
+        data = {'subject': 'This is subject',
+                'body': 'This is my body\n Multiline of course',
+                'functional_area': 'Addons'}
+        response = c.post(reverse('dashboard'), data, follow=True)
+        self.assertTemplateUsed(response, 'dashboard_mozillians.html')
+        for m in response.context['messages']:
+            pass
+        eq_(m.tags, u'success')
+        eq_(len(mail.outbox), 1)
 
     def test_view_about_page(self):
         """Get about page."""
@@ -252,7 +268,7 @@ class ViewsTest(TestCase):
     def test_mailhide_encryption(self):
         """Test email encryption function."""
         if (getattr(settings, 'MAILHIDE_PUB_KEY', None) !=
-            '01Ni54q--g1yltekhaSmPYHQ=='):
+                '01Ni54q--g1yltekhaSmPYHQ=='):
             raise SkipTest('Skipping test due to different MailHide pub key.')
 
         test_strings = [('foo@example.com', '3m5HgumLI4YSLSY-YP9HQA=='),
@@ -269,7 +285,7 @@ class ViewsTest(TestCase):
     def test_mailhide_helper(self):
         """Test mailhide helper."""
         if (getattr(settings, 'MAILHIDE_PUB_KEY', None) !=
-            '01Ni54q--g1yltekhaSmPYHQ=='):
+                '01Ni54q--g1yltekhaSmPYHQ=='):
             raise SkipTest('Skipping test due to different MailHide pub key.')
 
         m1 = Markup(u'<a href="http://mailhide.recaptcha.net/d?k=01Ni54q--g1yl'

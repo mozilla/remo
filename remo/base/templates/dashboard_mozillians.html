@@ -1,5 +1,4 @@
 {% extends "dashboard.html" %}
-
 {% block mozillian_interests %}
 <div class="two columns align-right">
   <a href="#" class="small white button nice radius"
@@ -275,23 +274,26 @@
 
 {% block modals %}
 <!-- mail reps reveal modal -->
-{% if mentees_emails is not none %}
-  <div id="mail-reps-modal" class="reveal-modal">
-    <a class="close-reveal-modal">&#215;</a>
-    <p class="lead">Email Reps</p>
-    <h6>Comming soon!</h6>
-    <form id="email-mentees-form" method="post"
-          action="{{ url('email_mentees') }}" class="custom">
-      {{ csrf() }}
-      {% for field in email_mentees_form %}
-        {{field}} {{ field.label }}
-        <br>
-      {% endfor %}
+<div id="mail-reps-modal" class="reveal-modal">
+  <a class="close-reveal-modal">&#215;</a>
+  <p class="lead">Email Reps</p>
+  <form id="email-reps-form" method="post"
+        action="{{ url('dashboard') }}" class="custom">
+    {{ csrf() }}
+    {% for field in reps_email_form %}
+      {{field}} {{ field.label }}
+      <br>
+    {% endfor %}
 
+    <div class="row">
+      <div id="send-mail" class="twelve columns align-right">
+        <button type="submit" class="medium blue button nice radius">
+          Send email
+        </button>
       </div>
-    </form>
-  </div>
-{% endif %}
+    </div>
+  </form>
+</div>
 <!-- mail reps reveal modal end -->
 
 <!-- interests modal -->

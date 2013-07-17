@@ -94,11 +94,20 @@ def dashboard(request):
 
     # Mozillians block
     if user.groups.filter(name='Mozillians').exists():
-        interestform = forms.TrackFunctionalAreasForm(
-            request.POST or None, instance=user.userprofile)
-        if request.method == 'POST' and interestform.is_valid():
+        user_profile = user.userprofile
+        interestform = forms.TrackFunctionalAreasForm(request.POST or None,
+                                                      instance=user_profile)
+        reps_email_form = forms.EmailRepsForm(request.POST or None)
+        if interestform.is_valid():
             interestform.save()
             messages.success(request, 'Interests successfully saved')
+            return redirect('dashboard')
+        if reps_email_form.is_valid():
+            functional_area = (reps_email_form
+                               .cleaned_data['functional_area'])
+            reps = (User.objects.filter(groups__name='Rep').filter(
+                userprofile__functional_areas__name=functional_area))
+            reps_email_form.send_email(request, reps)
             return redirect('dashboard')
 
         # Get the reps who match the specified interests
@@ -125,6 +134,7 @@ def dashboard(request):
         args['reps_past_events'] = reps_past_events
         args['reps_current_events'] = reps_current_events
         args['tracked_interests'] = tracked_interests
+        args['reps_email_form'] = reps_email_form
         return render(request, 'dashboard_mozillians.html', args)
 
     # Reps block

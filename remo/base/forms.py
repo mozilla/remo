@@ -1,12 +1,26 @@
 import happyforms
-from django.contrib import messages
+
 from django import forms
+from django.contrib import messages
+from django.core.exceptions import ValidationError
 
 from remo.base.tasks import send_mail_task
-from remo.profiles.models import UserProfile
+from remo.profiles.models import FunctionalArea, UserProfile
 
 
-class EmailUsersForm(happyforms.Form):
+class BaseEmailUsersFrom(happyforms.Form):
+    """Base form to send email to multiple users."""
+    subject = forms.CharField(label='', widget=(
+        forms.TextInput(attrs={'placeholder': 'Subject',
+                               'required': 'required',
+                               'class': 'input-text big'})))
+    body = forms.CharField(label='', widget=(
+        forms.Textarea(attrs={'placeholder': 'Body of email',
+                              'required': 'required',
+                              'class': 'flat long'})))
+
+
+class EmailUsersForm(BaseEmailUsersFrom):
     """Generic form to send email to multiple users."""
     def __init__(self, users, *args, **kwargs):
         """Initialize form.
@@ -18,25 +32,22 @@ class EmailUsersForm(happyforms.Form):
 
         for first_name, last_name, email in recipients:
             field_name = '%s %s <%s>' % (first_name, last_name, email)
-            self.fields[field_name] = forms.BooleanField(
-                label=field_name, initial=True, required=False,
-                widget=forms.CheckboxInput(
-                    attrs={'class': 'input-text big'}))
-        self.fields['subject'] = forms.CharField(label='',
-            widget=forms.TextInput(attrs={'placeholder': 'Subject',
-                                          'required': 'required',
-                                          'class': 'input-text big'}))
-        self.fields['body'] = forms.CharField(label='',
-            widget=forms.Textarea(attrs={'placeholder': 'Body of email',
-                                         'required': 'required',
-                                         'class': 'flat long'}))
+            # Insert method is used to override the order of form fields
+            form_widget = forms.CheckboxInput(
+                attrs={'class': 'input-text-big'})
+            self.fields.insert(0, field_name,
+                               forms.BooleanField(
+                                   label=field_name,
+                                   initial=True,
+                                   required=False,
+                                   widget=form_widget))
 
     def send_mail(self, request):
         """Send mail to recipients list."""
         recipients_list = []
         for field in self.fields:
             if (isinstance(self.fields[field], forms.BooleanField) and
-                self.cleaned_data[field]):
+                    self.cleaned_data[field]):
                 recipients_list.append(field)
         if recipients_list:
             from_email = '%s <%s>' % (request.user.get_full_name(),
@@ -49,6 +60,39 @@ class EmailUsersForm(happyforms.Form):
         else:
             messages.error(request, ('Email not sent. Please select at '
                                      'least one recipient.'))
+
+
+class EmailRepsForm(BaseEmailUsersFrom):
+    """Generic form to send email to multiple users."""
+
+    functional_area = forms.CharField(label='', initial='',
+                                      widget=forms.HiddenInput())
+
+    def clean(self):
+        """Clean form"""
+        functional_area = self.cleaned_data['functional_area']
+        if not FunctionalArea.objects.filter(name=functional_area).exists():
+            raise ValidationError('Please do not tamper with the data.')
+        return self.cleaned_data
+
+    def send_email(self, request, users):
+        """Send mail to recipients list."""
+        recipients = users.values_list('first_name', 'last_name', 'email')
+        recipients_list = []
+        for first_name, last_name, email in recipients:
+            recipient = '%s %s <%s>' % (first_name, last_name, email)
+            recipients_list.append(recipient)
+
+        if recipients_list:
+            from_email = '%s <%s>' % (request.user.get_full_name(),
+                                      request.user.email)
+            send_mail_task.delay(sender=from_email,
+                                 recipients=recipients_list,
+                                 subject=self.cleaned_data['subject'],
+                                 message=self.cleaned_data['body'])
+            messages.success(request, 'Email sent successfully.')
+        else:
+            messages.error(request, 'Email not sent. An error occured.')
 
 
 class EditSettingsForm(happyforms.ModelForm):
