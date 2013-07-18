@@ -1,15 +1,14 @@
 import datetime
-import pytz
 
 from django.contrib.auth.models import Group, User
 from django.core import mail, management
-from django.utils import timezone
 
-import fudge
-
+from mock import patch
 from nose.tools import eq_
 from test_utils import TestCase
 
+from remo.base.utils import datetime2pdt
+from remo.profiles.tests import UserFactory
 from remo.voting.models import Poll
 
 
@@ -19,25 +18,50 @@ class VotingTestCommands(TestCase):
 
     def setUp(self):
         """Initial data for the tests."""
+        UserFactory.create(username='remobot', email='reps@mozilla.org',
+                           first_name='ReMo', last_name='bot')
         self.user = User.objects.get(username='admin')
-        self.group = Group.objects.get(name='Admin')
-        self._now = timezone.make_aware(datetime.datetime.utcnow(), pytz.UTC)
+        self.group = Group.objects.get(name='Council')
+        self._now = datetime2pdt()
         self.now = self._now.replace(microsecond=0)
         self.start = self.now
-        self.end = self.now + datetime.timedelta(days=5)
+        self.end = self.now + datetime.timedelta(hours=5*24)
         self.voting = Poll(name='poll', start=self.start, end=self.end,
                            valid_groups=self.group, created_by=self.user)
         self.voting.save()
 
-    @fudge.patch('remo.voting.cron.datetime.datetime.utcnow')
-    def test_email_users_without_a_vote(self, fake_requests_obj):
+    @patch('remo.voting.cron.datetime2pdt')
+    def test_email_users_without_a_vote(self, fake_datetime2pdt):
         """Test sending an email to users who have not cast
         their vote yet.
 
         """
         # act like it's today + 1 day
-        tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)
-        (fake_requests_obj.expects_call().returns(tomorrow))
+        fake_datetime2pdt.return_value = (datetime2pdt() +
+                                          datetime.timedelta(days=1))
         args = ['poll_vote_reminder']
         management.call_command('cron', *args)
+        recipients = map(lambda x: '%s' % x.email,
+                         User.objects.filter(groups=self.group))
         eq_(len(mail.outbox), 3)
+        eq_(mail.outbox[2].to, recipients)
+
+    @patch('remo.voting.cron.datetime2pdt')
+    def test_extend_voting_period_by_24hours(self, fake_datetime2pdt):
+        """Test extending voting period by 24hours if less than
+        50% of the valid users have voted and the poll ends in less than
+        8 hours.
+
+        """
+        automated_poll = Poll(name='poll', start=self.start, end=self.end,
+                              valid_groups=self.group, created_by=self.user,
+                              automated_poll=True)
+        automated_poll.save()
+
+        # act like it's 4 hours before the end of the poll
+        fake_datetime2pdt.return_value = (datetime2pdt() +
+                                          datetime.timedelta(hours=116))
+        args = ['extend_voting_period']
+        management.call_command('cron', *args)
+        poll = Poll.objects.get(pk=automated_poll.id)
+        eq_(poll.end - automated_poll.end, datetime.timedelta(hours=24))

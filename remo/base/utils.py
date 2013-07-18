@@ -1,10 +1,13 @@
 import calendar
 import datetime
+import pytz
 
-from django.db.models import get_app, get_models
+from django.conf import settings
 from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ValidationError
+from django.db.models import get_app, get_models
+from django.utils import timezone
 
 
 def get_object_or_none(model_class, **kwargs):
@@ -110,3 +113,10 @@ def validate_datetime(data, **kwargs):
     if not isinstance(data, datetime.datetime):
         raise ValidationError('Date chosen is invalid.')
     return data
+
+
+def datetime2pdt(datetime_obj=None):
+    if not datetime_obj:
+        datetime_obj = datetime.datetime.now()
+    return timezone.make_aware(datetime_obj,
+                               pytz.timezone(settings.TIME_ZONE))
