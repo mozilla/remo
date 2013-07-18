@@ -1,7 +1,6 @@
 import pytz
 from datetime import datetime
 
-from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
 from django.test.client import Client
@@ -285,9 +284,7 @@ class ViewsTest(TestCase):
         minute = self.edit_future_data['start_form_1_minute']
 
         start = datetime(year, month, day, hour, minute)
-        to_zone = pytz.timezone(settings.TIME_ZONE)
-        poll_start = poll.start.astimezone(to_zone)
-        eq_(make_aware(start, to_zone), poll_start)
+        eq_(make_aware(start, pytz.UTC), poll.start)
 
         month = self.edit_future_data['end_form_0_month']
         day = self.edit_future_data['end_form_0_day']
@@ -296,7 +293,7 @@ class ViewsTest(TestCase):
         minute = self.edit_future_data['end_form_1_minute']
 
         end = datetime(year, month, day, hour, minute)
-        eq_(make_aware(end, pytz.timezone(settings.TIME_ZONE)), poll.end)
+        eq_(make_aware(end, pytz.UTC), poll.end)
 
     def test_view_edit_current_voting(self):
         """Test current voting test."""
@@ -337,7 +334,7 @@ class ViewsTest(TestCase):
         minute = self.edit_current_data['end_form_1_minute']
 
         end = datetime(year, month, day, hour, minute)
-        eq_(make_aware(end, pytz.timezone(settings.TIME_ZONE)), poll.end)
+        eq_(make_aware(end, pytz.UTC), poll.end)
 
         start_year = self.edit_current_data['start_form_0_year']
         self.assertNotEqual(poll.start.year, start_year)
