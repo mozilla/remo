@@ -1,7 +1,6 @@
 import datetime
 import pytz
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils import timezone
 
@@ -19,17 +18,14 @@ def poll_vote_reminder():
     remind valid users to cast their vote.
 
     """
-    now = timezone.make_aware(datetime.datetime.now(),
-                              pytz.timezone(settings.TIME_ZONE))
+    now = timezone.make_aware(datetime.datetime.utcnow(), pytz.UTC)
     polls = Poll.objects.filter(start__lte=now, end__gt=now)
 
     for poll in polls:
         last_notification = (poll.last_nofication if poll.last_notification
                              else poll.created_on)
-        last_notification_pdt = last_notification.astimezone(
-            pytz.timezone(settings.TIME_ZONE))
 
-        if (now - last_notification_pdt).seconds > NOTIFICATION_INTERVAL:
+        if (now - last_notification).seconds > NOTIFICATION_INTERVAL:
             valid_users = User.objects.filter(groups=poll.valid_groups)
             recipients = (valid_users.exclude(pk__in=poll.users_voted.all())
                                      .values_list('id', flat=True))

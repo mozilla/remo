@@ -6,7 +6,7 @@ voting "{{ poll.name }}" is now open for you to vote.
 Please go to {{ SITE_URL }}{{ url('voting_view_voting', slug=poll.slug) }}
 and cast your vote.
 
-Note that you can vote until {{ poll.end.strftime('%Y %B %d, %H:%M') }} PDT.
+Note that you can vote until {{ poll.end.strftime('%Y %B %d, %H:%M') }} UTC.
 
 The summary of this voting is:
 

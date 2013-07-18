@@ -2,7 +2,6 @@ import pytz
 from datetime import datetime
 
 from django.db.models import Q
-from django.conf import settings
 from django.contrib import messages
 from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
@@ -19,7 +18,7 @@ import forms
 def list_votings(request):
     """List votings view."""
     user = request.user
-    now = datetime.now()
+    now = datetime.utcnow()
     polls = Poll.objects.all()
     if not user.groups.filter(name='Admin').exists():
         polls = Poll.objects.filter(valid_groups__in=user.groups.all())
@@ -53,8 +52,7 @@ def edit_voting(request, slug=None):
                 RadioPoll.objects.filter(poll=poll).count()) == 0:
             extra = 1
         can_delete_voting = True
-        date_now = make_aware(datetime.now(),
-                              pytz.timezone(settings.TIME_ZONE))
+        date_now = make_aware(datetime.utcnow(), pytz.UTC)
         if poll.start < date_now and poll.end > date_now:
             current_voting_edit = True
 
@@ -104,7 +102,7 @@ def edit_voting(request, slug=None):
 def view_voting(request, slug):
     """View voting and cast a vote view."""
     user = request.user
-    now = make_aware(datetime.now(), pytz.timezone(settings.TIME_ZONE))
+    now = make_aware(datetime.utcnow(), pytz.UTC)
     poll = get_object_or_404(Poll, slug=slug)
     # If the user does not belong to a valid poll group
     if not (user.groups.filter(Q(id=poll.valid_groups.id) |
