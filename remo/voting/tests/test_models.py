@@ -51,6 +51,19 @@ class VotingMailNotificationTest(TestCase):
         poll.save()
         eq_(len(mail.outbox), 3)
 
+    def test_send_email_to_council_members(self):
+        """Test send emails to Council Members
+        if an automated poll is created.
+
+        """
+        automated_poll = Poll(name='automated_poll', start=self.start,
+                              end=self.end, valid_groups=self.group,
+                              created_by=self.user, automated_poll=True)
+        automated_poll.save()
+        eq_(len(mail.outbox), 4)
+        eq_(mail.outbox[2].to, [settings.REPS_COUNCIL_LIST])
+        eq_(mail.outbox[3].to, [settings.REPS_COUNCIL_LIST])
+
 
 class AutomatedRadioPollTest(TestCase):
     """Tests the automatic creation of new Radio polls."""

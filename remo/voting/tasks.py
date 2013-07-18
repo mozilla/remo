@@ -15,15 +15,20 @@ def send_voting_mail(voting_id, subject, email_template):
     from remo.voting.models import Poll
 
     poll = Poll.objects.get(pk=voting_id)
-    user_list = User.objects.filter(groups=poll.valid_groups)
-
     data = {'SITE_URL': settings.SITE_URL,
             'FROM_EMAIL': settings.FROM_EMAIL,
             'poll': poll}
 
-    for user in user_list:
-        ctx_data = {'user': user,
-                    'userprofile': user.userprofile}
-        ctx_data.update(data)
-        message = render_to_string(email_template, ctx_data)
-        send_mail(subject, message, settings.FROM_EMAIL, [user.email])
+    if poll.automated_poll:
+        message = render_to_string(email_template, data)
+        send_mail(subject, message, settings.FROM_EMAIL,
+                  [settings.REPS_COUNCIL_LIST])
+    else:
+        user_list = User.objects.filter(groups=poll.valid_groups)
+
+        for user in user_list:
+            ctx_data = {'user': user,
+                        'userprofile': user.userprofile}
+            ctx_data.update(data)
+            message = render_to_string(email_template, ctx_data)
+            send_mail(subject, message, settings.FROM_EMAIL, [user.email])
