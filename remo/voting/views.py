@@ -59,8 +59,6 @@ def edit_voting(request, slug=None):
     if current_voting_edit:
         poll_form = forms.PollEditForm(request.POST or None, instance=poll)
     else:
-        poll_form = forms.PollAddForm(request.POST or None, instance=poll)
-
         RangePollFormset = (inlineformset_factory(Poll, RangePoll,
                             formset=forms.BaseRangePollInlineFormSet,
                             extra=extra, can_delete=True))
@@ -72,14 +70,12 @@ def edit_voting(request, slug=None):
                                               instance=poll)
         radio_poll_formset = RadioPollFormset(request.POST or None,
                                               instance=poll)
+        poll_form = forms.PollAddForm(request.POST or None, instance=poll,
+                                      radio_poll_formset=radio_poll_formset,
+                                      range_poll_formset=range_poll_formset)
 
     if poll_form.is_valid():
-        if current_voting_edit:
-            poll_form.save()
-        elif range_poll_formset.is_valid() and radio_poll_formset.is_valid():
-            poll_form.save()
-            range_poll_formset.save_all()
-            radio_poll_formset.save_all()
+        poll_form.save()
 
         if created:
             messages.success(request, 'Voting successfully created.')

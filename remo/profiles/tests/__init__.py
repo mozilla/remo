@@ -18,40 +18,6 @@ COUNTRIES = product_details.get_regions('en').values()
 START_DT = datetime.datetime(2011, 1, 1, tzinfo=utc)
 
 
-class UserFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = User
-
-    username = factory.Sequence(lambda n: 'username%s' % n)
-    first_name = factory.Sequence(lambda n: 'first_name%s' % n)
-    last_name = factory.Sequence(lambda n: 'last_name%s' % n)
-    email = factory.Sequence(lambda n: 'user%s@example.com' % n)
-    password = 'sha1$caffc$30d78063d8f2a5725f60bae2aca64e48804272c3'
-    is_staff = False
-    is_active = True
-    is_superuser = False
-    last_login = datetime.datetime(2012, 1, 1)
-    date_joined = datetime.datetime(2011, 1, 1)
-
-    @classmethod
-    def _create(cls, target_class, *args, **kwargs):
-        post_save.disconnect(create_profile, User,
-                             dispatch_uid='create_profile_signal')
-        post_save.disconnect(user_set_inactive_post_save, User,
-                             dispatch_uid='user_set_inactive_post_save_signal')
-        return super(UserFactory, cls)._create(target_class, *args, **kwargs)
-
-    @factory.post_generation
-    def create_profile(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted is not False:
-            post_save.connect(create_profile, User, False,
-                              'create_profile_signal')
-            post_save.connect(user_set_inactive_post_save, User, False,
-                              'user_set_inactive_post_save_signal')
-            post_save.send(User, instance=self, created=True, raw=False)
-
-
 class UserProfileFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = UserProfile
 
@@ -70,7 +36,17 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
     irc_name = factory.Sequence(lambda n: 'user%s' % n)
     wiki_profile_url = 'https://wiki.mozilla.org/User:'
     gender = fuzzy.FuzzyChoice([None, True, False])
-    user = factory.SubFactory(UserFactory, create_profile=False)
+
+    @classmethod
+    def _create(cls, target_class, *args, **kwargs):
+        dispatch_uid = 'userprofile_email_mentor_notification'
+        pre_save.disconnect(email_mentor_notification, UserProfile,
+                            dispatch_uid=dispatch_uid)
+        profile = super(UserProfileFactory, cls)._create(target_class,
+                                                         *args, **kwargs)
+        pre_save.connect(email_mentor_notification, UserProfile,
+                         dispatch_uid=dispatch_uid)
+        return profile
 
     @factory.post_generation
     def functional_areas(self, create, extracted, **kwargs):
@@ -89,8 +65,37 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
             for area in FunctionalArea.objects.all().order_by('?')[:rand_int]:
                 self.functional_areas.add(area)
 
+
+class UserFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = User
+
+    username = factory.Sequence(lambda n: 'username%s' % n)
+    first_name = factory.Sequence(lambda n: 'first_name%s' % n)
+    last_name = factory.Sequence(lambda n: 'last_name%s' % n)
+    email = factory.Sequence(lambda n: 'user%s@example.com' % n)
+    password = 'sha1$caffc$30d78063d8f2a5725f60bae2aca64e48804272c3'
+    is_staff = False
+    is_active = True
+    is_superuser = False
+    last_login = datetime.datetime(2012, 1, 1)
+    date_joined = datetime.datetime(2011, 1, 1)
+    userprofile = factory.RelatedFactory(UserProfileFactory, 'user')
+
     @classmethod
     def _create(cls, target_class, *args, **kwargs):
-        pre_save.disconnect(email_mentor_notification, UserProfile)
-        return super(UserProfileFactory, cls)._create(target_class,
-                                                      *args, **kwargs)
+        post_save.disconnect(create_profile, User,
+                             dispatch_uid='create_profile_signal')
+        post_save.disconnect(user_set_inactive_post_save, User,
+                             dispatch_uid='user_set_inactive_post_save_signal')
+        user = super(UserFactory, cls)._create(target_class, *args, **kwargs)
+        post_save.connect(create_profile, User,
+                          dispatch_uid='create_profile_signal')
+        post_save.connect(user_set_inactive_post_save, User,
+                          dispatch_uid='user_set_inactive_post_save_signal')
+        return user
+
+
+class FunctionalAreaFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = FunctionalArea
+
+    name = factory.Sequence(lambda n: 'Functional Area #%s' % n)

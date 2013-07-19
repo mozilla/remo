@@ -49,6 +49,13 @@
           <div class="required-field"></div>
           <p class="more-info">Minimum 20 characters.</p>
           {{ field_errors(poll_form.description) }}
+          {% if poll_form.non_field_errors %}
+            {% for err in poll_form.non_field_errors() %}
+              <small class="error">
+                {{ err }}
+              </small>
+            {% endfor %}
+          {% endif %}
 
         </div>
       </div>
