@@ -17,3 +17,6 @@
 [submodule "vendor-local/src/django-waffle"]
 	path = vendor-local/src/django-waffle
 	url = https://github.com/jsocol/django-waffle.git
+[submodule "vendor-local/src/factory_boy"]
+	path = vendor-local/src/factory_boy
+	url = https://github.com/rbarrois/factory_boy.git
