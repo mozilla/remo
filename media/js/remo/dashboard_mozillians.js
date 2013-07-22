@@ -36,7 +36,7 @@ $(document).ready(function () {
     $('*').find('*[data-time]').prettyDate({attribute:'data-time', interval: 60000, isUTC:true});
 
     $("a[data-reveal-id='mail-reps-modal']").click(function () {
-        var anchorText = $('.tabs a.active').text();
-        $('input[name=functional_area]').val(anchorText);
+        var area_id = $('#tracked-interests-tabs a.active').data('id');
+        $('input[name=functional_area]').val(area_id);
     });
 });

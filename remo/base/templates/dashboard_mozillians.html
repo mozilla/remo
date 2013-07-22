@@ -24,17 +24,18 @@
     </div>
   </div>
 {% else %}
-  <dl class="tabs top-margined">
-    {% for key, reps in tracked_interests|dictsort %}
+  <dl class="tabs top-margined" id="tracked-interests-tabs">
+    {% for key, data in tracked_interests|dictsort %}
       <dd>
         <a href="#{{ key|replace(" ", "") }}"
+           data-id="{{ data['id'] }}"
            {% if loop.first %} class="active"{% endif %}>{{ key }}
         </a>
       </dd>
     {% endfor %}
   </dl>
   <ul class="tabs-content">
-    {% for key, reps in tracked_interests|dictsort %}
+    {% for key, data in tracked_interests|dictsort %}
       <li {% if loop.first %}class="active"{% endif %} id="{{ key|replace(" ", "") }}Tab">
       <!-- people block -->
       <div class="dashboard-box">
@@ -62,9 +63,9 @@
         <div class="row">
           <!-- people grid block -->
           <div class="dashboard-mozillians-reps-grid-block">
-            {% if reps %}
+            {% if data['reps'] %}
               <ul class="block-grid four-up">
-                {% for rep in reps %}
+                {% for rep in data['reps'] %}
                   <li>
                     <a href="{{ url('profiles_view_profile', rep|get_display_name)}}">
                       <div class="panel dashboard-mentee">
@@ -280,11 +281,10 @@
   <form id="email-reps-form" method="post"
         action="{{ url('dashboard') }}" class="custom">
     {{ csrf() }}
-    {% for field in reps_email_form %}
-      {{field}} {{ field.label }}
-      <br>
-    {% endfor %}
-
+    {{ reps_email_form.functional_area }}
+    {{ reps_email_form.subject }}
+    <br/>
+    {{ reps_email_form.body }}
     <div class="row">
       <div id="send-mail" class="twelve columns align-right">
         <button type="submit" class="medium blue button nice radius">
@@ -329,7 +329,7 @@
   </div>
 </form>
 <!-- interests modal end -->
-{% endblock %}  
+{% endblock %}
 
 {% block bottomextra %}
   {{ js('base_dashboard_mozillians') }}
