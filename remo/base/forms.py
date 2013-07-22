@@ -68,12 +68,12 @@ class EmailRepsForm(BaseEmailUsersFrom):
     functional_area = forms.CharField(label='', initial='',
                                       widget=forms.HiddenInput())
 
-    def clean(self):
+    def clean_functional_area(self):
         """Clean form"""
-        functional_area = self.cleaned_data['functional_area']
+        functional_area = self.cleaned_data.get('functional_area', None)
         if not FunctionalArea.objects.filter(name=functional_area).exists():
             raise ValidationError('Please do not tamper with the data.')
-        return self.cleaned_data
+        return functional_area
 
     def send_email(self, request, users):
         """Send mail to recipients list."""
