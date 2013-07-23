@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_fd4.html" %}
 
 {% block pagetitle %}
 Mozilla Reps - Profile of {{ user_profile.display_name }}
@@ -6,45 +6,40 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 
 {% block content %}
 {% if user == pageuser or perms.profiles.can_edit_profiles %}
-  <div class="row hide-on-phones">
-    <div class="twelve columns align-right">
+  <div class="row hide-for-small">
+    <div class="large-12 columns align-right">
       <a href="{{ url('profiles_edit', user_profile.display_name) }}"
-         class="small white button nice radius">Edit profile</a>
+         class="small button radius">Edit profile</a>
     </div>
   </div>
 {% endif %}
-<div class="row">
-  <div class="six columns">
+<div class="row user-profile-container">
+  <div class="large-6 columns">
     <div class="row">
-      <div class="one columns pictogram">
+      <div class="large-1 columns pictogram">
         J
       </div>
-      <div class="eleven columns">
-        <br>
-        <h4>
-          {{ pageuser.first_name }}
-        </h4>
-        <h4>
-          {{ pageuser.last_name }}
-        </h4>
+      <div class="large-11 columns profile-user-details">
+        <h1>
+          {{ pageuser.first_name }} {{ pageuser.last_name }}
+        </h1>
         {% if pageuser == user %}
           <span class="grayed">
             (that's you!)
           </span>
         {% else %}
-        <br>
         {% endif %}
         {% if user_profile.local_name %}
-          <h5 class="grayed">
+          <h2 class="grayed">
             {{ user_profile.local_name }}
-          </h5>
+          </h2>
         {% endif %}
-          <h5 class="grayed">
+          <h2 class="grayed">
             {{ user_profile.display_name }}
-          </h5>
+          </h2>
         {% if pageuser == user %}
           <p class="profile-item">
-            <span class="white radius label">
+            <span class="label radius">
               Profile Permalink
             </span>
             &nbsp;
@@ -56,20 +51,18 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
       </div>
     </div>
   </div>
-  <div class="six columns">
+  <div class="large-6 columns">
     <div class="row">
-      <div class="one columns pictogram">
+      <div class="large-1 columns pictogram">
         A
       </div>
-      <div class="eleven columns">
+      <div class="large-11 columns">
         <div class="row">
-          <div class="four columns profile-image">
+          <div class="large-4 columns profile-image">
             <img id="profiles-view-avatar" src="{{ pageuser|get_avatar_url(128) }}">
           </div>
-          <div class="eight columns smallmap-profile-container">
-            <div id="map">
-              <img src="{{ get_static_map_url(256, 128, user_profile.lat, user_profile.lon, 1) }}"/>
-            </div>
+          <div id="map" class="large-8 columns smallmap-profile-container">
+            <img src="{{ get_static_map_url(256, 128, user_profile.lat, user_profile.lon, 1) }}"/>
           </div>
         </div>
       </div>
@@ -77,40 +70,38 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
   </div>
 </div>
 <div class="row">
-  <div class="six columns">
+  <div class="large-6 columns">
     <div class="row">
       {% if user_profile.bio %}
-        <div class="one columns pictogram">
+        <div class="large-1 columns pictogram">
           V
         </div>
-        <div class="eleven columns top-margined">
-            <div class="markdown">
-              {{ user_profile.bio|markdown }}
-            </div>
+        <div class="large-11 columns markdown">
+          {{ user_profile.bio|markdown }}
         </div>
       {% endif %}
     </div>
     {% if monthly_reports %}
       <div class="row">
-        <div class="one columns pictogram">
+        <div class="large-1 columns pictogram">
           a
         </div>
-        <div class="eleven columns">
-          <h5 class="profile-item">Monthly Reports</h5>
-          {% include "monthly_reports.html" %}
+        <div class="large-11 columns">
+          <h5 class="profile-heading">Monthly Reports</h5>
+          {% include "monthly_reports_fd4.html" %}
         </div>
       </div>
     {% endif %}
     {% if future_events or past_events %}
       <!-- If Rep has events (future or past) -->
       <div class="row">
-        <div class="one columns pictogram">
+        <div class="large-1 columns pictogram">
           S
         </div>
-        <div class="eleven columns">
+        <div class="large-11 columns">
           <!-- If Rep has future events -->
           {% if future_events %}
-            <h5 class="profile-item">Upcoming Events</h5>
+            <h5 class="profile-heading">Upcoming Events</h5>
             <table class="profile-events-table">
               <thead>
                 <tr>
@@ -138,7 +129,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 
           <!-- If Rep has past events -->
           {% if past_events %}
-            <h5 class="profile-item">Past Events</h5>
+            <h5 class="profile-heading">Past Events</h5>
             <table class="profile-events-table">
               <thead>
                 <tr>
@@ -169,16 +160,16 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
     {% endif %}
   </div>
 
-  <div class="six columns">
+  <div class="large-6 columns">
     <!-- The following div.row should be displayed if usergroups OR featuredrep -->
     {% if usergroups or featured_rep.count() %}
-      <div class="row">
-        <div class="one columns pictogram">
+      <div class="row profile-detail-list">
+        <div class="large-1 columns pictogram">
           )
         </div>
-        <div class="eleven columns">
+        <div class="large-11 columns">
           {% if usergroups %}
-            <h6 class="profile-item">
+            <h6 class="profile-heading">
               {% if usergroups.count() %}
                 {{ pageuser.first_name }} is a
                 {% for group in usergroups %}
@@ -199,7 +190,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           {% endif %}
           {% if featured_rep.count() %}
             <!-- Display the following(s) if featured Rep -->
-            <h6 class="profile-item">
+            <h6 class="profile-heading">
               Featured Rep for
               {% for featured in featured_rep %}
                 <a href="#" 
@@ -218,13 +209,13 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         </div>
       </div>
     {% endif %}
-    <div class="row">
-      <div class="one columns pictogram">
+    <div class="row profile-detail-list">
+      <div class="large-1 columns pictogram">
         p
       </div>
-      <div class="eleven columns">
+      <div class="large-11 columns">
         <p class="profile-item">
-          <span class="white radius label">
+          <span class="label radius">
             Location
           </span>
           &nbsp;
@@ -242,7 +233,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         </p>
         {% if user_profile.gender is not none %}
           <p class="profile-item">
-            <span class="white radius label">
+            <span class="label radius">
               Gender
             </span>
             &nbsp;{{ user_profile.get_gender_display() }}
@@ -250,40 +241,40 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         {% endif %}
       </div>
     </div>
-    <div class="row">
-      <div class="one columns pictogram">
+    <div class="row profile-detail-list">
+      <div class="large-1 columns pictogram">
         @
       </div>
-      <div class="eleven columns">
+      <div class="large-11 columns">
         <p class="profile-item">
-          <span class="white radius label">
+          <span class="label radius">
             Personal Mail
           </span>
           &nbsp;{% if user.is_authenticated() %} {{ user_profile.private_email }}
           {% else %} {{ user_profile.private_email|mailhide }} {% endif %}
         </p>
         <p class="profile-item">
-          <span class="white radius label">
+          <span class="label radius">
             Bugzilla Mail
           </span>
           &nbsp;{% if user.is_authenticated() %} {{ pageuser.email }}
           {% else %} {{ pageuser.email|mailhide }} {% endif %}
         </p>
         <p class="profile-item">
-          <span class="white radius label">
+          <span class="label radius">
             Mozillians Profile
           </span>
           &nbsp;{{ user_profile.mozillians_profile_url|urlize(50) }}
         </p>
         <p class="profile-item">
-          <span class="white radius label">
+          <span class="label radius">
             Wiki Profile
           </span>
           &nbsp;{{ user_profile.wiki_profile_url|urlize(50) }}
         </p>
         {% if mentor %}
           <p class="profile-item">
-            <span class="white radius label">
+            <span class="label radius">
               Mentor
             </span>
             &nbsp;
@@ -294,16 +285,16 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         {% endif %}
       </div>
     </div>
-    <div class="row">
+    <div class="row profile-detail-list">
       {% if user_profile.twitter_account or user_profile.facebook_url or
             user_profile.diaspora_url or user_profile.linkedin_url %}
-        <div class="one columns pictogram">
+        <div class="large-1 columns pictogram">
           T
         </div>
-        <div class="eleven columns">
+        <div class="large-11 columns">
         {% if user_profile.twitter_account %}
           <p class="profile-item">
-            <span class="white radius label">
+            <span class="label radius">
               Twitter handle
             </span>
             &nbsp;
@@ -314,7 +305,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         {% endif %}
         {% if user_profile.facebook_url %}
           <p class="profile-item">
-            <span class="white radius label">
+            <span class="label radius">
               Facebook profile
             </span>
             &nbsp;{{ user_profile.facebook_url|urlize(50) }}
@@ -322,7 +313,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         {% endif %}
         {% if user_profile.diaspora_url %}
           <p class="profile-item">
-            <span class="white radius label">
+            <span class="label radius">
               Diaspora profile
             </span>
             &nbsp;{{ user_profile.diaspora_url|urlize(50) }}
@@ -330,7 +321,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         {% endif %}
         {% if user_profile.linkedin_url %}
           <p class="profile-item">
-            <span class="white radius label">
+            <span class="label radius">
               LinkedIn profile
             </span>
             &nbsp;{{ user_profile.linkedin_url|urlize(50) }}
@@ -339,28 +330,28 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         </div>
       {% endif %}
     </div>
-    <div class="row">
-      <div class="one columns pictogram">
+    <div class="row profile-detail-list">
+      <div class="large-1 columns pictogram">
         b
       </div>
-      <div class="eleven columns">
+      <div class="large-11 columns">
         {% if user_profile.jabber_id %}
           <p class="profile-item">
-            <span class="white radius label">
+            <span class="label radius">
               Jabber ID
             </span>
             &nbsp;{{ user_profile.jabber_id }}
           </p>
         {% endif %}
         <p class="profile-item">
-          <span class="white radius label">
+          <span class="label radius">
             IRC nickname
           </span>
           &nbsp;{{ user_profile.irc_name }}
         </p>
         {% if user_profile.irc_channels %}
           <p class="profile-item">
-            <span class="white radius label">
+            <span class="label radius">
               IRC channels
             </span>
             &nbsp;{{ user_profile.irc_channels }}
@@ -368,15 +359,15 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         {% endif %}
       </div>
     </div>
-    <div class="row">
+    <div class="row profile-detail-list">
       {% if user_profile.personal_website_url or user_profile.personal_blog_feed %}
-        <div class="one columns pictogram">
+        <div class="large-1 columns pictogram">
           w
         </div>
-        <div class="eleven columns">
+        <div class="large-11 columns">
           {% if user_profile.personal_website_url %}
             <p class="profile-item">
-              <span class="white radius label">
+              <span class="label radius">
                 Personal Site
               </span>
               &nbsp;{{ user_profile.personal_website_url|urlize(50) }}
@@ -384,7 +375,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           {% endif %}
           {% if user_profile.personal_blog_feed %}
             <p class="profile-item">
-              <span class="white radius label">
+              <span class="label radius">
                 Feed for Reps Planet
               </span>
               &nbsp;{{ user_profile.personal_blog_feed|urlize(50) }}
@@ -394,13 +385,13 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
       {% endif %}
     </div>
     {% if user_profile.functional_areas.all() %}
-      <div class="row">
-        <div class="one columns pictogram">
+      <div class="row profile-detail-list">
+        <div class="large-1 columns pictogram">
           j
         </div>
-        <div class="eleven columns">
+        <div class="large-11 columns">
           <p class="profile-item">
-            <span class="white radius label">
+            <span class="label radius">
               Interested in
             </span>
             &nbsp;
@@ -414,13 +405,13 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
     {% endif %}
     {% if perms.profiles.can_edit_profiles %}
       {% if added_by %}
-        <div class="row">
-          <div class="one columns pictogram">
+        <div class="row profile-detail-list">
+          <div class="large-1 columns pictogram">
             l
           </div>
-          <div class="eleven columns">
+          <div class="large-11 columns">
             <p class="profile-item">
-              <span class="white radius label">
+              <span class="label radius">
                 Added by
               </span>
               &nbsp;
@@ -434,13 +425,13 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
     {% endif %}
     {% if user.is_authenticated() %}
       {% if user_profile.date_joined_program %}
-        <div class="row">
-          <div class="one columns pictogram">
+        <div class="row profile-detail-list">
+          <div class="large-1 columns pictogram">
             %
           </div>
-          <div class="eleven columns">
+          <div class="large-11 columns">
             <p class="profile-item">
-              <span class="white radius label">
+              <span class="label radius">
                 Date Joined
               </span>
               &nbsp;
@@ -453,10 +444,10 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
   </div>
 </div>
 {% if user == pageuser or perms.profiles.can_edit_profiles %}
-  <div class="row show-on-phones">
-    <div class="twelve columns align-right">
+  <div class="row show-for-small">
+    <div class="large-12 columns align-center">
       <a href="{{ url('profiles_edit', user_profile.display_name) }}"
-         class="small white button nice radius">Edit profile</a>
+         class="small button radius">Edit profile</a>
     </div>
   </div>
 {% endif %}
