@@ -9,11 +9,20 @@ MINIFY_BUNDLES = {
         'common': (
             'css/remo/foundation.css',
             ),
+        'common-fd4': (
+            'css/remo/foundation-4.css',
+            ),
         'common_ie': (
             'css/remo/ie.css',
             ),
+        'common_ie_fd4': (
+            'css/remo/ie-fd4.css',
+            ),
         'remo': (
             'css/remo/app.less',
+            ),
+        'remo-fd4': (
+            'css/remo/app-fd4.less',
             ),
         'leaflet': (
             'leaflet/leaflet.css',
@@ -39,6 +48,19 @@ MINIFY_BUNDLES = {
              # Our app.js is always last to override stuff
             'js/remo/app.js',
             ),
+        'common-dbg-fd4': (
+            'js/libs/jquery-1.7.1.js',
+            'js/libs/modernizr.foundation.js',
+            'js/libs/foundation-4.min.js',
+            'js/libs/jquery.imageready.min.js',
+            'static/browserid/browserid.js',
+            'js/libs/jquery.prettydate.js',
+            'js/libs/placeholder.min.js',
+            'js/remo/remolib.js',
+            'js/remo/init.js',
+             # Our app.js is always last to override stuff
+            'js/remo/app.js',
+            ),
         'common': (
             'js/libs/jquery.min.js',
             'js/libs/modernizr.foundation.js',
@@ -46,6 +68,19 @@ MINIFY_BUNDLES = {
             'static/browserid/browserid.js',
             'js/libs/jquery.prettydate.js',
             'js/remo/remolib.js',
+             # Our app.js is always last to override stuff
+            'js/remo/app.js',
+            ),
+        'common-fd4': (
+            'js/libs/jquery.min.js',
+            'js/libs/modernizr.foundation.js',
+            'js/libs/foundation-4.min.js',
+            'js/libs/jquery.imageready.min.js',
+            'static/browserid/browserid.js',
+            'js/libs/jquery.prettydate.js',
+            'js/libs/placeholder.min.js',
+            'js/remo/remolib.js',
+            'js/remo/init.js',
              # Our app.js is always last to override stuff
             'js/remo/app.js',
             ),
@@ -62,6 +97,7 @@ MINIFY_BUNDLES = {
             'js/remo/map_modal.js',
             ),
         'base_main': (
+            'js/remo/orbit.js',
             'js/libs/FeedEk.js',
             'js/remo/planet.js'
             ),

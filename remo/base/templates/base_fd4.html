@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]>
+  <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en">
+<![endif]-->
+
+<!--[if IE 7]>
+  <html class="no-js lt-ie9 lt-ie8" lang="en">
+<![endif]-->
+
+<!--[if IE 8]>
+  <html class="no-js lt-ie9" lang="en">
+<![endif]-->
+
+<!--[if gt IE 8]>
+<!-->
+  <html lang="en">
+<!--<![endif]-->
+
+<head>
+  <meta charset="utf-8" />
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+  <title>
+    {% block pagetitle %}Mozilla Reps{% endblock%}
+  </title>
+  <link rel="shortcut icon" href="{{ MEDIA_URL }}img/remo/shortcut.ico" />
+  <!-- Included CSS Files -->
+  <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet" />
+  {{ css('common-fd4') }}
+  <!--[if lt IE 9]>
+      {{ css('common_ie_fd4') }}
+  <![endif]-->
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+      {{ js('common_ie') }}
+  <![endif]-->
+
+  <!-- Bing ownership verification -->
+  <meta name="msvalidate.01" content="B7B177115A634927D608514DA17B2574" />
+
+  {% block headextra %} {% endblock %}
+  <!-- our css is always last to override stuff -->
+  {% if get_development_environment() %}
+    <link href="/media/css/remo/app-fd4.less" rel="stylesheet/less">
+    {{ js('less') }}
+  {% else %}
+    {{ css('remo-fd4') }}
+  {% endif %}
+  {% include "includes/google_analytics.html" %}
+</head>
+
+<body>
+
+  <!-- Wrapper for background -->
+  <div id="wrapper">
+
+    <!-- container -->
+    <div class="container">
+
+      <!-- Header -->
+      <header class="row">
+        <div class="large-12 columns">
+
+          <!-- Sign In & Mozilla Tab -->
+
+            <!-- Mozilla Tab -->
+            <div class="large-2 small-2 columns" id="global-header-tab">
+              <a href="http://www.mozilla.org/" id="tabzilla">mozilla</a>
+            </div>
+
+            <!-- Sign In & Sign Out -->
+            <div class="large-10 small-10 columns" id="login-box">
+              <div class="account anonymous nomenu logout">
+                {% if not user.is_authenticated() %}
+                  <a id="browserid" href="#">Sign In</a>
+                   or
+                  <a href="#" data-reveal-id="join-modal">Join</a>
+                  <form method="POST" action="{{ url('mozilla_browserid_verify') }}">
+                    {{ csrf() }} {{ browserid_form.as_p() }}
+                    <input type="hidden" name="next"
+                           value="{{ get_next_url(request) }}" />
+                  </form>
+                {% else %}
+                  <div class="hide-for-small">
+                    {% if user_is_rep(user) %}
+                      <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
+                        {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                      </a>
+                    {% else %}
+                      {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                    {% endif %}
+                    [<a href="{{ url('edit_settings') }}">Settings</a>]
+                    [<a href="{{ url('logout') }}">Sign out</a>]
+                  </div>
+                  <div class="show-for-small">
+                    {% if user_is_rep(user) %}
+                      <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
+                        {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                      </a>
+                    {% else %}
+                      {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                    {% endif %}
+                    <div>
+                      <a href="{{ url('edit_settings') }}">Settings </a>|
+                      <a href="{{ url('logout') }}"> Sign out</a>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+          </div>
+
+          <!-- Logo & Navigation -->
+          <div class="logo-nav">
+
+            <!-- Logo and Wordmark -->
+            <div class="large-3 columns" id="logo-box">
+              <div class="row hide-for-small">
+                <a href="{{ url('main') }}">
+                  <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
+                       alt="Mozilla Reps logo">
+                  <h3><span class="metabold">mozilla</span> reps</h3>
+                </a>
+              </div>
+              <!-- Mobile Logo -->
+              <div class="row show-for-small">
+                <a href="{{ url('main') }}">
+                  <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
+                       alt="Mozilla Reps logo">
+                  <h3><span class="metabold">mozilla</span> reps</h3>
+                </a>
+              </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav role="navigation" class="large-9 columns hide-for-small" id="navigation-box">
+              <ul class="button-group">
+                <li>
+                  {% if user.is_authenticated() %}
+                    <a href="{{ url('dashboard') }}"
+                       class="main {{ active(request, '^/dashboard') }}">Dashboard</a>
+                  {% else %}
+                    <a href="{{ url('main') }}"
+                       class="main {{ active(request, '^/$') }}">Main</a>
+                  {% endif %}
+                </li>
+                <li>
+                  <a href="{{ url('profiles_list_profiles') }}"
+                     class="main {{ active(request, '^/people/') }}">People</a>
+                </li>
+                <li>
+                  <a href="{{ url('events_list_events') }}"
+                     class="main {{ active(request, '^/events/') }}">Events</a>
+                </li>
+                <li>
+                  <a href="http://planet.mozillareps.org" class="main">Planet</a>
+                </li>
+                <li>
+                  <a href="https://wiki.mozilla.org/ReMo" class="main">Wiki</a>
+                </li>
+                <li>
+                  <a href="{{ url('labs') }}"
+                     class="main {{ active(request, '^/labs/$') }}">Labs</a>
+                </li>
+                <li class="last">
+                  <a href="{{ url('faq') }}"
+                     class="main {{ active(request, '^/faq/$') }}">FAQ</a>
+                </li>
+              </ul>
+            </nav>
+
+            <!-- Mobile Navigation -->
+            <nav role="navigation" class="small-12 show-for-small" id="navigation-box-mobile">
+              <ul class="button-group">
+                <li>
+                  {% if user.is_authenticated() %}
+                    <a href="{{ url('dashboard') }}"
+                       class="main {{ active(request, '^/dashboard') }}">Dashboard</a>
+                  {% else %}
+                    <a href="{{ url('main') }}"
+                       class="main {{ active(request, '^/$') }}">Main</a>
+                  {% endif %}
+                </li>
+                <li>
+                  <a href="{{ url('profiles_list_profiles') }}"
+                     class="main {{ active(request, '^/people/') }}">People</a>
+                </li>
+                <li class="last">
+                  <a href="{{ url('events_list_events') }}" class="main">Events</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      <!-- Separator -->
+      <div class="row">
+        <hr>
+      </div>
+
+      <!-- Page Content -->
+      {% if messages %}
+        <div class="row">
+          {% for message in messages %}
+            <div class="alert-box {{ message.tags }}">
+              {{ message|safe }}
+              <a href="#" class="close">&times;</a>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}
+      {% endblock %}
+
+      <div class="end-row"></div>
+    </div> <!-- End of container -->
+  </div> <!-- End of background wrapper -->
+
+  <!-- Footer -->
+  {% block site_footer %}
+    {% include "includes/footer_fd4.html" %}
+  {% endblock %}
+
+  <!-- Join modal start -->
+  <div id="join-modal" class="reveal-modal">
+    <p class="lead">So, you wanna join us?</p>
+    <h2>Cool!</h2>
+    <p>
+      The Mozilla Reps program is open to all Mozillians who are 18 years
+      of age and above. Before you become a Mozilla Rep, you must
+      complete a short but rigorous application process in order to
+      demonstrate your interest in and motivation for joining the
+      program. Are you ready to take on the challenges and rewards
+      of advancing your leadership to the next level in Mozilla? If
+      your answer is YES, apply to become a Mozilla Rep today!
+    </p>
+    <p>
+      Not sure if you're ready for Mozilla Reps? There are many
+      other ways to take the lead in the Mozilla Community. If
+      you're a student, register for
+      the <a href="http://studentreps.mozilla.org">Student Reps
+      program</a> to gain experience leading projects at your
+      school. And all of our contributor opportunities are available
+      to you on the <a href="https://mozilla.org/contribute">Get
+      Involved homepage</a>.
+    </p>
+    <p>
+      The Mozilla Reps application process involves three simple
+      steps:
+    </p>
+    <ul>
+      <li>
+        <h4>Step 1</h4>
+        <p>Fill out and submit the
+        <a href="https://bugzilla.mozilla.org/form.reps.mentorship">
+          Mozilla Reps application form</a>.
+        A Mozilla Rep mentor will be in touch within 24 hours.</p>
+      </li>
+      <li>
+        <h4>Step 2</h4>
+        <p>If your application is approved, you'll be invited to be
+        interviewed by a member of the advisory council over IRC or
+        IM that same week. The interview lasts about 15 minutes and
+        you will be asked some simple questions about yourself, your
+        experience contributing to the Mozilla project and, of
+        course, your motivation for becoming a MozRep.</p>
+      </li>
+      <li>
+        <h4>Step 3</h4>
+        <p>
+          If you're accepted into the Mozilla Reps program, your
+          mentor will get you started and familiar with the tools at
+          your disposal to start organizing events, requesting
+          budgets, swag, etc. And just like that, you could become a
+          Mozilla Rep!
+        </p>
+      </li>
+    </ul>
+    <p>Thanks for your interest in making the Web better with Mozilla!</p>
+    <a class="close-reveal-modal">&#215;</a>
+  </div>
+  <!-- Join modal end -->
+
+  <!-- Included JS Files -->
+  <script src="https://browserid.org/include.js" type="text/javascript"></script>
+  {% if get_development_environment() %}
+    {{ js('common-dbg-fd4') }}
+  {% else %}
+    {{ js('common-fd4') }}
+  {% endif %}
+  <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
+  {% block bottomextra %} {% endblock %}
+</body>
+
+</html>

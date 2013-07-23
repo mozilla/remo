@@ -1,0 +1,606 @@
+/* --------------------
+    Imports
+-------------------- */
+
+@import "fonts.less";
+
+@breakDesktop: 767px;
+
+/* --------------------
+    Tabzilla
+-------------------- */
+
+/* Tabzilla still must use content-box model to preserve layout */
+#tabzilla-panel *,
+#tabzilla-panel *:before,
+#tabzilla-panel *:after {
+   -moz-box-sizing: content-box;
+   -webkit-box-sizing: content-box;
+   box-sizing: content-box;
+}
+
+/* --------------------
+    Generic Mixins
+-------------------- */
+
+.top-margined {
+    margin-top: 20px;
+}
+
+.align-right {
+    text-align:right;
+}
+
+.align-center {
+    text-align:center;
+}
+
+.grayed {
+    color: #888;
+}
+
+.pictogram {
+    margin-top: .5em;
+    padding: 0;
+    text-align:center;
+    font-family: "ModernPictogramsNormal";
+    font-size: 30px;
+    color: #aaa;
+    cursor: default;
+}
+
+.opensans {
+    font-family: 'Open Sans';
+}
+
+.opensanslight {
+    font-family: 'Open Sans Light';
+}
+
+.metabold {
+    font-family: 'MetaBold';
+}
+
+/* -----------------------------------------
+   Shared Styles
+----------------------------------------- */
+
+html {
+    border-top: 2px solid white;
+}
+
+body {
+    font-size: 16.17px;
+    color: rgb(51, 51, 51);
+    .opensans;
+}
+
+#wrapper {
+    background: rgb(249, 249, 249) url('/media/img/remo/mozorg-gradient.png') repeat-x top center;
+}
+
+hr {
+    margin: 5px 0.9375em 18px 0.9375em;
+}
+
+p {
+    .opensanslight;
+    line-height: 1.5em;
+}
+
+a {
+    color: rgb(41, 131, 200);
+}
+
+a:link, a:visited{
+    text-decoration:none;
+    -moz-transition:color .3s ease-in;
+    -webkit-transition:color .3s ease-in;
+    transition:color .3s ease-in;
+}
+
+a:hover, a:active{
+    -moz-transition:color .3s ease-out;
+    -webkit-transition:color .3s ease-out;
+    transition:color .3s ease-out;
+    color: rgb(32, 103, 158);
+}
+
+h1, h2, h3, h4, h5, h6, .huge, .large {
+    font-family: 'Open Sans Light',sans-serif;
+    display: block;
+    font-weight: 300;
+    margin: 0px 0px 12px;
+    line-height: 100%;
+    text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.75);
+    color: rgb(72, 72, 72);
+}
+
+.huge, .huge h1 {
+    font-size: 108px;
+    letter-spacing: -4px;
+    line-height: 100%;
+}
+
+.large, .large h1 {
+    font-size: 72px;
+    letter-spacing: -3px;
+    line-height: 100%;
+}
+
+h1, .huge h2, .large h2, .billboard h2 {
+    font-size: 48px;
+    letter-spacing: -2px;
+}
+
+h2 {
+    font-size: 32px;
+    letter-spacing: -1px;
+}
+
+h3 {
+    font-size: 28px;
+    letter-spacing: -0.5px;
+}
+
+h4 {
+    font-size: 24px;
+    letter-spacing: -0.25px;
+}
+
+h5 {
+    font-size: 19px;
+    letter-spacing: -0.25px;
+}
+
+h6 {
+    font-size: 16px;
+    letter-spacing: -0.25px;
+}
+
+.required-field {
+    .grayed;
+    font-family: 'ModernPictogramsNormal';
+    font-size: 12px;
+    float: right;
+    margin-bottom: -40px;
+    position: relative;
+    top: -40px;
+}
+
+.required-field:before {
+    content: '\*';
+}
+
+.has-tip {
+    border-bottom: none;
+    font-weight: normal;
+    cursor: auto;
+    &:hover {
+        color:inherit;
+        border-bottom: none;
+    }
+}
+
+::-webkit-input-placeholder {
+    .grayed;
+}
+:-moz-placeholder {
+    .grayed;
+}
+
+.end-row {
+    padding-bottom: 80px;
+}
+
+textarea {
+    font-family: "Helvetica Neue", "HelveticaNeue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+/* Setting tabzilla z-index to 30 so it is displayed below modals */
+#tabzilla {
+    z-index: 30;
+}
+
+.markdown {
+    p {
+        font-size: 13px;
+        margin: 0 auto;
+    }
+    h1, h2, h3, h4 {
+        margin-top: 15px;
+    }
+    h1 {
+        font-size: 28px;
+    }
+    h2 {
+        font-size: 24px;
+    }
+    h3 {
+        font-size: 22px;
+    }
+    h4 {
+        font-size: 20px;
+    }
+    ol, ul {
+        margin-left: 24px;
+    }
+    ol, ul, li {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+    ul > li {
+        list-style: disc;
+        &> ul > li {
+            list-style: circle;
+        }
+    }
+    ol > li {
+        list-style: decimal;
+        &> ol > li {
+            list-style: lower-roman;
+        }
+    }
+}
+
+.button {
+    .opensans;
+}
+
+.button.small {
+    font-size: 11px;
+    padding: 8px 20px 10px;
+    background-color: #e9e9e9; color: #333;
+    border: 1px solid rgb(202, 202, 202);
+    -webkit-transition: background-color .15s ease-in-out;
+    -moz-transition: background-color .15s ease-in-out;
+    -o-transition: background-color .15s ease-in-out;
+}
+
+.button.small:hover, .button.small:focus {
+    background-color: #dadada; 
+    color: #333;
+}
+
+/* -----------------------------------------
+   Header Styles
+----------------------------------------- */
+
+#global-header-tab {
+    float: right;
+    padding: 0;
+}
+
+#login-box {
+    float: right;
+    padding: 0;
+    font-size: 12px;
+    text-align: right;
+    height: 36px;
+    line-height: 18px;
+    margin: 10px 0 0 0;
+    padding: 0 7px 0 0;
+}
+
+@media only screen and (max-width: @breakDesktop) {
+    #login-box {
+        height: 51px;
+        margin-top: 3px;
+        text-align:left;
+    }
+}
+
+.logo-nav {
+    clear: right;
+    padding-top: 10px;
+}
+
+#logo-box {
+    h3 {
+        font-family: 'MetaNormal';
+        margin-top: 5px;
+    }
+}
+
+#logo-box img {
+    max-width: 100%;
+    height: 46px;
+    float: left;
+    padding: 3px 6px 3px 3px;
+}
+
+#logo-box img:hover {
+    animation-name: bounce-flip;
+    animation-duration: 1s;
+    transform-origin:50% 50%;
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
+}
+
+#navigation-box ul {
+    float: right;
+    font-family: 'Open Sans Light';
+    overflow: hidden;
+
+    li {
+        float: left;
+        display: block;
+        position: relative;
+        padding: 0;
+        margin: 0;
+        border-right: 1px solid rgb(221, 221, 221);
+        line-height: 45px;
+
+        a {
+            font-size: 15px;
+            padding: 0 20px;
+            display: block;
+            text-decoration: none;
+        }
+
+        &.last {
+            border-right:none;
+            a {
+                padding: 0 0 0 20px;
+            }
+        }
+    }
+}
+
+#navigation-box-mobile ul {
+    float: none;
+    margin: 10px 0 0 0;
+    font-size: 15px;
+    li {
+        float: none;
+        border-bottom: 1px solid rgb(221, 221, 221);
+        line-height: 45px;
+        a {
+            padding: 0 20px;
+        }
+        &.last {
+            border-bottom: none;
+        }
+    }
+}
+
+@media only screen and (max-width: @breakDesktop) {
+    #logo-box {
+        text-align: center;
+    }
+}
+
+.active-nav {
+    .opensans;
+}
+
+/* Easter Egg */
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    30% { transform: scale(1); }
+    40% { transform: scale(1.2); }
+    50% { transform: scale(1); }
+    60% { transform: scale(1); }
+    70% { transform: scale(1.1); }
+    80% { transform: scale(1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes bounce-flip {
+    0% {
+        transform: scale(1);
+        transform: rotateY(0deg);
+    }
+    30% { transform: scale(1.1); }
+    50% {
+        transform: scale(1.2);
+        transform: rotateY(180deg);
+    }
+    70% { transform: scale(1.1); }
+    100% {
+        transform: scale(1);
+        transform: rotateY(0deg);
+    }
+}
+
+/* -----------------------------------------
+   View Profile Styles
+----------------------------------------- */
+
+.profile-image {
+    margin-top: 20px;
+}
+
+.profile-heading {
+    margin-top: 20px;
+}
+
+.profile-item {
+    .top-margined;
+    font-size: 13px;
+    .label {
+        font-size: 11px;
+        background-color: #ccc;
+        color: #444;
+        .opensans;
+        font-weight: normal;
+    }
+}
+
+.smallmap-profile-container {
+    margin-top: 20px;
+}
+
+.profile-user-details {
+    h1 {
+        margin-top: 1em;
+        font-size: 24px;
+        letter-spacing: -0.25px;
+    }
+    h2 {
+        margin-top: 1em;
+        font-size: 19px;
+        letter-spacing: -0.25px;
+    }
+}
+
+@media only screen and (max-width: @breakDesktop) {
+    .smallmap-profile-container,
+    .profile-user-details,
+    .profile-detail-list,
+    .profile-image {
+        text-align: center;
+    }
+}
+
+.profile-events-table {
+    width: 100%;
+    th, td {
+        line-height: 1.5em;
+        font-size: 12px;
+    }
+}
+
+/* -----------------------------------------
+   Footer Styles
+----------------------------------------- */
+
+#colophon {
+    color: #bbb;
+    padding: 48px 0;
+    line-height: 18px;
+    a { color: rgb(103,167,208); }
+    a:link { color: rgb(103,167,208); }
+    a:visited { color: rgb(103,167,208); }
+    a:hover { color: rgb(83,147,188); }
+    a:active { color: rgb(83,147,188); }
+    nav { font-family: 'Open Sans', sans-serif; }
+    p { font-size: 13px; }
+    ul li {
+        font-size: 13px;
+        font-family: 'Open Sans', sans-serif;
+        list-style-type: none;
+        margin: 0 0 2px 0;
+    }
+}
+
+/* -----------------------------------------
+   Error Styles
+----------------------------------------- */
+
+small.error {
+    margin: -20px 0px 20px 4px;
+}
+
+/* -----------------------------------------
+   Pictogram Styles
+----------------------------------------- */
+
+.pictogram-button {
+    .pictogram;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.pictogram-button.active, .pictogram-button:hover {
+    .grayed;
+}
+
+.pictogram-search {
+    .pictogram;
+    margin-top: 20px;
+    float: left;
+    color: #ccc;
+}
+
+@media only screen and (max-width: @breakDesktop) {
+    .pictogram-search {
+        margin-top: 20px;
+    }
+}
+
+/* -----------------------------------------
+   Logo Gray Styles
+----------------------------------------- */
+
+#gray-logo {
+    .top-margined;
+    text-align: center;
+    width: 100px;
+    margin: 0 auto;
+}
+
+#about p {
+    font-size: 16px;
+    line-height: 24px;
+    color: #777;
+    text-align: left;
+    .opensanslight;
+}
+
+/* -----------------------------------------
+   Reports Styles
+----------------------------------------- */
+
+.mreports-container {
+    .label {
+        font-size: 11px;
+        background-color: #ccc;
+        color: #444;
+        .opensans;
+        font-weight: normal;
+    }
+}
+
+ul.mreports {
+    display: block;
+    list-style-type: none;
+    background: #f4f4f4;
+    padding: 10px 10px;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    border-radius: 2px;
+    overflow: hidden;
+    li {
+        margin: 0;
+        padding: 0 4px 0 0;
+        float: left;
+    }
+}
+
+ul.mreports li a, ul.mreports li span {
+    text-transform: uppercase;
+    font-size: 11px;
+    padding-left: 4px;
+}
+
+ul.mreports li:first-child a, ul.mreports li:first-child span {
+    padding-left: 0;
+}
+
+ul.mreports li:before {
+    content: "/";
+    color: #aaa;
+}
+
+ul.mreports li:first-child:before {
+    content: "";
+}
+
+ul.mreports li.exists:hover a, ul.mreports li.exists a:focus {
+    text-decoration: none;
+}
+
+ul.mreports li.unavailable a {
+    color: #999;
+}
+
+ul.mreports li.unavailable:hover a, ul.pagination li.unavailable a:focus {
+    text-decoration: none;
+    color: #999;
+    cursor: default;
+}
+
+ul.mreports li.editable a {
+    color: #dd4433;
+}
