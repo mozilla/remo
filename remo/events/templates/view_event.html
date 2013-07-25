@@ -519,28 +519,30 @@ Mozilla Reps - {{ event.name }}
   {% endif %}
 </div>
 
-<!-- Mail attendees Reveal Modal -->
-<div id="mail-modal" class="reveal-modal">
-  <a class="close-reveal-modal">&#215;</a>
-  <p class="lead">Mail event attendees</p>
-  <h4>Mail attendees:</h4>
-  <form id="email-attendees-form" method="post"
-        action="{{ url('email_attendees', slug=event.slug) }}" class="custom">
-    {{ csrf() }}
-    {% for field in email_attendees_form %}
-      {{ field }} {{ field.label }}
-      <br>
-    {% endfor %}
-    <div class="row">
-      <div id="send-mail" class="twelve columns align-right">
-        <button type="submit" class="medium blue button nice radius">
-          Send email
-        </button>
+{% if request.user.is_authenticated() %}
+  <!-- Mail attendees Reveal Modal -->
+  <div id="mail-modal" class="reveal-modal">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">Mail event attendees</p>
+    <h4>Mail attendees:</h4>
+    <form id="email-attendees-form" method="post"
+          action="{{ url('email_attendees', slug=event.slug) }}" class="custom">
+      {{ csrf() }}
+      {% for field in email_attendees_form %}
+        {{ field }} {{ field.label }}
+        <br>
+      {% endfor %}
+      <div class="row">
+        <div id="send-mail" class="twelve columns align-right">
+          <button type="submit" class="medium blue button nice radius">
+            Send email
+          </button>
+        </div>
       </div>
-    </div>
-  </form>
-</div>
-<!-- Mail attendees Reveal Modal End -->
+    </form>
+  </div>
+  <!-- Mail attendees Reveal Modal End -->
+{% endif %}
 
 {% endblock %}
 
