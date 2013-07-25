@@ -1,507 +1,565 @@
-{% extends "base.html" %}
+{% extends "base_fd4.html" %}
 {% block pagetitle %}Mozilla Reps - Edit Profile{% endblock %}
 
 {% block content %}
-<form class="custom" method="post"
-      action="{{ url('profiles_edit', pageuser.userprofile.display_name) }}">
-  {{ csrf() }}
-  <div class="row">
-    <div class="eight columns">
-      <!-- Title -->
-      <h4>
-        Editing profile of user {{ pageuser.userprofile.display_name }}
-        {% if pageuser == request.user %}
-          <small class="grayed">
-            (that's you!)
-          </small>
+<main role="main" class="profile-edit-main">
+  <form style="custom" method="post" action="{{ url('profiles_edit', pageuser.userprofile.display_name) }}">
+    {{ csrf() }}
+    <div class="row">
+      <div class="large-8 columns">
+        <!-- Title -->
+        <h4>
+          Editing profile of user {{ pageuser.userprofile.display_name }}
+          {% if pageuser == request.user %}
+            <small class="grayed">
+              (that's you!)
+            </small>
+          {% endif %}
+        </h4>
+      </div>
+      <!-- Deleting and Saving -->
+      <div class="large-4 columns hide-for-small align-right">
+        {% if perms.profiles.can_delete_profiles %}
+          <button class="button small alert"
+             data-reveal-id="delete-profile">Delete profile</button>
         {% endif %}
-      </h4>
-    </div>
-    <!-- Deleting and Saving -->
-    <div class="four columns hide-on-phones align-right">
-      {% if perms.profiles.can_delete_profiles %}
-        <a href="#" class="small red button nice radius"
-           data-reveal-id="delete-profile">Delete profile</a>
-      {% endif %}
-      <button type="submit" class="small green button nice radius">
-        Save profile
-      </button>
-    </div>
-  </div>
-  <!-- Two column block -->
-  <div class="row">
-    <div class="six columns">
-      <div class="row">
-        <div class="one columns pictogram">
-          J
-        </div>
-        <div class="eleven columns">
-          <input type="text" placeholder="Username" name="display_name"
-                 value="{{ profileform.display_name.value() }}"
-                 class="input-text big has-tip tip-left"
-                 title="Username">
-          <div class="required-field"></div>
-          {% if profileform.display_name.errors %}
-            <small class="error">
-              {{ profileform.display_name.errors }}
-            </small>
-          {% endif %}
-          <p class="more-info">changing your username will result in
-          changing your profile URL</p>
-          <input type="text" placeholder="Last name" name="last_name"
-                 value="{{ userform.last_name.value() }}"
-                 class="input-text big has-tip tip-left"
-                 title="Last name">
-          <div class="required-field"></div>
-          {% if userform.last_name.errors %}
-            <small class="error">
-              {{ userform.last_name.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="First name" name="first_name"
-                 value="{{ userform.first_name.value() }}"
-                 class="input-text big has-tip tip-left"
-                 title="First name">
-          <div class="required-field"></div>
-          {% if userform.first_name.errors %}
-            <small class="error">
-              {{ userform.first_name.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="Name in local language"
-                 name="local_name" value="{{ profileform.local_name.value() }}"
-                 class="input-text big has-tip tip-left"
-                 title="Name in local language">
-          {% if profileform.local_name.errors %}
-            <small class="error">
-              {{ profileform.local_name.errors }}
-            </small>
-          {% endif %}
-          <div class="has-tip tip-left" title="Gender">
-            {{ profileform.gender }}
-          </div>
-          {% if profileform.gender.errors %}
-            <small class="error">
-              {{ profileform.gender.errors }}
-            </small>
-          {% endif %}
-        </div>
+        <button type="submit" class="button small confirm">
+          Save profile
+        </button>
       </div>
     </div>
-    <div class="six columns">
-      <div class="row">
-        <div class="one columns pictogram">
-          A
-        </div>
-        <div class="eleven columns profile-image">
-          <a href="https://libravatar.org" target="_blank">
-            <img id="profiles-edit-avatar" src="{{ pageuser|get_avatar_url(128) }}">
-          </a>
-          <br>
-          <span class="profile-image">
-            Step 1: Create an account on
-            <a href="https://libravatar.org" target="_blank">libravatar.org</a>.
-            <br>
-            Step 2: Once logged in, upload a photo and associate it to your bugzilla email.
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="six columns">
-      <div class="row">
-        <div class="one columns pictogram">
-          @
-        </div>
-        <div class="eleven columns">
-          <input type="text" placeholder="Personal email"
-                 value="{{ profileform.private_email.value() }}"
-                 name="private_email"
-                 class="input-text big has-tip tip-left"
-                 title="Private email">
-          <div class="required-field"></div>
-          {% if profileform.private_email.errors %}
-            <small class="error">
-              {{ profileform.private_email.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="Bugzilla email"
-                 value="{{ userform.email.value() }}"
-                 name="email"
-                 class="input-text big has-tip tip-left"
-                 title="Bugzilla email">
-          <div class="required-field"></div>
-          {% if userform.email.errors %}
-            <small class="error">
-              {{ userform.email.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="Mozillians.org profile"
-                 value="{{ profileform.mozillians_profile_url.value() }}"
-                 name="mozillians_profile_url"
-                 class="input-text big has-tip tip-left"
-                 title="Mozillians.org profile">
-          <div class="required-field"></div>
-          {% if profileform.mozillians_profile_url.errors %}
-            <small class="error">
-              {{ profileform.mozillians_profile_url.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="Wiki profile"
-                 value="{{ profileform.wiki_profile_url.value() }}"
-                 name="wiki_profile_url"
-                 class="input-text big has-tip tip-left"
-                 title="Wiki profile">
-          <div class="required-field"></div>
-          {% if profileform.wiki_profile_url.errors %}
-            <small class="error">
-              {{ profileform.wiki_profile_url.errors }}
-            </small>
-          {% endif %}
-          <div class="has-tip tip-left" title="Mentor">
-            {{ profileform.mentor }}
-          </div>
-          <div class="required-field"></div>
-          {% if profileform.mentor.errors %}
-            <small class="error">
-              {{ profileform.mentor.errors }}
-            </small>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    <div class="six columns">
-      <div class="row">
-        <div class="one columns pictogram">
-          p
-        </div>
-        <div class="eleven columns">
-          <input type="text" placeholder="City" value="{{ profileform.city.value() }}"
-                 name="city"
-                 class="input-text big has-tip tip-right"
-                 title="City">
-          <div class="required-field"></div>
-          {% if profileform.city.errors %}
-            <small class="error">
-              {{ profileform.city.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="State or Region"
-                 value="{{ profileform.region.value() }}"
-                 name="region"
-                 class="input-text big has-tip tip-right"
-                 title="Region">
-          <div class="required-field"></div>
-          {% if profileform.region.errors %}
-            <small class="error">
-              {{ profileform.region.errors }}
-            </small>
-          {% endif %}
-          <div class="has-tip tip-right" title="Country">
-            {{ profileform.country }}
-          </div>
-          {% if profileform.country.errors %}
-            <small class="error">
-              {{ profileform.country.errors }}
-            </small>
-          {% endif %}
-          <input type="hidden" id="lat"
-                 value="{{ profileform.lat.value() }}"
-                 name="lat" class="input-text">
-          <input type="hidden" id="lon"
-                 value="{{ profileform.lon.value() }}"
-                 name="lon" class="input-text">
-          <div class="align-right">
-            <a href="#" class="small white button nice radius"
-               data-reveal-id="map-point">Point your marker in map</a>
-            <div class="required-field"></div>
-          </div>
-          {% if profileform.lat.errors or profileform.lon.errors %}
-            <small class="error">
-              Please use the point in map button.
-            </small>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="six columns">
-      <div class="row">
-        <div class="one columns pictogram">
-          T
-        </div>
-        <div class="eleven columns">
-          <input type="text" placeholder="Twitter handle"
-                 value="{{ profileform.twitter_account.value() }}"
-                 name="twitter_account"
-                 class="input-text big has-tip tip-left"
-                 title="Twitter handle">
-          {% if profileform.twitter_account.errors %}
-            <small class="error">
-              {{ profileform.twitter_account.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="Facebook profile"
-                 value="{{ profileform.facebook_url.value() }}"
-                 name="facebook_url"
-                 class="input-text big has-tip tip-left"
-                 title="Facebook profile">
-          {% if profileform.facebook_url.errors %}
-            <small class="error">
-              {{ profileform.facebook_url.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="Diaspora profile"
-                 value="{{ profileform.diaspora_url.value() }}"
-                 name="diaspora_url"
-                 class="input-text big has-tip tip-left"
-                 title="Diaspora profile">
-          {% if profileform.diaspora_url.errors %}
-            <small class="error">
-              {{ profileform.diaspora_url.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="LinkedIn profile"
-                 value="{{ profileform.linkedin_url.value() }}"
-                 name="linkedin_url"
-                 class="input-text big has-tip tip-left"
-                 title="LinkedIn profile">
-          {% if profileform.linkedin_url.errors %}
-            <small class="error">
-              {{ profileform.linkedin_url.errors }}
-            </small>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    <div class="six columns">
-      <div class="row">
-        <div class="one columns pictogram">
-          b
-        </div>
-        <div class="eleven columns">
-          <input type="text" placeholder="Jabber ID"
-                 value="{{ profileform.jabber_id.value() }}"
-                 name="jabber_id"
-                 class="input-text big has-tip tip-right"
-                 title="Jabber ID">
-          {% if profileform.jabber_id.errors %}
-            <small class="error">
-              {{ profileform.jabber_id.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="IRC nickname"
-                 value="{{ profileform.irc_name.value() }}"
-                 name="irc_name"
-                 class="input-text big has-tip tip-right"
-                 title="IRC nickname">
-          <div class="required-field"></div>
-          {% if profileform.irc_name.errors %}
-            <small class="error">
-              {{ profileform.irc_name.errors }}
-            </small>
-          {% endif %}
-          <textarea class="flat has-tip tip-right"
-                    placeholder="Please list the channels you use in IRC"
-                    title="List of IRC channels"
-                    name="irc_channels">{{ profileform.irc_channels.value() }}</textarea>
-          {% if profileform.irc_channels.errors %}
-            <small class="error">
-              {{ profileform.irc_channels.errors }}
-            </small>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="six columns">
-      <div class="row">
-        <div class="one columns pictogram">
-          w
-        </div>
-        <div class="eleven columns">
-          <input type="text" placeholder="Personal site URL"
-                 value="{{ profileform.personal_website_url.value() }}"
-                 name="personal_website_url"
-                 class="input-text big has-tip tip-left"
-                 title="Personal site URL">
-          {% if profileform.personal_website_url.errors %}
-            <small class="error">
-              {{ profileform.personal_website_url.errors }}
-            </small>
-          {% endif %}
-          <input type="text" placeholder="Feed for Reps Planet"
-                 value="{{ profileform.personal_blog_feed.value() }}"
-                 name="personal_blog_feed"
-                 class="input-text big has-tip tip-left"
-                 title="Feed for Reps planet">
-          {% if profileform.personal_blog_feed.errors %}
-            <small class="error">
-              {{ profileform.personal_blog_feed.errors }}
-            </small>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    <div class="six columns">
-      <div class="row">
-        <div class="one columns pictogram">
-          V
-        </div>
-        <div class="eleven columns top-margined">
-          <textarea class="flat has-tip tip-right"
-                    placeholder="Bio - Write us a bit about yourself"
-                    name="bio"
-                    title="Bio">{{ profileform.bio.value() }}</textarea>
-          {% if profileform.bio.errors %}
-            <small class="error">
-              {{ profileform.bio.errors }}
-            </small>
-          {% endif %}
-          <p class="more-info">In this field you can use
-            <a href="http://en.wikipedia.org/wiki/Markdown"
-               target="_blank"> Markdown</a>
-             syntax.</p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="one columns pictogram">
-          j
-        </div>
-        <div class="eleven columns edit-profile-item">
-          <div class="align-right">
-              <a href="#" class="small white button nice radius"
-                 data-reveal-id="interests-modal">Mark your interests</a>
-              {% if profileform.functional_areas.errors %}
-                <small class="error">
-                  Please mark your interests
-                </small>
-              {% endif %}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="six columns">
-    </div>
-    {% if perms.profiles.can_edit_profiles %}
-      <div class="six columns">
+    <!-- Two column block -->
+    <div class="row">
+      <div class="large-6 columns">
         <div class="row">
-          <div class="one columns pictogram">
-            %
+          <div class="large-1 columns">
+            <div class="pict-icon large edit"></div>
           </div>
-          <div class="eleven columns edit-profile-item">
-            Date Rep joined program<br/><br/>
-            {{ datejoinedform.date_joined_program }}
-            {% if datejoinedform.date_joined_program.errors %}
+          <div class="large-11 columns">
+            <input type="text" placeholder="Username" name="display_name"
+                   value="{{ profileform.display_name.value() }}"
+                   class="has-tip tip-left"
+                   title="Username"
+                   aria-required="required"
+                   data-tooltip 
+                   data-options="disable-for-touch:true"
+                   required>
+            <div class="required-field"></div>
+            {% if profileform.display_name.errors %}
               <small class="error">
-                {{ datejoinedform.date_joined_program.errors }}
+                {{ profileform.display_name.errors }}
+              </small>
+            {% endif %}
+            <p class="more-info">changing your username will result in
+            changing your profile URL</p>
+            <input type="text" placeholder="Last name" name="last_name"
+                   value="{{ userform.last_name.value() }}"
+                   class="has-tip tip-left"
+                   title="Last name"
+                   aria-required="required"
+                   data-tooltip
+                   data-options="disable-for-touch:true"
+                   required>
+            <div class="required-field"></div>
+            {% if userform.last_name.errors %}
+              <small class="error">
+                {{ userform.last_name.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="First name" name="first_name"
+                   value="{{ userform.first_name.value() }}"
+                   class="has-tip tip-left"
+                   title="First name"
+                   aria-required="required"
+                   data-tooltip
+                   data-options="disable-for-touch:true"
+                   required>
+            <div class="required-field"></div>
+            {% if userform.first_name.errors %}
+              <small class="error">
+                {{ userform.first_name.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="Name in local language"
+                   name="local_name" value="{{ profileform.local_name.value() }}"
+                   class="has-tip tip-left"
+                   title="Name in local language"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+            {% if profileform.local_name.errors %}
+              <small class="error">
+                {{ profileform.local_name.errors }}
+              </small>
+            {% endif %}
+            <div class="has-tip tip-left" title="Gender" data-tooltip data-options="disable-for-touch:true">
+              {{ profileform.gender }}
+            </div>
+            {% if profileform.gender.errors %}
+              <small class="error">
+                {{ profileform.gender.errors }}
               </small>
             {% endif %}
           </div>
         </div>
+      </div>
+      <div class="large-6 columns">
         <div class="row">
-          <div class="one columns pictogram">
-            W
+          <div class="large-1 columns">
+            <div class="pict-icon large pic"></div>
           </div>
-          <div class="eleven columns">
-            <br>
-            <label for="admin-bit">
-              <input type="checkbox" {% if group_bits.0 %}checked="checked"{% endif %}
-                     id="admin-bit" name="admin_group">
-              <span class="custom checkbox">
-              </span>
-              Administrator
-            </label>
-            <label for="council-bit">
-              <input type="checkbox" {% if group_bits.1 %}checked="checked"{% endif %}
-                     id="council-bit" name="council_group">
-              <span class="custom checkbox">
-              </span>
-              Council member
-            </label>
-            <label for="mentor-bit">
-              <input type="checkbox" {% if group_bits.2 %}checked="checked"{% endif %}
-                     id="mentor-bit" name="mentor_group">
-              <span class="custom checkbox">
-              </span>
-              Mentor
-            </label>
-            <label for="rep-bit">
-              <input type="checkbox" {% if group_bits.3 %}checked="checked"{% endif %}
-                     id="rep-bit" name="rep_group" style="display: none;">
-              <span class="custom checkbox">
-              </span>
-              Rep
-            </label>
+          <div class="large-11 columns profile-image">
+            <a href="https://libravatar.org" target="_blank">
+              <img id="profiles-edit-avatar" src="{{ pageuser|get_avatar_url(128) }}">
+            </a>
+            <ul class="edit-profile-item">
+              <li>
+                Step 1: Create an account on <a href="https://libravatar.org" target="_blank">libravatar.org</a>.
+              </li>
+              <li>
+                Step 2: Once logged in, upload a photo and associate it to your bugzilla email.
+              </li>
+            </ul>
           </div>
         </div>
       </div>
-    {% endif %}
-  </div>
-  <div class="row end-row show-on-phones">
-    <div class="twelve columns show-on-phones align-right">
-      {% if perms.profiles.can_edit_profiles %}
-      <a href="#" class="small red button nice radius"
-         data-reveal-id="delete-profile">Delete profile</a>
-      {% endif %}
-      <button id="save-profile" type="submit" class="small green button nice radius top-margined">
-        Save profile
-      </button>
     </div>
-  </div>
+    <div class="row">
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large at"></div>
+          </div>
+          <div class="large-11 columns">
+            <input type="text" placeholder="Personal email"
+                   value="{{ profileform.private_email.value() }}"
+                   name="private_email"
+                   class="has-tip tip-left"
+                   title="Private email"
+                   aria-required="required"
+                   data-tooltip
+                   data-options="disable-for-touch:true"
+                   required>
+            <div class="required-field"></div>
+            {% if profileform.private_email.errors %}
+              <small class="error">
+                {{ profileform.private_email.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="Bugzilla email"
+                   value="{{ userform.email.value() }}"
+                   name="email"
+                   class="has-tip tip-left"
+                   title="Bugzilla email"
+                   aria-required="required"
+                   data-tooltip
+                   data-options="disable-for-touch:true"
+                   required>
+            <div class="required-field"></div>
+            {% if userform.email.errors %}
+              <small class="error">
+                {{ userform.email.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="Mozillians.org profile"
+                   value="{{ profileform.mozillians_profile_url.value() }}"
+                   name="mozillians_profile_url"
+                   class="has-tip tip-left"
+                   title="Mozillians.org profile"
+                   aria-required="required"
+                   data-tooltip
+                   data-options="disable-for-touch:true"
+                   required>
+            <div class="required-field"></div>
+            {% if profileform.mozillians_profile_url.errors %}
+              <small class="error">
+                {{ profileform.mozillians_profile_url.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="Wiki profile"
+                   value="{{ profileform.wiki_profile_url.value() }}"
+                   name="wiki_profile_url"
+                   class="has-tip tip-left"
+                   title="Wiki profile"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+            <div class="required-field"></div>
+            {% if profileform.wiki_profile_url.errors %}
+              <small class="error">
+                {{ profileform.wiki_profile_url.errors }}
+              </small>
+            {% endif %}
+            <div class="has-tip tip-left" title="Mentor" data-tooltip data-options="disable-for-touch:true">
+              {{ profileform.mentor }}
+            </div>
+            <div class="required-field"></div>
+            {% if profileform.mentor.errors %}
+              <small class="error">
+                {{ profileform.mentor.errors }}
+              </small>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large home"></div>
+          </div>
+          <div class="large-11 columns">
+            <input type="text" placeholder="City" value="{{ profileform.city.value() }}"
+                   name="city"
+                   class="has-tip tip-right"
+                   title="City"
+                   aria-required="required"
+                   data-tooltip
+                   data-options="disable-for-touch:true"
+                   required>
+            <div class="required-field"></div>
+            {% if profileform.city.errors %}
+              <small class="error">
+                {{ profileform.city.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="State or Region"
+                   value="{{ profileform.region.value() }}"
+                   name="region"
+                   class="has-tip tip-right"
+                   title="Region"
+                   aria-required="required"
+                   data-tooltip
+                   data-options="disable-for-touch:true"
+                   required>
+            <div class="required-field"></div>
+            {% if profileform.region.errors %}
+              <small class="error">
+                {{ profileform.region.errors }}
+              </small>
+            {% endif %}
+            <div class="has-tip tip-right" title="Country" data-tooltip>
+              {{ profileform.country }}
+            </div>
+            {% if profileform.country.errors %}
+              <small class="error">
+                {{ profileform.country.errors }}
+              </small>
+            {% endif %}
+            <input type="hidden" id="lat"
+                   value="{{ profileform.lat.value() }}"
+                   name="lat" class="input-text">
+            <input type="hidden" id="lon"
+                   value="{{ profileform.lon.value() }}"
+                   name="lon" class="input-text">
+            <div class="align-right">
+              <button class="small white button nice radius"
+                 data-reveal-id="map-point">Point your marker in map</button>
+              <div class="required-field"></div>
+            </div>
+            {% if profileform.lat.errors or profileform.lon.errors %}
+              <small class="error">
+                Please use the point in map button.
+              </small>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large twitter"></div>
+          </div>
+          <div class="large-11 columns">
+            <input type="text" placeholder="Twitter handle"
+                   value="{{ profileform.twitter_account.value() }}"
+                   name="twitter_account"
+                   class="has-tip tip-left"
+                   title="Twitter handle"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+            {% if profileform.twitter_account.errors %}
+              <small class="error">
+                {{ profileform.twitter_account.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="Facebook profile"
+                   value="{{ profileform.facebook_url.value() }}"
+                   name="facebook_url"
+                   class="has-tip tip-left"
+                   title="Facebook profile"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+            {% if profileform.facebook_url.errors %}
+              <small class="error">
+                {{ profileform.facebook_url.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="Diaspora profile"
+                   value="{{ profileform.diaspora_url.value() }}"
+                   name="diaspora_url"
+                   class="has-tip tip-left"
+                   title="Diaspora profile"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+            {% if profileform.diaspora_url.errors %}
+              <small class="error">
+                {{ profileform.diaspora_url.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="LinkedIn profile"
+                   value="{{ profileform.linkedin_url.value() }}"
+                   name="linkedin_url"
+                   class="has-tip tip-left"
+                   title="LinkedIn profile"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+            {% if profileform.linkedin_url.errors %}
+              <small class="error">
+                {{ profileform.linkedin_url.errors }}
+              </small>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large talk"></div>
+          </div>
+          <div class="large-11 columns">
+            <input type="text" placeholder="Jabber ID"
+                   value="{{ profileform.jabber_id.value() }}"
+                   name="jabber_id"
+                   class="has-tip tip-right"
+                   title="Jabber ID"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+            {% if profileform.jabber_id.errors %}
+              <small class="error">
+                {{ profileform.jabber_id.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="IRC nickname"
+                   value="{{ profileform.irc_name.value() }}"
+                   name="irc_name"
+                   class="has-tip tip-right"
+                   title="IRC nickname"
+                   data-tooltip
+                   data-options="disable-for-touch:true"
+                   aria-required="required"
+                   required>
+            <div class="required-field"></div>
+            {% if profileform.irc_name.errors %}
+              <small class="error">
+                {{ profileform.irc_name.errors }}
+              </small>
+            {% endif %}
+            <textarea class="flat has-tip tip-right"
+                      placeholder="Please list the channels you use in IRC"
+                      title="List of IRC channels"
+                      name="irc_channels"
+                      data-tooltip
+                      data-options="disable-for-touch:true">{{ profileform.irc_channels.value() }}</textarea>
+            {% if profileform.irc_channels.errors %}
+              <small class="error">
+                {{ profileform.irc_channels.errors }}
+              </small>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large www"></div>
+          </div>
+          <div class="large-11 columns">
+            <input type="text" placeholder="Personal site URL"
+                   value="{{ profileform.personal_website_url.value() }}"
+                   name="personal_website_url"
+                   class="has-tip tip-left"
+                   title="Personal site URL"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+            {% if profileform.personal_website_url.errors %}
+              <small class="error">
+                {{ profileform.personal_website_url.errors }}
+              </small>
+            {% endif %}
+            <input type="text" placeholder="Feed for Reps Planet"
+                   value="{{ profileform.personal_blog_feed.value() }}"
+                   name="personal_blog_feed"
+                   class="has-tip tip-left"
+                   title="Feed for Reps planet"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+            {% if profileform.personal_blog_feed.errors %}
+              <small class="error">
+                {{ profileform.personal_blog_feed.errors }}
+              </small>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large edit"></div>
+          </div>
+          <div class="large-11 columns top-margined">
+            <textarea class="flat has-tip tip-right"
+                      placeholder="Bio - Write us a bit about yourself"
+                      name="bio"
+                      title="Bio"
+                      data-tooltip
+                      data-options="disable-for-touch:true">{{ profileform.bio.value() }}</textarea>
+            {% if profileform.bio.errors %}
+              <small class="error">
+                {{ profileform.bio.errors }}
+              </small>
+            {% endif %}
+            <p class="more-info">In this field you can use
+              <a href="http://en.wikipedia.org/wiki/Markdown"
+                 target="_blank"> Markdown</a>
+               syntax.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large heart"></div>
+          </div>
+          <div class="large-11 columns edit-profile-item">
+            <div class="align-right">
+                <button class="small white button nice radius"
+                   data-reveal-id="interests-modal">Mark your interests</button>
+                {% if profileform.functional_areas.errors %}
+                  <small class="error">
+                    Please mark your interests
+                  </small>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <!-- Interests modal -->
-  <div id="interests-modal" class="reveal-modal">
-    <a class="close-reveal-modal">&#215;</a>
-    <p class="lead">
-      Specify your interests in Functional Areas of Mozilla
-    </p>
-    <h3>
-      Functional Areas
-    </h3>
-    <ul class="block-grid three-up">
-      {% for choice in profileform.functional_areas.field.choices %}
-        <li>
-          <label for="{{ choice.1 }}-bit">
-            <input type="checkbox" name="functional_areas" value="{{ choice.0 }}"
-                   {% if choice.0 in profileform.functional_areas.value() %}
-                     checked="checked"
-                   {% endif %}/>
-            {{ choice.1 }}
-        </li>
-      {% endfor %}
-    </ul>
-    <a href="#" class="small blue button nice radius close-reveal-modal">
-      Choose these areas &raquo;
-    </a>
-  </div>
-</form>
+    <div class="row">
+      <div class="large-6 columns">
+      </div>
+      {% if perms.profiles.can_edit_profiles %}
+        <div class="large-6 columns">
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large checkmark"></div>
+            </div>
+            <div class="large-11 columns edit-profile-item">
+              <h6>Date Rep joined program</h6>
+              {{ datejoinedform.date_joined_program }}
+              {% if datejoinedform.date_joined_program.errors %}
+                <small class="error">
+                  {{ datejoinedform.date_joined_program.errors }}
+                </small>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large checkbox"></div>
+            </div>
+            <ul class="large-11 columns edit-profile-item">
+              <li>
+                <label for="admin-bit">
+                  <input type="checkbox" {% if group_bits.0 %}checked="checked"{% endif %}
+                         id="admin-bit" name="admin_group">
+                  Administrator
+                </label>
+              </li>
+              <li>
+                <label for="council-bit">
+                  <input type="checkbox" {% if group_bits.1 %}checked="checked"{% endif %}
+                         id="council-bit" name="council_group">
+                  Council member
+                </label>
+              </li>
+              <li>
+                <label for="mentor-bit">
+                  <input type="checkbox" {% if group_bits.2 %}checked="checked"{% endif %}
+                         id="mentor-bit" name="mentor_group">
+                  Mentor
+                </label>
+              </li>
+              <li>
+                <label for="rep-bit">
+                  <input type="checkbox" {% if group_bits.3 %}checked="checked"{% endif %}
+                         id="rep-bit" name="rep_group">
+                  Rep
+                </label>
+              </li>
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <div class="row end-row show-for-small">
+      <div class="large-12 columns show-for-small align-right">
+        {% if perms.profiles.can_edit_profiles %}
+        <button class="button small alert"
+           data-reveal-id="delete-profile">Delete profile</button>
+        {% endif %}
+        <button id="save-profile" type="submit" class="button small confirm">
+          Save profile
+        </button>
+      </div>
+    </div>
+
+    <!-- Interests modal -->
+    <div id="interests-modal" class="reveal-modal medium">
+      <a class="close-reveal-modal">&#215;</a>
+      <p class="lead">
+        Specify your interests in Functional Areas of Mozilla
+      </p>
+      <h3>
+        Functional Areas
+      </h3>
+      <ul class="large-block-grid-3 small-block-grid-1">
+        {% for choice in profileform.functional_areas.field.choices %}
+          <li>
+            <label for="{{ choice.1 }}-bit">
+              <input type="checkbox" name="functional_areas" value="{{ choice.0 }}"
+                     {% if choice.0 in profileform.functional_areas.value() %}
+                       checked="checked"
+                     {% endif %}/>
+              {{ choice.1 }}
+          </li>
+        {% endfor %}
+      </ul>
+      <a href="#" class="button small update close-reveal-modal">
+        Choose these areas &raquo;
+      </a>
+    </div>
+  </form>
+</main>
 
 <!-- Map Point Reveal Modal -->
-<div id="map-point" class="reveal-modal">
+<div id="map-point" class="reveal-modal small">
   <a class="close-reveal-modal">&#215;</a>
   <div class="row">
-    <div class="twelve columns">
+    <div class="large-12 columns">
       <p class="lead">
         Please click your location on the map
       </p>
-      <div id="map_point" class="map300">
-      </div>
+      <div id="map_point" class="map300"></div>
     </div>
   </div>
   <div class="row">
-    <div class="six columns">
+    <div class="large-6 columns">
       <input type="text" placeholder="Latitude" class="input-text" id="lat-temp">
       <input type="text" placeholder="Longitude" class="input-text" id="lon-temp">
     </div>
-    <div class="six columns use-these">
-      <a href="#" class="small blue button nice radius close-reveal-modal">
+    <div class="large-6 columns use-these">
+      <a href="#" class="button small update close-reveal-modal">
         Use these geo-coordinates &raquo;
       </a>
     </div>
@@ -509,7 +567,7 @@
 </div>
 
 <!-- Delete Profile Reveal Modal -->
-<div id="delete-profile" class="reveal-modal">
+<div id="delete-profile" class="reveal-modal small">
   <a class="close-reveal-modal">&#215;</a>
   <p class="lead">
     Are you sure you want to do that?
@@ -523,7 +581,7 @@
   </p>
     <form method="post" action="{{ url('profiles_delete', pageuser.userprofile.display_name) }}">
       {{ csrf() }}
-      <button class="large red button nice radius close-reveal-modal">
+      <button class="button large alert close-reveal-modal">
         Delete profile
       </button>
     </form>

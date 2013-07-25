@@ -1,71 +1,70 @@
-{% extends "base.html" %}
+{% extends "base_fd4.html" %}
 {% block pagetitle %}Mozilla Reps - People{% endblock %}
 
 {% block content %}
-<!-- Map -->
-<div class="row show-on-desktop">
-  <div class="twelve columns">
-    <div id="map" class="map300">
+<main role="main" class="people-main">
+
+  <!-- Map -->
+  <div class="row">
+    <div class="large-12 columns">
+      <div id="map" class="map300">
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Search box -->
-<div class="row">
-  <div class="ten columns" id="search">
-    <form class="nice" id="searchform">
-      <span class="pictogram-search">
-        <div id="search-ready-icon" class="hidden">s</div>
-        <div id="search-loading-icon"></div>
-      </span>
-      <input type="text" placeholder="Loading..." id="searchfield"
-             class="input-text big" disabled="disabled">
-    </form>
+  <!-- Search box -->
+  <div class="row">
+    <div class="large-12 columns" id="search">
+      <form id="searchform" role="search" aria-controls="profiles_gridview">
+        <span class="pictogram-search">
+          <div id="search-ready-icon" class="hidden pict-icon large search"></div>
+          <div id="search-loading-icon"></div>
+        </span>
+        <input type="text" placeholder="Loading&hellip;" id="searchfield" disabled="disabled">
+      </form>
+      <ul class="button-group search-controls" aria-controls="profiles_gridview">
+        <li role="button" id="adv-search-icon" title="Advanced Options" class="pictogram-button" tabindex="0">
+          <div class="pict-icon large tools"></div>
+        </li>
+        <li role="button" id="gridviewbutton" title="Grid View" class="pictogram-button" tabindex="0">
+          <div class="pict-icon large grid"></div>
+        </li>
+        <li role="button" id="listviewbutton" title="List View" class="pictogram-button" tabindex="0">
+          <div class="pict-icon large list"></div>
+        </li>
+      </ul>
+    </div>
   </div>
-  <div class="two columns view-change">
-    <span id="adv-search-icon" title="Advanced Options" class="pictogram-button">
-      (
-    </span>
-    <span id="gridviewbutton" title="Grid View" class="pictogram-button">
-      3
-    </span>
-    &nbsp;&nbsp;
-    <span id="listviewbutton" title="List View" class="pictogram-button">
-      4
-    </span>
-  </div>
-</div>
 
-<!-- Advanced search box -->
-<div class="row hidden" id="adv-search">
-  <div class="twelve columns">
-    <div class="row">
-      <form class="custom" id="searchform">
-        <div class="three columns">
-          <select id="adv-search-group" class="expand">
+  <!-- Advanced search box -->
+  <div class="row hidden" id="adv-search">
+    <div class="large-12 columns">
+      <form class="row">
+        <div class="large-3 columns">
+          <select id="adv-search-group">
             <option value="">All Groups</option>
             <option value="rep">Rep</option>
             <option value="mentor">Mentor</option>
             <option value="council">Council</option>
           </select>
         </div>
-        <div class="three columns">
-          <select id="adv-search-country" class="expand">
+        <div class="large-3 columns">
+          <select id="adv-search-country">
             <option value="">All Countries</option>
             {% for country in countries %}
               <option value="{{ country|lower }}">{{ country }}</option>
             {% endfor %}
           </select>
         </div>
-        <div class="three columns">
-          <select id="adv-search-area" class="expand">
+        <div class="large-3 columns">
+          <select id="adv-search-area">
             <option value="">All Areas</option>
             {% for area in areas %}
               <option value="{{ area|lower }}">{{ area }}</option>
             {% endfor %}
           </select>
         </div>
-        <div class="three columns align-center">
+        <div class="large-3 columns align-center">
           {% if user.is_authenticated() %}
             <button id="csv-export-button"
                     class="small white button nice radius">CSV Export</button>
@@ -74,83 +73,82 @@
       </form>
     </div>
   </div>
-</div>
 
-<!-- People are here -->
-<div class="row hidden" id="profiles_noresults">
-  <div class="twelve columns profiles-no-results">
-    Sorry, no Reps found.
-  </div>
-</div>
-
-<div class="row" id="profiles_gridview">
-  <ul class="block-grid mobile three-up" id="grid-search-list">
-  </ul>
-</div>
-
-<div id="profiles_listview">
-  <div class="row show-on-phones mobile-list-warning">
-    Please switch to grid view.
-  </div>
-  <div class="row hide-on-phones">
-    <div class="twelve columns">
-      <table id="list-people-view">
-        <thead>
-          <tr>
-            <th>Full Name</th>
-            <th>Name in local language</th>
-            <th>Username</th>
-            <th>City</th>
-            <th>Region</th>
-            <th>Country</th>
-          </tr>
-        </thead>
-        <tbody id="table-search-list">
-        </tbody>
-      </table>
+  <!-- People are here -->
+  <div class="row hidden" id="profiles_noresults">
+    <div class="large-12 columns profiles-no-results">
+      Sorry, no Reps found.
     </div>
   </div>
-</div>
 
-<!-- Loader animation -->
-<div class="row" id="profiles-loading-wrapper">
-  <div class="twelve columns">
-    <div id="profiles-loading"></div>
-  </div>
-</div>
-
-{% if user.is_authenticated() %}
-  <div id="profiles-reps-number" class="row">
-    <div id="profiles-number-of-reps" class="twelve columns reps-number">
+  <div class="row" id="profiles_gridview" role="region">
+    <div class="large-12 columns">
+      <ul class="large-block-grid-3 small-block-grid-1" id="grid-search-list"></ul>
     </div>
   </div>
-{% endif %}
 
-{% for rep in reps %}
-  <div class="profile-pointer-item"
-       data-lat="{{ rep.userprofile.lat }}"
-       data-lon="{{ rep.userprofile.lon }}"
-       data-fullname="{{ rep.get_full_name() }}">
+  <div id="profiles_listview">
+    <div class="row show-for-small mobile-list-warning">
+      Please switch to grid view.
+    </div>
+    <div class="row hide-for-small">
+      <div class="large-12 columns">
+        <table id="list-people-view">
+          <thead>
+            <tr>
+              <th>Full Name</th>
+              <th>Name in local language</th>
+              <th>Username</th>
+              <th>City</th>
+              <th>Region</th>
+              <th>Country</th>
+            </tr>
+          </thead>
+          <tbody id="table-search-list">
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-{% endfor %}
+
+  <!-- Loader animation -->
+  <div class="row" id="profiles-loading-wrapper">
+    <div class="large-12 columns">
+      <div id="profiles-loading"></div>
+    </div>
+  </div>
+
+  {% if user.is_authenticated() %}
+    <div id="profiles-reps-number" class="row">
+      <div id="profiles-number-of-reps" class="large-12 columns reps-number">
+      </div>
+    </div>
+  {% endif %}
+
+  {% for rep in reps %}
+    <div class="profile-pointer-item"
+         data-lat="{{ rep.userprofile.lat }}"
+         data-lon="{{ rep.userprofile.lon }}"
+         data-fullname="{{ rep.get_full_name() }}">
+    </div>
+  {% endfor %}
+
+</main>
 
 <script id="gridItem-tmpl" type="text/x-jquery-tmpl">
   <li class="profiles-li-item"
       data-lon="${ profile.lon }" data-lat="${ profile.lat }"
       data-fullname="${ fullname }">
-    <a href="${ profile.profile_url }">
-      <div class="panel grid-profile">
-        <div class="row">
-          <div class="three phone-one columns grid-profile-image">
-            <img src="${ profile.avatar_url }"
-                 class="profiles-people-avatar"
-                 alt="${ fullname } avatar">
-          </div>
-          <div class="nine phone-three columns grid-profile-text">
-            <h6>${ first_name }</h6>
-            <h6>${ last_name }</h6>
-            ${ profile.city }, ${ profile.country }
-          </div>
+    <a class="panel grid-profile" href="${ profile.profile_url }">
+      <div class="row">
+        <div class="large-3 small-3 columns grid-profile-image">
+          <img src="${ profile.avatar_url }"
+               class="profiles-people-avatar"
+               alt="${ fullname } avatar">
+        </div>
+        <div class="large-9 small-9 columns grid-profile-text">
+          <h6>${ first_name }<br>${ last_name }</h6>
+          ${ profile.city }, ${ profile.country }
         </div>
       </div>
     </a>

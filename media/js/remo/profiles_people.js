@@ -191,6 +191,7 @@ function request_error() {
 }
 
 function handle_xhr_response(value, newquery, update_pointers) {
+
     return function(event) {
         if (ProfilesLib.request.status === 200) {
             update_results(JSON.parse(ProfilesLib.request.responseText), value, newquery, update_pointers);
@@ -272,11 +273,14 @@ function send_query(newquery) {
     if (ProfilesLib.request) {
         ProfilesLib.request.abort();
     }
-    ProfilesLib.request = new XMLHttpRequest();
-    ProfilesLib.request.open('GET', API_URL + extra_q, true);
-    ProfilesLib.request.onload = handle_xhr_response(value, newquery, update_pointers);
-    ProfilesLib.request.onerror = request_error;
-    ProfilesLib.request.send();
+
+    ProfilesLib.request = $.ajax({
+        url: API_URL + extra_q,
+        type: 'GET',
+        dataType: 'json'
+    });
+    ProfilesLib.request.done(handle_xhr_response(value, newquery, update_pointers));
+    ProfilesLib.request.fail(request_error);
 
     // Set the CSV url
     ProfilesLib.api_csv_url = API_CSV_URL + csv_q + '&format=csv';
