@@ -8,11 +8,16 @@ Requires commander_ which is installed on the systems that need it.
 
 import os
 import sys
+import urllib
+import urllib2
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from commander.deploy import task, hostgroups
 import commander_settings as settings
+
+
+NEW_RELIC_URL = 'https://rpm.newrelic.com/deployments.xml'
 
 
 @task
@@ -71,7 +76,7 @@ def update_celery(ctx):
 
 
 @task
-def update_info(ctx):
+def update_info(ctx, tag):
     """Write info about the current state to a publicly visible file."""
     with ctx.lcd(settings.SRC_DIR):
         ctx.local('date > media/revision_info.txt')
@@ -81,12 +86,24 @@ def update_info(ctx):
         ctx.local('git submodule status >> media/revision_info.txt')
         ctx.local('git rev-parse HEAD > media/revision.txt')
 
+        if settings.NEW_RELIC_API_KEY and settings.NEW_RELIC_APP_ID:
+            print 'Post deploy event to NewRelic'
+            data = urllib.urlencode(
+                {'deployment[revision]': tag,
+                 'deployment[app_id]': settings.NEW_RELIC_APP_ID})
+            headers = {'x-api-key': settings.NEW_RELIC_API_KEY}
+            try:
+                request = urllib2.Request(NEW_RELIC_URL, data, headers)
+                urllib2.urlopen(request)
+            except urllib.URLError as exp:
+                print 'Error notifing NewRelic: {0}'.format(exp)
+
 
 @task
 def pre_update(ctx, ref=settings.UPDATE_REF):
     """Update code to pick up changes to this file."""
     update_code(ref)
-    update_info()
+    update_info(ref)
 
 
 @task
