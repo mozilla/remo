@@ -100,7 +100,7 @@ class PollEditForm(happyforms.ModelForm):
 
         cdata['end'] = cdata['end_form'].replace(tzinfo=utc)
 
-        if cdata['end_form'] < date_now:
+        if cdata['end'] < date_now:
             msg = 'End date should not be in the past.'
             self._errors['end_form'] = self.error_class([msg])
 
@@ -157,7 +157,7 @@ class PollAddForm(PollEditForm):
         if cdata['start_form'] >= cdata['end_form']:
             msg = 'Start date should come before end date.'
             self._errors['start_form'] = self.error_class([msg])
-        if cdata['start_form'] < date_now:
+        if cdata['start'] < date_now:
             msg = 'Start date should not be in the past.'
             self._errors['start_form'] = self.error_class([msg])
 
