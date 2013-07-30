@@ -22,10 +22,11 @@ DISPLAY_NAME_MAX_LENGTH = 50
 
 def user_unicode(self):
     """Return user's full name and display name if available."""
-    if self.userprofile:
+    try:
         return u'%s :%s' % (self.get_full_name(),
                             self.userprofile.display_name)
-    return self.get_full_name()
+    except UserProfile.DoesNotExist:
+        return self.get_full_name()
 
 User.__unicode__ = user_unicode
 
