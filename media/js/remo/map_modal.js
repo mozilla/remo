@@ -1,8 +1,10 @@
+var CLOUDMADE_API_KEY = $('body').data('cloudmade-api-key');
+
 $(document).ready(function() {
     var map = new L.Map('map_point', { minZoom: 1 });
-    var cloudmade = new L.TileLayer(('http://{s}.tile.cloudmade.com/' +
-                                     'b465ca1b6fe040dba7eec0291ecb7a8c/' +
-                                     '997/256/{z}/{x}/{y}.png'), { maxZoom: 18 });
+    var cloudmade = new L.TileLayer(('https://ssl_tiles.cloudmade.com/' +
+                                     CLOUDMADE_API_KEY +
+                                     '/997/256/{z}/{x}/{y}.png'), { maxZoom: 18 });
     var center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
     map.setView(center, 1).addLayer(cloudmade);
 
