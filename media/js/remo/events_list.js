@@ -30,6 +30,8 @@ EventsLib.offset = 0;
 EventsLib.window_offset = 450;
 EventsLib.results_batch = 21;
 
+var CLOUDMADE_API_KEY = $('body').data('cloudmade-api-key');
+
 function initialize_map() {
     // Initialize map.
     EventsLib.map = new L.Map('map', { minZoom: 1 });
@@ -37,9 +39,9 @@ function initialize_map() {
                        'OpenStreetMap</a> contributors, <a href="http://creativecommons.org/' +
                        'licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © ' +
                        '<a href="http://cloudmade.com">CloudMade</a>');
-    var cloudmade = new L.TileLayer('http://{s}.tile.cloudmade.com/' +
-                                    'b465ca1b6fe040dba7eec0291ecb7a8c/' +
-                                    '997/256/{z}/{x}/{y}.png',
+    var cloudmade = new L.TileLayer('https://ssl_tiles.cloudmade.com/' +
+                                    CLOUDMADE_API_KEY +
+                                    '/997/256/{z}/{x}/{y}.png',
                                     { attribution: attribution, maxZoom: 18 });
     var center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
     EventsLib.map.setView(center, 2).addLayer(cloudmade);

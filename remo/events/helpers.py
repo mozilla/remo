@@ -27,7 +27,7 @@ def get_link_to_cloudmade(lat, lon, zoom=15):
 
 @register.function
 def get_link_to_gmaps(lat, lon, label='', zoom=15):
-    """Return link to cloudmade map centered in lat, lon."""
+    """Return link to gmaps map centered in lat, lon."""
     return ('https://maps.google.com/maps?ll=%(lat)s,%(lon)s'
             '&q=%(label)s@%(lat)s,%(lon)s&zoom=%(zoom)s' % {'lat': lat,
                                                             'lon': lon,
