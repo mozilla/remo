@@ -5,469 +5,471 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 {% endblock %}
 
 {% block content %}
-{% if user == pageuser or perms.profiles.can_edit_profiles %}
-  <div class="row hide-for-small">
-    <div class="large-12 columns align-right">
-      <a href="{{ url('profiles_edit', user_profile.display_name) }}"
-         class="small button radius">Edit profile</a>
-    </div>
-  </div>
-{% endif %}
-<div class="row user-profile-container">
-  <div class="large-6 columns">
+<main role="main" class="user-profile-container">
+  {% if user == pageuser or perms.profiles.can_edit_profiles %}
     <div class="row">
-      <div class="large-1 columns pictogram">
-        J
-      </div>
-      <div class="large-11 columns profile-user-details">
-        <h1>
-          {{ pageuser.first_name }} {{ pageuser.last_name }}
-        </h1>
-        {% if pageuser == user %}
-          <span class="grayed">
-            (that's you!)
-          </span>
-        {% else %}
-        {% endif %}
-        {% if user_profile.local_name %}
-          <h2 class="grayed">
-            {{ user_profile.local_name }}
-          </h2>
-        {% endif %}
-          <h2 class="grayed">
-            {{ user_profile.display_name }}
-          </h2>
-        {% if pageuser == user %}
-          <p class="profile-item">
-            <span class="label radius">
-              Profile Permalink
-            </span>
-            &nbsp;
-            <a href="{{ url('profiles_view_profile', user_profile.display_name) }}">
-                    {{ settings.SITE_URL }}
-                    {{url('profiles_view_profile', user_profile.display_name)}}</a>
-          </p>
-        {% endif %}
+      <div class="large-12 columns align-right hide-for-small">
+        <a href="{{ url('profiles_edit', user_profile.display_name) }}"
+           class="small button">Edit profile</a>
       </div>
     </div>
-  </div>
-  <div class="large-6 columns">
-    <div class="row">
-      <div class="large-1 columns pictogram">
-        A
-      </div>
-      <div class="large-11 columns">
-        <div class="row">
-          <div class="large-4 columns profile-image">
-            <img id="profiles-view-avatar" src="{{ pageuser|get_avatar_url(128) }}">
-          </div>
-          <div id="map" class="large-8 columns smallmap-profile-container">
-            <img src="{{ get_static_map_url(256, 128, user_profile.lat, user_profile.lon, 1) }}"/>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="large-6 columns">
-    <div class="row">
-      {% if user_profile.bio %}
-        <div class="large-1 columns pictogram">
-          V
-        </div>
-        <div class="large-11 columns markdown">
-          {{ user_profile.bio|markdown }}
-        </div>
-      {% endif %}
-    </div>
-    {% if monthly_reports %}
+  {% endif %}
+  <div class="row">
+    <div class="large-6 columns">
       <div class="row">
         <div class="large-1 columns pictogram">
-          a
+          <div class="pict-icon large tag"></div>
         </div>
-        <div class="large-11 columns">
-          <h5 class="profile-heading">Monthly Reports</h5>
-          {% include "monthly_reports_fd4.html" %}
-        </div>
-      </div>
-    {% endif %}
-    {% if future_events or past_events %}
-      <!-- If Rep has events (future or past) -->
-      <div class="row">
-        <div class="large-1 columns pictogram">
-          S
-        </div>
-        <div class="large-11 columns">
-          <!-- If Rep has future events -->
-          {% if future_events %}
-            <h5 class="profile-heading">Upcoming Events</h5>
-            <table class="profile-events-table">
-              <thead>
-                <tr>
-                  <th>Event</th>
-                  <th>Date</th> <!-- we mean start date -->
-                  <th>Role</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for event in future_events %}
-                  <tr>
-                    <td>
-                      <a href="{{ url('events_view_event', slug=event.slug) }}">
-                        {{ event.name }}
-                      </a>
-                    </td>
-                    <td>{{ event.start|strftime("%d %b %Y") }}</td>
-                    <td>{{ get_attendee_role_event(pageuser, event) }}</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+        <div class="large-11 columns profile-user-details">
+          <h1>
+            {{ pageuser.first_name }} {{ pageuser.last_name }}
+          </h1>
+          {% if pageuser == user %}
+            <span class="grayed">
+              (that's you!)
+            </span>
+          {% else %}
           {% endif %}
-          <!-- end of if_future_events -->
-
-          <!-- If Rep has past events -->
-          {% if past_events %}
-            <h5 class="profile-heading">Past Events</h5>
-            <table class="profile-events-table">
-              <thead>
-                <tr>
-                  <th>Event</th>
-                  <th>Date</th> <!-- we mean start date -->
-                  <th>Role</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for event in past_events %}
-                  <tr>
-                    <td>
-                      <a href="{{ url('events_view_event', slug=event.slug) }}">
-                        {{ event.name }}
-                      </a>
-                    </td>
-                    <td>{{ event.start|strftime("%d %b %Y") }}</td>
-                    <td>{{ get_attendee_role_event(pageuser, event) }}</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+          {% if user_profile.local_name %}
+            <h2 class="grayed">
+              {{ user_profile.local_name }}
+            </h2>
           {% endif %}
-          <!-- end of if_past_events -->
-        </div>
-      </div>
-      <!--End of if_events -->
-    {% endif %}
-  </div>
-
-  <div class="large-6 columns">
-    <!-- The following div.row should be displayed if usergroups OR featuredrep -->
-    {% if usergroups or featured_rep.count() %}
-      <div class="row profile-detail-list">
-        <div class="large-1 columns pictogram">
-          )
-        </div>
-        <div class="large-11 columns">
-          {% if usergroups %}
-            <h6 class="profile-heading">
-              {% if usergroups.count() %}
-                {{ pageuser.first_name }} is a
-                {% for group in usergroups %}
-                  {% if group.name == "Mentor" %}
-                    <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
-                      Reps Mentor
-                    </a>
-                  {% endif %}
-                  {% if group.name == "Council" %}
-                    <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
-                      Reps Council
-                    </a> member
-                  {% endif %}
-                  {% if not loop.last %} and a {% endif %}
-                {% endfor %}
-              {% endif %}
-            </h6>
-          {% endif %}
-          {% if featured_rep.count() %}
-            <!-- Display the following(s) if featured Rep -->
-            <h6 class="profile-heading">
-              Featured Rep for
-              {% for featured in featured_rep %}
-                <a href="#" 
-                   data-reveal-id="featured-modal-{{ featured.created_on|
-                                                     format_datetime_utc }}">
-                  {{ featured.created_on|strftime('%B %Y') }}
-                </a>
-                {% if not loop.last %}
-                  ,&nbsp;
-                {% else %}
-                  .
-                {% endif %}
-              {% endfor %}
-            </h6>
-          {% endif %}
-        </div>
-      </div>
-    {% endif %}
-    <div class="row profile-detail-list">
-      <div class="large-1 columns pictogram">
-        p
-      </div>
-      <div class="large-11 columns">
-        <p class="profile-item">
-          <span class="label radius">
-            Location
-          </span>
-          &nbsp;
-          <a href="{{ url('profiles_list_profiles') }}search/{{ user_profile.city }}/">
-            {{ user_profile.city }}
-          </a>
-          -
-          <a href="{{ url('profiles_list_profiles') }}search/{{ user_profile.region }}/">
-            {{ user_profile.region }}
-          </a>
-          -
-          <a href="{{ url('profiles_list_profiles') }}country/{{ user_profile.country }}/">
-            {{ user_profile.country }}
-          </a>
-        </p>
-        {% if user_profile.gender is not none %}
-          <p class="profile-item">
-            <span class="label radius">
-              Gender
-            </span>
-            &nbsp;{{ user_profile.get_gender_display() }}
-          </p>
-        {% endif %}
-      </div>
-    </div>
-    <div class="row profile-detail-list">
-      <div class="large-1 columns pictogram">
-        @
-      </div>
-      <div class="large-11 columns">
-        <p class="profile-item">
-          <span class="label radius">
-            Personal Mail
-          </span>
-          &nbsp;{% if user.is_authenticated() %} {{ user_profile.private_email }}
-          {% else %} {{ user_profile.private_email|mailhide }} {% endif %}
-        </p>
-        <p class="profile-item">
-          <span class="label radius">
-            Bugzilla Mail
-          </span>
-          &nbsp;{% if user.is_authenticated() %} {{ pageuser.email }}
-          {% else %} {{ pageuser.email|mailhide }} {% endif %}
-        </p>
-        <p class="profile-item">
-          <span class="label radius">
-            Mozillians Profile
-          </span>
-          &nbsp;{{ user_profile.mozillians_profile_url|urlize(50) }}
-        </p>
-        <p class="profile-item">
-          <span class="label radius">
-            Wiki Profile
-          </span>
-          &nbsp;{{ user_profile.wiki_profile_url|urlize(50) }}
-        </p>
-        {% if mentor %}
-          <p class="profile-item">
-            <span class="label radius">
-              Mentor
-            </span>
-            &nbsp;
-            <a href="{{ url('profiles_view_profile', mentor.userprofile.display_name) }}">
-              {{ mentor.get_full_name() }}
-            </a>
-          </p>
-        {% endif %}
-      </div>
-    </div>
-    <div class="row profile-detail-list">
-      {% if user_profile.twitter_account or user_profile.facebook_url or
-            user_profile.diaspora_url or user_profile.linkedin_url %}
-        <div class="large-1 columns pictogram">
-          T
-        </div>
-        <div class="large-11 columns">
-        {% if user_profile.twitter_account %}
-          <p class="profile-item">
-            <span class="label radius">
-              Twitter handle
-            </span>
-            &nbsp;
-            <a href="http://twitter.com/#!/{{ user_profile.twitter_account }}">
-              @{{ user_profile.twitter_account }}
-            </a>
-          </p>
-        {% endif %}
-        {% if user_profile.facebook_url %}
-          <p class="profile-item">
-            <span class="label radius">
-              Facebook profile
-            </span>
-            &nbsp;{{ user_profile.facebook_url|urlize(50) }}
-          </p>
-        {% endif %}
-        {% if user_profile.diaspora_url %}
-          <p class="profile-item">
-            <span class="label radius">
-              Diaspora profile
-            </span>
-            &nbsp;{{ user_profile.diaspora_url|urlize(50) }}
-          </p>
-        {% endif %}
-        {% if user_profile.linkedin_url %}
-          <p class="profile-item">
-            <span class="label radius">
-              LinkedIn profile
-            </span>
-            &nbsp;{{ user_profile.linkedin_url|urlize(50) }}
-          </p>
-        {% endif %}
-        </div>
-      {% endif %}
-    </div>
-    <div class="row profile-detail-list">
-      <div class="large-1 columns pictogram">
-        b
-      </div>
-      <div class="large-11 columns">
-        {% if user_profile.jabber_id %}
-          <p class="profile-item">
-            <span class="label radius">
-              Jabber ID
-            </span>
-            &nbsp;{{ user_profile.jabber_id }}
-          </p>
-        {% endif %}
-        <p class="profile-item">
-          <span class="label radius">
-            IRC nickname
-          </span>
-          &nbsp;{{ user_profile.irc_name }}
-        </p>
-        {% if user_profile.irc_channels %}
-          <p class="profile-item">
-            <span class="label radius">
-              IRC channels
-            </span>
-            &nbsp;{{ user_profile.irc_channels }}
-          </p>
-        {% endif %}
-      </div>
-    </div>
-    <div class="row profile-detail-list">
-      {% if user_profile.personal_website_url or user_profile.personal_blog_feed %}
-        <div class="large-1 columns pictogram">
-          w
-        </div>
-        <div class="large-11 columns">
-          {% if user_profile.personal_website_url %}
+            <h2 class="grayed">
+              {{ user_profile.display_name }}
+            </h2>
+          {% if pageuser == user %}
             <p class="profile-item">
               <span class="label radius">
-                Personal Site
-              </span>
-              &nbsp;{{ user_profile.personal_website_url|urlize(50) }}
-            </p>
-          {% endif %}
-          {% if user_profile.personal_blog_feed %}
-            <p class="profile-item">
-              <span class="label radius">
-                Feed for Reps Planet
-              </span>
-              &nbsp;{{ user_profile.personal_blog_feed|urlize(50) }}
-            </p>
-          {% endif %}
-        </div>
-      {% endif %}
-    </div>
-    {% if user_profile.functional_areas.all() %}
-      <div class="row profile-detail-list">
-        <div class="large-1 columns pictogram">
-          j
-        </div>
-        <div class="large-11 columns">
-          <p class="profile-item">
-            <span class="label radius">
-              Interested in
-            </span>
-            &nbsp;
-            {% for area in user_profile.functional_areas.all() %}
-              <a href="{{ url('profiles_list_profiles') }}area/{{ area.name }}/">
-                 {{ area.name }}</a>{% if not loop.last %}, {% endif %}
-            {% endfor %}
-          </p>
-        </div>
-      </div>
-    {% endif %}
-    {% if perms.profiles.can_edit_profiles %}
-      {% if added_by %}
-        <div class="row profile-detail-list">
-          <div class="large-1 columns pictogram">
-            l
-          </div>
-          <div class="large-11 columns">
-            <p class="profile-item">
-              <span class="label radius">
-                Added by
+                Profile Permalink
               </span>
               &nbsp;
-              <a href="{{ url('profiles_view_profile', added_by.userprofile.display_name) }}">
-                {{ added_by.userprofile.display_name }}
+              <a href="{{ url('profiles_view_profile', user_profile.display_name) }}">
+                      {{ settings.SITE_URL }}
+                      {{url('profiles_view_profile', user_profile.display_name)}}</a>
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="large-6 columns">
+      <div class="row">
+        <div class="large-1 columns pictogram">
+          <div class="pict-icon large pic"></div>
+        </div>
+        <div class="large-11 columns">
+          <div class="row">
+            <div class="large-4 columns profile-image">
+              <img id="profiles-view-avatar" src="{{ pageuser|get_avatar_url(128) }}">
+            </div>
+            <div id="map" class="large-8 columns smallmap-profile-container">
+              <img src="{{ get_static_map_url(256, 128, user_profile.lat, user_profile.lon, 1) }}"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-6 columns">
+      <div class="row">
+        {% if user_profile.bio %}
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large edit"></div>
+          </div>
+          <div class="large-11 columns markdown">
+            {{ user_profile.bio|markdown }}
+          </div>
+        {% endif %}
+      </div>
+      {% if monthly_reports %}
+        <div class="row">
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large report"></div>
+          </div>
+          <div class="large-11 columns">
+            <h5 class="profile-heading">Monthly Reports</h5>
+            {% include "monthly_reports_fd4.html" %}
+          </div>
+        </div>
+      {% endif %}
+      {% if future_events or past_events %}
+        <!-- If Rep has events (future or past) -->
+        <div class="row">
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large event"></div>
+          </div>
+          <div class="large-11 columns">
+            <!-- If Rep has future events -->
+            {% if future_events %}
+              <h5 class="profile-heading">Upcoming Events</h5>
+              <table class="profile-events-table">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Date</th> <!-- we mean start date -->
+                    <th>Role</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for event in future_events %}
+                    <tr>
+                      <td>
+                        <a href="{{ url('events_view_event', slug=event.slug) }}">
+                          {{ event.name }}
+                        </a>
+                      </td>
+                      <td>{{ event.start|strftime("%d %b %Y") }}</td>
+                      <td>{{ get_attendee_role_event(pageuser, event) }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% endif %}
+            <!-- end of if_future_events -->
+
+            <!-- If Rep has past events -->
+            {% if past_events %}
+              <h5 class="profile-heading">Past Events</h5>
+              <table class="profile-events-table">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Date</th> <!-- we mean start date -->
+                    <th>Role</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for event in past_events %}
+                    <tr>
+                      <td>
+                        <a href="{{ url('events_view_event', slug=event.slug) }}">
+                          {{ event.name }}
+                        </a>
+                      </td>
+                      <td>{{ event.start|strftime("%d %b %Y") }}</td>
+                      <td>{{ get_attendee_role_event(pageuser, event) }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% endif %}
+            <!-- end of if_past_events -->
+          </div>
+        </div>
+        <!--End of if_events -->
+      {% endif %}
+    </div>
+
+    <div class="large-6 columns">
+      <!-- The following div.row should be displayed if usergroups OR featuredrep -->
+      {% if usergroups or featured_rep.count() %}
+        <div class="row profile-detail-list">
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large award"></div>
+          </div>
+          <div class="large-11 columns">
+            {% if usergroups %}
+              <h6 class="profile-heading">
+                {% if usergroups.count() %}
+                  {{ pageuser.first_name }} is a
+                  {% for group in usergroups %}
+                    {% if group.name == "Mentor" %}
+                      <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
+                        Reps Mentor
+                      </a>
+                    {% endif %}
+                    {% if group.name == "Council" %}
+                      <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
+                        Reps Council
+                      </a> member
+                    {% endif %}
+                    {% if not loop.last %} and a {% endif %}
+                  {% endfor %}
+                {% endif %}
+              </h6>
+            {% endif %}
+            {% if featured_rep.count() %}
+              <!-- Display the following(s) if featured Rep -->
+              <h6 class="profile-heading">
+                Featured Rep for
+                {% for featured in featured_rep %}
+                  <a href="#" 
+                     data-reveal-id="featured-modal-{{ featured.created_on|
+                                                       format_datetime_utc }}">
+                    {{ featured.created_on|strftime('%B %Y') }}
+                  </a>
+                  {% if not loop.last %}
+                    ,&nbsp;
+                  {% else %}
+                    .
+                  {% endif %}
+                {% endfor %}
+              </h6>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+      <div class="row profile-detail-list">
+        <div class="large-1 columns pictogram">
+          <div class="pict-icon large home"></div>
+        </div>
+        <div class="large-11 columns">
+          <p class="profile-item">
+            <span class="label radius">
+              Location
+            </span>
+            &nbsp;
+            <a href="{{ url('profiles_list_profiles') }}search/{{ user_profile.city }}/">
+              {{ user_profile.city }}
+            </a>
+            -
+            <a href="{{ url('profiles_list_profiles') }}search/{{ user_profile.region }}/">
+              {{ user_profile.region }}
+            </a>
+            -
+            <a href="{{ url('profiles_list_profiles') }}country/{{ user_profile.country }}/">
+              {{ user_profile.country }}
+            </a>
+          </p>
+          {% if user_profile.gender is not none %}
+            <p class="profile-item">
+              <span class="label radius">
+                Gender
+              </span>
+              &nbsp;{{ user_profile.get_gender_display() }}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="row profile-detail-list">
+        <div class="large-1 columns pictogram">
+          <div class="pict-icon large at"></div>
+        </div>
+        <div class="large-11 columns">
+          <p class="profile-item">
+            <span class="label radius">
+              Personal Mail
+            </span>
+            &nbsp;{% if user.is_authenticated() %} {{ user_profile.private_email }}
+            {% else %} {{ user_profile.private_email|mailhide }} {% endif %}
+          </p>
+          <p class="profile-item">
+            <span class="label radius">
+              Bugzilla Mail
+            </span>
+            &nbsp;{% if user.is_authenticated() %} {{ pageuser.email }}
+            {% else %} {{ pageuser.email|mailhide }} {% endif %}
+          </p>
+          <p class="profile-item">
+            <span class="label radius">
+              Mozillians Profile
+            </span>
+            &nbsp;{{ user_profile.mozillians_profile_url|urlize(50) }}
+          </p>
+          <p class="profile-item">
+            <span class="label radius">
+              Wiki Profile
+            </span>
+            &nbsp;{{ user_profile.wiki_profile_url|urlize(50) }}
+          </p>
+          {% if mentor %}
+            <p class="profile-item">
+              <span class="label radius">
+                Mentor
+              </span>
+              &nbsp;
+              <a href="{{ url('profiles_view_profile', mentor.userprofile.display_name) }}">
+                {{ mentor.get_full_name() }}
               </a>
             </p>
-          </div>
+          {% endif %}
         </div>
-      {% endif %}
-    {% endif %}
-    {% if user.is_authenticated() %}
-      {% if user_profile.date_joined_program %}
+      </div>
+      <div class="row profile-detail-list">
+        {% if user_profile.twitter_account or user_profile.facebook_url or
+              user_profile.diaspora_url or user_profile.linkedin_url %}
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large twitter"></div>
+          </div>
+          <div class="large-11 columns">
+          {% if user_profile.twitter_account %}
+            <p class="profile-item">
+              <span class="label radius">
+                Twitter handle
+              </span>
+              &nbsp;
+              <a href="http://twitter.com/#!/{{ user_profile.twitter_account }}">
+                @{{ user_profile.twitter_account }}
+              </a>
+            </p>
+          {% endif %}
+          {% if user_profile.facebook_url %}
+            <p class="profile-item">
+              <span class="label radius">
+                Facebook profile
+              </span>
+              &nbsp;{{ user_profile.facebook_url|urlize(50) }}
+            </p>
+          {% endif %}
+          {% if user_profile.diaspora_url %}
+            <p class="profile-item">
+              <span class="label radius">
+                Diaspora profile
+              </span>
+              &nbsp;{{ user_profile.diaspora_url|urlize(50) }}
+            </p>
+          {% endif %}
+          {% if user_profile.linkedin_url %}
+            <p class="profile-item">
+              <span class="label radius">
+                LinkedIn profile
+              </span>
+              &nbsp;{{ user_profile.linkedin_url|urlize(50) }}
+            </p>
+          {% endif %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="row profile-detail-list">
+        <div class="large-1 columns pictogram">
+          <div class="pict-icon large talk"></div>
+        </div>
+        <div class="large-11 columns">
+          {% if user_profile.jabber_id %}
+            <p class="profile-item">
+              <span class="label radius">
+                Jabber ID
+              </span>
+              &nbsp;{{ user_profile.jabber_id }}
+            </p>
+          {% endif %}
+          <p class="profile-item">
+            <span class="label radius">
+              IRC nickname
+            </span>
+            &nbsp;{{ user_profile.irc_name }}
+          </p>
+          {% if user_profile.irc_channels %}
+            <p class="profile-item">
+              <span class="label radius">
+                IRC channels
+              </span>
+              &nbsp;{{ user_profile.irc_channels }}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="row profile-detail-list">
+        {% if user_profile.personal_website_url or user_profile.personal_blog_feed %}
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large www"></div>
+          </div>
+          <div class="large-11 columns">
+            {% if user_profile.personal_website_url %}
+              <p class="profile-item">
+                <span class="label radius">
+                  Personal Site
+                </span>
+                &nbsp;{{ user_profile.personal_website_url|urlize(50) }}
+              </p>
+            {% endif %}
+            {% if user_profile.personal_blog_feed %}
+              <p class="profile-item">
+                <span class="label radius">
+                  Feed for Reps Planet
+                </span>
+                &nbsp;{{ user_profile.personal_blog_feed|urlize(50) }}
+              </p>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+      {% if user_profile.functional_areas.all() %}
         <div class="row profile-detail-list">
           <div class="large-1 columns pictogram">
-            %
+            <div class="pict-icon large heart"></div>
           </div>
           <div class="large-11 columns">
             <p class="profile-item">
               <span class="label radius">
-                Date Joined
+                Interested in
               </span>
               &nbsp;
-              {{ user_profile.date_joined_program|strftime('%d %B %Y') }}
+              {% for area in user_profile.functional_areas.all() %}
+                <a href="{{ url('profiles_list_profiles') }}area/{{ area.name }}/">
+                   {{ area.name }}</a>{% if not loop.last %}, {% endif %}
+              {% endfor %}
             </p>
           </div>
         </div>
       {% endif %}
-    {% endif %}
-  </div>
-</div>
-{% if user == pageuser or perms.profiles.can_edit_profiles %}
-  <div class="row show-for-small">
-    <div class="large-12 columns align-center">
-      <a href="{{ url('profiles_edit', user_profile.display_name) }}"
-         class="small button radius">Edit profile</a>
+      {% if perms.profiles.can_edit_profiles %}
+        {% if added_by %}
+          <div class="row profile-detail-list">
+            <div class="large-1 columns pictogram">
+              <div class="pict-icon large thumbs-up"></div>
+            </div>
+            <div class="large-11 columns">
+              <p class="profile-item">
+                <span class="label radius">
+                  Added by
+                </span>
+                &nbsp;
+                <a href="{{ url('profiles_view_profile', added_by.userprofile.display_name) }}">
+                  {{ added_by.userprofile.display_name }}
+                </a>
+              </p>
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+      {% if user.is_authenticated() %}
+        {% if user_profile.date_joined_program %}
+          <div class="row profile-detail-list">
+            <div class="large-1 columns pictogram">
+              <div class="pict-icon large checkmark"></div>
+            </div>
+            <div class="large-11 columns">
+              <p class="profile-item">
+                <span class="label radius">
+                  Date Joined
+                </span>
+                &nbsp;
+                {{ user_profile.date_joined_program|strftime('%d %B %Y') }}
+              </p>
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
     </div>
   </div>
-{% endif %}
+  {% if user == pageuser or perms.profiles.can_edit_profiles %}
+    <div class="row show-for-small">
+      <div class="large-12 columns align-center">
+        <a href="{{ url('profiles_edit', user_profile.display_name) }}"
+           class="small button radius">Edit profile</a>
+      </div>
+    </div>
+  {% endif %}
 
-<!-- Featured Rep text Reveal Modal -->
-{% for featured in featured_rep %}
-  <div class="reveal-modal" 
-       id="featured-modal-{{ featured.created_on|format_datetime_utc }}">
-    <a class="close-reveal-modal">&#215;</a>
-    <p class="lead">
-      Featured for {{ featured.created_on|strftime('%B %Y') }}
-    </p>
-    <h2>
-      {{ featured.user.get_full_name() }}
-    </h2>
-    <!-- Make following p Markdown to match featured rep content -->
-    <p>
-      {{ featured.text|markdown }}
-    </p>
-  </div>
-{% endfor %}
+  <!-- Featured Rep text Reveal Modal -->
+  {% for featured in featured_rep %}
+    <div class="reveal-modal" 
+         id="featured-modal-{{ featured.created_on|format_datetime_utc }}">
+      <a class="close-reveal-modal">&#215;</a>
+      <p class="lead">
+        Featured for {{ featured.created_on|strftime('%B %Y') }}
+      </p>
+      <h2>
+        {{ featured.user.get_full_name() }}
+      </h2>
+      <!-- Make following p Markdown to match featured rep content -->
+      <p>
+        {{ featured.text|markdown }}
+      </p>
+    </div>
+  {% endfor %}
 
+</main>
 {% endblock %}

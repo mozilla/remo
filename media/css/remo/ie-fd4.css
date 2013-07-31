@@ -91,3 +91,13 @@
 .hide-for-small {
 	display: block !important;
 }
+
+.lt-ie9 .large-block-grid-3 {
+    list-style: none;
+}
+.lt-ie9 .large-block-grid-3 li {
+    float:left;
+    width: 30%;
+    margin: 0 1.5%;
+
+}
