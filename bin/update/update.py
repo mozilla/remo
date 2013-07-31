@@ -18,6 +18,8 @@ import commander_settings as settings
 
 
 NEW_RELIC_URL = 'https://rpm.newrelic.com/deployments.xml'
+NEW_RELIC_APP_ID = getattr(settings, 'NEW_RELIC_APP_ID', False)
+NEW_RELIC_API_KEY = getattr(settings, 'NEW_RELIC_API_KEY', False)
 
 
 @task
@@ -86,12 +88,12 @@ def update_info(ctx, tag):
         ctx.local('git submodule status >> media/revision_info.txt')
         ctx.local('git rev-parse HEAD > media/revision.txt')
 
-        if settings.NEW_RELIC_API_KEY and settings.NEW_RELIC_APP_ID:
+        if NEW_RELIC_API_KEY and NEW_RELIC_APP_ID:
             print 'Post deploy event to NewRelic'
             data = urllib.urlencode(
                 {'deployment[revision]': tag,
-                 'deployment[app_id]': settings.NEW_RELIC_APP_ID})
-            headers = {'x-api-key': settings.NEW_RELIC_API_KEY}
+                 'deployment[app_id]': NEW_RELIC_APP_ID})
+            headers = {'x-api-key': NEW_RELIC_API_KEY}
             try:
                 request = urllib2.Request(NEW_RELIC_URL, data, headers)
                 urllib2.urlopen(request)
