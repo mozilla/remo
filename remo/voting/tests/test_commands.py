@@ -35,13 +35,9 @@ class VotingTestCommands(TestCase):
         their vote yet.
 
         """
-        today = datetime.datetime.today()
-
         # act like it's today + 1 day
-        fake_date = datetime.datetime(year=today.year, month=today.month,
-                                      day=today.day + 1, hour=today.hour,
-                                      minute=today.minute)
-        (fake_requests_obj.expects_call().returns(fake_date))
+        tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)
+        (fake_requests_obj.expects_call().returns(tomorrow))
         args = ['poll_vote_reminder']
         management.call_command('cron', *args)
         eq_(len(mail.outbox), 3)
