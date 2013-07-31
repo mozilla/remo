@@ -38,6 +38,9 @@ MINIFY_BUNDLES = {
         'less': (
             'js/libs/less-1.3.0.min.js',
             ),
+        'init-fd4': (
+            'js/remo/init.js',
+            ),
         'common-dbg': (
             'js/libs/jquery-1.7.1.js',
             'js/libs/modernizr.foundation.js',
@@ -50,14 +53,13 @@ MINIFY_BUNDLES = {
             ),
         'common-dbg-fd4': (
             'js/libs/jquery-1.7.1.js',
-            'js/libs/modernizr.foundation.js',
+            'js/libs/modernizr.foundation-4.js',
             'js/libs/foundation-4.min.js',
-            'js/libs/jquery.imageready.min.js',
             'static/browserid/browserid.js',
             'js/libs/jquery.prettydate.js',
+            'js/libs/jquery.imageready.min.js',
             'js/libs/placeholder.min.js',
             'js/remo/remolib.js',
-            'js/remo/init.js',
              # Our app.js is always last to override stuff
             'js/remo/app.js',
             ),
@@ -72,15 +74,14 @@ MINIFY_BUNDLES = {
             'js/remo/app.js',
             ),
         'common-fd4': (
-            'js/libs/jquery.min.js',
-            'js/libs/modernizr.foundation.js',
+            'js/libs/jquery-1.7.1.min.js',
+            'js/libs/modernizr.foundation-4.js',
             'js/libs/foundation-4.min.js',
-            'js/libs/jquery.imageready.min.js',
             'static/browserid/browserid.js',
             'js/libs/jquery.prettydate.js',
+            'js/libs/jquery.imageready.min.js',
             'js/libs/placeholder.min.js',
             'js/remo/remolib.js',
-            'js/remo/init.js',
              # Our app.js is always last to override stuff
             'js/remo/app.js',
             ),

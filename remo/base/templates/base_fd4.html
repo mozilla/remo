@@ -50,7 +50,7 @@
   {% include "includes/google_analytics.html" %}
 </head>
 
-<body>
+<body data-cloudmade-api-key="{{ settings.CLOUDMADE_API }}">
 
   <!-- Wrapper for background -->
   <div id="wrapper">
@@ -66,7 +66,7 @@
 
             <!-- Mozilla Tab -->
             <div class="large-2 small-2 columns" id="global-header-tab">
-              <a href="http://www.mozilla.org/" id="tabzilla">mozilla</a>
+              <a href="http://www.mozilla.org/" class="logo" id="tabzilla">mozilla</a>
             </div>
 
             <!-- Sign In & Sign Out -->
@@ -116,7 +116,7 @@
             <!-- Logo and Wordmark -->
             <div class="large-3 columns" id="logo-box">
               <div class="row hide-for-small">
-                <a href="{{ url('main') }}">
+                <a class="logo" href="{{ url('main') }}">
                   <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
                        alt="Mozilla Reps logo">
                   <h3><span class="metabold">mozilla</span> reps</h3>
@@ -124,7 +124,7 @@
               </div>
               <!-- Mobile Logo -->
               <div class="row show-for-small">
-                <a href="{{ url('main') }}">
+                <a class="logo" href="{{ url('main') }}">
                   <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
                        alt="Mozilla Reps logo">
                   <h3><span class="metabold">mozilla</span> reps</h3>
@@ -202,12 +202,14 @@
       <!-- Page Content -->
       {% if messages %}
         <div class="row">
-          {% for message in messages %}
-            <div class="alert-box {{ message.tags }}">
-              {{ message|safe }}
-              <a href="#" class="close">&times;</a>
-            </div>
-          {% endfor %}
+          <div class="large-12 columns">
+            {% for message in messages %}
+              <div class="alert-box {{ message.tags }}">
+                {{ message|safe }}
+                <a href="#" class="close">&times;</a>
+              </div>
+            {% endfor %}
+          </div>
         </div>
       {% endif %}
 
@@ -292,6 +294,7 @@
   {% endif %}
   <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
   {% block bottomextra %} {% endblock %}
+  {{  js('init-fd4') }}
 </body>
 
 </html>

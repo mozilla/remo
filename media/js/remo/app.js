@@ -29,7 +29,12 @@ jQuery(document).ready(function ($) {
 
     if (window.location.hash) {
         activateTab($('a[href="' + window.location.hash + '"]'));
-        $.foundation.customForms.appendCustomMarkup();
+
+        /* this is for legacy Foundation 2 TODO - remove after migration to 4 */
+        if ($.isFunction($.fn.foundation.customForms)) {
+            $.foundation.customForms.appendCustomMarkup();
+        }
+        
     }
 
     /* PLACEHOLDER FOR FORMS ------------- */
@@ -37,7 +42,10 @@ jQuery(document).ready(function ($) {
     $('input, textarea').placeholder();
 
     /* TOOLTIPS ------------ */
-    $(this).tooltips();
+    /* this is for legacy Foundation 2 TODO - remove after migration to 4 */
+    if ($.isFunction($.fn.tooltips)) {
+        $(this).tooltips();
+    }
 
     /* UNCOMMENT THE LINE YOU WANT BELOW IF YOU WANT IE6/7/8 SUPPORT AND ARE USING .block-grids */
     $('.block-grid.two-up>li:nth-child(2n+1)').css({clear: 'left'});
@@ -47,7 +55,7 @@ jQuery(document).ready(function ($) {
 
     /* DROPDOWN NAV ------------- */
     var lockNavBar = false;
-    $('.nav-bar a.flyout-toggle').live('click', function(e) {
+    $('.nav-bar a.flyout-toggle').on('click', function(e) {
         e.preventDefault();
         var flyout = $(this).siblings('.flyout');
         if (!lockNavBar) {
