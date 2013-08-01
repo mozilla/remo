@@ -1,110 +1,115 @@
-{% extends "base.html" %}
+{% extends "base_fd4.html" %}
+
+{% block logo %}
+<h1><span class="metabold">mozilla</span> reps</h1>
+{% endblock %}
 
 {% block content %}
 
-<!-- Sidereel Orbit featured images -->
-<div class="row show-on-desktop">
-  <div class="twelve columns">
-    <div id="featured">
-      <img src="{{ MEDIA_URL }}img/remo/show2.jpg" alt="Mozilla Reps in action" />
-      <img src="{{ MEDIA_URL }}img/remo/show3.jpg" alt="Mozilla Reps polo shirt" />
-      <img src="{{ MEDIA_URL }}img/remo/show4.jpg" alt="Mozilla Reps welcome pack" />
-      <img src="{{ MEDIA_URL }}img/remo/show1.jpg" alt="Mozilla Festival closing session" />
-    </div>
-  </div>
-</div>
-
-<!-- Motto goes here -->
-<div class="row">
-  <div class="twelve columns" id="motto">
-  </div>
-</div>
-
-<!-- 3 Sections are here -->
-<div class="row">
-
-  <!-- About section -->
-  <div class="four columns main-section">
-    <div id="about">
-      <h5>
-        about:reps
-      </h5>
-      <br>
-      <p>
-        The Mozilla Reps program aims to empower and support volunteer
-        Mozillians who want to become official representatives of
-        Mozilla in their region/locale.
-      </p>
-      <p>
-        The program provides a simple framework and a specific set of
-        tools to help Mozillians to organize and/or attend events,
-        recruit and mentor new contributors, document and share
-        activities, and support their local communities better.
-      </p>
-      <p>
-        You can learn more about the program
-        <a href="{{ url('about') }}">here</a>.
-      </p>
-    </div>
-    <hr>
-    <div id="gray-logo">
-      <img src="{{ MEDIA_URL }}img/remo/remo_avatar.png" alt="Reps Logo gray">
+<main role="main">
+  <!-- Sidereel Orbit featured images -->
+  <div class="row">
+    <div class="large-12 columns slidereel">
+      <ul id="featured" data-orbit>
+        <li>
+          <img src="{{ MEDIA_URL }}img/remo/show2.jpg" alt="Mozilla Reps in action" />
+        </li>
+        <li>
+          <img src="{{ MEDIA_URL }}img/remo/show3.jpg" alt="Mozilla Reps polo shirt" />
+        </li>
+        <li>
+          <img src="{{ MEDIA_URL }}img/remo/show4.jpg" alt="Mozilla Reps welcome pack" />
+        </li>
+        <li>
+          <img src="{{ MEDIA_URL }}img/remo/show1.jpg" alt="Mozilla Festival closing session" />
+        </li>
+      </ul>
     </div>
   </div>
 
-  <!-- Featured Rep section -->
-  <div class="four columns main-section">
-    <h5>
-      Rep of the month
-    </h5>
-    <br>
-    <div class="row">
-      {% if featuredrep %}
-      <div class="four columns">
-        <img src="{{ featuredrep.user|get_avatar_url(80) }}" id="main-featured-avatar"
-             alt="Rep of the month profile picture">
+  <!-- 3 Sections are here -->
+  <div class="row">
+
+    <!-- About section -->
+    <div class="large-4 columns main-section">
+      <div id="about">
+        <h3>
+          about:reps
+        </h3>
+        <p>
+          The Mozilla Reps program aims to empower and support volunteer
+          Mozillians who want to become official representatives of
+          Mozilla in their region/locale.
+        </p>
+        <p>
+          The program provides a simple framework and a specific set of
+          tools to help Mozillians to organize and/or attend events,
+          recruit and mentor new contributors, document and share
+          activities, and support their local communities better.
+        </p>
+        <p>
+          You can learn more about the program
+          <a href="{{ url('about') }}">here</a>.
+        </p>
       </div>
-      <div class="eight columns">
-        <h5>
-          <a href="{{ url('profiles_view_profile', featuredrep.user.userprofile.display_name) }}">
-            {{ featuredrep.user.first_name }}<br>{{ featuredrep.user.last_name }}
-          </a>
-        </h5>
-        <br>
-        {{ featuredrep.user.userprofile.city }}, {{ featuredrep.user.userprofile.country }}
+      <hr>
+      <div id="gray-logo">
+        <img src="{{ MEDIA_URL }}img/remo/remo_avatar.png" alt="">
       </div>
-      {% else %}
-      <div class="twelve columns">
-        None for this month!
-      </div>
-      {% endif %}
     </div>
-    <div class="row">
-      <div class="twelve columns top-margined">
-        <div class="markdown">
-          {{ featuredrep.text|markdown }}
+
+    <!-- Featured Rep section -->
+    <div class="large-4 columns main-section">
+      <h3>
+        Rep of the month
+      </h3>
+      <div class="row">
+        {% if featuredrep %}
+        <div class="large-4 columns">
+          <img src="{{ featuredrep.user|get_avatar_url(80) }}" id="main-featured-avatar"
+               alt="Profile picture of {{ featuredrep.user.first_name }} {{ featuredrep.user.last_name }}">
+        </div>
+        <div class="large-8 columns">
+          <h5>
+            <a href="{{ url('profiles_view_profile', featuredrep.user.userprofile.display_name) }}">
+              {{ featuredrep.user.first_name }}<br>{{ featuredrep.user.last_name }}
+            </a>
+          </h5>
+          {{ featuredrep.user.userprofile.city }}, {{ featuredrep.user.userprofile.country }}
+        </div>
+        {% else %}
+        <div class="large-12 columns">
+          None for this month!
+        </div>
+        {% endif %}
+      </div>
+      <div class="row">
+        <div class="large-12 columns top-margined">
+          <div class="markdown">
+            {{ featuredrep.text|markdown }}
+          </div>
         </div>
       </div>
+      <div class="row">
+        <a class="large-12 columns more-posts" href="/featured/">See past featured Reps...</a>
+      </div>
     </div>
-    <div class="row more-posts">
-      <a href="/featured/">See past featured Reps...</a>
-    </div>
-  </div>
 
-  <!-- Planet Section -->
-  <div class="four columns main-section">
-    <h5>
-      Reps planet
-    </h5>
-    <div id="planet">
-      Fetching awesome Reps Planet posts...
+    <!-- Planet Section -->
+    <div class="large-4 columns main-section">
+      <h3>
+        Reps planet
+      </h3>
+      <p id="planet">
+        Fetching awesome Reps Planet posts...
+      </p>
+      <div class="row">
+        <a class="large-12 columns more-posts" href="http://planet.mozillareps.org">See all posts in planet...</a>
+      </div>
     </div>
-    <div class="row more-posts">
-      <a href="http://planet.mozillareps.org">See all posts in planet...</a>
-    </div>
-  </div>
 
-</div>
+  </div>
+</main>
 {% endblock %}
 
 {% block bottomextra %}

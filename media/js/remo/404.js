@@ -1,3 +1,3 @@
 $(document).ready(function() {
-    $('#404-error').reveal();
+    $('#404-error').foundation('reveal', 'open');
 });

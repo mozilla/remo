@@ -1,73 +1,68 @@
-{% extends "base.html" %}
+{% extends "base_fd4.html" %}
 
 {% block pagetitle %}
 Mozilla Reps - Settings
 {% endblock %}
 
 {% block content %}
-<form class="custom" method="post"
-      action="{{ url('edit_settings') }}">
-  {{ csrf() }}
-  <div class="row">
-    <div class="ten columns">
-      <h4>Settings</h4>
+<main role="main" class="settings-main">
+  <form method="post" action="{{ url('edit_settings') }}">
+    {{ csrf() }}
+    <div class="row">
+      <div class="large-10 columns">
+        <h1>Settings</h1>
+      </div>
+      <div class="large-2 columns align-right hide-for-small">
+        <button id="save-settings" type="submit" class="button small confirm">
+          Save
+        </button>
+      </div>
     </div>
-    <div class="two columns align-right hide-on-phones">
-      <button id="save-settings" type="submit"
-              class="small green button nice radius">
+
+    <div class="row">
+      <div class="large-12 columns">
+        <div class="section-container auto" data-section>
+          <section>
+            <p class="title" data-section-title>
+              <a href="#mailPreferences">Mail Preferences</a>
+            </p>
+            <div class="content" data-section-content id="mailPreferencesTab">
+              {% if user_is_mozillian(user) %}
+                <p>Nothing to see here yet!</p>
+              {% else %}
+                <h2>Reports</h2>
+                <p>
+                  {{ settingsform.receive_email_on_add_comment }}
+                  {{ settingsform.receive_email_on_add_comment.label }}
+                </p>
+                {% if user_is_mentor(user) %}
+                <p>
+                  {{ settingsform.receive_email_on_add_report }}
+                  {{ settingsform.receive_email_on_add_report.label }}
+                </p>
+                <p>
+                  {{ settingsform.receive_email_on_edit_report }}
+                  {{ settingsform.receive_email_on_edit_report.label }}
+                </p>
+                {% endif %}
+                <h2>Events</h2>
+                <p>
+                  {{ settingsform.receive_email_on_add_event_comment }}
+                  {{ settingsform.receive_email_on_add_event_comment.label }}
+                </p>
+              {% endif %}
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="large-2 columns align-right show-for-small">
+      <button id="save-settings" type="submit" class="button small confirm">
         Save
       </button>
     </div>
-  </div>
-
-  <div class="row">
-    <div class="twelve columns">
-      <dl class="tabs">
-        <dd class="active"><a href="#mailPreferences">Mail Preferences</a>
-        </dd>
-      </dl>
-
-      <ul class="tabs-content">
-        <li class="active" id="mailPreferencesTab">
-          <div class="dashboard-box">
-            <div class="row">
-              <div class="twelve columns">
-                {% if user_is_mozillian(user) %}
-                  <p>Nothing to see here yet!</p>
-                {% else %}
-                  <div class="profile-item">
-                    <h5>Reports</h5>
-                    {{ settingsform.receive_email_on_add_comment }}
-                    {{ settingsform.receive_email_on_add_comment.label }}
-                    <br>
-                    {% if user_is_mentor(user) %}
-                      {{ settingsform.receive_email_on_add_report }}
-                      {{ settingsform.receive_email_on_add_report.label }}
-                      <br>
-                      {{ settingsform.receive_email_on_edit_report }}
-                      {{ settingsform.receive_email_on_edit_report.label }}
-                    {% endif %}
-                  </div>
-                  <div class="profile-item">
-                    <h5>Events</h5>
-                    {{ settingsform.receive_email_on_add_event_comment }}
-                    {{ settingsform.receive_email_on_add_event_comment.label }}
-                  </div>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="two columns align-right show-on-phones">
-    <button id="save-settings" type="submit"
-            class="small green button nice radius top-margined">
-      Save
-    </button>
-  </div>
-</form>
+  </form>
+</main>
 
 {% endblock %}

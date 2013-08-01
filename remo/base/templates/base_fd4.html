@@ -115,19 +115,13 @@
 
             <!-- Logo and Wordmark -->
             <div class="large-3 columns" id="logo-box">
-              <div class="row hide-for-small">
+              <div class="row">
                 <a class="logo" href="{{ url('main') }}">
                   <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
                        alt="Mozilla Reps logo">
-                  <h3><span class="metabold">mozilla</span> reps</h3>
-                </a>
-              </div>
-              <!-- Mobile Logo -->
-              <div class="row show-for-small">
-                <a class="logo" href="{{ url('main') }}">
-                  <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
-                       alt="Mozilla Reps logo">
-                  <h3><span class="metabold">mozilla</span> reps</h3>
+                  {% block logo %}
+                  <h2><span class="metabold">mozilla</span> reps</h2>
+                  {% endblock %}
                 </a>
               </div>
             </div>
