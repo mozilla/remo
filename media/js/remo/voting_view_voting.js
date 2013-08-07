@@ -24,7 +24,6 @@ function set_time_tooltip() {
     // have initialized the tooltip.
     item.attr('title', title);
     item.addClass('has-tip');
-    $(document).tooltips();
 }
 
 $(document).ready(function() {

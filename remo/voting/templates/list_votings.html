@@ -1,121 +1,123 @@
-{% extends "base.html" %}
+{% extends "base_fd4.html" %}
 {% block pagetitle %}Mozilla Reps - Voting{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="ten columns">
-    <h4>Voting</h4>
-  </div>
-  {% if user_is_admin(user) %}
-    <div class="two columns align-right">
-      <a href="{{ url('voting_new_voting') }}" target="_blank"
-         class="small blue button nice radius"
-         id="voting-create-button">Create voting</a>
+<main role="main" class="voting-main">
+  <div class="row">
+    <div class="large-10 columns">
+      <h1>Voting</h1>
     </div>
-  {% endif %}
-</div>
+    {% if user_is_admin(user) %}
+      <div class="large-2 columns align-right">
+        <a href="{{ url('voting_new_voting') }}" target="_blank"
+           class="button small update" role="button"
+           id="voting-create-button">Create voting</a>
+      </div>
+    {% endif %}
+  </div>
 
-{% macro display_polls(polls) -%}
-  <div class="twelve columns">
-    <table class="dashboard-table">
-      <thead>
-        <tr>
-          <th class="dashboard-clickable type-string">Name</th>
-          <th class="dashboard-clickable type-string">Start Date</th>
-          <th class="dashboard-clickable type-string">End Date</th>
-          <th class="dashboard-clickable type-string">Eligible Groups</th>
-          <th class="dashboard-clickable type-string align-center">Voted</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for poll in polls %}
+  {% macro display_polls(polls) -%}
+    <div class="large-12 columns">
+      <table class="dashboard-table">
+        <thead>
           <tr>
-            <td>
-              <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
-                {{ poll.name }}
-              </a>
-            </td>
-            <td title="{{ poll.start|format_datetime }}"
-                data-time="{{ poll.start|format_datetime_iso }}">
-              {{ poll.start|format_datetime }}
-            </td>
-            <td title="{{ poll.end|format_datetime }}"
-                data-time="{{ poll.end|format_datetime_iso }}">
-              {{ poll.end|format_datetime }}
-            </td>
-            <td>{{ poll.valid_groups }}</td>
-            <td class="align-center">{{ poll|get_users_voted }}</td>
+            <th class="dashboard-clickable type-string">Name</th>
+            <th class="dashboard-clickable type-string">Start Date</th>
+            <th class="dashboard-clickable type-string">End Date</th>
+            <th class="dashboard-clickable type-string">Eligible Groups</th>
+            <th class="dashboard-clickable type-string align-center">Voted</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for poll in polls %}
+            <tr>
+              <td>
+                <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
+                  {{ poll.name }}
+                </a>
+              </td>
+              <td title="{{ poll.start|format_datetime }}"
+                  data-time="{{ poll.start|format_datetime_iso }}">
+                {{ poll.start|format_datetime }}
+              </td>
+              <td title="{{ poll.end|format_datetime }}"
+                  data-time="{{ poll.end|format_datetime_iso }}">
+                {{ poll.end|format_datetime }}
+              </td>
+              <td>{{ poll.valid_groups }}</td>
+              <td class="align-center">{{ poll|get_users_voted }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {%- endmacro%}
+
+  <div class="row">
+    <div class="large-12 columns">
+
+      <!-- Current votes block -->
+      <div class="dashboard-box">
+        <div class="row">
+          <div class="large-12 columns">
+            <h2>Current Votes</h2>
+          </div>
+        </div>
+
+        <div class="row">
+          {% if current_polls %}
+            {{ display_polls(current_polls) }}
+          {% else %}
+            <div class="large-12 columns no-bugs">
+              <p>No current votes found!</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <!-- end Current votes block -->
+
+      <!-- Future votes block -->
+      <div class="dashboard-box">
+        <div class="row">
+          <div class="large-12 columns">
+            <h2>Future Votes</h2>
+          </div>
+        </div>
+
+        <div class="row">
+          {% if future_polls %}
+            {{ display_polls(future_polls) }}
+          {% else %}
+            <div class="large-12 columns no-bugs">
+              <p>No future votes found!</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <!-- end Future votes block -->
+
+      <!-- Past votes block -->
+      <div class="dashboard-box">
+        <div class="row">
+          <div class="large-12 columns">
+            <h2>Past Votes</h2>
+          </div>
+        </div>
+
+        <div class="row">
+          {% if past_polls %}
+            {{ display_polls(past_polls) }}
+          {% else %}
+            <div class="large-12 columns no-bugs">
+              <p>No past votes found!</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <!-- end Past votes block -->
+    </div>
   </div>
-{%- endmacro%}
-
-<div class="row">
-  <div class="twelve columns">
-
-    <!-- Current votes block -->
-    <div class="dashboard-box">
-      <div class="row">
-        <div class="twelve columns">
-          <h5>Current Votes</h5>
-        </div>
-      </div>
-
-      <div class="row">
-        {% if current_polls %}
-          {{ display_polls(current_polls) }}
-        {% else %}
-          <div class="twelve columns no-bugs">
-            <p>No current votes found!</p>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-    <!-- end Current votes block -->
-
-    <!-- Future votes block -->
-    <div class="dashboard-box">
-      <div class="row">
-        <div class="twelve columns">
-          <h5>Future Votes</h5>
-        </div>
-      </div>
-
-      <div class="row">
-        {% if future_polls %}
-          {{ display_polls(future_polls) }}
-        {% else %}
-          <div class="twelve columns no-bugs">
-            <p>No future votes found!</p>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-    <!-- end Future votes block -->
-
-    <!-- Past votes block -->
-    <div class="dashboard-box">
-      <div class="row">
-        <div class="twelve columns">
-          <h5>Past Votes</h5>
-        </div>
-      </div>
-
-      <div class="row">
-        {% if past_polls %}
-          {{ display_polls(past_polls) }}
-        {% else %}
-          <div class="twelve columns no-bugs">
-            <p>No past votes found!</p>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-    <!-- end Past votes block -->
-  </div>
-</div>
+</main>
 {% endblock %}
 
 {% block bottomextra %}

@@ -23,6 +23,7 @@
 
 @breakSmall: 767px;
 @breakMedium: 850px;
+@breakLarge: 960px;
 
 .top-margined {
     margin-top: 20px;
@@ -223,7 +224,7 @@ select {
     font-size: 12px;
     height: 30px;
     padding: 5px;
-    background: #f9f9f9;
+    background: transparent;
     border: 1px solid #d3d3d3;
     color: #141414;
 }
@@ -274,18 +275,17 @@ select {
     }
 }
 
-.alert-box.info {
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 2em;
-    p {
-        margin: .5em 0 1em 0;
-        font-size: 14px;
-    }
-    a {
-        font-size: 14px;
+.label {
+    font-size: 11px;
+    background-color: #ccc;
+    color: #444;
+    .opensans;
+    font-weight: normal;
+    &.inline {
+        margin-right: .5em;
     }
 }
+
 
 /* -----------------------------------------
    Custom Button Styles
@@ -898,13 +898,6 @@ ul.edit-profile-item {
 .profile-item {
     .top-margined;
     font-size: 13px;
-    .label {
-        font-size: 11px;
-        background-color: #ccc;
-        color: #444;
-        .opensans;
-        font-weight: normal;
-    }
 }
 
 .smallmap-profile-container {
@@ -1133,12 +1126,9 @@ small.error {
 .pictogram-button .pict-icon.large:focus:after {
     .grayed;
 }
-
-.pict-icon.large {
+.pict-icon {
   position: relative;
   display: block;
-  width: 30px;
-  height: 48px;
   padding-top: 18px;
   margin: 0;
   overflow: hidden;
@@ -1146,6 +1136,14 @@ small.error {
   font-weight: normal;
   border: 0;
   background: transparent;
+}
+.pict-icon.large {
+  width: 30px;
+  height: 48px;
+}
+.pict-icon.small {
+  width: 20px;
+  height: 38px;
 }
 .pict-icon.large:after {
   .pictogram;
@@ -1156,6 +1154,20 @@ small.error {
   display: block;
   width: 30px;
   height: 30px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.pict-icon.small:after {
+  .pictogram;
+  font-size: 20px;
+  line-height: 15px;
+  white-space: nowrap;
+  text-indent: 0;
+  text-align: center;
+  display: block;
+  width: 20px;
+  height: 20px;
   position: absolute;
   left: 0;
   top: 0;
@@ -1216,6 +1228,19 @@ small.error {
 }
 .pict-icon.search:after {
   content: "s";
+}
+.pict-icon.time:after {
+  content: "}";
+}
+.pict-icon.lock:after {
+  content: "n";
+}
+.pict-icon.people:after {
+  content: "g";
+  font-size: 25px;
+}
+.pict-icon.news:after {
+  content: "a";
 }
 
 @media only screen and (max-width: @breakMedium) {
@@ -1317,4 +1342,269 @@ ul.pagination li.unavailable a:focus {
 
 ul.mreports li.editable a {
     color: #dd4433;
+}
+
+/* -----------------------------------------
+   Dashboard
+----------------------------------------- */
+
+.dashboard-table {
+    width: 100%;
+    th {
+        font-size: 14px;
+    }
+    td {
+        font-size: 12px;
+    }
+}
+
+/* -----------------------------------------
+   Voting
+----------------------------------------- */
+
+.voting-main {
+    h1 {
+        font-size: 24px;
+        letter-spacing: -0.5px;
+        margin-bottom: 1em;
+    }
+    h2 {
+        font-size: 18px;
+        letter-spacing: 1px;
+        margin-top: 10px;
+    }
+    p {
+        margin-top: 10px;
+        font-size: 13px;
+    }
+    textarea {
+        height: auto;
+    }
+    textarea + .required-field {
+        top: -50px;
+    }
+    .valid-groups {
+        select {
+            width: auto;
+        }
+    }
+    .data-tip {
+        margin: 10px 0;
+        overflow: hidden;
+        select {
+            margin: 0;
+        }
+    }
+    .event-single-date {
+        padding: 10px;
+        margin-bottom: 20px;
+        .grayed;
+        background: #efefef;
+        background: -moz-linear-gradient(top, #ffffff 0%, #f4f4f4 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f4f4f4));
+        background: -webkit-linear-gradient(top, #ffffff 0%,#f4f4f4 100%);
+        background: -o-linear-gradient(top, #ffffff 0%,#f4f4f4 100%);
+        background: -ms-linear-gradient(top, #ffffff 0%,#f4f4f4 100%);
+        background: linear-gradient(to bottom, #ffffff 0%,#f4f4f4 100%);
+        border: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        -webkit-box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        -moz-box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        overflow: hidden;
+        time {
+            display: inline-block;
+            .opensans;
+            font-weight: bold;
+            font-size: 20px;
+            text-align: right;
+            text-shadow: 1px 1px 0px rgba(200, 200, 200, 0.75);
+            line-height: 1.2em;
+        }
+        .date {
+            border-right: 1px solid #ddd;
+        }
+        .day {
+            .opensanslight;
+            font-style: italic;
+            font-size: 15px;
+            text-indent: .5em;
+            line-height: 1.2em;
+        }
+        .single-day {
+            font-style: italic;
+            font-size: 15px;
+            margin: 10px 0 0 10px;
+            text-align: left;
+        }
+        .pict-icon.time {
+            position: absolute;
+            top: -5px;
+            right: 0;
+        }
+        .pict-icon.time:after {
+            .grayed;
+            margin: 0;
+            text-align: left;
+        }
+        .pict-icon.time:hover:after {
+            color: #000;
+        }
+        .pict-icon.time.single:after {
+            color: inherit;
+        }
+        .number {
+            .metabold;
+            font-size: 60px;
+            line-height: 40px;
+            text-shadow: 1px 1px 0px rgba(200, 200, 200, 0.75);
+        }
+        .month {
+            .opensans;
+            font-weight: bold;
+            font-size: 20px;
+            text-align: left;
+            margin-left: 10px;
+            text-shadow: 1px 1px 0px rgba(200, 200, 200, 0.75);
+            min-width: 96px;
+        }
+        .date-times {
+            .opensanslight;
+            .grayed;
+            text-align: left;
+            border-left: 1px solid #ddd;
+            border-bottom: none;
+            text-align: left;
+            min-width: 60px;
+        }
+        .date-times:hover {
+            color: #000;
+        }
+        .time-start {
+            margin-left: 10px;
+            font-size: 20px;
+        }
+        .time-end {
+            .opensanslight;
+            margin: 8px 0 0 10px;
+            font-size: 20px;
+        }
+        .row {
+            margin: 0 -0.5em;
+        }
+        .columns {
+            padding: 0 0.5em;
+        }
+    }
+    .formset {
+        text-align: right;
+        button {
+            margin-top: 10px;
+        }
+        select {
+            margin: 8px 20px 20px;
+        }
+    }
+    .controls-footer {
+        margin-top: 20px;
+    }
+    .copyblock.nominee {
+        text-align: left;
+        margin-bottom: 10px;
+    }
+    .select-nominee-group {
+        display: inline-block;
+        width: 70%;
+        text-align: left;
+        select {
+            width: 90%;
+            margin: 0;
+        }
+        .required-field {
+            margin-top: 1.5em;
+        }
+    }
+    .delete-nominee-group {
+        float: right;
+        width: 70px;
+        padding-top: 5px;
+        text-align: right;
+    }
+}
+
+@media only screen and (max-width: @breakMedium) {
+    .voting-main {
+        .event-single-date {
+            .pict-icon.small.single {
+                display: none;
+            }
+        }
+        .select-nominee-group {
+            width: 100%;
+        }
+        .delete-nominee-group {
+            float: none;
+            width: 100%;
+            margin-top: 10px;
+            text-align: center;
+        }
+    }
+}
+
+@media only screen and (max-width: @breakLarge) {
+    .voting-main {
+        .event-single-date {
+            .number {
+                font-size: 40px;
+                line-height: 30px
+            }
+            .time-start,
+            .time-end,
+            .month,
+            .single-day {
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+.poll-choices {
+    margin-top: 10px;
+}
+
+.poll-answer,
+.poll-choice label {
+    font-family: 'Open Sans Light',sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    margin: 12px 0px;
+    line-height: 100%;
+    text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.75);
+    color: rgb(72, 72, 72);
+}
+
+.poll-block {
+    display: block;
+    padding: 10px 20px 10px 20px;
+    margin: 10px 0 0 0;
+    background-color: #eee;
+    border-radius: 10px;
+
+    label {
+        display: inline;
+    }
+}
+
+#delete-voting {
+    p {
+        font-size: 14px;
+    }
+    p.lead {
+        font-size: 16px;
+    }
+    h2 {
+        font-size: 24px;
+        letter-spacing: -0.25px;
+    }
 }
