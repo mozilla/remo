@@ -89,6 +89,7 @@ function append_to_formset(event) {
     attr_update('[id*=id_', 'id', 'id_');
     attr_update('[name*=', 'name', '');
     attr_update('[data-prefix*=', 'data-prefix', '');
+    attr_update('[for*=id_', 'for', 'id_');
 
     new_block_obj.insertAfter(append_after_obj);
 

@@ -4,10 +4,8 @@ $(document).ready(function() {
         ['0_month', '0_day', '0_year', '1_hour', '1_minute'].forEach(function(elem) {
             var destination = $('#' + obj + '-' + elem.substr(2));
             var form_elem = $('#id_' + obj + '_form_' + elem);
-            var foundation_elem = form_elem.next().detach();
 
             form_elem.detach().appendTo(destination);
-            foundation_elem.appendTo(destination);
         });
     });
 
@@ -20,6 +18,6 @@ $(document).ready(function() {
         });
     });
 
-    $('form.custom').on('click', '.voting-add-answer-button, .voting-add-radiopoll-button, .voting-add-nominee-button, .voting-add-rangepoll-button', append_to_formset);
+    $('form').on('click', '.voting-add-answer-button, .voting-add-radiopoll-button, .voting-add-nominee-button, .voting-add-rangepoll-button', append_to_formset);
 
 });
