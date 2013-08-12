@@ -1,6 +1,10 @@
 {% extends "base_fd4.html" %}
 {% block pagetitle %}Mozilla Reps - People{% endblock %}
 
+{% block logo %}
+<h1><span class="metabold">mozilla</span> reps</h1>
+{% endblock %}
+
 {% block content %}
 <main role="main" class="people-main">
 
@@ -20,7 +24,7 @@
           <div id="search-ready-icon" class="hidden pict-icon large search"></div>
           <div id="search-loading-icon"></div>
         </span>
-        <input type="text" placeholder="Loading&hellip;" id="searchfield" disabled="disabled">
+        <input type="text" placeholder="Loading..." id="searchfield" disabled="disabled">
       </form>
       <ul class="button-group search-controls" aria-controls="profiles_gridview">
         <li role="button" id="adv-search-icon" title="Advanced Options" class="pictogram-button" tabindex="0">

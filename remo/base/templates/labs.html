@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_fd4.html" %}
 
 {% block pagetitle %}
 Mozilla Reps - Labs
@@ -6,84 +6,89 @@ Mozilla Reps - Labs
 
 {% block content %}
 <!-- Labs Page -->
-<div class="row">
-  <div class="twelve columns">
-    <h3>Labs</h3>
-    <p>
-      Mozilla Reps are strongly encouraged to experiment and try new
-      things. In this section, we will be developing, testing and
-      showcasing awesome new tools for Mozilla Reps.
-    </p>
-    <p>
-      Do you have what it takes to experiment and help us shape the
-      future of Mozilla Reps tools? Drop
-      by <a href="irc://irc.mozilla.org/remo-dev">#remo-dev</a> or
-      subscribe
-      to <a href="https://lists.mozilla.org/listinfo/reps-webdev">our
-        mailing list</a> to share your ideas and start hacking!
-    </p>
-
-    <!-- Reps Companion section -->
-    <div class="row top-margined">
-      <div class="six columns">
-        <h4>Mozilla Reps Companion</h4>
-        <p>
-          What can be cooler than having all your Reps documentation
-          (SOPs, tutorials, tools etc..) one click away?
-        </p>
-        <p>
-          Install
-          the <a href="https://addons.mozilla.org/en-US/firefox/addon/mozilla-reps-companion/"
-                 target="_blank">
-          Mozilla Reps Companion - Firefox add-on</a> today.
-        </p>
+<main role="main" class="labs-main">
+  <div class="row">
+    <div class="large-12 columns">
+      <div class="row">
+        <div class="large-6 columns">
+          <h1>Labs</h1>
+          <p>
+            Mozilla Reps are strongly encouraged to experiment and try new
+            things. In this section, we will be developing, testing and
+            showcasing awesome new tools for Mozilla Reps.
+          </p>
+          <p>
+            Do you have what it takes to experiment and help us shape the
+            future of Mozilla Reps tools? Drop
+            by <a href="irc://irc.mozilla.org/remo-dev">#remo-dev</a> or
+            subscribe
+            to <a href="https://lists.mozilla.org/listinfo/reps-webdev">our
+              mailing list</a> to share your ideas and start hacking!
+          </p>
+        </div>
       </div>
-      <div class="six columns align-right">
-        <a href="https://addons.mozilla.org/en-US/firefox/addon/mozilla-reps-companion/"
-           target="_blank">
-          <img class="labs-pic" src="/media/img/remo/remo-companion.png">
-        </a>
+
+      <!-- Reps Companion section -->
+      <div class="row">
+        <div class="large-6 columns labs-item">
+          <h2>Mozilla Reps Companion</h2>
+          <p>
+            What can be cooler than having all your Reps documentation
+            (SOPs, tutorials, tools etc..) one click away?
+          </p>
+          <p>
+            Install
+            the <a href="https://addons.mozilla.org/en-US/firefox/addon/mozilla-reps-companion/"
+                   target="_blank">
+            Mozilla Reps Companion - Firefox add-on</a> today.
+          </p>
+        </div>
+        <div class="large-6 columns labs-img">
+          <a href="https://addons.mozilla.org/en-US/firefox/addon/mozilla-reps-companion/"
+             target="_blank">
+            <img class="labs-pic" src="/media/img/remo/remo-companion.png" alt="">
+          </a>
+        </div>
+      </div>
+
+      <!-- Card Generator section -->
+      <div class="row">
+        <div class="large-6 columns labs-item">
+          <h2>Business card generator</h2>
+          <p>
+            Create your own Mozilla Reps business cards using our
+            Business Card generator!
+          </p>
+          <p>
+            If you are a Mozilla Rep give it a
+            try <a href="http://cards.mozillareps.org/" target="_blank">here</a>.
+          </p>
+        </div>
+        <div class="large-6 columns labs-img">
+          <a href="http://cards.mozillareps.org/" target="_blank">
+            <img class="labs-pic" src="/media/img/remo/remo-cards.png" alt="">
+          </a>
+        </div>
+      </div>
+
+      <!-- Mentorship section -->
+      <div class="row">
+        <div class="large-6 columns labs-item">
+          <h2>Mentorship Structure</h2>
+          <p>
+            Visualization of mentorship structure within Mozilla Reps using d3.js for dynamic rendering of realtime data.
+          </p>
+          <p>
+            You can view the visualization <a href="http://mentorship.mozillareps.org/" target="_blank">here</a>.
+          </p>
+        </div>
+        <div class="large-6 columns labs-img">
+          <a href="http://mentorship.mozillareps.org/" target="_blank">
+            <img class="labs-pic" src="/media/img/remo/labs-mentorship.png" alt="">
+          </a>
+        </div>
       </div>
     </div>
-
-    <!-- Card Generator section -->
-    <div class="row top-margined">
-      <div class="six columns">
-        <h4>Business card generator</h4>
-        <p>
-          Create your own Mozilla Reps business cards using our
-          Business Card generator!
-        </p>
-        <p>
-          If you are a Mozilla Rep give it a
-          try <a href="http://cards.mozillareps.org/" target="_blank">here</a>.
-        </p>
-      </div>
-      <div class="six columns align-right">
-        <a href="http://cards.mozillareps.org/" target="_blank">
-          <img class="labs-pic" src="/media/img/remo/remo-cards.png">
-        </a>
-      </div>
-    </div>
-
-    <!-- Mentorship section -->
-    <div class="row top-margined">
-      <div class="six columns">
-        <h4>Mentorship Structure</h4>
-        <p>
-          Visualization of mentorship structure within Mozilla Reps using d3.js for dynamic rendering of realtime data.
-        </p>
-        <p>
-          You can view the visualization <a href="http://mentorship.mozillareps.org/" target="_blank">here</a>.
-        </p>
-      </div>
-      <div class="six columns align-right">
-        <a href="http://mentorship.mozillareps.org/" target="_blank">
-          <img class="labs-pic" src="/media/img/remo/labs-mentorship.png">
-        </a>
-      </div>
-    </div>
-
   </div>
-</div>
+</main>
 {% endblock %}

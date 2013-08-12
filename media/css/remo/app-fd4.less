@@ -4,9 +4,6 @@
 
 @import "fonts.less";
 
-@breakSmall: 767px;
-@breakMedium: 850px;
-
 /* --------------------
     Tabzilla
 -------------------- */
@@ -24,6 +21,9 @@
     Generic Mixins
 -------------------- */
 
+@breakSmall: 767px;
+@breakMedium: 850px;
+
 .top-margined {
     margin-top: 20px;
 }
@@ -38,16 +38,6 @@
 
 .grayed {
     color: #888;
-}
-
-.pictogram {
-    margin-top: 10px;
-    padding: 0;
-    text-align:center;
-    font-family: "ModernPictogramsNormal";
-    font-size: 30px;
-    color: #aaa;
-    cursor: default;
 }
 
 .opensans {
@@ -74,6 +64,7 @@ body {
     font-size: 16.17px;
     color: rgb(51, 51, 51);
     .opensans;
+    cursor: auto;
 }
 
 #wrapper {
@@ -112,8 +103,7 @@ a:focus {
     outline: 1px dotted rgb(41, 131, 200);
 }
 
-h1, h2, h3, h4, h5, h6,
-.huge, .large {
+h1, h2, h3, h4, h5, h6 {
     font-family: 'Open Sans Light',sans-serif;
     display: block;
     font-weight: 300;
@@ -123,51 +113,30 @@ h1, h2, h3, h4, h5, h6,
     color: rgb(72, 72, 72);
 }
 
-.huge, 
-.huge h1 {
-    font-size: 108px;
-    letter-spacing: -4px;
-    line-height: 100%;
-}
-
-.large, 
-.large h1 {
-    font-size: 72px;
-    letter-spacing: -3px;
-    line-height: 100%;
-}
-
-h1, 
-.huge h2, 
-.large h2, 
-.billboard h2 {
-    font-size: 48px;
-    letter-spacing: -2px;
-}
-
-h2 {
-    font-size: 32px;
-    letter-spacing: -1px;
-}
-
-h3 {
+h1 {
     font-size: 28px;
     letter-spacing: -0.5px;
 }
 
-h4 {
+h2 {
     font-size: 24px;
-    letter-spacing: -0.25px;
+    letter-spacing: -0.25px;   
+}
+
+h3 {
+    font-size: 22px;   
+}
+
+h4 {
+    font-size: 20px;
 }
 
 h5 {
-    font-size: 19px;
-    letter-spacing: -0.25px;
+    font-size: 18px;
 }
 
 h6 {
     font-size: 16px;
-    letter-spacing: -0.25px;
 }
 
 .required-field {
@@ -409,8 +378,10 @@ select {
 }
 
 #logo-box {
-    h3 {
+    h1, h2 {
         font-family: 'MetaNormal';
+        font-size: 28px;
+        letter-spacing: -0.5px;
         margin-top: 5px;
     }
 }
@@ -441,7 +412,7 @@ select {
         position: relative;
         padding: 0;
         margin: 0;
-        border-right: 1px solid rgb(221, 221, 221);
+        border-right: 1px solid #d3d3d3;
         line-height: 45px;
 
         a {
@@ -528,6 +499,86 @@ select {
         transform: scale(1);
         transform: rotateY(0deg);
     }
+}
+
+/* -----------------------------------------
+   Main Page Styles
+----------------------------------------- */
+
+.main-section {
+    font-size: 12px;
+    line-height: 1.5em;
+
+    hr {
+        margin: 5px 0 18px 0;
+    }
+    h3 {
+        font-size: 18px;
+        letter-spacing: -0.25px;
+        margin-bottom: 1.5em;
+    }
+    h5 {
+        margin-bottom: 1.5em;
+    }
+}
+
+.more-posts {
+    margin: 20px 0px;
+}
+
+.slidereel {
+    text-align: center;
+
+    .orbit-container {
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+    }
+
+    .orbit-slide-number,
+    .orbit-timer {
+        display: none;
+    }
+
+    ol.orbit-bullets {
+        display: inline-block;
+        li {
+            width: 10px;
+            height: 10px;
+            margin: 4px;
+            border: none;
+            background: #000;
+            &.active {
+                background: #fff;
+                border: 2px solid rgb(34, 34, 34);
+            }
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+#featured {
+    max-height: 198px;
+    overflow: hidden; 
+}
+
+#main-featured-avatar {
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+/* -----------------------------------------
+   Planet feed Styles
+----------------------------------------- */
+
+#planet {
+    overflow: hidden;
+}
+
+.ItemTitle {
+    font-weight:bold;
+    margin:20px 0px 0px 0px;
 }
 
 /* -----------------------------------------
@@ -752,6 +803,10 @@ select {
         width: auto;
         max-width: 100%;
     }
+    h1 {
+        font-size: 24px;
+        letter-spacing: -0.5px;  
+    }
 }
 
 .profile-image {
@@ -842,14 +897,13 @@ ul.edit-profile-item {
 
 .profile-user-details {
     h1 {
-        margin-top: 1em;
         font-size: 24px;
-        letter-spacing: -0.25px;
+        letter-spacing: -0.5px; 
+        margin-bottom: 1em; 
     }
     h2 {
-        margin-top: 1em;
-        font-size: 19px;
-        letter-spacing: -0.25px;
+        font-size: 18px;
+        letter-spacing: 1px;
     }
 }
 
@@ -908,6 +962,107 @@ ul.edit-profile-item {
 }
 
 /* -----------------------------------------
+   About Styles
+----------------------------------------- */
+
+#about-text { 
+    h2 {
+        margin-top: 40px;
+    }
+    p {
+        font-size: 13px;
+    }
+    ul {
+        font-size: 13px;
+        list-style-type: circle;
+        list-style-position: inside;
+        li {
+            margin-bottom: 12px;
+            ol {
+                margin-top: 12px;
+            }
+        }
+    }
+    ol {
+        font-size: 13px;
+        margin-left: 30px;
+        li {
+            margin-bottom: 12px;
+        }
+    }
+    
+}
+
+#about-navigation {
+    font-family: 'Open Sans Light';
+    ul {
+        list-style-type: none;
+        li {
+            font-size: 16px;
+            margin-top: 20px;
+        }
+    }
+}
+
+@media only screen and (max-width: @breakSmall) {
+    #about-navigation {
+        margin-top: 40px;
+    }
+}
+
+/* -----------------------------------------
+   Labs Styles
+----------------------------------------- */
+
+.labs-main {
+    p {
+        font-size: 13px;
+    }
+}
+
+.labs-item {
+    margin-top: 20px;
+}
+
+.labs-img {
+    margin-top: 20px;
+    text-align: right;
+
+    img {
+        border: 1px solid #d3d3d3;
+    }
+}
+
+@media only screen and (max-width: @breakSmall) {
+    .labs-img {
+        text-align: left;
+    }
+}
+
+/* -----------------------------------------
+   Settings Styles
+----------------------------------------- */
+
+.settings-main {
+    h1 {
+        font-size: 24px;
+        letter-spacing: -0.5px; 
+        margin-bottom: 1em; 
+    }
+    h2 {
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
+    .section-container.auto {
+        section .content {
+            background: transparent;
+            border: none;
+            border-top: 1px solid #d3d3d3;
+        }
+    }
+}
+
+/* -----------------------------------------
    Footer Styles
 ----------------------------------------- */
 
@@ -941,6 +1096,16 @@ small.error {
 /* -----------------------------------------
    Pictogram Styles
 ----------------------------------------- */
+
+.pictogram {
+    margin-top: 10px;
+    padding: 0;
+    text-align:center;
+    font-family: "ModernPictogramsNormal";
+    font-size: 30px;
+    color: #aaa;
+    cursor: default;
+}
 
 .pictogram-button .pict-icon.large:after {
     color: #ccc;

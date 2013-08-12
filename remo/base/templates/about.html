@@ -1,15 +1,13 @@
-{% extends "base.html" %}
+{% extends "about_base.html" %}
 
 {% block pagetitle %}
 Mozilla Reps - About
 {% endblock %}
 
-{% block content %}
-<!-- About Page -->
-<div class="row">
+{% block main %}
   <!-- About text section -->
-  <div id="about-text" class="nine columns">
-    <h3>About Mozilla Reps</h3>
+  <div id="about-text" class="large-9 columns">
+    <h1>About Mozilla Reps</h1>
     <p>Community is the backbone of the Mozilla project. As the
     Mozilla project grows in scope and scale, community needs to be
     strengthened and empowered accordingly. This is the central aim of
@@ -52,14 +50,14 @@ Mozilla Reps - About
     carefully reviewed by the Mozilla Rep council and each applicant,
     if shortlisted, must pass a short interview before officially
     becoming a Mozilla Rep. </p>
-    <h4>ReMo Tools and Resources</h4>
+    <h2>ReMo Tools and Resources</h2>
     <p>To make it easier, faster and more efficient to
     organize/participate in events, to obtain sponsorship for
     Mozilla-related travel, to order / customize swag, to document an
     activity, Mozilla Reps have a specific set of tools and resources
     at their disposal. Find out
     more <a href="https://wiki.mozilla.org/ReMo/Tools_and_Resources">here</a>.</p>
-    <h4>Who runs the program? And how?</h4>
+    <h2>Who runs the program? And how?</h2>
     <p>The Mozilla Reps program is a community-driven program that
     empowers hundreds of Mozillians around the world. It is managed by
     Mozillians (volunteers and paid staff) for Mozillians. The
@@ -68,7 +66,7 @@ Mozilla Reps - About
     way. To learn more about the structure and governance of the
     program,
     click <a href="https://wiki.mozilla.org/ReMo/Structure_Governance">here</a>.
-    <h4>Contact</h4>
+    <h2>Contact</h2>
     <p>If you have a specific question or if you just want to learn
     more about the program, contact one of the members of the Mozilla
     Reps council at reps-council [AT] mozilla [DOT] com</p>
@@ -76,47 +74,29 @@ Mozilla Reps - About
     Reps for any questions you may have or ideas you may want to
     share:</p>
     <ul>
-      <li>IRC - You can join us on these channels on irc.mozilla.org:</li>
-      <ol>
-        <li>#remo General Channel for ReMo (will be used as our main one)</li>
-        <li>#remo-dev Channel on planning and deploying ReMo</li>
-      </ol>
-      <li>Mailing Lists</li>
-      <ol>
-        <li><a href="https://lists.mozilla.org/listinfo/reps-general">Reps-general</a>
-        General mailing list of Mozilla Reps</li>
-        <li><a href="https://lists.mozilla.org/listinfo/reps-webdev">Reps-webdev</a>
-        WedDev and Infrastructure planning and building mailing
-        list</li>
-        <li><a href="https://lists.mozilla.org/listinfo/reps-mentors">Reps-mentors</a>
-        Mentors mailing list used by Mozilla Rep mentors to exchange
-        tips and best practices</li>
-        <li><a href="https://lists.mozilla.org/listinfo/reps-students">Reps-students</a>
-        Students mailing list used by Mozilla Rep students to exchange
-        tips and best practices</li>
-      </ol>
+      <li>
+        IRC - You can join us on these channels on irc.mozilla.org:
+        <ol>
+          <li>#remo General Channel for ReMo (will be used as our main one)</li>
+          <li>#remo-dev Channel on planning and deploying ReMo</li>
+        </ol>
+      </li>
+      <li>
+        Mailing Lists
+        <ol>
+          <li><a href="https://lists.mozilla.org/listinfo/reps-general">Reps-general</a>
+          General mailing list of Mozilla Reps</li>
+          <li><a href="https://lists.mozilla.org/listinfo/reps-webdev">Reps-webdev</a>
+          WedDev and Infrastructure planning and building mailing
+          list</li>
+          <li><a href="https://lists.mozilla.org/listinfo/reps-mentors">Reps-mentors</a>
+          Mentors mailing list used by Mozilla Rep mentors to exchange
+          tips and best practices</li>
+          <li><a href="https://lists.mozilla.org/listinfo/reps-students">Reps-students</a>
+          Students mailing list used by Mozilla Rep students to exchange
+          tips and best practices</li>
+        </ol>
+      </li>
     </ul>
   </div>
-  <!-- Sidebar with more links -->
-  <div id="about-navigation" class="three columns">
-    <nav>
-      <h4>Mozilla Reps</h4>
-      <ul>
-        <li>About</li>
-        <li><a href="{{ url('faq') }}">FAQ</a></li>
-      </ul>
-    </nav>
-    <nav>
-      <h4>See more</h4>
-      <ul>
-        <li>
-        <a href="https://wiki.mozilla.org/ReMo">Mozilla Reps Wiki</a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</div>
-{% endblock %}
-
-{% block bottomextra %}
 {% endblock %}
