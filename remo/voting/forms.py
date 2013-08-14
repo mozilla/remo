@@ -124,6 +124,8 @@ class PollAddForm(PollEditForm):
 
         Dynamically set some fields of the form.
         """
+        self.range_poll_formset = kwargs.pop('range_poll_formset')
+        self.radio_poll_formset = kwargs.pop('radio_poll_formset')
         super(PollAddForm, self).__init__(*args, **kwargs)
 
         instance = self.instance
@@ -140,6 +142,12 @@ class PollAddForm(PollEditForm):
             server_time = make_aware(naive_time,
                                      pytz.timezone(settings.TIME_ZONE))
             self.fields['start_form'].initial = server_time
+
+    def is_valid(self):
+        """Override the is_valid() method."""
+        return (super(PollAddForm, self).is_valid()
+                and (self.range_poll_formset.is_valid()
+                     or self.radio_poll_formset.is_valid()))
 
     def clean(self):
         """Clean form."""
@@ -161,7 +169,19 @@ class PollAddForm(PollEditForm):
             msg = 'Start date should not be in the past.'
             self._errors['start_form'] = self.error_class([msg])
 
+        # Check that there is at least one radio or range poll
+        if ((not self.range_poll_formset._count_filled_forms()) and
+                (not self.radio_poll_formset._count_filled_forms())):
+            msg = u'You must fill at least one radio or range poll.'
+            raise ValidationError(msg)
+
         return cdata
+
+    def save(self, commit=True):
+        """Override save method."""
+        super(PollAddForm, self).save()
+        self.radio_poll_formset.save_all()
+        self.range_poll_formset.save_all()
 
     class Meta:
         model = Poll
@@ -210,6 +230,13 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
         """Init with minimum number of 1 form."""
         super(BaseRangePollInlineFormSet, self).__init__(*args, **kwargs)
 
+    def _count_filled_forms(self):
+        """Count valid, filled forms with delete == False."""
+        return len([form for form in self.forms if
+                    form.is_valid() and
+                    len(form.cleaned_data) and
+                    form.cleaned_data['DELETE'] is False])
+
     def add_fields(self, form, index):
         """Add extra fields."""
         super(BaseRangePollInlineFormSet, self).add_fields(form, index)
@@ -222,6 +249,7 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
             pk_value = form.prefix
 
         data = self.data if self.data and index is not None else None
+
         # store the formset in the .nested property
         form.nested = [
             RangePollChoiceFormset(data=data, instance=instance,
@@ -336,6 +364,13 @@ class BaseRadioPollInlineFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         """Initialize form."""
         super(BaseRadioPollInlineFormSet, self).__init__(*args, **kwargs)
+
+    def _count_filled_forms(self):
+        """Count valid, filled forms with delete == False."""
+        return len([form for form in self.forms if
+                    form.is_valid() and
+                    len(form.cleaned_data) and
+                    form.cleaned_data['DELETE'] is False])
 
     def add_fields(self, form, index):
         """Add extra fields."""
