@@ -108,3 +108,11 @@ def get_event_category_link(category):
 
     url = reverse('events_list_events')
     return urlparams(url, '/category/%s/' % category.lower())
+
+
+@register.function
+def get_event_link(event):
+    """Returns events url."""
+
+    return (settings.SITE_URL +
+            reverse('events_view_event', kwargs={'slug': event.slug}))
