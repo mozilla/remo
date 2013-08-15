@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
+import caching.base
 from south.signals import post_migrate
 
 from remo.base.utils import add_permissions_to_groups
@@ -67,7 +68,7 @@ class FunctionalArea(models.Model):
         return self.name
 
 
-class UserProfile(models.Model):
+class UserProfile(caching.base.CachingMixin, models.Model):
     """Definition of UserProfile Model."""
     user = models.OneToOneField(User)
     registration_complete = models.BooleanField(default=False)
@@ -144,6 +145,8 @@ class UserProfile(models.Model):
     receive_email_on_add_event_comment = models.BooleanField(null=False,
                                                              blank=True,
                                                              default=True)
+
+    objects = caching.base.CachingManager()
 
     class Meta:
         permissions = (('create_user', 'Can create new user'),
