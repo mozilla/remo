@@ -3,3 +3,4 @@ src/django-uuslug
 src/markdown
 src/django-waffle
 src/factory_boy
+src/django-cache-machine
