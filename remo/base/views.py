@@ -103,10 +103,10 @@ def dashboard(request):
             messages.success(request, 'Interests successfully saved')
             return redirect('dashboard')
         if reps_email_form.is_valid():
-            functional_area = (reps_email_form
-                               .cleaned_data['functional_area'])
-            reps = (User.objects.filter(groups__name='Rep').filter(
-                userprofile__functional_areas__name=functional_area))
+            functional_area = reps_email_form.cleaned_data['functional_area']
+            reps = (User.objects
+                    .filter(groups__name='Rep')
+                    .filter(userprofile__functional_areas=functional_area))
             reps_email_form.send_email(request, reps)
             return redirect('dashboard')
 
@@ -121,14 +121,15 @@ def dashboard(request):
             # Get the Reps with the specified interest
             reps = User.objects.filter(groups__name='Rep').filter(
                 userprofile__functional_areas=interest)
-            tracked_interests[interest] = reps
+            tracked_interests[interest.name] = {
+                'id': interest.id, 'reps': reps}
             # Get the reports of the Reps with the specified interest
-            reps_reports[interest] = Report.objects.filter(
+            reps_reports[interest.name] = Report.objects.filter(
                 user__in=reps).order_by('created_on')[:20]
             # Get the events with the specified category
             events = Event.objects.filter(categories=interest)
-            reps_past_events[interest] = events.filter(start__lt=now)[:50]
-            reps_current_events[interest] = events.filter(start__gt=now)
+            reps_past_events[interest.name] = events.filter(start__lt=now)[:50]
+            reps_current_events[interest.name] = events.filter(start__gte=now)
         args['interestform'] = interestform
         args['reps_reports'] = reps_reports
         args['reps_past_events'] = reps_past_events
