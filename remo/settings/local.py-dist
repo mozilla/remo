@@ -51,6 +51,14 @@ HMAC_KEYS = {
     #'2012-06-06': 'some secret',
 }
 
+# Cache backend settings. Enables Cache Machine's memcache backend.
+CACHES = {
+    'default': {
+        'BACKEND': 'caching.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
 from django_sha2 import get_password_hashers
 PASSWORD_HASHERS = get_password_hashers(base.BASE_PASSWORD_HASHERS, HMAC_KEYS)
 
