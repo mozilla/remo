@@ -243,7 +243,7 @@ class ViewsTest(TestCase):
         c.login(username='mozillian1', password='passwd')
         data = {'subject': 'This is subject',
                 'body': 'This is my body\n Multiline of course',
-                'functional_area': 'Addons'}
+                'functional_area': 3}
         response = c.post(reverse('dashboard'), data, follow=True)
         self.assertTemplateUsed(response, 'dashboard_mozillians.html')
         for m in response.context['messages']:
