@@ -2,7 +2,6 @@ import happyforms
 
 from django import forms
 from django.contrib import messages
-from django.core.exceptions import ValidationError
 
 from remo.base.tasks import send_mail_task
 from remo.profiles.models import FunctionalArea, UserProfile
@@ -65,15 +64,9 @@ class EmailUsersForm(BaseEmailUsersFrom):
 class EmailRepsForm(BaseEmailUsersFrom):
     """Generic form to send email to multiple users."""
 
-    functional_area = forms.CharField(label='', initial='',
-                                      widget=forms.HiddenInput())
-
-    def clean_functional_area(self):
-        """Clean form"""
-        functional_area = self.cleaned_data.get('functional_area', None)
-        if not FunctionalArea.objects.filter(name=functional_area).exists():
-            raise ValidationError('Please do not tamper with the data.')
-        return functional_area
+    functional_area = forms.ModelChoiceField(
+        queryset=FunctionalArea.objects.all(), empty_label=None,
+        widget=forms.HiddenInput())
 
     def send_email(self, request, users):
         """Send mail to recipients list."""

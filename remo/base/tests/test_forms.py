@@ -32,7 +32,7 @@ class EmailRepsFormsTest(TestCase):
 
         data = {'subject': 'Test email subject',
                 'body': 'Test email body',
-                'functional_area': self.functional_area}
+                'functional_area': self.functional_area.id}
 
         form = EmailRepsForm(data=data)
         ok_(form.is_valid())
