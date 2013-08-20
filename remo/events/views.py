@@ -86,7 +86,11 @@ def view_event(request, slug):
     """View event view."""
     event = get_object_or_404(Event, slug=slug)
     attendees = event.attendees.all()
-    email_att_form = EmailUsersForm(attendees)
+    event_url = reverse('events_view_event', kwargs={'slug': slug})
+    email_att_initial = {
+        'subject': event.name,
+        'body': '%s\n%s' % (event.name, settings.SITE_URL + event_url)}
+    email_att_form = EmailUsersForm(attendees, initial=email_att_initial)
 
     if request.method == 'POST':
         if not request.user.is_authenticated():
@@ -104,8 +108,6 @@ def view_event(request, slug):
             event_comment_form = forms.EventCommentForm()
     else:
         event_comment_form = forms.EventCommentForm()
-
-    event_url = reverse('events_view_event', kwargs={'slug': slug})
 
     return render(request, 'view_event.html',
                   {'event': event, 'email_attendees_form': email_att_form,
