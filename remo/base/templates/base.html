@@ -209,7 +209,7 @@
         <div class="row">
           {% for message in messages %}
             <div class="alert-box {{ message.tags }}">
-              {{ message|safe }}
+              {{ message }}
               <a href="#" class="close">&times;</a>
             </div>
           {% endfor %}

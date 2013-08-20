@@ -264,3 +264,5 @@ MOZILLIANS_API_BASE = 'https://mozillians.org'
 
 ALLOWED_HOSTS = ['reps.mozilla.org']
 JINGO_MINIFY_USE_STATIC = False
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

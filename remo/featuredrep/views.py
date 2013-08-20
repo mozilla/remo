@@ -39,11 +39,10 @@ def edit_featured(request, feature_id=None):
         form.save()
 
         if feature_id:
-            messages.success(request, 'New featured rep article created '
-                                      '&#9786;')
+            messages.success(
+                request, 'Featured rep article successfuly edited.')
         else:
-            messages.success(request, 'Featured rep article successfuly '
-                                      'edited &#9786;')
+            messages.success(request, 'New featured rep article created.')
 
         return redirect('featuredrep_list_featured')
 
