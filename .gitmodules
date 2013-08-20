@@ -20,3 +20,6 @@
 [submodule "vendor-local/src/factory_boy"]
 	path = vendor-local/src/factory_boy
 	url = https://github.com/rbarrois/factory_boy.git
+[submodule "vendor-local/src/django-cache-machine"]
+	path = vendor-local/src/django-cache-machine
+	url = https://github.com/jbalogh/django-cache-machine.git
