@@ -155,6 +155,40 @@ Mozilla Reps - {{ event.name }}
         </p>
       </div>
     </div>
+    <div class="row">
+      <div class="one columns pictogram">
+        o
+      </div>
+      <div class="eleven columns">
+        {% set event_link = get_event_link(event) %}
+        <ul class="social-share">
+          <li>
+            <a class="fb has-tip tip-bottom"
+               title="Share on Facebook"
+               target="_blank"
+               href="https://www.facebook.com/sharer/sharer.php?{{ event_link }}">
+              Facebook
+            </a>
+          </li>
+          <li>
+            <a class="tw has-tip tip-bottom"
+               title="Share on Twitter"
+               target="_blank"
+               href="http://twitter.com/share?url={{ event_link }}&amp;via=mozillareps&amp;text=Mozilla Reps - {{ event.name }}">
+              Twitter
+            </a>
+          </li>
+          <li>
+            <a class="gp has-tip tip-bottom"
+               title="Share on Google+"
+               target="_blank"
+               href="https://plus.google.com/share?url={{ event_link }}&amp;hl=en-US">
+              Google +
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
   <div class="seven columns">
     <div class="row">
