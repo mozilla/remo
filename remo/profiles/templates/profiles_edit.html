@@ -6,7 +6,7 @@
   <form style="custom" method="post" action="{{ url('profiles_edit', pageuser.userprofile.display_name) }}">
     {{ csrf() }}
     <div class="row">
-      <div class="large-8 columns">
+      <div class="large-8 columns" id="title">
         <!-- Title -->
         <h1>
           Editing profile of user {{ pageuser.userprofile.display_name }}
@@ -18,12 +18,14 @@
         </h1>
       </div>
       <!-- Deleting and Saving -->
-      <div class="large-4 columns hide-for-small align-right">
+      <div class="large-4 columns hide-for-small align-right"
+           id="save-delete-buttons">
         {% if perms.profiles.can_delete_profiles %}
-          <button class="button small alert"
-             data-reveal-id="delete-profile">Delete profile</button>
+          <button class="button small alert" id="delete-profile-button"
+                  data-reveal-id="delete-profile">Delete profile</button>
         {% endif %}
-        <button type="submit" class="button small confirm">
+        <button type="submit" class="button small confirm"
+                id="save-profile-button">
           Save profile
         </button>
       </div>
@@ -35,13 +37,13 @@
           <div class="large-1 columns">
             <div class="pict-icon large edit"></div>
           </div>
-          <div class="large-11 columns">
+          <div class="large-11 columns" id="name-gender">
             <input type="text" placeholder="Username" name="display_name"
                    value="{{ profileform.display_name.value() }}"
                    class="has-tip tip-left"
                    title="Username"
                    aria-required="required"
-                   data-tooltip 
+                   data-tooltip
                    data-options="disable-for-touch:true"
                    required>
             <div class="required-field"></div>
@@ -107,7 +109,7 @@
           <div class="large-1 columns">
             <div class="pict-icon large pic"></div>
           </div>
-          <div class="large-11 columns profile-image">
+          <div class="large-11 columns profile-image" id="profile-image">
             <a href="https://libravatar.org" target="_blank">
               <img id="profiles-edit-avatar" src="{{ pageuser|get_avatar_url(128) }}">
             </a>
@@ -129,7 +131,7 @@
           <div class="large-1 columns">
             <div class="pict-icon large at"></div>
           </div>
-          <div class="large-11 columns">
+          <div class="large-11 columns" id="email-mozillians-wiki-mentor">
             <input type="text" placeholder="Personal email"
                    value="{{ profileform.private_email.value() }}"
                    name="private_email"
@@ -205,7 +207,7 @@
           <div class="large-1 columns">
             <div class="pict-icon large home"></div>
           </div>
-          <div class="large-11 columns">
+          <div class="large-11 columns" id="location">
             <input type="text" placeholder="City" value="{{ profileform.city.value() }}"
                    name="city"
                    class="has-tip tip-right"
@@ -251,7 +253,8 @@
                    name="lon" class="input-text">
             <div class="align-right">
               <button class="small white button nice radius"
-                 data-reveal-id="map-point">Point your marker in map</button>
+                      id="map-marker-button"
+                      data-reveal-id="map-point">Point your marker in map</button>
               <div class="required-field"></div>
             </div>
             {% if profileform.lat.errors or profileform.lon.errors %}
@@ -269,7 +272,7 @@
           <div class="large-1 columns">
             <div class="pict-icon large twitter"></div>
           </div>
-          <div class="large-11 columns">
+          <div class="large-11 columns" id="social-networks">
             <input type="text" placeholder="Twitter handle"
                    value="{{ profileform.twitter_account.value() }}"
                    name="twitter_account"
@@ -326,7 +329,7 @@
           <div class="large-1 columns">
             <div class="pict-icon large talk"></div>
           </div>
-          <div class="large-11 columns">
+          <div class="large-11 columns" id="jabber-irc">
             <input type="text" placeholder="Jabber ID"
                    value="{{ profileform.jabber_id.value() }}"
                    name="jabber_id"
@@ -375,7 +378,7 @@
           <div class="large-1 columns">
             <div class="pict-icon large www"></div>
           </div>
-          <div class="large-11 columns">
+          <div class="large-11 columns" id="personal-site">
             <input type="text" placeholder="Personal site URL"
                    value="{{ profileform.personal_website_url.value() }}"
                    name="personal_website_url"
@@ -408,7 +411,7 @@
           <div class="large-1 columns">
             <div class="pict-icon large edit"></div>
           </div>
-          <div class="large-11 columns top-margined">
+          <div class="large-11 columns top-margined" id="bio">
             <textarea class="flat has-tip tip-right"
                       placeholder="Bio - Write us a bit about yourself"
                       name="bio"
@@ -430,10 +433,11 @@
           <div class="large-1 columns">
             <div class="pict-icon large heart"></div>
           </div>
-          <div class="large-11 columns edit-profile-item">
+          <div class="large-11 columns edit-profile-item" id="interests">
             <div class="align-right">
                 <button class="small white button nice radius"
-                   data-reveal-id="interests-modal">Mark your interests</button>
+                        data-reveal-id="interests-modal"
+                        id="categories-button">Mark your interests</button>
                 {% if profileform.functional_areas.errors %}
                   <small class="error">
                     Please mark your interests
@@ -454,7 +458,7 @@
             <div class="large-1 columns">
               <div class="pict-icon large checkmark"></div>
             </div>
-            <div class="large-11 columns edit-profile-item">
+            <div class="large-11 columns edit-profile-item" id="join-date">
               <h6>Date Rep joined program</h6>
               {{ datejoinedform.date_joined_program }}
               {% if datejoinedform.date_joined_program.errors %}
@@ -464,7 +468,7 @@
               {% endif %}
             </div>
           </div>
-          <div class="row">
+          <div class="row" id="user-groups">
             <div class="large-1 columns">
               <div class="pict-icon large checkbox"></div>
             </div>
@@ -503,10 +507,12 @@
       {% endif %}
     </div>
     <div class="row end-row show-for-small">
-      <div class="large-12 columns show-for-small align-right">
+      <div class="large-12 columns show-for-small align-right"
+           id="save-delete-buttons-small">
         {% if perms.profiles.can_edit_profiles %}
         <button class="button small alert"
-           data-reveal-id="delete-profile">Delete profile</button>
+                data-reveal-id="delete-profile"
+                id="delete-profile-small">Delete profile</button>
         {% endif %}
         <button id="save-profile" type="submit" class="button small confirm">
           Save profile
@@ -581,7 +587,7 @@
   </p>
     <form method="post" action="{{ url('profiles_delete', pageuser.userprofile.display_name) }}">
       {{ csrf() }}
-      <button class="button large alert close-reveal-modal">
+      <button class="button large alert close-reveal-modal" id="delete-profile-verification">
         Delete profile
       </button>
     </form>
