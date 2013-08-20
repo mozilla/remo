@@ -8,11 +8,13 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from funfactory.helpers import urlparams
+from jinja2 import Markup
 
 from remo.base.decorators import permission_check
 from remo.base.forms import EmailUsersForm
@@ -61,8 +63,9 @@ def manage_subscription(request, slug, subscribe=True):
                                            'this event.'))
             else:
                 attendance.save()
-                messages.success(request, ('You have subscribed to '
-                                           'this event.'))
+                subscribed_text = render_to_string(
+                    'includes/subscribe_to_ical.html', {'event': event})
+                messages.info(request, Markup(subscribed_text))
 
         else:
             if created:

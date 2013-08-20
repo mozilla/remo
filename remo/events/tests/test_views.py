@@ -102,7 +102,7 @@ class ViewsTest(TestCase):
                                  'event page after subscribing.'))
         for m in response.context['messages']:
             pass
-        eq_(m.tags, u'success')
+        eq_(m.tags, u'info')
 
         # Subscribed tries again.
         response = c.post(reverse('events_subscribe_to_event',
