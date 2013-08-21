@@ -4,6 +4,14 @@
 Mozilla Reps - {{ event.name }}
 {% endblock %}
 
+{% set event_link = get_event_link(event) %}
+{% block headextra %}
+<meta property="og:title" content="{{ event.name }}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ event_link }}" />
+<meta property="og:image" content="{{ MEDIA_URL }}img/remo/remo-logo-og.jpg" />
+{% endblock %}
+
 {% block content %}
 <div class="row">
   <div class="eight columns">
@@ -160,7 +168,6 @@ Mozilla Reps - {{ event.name }}
         o
       </div>
       <div class="eleven columns">
-        {% set event_link = get_event_link(event) %}
         <ul class="social-share">
           <li>
             <a class="fb has-tip tip-bottom"
