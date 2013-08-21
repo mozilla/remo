@@ -75,10 +75,11 @@
           {{ field_errors(event_form.venue) }}
           <p class="more-info">If you don't know the name of venue yet, please type "TBD"</p>
 
-          <div class="align-right">
+          <div>
             <a href="#" class="small white button nice radius"
                data-reveal-id="map-point">Point event venue in map</a>
           </div>
+          <div class="required-field"></div>
           {{ event_form.lat }}
           {{ event_form.lon }}
 
@@ -324,7 +325,7 @@
           j
         </div>
         <div class="eleven columns">
-          <div class="align-right top-margined">
+          <div class="top-margined">
             <a href="#" class="small white button nice radius"
                data-reveal-id="category-modal">Select event category</a>
                {% if event_form.categories.errors %}
@@ -333,6 +334,7 @@
                 </small>
                {% endif %}
           </div>
+           <div class="required-field"></div>
         </div>
       </div>
 

@@ -251,7 +251,7 @@
             <input type="hidden" id="lon"
                    value="{{ profileform.lon.value() }}"
                    name="lon" class="input-text">
-            <div class="align-right">
+            <div>
               <button class="small white button nice radius"
                       id="map-marker-button"
                       data-reveal-id="map-point">Point your marker in map</button>
@@ -262,6 +262,7 @@
                 Please use the point in map button.
               </small>
             {% endif %}
+            <div class="required-field"></div>
           </div>
         </div>
       </div>
@@ -434,7 +435,7 @@
             <div class="pict-icon large heart"></div>
           </div>
           <div class="large-11 columns edit-profile-item" id="interests">
-            <div class="align-right">
+            <div>
                 <button class="small white button nice radius"
                         data-reveal-id="interests-modal"
                         id="categories-button">Mark your interests</button>
@@ -444,6 +445,7 @@
                   </small>
                 {% endif %}
             </div>
+            <div class="required-field"></div>
           </div>
         </div>
       </div>
