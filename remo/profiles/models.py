@@ -57,9 +57,11 @@ def _validate_mentor(data, **kwargs):
     return data
 
 
-class FunctionalArea(models.Model):
+class FunctionalArea(caching.base.CachingMixin, models.Model):
     """Mozilla functional areas."""
     name = models.CharField(max_length=100)
+
+    objects = caching.base.CachingManager()
 
     class Meta:
         ordering = ['name']
