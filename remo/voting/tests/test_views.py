@@ -73,7 +73,7 @@ class ViewsTest(TestCase):
         self.edit_current_data = {
             'name': u'Test edit voting',
             'description': u'This is a description.',
-            'created_by': u'Nikos Koukos :admin',
+            'created_by': u'Nikos Koukos',
             'valid_groups': 3,
             'start_form_0_year': 2011,
             'end_form_0_year': 2018,

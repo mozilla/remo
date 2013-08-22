@@ -18,16 +18,27 @@ from remo.reports.tasks import send_remo_mail
 
 DISPLAY_NAME_MAX_LENGTH = 50
 
+
+class AllCacheQuerySet(models.query.QuerySet):
+    def all(self, get_from_cache=True):
+        if get_from_cache:
+            return self
+        return self._clone
+
+
+class AllCachingManager(models.Manager):
+    def get_query_set(self):
+        return AllCacheQuerySet(self.model, using=self._db)
+
+
+# Mokey patch User Manager
+User.add_to_class('cached_objects', AllCachingManager())
+
+
 # Monkey patch unicode(User)
-
-
 def user_unicode(self):
-    """Return user's full name and display name if available."""
-    try:
-        return u'%s :%s' % (self.get_full_name(),
-                            self.userprofile.display_name)
-    except UserProfile.DoesNotExist:
-        return self.get_full_name()
+    """Return user's full name."""
+    return self.get_full_name()
 
 User.__unicode__ = user_unicode
 
