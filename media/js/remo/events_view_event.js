@@ -18,7 +18,7 @@ function initialize_map() {
     map.addLayer(marker);
 }
 
-function set_time_tooltip() {
+function set_tooltips() {
     // Set time tooltip to display the time to your browser's timezone.
     var title = '';
     var item = $('#datetime-tip');
@@ -47,6 +47,9 @@ function set_time_tooltip() {
     // have initialized the tooltip.
     item.attr('title', title);
     item.addClass('has-tip');
+
+    // Set social share tooltips
+    $('.social-share a').addClass('has-tip');
     $(document).tooltips();
 }
 
@@ -117,7 +120,7 @@ function initialize_mashup() {
 }
 
 $(document).ready(function() {
-    set_time_tooltip();
+    set_tooltips();
     initialize_map();
     initialize_mashup();
 
