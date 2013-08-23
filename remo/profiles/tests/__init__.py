@@ -18,6 +18,25 @@ COUNTRIES = product_details.get_regions('en').values()
 START_DT = datetime.datetime(2011, 1, 1, tzinfo=utc)
 
 
+class OutOfRangeError(Exception):
+    pass
+
+
+def int2roman(n):
+    roman_map = (('M', 1000), ('CM', 900), ('D', 500), ('CD', 400),
+                 ('C', 100), ('XC', 90), ('L', 50), ('XL', 40), ('X', 10),
+                 ('IX', 9), ('V', 5), ('IV', 4), ('I', 1))
+
+    if not (0 < n < 5000):
+        raise OutOfRangeError
+    result = ''
+    for numeral, integer in roman_map:
+        while n >= integer:
+            result += numeral
+            n -= integer
+    return result
+
+
 class UserProfileFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = UserProfile
 
@@ -70,8 +89,8 @@ class UserFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = User
 
     username = factory.Sequence(lambda n: 'username%s' % n)
-    first_name = factory.Sequence(lambda n: 'first_name%s' % n)
-    last_name = factory.Sequence(lambda n: 'last_name%s' % n)
+    first_name = 'John'
+    last_name = factory.Sequence(lambda n: 'Doe %s' % int2roman(n))
     email = factory.Sequence(lambda n: 'user%s@example.com' % n)
     password = 'sha1$caffc$30d78063d8f2a5725f60bae2aca64e48804272c3'
     is_staff = False
