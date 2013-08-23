@@ -31,10 +31,10 @@ jQuery(document).ready(function ($) {
         activateTab($('a[href="' + window.location.hash + '"]'));
 
         /* this is for legacy Foundation 2 TODO - remove after migration to 4 */
-        if ($.isFunction($.fn.foundation.customForms)) {
+        if (typeof $.foundation !== 'undefined') {
             $.foundation.customForms.appendCustomMarkup();
         }
-        
+
     }
 
     /* PLACEHOLDER FOR FORMS ------------- */
