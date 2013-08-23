@@ -4,15 +4,26 @@ from datetime import datetime
 
 from django import forms
 from django.conf import settings
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
 from django.db.models import F
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
+from django.utils.functional import curry
 from django.utils.timezone import make_aware, make_naive, utc
 
 from datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.utils import validate_datetime
 from models import Poll, RadioPoll, RadioPollChoice, RangePoll, RangePollChoice
+
+
+class RangePollChoiceModelForm(happyforms.ModelForm):
+    class Meta:
+        model = RangePollChoice
+
+    def __init__(self, *args, **kwargs):
+        self._user_list = kwargs.pop('user_list')
+        super(RangePollChoiceModelForm, self).__init__(*args, **kwargs)
+        self.fields['nominee'].queryset = self._user_list
 
 
 class RangePollChoiceForm(happyforms.Form):
@@ -220,8 +231,12 @@ class BaseRangePollChoiceInilineFormset(BaseInlineFormSet):
 
 
 RangePollChoiceFormset = (inlineformset_factory(RangePoll, RangePollChoice,
-                          formset=BaseRangePollChoiceInilineFormset, extra=1,
-                          exclude='votes', can_delete=True))
+                          formset=BaseRangePollChoiceInilineFormset,
+                          extra=1, exclude='votes', can_delete=True))
+RangePollChoiceFormset.form = staticmethod(curry(RangePollChoiceModelForm,
+                                                 user_list=(User
+                                                            .cached_objects
+                                                            .all())))
 
 
 class BaseRangePollInlineFormSet(BaseInlineFormSet):
