@@ -9,6 +9,7 @@ from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
+import caching.base
 from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
@@ -29,7 +30,7 @@ class Attendance(models.Model):
         return '%s %s' % (self.user, self.event)
 
 
-class Event(models.Model):
+class Event(caching.base.CachingMixin, models.Model):
     """Event Model."""
     name = models.CharField(max_length=100)
     slug = models.SlugField(blank=True, max_length=100)
@@ -64,6 +65,8 @@ class Event(models.Model):
     times_edited = models.PositiveIntegerField(default=0, editable=False)
     categories = models.ManyToManyField(FunctionalArea,
                                         related_name='events_categories')
+
+    objects = caching.base.CachingManager()
 
     def __unicode__(self):
         """Event unicode representation."""
