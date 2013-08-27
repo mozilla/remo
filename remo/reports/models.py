@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
+import caching.base
 from south.signals import post_migrate
 
 from remo.base.utils import (add_permissions_to_groups,
@@ -21,7 +22,7 @@ PARTICIPATION_TYPE_CHOICES = ((1, 'Organizer'),
                               (3, 'Rep attendee'))
 
 
-class Report(models.Model):
+class Report(caching.base.CachingMixin, models.Model):
     """Report Model."""
     user = models.ForeignKey(User, related_name='reports')
     created_on = models.DateTimeField(auto_now_add=True)
@@ -35,6 +36,8 @@ class Report(models.Model):
     future_items = models.TextField(blank=True, default='')
     flags = models.TextField(blank=True, default='')
     overdue = models.BooleanField(default=False)
+
+    objects = caching.base.CachingManager()
 
     class Meta:
         ordering = ['-month']
