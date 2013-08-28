@@ -2,7 +2,7 @@ import datetime
 from random import randint
 
 from django.db.models.signals import pre_save, post_save
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.utils.timezone import utc
 
 import factory
@@ -19,6 +19,7 @@ START_DT = datetime.datetime(2011, 1, 1, tzinfo=utc)
 
 
 class UserProfileFactory(factory.django.DjangoModelFactory):
+    """UserProfile fixture factory."""
     FACTORY_FOR = UserProfile
 
     registration_complete = True
@@ -50,6 +51,7 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def functional_areas(self, create, extracted, **kwargs):
+        """Add functional areas list after object generation."""
         if not create:
             return
         if extracted:
@@ -58,6 +60,7 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def random_functional_areas(self, create, extracted, **kwargs):
+        """Add random functional areas after object generation."""
         if not create:
             return
         if extracted:
@@ -65,8 +68,17 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
             for area in FunctionalArea.objects.all().order_by('?')[:rand_int]:
                 self.functional_areas.add(area)
 
+    @factory.post_generation
+    def initial_council(self, create, extracted, **kwargs):
+        """Create userprofile with self as mentor."""
+        if not create:
+            return
+        if extracted:
+            self.mentor = self.user
+
 
 class UserFactory(factory.django.DjangoModelFactory):
+    """User fixture factory."""
     FACTORY_FOR = User
 
     username = factory.Sequence(lambda n: 'username%s' % n)
@@ -94,8 +106,18 @@ class UserFactory(factory.django.DjangoModelFactory):
                           dispatch_uid='user_set_inactive_post_save_signal')
         return user
 
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        """Add list of groups to User object."""
+        if not create:
+            return
+        if extracted:
+            groups = Group.objects.filter(name__in=extracted)
+            self.groups.add(*groups)
+
 
 class FunctionalAreaFactory(factory.django.DjangoModelFactory):
+    """FunctionalArea fixture factory."""
     FACTORY_FOR = FunctionalArea
 
     name = factory.Sequence(lambda n: 'Functional Area #%s' % n)
