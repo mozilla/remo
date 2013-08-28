@@ -6,8 +6,10 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.timezone import utc
 
+import caching.base
 
-class Bug(models.Model):
+
+class Bug(caching.base.CachingMixin, models.Model):
     """Bug model definition."""
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -25,6 +27,8 @@ class Bug(models.Model):
     status = models.CharField(max_length=30, default='')
     resolution = models.CharField(max_length=30, default='')
     due_date = models.DateTimeField(null=True, blank=True)
+
+    objects = caching.base.CachingManager()
 
     def __unicode__(self):
         return u'%d' % self.bug_id
