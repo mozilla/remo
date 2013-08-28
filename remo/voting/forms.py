@@ -15,14 +15,14 @@ from remo.base.utils import validate_datetime
 from models import Poll, RadioPoll, RadioPollChoice, RangePoll, RangePollChoice
 
 
-class RangePollChoiceForm(happyforms.Form):
+class RangePollChoiceVoteForm(happyforms.Form):
     """Range voting vote form."""
     def __init__(self, choices, *args, **kwargs):
         """Initialize form
 
         Dynamically set fields for the participants in a range voting.
         """
-        super(RangePollChoiceForm, self).__init__(*args, **kwargs)
+        super(RangePollChoiceVoteForm, self).__init__(*args, **kwargs)
         nominees = [(i, '%d' % i) for i in range(0, choices.count()+1)]
         for choice in choices:
             self.fields['range_poll__%s' % str(choice.id)] = (
@@ -37,14 +37,14 @@ class RangePollChoiceForm(happyforms.Form):
              .filter(pk=nominee_id).update(votes=F('votes')+int(votes)))
 
 
-class RadioPollChoiceForm(happyforms.Form):
+class RadioPollChoiceVoteForm(happyforms.Form):
     """Radio voting vote form."""
     def __init__(self, radio_poll, *args, **kwargs):
         """Initialize form
 
         Dynamically set field for the answers in a radio voting.
         """
-        super(RadioPollChoiceForm, self).__init__(*args, **kwargs)
+        super(RadioPollChoiceVoteForm, self).__init__(*args, **kwargs)
         choices = (((None, '----'),) +
                    tuple(radio_poll.answers.values_list('id', 'answer')))
         self.fields['radio_poll__%s' % str(radio_poll.id)] = (
@@ -190,11 +190,19 @@ class PollAddForm(PollEditForm):
                    'end': SplitSelectDateTimeWidget()}
 
 
-class BaseRangePollChoiceInilineFormset(BaseInlineFormSet):
+class BaseRangePollChoiceInlineFormset(BaseInlineFormSet):
+    _user_list = None
+
     def __init__(self, *args, **kwargs):
         """Initialize form."""
-        (super(BaseRangePollChoiceInilineFormset, self)
+        self._user_list = kwargs.pop('user_list')
+        (super(BaseRangePollChoiceInlineFormset, self)
          .__init__(*args, **kwargs))
+
+    def add_fields(self, form, index):
+        """Add extra fields."""
+        super(BaseRangePollChoiceInlineFormset, self).add_fields(form, index)
+        form.fields['nominee'].queryset = self._user_list
 
     def clean(self):
         """Clean form.
@@ -220,13 +228,14 @@ class BaseRangePollChoiceInilineFormset(BaseInlineFormSet):
 
 
 RangePollChoiceFormset = (inlineformset_factory(RangePoll, RangePollChoice,
-                          formset=BaseRangePollChoiceInilineFormset, extra=1,
+                          formset=BaseRangePollChoiceInlineFormset, extra=1,
                           exclude='votes', can_delete=True))
 
 
 class BaseRangePollInlineFormSet(BaseInlineFormSet):
     """Formset for range polls."""
     def __init__(self, *args, **kwargs):
+        self._user_list = kwargs.pop('user_list')
         """Init with minimum number of 1 form."""
         super(BaseRangePollInlineFormSet, self).__init__(*args, **kwargs)
 
@@ -253,7 +262,8 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
         # store the formset in the .nested property
         form.nested = [
             RangePollChoiceFormset(data=data, instance=instance,
-                                   prefix='%s_range_choices' % pk_value)]
+                                   prefix='%s_range_choices' % pk_value,
+                                   user_list=self._user_list)]
 
     def is_valid(self):
         """Validate nested forms."""
@@ -325,10 +335,10 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
         return super(BaseRangePollInlineFormSet, self).clean()
 
 
-class BaseRadioPollChoiceInilineFormset(BaseInlineFormSet):
+class BaseRadioPollChoiceInlineFormset(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         """Initialize form."""
-        (super(BaseRadioPollChoiceInilineFormset, self)
+        (super(BaseRadioPollChoiceInlineFormset, self)
          .__init__(*args, **kwargs))
 
     def clean(self):
@@ -355,7 +365,7 @@ class BaseRadioPollChoiceInilineFormset(BaseInlineFormSet):
 
 
 RadioPollChoiceFormset = (inlineformset_factory(RadioPoll, RadioPollChoice,
-                          formset=BaseRadioPollChoiceInilineFormset, extra=1,
+                          formset=BaseRadioPollChoiceInlineFormset, extra=1,
                           exclude='votes', can_delete=True))
 
 

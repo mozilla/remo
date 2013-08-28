@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.db.models import Q
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import make_aware
@@ -66,8 +67,10 @@ def edit_voting(request, slug=None):
                             formset=forms.BaseRadioPollInlineFormSet,
                             extra=extra, can_delete=True))
 
+        nominee_list = User.objects.filter(groups__name='Rep')
         range_poll_formset = RangePollFormset(request.POST or None,
-                                              instance=poll)
+                                              instance=poll,
+                                              user_list=nominee_list)
         radio_poll_formset = RadioPollFormset(request.POST or None,
                                               instance=poll)
         poll_form = forms.PollAddForm(request.POST or None, instance=poll,
@@ -135,11 +138,11 @@ def view_voting(request, slug):
 
     # pack the forms for rendering
     for item in poll.range_polls.all():
-        range_poll_choice_forms[item] = forms.RangePollChoiceForm(
+        range_poll_choice_forms[item] = forms.RangePollChoiceVoteForm(
             data=request.POST or None, choices=item.choices.all())
 
     for item in poll.radio_polls.all():
-        radio_poll_choice_forms[item] = forms.RadioPollChoiceForm(
+        radio_poll_choice_forms[item] = forms.RadioPollChoiceVoteForm(
             data=request.POST or None, radio_poll=item)
 
     if request.method == 'POST':

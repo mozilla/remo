@@ -26,7 +26,7 @@ class ViewsTest(TestCase):
         self.edit_future_data = {
             'name': u'Test edit voting',
             'description': u'This is a description.',
-            'created_by': u'Nikos Koukos :admin',
+            'created_by': 4,
             'valid_groups': 3,
             'start_form_0_year': 2018,
             'start_form_0_month': 10,
@@ -73,7 +73,7 @@ class ViewsTest(TestCase):
         self.edit_current_data = {
             'name': u'Test edit voting',
             'description': u'This is a description.',
-            'created_by': u'Nikos Koukos :admin',
+            'created_by': 4,
             'valid_groups': 3,
             'start_form_0_year': 2011,
             'end_form_0_year': 2018,
@@ -238,13 +238,14 @@ class ViewsTest(TestCase):
         poll = Poll.objects.get(name='Test edit voting')
 
         # Test fields with the same name in POST data and models.
-        excluded = ['valid_groups']
+        excluded = ['valid_groups', 'created_by']
         for field in set(self.edit_future_data).difference(set(excluded)):
             if getattr(poll, field, None):
-                eq_(str(getattr(poll, field)), self.edit_future_data[field])
+                eq_(getattr(poll, field), self.edit_future_data[field])
 
         # Test excluded fields.
         eq_(self.edit_future_data['valid_groups'], poll.valid_groups.id)
+        #eq_(self.edit_future_data['created_by'], poll.created_by.id)
 
         # Ensure Range/Radio Polls are saved.
         range_poll = RangePoll.objects.get(poll_id=poll.id)
@@ -318,12 +319,13 @@ class ViewsTest(TestCase):
         poll = Poll.objects.get(name='Test edit voting')
 
         # Test fields with the same name in POST data and models.
-        excluded = ['valid_groups']
+        excluded = ['valid_groups', 'created_by']
         for field in set(self.edit_current_data).difference(set(excluded)):
             if getattr(poll, field, None):
-                eq_(str(getattr(poll, field)), self.edit_current_data[field])
+                eq_(getattr(poll, field), self.edit_current_data[field])
 
         # Test excluded fields.
+        eq_(self.edit_current_data['created_by'], poll.created_by.id)
         eq_(self.edit_current_data['valid_groups'], poll.valid_groups.id)
 
         # Ensure voting end is saved.
