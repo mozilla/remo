@@ -26,6 +26,7 @@ MINIFY_BUNDLES = {
         ),
         'leaflet': (
             'leaflet/leaflet.css',
+            'leaflet-locatecontrol/src/L.Control.Locate.css',
         ),
         'jqueryui': (
             'css/jquery-ui-1.10.0.custom.css',
@@ -93,6 +94,7 @@ MINIFY_BUNDLES = {
         ),
         'leaflet': (
             'leaflet/leaflet.js',
+            'leaflet-locatecontrol/src/L.Control.Locate.js',
         ),
         'map_modal': (
             'js/remo/map_modal.js',
