@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 
 from nose.tools import ok_
@@ -83,7 +84,7 @@ class PollAddFormTest(TestCase):
             '%s_range_choices-INITIAL_FORMS' % str(self.range_poll.id): u'0',
             '%s_range_choices-TOTAL_FORMS' % (
                 str(self.range_poll.id)): u'1000'}
-
+        self._user_list = User.objects.filter(groups__name='Rep')
         RangePollFormset = (inlineformset_factory(Poll, RangePoll,
                             formset=forms.BaseRangePollInlineFormSet,
                             extra=1, can_delete=True))
@@ -91,13 +92,15 @@ class PollAddFormTest(TestCase):
                             formset=forms.BaseRadioPollInlineFormSet,
                             extra=1, can_delete=True))
         self.range_poll_formset = RangePollFormset(self.range_formset_data,
-                                                   instance=self.poll)
+                                                   instance=self.poll,
+                                                   user_list=self._user_list)
         self.radio_poll_formset = RadioPollFormset(self.radio_formset_data,
                                                    instance=self.poll)
         self.radio_poll_formset_invalid = RadioPollFormset(
             self.radio_formset_invalid_data, instance=self.poll)
         self.range_poll_formset_invalid = RangePollFormset(
-            self.range_formset_invalid_data, instance=self.poll)
+            self.range_formset_invalid_data, instance=self.poll,
+            user_list=self._user_list)
 
     def test_clean_one_radio_one_range_poll(self):
         """Test with valid data for one radio and one range poll."""
