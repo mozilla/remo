@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.markup.templatetags import markup
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
+
 from jingo import register
 from jinja2 import Markup
 
