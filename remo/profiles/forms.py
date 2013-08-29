@@ -66,6 +66,19 @@ class ChangeUserForm(happyforms.ModelForm):
         data = self.cleaned_data['last_name']
         return self._clean_names(data)
 
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if (User.objects.filter(email=email)
+                        .exclude(email=self.instance.email)
+                        .exists()):
+            msg = ("Email already exists. You probably used this email to "
+                   "sign in as a 'mozillian' into the portal. "
+                   "Please send an email to "
+                   "https://lists.mozilla.org/listinfo/reps-webdev "
+                   "to get help.")
+            raise ValidationError(msg)
+        return email
+
     def save(self):
         """Override save method to update user's
         username hash on the database.
