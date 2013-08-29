@@ -84,7 +84,8 @@ class PollAddFormTest(TestCase):
             '%s_range_choices-INITIAL_FORMS' % str(self.range_poll.id): u'0',
             '%s_range_choices-TOTAL_FORMS' % (
                 str(self.range_poll.id)): u'1000'}
-        self._user_list = User.objects.filter(groups__name='Rep')
+        self._user_list = User.objects.filter(
+            groups__name='Rep', userprofile__registration_complete=True)
         RangePollFormset = (inlineformset_factory(Poll, RangePoll,
                             formset=forms.BaseRangePollInlineFormSet,
                             extra=1, can_delete=True))

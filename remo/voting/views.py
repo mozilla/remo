@@ -67,7 +67,8 @@ def edit_voting(request, slug=None):
                             formset=forms.BaseRadioPollInlineFormSet,
                             extra=extra, can_delete=True))
 
-        nominee_list = User.objects.filter(groups__name='Rep')
+        nominee_list = User.objects.filter(
+            groups__name='Rep', userprofile__registration_complete=True)
         range_poll_formset = RangePollFormset(request.POST or None,
                                               instance=poll,
                                               user_list=nominee_list)
