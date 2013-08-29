@@ -513,6 +513,8 @@ $(document).ready(function () {
 
     initialize_map();
 
+    EventsLib.map.locate({setView: true, maxZoom:5});
+
     EventsLib.searchform_elm.submit(function (event) {
         event.preventDefault();
     });
