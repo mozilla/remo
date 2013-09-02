@@ -147,7 +147,7 @@ class PollAddForm(PollEditForm):
         """Override the is_valid() method."""
         return (super(PollAddForm, self).is_valid()
                 and (self.range_poll_formset.is_valid()
-                     or self.radio_poll_formset.is_valid()))
+                     and self.radio_poll_formset.is_valid()))
 
     def clean(self):
         """Clean form."""
