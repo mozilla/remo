@@ -4,6 +4,7 @@ from django.forms.models import inlineformset_factory
 from nose.tools import ok_
 from test_utils import TestCase
 
+from remo.profiles.tests import UserFactory
 from remo.voting import forms
 from remo.voting.models import Poll, RadioPoll, RangePoll
 from remo.voting.tests import (PollFactory, RadioPollFactory,
@@ -23,6 +24,10 @@ class PollAddFormTest(TestCase):
         self.range_poll = RangePollFactory.create(poll=self.poll)
         self.range_poll_choice = (RangePollChoiceFactory
                                   .create(range_poll=self.range_poll))
+        UserFactory.create_batch(20, groups=['Rep'])
+        self._user_list = User.objects.filter(
+            groups__name='Rep', userprofile__registration_complete=True)
+        self._user = self._user_list[0]
 
         self.form_data = {
             'description': u'This is a description.',
@@ -47,9 +52,10 @@ class PollAddFormTest(TestCase):
             'radio_polls-MAX_NUM_FORMS': u'1000',
             '%s_radio_choices-TOTAL_FORMS' % str(self.radio_poll.id): u'1',
             '%s_radio_choices-INITIAL_FORMS' % str(self.radio_poll.id): u'1',
-            '%s_radio_choices-MAX_NUM_FORMS' % (
-                str(self.radio_poll.id)): u'1000',
-            '%s_radio_choices-0-id' % str(self.radio_poll.id): u'1',
+            '%s_radio_choices-MAX_NUM_FORMS' % str(self.radio_poll.id):
+            u'1000',
+            '%s_radio_choices-0-id' % str(self.radio_poll.id):
+            u'%s' % str(self.radio_poll.id),
             '%s_radio_choices-0-answer' % str(self.radio_poll.id): u'Answer 1',
             '%s_radio_choices-0-DELETE' % str(self.radio_poll.id): False}
 
@@ -59,33 +65,26 @@ class PollAddFormTest(TestCase):
             'range_polls-MAX_NUM_FORMS': u'1000',
             'range_polls-0-id': u'%s' % str(self.range_poll.id),
             'range_polls-0-name': u'Current Range Poll 1',
-            '%s_range_choices-0-id' % str(self.range_poll.id): u'1',
-            '%s_range_choices-0-nominee' % self.range_poll.id: u'4',
+            '%s_range_choices-0-id' % str(self.range_poll.id):
+            u'%s' % str(self.range_poll.id),
+            '%s_range_choices-0-nominee' % str(self.range_poll.id):
+            u'%s' % str(self._user.id),
             '%s_range_choices-0-DELETE' % str(self.range_poll.id): False,
             '%s_range_choices-TOTAL_FORMS' % str(self.range_poll.id): u'1',
             '%s_range_choices-INITIAL_FORMS' % str(self.range_poll.id): u'1',
             '%s_range_choices-MAX_NUM_FORMS' % (
                 str(self.range_poll.id)): u'1000'}
 
-        self.radio_formset_invalid_data = {
+        self.empty_radio_formset = {
             'radio_polls-TOTAL_FORMS': u'0',
             'radio_polls-INITIAL_FORMS': u'0',
-            'radio_polls-MAX_NUM_FORMS': u'1000',
-            '%s_radio_choices-TOTAL_FORMS' % str(self.radio_poll.id): u'0',
-            '%s_radio_choices-INITIAL_FORMS' % str(self.radio_poll.id): u'0',
-            '%s_radio_choices-MAX_NUM_FORMS' % (
-                str(self.radio_poll.id)): u'1000'}
+            'radio_polls-MAX_NUM_FORMS': u'1000'}
 
-        self.range_formset_invalid_data = {
+        self.empty_range_formset = {
             'range_polls-TOTAL_FORMS': u'0',
             'range_polls-INITIAL_FORMS': u'0',
-            'range_polls-MAX_NUM_FORMS': u'1000',
-            '%s_range_choices-TOTAL_FORMS' % str(self.range_poll.id): u'0',
-            '%s_range_choices-INITIAL_FORMS' % str(self.range_poll.id): u'0',
-            '%s_range_choices-TOTAL_FORMS' % (
-                str(self.range_poll.id)): u'1000'}
-        self._user_list = User.objects.filter(
-            groups__name='Rep', userprofile__registration_complete=True)
+            'range_polls-MAX_NUM_FORMS': u'1000'}
+
         RangePollFormset = (inlineformset_factory(Poll, RangePoll,
                             formset=forms.BaseRangePollInlineFormSet,
                             extra=1, can_delete=True))
@@ -98,9 +97,9 @@ class PollAddFormTest(TestCase):
         self.radio_poll_formset = RadioPollFormset(self.radio_formset_data,
                                                    instance=self.poll)
         self.radio_poll_formset_invalid = RadioPollFormset(
-            self.radio_formset_invalid_data, instance=self.poll)
+            self.empty_radio_formset, instance=self.poll)
         self.range_poll_formset_invalid = RangePollFormset(
-            self.range_formset_invalid_data, instance=self.poll,
+            self.empty_range_formset, instance=self.poll,
             user_list=self._user_list)
 
     def test_clean_one_radio_one_range_poll(self):
