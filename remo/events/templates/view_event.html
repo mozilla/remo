@@ -10,6 +10,7 @@ Mozilla Reps - {{ event.name }}
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{ event_link }}" />
 <meta property="og:image" content="{{ MEDIA_URL }}img/remo/remo-logo-og.jpg" />
+<meta property="og:description" content="{{ event.description|truncate(200) }}">
 {% endblock %}
 
 {% block content %}
