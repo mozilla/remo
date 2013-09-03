@@ -47,10 +47,6 @@ function set_tooltips() {
     // have initialized the tooltip.
     item.attr('title', title);
     item.addClass('has-tip');
-
-    // Set social share tooltips
-    $('.social-share a').addClass('has-tip');
-    $(document).tooltips();
 }
 
 function initialize_mashup() {

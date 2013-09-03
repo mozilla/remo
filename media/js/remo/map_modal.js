@@ -29,18 +29,12 @@ $(document).ready(function() {
         }
     }
 
-    // due to Foundation 4, we need to only draw the map once shown
-    if ($.isFunction($.fn.foundation)) {
-        $('#map-point').foundation('reveal', {
-            opened: function () {
-                //callback fires for any reveal on page so must check the modal id
-                if (this.id === 'map-point') {
-                     initMap();
-                }
+    $('#map-point').foundation('reveal', {
+        opened: function () {
+            //callback fires for any reveal on page so must check the modal id
+            if (this.id === 'map-point') {
+                 initMap();
             }
-        });
-    } else {
-        // For Foundation 2 we can draw on DOM ready
-        initMap();
-    }
+        }
+    });
 });
