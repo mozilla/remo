@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template import Context, RequestContext, loader
 from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.http import require_POST
@@ -18,6 +18,7 @@ import utils
 
 from remo.base.decorators import permission_check
 from remo.base.mozillians import is_vouched, BadStatusCodeError
+from remo.base.cards import send_card
 from remo.events.models import Event
 from remo.featuredrep.models import FeaturedRep
 from remo.remozilla.models import Bug
@@ -268,3 +269,13 @@ def edit_settings(request):
         return redirect('dashboard')
     return render(request, 'settings.html', {'user': user,
                                              'settingsform': form})
+
+
+def cards(request):
+    """Cards Generator."""
+    display_name = request.user.userprofile.display_name
+    user = get_object_or_404(User,
+                             userprofile__display_name__iexact=display_name)
+    send_card(user)
+    messages.success(request, 'Card sent. Check your mailbox!')
+    return redirect('dashboard')

@@ -60,8 +60,13 @@ Mozilla Reps - Labs
             Business Card generator!
           </p>
           <p>
-            If you are a Mozilla Rep give it a
-            try <a href="http://cards.mozillareps.org/" target="_blank">here</a>.
+            If you are a Mozilla Rep give it a try.
+            All your personal details are pulled from your profile.
+            {% if user.is_authenticated() %}
+              <a href="/cards/">Send card!</a>
+            {% else %}
+              You have to Sign-in first.
+            {% endif %}
           </p>
         </div>
         <div class="large-6 columns labs-img">
@@ -91,4 +96,5 @@ Mozilla Reps - Labs
     </div>
   </div>
 </main>
+
 {% endblock %}

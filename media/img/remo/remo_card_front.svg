@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.2"
+   width="301.18109"
+   height="194.8819"
+   id="svg2"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="remo_card_front.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="973"
+     id="namedview3133"
+     showgrid="false"
+     inkscape:zoom="2.0754369"
+     inkscape:cx="248.9556"
+     inkscape:cy="64.254032"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2"
+     showguides="true"
+     inkscape:guide-bbox="true" />
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 97.440948 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="301.18109 : 97.440948 : 1"
+       inkscape:persp3d-origin="150.59055 : 64.960632 : 1"
+       id="perspective3857" />
+    <radialGradient
+       cx="807.55658"
+       cy="282.41989"
+       r="87.093903"
+       id="radialGradient3048"
+       xlink:href="#SVGID_1_"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       cx="807.55658"
+       cy="282.41989"
+       r="87.093903"
+       id="SVGID_1_"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         id="stop10"
+         style="stop-color:#ef4136;stop-opacity:1"
+         offset="0.44170001" />
+      <stop
+         id="stop12"
+         style="stop-color:#be1e2d;stop-opacity:1"
+         offset="1" />
+    </radialGradient>
+    <inkscape:perspective
+       id="perspective2994"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3023"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3050"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3077"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3104"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3131"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3131-5"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3169"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3196"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2886"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-857.48024)"
+     id="layer1"
+     style="display:inline;fill:#a02c2c">
+    <rect
+       width="301.18109"
+       height="194.8819"
+       x="0"
+       y="857.48029"
+       id="rect2989"
+       style="fill:#a02c2c;fill-opacity:1;stroke:none" />
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:15.71327209px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="148.11464"
+     y="42.578606"
+     id="text2946"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="fullname"
+       x="148.11464"
+       y="42.578606"
+       style="font-size:13px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBold-Roman;-inkscape-font-specification:MetaBold-Roman">Name Surname</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="148.08965"
+     y="55.192131"
+     id="text2950"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan2952"
+       x="148.08965"
+       y="55.192131"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBook-Roman;-inkscape-font-specification:MetaBook-Roman Italic">Mozilla Representative</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:9px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="148.47464"
+     y="92.094673"
+     id="text2954"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="bugzillamail"
+       x="148.47464"
+       y="92.094673"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBook-Roman;-inkscape-font-specification:MetaBook-Roman"
+       default="">email@domain.com</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:9px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="148.28464"
+     y="104.33218"
+     id="text2958"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="website"
+       x="148.28464"
+       y="104.33218"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBook-Roman;-inkscape-font-specification:MetaBook-Roman"
+       default="">http://domain.com</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:9px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="148.28464"
+     y="116.66967"
+     id="text2962"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan2964"
+       x="148.28464"
+       y="116.66967"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBook-Roman;-inkscape-font-specification:MetaBook-Roman">http://mozillareps.org</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="148.92464"
+     y="139.82802"
+     id="text2966"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="twitter-name"
+       x="148.92464"
+       y="139.82802"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBoldLF-Caps;-inkscape-font-specification:MetaBoldLF-Caps"
+       default="">twitter</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="194.61183"
+     y="139.95801"
+     id="text2978"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="twitter"
+       x="194.61183"
+       y="139.95801"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBook-Roman;-inkscape-font-specification:MetaBook-Roman"
+       default=""
+       prepend="@"
+       append=""
+       force_lowercase="">@twitterhandle</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="148.22464"
+     y="151.19341"
+     id="text2970"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="irc-name"
+       x="148.22464"
+       y="151.19341"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBoldLF-Caps;-inkscape-font-specification:MetaBoldLF-Caps"
+       default="">irc</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:8px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="194.51984"
+     y="151.32339"
+     id="text2974"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="irc"
+       x="194.51984"
+       y="151.32339"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBook-Roman;-inkscape-font-specification:MetaBook-Roman"
+       default=""
+       prepend=":"
+       append=""
+       force_lowercase="True">:ircnickname</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="194.92262"
+     y="175.79149"
+     id="text2982"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan2984"
+       x="194.92262"
+       y="175.79149"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBoldLF-Roman;-inkscape-font-specification:MetaBoldLF-Roman">www.mozilla.org</tspan></text>
+  <g
+     id="g3025"
+     transform="matrix(0.4050236,0,0,0.4050236,-252.11592,-18.567531)">
+    <g
+       id="g3">
+      <path
+         style="fill:#414042"
+         id="path5"
+         d="m 889.69,211.846 c -0.609,-6.301 -7.699,-6.662 -9.312,-6.662 -0.211,0 -0.326,0.008 -0.326,0.008 -1.457,0.025 -2.881,0.039 -4.293,0.039 -47.258,0 -66.727,-14.039 -68.16,-15.119 v -0.07 c 0,0 -0.014,0.014 -0.037,0.035 -0.035,-0.021 -0.053,-0.035 -0.053,-0.035 l 0.004,0.07 c -1.434,1.08 -20.904,15.119 -68.16,15.119 -1.408,0 -2.83,-0.014 -4.291,-0.039 0,0 -0.115,-0.008 -0.324,-0.008 -1.619,0 -8.705,0.361 -9.314,6.662 -0.686,7.115 3.904,80.115 2.523,115.236 -1.379,35.121 12.398,41.318 33.744,47.514 20.646,5.998 29.699,5.873 42.105,19.256 1.121,1.43 2.449,2.672 3.691,2.672 1.133,0 2.268,-0.67 3.451,-2.262 12.604,-13.791 21.633,-13.609 42.482,-19.666 21.35,-6.195 35.129,-12.393 33.744,-47.514 -1.374,-35.121 3.216,-108.121 2.526,-115.236 z" />
+      <path
+         style="fill:#ffffff"
+         id="path7"
+         d="m 891.962,198.732 c -0.627,-6.475 -7.91,-6.846 -9.572,-6.846 -0.217,0 -0.334,0.008 -0.334,0.008 -1.496,0.025 -2.963,0.039 -4.41,0.039 -48.566,0 -68.572,-14.428 -70.045,-15.537 v -0.072 c 0,0 -0.016,0.014 -0.039,0.035 -0.035,-0.021 -0.057,-0.035 -0.057,-0.035 l 0.006,0.072 c -1.473,1.109 -21.482,15.537 -70.043,15.537 -1.447,0 -2.912,-0.014 -4.41,-0.039 0,0 -0.119,-0.008 -0.334,-0.008 -1.664,0 -8.945,0.371 -9.572,6.846 -0.705,7.314 4.012,82.33 2.594,118.422 -1.416,36.092 12.742,42.463 34.676,48.83 21.219,6.162 30.521,6.033 43.271,19.785 1.152,1.471 2.518,2.746 3.793,2.746 1.164,0 2.332,-0.689 3.549,-2.324 12.949,-14.17 22.229,-13.984 43.656,-20.207 21.939,-6.367 36.098,-12.738 34.678,-48.83 -1.415,-36.092 3.302,-111.107 2.593,-118.422 z" />
+      <radialGradient
+         gradientUnits="userSpaceOnUse"
+         id="radialGradient4245"
+         r="87.093903"
+         cy="282.41989"
+         cx="807.55658">
+        <stop
+           offset="0.44170001"
+           style="stop-color:#ef4136;stop-opacity:1"
+           id="stop4247" />
+        <stop
+           offset="1"
+           style="stop-color:#be1e2d;stop-opacity:1"
+           id="stop4249" />
+      </radialGradient>
+      <path
+         style="fill:url(#radialGradient3048)"
+         id="path14"
+         d="m 881.586,317.699 c -0.896,-22.992 0.621,-60.754 1.73,-88.328 0.514,-12.729 1.047,-25.869 0.922,-29.189 -0.443,-0.145 -1.141,-0.268 -1.834,-0.268 l -0.191,0.014 -0.018,-0.01 c -1.52,0.027 -3.057,0.039 -4.553,0.039 -38.512,0 -60.332,-8.885 -69.59,-13.91 h -0.992 c -9.264,5.027 -31.084,13.91 -69.594,13.91 -1.492,0 -3.023,-0.012 -4.545,-0.039 l -0.238,-0.004 h -0.004 c -0.682,0.004 -1.363,0.129 -1.807,0.268 -0.119,3.311 0.408,16.457 0.922,29.189 1.107,27.574 2.631,65.336 1.732,88.328 -0.764,19.4 3.418,26.469 6.629,30.098 4.441,5.021 11.309,7.727 22.438,10.953 4.072,1.186 7.779,2.15 11.053,3.004 13.182,3.436 22.898,5.969 33.912,17.039 10.959,-11.053 20.275,-13.48 33.92,-17.045 3.27,-0.854 6.977,-1.812 11.043,-2.998 11.125,-3.227 17.996,-5.932 22.434,-10.953 3.213,-3.629 7.397,-10.697 6.631,-30.098 z" />
+    </g>
+    <g
+       id="g16">
+      <g
+         id="g18">
+        <circle
+           sodipodi:ry="9.3859997"
+           sodipodi:rx="9.3859997"
+           sodipodi:cy="234.83"
+           sodipodi:cx="807.53699"
+           d="m 816.92299,234.83 c 0,5.18375 -4.20226,9.386 -9.386,9.386 -5.18375,0 -9.386,-4.20225 -9.386,-9.386 0,-5.18374 4.20225,-9.386 9.386,-9.386 5.18374,0 9.386,4.20226 9.386,9.386 z"
+           style="fill:#ffffff"
+           id="circle20"
+           r="9.3859997"
+           cy="234.83"
+           cx="807.53699" />
+        <path
+           style="fill:#ffffff"
+           id="path22"
+           d="m 816.575,319.546 c 0,2.177 -1.765,3.941 -3.941,3.941 h -10.192 c -2.178,0 -3.942,-1.765 -3.942,-3.941 v -52.608 c 0,-2.176 1.765,-3.941 3.942,-3.941 h 10.192 c 2.177,0 3.941,1.766 3.941,3.941 v 52.608 z" />
+        <path
+           style="fill:#ffffff"
+           id="path24"
+           d="m 827.004,277.121 c 0,2.178 -1.765,3.941 -3.941,3.941 h -31.05 c -2.178,0 -3.942,-1.764 -3.942,-3.941 V 250.59 c 0,-2.176 1.765,-3.941 3.942,-3.941 h 31.05 c 2.177,0 3.941,1.766 3.941,3.941 v 26.531 z" />
+      </g>
+      <g
+         id="g26">
+        <g
+           id="g28">
+          <circle
+             sodipodi:ry="7.3000002"
+             sodipodi:rx="7.3000002"
+             sodipodi:cy="242.864"
+             sodipodi:cx="847.70898"
+             d="m 855.00898,242.864 c 0,4.03168 -3.26832,7.3 -7.3,7.3 -4.03167,0 -7.3,-3.26832 -7.3,-7.3 0,-4.03168 3.26833,-7.3 7.3,-7.3 4.03168,0 7.3,3.26832 7.3,7.3 z"
+             style="fill:#ffffff"
+             id="circle30"
+             r="7.3000002"
+             cy="242.864"
+             cx="847.70898" />
+          <path
+             style="fill:#ffffff"
+             id="path32"
+             d="m 854.739,310.302 c 0,1.693 -1.373,3.066 -3.065,3.066 h -7.929 c -1.693,0 -3.065,-1.373 -3.065,-3.066 v -42.464 c 0,-1.693 1.372,-3.066 3.065,-3.066 h 7.929 c 1.692,0 3.065,1.373 3.065,3.066 v 42.464 z" />
+          <path
+             style="fill:#ffffff"
+             id="path34"
+             d="m 862.851,275.758 c 0,1.693 -1.373,3.066 -3.066,3.066 h -24.15 c -1.693,0 -3.065,-1.373 -3.065,-3.066 v -20.636 c 0,-1.692 1.372,-3.065 3.065,-3.065 h 24.15 c 1.693,0 3.066,1.373 3.066,3.065 v 20.636 z" />
+        </g>
+        <g
+           id="g36">
+          <circle
+             sodipodi:ry="7.3000002"
+             sodipodi:rx="7.3000002"
+             sodipodi:cy="242.86301"
+             sodipodi:cx="767.40601"
+             d="m 774.70601,242.86301 c 0,4.03168 -3.26833,7.3 -7.3,7.3 -4.03168,0 -7.3,-3.26832 -7.3,-7.3 0,-4.03168 3.26832,-7.3 7.3,-7.3 4.03167,0 7.3,3.26832 7.3,7.3 z"
+             style="fill:#ffffff"
+             id="circle38"
+             r="7.3000002"
+             cy="242.86301"
+             cx="767.40601" />
+          <path
+             style="fill:#ffffff"
+             id="path40"
+             d="m 774.436,310.302 c 0,1.693 -1.372,3.066 -3.065,3.066 h -7.929 c -1.692,0 -3.065,-1.373 -3.065,-3.066 v -42.464 c 0,-1.693 1.373,-3.066 3.065,-3.066 h 7.929 c 1.693,0 3.065,1.373 3.065,3.066 v 42.464 z" />
+          <path
+             style="fill:#ffffff"
+             id="path42"
+             d="m 782.547,275.758 c 0,1.693 -1.372,3.066 -3.065,3.066 H 755.33 c -1.692,0 -3.065,-1.373 -3.065,-3.066 v -20.636 c 0,-1.692 1.373,-3.065 3.065,-3.065 h 24.151 c 1.693,0 3.065,1.373 3.065,3.065 v 20.636 z" />
+        </g>
+      </g>
+    </g>
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Yanone Kaffeesatz;-inkscape-font-specification:Yanone Kaffeesatz"
+     x="148.08965"
+     y="67.192131"
+     id="text2950-9"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="sig"
+       x="148.08965"
+       y="67.192131"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:MetaBook-Roman;-inkscape-font-specification:MetaBook-Roman Italic"
+       default="">PR SIG</tspan></text>
+</svg>
