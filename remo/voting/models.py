@@ -1,5 +1,5 @@
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from celery.task import control as celery_control
 from django.core.validators import MaxLengthValidator, MinLengthValidator
@@ -13,19 +13,20 @@ from django.utils.timezone import make_aware
 from south.signals import post_migrate
 from uuslug import uuslug
 
-from remo.base.utils import add_permissions_to_groups
+from remo.base.utils import add_permissions_to_groups, datetime2pdt
+from remo.remozilla.models import Bug
 from remo.voting.tasks import send_voting_mail
 
 
 class Poll(models.Model):
     """Poll Model."""
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(blank=True, max_length=100)
+    name = models.CharField(max_length=300)
+    slug = models.SlugField(blank=True, max_length=255)
     start = models.DateTimeField()
     end = models.DateTimeField()
     valid_groups = models.ForeignKey(Group, related_name='valid_polls')
     created_on = models.DateTimeField(auto_now_add=True)
-    description = models.TextField(validators=[MaxLengthValidator(500),
+    description = models.TextField(validators=[MaxLengthValidator(1500),
                                                MinLengthValidator(20)])
     created_by = models.ForeignKey(User, related_name='range_polls_created')
     users_voted = models.ManyToManyField(User, related_name='polls_voted',
@@ -35,9 +36,8 @@ class Poll(models.Model):
     task_end_id = models.CharField(max_length=256, blank=True, null=True,
                                    editable=False, default='')
     last_notification = models.DateTimeField(null=True)
-
-    class Meta:
-        ordering = ['-created_on']
+    bug = models.ForeignKey(Bug, null=True, blank=True)
+    automated_poll = models.BooleanField(default=False)
 
     @property
     def is_future_voting(self):
@@ -55,6 +55,9 @@ class Poll(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        ordering = ['-created_on']
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -166,3 +169,37 @@ def voting_set_groups(app, sender, signal, **kwargs):
                    ('voting.change_poll', ['Admin']))
 
     add_permissions_to_groups('voting', permissions)
+
+
+@receiver(post_save, sender=Bug,
+          dispatch_uid='remozilla_create_radio_poll_signal')
+def create_radio_poll(sender, instance, **kwargs):
+    """Create a radio poll automatically when a new budget or
+    swag bug is submitted.
+    """
+    # Avoid circular dependencies
+    from remo.voting.models import Poll, RadioPoll, RadioPollChoice
+
+    if (instance.flag_status == '?' and
+        instance.flag_name == 'remo-review' and
+            instance.component in ('Budget Requests', 'Swag Requests')):
+        if not Poll.objects.filter(bug=instance).exists():
+            date_now = datetime2pdt()
+            remobot = User.objects.get(username='remobot')
+
+            poll = (Poll.objects
+                    .create(name=instance.summary,
+                            description=instance.first_comment,
+                            valid_groups=Group.objects.get(name='Council'),
+                            start=date_now,
+                            end=(date_now + timedelta(days=3)),
+                            bug=instance,
+                            created_by=remobot,
+                            automated_poll=True))
+
+            radio_poll = RadioPoll.objects.create(poll=poll,
+                                                  question='Budget Approval')
+
+            for answer in ('Approved', 'Denied'):
+                RadioPollChoice.objects.create(answer=answer,
+                                               radio_poll=radio_poll)

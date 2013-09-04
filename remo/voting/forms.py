@@ -3,15 +3,14 @@ import pytz
 from datetime import datetime
 
 from django import forms
-from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db.models import F
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
-from django.utils.timezone import make_aware, make_naive, utc
+from django.utils.timezone import make_naive, utc
 
 from datetimewidgets import SplitSelectDateTimeWidget
-from remo.base.utils import validate_datetime
+from remo.base.utils import datetime2pdt, validate_datetime
 from models import Poll, RadioPoll, RadioPollChoice, RangePoll, RangePollChoice
 
 
@@ -83,8 +82,7 @@ class PollEditForm(happyforms.ModelForm):
         if self.instance.end:
             # Convert to server timezone
             naive_time = make_naive(instance.end, pytz.UTC)
-            server_time = make_aware(naive_time,
-                                     pytz.timezone(settings.TIME_ZONE))
+            server_time = datetime2pdt(naive_time)
             self.fields['end_form'].initial = server_time
 
     def clean(self):
@@ -92,7 +90,7 @@ class PollEditForm(happyforms.ModelForm):
         super(PollEditForm, self).clean()
 
         cdata = self.cleaned_data
-        date_now = make_aware(datetime.utcnow(), pytz.UTC)
+        date_now = datetime2pdt()
 
         # Check if key exists
         if not 'end_form' in cdata:
@@ -139,8 +137,7 @@ class PollAddForm(PollEditForm):
             validators=[validate_datetime])
         if self.instance.start:
             naive_time = make_naive(instance.start, pytz.UTC)
-            server_time = make_aware(naive_time,
-                                     pytz.timezone(settings.TIME_ZONE))
+            server_time = datetime2pdt(naive_time)
             self.fields['start_form'].initial = server_time
 
     def is_valid(self):
@@ -154,7 +151,7 @@ class PollAddForm(PollEditForm):
         super(PollAddForm, self).clean()
 
         cdata = self.cleaned_data
-        date_now = make_aware(datetime.utcnow(), pytz.UTC)
+        date_now = datetime2pdt()
 
         # Check if key exists
         if not 'start_form' in cdata:

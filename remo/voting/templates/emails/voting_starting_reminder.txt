@@ -1,4 +1,4 @@
-Hello {{ user.first_name }},
+Hello {% if poll.automated_poll %}Council{% else %}{{ user.first_name }}{% endif %},
 
 This email was generated automatically to inform you that
 voting "{{ poll.name }}" is now open for you to vote.
