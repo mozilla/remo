@@ -1,4 +1,3 @@
-import pytz
 from datetime import datetime
 
 from django.db.models import Q
@@ -6,10 +5,9 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.timezone import make_aware
 
 from remo.base.decorators import permission_check
-from remo.base.utils import get_or_create_instance
+from remo.base.utils import datetime2pdt, get_or_create_instance
 from remo.voting.models import Poll, RadioPoll, RangePoll, Vote
 
 import forms
@@ -53,7 +51,7 @@ def edit_voting(request, slug=None):
                 RadioPoll.objects.filter(poll=poll).count()) == 0:
             extra = 1
         can_delete_voting = True
-        date_now = make_aware(datetime.utcnow(), pytz.UTC)
+        date_now = datetime2pdt()
         if poll.start < date_now and poll.end > date_now:
             current_voting_edit = True
 
@@ -102,7 +100,7 @@ def edit_voting(request, slug=None):
 def view_voting(request, slug):
     """View voting and cast a vote view."""
     user = request.user
-    now = make_aware(datetime.utcnow(), pytz.UTC)
+    now = datetime2pdt()
     poll = get_object_or_404(Poll, slug=slug)
     # If the user does not belong to a valid poll group
     if not (user.groups.filter(Q(id=poll.valid_groups.id) |

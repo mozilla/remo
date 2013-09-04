@@ -22,7 +22,7 @@ COMPONENTS = ['Budget Requests', 'Community IT Requests', 'Mentorship',
 BUGZILLA_FIELDS = [u'is_confirmed', u'summary', u'creator', u'creation_time',
                    u'component', u'whiteboard', u'op_sys', u'cc', u'id',
                    u'status', u'assigned_to', u'resolution',
-                   u'last_change_time', u'cf_due_date']
+                   u'last_change_time', u'cf_due_date', u'flags', u'comments']
 
 URL = ('https://api-dev.bugzilla.mozilla.org/latest/bug/'
        '?username={username}&password={password}&'
@@ -52,7 +52,6 @@ def fetch_bugs(components=COMPONENTS, days=None):
                          component=quote(component),
                          fields=','.join(BUGZILLA_FIELDS),
                          timedelta=days, offset=offset, limit=LIMIT)
-
         while True:
             response = requests.get(url)
             if response.status_code != 200:
@@ -90,6 +89,17 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 if 'last_change_time' in bdata:
                     bug.bug_last_change_time = datetime.strptime(
                         bdata['last_change_time'], '%Y-%m-%dT%H:%M:%SZ')
+                flags = bdata.get('flags', [])
+
+                bug.flag_status = next((item['status'] for item in flags
+                                        if item['status'] == '?'), '')
+                bug.flag_name = next((item['name'] for item in flags
+                                      if item['name'] == 'remo-review'), '')
+
+                comments = bdata.get('comments', [])
+                if comments and comments[0].get('text', ''):
+                    bug.first_comment = comments[0]['text']
+
                 bug.save()
 
             offset += LIMIT
