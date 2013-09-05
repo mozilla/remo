@@ -217,18 +217,41 @@ function set_number_of_events(number_of_events) {
     number_of_events = parseInt(number_of_events, 10);
     EventsLib.number_of_events = number_of_events;
 
+    //set the suffix according to period
+    var search_type = hash_get_value('period');
+    var suffix = '';
+    if (search_type === 'custom') {
+        var start_date = hash_get_value('start');
+        var end_date = hash_get_value('end');
+        if (start_date && end_date) {
+            suffix = ' for period ' + start_date + ' to ' + end_date;
+        }
+        else if (start_date) {
+            suffix = ' from ' + start_date;
+        }
+        else if (end_date) {
+            suffix = ' till ' + end_date;
+        }
+    }
+    else if (search_type === 'future'){
+        suffix = ' currently or in the future';
+    }
+    else if (search_type === 'past'){
+        suffix = ' in the past';
+    }
+
     if (number_of_events === 0) {
         EventsLib.events_table_elm.hide();
-        EventsLib.events_number_elm.html('Sorry no events found.');
+        EventsLib.events_number_elm.html('Sorry, no events found' + suffix + '.');
     }
     else {
         EventsLib.events_table_elm.show();
 
         if (number_of_events === 1) {
-            EventsLib.events_number_elm.html('1 event found.');
+            EventsLib.events_number_elm.html('1 event found' + suffix + '.');
         }
         else {
-            EventsLib.events_number_elm.html(number_of_events + ' events found.');
+            EventsLib.events_number_elm.html(number_of_events + ' events found' + suffix + '.');
         }
     }
 }
