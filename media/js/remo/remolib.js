@@ -79,10 +79,8 @@ function append_to_formset(event) {
     function attr_update(selector, attr, prepend){
         new_block_obj.find(selector + prefix + "]").each(function (index, item) {
             var item_obj = $(item);
-            var prologue_length = 2+prepend.length+prefix.length+total_forms_obj.val().length;
-            var item_id = item_obj.attr(attr).substr(prologue_length);
-            var dash = item_obj.attr(attr).substr(prologue_length-1, 1);
-            newid = prepend + prefix + '-' + total_forms_obj.val() + dash + item_id;
+            var item_id = item_obj.attr(attr).split('-').pop()
+            newid = prepend + prefix + '-' + total_forms_obj.val() + '-' + item_id;
             item_obj.attr(attr, newid);
         });
     }
