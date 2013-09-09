@@ -123,7 +123,8 @@ class UserProfile(caching.base.CachingMixin, models.Model):
                                      default=None)
     mentor = models.ForeignKey(User, null=True, blank=False,
                                related_name='mentees',
-                               validators=[_validate_mentor])
+                               validators=[_validate_mentor],
+                               on_delete=models.SET_NULL)
     functional_areas = models.ManyToManyField(
         FunctionalArea, related_name='users_matching')
     tracked_functional_areas = models.ManyToManyField(
