@@ -17,9 +17,11 @@ class Bug(caching.base.CachingMixin, models.Model):
     bug_creation_time = models.DateTimeField(blank=True, null=True)
     bug_last_change_time = models.DateTimeField(blank=True, null=True)
     creator = models.ForeignKey(User, null=True, blank=True,
-                                related_name='bugs_created')
+                                related_name='bugs_created',
+                                on_delete=models.SET_NULL)
     assigned_to = models.ForeignKey(User, null=True, blank=True,
-                                    related_name='bugs_assigned')
+                                    related_name='bugs_assigned',
+                                    on_delete=models.SET_NULL)
     cc = models.ManyToManyField(User, related_name='bugs_cced')
     component = models.CharField(max_length=200)
     summary = models.CharField(max_length=500, default='')
