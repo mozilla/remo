@@ -1,10 +1,10 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib import quote
 
 import django.utils.timezone as timezone
 
-from celery.task import task
+from celery.task import periodic_task
 from django.conf import settings
 from django.contrib.auth.models import User
 
@@ -15,6 +15,8 @@ from funfactory.helpers import urlparams
 from remo.base.utils import get_object_or_none
 from remo.remozilla.models import Bug
 from remo.remozilla.utils import get_last_updated_date, set_last_updated_date
+
+INTERVAL = 15 * 60
 
 COMPONENTS = ['Budget Requests', 'Community IT Requests', 'Mentorship',
               'Swag Requests', 'Planning']
@@ -33,7 +35,7 @@ URL = ('https://api-dev.bugzilla.mozilla.org/latest/bug/'
 LIMIT = 100
 
 
-@task
+@periodic_task(run_every=timedelta(seconds=INTERVAL))
 def fetch_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
 
