@@ -43,3 +43,9 @@ class HelpersTest(TestCase):
                                 reverse('events_count_converted_visitors',
                                         kwargs={'slug': e.slug}))})
         eq_(get_contribute_link(e), url)
+
+    def test_get_event_search_link(self):
+        """Test event search link generation."""
+        search = 'SearchTerm'
+        url = reverse('events_list_events')
+        eq_(get_event_search_link(search), urlparams(url, '/search/searchterm/'))
