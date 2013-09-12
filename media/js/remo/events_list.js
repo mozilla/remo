@@ -46,6 +46,16 @@ function initialize_map() {
     var center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
     EventsLib.map.setView(center, 2).addLayer(cloudmade);
 
+    L.control.locate({
+        setView: false,
+        onLocationError: handleLocationError,
+        locateOptions: {
+            watch: false
+        }
+    }).addTo(EventsLib.map);
+
+    EventsLib.map.on('locationfound', handleLocationFound);
+
     // When user clicks on map and a search filter exists, remove filter.
     EventsLib.map.on('click', function(e) {
         var val = EventsLib.searchfield_elm.val();
@@ -55,6 +65,17 @@ function initialize_map() {
             EventsLib.searchfield_elm.trigger('input');
         }
     });
+}
+
+function handleLocationError() {
+    // Show message when geolocation fails
+    var msg = 'Sorry, we could not determine your location.';
+    showMessage(msg, 'warning');
+}
+
+function handleLocationFound(e) {
+    // setView and zoom map when geolocation succeeds
+    EventsLib.map.setView(e.latlng, 5);
 }
 
 function clear_map() {
@@ -535,6 +556,9 @@ $(document).ready(function () {
     });
 
     initialize_map();
+
+    // Click geolocation button on load
+    $('a[title="Show me where I am"]', '#map')[0].click();
 
     EventsLib.searchform_elm.submit(function (event) {
         event.preventDefault();
