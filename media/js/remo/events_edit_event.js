@@ -21,5 +21,5 @@ $(document).ready(function() {
     });
 
     // Dynamically add Metric forms
-    $('form.custom').on('click', '#events-add-metric-button', append_to_formset);
+    $('form').on('click', '#events-add-metric-button', append_to_formset);
 });

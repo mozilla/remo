@@ -1,134 +1,132 @@
-{% extends "base.html" %}
+{% extends "base_fd4.html" %}
 
 {% block pagetitle %}
 Mozilla Reps - Events
 {% endblock %}
 
+{% block logo %}
+<h1><span class="metabold">mozilla</span> reps</h1>
+{% endblock %}
+
 {% block content %}
 
-<div class="row">
-  <div class="twelve columns align-right">
-    {% if perms.events.can_edit_events %}
-      <a href="{{ url('events_new_event') }}" target="_blank"
-         class="small blue button nice radius" id="events-create-button">Create event</a>
-    {% endif %}
-    <div class="hide-on-phones">
-      <dl id="events-viz-switcher" class="sub-nav dashboard-filter">
+<main role="main" class="events-main">
+  <div class="row">
+    <div class="large-12 columns align-right">
+      {% if perms.events.can_edit_events %}
+        <a href="{{ url('events_new_event') }}" target="_blank"
+           class="small button update" id="events-create-button">Create event</a>
+      {% endif %}
+      <dl id="events-viz-switcher" class="sub-nav dashboard-filter hide-for-small">
         <dd class="active">
-          <a id="events-map-button" href="javascript:void(0)">
-            Map
-          </a>
+          <a id="events-map-button" href="#">Map</a>
         </dd>
         <dd>
-          <a id="events-timeline-button" href="javascript:void(0)">
-            Timeline
-          </a>
+          <a id="events-timeline-button" href="#">Timeline</a>
         </dd>
       </dl>
     </div>
   </div>
-</div>
 
 
-<!-- Map & Vizualization -->
-<div class="row show-on-desktop {% if perms.events.can_edit_events %}top-margined{% endif %}">
-  <div class="twelve columns">
-    <div id="map" class="map300"></div>
-    <div class="hide-on-phones">
-      <div id="event-timeline"></div>
+  <!-- Map & Vizualization -->
+  <div class="row {% if perms.events.can_edit_events %}top-margined{% endif %}">
+    <div class="large-12 columns">
+      <div id="map" class="map300"></div>
+      <div class="hide-for-small">
+        <div id="event-timeline"></div>
+      </div>
     </div>
   </div>
-</div>
 
-<div id="map-overlay" class="hidden">
-  <div id="map-overlay-text">
-    Please refine search to view events.
-  </div>
-</div>
-
-<div id="timeline-overlay" class="hidden">
-  <div id="timeline-overlay-text">
-    Please refine search to view timeline.
-  </div>
-</div>
-
-<!-- Search box -->
-<div class="row">
-  <form class="custom" id="events-searchform">
-    <div class="nine columns" id="search">
-      <span class="pictogram-search" id="search-icon">
-        <div id="search-ready-icon" class="hidden">s</div>
-        <div id="search-loading-icon"></div>
-      </span>
-      <input type="text" placeholder="Loading..." id="searchfield"
-             class="input-text big" disabled="disabled">
-    </div>
-    <div class="three columns">
-      <select id="events-period-selector">
-        <option value="all">All Events</option>
-        <option value="future">Current and Future</option>
-        <option value="past">Past</option>
-        <option value="custom">Custom</option>
-      </select>
-      <span id="adv-search-icon-events" title="Advanced Options" class="pictogram-button">
-        (
-      </span>
-    </div>
-  </form>
-</div>
-
-<!-- Advanced search box -->
-<div class="row hidden" id="adv-search">
-  <div class="twelve columns">
-    <div class="row">
-      <form class="custom" id="searchform">
-        <div class="three columns">
-          <select id="adv-search-categories" class="expand">
-            <option value="">All Categories</option>
-            {% for category in categories %}
-              <option value="{{ category.name|lower }}">{{ category.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="three columns">
-          <input type="text" class="datepicker input-text big"
-                 id="date-start" placeholder="Start Range Date"/>
-        </div>
-        <div class="three columns">
-          <input type="text" class="datepicker input-text big"
-                 id="date-end" placeholder="End Range Date"/>
-        </div>
-        <div class="three columns align-right">
-          <a id="icalendar-export-button"
-             class="small white button nice radius" href="#">Export iCalendar</a>
-        </div>
-      </form>
+  <div id="map-overlay" class="hidden">
+    <div id="map-overlay-text">
+      Please refine search to view events.
     </div>
   </div>
-</div>
 
-<!-- Events listing -->
-<div class="row">
-  <div class="twelve columns">
-    <!-- Table start -->
-    <table id="events-table">
-      <tbody id="events-table-body">
-      </tbody>
-    </table>
+  <div id="timeline-overlay" class="hidden">
+    <div id="timeline-overlay-text">
+      Please refine search to view timeline.
+    </div>
   </div>
-</div>
 
-<!-- Loader animation -->
-<div class="row" id="events-loading-wrapper">
-  <div class="twelve columns">
-    <div id="events-loading"></div>
+  <!-- Search box -->
+  <div class="row">
+    <form id="events-searchform">
+      <div class="large-9 columns" id="search">
+        <span class="pictogram-search" id="search-icon">
+          <div id="search-ready-icon" class="pict-icon large search"></div>
+          <div id="search-loading-icon"></div>
+        </span>
+        <input type="text" placeholder="Loading..." id="searchfield"
+               class="input-text big" disabled="disabled">
+      </div>
+      <div class="large-3 columns">
+        <select id="events-period-selector">
+          <option value="all">All Events</option>
+          <option value="future">Current and Future</option>
+          <option value="past">Past</option>
+          <option value="custom">Custom</option>
+        </select>
+        <span id="adv-search-icon-events" title="Advanced Options" class="pict-icon large tools"></span>
+      </div>
+    </form>
   </div>
-</div>
 
-<div class="row end-row">
-  <div id="events-number" class="twelve columns reps-number">
+  <!-- Advanced search box -->
+  <div class="row hidden" id="adv-search">
+    <div class="large-12 columns">
+      <div class="row">
+        <form id="searchform">
+          <div class="large-3 columns">
+            <select id="adv-search-categories" class="expand">
+              <option value="">All Categories</option>
+              {% for category in categories %}
+                <option value="{{ category.name|lower }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="large-3 columns">
+            <input type="text" class="datepicker input-text big"
+                   id="date-start" placeholder="Start Range Date"/>
+          </div>
+          <div class="large-3 columns">
+            <input type="text" class="datepicker input-text big"
+                   id="date-end" placeholder="End Range Date"/>
+          </div>
+          <div class="large-3 columns align-right">
+            <a id="icalendar-export-button"
+               class="small button" href="#">Export iCalendar</a>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- Events listing -->
+  <div class="row">
+    <div class="large-12 columns">
+      <!-- Table start -->
+      <table id="events-table">
+        <tbody id="events-table-body">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Loader animation -->
+  <div class="row" id="events-loading-wrapper">
+    <div class="large-12 columns">
+      <div id="events-loading"></div>
+    </div>
+  </div>
+
+  <div class="row end-row">
+    <div id="events-number" class="large-12 columns reps-number">
+    </div>
+  </div>
+</main>
 
 <script id="eventItem-tmpl" type="text/x-jquery-tmpl">
   <tr class="event-item" data-lat="${ lat }"
@@ -136,7 +134,7 @@ Mozilla Reps - Events
     <td>
       <div class="row">
         <!-- Event Date -->
-        <div class="two columns events-table-date-container">
+        <div class="large-1 columns events-table-date-container">
           <div class="events-table-date panel">
             <div class="{{ '{{if multiday}} events-table-date-day-multiple {{else}} events-table-date-day {{/if}}' }}">
               ${ $item.getDay() }
@@ -146,21 +144,23 @@ Mozilla Reps - Events
             </div>
           </div>
           <!-- Event name only in phones -->
-          <div class="events-table-name show-on-phones">
+          <div class="events-table-name show-for-small">
             <a href="${ event_url }">
               ${ name }
             </a>
           </div>
         </div>
         <!-- Event Info -->
-        <div class="nine columns events-table-info">
-          <div class="events-table-name hide-on-phones">
+        <div class="large-9 columns events-table-info">
+          <div class="events-table-name hide-for-small">
             <a href="${ event_url }">
               ${ name }
             </a>
           </div>
-          <div class="events-table-decription">
-            ${ description }
+          <div class="events-table-description-wrapper">
+            <div class="events-table-decription">
+              ${ description }
+            </div>
           </div>
           <div class="events-table-location">
             <span class="events-table-venue">${ venue }</span> -
@@ -176,7 +176,7 @@ Mozilla Reps - Events
           </div>
         </div>
         <!-- Event Extra -->
-        <div class="two columns events-table-extra hide-on-phones">
+        <div class="large-2 columns events-table-extra hide-for-small">
           <div class="events-table-owner">
             <span class="events-table-owner-tag">
               Owner
