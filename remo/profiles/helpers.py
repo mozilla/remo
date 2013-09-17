@@ -27,7 +27,7 @@ def get_avatar_url(user, size=50):
 
     default_img_url = reduce(lambda u, x: urlparse.urljoin(u, x),
                              [settings.SITE_URL,
-                              settings.MEDIA_URL,
+                              settings.STATIC_URL,
                               'img/remo/remo_avatar.png'])
 
     user_avatar, created = UserAvatar.objects.get_or_create(user=user)

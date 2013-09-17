@@ -338,5 +338,7 @@ Mozilla Reps - Edit Report
 {% endblock %}
 
 {% block bottomextra %}
-  {{ js('reports_edit_report') }}
+  {% compress js %}
+    <script src="{{ static('reports/js/reports_edit_report.js') }}"></script>
+  {% endcompress %}
 {% endblock %}

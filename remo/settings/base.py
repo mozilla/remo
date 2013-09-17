@@ -2,154 +2,6 @@
 # repo. If you need to override a setting locally, use settings_local.py
 from funfactory.settings_base import *
 
-# Bundles is a dictionary of two dictionaries, css and js, which list css files
-# and js files that can be bundled together by the minify app.
-MINIFY_BUNDLES = {
-    'css': {
-        'common': (
-            'css/remo/foundation.css',
-        ),
-        'common-fd4': (
-            'css/remo/foundation-4.css',
-        ),
-        'common_ie': (
-            'css/remo/ie.css',
-        ),
-        'common_ie_fd4': (
-            'css/remo/ie-fd4.css',
-        ),
-        'remo': (
-            'css/remo/app.less',
-        ),
-        'remo-fd4': (
-            'css/remo/app-fd4.less',
-        ),
-        'leaflet': (
-            'leaflet/leaflet.css',
-            'leaflet-locatecontrol/src/L.Control.Locate.css',
-        ),
-        'jqueryui': (
-            'css/jquery-ui-1.10.0.custom.css',
-        ),
-        'storyjs-css': (
-            'css/timeline/timeline.css',
-        ),
-    },
-    'js': {
-        'less': (
-            'js/libs/less-1.3.0.min.js',
-        ),
-        'init-fd4': (
-            'js/remo/init.js',
-        ),
-        'common-dbg': (
-            'js/libs/jquery-1.7.1.js',
-            'js/libs/modernizr.foundation.js',
-            'js/libs/foundation.js',
-            'js/libs/jquery.prettydate.js',
-            'js/remo/remolib.js',
-            # Our app.js is always last to override stuff
-            'js/remo/app.js',
-        ),
-        'common-dbg-fd4': (
-            'js/libs/jquery-1.7.1.js',
-            'js/libs/modernizr.foundation-4.js',
-            'js/libs/foundation-4.min.js',
-            'js/libs/jquery.prettydate.js',
-            'js/libs/jquery.imageready.min.js',
-            'js/libs/placeholder.min.js',
-            'js/remo/remolib.js',
-            # Our app.js is always last to override stuff
-            'js/remo/app.js',
-        ),
-        'common': (
-            'js/libs/jquery.min.js',
-            'js/libs/modernizr.foundation.js',
-            'js/libs/foundation.js',
-            'js/libs/jquery.prettydate.js',
-            'js/remo/remolib.js',
-            # Our app.js is always last to override stuff
-            'js/remo/app.js',
-        ),
-        'common-fd4': (
-            'js/libs/jquery-1.7.1.min.js',
-            'js/libs/modernizr.foundation-4.js',
-            'js/libs/foundation-4.min.js',
-            'js/libs/jquery.prettydate.js',
-            'js/libs/jquery.imageready.min.js',
-            'js/libs/placeholder.min.js',
-            'js/remo/remolib.js',
-            # Our app.js is always last to override stuff
-            'js/remo/app.js',
-        ),
-        'common_ie': (
-            'js/libs/html5.js',
-        ),
-        '404': (
-            'js/remo/404.js',
-        ),
-        'leaflet': (
-            'leaflet/leaflet.js',
-            'leaflet-locatecontrol/src/L.Control.Locate.js',
-        ),
-        'map_modal': (
-            'js/remo/map_modal.js',
-        ),
-        'base_main': (
-            'js/remo/orbit.js',
-            'js/libs/FeedEk.js',
-            'js/remo/planet.js'
-        ),
-        'base_dashboard': (
-            'js/libs/stupidtable.js',
-            'js/remo/dashboard.js'
-        ),
-        'base_dashboard_mozillians': (
-            'js/libs/stupidtable.js',
-            'js/remo/dashboard_mozillians.js'
-        ),
-        'voting_list_votings': (
-            'js/libs/stupidtable.js',
-            'js/remo/voting_list.js',
-        ),
-        'voting_edit_voting': (
-            'js/remo/voting_edit_voting.js',
-        ),
-        'voting_view_voting': (
-            'js/remo/voting_view_voting.js',
-        ),
-        'profiles_view_report': (
-            'js/remo/profiles_view_report.js',
-        ),
-        'profiles_people': (
-            'js/libs/jquery.tmpl.js',
-            'js/libs/heartcode-canvasloader-min.js',
-            'js/remo/profiles_people.js'
-        ),
-        'reports_edit_report': (
-            'js/remo/reports_edit_report.js',
-        ),
-        'events_edit_event': (
-            'js/remo/events_edit_event.js',
-        ),
-        'events_view_event': (
-            'js/libs/jquery.zflickrfeed.js',
-            'js/libs/jquery.tweet.js',
-            'js/remo/events_view_event.js',
-        ),
-        'events_list': (
-            'js/libs/jquery.tmpl.js',
-            'js/libs/timeline/timeline.js',
-            'js/libs/timeline/storyjs-embed.js',
-            'js/libs/heartcode-canvasloader-min.js',
-            'js/remo/events_list.js',
-        ),
-        'jqueryui': (
-            'js/libs/jquery-ui-1.10.0.custom.js',
-        ),
-    }
-}
-
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'remo.urls'
 
@@ -159,7 +11,6 @@ INSTALLED_APPS = ['south'] + \
                      'django.contrib.admin',
                      'django.contrib.messages',
                      'django.contrib.markup',
-                     'jingo_minify',
 
                      'remo.base',
                      'remo.profiles',
@@ -234,6 +85,7 @@ MIDDLEWARE_CLASSES += ('django.contrib.messages.middleware.MessageMiddleware',
 
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django_browserid.context_processors.browserid',
+    'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages')
 
 # Instruct session-csrf to always produce tokens for anonymous users
@@ -247,6 +99,9 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+# Allow robots to crawl the site.
+ENGAGE_ROBOTS = True
+
 CLOUDMADE_API = 'bbb9265287234b89b116cdbb09f0af36'
 CLOUDMADE_MARKER_PURPLE = 'fc2feea1e8e84d0192c32a2b867073a3'
 CLOUDMADE_MARKER = '9d7b9835ddd64784ade32d16a7968e90'
@@ -258,9 +113,6 @@ USE_TZ = True
 ETHERPAD_URL = 'http://etherpad.mozilla.org/'
 ETHERPAD_PREFIX = 'remo-'
 
-STATIC_ROOT = './media/static/'
-STATIC_URL = '/media/static/'
-
 CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
                   'event/?callbackurl=%(callbackurl)s')
 
@@ -271,7 +123,6 @@ REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
 MOZILLIANS_API_BASE = 'https://mozillians.org'
 
 ALLOWED_HOSTS = ['reps.mozilla.org']
-JINGO_MINIFY_USE_STATIC = False
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
@@ -284,3 +135,5 @@ def JINJA_CONFIG():
 
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_ENABLE_UTC = True
+
+COMPRESS_ENABLED = True

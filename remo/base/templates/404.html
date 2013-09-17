@@ -16,5 +16,7 @@
 
 {% block bottomextra %}
   {{ super() }}
-  {{ js('404') }}
+  {% compress js %}
+    <script src="{{ static('base/js/404.js') }}"></script>
+  {% endcompress %}
 {% endblock %}

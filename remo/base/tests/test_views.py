@@ -9,7 +9,9 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import mail
 from django.core.urlresolvers import reverse
+from django.test import RequestFactory
 from django.test.client import Client
+from django.test.utils import override_settings
 
 from funfactory.helpers import urlparams
 from jinja2 import Markup
@@ -20,6 +22,7 @@ from test_utils import TestCase
 from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
 from remo.base.tests.browserid_mock import mock_browserid
+from remo.base.views import robots_txt
 
 
 VOUCHED_MOZILLIAN = """
@@ -358,3 +361,19 @@ class ViewsTest(TestCase):
         user = User.objects.get(username='rep')
         eq_(user.userprofile.receive_email_on_add_comment,
             self.settings_data['receive_email_on_add_comment'])
+
+    @override_settings(ENGAGE_ROBOTS=True)
+    def test_robots_allowed(self):
+        """Test robots.txt generation when crawling allowed."""
+        factory = RequestFactory()
+        request = factory.get('/robots.txt')
+        response = robots_txt(request)
+        eq_(response.content, 'User-agent: *\nAllow: /')
+
+    @override_settings(ENGAGE_ROBOTS=False)
+    def test_robots_disallowed(self):
+        """Test robots.txt generation when crawling disallowed."""
+        factory = RequestFactory()
+        request = factory.get('/robots.txt')
+        response = robots_txt(request)
+        eq_(response.content, 'User-agent: *\nDisallow: /')
