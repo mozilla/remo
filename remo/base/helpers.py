@@ -146,12 +146,6 @@ def active(request, pattern):
 
 
 @register.function
-def get_development_environment():
-    """Return settings.TEMPLATE_DEBUG."""
-    return getattr(settings, 'TEMPLATE_DEBUG', False)
-
-
-@register.function
 def field_with_attrs(bfield, **kwargs):
     """Allows templates to dynamically add html attributes to bound
     fields from django forms.

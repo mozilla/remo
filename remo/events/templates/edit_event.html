@@ -522,10 +522,17 @@
 </main>
 
 {% endblock %}
-
 {% block bottomextra %}
-  {{ css('leaflet') }}
-  {{ js('leaflet') }}
-  {{ js('map_modal') }}
-  {{ js('events_edit_event') }}
+  {% compress css %}
+    <link rel="stylesheet" href="{{ static('base/css/leaflet.css') }}"
+          media="screen,projection,tv" />
+    <link rel="stylesheet" href="{{ static('base/css/L.Control.Locate.css') }}"
+          media="screen,projection,tv" />
+  {% endcompress %}
+  {% compress js %}
+    <script src="{{ static('base/js/leaflet.js') }}"></script>
+    <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
+    <script src="{{ static('base/js/map_modal.js') }}"></script>
+    <script src="{{ static('events/js/events_edit_event.js') }}"></script>
+  {% endcompress %}
 {% endblock %}

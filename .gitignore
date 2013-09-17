@@ -9,10 +9,6 @@ docs/_gh-pages
 build.py
 build
 .DS_Store
-*-min.css
-*-all.css
-*-min.js
-*-all.js
 .noseids
 tmp/*
 *~
@@ -20,7 +16,7 @@ tmp/*
 .vagrant
 .virtualenv
 /vendor-local/lib/python/*.egg-info/*
-media/static
-media/css/remo/app.less.css
+media
 venv
 vagrantconfig_local.yaml
+static

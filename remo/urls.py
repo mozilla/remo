@@ -1,12 +1,14 @@
 from django.conf import settings
 from django.conf.urls.defaults import include, patterns, url
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from funfactory.monkeypatches import patch
 patch()
 
 handler404 = 'remo.base.views.custom_404'
 handler500 = 'remo.base.views.custom_500'
+robots_txt = 'remo.base.views.robots_txt'
 
 admin.autodiscover()
 
@@ -47,15 +49,13 @@ urlpatterns = patterns('',
     # Voting
     url(r'^voting/', include('remo.voting.voting_urls')),
     url(r'^v/', include('remo.voting.v_urls')),
+
+    # Generate a robots.txt
+    (r'^robots\.txt$', robots_txt),
 )
 
-## In DEBUG mode, serve media files through Django.
 if settings.DEBUG:
-    # Remove leading and trailing slashes so the regex matches.
-    media_url = settings.MEDIA_URL.lstrip('/').rstrip('/')
     urlpatterns += patterns('',
         url(r'^404/$', handler404, name='404'),
-        url(r'^500/$', handler500, name='500'),
-        url(r'^%s/(?P<path>.*)$' % media_url, 'django.views.static.serve',
-            {'document_root': settings.MEDIA_ROOT}),
-    )
+        url(r'^500/$', handler500, name='500'))
+    urlpatterns += staticfiles_urlpatterns()
