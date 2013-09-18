@@ -79,8 +79,10 @@ function append_to_formset(event) {
     function attr_update(selector, attr, prepend){
         new_block_obj.find(selector + prefix + "]").each(function (index, item) {
             var item_obj = $(item);
-            var item_id = item_obj.attr(attr).split('-').pop()
-            newid = prepend + prefix + '-' + total_forms_obj.val() + '-' + item_id;
+            var obj_length = total_forms_obj.val().length;
+            var prologue_length = 2 + prepend.length + prefix.length + obj_length;
+            var item_id = item_obj.attr(attr).substr(prologue_length - obj_length);
+            var newid = prepend + prefix + '-' + total_forms_obj.val() + item_id;
             item_obj.attr(attr, newid);
         });
     }
