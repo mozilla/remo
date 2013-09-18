@@ -79,8 +79,9 @@ function append_to_formset(event) {
     function attr_update(selector, attr, prepend){
         new_block_obj.find(selector + prefix + "]").each(function (index, item) {
             var item_obj = $(item);
-            var item_id = item_obj.attr(attr).split('-').pop()
-            newid = prepend + prefix + '-' + total_forms_obj.val() + '-' + item_id;
+            var regex = new RegExp('(' + prepend + prefix + '-)(\\d+)(.+)');
+            var regex_results = regex.exec(item_obj.attr(attr));
+            var newid = regex_results[1] + total_forms_obj.val() + regex_results[3];
             item_obj.attr(attr, newid);
         });
     }
