@@ -11,7 +11,16 @@ from django.utils.timezone import make_naive, utc
 
 from datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.utils import datetime2pdt, validate_datetime
-from models import Poll, RadioPoll, RadioPollChoice, RangePoll, RangePollChoice
+from models import (Poll, PollComment, RadioPoll,
+                    RadioPollChoice, RangePoll, RangePollChoice)
+
+
+class PollCommentForm(happyforms.ModelForm):
+    """Form of a poll comment."""
+
+    class Meta:
+        model = PollComment
+        fields = ['comment']
 
 
 class RangePollChoiceVoteForm(happyforms.Form):
@@ -116,7 +125,7 @@ class PollAddForm(PollEditForm):
     """Poll Add Form."""
     start = forms.DateTimeField(required=False)
     valid_groups = forms.ModelChoiceField(
-        queryset=Group.objects.all(),
+        queryset=Group.objects.all().exclude(name='Mozillians'),
         error_messages={'required': 'Please select an option from the list.'})
 
     def __init__(self, *args, **kwargs):

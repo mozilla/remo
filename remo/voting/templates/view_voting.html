@@ -56,7 +56,6 @@ Mozilla Reps - {{ poll.name }} - Results
                       </div>
                     </div>
                   {% else %}
-                    {# Voting is multiday #}
                     <!-- Voting is multiday -->
                     <div class="large-12 columns">
                       <div class="large-11 small-12 columns">
@@ -174,6 +173,36 @@ Mozilla Reps - {{ poll.name }} - Results
             {% endfor %}
           </div>
         </div>
+        {% if poll.automated_poll %}
+          <div class="row">
+            <div class="large-12 columns">
+              <div class="row report-box">
+                <div class="columns comment-icon">
+                  <div class="pict-icon large talk"></div>
+                </div>
+                <div class="columns report-item comment-item">
+                  {% for comment in poll.comments.all() %}
+                    <div class="voting-comment">
+                      <span class="label inline">
+                        Comment {{ loop.index }}
+                      </span>
+                      <span class="grayed">by </span>
+                        <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
+                          {{ comment.user.get_full_name() }}
+                        </a>
+                      <span class="grayed"
+                            data-time="{{ comment.created_on|format_datetime_iso }}"
+                            title="{{ comment.created_on }}">
+                        at {{ comment.created_on }}
+                      </span><br>
+                      {{ comment.comment }}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
       {% endif %}
 
     </div>

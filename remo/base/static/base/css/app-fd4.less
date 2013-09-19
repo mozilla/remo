@@ -1269,6 +1269,9 @@ small.error {
 .pict-icon.info:after {
     content: "=";
 }
+.pict-icon.comment:after {
+    content: "b";
+}
 
 .pict-table-icon {
     font-family: "ModernPictogramsNormal";
@@ -1593,6 +1596,15 @@ ul.mreports li.editable a {
         width: 70px;
         padding-top: 5px;
         text-align: right;
+    }
+    .comment-icon {
+        float: left;
+        width: 4.15%;
+        padding-top: 10px;
+    }
+    .comment-item {
+        float: right;
+        width: 91.75%;
     }
 }
 
@@ -2451,6 +2463,7 @@ ul.mreports li.editable a {
    Form Comments
 ----------------------------------------- */
 
+.voting-comment,
 .event-comment,
 .report-comment {
     font-size: 13px;

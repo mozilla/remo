@@ -9,7 +9,7 @@ import forms
 
 from remo.base.decorators import permission_check
 from remo.base.utils import datetime2pdt, get_or_create_instance
-from remo.voting.models import Poll, RadioPoll, RangePoll, Vote
+from remo.voting.models import Poll, PollComment, RadioPoll, RangePoll, Vote
 
 
 @permission_check()
@@ -141,6 +141,10 @@ def view_voting(request, slug):
         radio_poll_choice_forms[item] = forms.RadioPollChoiceVoteForm(
             data=request.POST or None, radio_poll=item)
 
+    poll_comment = PollComment(poll=poll, user=request.user)
+    poll_comment_form = forms.PollCommentForm(data=request.POST or None,
+                                              instance=poll_comment)
+
     if request.method == 'POST':
         forms_valid = True
         # validate all forms
@@ -149,12 +153,16 @@ def view_voting(request, slug):
             if not item.is_valid():
                 forms_valid = False
                 break
+        if poll.automated_poll and not poll_comment_form.is_valid():
+            forms_valid = False
 
         if forms_valid:
             for range_poll_form in range_poll_choice_forms.values():
                 range_poll_form.save()
             for radio_poll_form in radio_poll_choice_forms.values():
                 radio_poll_form.save()
+            if poll.automated_poll:
+                poll_comment_form.save()
             Vote.objects.create(user=user, poll=poll)
             messages.success(request, ('Your vote has been '
                                        'successfully registered.'))
@@ -162,6 +170,7 @@ def view_voting(request, slug):
 
     data['range_poll_choice_forms'] = range_poll_choice_forms
     data['radio_poll_choice_forms'] = radio_poll_choice_forms
+    data['poll_comment_form'] = poll_comment_form
 
     return render(request, 'vote_voting.html', data)
 
