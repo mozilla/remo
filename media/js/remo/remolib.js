@@ -1,4 +1,5 @@
 function hash_set_value(key, value) {
+    'use strict';
     // Set value for key in hash
     var hash = $(location).attr('hash').substring(2).toLowerCase().replace(/\/$/, '');
     var keys;
@@ -17,7 +18,7 @@ function hash_set_value(key, value) {
         values = [];
     }
 
-    index_of_key = keys.indexOf(key);
+    var index_of_key = keys.indexOf(key);
 
     if (index_of_key > -1) {
         values[index_of_key] = value;
@@ -38,6 +39,7 @@ function hash_set_value(key, value) {
 }
 
 function hash_get_value(key) {
+    'use strict';
     // Get value for key in hash
     var hash = $(location).attr('hash').substring(2).toLowerCase();
     var keys = hash.split('/').filter(function(element, index) { return (index % 2 === 0); });
@@ -51,6 +53,7 @@ function hash_get_value(key) {
 }
 
 function set_dropdown_value(elm, value) {
+    'use strict';
     elm.val(value);
     // We have to force trigger 'change' for foundation to update.
     elm.trigger('change');
@@ -60,10 +63,12 @@ function pad2(number) {
     // Pad numbers
     // snippet from
     // http://www.electrictoolbox.com/pad-number-two-digits-javascript/
+    'use strict';
     return (number < 10 ? '0' : '') + number;
 }
 
 function append_to_formset(event) {
+    'use strict';
     event.preventDefault();
     var button_obj = $(event.currentTarget);
     var formset_obj = button_obj.closest('.formset');
@@ -72,6 +77,13 @@ function append_to_formset(event) {
     var prefix = formset_obj.data('prefix');
     var total_forms_obj = formset_obj.parent().children('#id_' + prefix + '-TOTAL_FORMS');
     var append_after_obj = block_obj;
+    
+    if (button_obj.hasClass('voting-add-rangepoll-button') ||
+        button_obj.hasClass('voting-add-radiopoll-button')) {
+        var input = new_block_obj.find('#inner-rangepoll-formset, #inner-radiopoll-formset');
+        input.not(':first').remove();
+    }
+
     if (block_obj.siblings('.copyblock').length > 0) {
         append_after_obj = block_obj.siblings('.copyblock').last();
     }
@@ -114,11 +126,13 @@ function append_to_formset(event) {
 
 function format_hour(date_obj) {
     // Format date_obj to HH:MM.
+    'use strict';
     return pad2(date_obj.getHours()) + ':' + pad2(date_obj.getMinutes());
 }
 
 function showMessage(msg, tag) {
     // Show a message the same way we are using django messages
+    'use strict';
     var container = $('#client-message-container').clone();
     container.removeAttr('id');
     container.insertAfter('#client-message-container');

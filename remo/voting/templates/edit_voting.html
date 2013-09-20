@@ -243,7 +243,7 @@
                              data-prefix="{{ range_poll_form.nested[0].prefix }}">
                           {% for nominee_form in range_poll_form.nested[0] %}
                             {{ nominee_form.id }}
-                            <div class="copyblock nominee">
+                            <div id="inner-rangepoll-formset" class="copyblock nominee">
                               <div class="select-nominee-group">
                                 <div data-tooltip class="has-tip tip-left select-nominee" title="Select Nominee">
                                   {{ nominee_form.nominee }}
@@ -299,7 +299,7 @@
                         <div class="formset" data-prefix="{{ radio_poll_form.nested[0].prefix }}">
                           {% for answer_form in radio_poll_form.nested[0] %}
                             {{ answer_form.id }}
-                            <div class="copyblock">
+                            <div id="inner-radiopoll-formset" class="copyblock">
                               <div data-tooltip class="has-tip tip-left" title="Radio Poll Answer">
                                 {{ field_with_attrs(answer_form.answer,
                                                     placeholder='Radio Poll Answer') }}
