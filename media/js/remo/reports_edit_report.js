@@ -5,7 +5,7 @@ $(document).ready(function() {
         future_items = $.trim($('#future_items').val());
 
         if (past_items === '' && future_items === '') {
-            $('#empty-report').reveal();
+            $('#empty-report').foundation('reveal', 'open');
         }
         else {
             $('#reportform').submit();
@@ -19,7 +19,7 @@ $(document).ready(function() {
         $('#reportform').submit();
     });
 
-    $('form.custom').on(
+    $('form').on(
         'click', '#reports-add-link-button,#reports-add-event-button',
         append_to_formset);
 
