@@ -1,323 +1,340 @@
-{% extends "base.html" %}
+{% extends "base_fd4.html" %}
 
 {% block pagetitle %}
 Mozilla Reps - Edit Report
 {% endblock %}
 
 {% block content %}
-<form id="reportform" method="post" class="custom">
-  {{ csrf() }}
+<main role="main" class="reports-main">
+  <form id="reportform" method="post">
+    {{ csrf() }}
 
-  <div class="row">
-    <div class="eight columns">
-      <h4>Editing Monthly Report</h4>
-    </div>
-    <div class="four columns hide-on-phones align-right">
-      {% if perms.reports.can_edit_reports %}
-        <a href="#" class="small red button nice radius"
-           data-reveal-id="delete-report">Delete Report</a>
-      {% endif %}
-      <a type="submit"
-         class="small green button nice radius reports-submit-button">
-        Save report
-      </a>
-    </div>
-  </div>
-
-  <div class="row">
-    <!-- Non-editable elements -->
-    <div class="six columns">
-      <div class="row report-box">
-        <div class="one columns pictogram">
-          J
-        </div>
-        <div class="eleven columns">
-          <input type="text" placeholder="Username" name="display_name"
-                 value="{{ pageuser.userprofile.display_name }}" readonly
-                 class="input-text big">
-          <input type="text" placeholder="Month" name="report_month"
-                 value="{{ month }}" readonly
-                 class="input-text big">
-          <input type="text" placeholder="Year" name="report_year"
-                 value="{{ year }}" readonly
-                 class="input-text big">
-        </div>
+    <div class="row">
+      <div class="large-8 columns">
+        <h1>Editing Monthly Report</h1>
+      </div>
+      <div class="large-4 columns hide-for-small align-right">
+        {% if perms.reports.can_edit_reports %}
+          <button class="small button alert" data-reveal-id="delete-report">
+            Delete Report
+          </button>
+        {% endif %}
+        <button type="submit" class="small button confirm reports-submit-button">
+          Save report
+        </button>
       </div>
     </div>
 
-    <!-- Text about empty reports -->
-    <div class="six columns">
-      <div class="row report-box">
-        <div class="one columns pictogram">
-          =
-        </div>
-        <div class="eleven columns">
-          <p>All Mozillians are super busy and sometimes you need to
-          take a break from Mozilla awesomeness and you'll find
-          yourself with little or even no information to share in a given
-          month. That's OK! If you feel that this is the month, skip the
-          fields and click directly 'Save report'</p>
-          <p>In any doubt, please contact your mentor.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-
-    <!-- Past and future Items -->
-    <div class="six columns">
-      <div class="row report-box">
-        <div class="one columns pictogram">
-          {
-        </div>
-        <div class="eleven columns report-item">
-          <div class="has-tip tip-left" title="Past month activities">
-            {{ report_form.past_items }}
+    <div class="row">
+      <!-- Non-editable elements -->
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large tag"></div>
           </div>
-          {% if report_form.past_items.errors %}
-            <small class="error">
-              {{ report_form.past_items.errors }}
-            </small>
-          {% endif %}
-          <div class="has-tip tip-left" title="Next month activities">
-            {{ report_form.future_items }}
+          <div class="large-11 columns edit-box">
+            <input type="text" placeholder="Username" name="display_name"
+                   value="{{ pageuser.userprofile.display_name }}" readonly>
+            <input type="text" placeholder="Month" name="report_month"
+                   value="{{ month }}" readonly>
+            <input type="text" placeholder="Year" name="report_year"
+                   value="{{ year }}" readonly>
           </div>
-          {% if report_form.future_items.errors %}
-            <small class="error">
-              {{ report_form.future_items.errors }}
-            </small>
-          {% endif %}
+        </div>
+      </div>
+
+      <!-- Text about empty reports -->
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large info"></div>
+          </div>
+          <div class="large-11 columns">
+            <p>All Mozillians are super busy and sometimes you need to
+            take a break from Mozilla awesomeness and you'll find
+            yourself with little or even no information to share in a given
+            month. That's OK! If you feel that this is the month, skip the
+            fields and click directly 'Save report'</p>
+            <p>In any doubt, please contact your mentor.</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Recruits and flags -->
-    <div class="six columns">
-      <div class="row report-box">
-        <div class="one columns pictogram">
-          6
-        </div>
-        <div class="eleven columns report-item">
-          <div class="has-tip tip-right" title="Recruits for this month">
-            {{ report_form.recruits_comments }}
-          </div>
-          {% if report_form.recruits_comments.errors %}
-            <small class="error">
-              {{ report_form.recruits_comments.errors }}
-            </small>
-          {% endif %}
-        </div>
-      </div>
-      <div class="row">
-        <div class="one columns pictogram">
-          !
-        </div>
-        <div class="eleven columns report-item">
-          <div class="has-tip tip-right" title="Flags for mentor">
-            {{ report_form.flags }}
-          </div>
-          {% if report_form.flags.errors %}
-            <small class="error">
-              {{ report_form.flags.errors }}
-            </small>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
+    <div class="row">
 
-  <div class="row">
-    <!-- Events -->
-    <div class="six columns" >
-      <div class="formset" data-prefix="{{ report_event_formset.prefix }}">
-        {% for form in report_event_formset %}
-          {{ form.id }}
-          <div class="row report-box copyblock">
-            <div class="one columns pictogram">
-              u
+      <!-- Past and future Items -->
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large clock"></div>
+          </div>
+          <div class="large-11 columns edit-box">
+            <div class="has-tip tip-left"
+                 data-tooltip
+                 title="Past month activities">
+              {{ report_form.past_items }}
             </div>
-            <div class="eleven columns report-item">
-              <div class="row report-event">
-                <input type="text" placeholder="Event Name"
-                       name="{{ form.name.html_name }}" value="{{ form.name.value() }}"
-                       class="input-text big has-tip tip-left" title="Event Name">
-                {% if form.name.errors %}
-                  <small class="error">
-                    {{ form.name.errors }}
-                  </small>
-                {% endif %}
-
-                <div class="has-tip tip-left" title="Type of participation">
-                  {{ form.participation_type }}
-                </div>
-                {% if form.participation_type.errors %}
-                  <small class="error">
-                    {{ form.participation_type.errors }}
-                  </small>
-                {% endif %}
-
-                <textarea class="flat has-tip tip-left" placeholder="Describe the event briefly"
-                          name="{{ form.description.html_name }}" title="Event description">{{ form.description.value() }}</textarea>
-                {% if form.description.errors %}
-                  <small class="error">
-                    {{ form.description.errors }}
-                  </small>
-                {% endif %}
-
-                <input type="text" placeholder="Link to event"
-                       name="{{ form.link.html_name }}" value="{{ form.link.value() }}"
-                       class="input-text big has-tip tip-left"
-                       title="Event link">
-                {% if form.link.errors %}
-                  <small class="error">
-                    {{ form.link.errors }}
-                  </small>
-                {% endif %}
-
-                {{ form.DELETE }} Delete event
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-        <div class="align-right">
-          <a id="reports-add-event-button" href="javascript:void(0)"
-             class="small white button nice radius">Add another event
-          </a>
-        </div>
-      </div>
-      {{ report_event_formset.management_form }}
-    </div>
-
-    <!-- Activities and Links -->
-    <div class="six columns">
-      <div class="formset" data-prefix="{{ report_link_formset.prefix }}">
-        {% for form in report_link_formset %}
-          {{ form.id }}
-          <div class="row report-box copyblock">
-            <div class="one columns pictogram">
-              a
-            </div>
-            <div class="eleven columns report-item">
-              <div class="row report-activity">
-                <input type="text" placeholder="Relevant Link"
-                       name="{{ form.link.html_name }}"
-                       value="{{ form.link.value() }}"
-                       class="input-text big has-tip tip-right"
-                       title="Activity Link">
-                {% if form.link.errors %}
-                  <small class="error">
-                    {{ form.link.errors }}
-                  </small>
-                {% endif %}
-
-                <textarea class="flat has-tip tip-right"
-                          placeholder="Please provide a brief description for the link above (e.g. blog post, presentation slides, etc)"
-                          name="{{ form.description.html_name }}"
-                          title="Activity description">{{ form.description.value() }}</textarea>
-                {% if form.description.errors %}
-                  <small class="error">
-                    {{ form.description.errors }}
-                  </small>
-                {% endif %}
-
-                {{ form.DELETE }} Delete activity
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-        <div class="align-right">
-          <a id="reports-add-link-button" href="javascript:void(0)"
-             class="small white button nice radius">Add another activity</a>
-        </div>
-      </div>
-      {{ report_link_formset.management_form }}
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="six columns">
-    </div>
-
-    {% if perms.reports.can_edit_reports %}
-      <!-- Mentors and Admins panel -->
-      <div class="six columns">
-        <div class="row report-box">
-          <div class="one columns pictogram">
-            (
-          </div>
-          <div class="eleven columns">
-            <br/>
-            {{ report_form.overdue }} Overdue report
-            <br/>
-            {{ report_form.empty }} Empty report
-
-            {% if (not created) and (perms.reports.can_delete_reports) %}
-              <div class="align-right show-on-phones top-margined">
-                <a href="#" class="small red button nice radius"
-                   data-reveal-id="delete-report">Delete Report</a>
-              </div>
+            {% if report_form.past_items.errors %}
+              <small class="error">
+                {{ report_form.past_items.errors }}
+              </small>
             {% endif %}
-
+            <div class="has-tip tip-left"
+                 data-tooltip
+                 title="Next month activities">
+              {{ report_form.future_items }}
+            </div>
+            {% if report_form.future_items.errors %}
+              <small class="error">
+                {{ report_form.future_items.errors }}
+              </small>
+            {% endif %}
           </div>
         </div>
       </div>
-    {% endif %}
 
-  </div>
-
-  <!-- Report submit button -->
-  <div class="row report-box show-on-phones">
-    <div id="save-report" class="twelve columns align-right">
-      <a type="submit"
-         class="small green button nice radius reports-submit-button">
-        Save report
-      </a>
+      <!-- Recruits and flags -->
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large graph"></div>
+          </div>
+          <div class="large-11 columns">
+            <div class="has-tip tip-right"
+                 data-tooltip
+                 title="Recruits for this month">
+              {{ report_form.recruits_comments }}
+            </div>
+            {% if report_form.recruits_comments.errors %}
+              <small class="error">
+                {{ report_form.recruits_comments.errors }}
+              </small>
+            {% endif %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large alert"></div>
+          </div>
+          <div class="large-11 columns">
+            <div class="has-tip tip-right"
+                 data-tooltip
+                 title="Flags for mentor">
+              {{ report_form.flags }}
+            </div>
+            {% if report_form.flags.errors %}
+              <small class="error">
+                {{ report_form.flags.errors }}
+              </small>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-<!-- Empty Report Reveal Modal -->
-<div id="empty-report" class="reveal-modal">
-  <a class="close-reveal-modal">&#215;</a>
-  <p class="lead">
-    Are you sure you want to do that?
-  </p>
-  <h2>
-    File an empty report
-  </h2>
-  <p>
-    By pressing the following button, you will file an empty report for
-    this month. Your mentor will be notified.
-  </p>
-  <button id="reports-emptyreport-button"
-          class="small blue button nice radius close-reveal-modal">
-    File empty report
-  </button>
-</form>
-</div>
+    <div class="row">
+      <!-- Events -->
+      <div class="large-6 columns" >
+        <div class="formset" data-prefix="{{ report_event_formset.prefix }}">
+          {% for form in report_event_formset %}
+            {{ form.id }}
+            <div class="row copyblock">
+              <div class="large-1 columns">
+                <div class="pict-icon large contract"></div>
+              </div>
+              <div class="large-11 columns edit-box">
+                <div class="row report-event">
+                  <input type="text" placeholder="Event Name" data-tooltip
+                         name="{{ form.name.html_name }}" value="{{ form.name.value() }}"
+                         class="has-tip tip-left" title="Event Name">
+                  {% if form.name.errors %}
+                    <small class="error">
+                      {{ form.name.errors }}
+                    </small>
+                  {% endif %}
 
-<!-- Delete Profile Reveal Modal -->
-<div id="delete-report" class="reveal-modal">
-  <a class="close-reveal-modal">&#215;</a>
-  <p class="lead">
-    Are you sure you want to do that?
-  </p>
-  <h2>
-    Warning!
-  </h2>
-  <p>
-    By pressing the following button, you will permanently and irreversibly delete this
-    report.
-  </p>
-    <form method="post"
-          action="{{ url('reports_delete_report', pageuser.userprofile.display_name,
-                  year, month) }}">
-      {{ csrf() }}
-      <button class="large red button nice radius close-reveal-modal">
-        Delete report
+                  <div data-tooltip class="has-tip tip-left" title="Type of participation">
+                    {{ form.participation_type }}
+                  </div>
+                  {% if form.participation_type.errors %}
+                    <small class="error">
+                      {{ form.participation_type.errors }}
+                    </small>
+                  {% endif %}
+
+                  <textarea data-tooltip class="flat has-tip tip-left"
+                            placeholder="Describe the event briefly"
+                            name="{{ form.description.html_name }}"
+                            title="Event description">{{ form.description.value() }}</textarea>
+                  {% if form.description.errors %}
+                    <small class="error">
+                      {{ form.description.errors }}
+                    </small>
+                  {% endif %}
+
+                  <input type="text" placeholder="Link to event" data-tooltip
+                         name="{{ form.link.html_name }}" value="{{ form.link.value() }}"
+                         class="has-tip tip-left"
+                         title="Event link">
+                  {% if form.link.errors %}
+                    <small class="error">
+                      {{ form.link.errors }}
+                    </small>
+                  {% endif %}
+
+                  {{ form.DELETE }}{{ form.DELETE.label_tag() }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          <div class="align-right">
+            <button id="reports-add-event-button" class="small button">
+              Add another event
+            </button>
+          </div>
+        </div>
+        {{ report_event_formset.management_form }}
+      </div>
+
+      <!-- Activities and Links -->
+      <div class="large-6 columns">
+        <div class="formset" data-prefix="{{ report_link_formset.prefix }}">
+          {% for form in report_link_formset %}
+            {{ form.id }}
+            <div class="row copyblock">
+              <div class="large-1 columns">
+                <div class="pict-icon large news"></div>
+              </div>
+              <div class="large-11 columns edit-box">
+                <div class="row report-activity">
+                  <input type="text" placeholder="Relevant Link"
+                         name="{{ form.link.html_name }}"
+                         value="{{ form.link.value() }}"
+                         class="has-tip tip-right"
+                         title="Activity Link"
+                         data-tooltip>
+                  {% if form.link.errors %}
+                    <small class="error">
+                      {{ form.link.errors }}
+                    </small>
+                  {% endif %}
+
+                  <textarea class="flat has-tip tip-right"
+                            placeholder="Please provide a brief description for the link above (e.g. blog post, presentation slides, etc)"
+                            name="{{ form.description.html_name }}"
+                            title="Activity description"
+                            data-tooltip>{{ form.description.value() }}</textarea>
+                  {% if form.description.errors %}
+                    <small class="error">
+                      {{ form.description.errors }}
+                    </small>
+                  {% endif %}
+
+                  {{ form.DELETE }}{{ form.DELETE.label_tag() }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          <div class="align-right">
+            <button id="reports-add-link-button" class="small button">
+              Add another activity
+             </button>
+          </div>
+        </div>
+        {{ report_link_formset.management_form }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-6 columns">
+      </div>
+
+      {% if perms.reports.can_edit_reports %}
+        <!-- Mentors and Admins panel -->
+        <div class="large-6 columns">
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large tools"></div>
+            </div>
+            <div class="large-11 columns">
+              <ul class="report-admin">
+                <li>
+                  {{ report_form.overdue }}
+                  <label for="id_overdue">Overdue report</label>
+                </li>
+                <li>
+                  {{ report_form.empty }}
+                  <label for="id_empty">Empty report</label>
+                </li>
+              </ul>
+              {% if (not created) and (perms.reports.can_delete_reports) %}
+                <div class="align-right show-for-small top-margined">
+                  <button class="small button alert"
+                     data-reveal-id="delete-report">Delete Report</button>
+                </div>
+              {% endif %}
+
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Report submit button -->
+    <div class="row show-for-small">
+      <div id="save-report" class="large-12 columns align-right">
+        <button type="submit"
+           class="small button confirm reports-submit-button">
+          Save report
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty Report Reveal Modal -->
+    <div id="empty-report" class="reveal-modal small">
+      <a class="close-reveal-modal">&#215;</a>
+      <p class="lead">
+        Are you sure you want to do that?
+      </p>
+      <h2>
+        File an empty report
+      </h2>
+      <p>
+        By pressing the following button, you will file an empty report for
+        this month. Your mentor will be notified.
+      </p>
+      <button id="reports-emptyreport-button"
+              class="small button update">
+        File empty report
       </button>
-    </form>
-</div>
+    </div>
+  </form>
+
+  <!-- Delete Profile Reveal Modal -->
+  <div id="delete-report" class="reveal-modal small">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">
+      Are you sure you want to do that?
+    </p>
+    <h2>
+      Warning!
+    </h2>
+    <p>
+      By pressing the following button, you will permanently and irreversibly delete this
+      report.
+    </p>
+      <form method="post"
+            action="{{ url('reports_delete_report', pageuser.userprofile.display_name,
+                    year, month) }}">
+        {{ csrf() }}
+        <button class="large button alert">
+          Delete report
+        </button>
+      </form>
+  </div>
+</main>
 {% endblock %}
 
 {% block bottomextra %}
