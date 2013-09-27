@@ -75,6 +75,9 @@ class BrowserIDVerify(Verify):
                     # Due to privacy settings, this might be missing
                     if not 'full_name' in data:
                         data['full_name'] = 'Anonymous Mozillian'
+                    else:
+                        user.userprofile.mozillian_username = data['username']
+                        user.userprofile.save()
 
                     first_name, last_name = (
                         data['full_name'].split(' ', 1)

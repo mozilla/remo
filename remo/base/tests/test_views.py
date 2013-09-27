@@ -24,6 +24,8 @@ from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
 from remo.base.tests.browserid_mock import mock_browserid
 from remo.base.views import robots_txt
+from remo.profiles.tasks import check_mozillian_username
+from remo.profiles.tests import UserFactory
 
 
 VOUCHED_MOZILLIAN = """
@@ -141,6 +143,41 @@ class MozilliansTest(TestCase):
         eq_(User.objects.filter(email=email).count(), 0)
         c.post('/browserid/login/', data={'assertion': 'xxx'})
         user = User.objects.get(email=email)
+        eq_(user.get_full_name(), u'Anonymous Mozillian')
+
+    @mock.patch('remo.profiles.tasks.is_vouched')
+    def test_mozillian_username_exists(self, mocked_is_vouched):
+        """Test that if an Anonymous Mozillians changes his
+
+        settings in the mozillians.org, we update his username
+        on our portal.
+        """
+        mozillian = UserFactory.create(groups=['Mozillians'])
+        mocked_is_vouched.return_value = {'is_vouched': True,
+                                          'email': mozillian.email,
+                                          'username': 'Mozillian',
+                                          'full_name': 'Awesome Mozillian'}
+        check_mozillian_username.apply()
+        user = User.objects.get(email=mozillian.email)
+        eq_(user.userprofile.mozillian_username, u'Mozillian')
+        eq_(user.get_full_name(), u'Awesome Mozillian')
+
+    @mock.patch('remo.profiles.tasks.is_vouched')
+    def test_mozillian_username_missing(self, mocked_is_vouched):
+        """Test that if a Mozillian changes his
+
+        settings in the mozillians.org, we update his username
+        on our portal.
+        """
+        mozillian = UserFactory.create(
+            groups=['Mozillians'], first_name='Awesome',
+            last_name='Mozillian',
+            userprofile__mozillian_username='Mozillian')
+        mocked_is_vouched.return_value = {'is_vouched': True,
+                                          'email': mozillian.email}
+        check_mozillian_username.apply()
+        user = User.objects.get(email=mozillian.email)
+        eq_(user.userprofile.mozillian_username, '')
         eq_(user.get_full_name(), u'Anonymous Mozillian')
 
 

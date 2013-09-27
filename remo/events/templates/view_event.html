@@ -388,8 +388,17 @@ Mozilla Reps - {{ event.name }}
                  target="_blank">
                 {{ display_attendee(attendee) }}
               </a>
-            {% else %}
+            {% endif %}
+            {% if user_is_mozillian(attendee) %}
+              {% if not attendee.userprofile.mozillian_username %}
                 {{ display_attendee(attendee) }}
+              {% else %}
+                <a href="{{ settings.MOZILLIANS_API_BASE + '/u/' +
+                            attendee.userprofile.mozillian_username }}"
+                  target="_blank">
+                  {{ display_attendee(attendee) }}
+                </a>
+              {% endif %}
             {% endif %}
           {% endfor %}
 
