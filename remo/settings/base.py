@@ -270,8 +270,11 @@ JINGO_MINIFY_USE_STATIC = False
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 jinja_conf = JINJA_CONFIG()
+
+
 def JINJA_CONFIG():
     jinja_conf['extensions'].append('caching.ext.cache')
     return jinja_conf
 
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+CELERY_ENABLE_UTC = True

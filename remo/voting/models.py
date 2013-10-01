@@ -1,6 +1,3 @@
-import pytz
-from datetime import datetime
-
 from celery.task import control as celery_control
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.conf import settings
@@ -8,7 +5,7 @@ from django.contrib.auth.models import Group, User
 from django.db import models
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-from django.utils.timezone import make_aware
+from django.utils.timezone import now as now_utc
 
 from south.signals import post_migrate
 from uuslug import uuslug
@@ -41,15 +38,13 @@ class Poll(models.Model):
 
     @property
     def is_future_voting(self):
-        now = make_aware(datetime.utcnow(), pytz.UTC)
-        if self.start > now:
+        if self.start > now_utc():
             return True
         return False
 
     @property
     def is_current_voting(self):
-        now = make_aware(datetime.utcnow(), pytz.UTC)
-        if self.start < now and self.end > now:
+        if self.start < now_utc() and self.end > now_utc():
             return True
         return False
 
