@@ -39,6 +39,7 @@
           </div>
           <div class="large-11 columns" id="name-gender">
             <input type="text" placeholder="Username" name="display_name"
+                   id="id_display_name"
                    value="{{ profileform.display_name.value() }}"
                    class="has-tip tip-left"
                    title="Username"
@@ -55,6 +56,7 @@
             <p class="more-info">changing your username will result in
             changing your profile URL</p>
             <input type="text" placeholder="Last name" name="last_name"
+                   id="id_last_name"
                    value="{{ userform.last_name.value() }}"
                    class="has-tip tip-left"
                    title="Last name"
@@ -69,6 +71,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="First name" name="first_name"
+                   id="id_first_name"
                    value="{{ userform.first_name.value() }}"
                    class="has-tip tip-left"
                    title="First name"
@@ -83,6 +86,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="Name in local language"
+                   id="id_local_name"
                    name="local_name" value="{{ profileform.local_name.value() }}"
                    class="has-tip tip-left"
                    title="Name in local language"
@@ -133,6 +137,7 @@
           </div>
           <div class="large-11 columns" id="email-mozillians-wiki-mentor">
             <input type="text" placeholder="Personal email"
+                   id="id_private_email"
                    value="{{ profileform.private_email.value() }}"
                    name="private_email"
                    class="has-tip tip-left"
@@ -148,6 +153,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="Bugzilla email"
+                   id="id_email"
                    value="{{ userform.email.value() }}"
                    name="email"
                    class="has-tip tip-left"
@@ -163,6 +169,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="Mozillians.org profile"
+                   id="id_mozillians_profile_url"
                    value="{{ profileform.mozillians_profile_url.value() }}"
                    name="mozillians_profile_url"
                    class="has-tip tip-left"
@@ -178,6 +185,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="Wiki profile"
+                   id="id_wiki_profile_url"
                    value="{{ profileform.wiki_profile_url.value() }}"
                    name="wiki_profile_url"
                    class="has-tip tip-left"
@@ -209,6 +217,7 @@
           </div>
           <div class="large-11 columns" id="location">
             <input type="text" placeholder="City" value="{{ profileform.city.value() }}"
+                   id="id_city"
                    name="city"
                    class="has-tip tip-right"
                    title="City"
@@ -223,6 +232,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="State or Region"
+                   id="id_region"
                    value="{{ profileform.region.value() }}"
                    name="region"
                    class="has-tip tip-right"
@@ -275,6 +285,7 @@
           </div>
           <div class="large-11 columns" id="social-networks">
             <input type="text" placeholder="Twitter handle"
+                   id="id_twitter_account"
                    value="{{ profileform.twitter_account.value() }}"
                    name="twitter_account"
                    class="has-tip tip-left"
@@ -287,6 +298,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="Facebook profile"
+                   id="id_facebook_url"
                    value="{{ profileform.facebook_url.value() }}"
                    name="facebook_url"
                    class="has-tip tip-left"
@@ -299,6 +311,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="Diaspora profile"
+                   id="id_diaspora"
                    value="{{ profileform.diaspora_url.value() }}"
                    name="diaspora_url"
                    class="has-tip tip-left"
@@ -311,6 +324,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="LinkedIn profile"
+                   id="id_linkedin_url"
                    value="{{ profileform.linkedin_url.value() }}"
                    name="linkedin_url"
                    class="has-tip tip-left"
@@ -332,6 +346,7 @@
           </div>
           <div class="large-11 columns" id="jabber-irc">
             <input type="text" placeholder="Jabber ID"
+                   id="id_jabber_id"
                    value="{{ profileform.jabber_id.value() }}"
                    name="jabber_id"
                    class="has-tip tip-right"
@@ -344,6 +359,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="IRC nickname"
+                   id="id_irc_name"
                    value="{{ profileform.irc_name.value() }}"
                    name="irc_name"
                    class="has-tip tip-right"
@@ -359,6 +375,7 @@
               </small>
             {% endif %}
             <textarea class="flat has-tip tip-right"
+                      id="id_irc_channels"
                       placeholder="Please list the channels you use in IRC"
                       title="List of IRC channels"
                       name="irc_channels"
@@ -381,6 +398,7 @@
           </div>
           <div class="large-11 columns" id="personal-site">
             <input type="text" placeholder="Personal site URL"
+                   id="id_personal_website_url"
                    value="{{ profileform.personal_website_url.value() }}"
                    name="personal_website_url"
                    class="has-tip tip-left"
@@ -393,6 +411,7 @@
               </small>
             {% endif %}
             <input type="text" placeholder="Feed for Reps Planet"
+                   id="id_personal_blog_feed"
                    value="{{ profileform.personal_blog_feed.value() }}"
                    name="personal_blog_feed"
                    class="has-tip tip-left"
@@ -414,6 +433,7 @@
           </div>
           <div class="large-11 columns top-margined" id="bio">
             <textarea class="flat has-tip tip-right"
+                      id="id_bio"
                       placeholder="Bio - Write us a bit about yourself"
                       name="bio"
                       title="Bio"
@@ -536,6 +556,7 @@
           <li>
             <label for="{{ choice.1 }}-bit">
               <input type="checkbox" name="functional_areas" value="{{ choice.0 }}"
+                     id="id_functional_areas"
                      {% if choice.0 in profileform.functional_areas.value() %}
                        checked="checked"
                      {% endif %}/>
