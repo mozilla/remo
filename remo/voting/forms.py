@@ -135,6 +135,7 @@ class PollAddForm(PollEditForm):
             widget=SplitSelectDateTimeWidget(
                 years=range(start_year, now.year + 10), minute_step=5),
             validators=[validate_datetime])
+
         if self.instance.start:
             naive_time = make_naive(instance.start, pytz.UTC)
             server_time = datetime2pdt(naive_time)

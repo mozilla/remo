@@ -2,7 +2,7 @@ import pytz
 from datetime import datetime, timedelta
 
 from django.contrib.auth.models import Group
-from django.utils.timezone import make_aware
+from django.utils.timezone import now as now_utc
 
 import factory
 from factory import fuzzy
@@ -17,7 +17,7 @@ VALID_GROUPS = [Group.objects.get(name='Admin'),
                 Group.objects.get(name='Mentor'),
                 Group.objects.get(name='Rep'),
                 Group.objects.get(name='Mozillians')]
-POLL_END_DT = make_aware(datetime.utcnow(), pytz.UTC)
+POLL_END_DT = now_utc()
 
 
 class PollFactory(factory.django.DjangoModelFactory):
