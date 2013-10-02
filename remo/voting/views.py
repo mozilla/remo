@@ -1,30 +1,28 @@
-from datetime import datetime
-
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.timezone import now as now_utc
+
+import forms
 
 from remo.base.decorators import permission_check
 from remo.base.utils import datetime2pdt, get_or_create_instance
 from remo.voting.models import Poll, RadioPoll, RangePoll, Vote
-
-import forms
 
 
 @permission_check()
 def list_votings(request):
     """List votings view."""
     user = request.user
-    now = datetime.utcnow()
     polls = Poll.objects.all()
     if not user.groups.filter(name='Admin').exists():
         polls = Poll.objects.filter(valid_groups__in=user.groups.all())
 
-    past_polls = polls.filter(end__lt=now)
-    current_polls = polls.filter(start__lt=now, end__gt=now)
-    future_polls = polls.filter(start__gt=now)
+    past_polls = polls.filter(end__lt=now_utc())
+    current_polls = polls.filter(start__lt=now_utc(), end__gt=now_utc())
+    future_polls = polls.filter(start__gt=now_utc())
 
     return render(request, 'list_votings.html',
                   {'user': user,
@@ -100,7 +98,6 @@ def edit_voting(request, slug=None):
 def view_voting(request, slug):
     """View voting and cast a vote view."""
     user = request.user
-    now = datetime2pdt()
     poll = get_object_or_404(Poll, slug=slug)
     # If the user does not belong to a valid poll group
     if not (user.groups.filter(Q(id=poll.valid_groups.id) |
@@ -115,15 +112,15 @@ def view_voting(request, slug):
     data = {'poll': poll}
 
     # if the voting period has ended, display the results
-    if now > poll.end:
+    if now_utc() > poll.end:
         return render(request, 'view_voting.html', data)
-    if now < poll.start:
+    if now_utc() < poll.start:
         # Admin can edit future votings
         if user.groups.filter(name='Admin').exists():
             return redirect('voting_edit_voting', slug=poll.slug)
         else:
             messages.warning(request, ('This vote has not yet begun. '
-                                       'You can cast your vote on %s PDT.' %
+                                       'You can cast your vote on %s UTC.' %
                                        poll.start.strftime('%Y %B %d, %H:%M')))
             return redirect('voting_list_votings')
 
@@ -131,7 +128,7 @@ def view_voting(request, slug):
     if Vote.objects.filter(poll=poll, user=user).exists():
         messages.warning(request, ('You have already cast your vote for this '
                                    'voting. Come back to see the results on '
-                                   '%s PDT.'
+                                   '%s UTC.'
                                    % poll.end.strftime('%Y %B %d, %H:%M')))
         return redirect('voting_list_votings')
 
