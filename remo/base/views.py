@@ -62,6 +62,8 @@ def mozilla_browserid_verify(request):
                         user.last_name = last_name
                         user.save()
                         user.groups.add(Group.objects.get(name='Mozillians'))
+                        user.userprofile.mozillian_username = data['username']
+                        user.userprofile.save()
 
             if _is_valid_login:
                 user = auth.authenticate(assertion=assertion,

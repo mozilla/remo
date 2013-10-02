@@ -141,6 +141,8 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     receive_email_on_add_event_comment = models.BooleanField(null=False,
                                                              blank=True,
                                                              default=True)
+    mozillian_username = models.CharField(blank=True, default='',
+                                          max_length=40)
 
     objects = caching.base.CachingManager()
 
