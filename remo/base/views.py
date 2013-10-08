@@ -1,17 +1,15 @@
 from datetime import date, datetime
 
 from django import http
-from django_browserid import get_audience, verify
+from django_browserid import BrowserIDException, get_audience, verify
 from django_browserid.auth import default_username_algo
-from django_browserid.forms import BrowserIDForm
+from django_browserid.views import Verify
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
 from django.shortcuts import redirect, render
-from django.template import Context, RequestContext, loader
 from django.views.decorators.cache import cache_control, never_cache
-from django.views.decorators.http import require_POST
 
 import forms
 import utils
@@ -29,53 +27,73 @@ USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
 
 
-@never_cache
-@require_POST
-def mozilla_browserid_verify(request):
-    """
-    Custom BrowserID verifier for ReMo users
-    and vouched mozillians.
-    """
-    form = BrowserIDForm(request.POST)
-    if form.is_valid():
-        assertion = form.cleaned_data['assertion']
-        audience = get_audience(request)
-        result = verify(assertion, audience)
-        try:
-            _is_valid_login = False
-            if result:
-                if User.objects.filter(email=result['email']).exists():
-                    _is_valid_login = True
-                else:
-                    data = is_vouched(result['email'])
-                    if data and data['is_vouched']:
-                        _is_valid_login = True
-                        user = User.objects.create_user(
-                            username=USERNAME_ALGO(data['email']),
-                            email=data['email'])
+class BrowserIDVerify(Verify):
+    def login_failure(self, error=None, message=None):
+        """Custom login failed method.
 
-                        first_name, last_name = (
-                            data['full_name'].split(' ', 1)
-                            if ' ' in data['full_name']
-                            else ('', data['full_name']))
-                        user.first_name = first_name
-                        user.last_name = last_name
-                        user.save()
-                        user.groups.add(Group.objects.get(name='Mozillians'))
+        This method acts like a segway between a failed login attempt and
+        'main' view. Adds messages in the messages framework queue, that
+        informs user login failed.
+
+        """
+        if not message:
+            message = ('Login failed. Please make sure that you are '
+                       'an accepted Rep or a vouched Mozillian '
+                       'and you use your Bugzilla email to login.')
+        messages.warning(self.request, message)
+
+        return super(BrowserIDVerify, self).login_failure(error=error)
+
+    def form_valid(self, form):
+        """
+        Custom BrowserID verifier for ReMo users
+        and vouched mozillians.
+        """
+        self.assertion = form.cleaned_data['assertion']
+        self.audience = get_audience(self.request)
+        result = verify(self.assertion, self.audience)
+        _is_valid_login = False
+
+        if result:
+            if User.objects.filter(email=result['email']).exists():
+                _is_valid_login = True
+            else:
+                try:
+                    data = is_vouched(result['email'])
+                except BadStatusCodeError:
+                    msg = ('Email (%s) authenticated but unable to '
+                           'connect to Mozillians to see if you are vouched' %
+                           result['email'])
+                    return self.login_failure(message=msg)
+
+                if data and data['is_vouched']:
+                    _is_valid_login = True
+                    user = User.objects.create_user(
+                        username=USERNAME_ALGO(data['email']),
+                        email=data['email'])
+
+                    first_name, last_name = (
+                        data['full_name'].split(' ', 1)
+                        if ' ' in data['full_name']
+                        else ('', data['full_name']))
+                    user.first_name = first_name
+                    user.last_name = last_name
+                    user.save()
+                    user.groups.add(
+                        Group.objects.get(name='Mozillians'))
 
             if _is_valid_login:
-                user = auth.authenticate(assertion=assertion,
-                                         audience=audience)
-                auth.login(request, user)
-                return redirect('dashboard')
+                try:
+                    self.user = auth.authenticate(assertion=self.assertion,
+                                                  audience=self.audience)
+                    auth.login(self.request, self.user)
+                except BrowserIDException as e:
+                    return self.login_failure(error=e)
 
-        except BadStatusCodeError:
-            message = ('Email (%s) authenticated but unable to '
-                       'connect to Mozillians to see if you are vouched' %
-                       result['email'])
-            return login_failed(request, message)
+                if self.request.user and self.request.user.is_active:
+                    return self.login_success()
 
-    return redirect(settings.LOGIN_REDIRECT_URL_FAILURE)
+        return self.login_failure()
 
 
 @cache_control(private=True, no_cache=True)
@@ -209,36 +227,13 @@ def dashboard(request):
 def custom_404(request):
     """Custom 404 error handler."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
-    t = loader.get_template('404.html')
-    return http.HttpResponseNotFound(
-        t.render(RequestContext(request, {'request_path': request.path,
-                                          'featuredrep': featured_rep})))
+    return http.HttpResponseNotFound(render(request, '404.html',
+                                            {'featuredrep': featured_rep}))
 
 
 def custom_500(request):
     """Custom 500 error handler."""
-    t = loader.get_template('500.html')
-    return http.HttpResponseServerError(
-        t.render(Context({'MEDIA_URL': settings.MEDIA_URL,
-                          'request': request,
-                          'user': request.user})))
-
-
-def login_failed(request, msg=None):
-    """Login failed view.
-
-    This view acts like a segway between a failed login attempt and
-    'main' view. Adds messages in the messages framework queue, that
-    informs user login failed.
-
-    """
-    if not msg:
-        msg = ('Login failed. Please make sure that you are '
-               'an accepted Rep or a vouched Mozillian '
-               'and you use your Bugzilla email to login.')
-    messages.warning(request, msg)
-
-    return redirect('main')
+    return http.HttpResponseServerError(render(request, '500.html'))
 
 
 @permission_check(group='Mentor')
