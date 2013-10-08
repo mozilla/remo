@@ -46,7 +46,6 @@ MINIFY_BUNDLES = {
             'js/libs/jquery-1.7.1.js',
             'js/libs/modernizr.foundation.js',
             'js/libs/foundation.js',
-            'static/browserid/browserid.js',
             'js/libs/jquery.prettydate.js',
             'js/remo/remolib.js',
             # Our app.js is always last to override stuff
@@ -56,7 +55,6 @@ MINIFY_BUNDLES = {
             'js/libs/jquery-1.7.1.js',
             'js/libs/modernizr.foundation-4.js',
             'js/libs/foundation-4.min.js',
-            'static/browserid/browserid.js',
             'js/libs/jquery.prettydate.js',
             'js/libs/jquery.imageready.min.js',
             'js/libs/placeholder.min.js',
@@ -68,7 +66,6 @@ MINIFY_BUNDLES = {
             'js/libs/jquery.min.js',
             'js/libs/modernizr.foundation.js',
             'js/libs/foundation.js',
-            'static/browserid/browserid.js',
             'js/libs/jquery.prettydate.js',
             'js/remo/remolib.js',
             # Our app.js is always last to override stuff
@@ -78,7 +75,6 @@ MINIFY_BUNDLES = {
             'js/libs/jquery-1.7.1.min.js',
             'js/libs/modernizr.foundation-4.js',
             'js/libs/foundation-4.min.js',
-            'static/browserid/browserid.js',
             'js/libs/jquery.prettydate.js',
             'js/libs/jquery.imageready.min.js',
             'js/libs/placeholder.min.js',
@@ -183,6 +179,7 @@ INSTALLED_APPS = ['south'] + \
 JINGO_EXCLUDE_APPS = [
     'admin',
     'registration',
+    'browserid',
 ]
 
 # Tells the extract script what files to look for L10n in and what function
@@ -214,6 +211,18 @@ AUTHENTICATION_BACKENDS = ('django_browserid.auth.BrowserIDBackend',
 # Required for BrowserID. Very important security feature
 SITE_URL = 'https://reps.mozilla.org'
 
+# Override BrowserID verification
+BROWSERID_VERIFY_CLASS = 'remo.base.views.BrowserIDVerify'
+
+# Do not create user on login
+BROWSERID_CREATE_USER = False
+
+# Optional BrowserID settings
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGIN_REDIRECT_URL_FAILURE = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+
 # Remove LocaleURLMiddleware since we are not localing our website
 MIDDLEWARE_CLASSES = filter(
     lambda x: x != 'funfactory.middleware.LocaleURLMiddleware',
@@ -224,13 +233,11 @@ MIDDLEWARE_CLASSES += ('django.contrib.messages.middleware.MessageMiddleware',
                        'waffle.middleware.WaffleMiddleware')
 
 TEMPLATE_CONTEXT_PROCESSORS += (
-    'django_browserid.context_processors.browserid_form',
+    'django_browserid.context_processors.browserid',
     'django.contrib.messages.context_processors.messages')
 
 # Instruct session-csrf to always produce tokens for anonymous users
 ANON_ALWAYS = True
-
-LOGIN_REDIRECT_URL_FAILURE = '/login/failed/'
 
 FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
 
@@ -257,7 +264,6 @@ STATIC_URL = '/media/static/'
 CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
                   'event/?callbackurl=%(callbackurl)s')
 
-BROWSERID_CREATE_USER = False
 
 REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
 REPS_COUNCIL_LIST = 'reps-council@mozilla.com'
