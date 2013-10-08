@@ -162,23 +162,23 @@
         }
     },
     {
-        "pk": 10,
+        "pk": 12,
         "model": "auth.user",
         "fields": {
-            "username": "mozillian1",
-            "first_name": "Antoni",
-            "last_name": "ReMo",
+            "username": "remobot",
+            "first_name": "ReMo",
+            "last_name": "bot",
             "is_active": true,
             "is_superuser": false,
             "is_staff": false,
-            "last_login": "2012-01-23 05:30:58+00:00",
+            "last_login": "2013-09-19T10:01:11Z",
             "groups": [
-                5
+                1
             ],
             "user_permissions": [],
-            "password": "md5$2$f74916608ad95265f58a739d6ffba15f",
-            "email": "mozillian@example.com",
-            "date_joined": "2012-01-23 05:30:58+00:00"
+            "password": "",
+            "email": "reps@mozilla.org",
+            "date_joined": "2013-09-19T10:01:11Z"
         }
     },
     {
@@ -471,23 +471,20 @@
         }
     },
     {
-        "pk": 10,
+        "pk": 12,
         "model": "profiles.userprofile",
         "fields": {
             "personal_website_url": "",
-            "receive_email_on_add_report": true,
+            "receive_email_on_add_report": false,
             "mozillians_profile_url": "",
-            "tracked_functional_areas": [
-                7,
-                39
-            ],
+            "tracked_functional_areas": [],
             "gender": null,
             "city": "",
             "twitter_account": "",
             "jabber_id": "",
-            "display_name": "antoni_remo",
+            "display_name": "ReMo bot",
             "receive_email_on_edit_report": false,
-            "irc_name": "",
+            "irc_name": "remobot",
             "lon": null,
             "functional_areas": [],
             "wiki_profile_url": "",
@@ -495,11 +492,11 @@
             "bio": "",
             "private_email": "",
             "facebook_url": "",
-            "user": 10,
-            "date_joined_program": "2012-01-01",
+            "user": 12,
+            "date_joined_program": "2007-07-01",
             "lat": null,
-            "receive_email_on_add_comment": true,
-            "receive_email_on_add_event_comment": true,
+            "receive_email_on_add_comment": false,
+            "receive_email_on_add_event_comment": false,
             "country": "",
             "region": "",
             "irc_channels": "",

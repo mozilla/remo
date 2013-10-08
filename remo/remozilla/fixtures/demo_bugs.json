@@ -4,7 +4,6 @@
         "model": "remozilla.bug",
         "fields": {
             "status": "",
-            "due_date": null,
             "creator": null,
             "cc": [
                 7

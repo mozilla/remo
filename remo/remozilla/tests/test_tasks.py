@@ -63,8 +63,13 @@ class FetchBugsTest(TestCase):
                                      {'name': 'not_a_rep@example.com'}],
                               'assigned_to':{'name':'mentor@example.com'},
                               'status':'resolved',
-                              'resolution':'invalid',
-                              'cf_due_date': None},
+                              'flags': [
+                                  {'requestee': {
+                                      'ref': '',
+                                      'name': 'reps-council@mozilla.com'},
+                                   'status': '?',
+                                   'name': 'remo-review'}],
+                              'resolution':'invalid'},
                              {'id': 1199,
                               'summary':'New summary',
                               'creator': {'name': 'not_a_rep@example.com'},
@@ -74,8 +79,7 @@ class FetchBugsTest(TestCase):
                                      {'name': 'not_a_rep@example.com'}],
                               'assigned_to':{'name':'mentor@example.com'},
                               'status':'resolved',
-                              'resolution':'invalid',
-                              'cf_due_date': None}]}
+                              'resolution':'invalid'}]}
 
         first_request.text = json.dumps(bug_data)
 
@@ -109,9 +113,10 @@ class FetchBugsTest(TestCase):
         bug = Bug.objects.get(bug_id=7788)
         eq_(bug.cc.all().count(), 1)
         eq_(bug.assigned_to.email, 'mentor@example.com')
-        eq_(bug.due_date, None)
         eq_(bug.resolution, 'INVALID')
+        eq_(bug.council_vote_requested, True)
 
         bug = Bug.objects.get(bug_id=1199)
         eq_(bug.creator, None)
         eq_(bug.cc.all().count(), 1)
+        eq_(bug.council_vote_requested, False)

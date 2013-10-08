@@ -18,8 +18,6 @@ class VotingTestCommands(TestCase):
 
     def setUp(self):
         """Initial data for the tests."""
-        UserFactory.create(username='remobot', email='reps@mozilla.org',
-                           first_name='ReMo', last_name='bot')
         self.user = User.objects.get(username='admin')
         self.group = Group.objects.get(name='Council')
         self._now = datetime2pdt()
@@ -41,10 +39,10 @@ class VotingTestCommands(TestCase):
                                           datetime.timedelta(days=1))
         args = ['poll_vote_reminder']
         management.call_command('cron', *args)
-        recipients = map(lambda x: '%s' % x.email,
-                         User.objects.filter(groups=self.group))
         eq_(len(mail.outbox), 3)
-        eq_(mail.outbox[2].to, recipients)
+        for email in mail.outbox:
+            eq_(email.to, ['counselor@example.com'])
+
 
     @patch('remo.voting.cron.datetime2pdt')
     def test_extend_voting_period_by_24hours(self, fake_datetime2pdt):
