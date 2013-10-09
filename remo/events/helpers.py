@@ -102,12 +102,20 @@ def get_event_comment_delete_url(obj):
                            'pk': obj.id})
 
 
-@register.filter
+@register.function
 def get_event_category_link(category):
     """Returns events list page of given category."""
 
     url = reverse('events_list_events')
     return urlparams(url, '/category/%s/' % category.lower())
+
+
+@register.function
+def get_event_search_link(search):
+    """Returns events list page with the given search term."""
+
+    url = reverse('events_list_events')
+    return urlparams(url, '/search/%s/' % search.lower())
 
 
 @register.function

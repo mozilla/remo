@@ -2097,6 +2097,86 @@ form.delete-comment {
 }
 
 /* -----------------------------------------
+   Next Three Events like This
+----------------------------------------- */
+
+.events-like-this {
+    .opensanslight;
+    margin-top: 10px;
+    font-size: 13px;
+    h5 {
+        margin: 0 0 20px 10px;
+    }
+    ul {
+        margin-left: 20px;
+        list-style-type: none;
+        padding: 0;
+    }
+    .event-date {
+        .opensans;
+        display: block;
+        font-size: 20px;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 10px;
+        padding: 0;
+        max-width: 50px;
+        .grayed;
+        background: #efefef;
+        background: -moz-linear-gradient(top, #ffffff 0%, #f4f4f4 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f4f4f4));
+        background: -webkit-linear-gradient(top, #ffffff 0%,#f4f4f4 100%);
+        background: -o-linear-gradient(top, #ffffff 0%,#f4f4f4 100%);
+        background: -ms-linear-gradient(top, #ffffff 0%,#f4f4f4 100%);
+        background: linear-gradient(to bottom, #ffffff 0%,#f4f4f4 100%);
+        border: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        text-shadow: 1px 1px 0px rgba(200, 200, 200, 0.75);
+        -webkit-box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        -moz-box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        -moz-transition:box-shadow .1s ease-in;
+        -webkit-transition:box-shadow .1s ease-in;
+        transition:box-shadow .1s ease-in;
+        &:hover,
+        &:focus {
+            box-shadow: 0 2px 5px gray;
+            -webkit-box-shadow: 0 2px 5px gray;
+            -moz-box-shadow: 0 2px 5px gray;
+        }
+    }
+    .event-detail {
+        time {
+            display: block;
+        }
+    }
+    .event-title {
+        font-weight: bold;
+        color: rgb(51, 51, 51);
+        &:link,
+        &:visited {
+            font-weight: bold;
+            color: rgb(51, 51, 51);
+        }
+        &:hover,
+        &:active,
+        &:focus {
+            text-decoration: underline;
+        }
+    }
+}
+
+@media only screen and (max-width: @breakSmall) {
+    .events-like-this {
+        ul li .columns {
+            padding: 0;
+            text-align: left;
+        }
+    }
+}
+
+/* -----------------------------------------
    Events Social Mashup
 ----------------------------------------- */
 

@@ -6,8 +6,10 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.utils.timezone import now
 
 import caching.base
 from south.signals import post_migrate
@@ -17,6 +19,9 @@ from remo.base.utils import add_permissions_to_groups
 from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
 from remo.reports.tasks import send_remo_mail
+
+
+SIMILAR_EVENTS = 3
 
 
 class Attendance(models.Model):
@@ -93,6 +98,28 @@ class Event(caching.base.CachingMixin, models.Model):
     def local_end(self):
         """Property to end datetime localized."""
         return self._make_local(self.end)
+
+    def get_similar_events(self):
+        """Implement 3-events-like-this functionality.
+
+        Specs:
+
+        * Return future events that match the same country and one or more categories.
+        * If less than 3 matches, show upcoming events with the same country.
+        * If less than 3 matches, show upcoming events with the same category.
+        * Order by date, earliest date first.
+
+        """
+
+        events = Event.objects.filter(start__gte=now()).exclude(pk=self.pk)
+        country = Q(country=self.country)
+        category = Q(categories__in=self.categories.all())
+
+        if events.filter(country, category).distinct().count() < SIMILAR_EVENTS:
+            if events.filter(country).count() < SIMILAR_EVENTS:
+                return events.filter(category).distinct()
+            return events.filter(country)
+        return events.filter(country, category).distinct()
 
     class Meta:
         ordering = ['start']

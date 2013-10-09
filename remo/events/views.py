@@ -114,6 +114,7 @@ def view_event(request, slug):
 
     return render(request, 'view_event.html',
                   {'event': event, 'email_attendees_form': email_att_form,
+                   'similar_events': event.get_similar_events(),
                    'comments': event.eventcomment_set.all(),
                    'event_comment_form': event_comment_form,
                    'event_comment_form_url': event_url})
