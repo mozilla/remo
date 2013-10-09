@@ -225,7 +225,8 @@ class BaseRangePollChoiceInlineFormset(BaseInlineFormSet):
         model = RangePollChoice
 
 
-RangePollChoiceFormset = (inlineformset_factory(RangePoll, RangePollChoice,
+RangePollChoiceFormset = (
+    inlineformset_factory(RangePoll, RangePollChoice,
                           formset=BaseRangePollChoiceInlineFormset, extra=1,
                           exclude='votes', can_delete=True))
 
@@ -336,8 +337,7 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
 class BaseRadioPollChoiceInlineFormset(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         """Initialize form."""
-        (super(BaseRadioPollChoiceInlineFormset, self)
-         .__init__(*args, **kwargs))
+        super(BaseRadioPollChoiceInlineFormset, self).__init__(*args, **kwargs)
 
     def clean(self):
         """Clean form.
@@ -345,9 +345,10 @@ class BaseRadioPollChoiceInlineFormset(BaseInlineFormSet):
         Check if the same answer has already been submited
         in the same voting.
         """
+        # Do not check, unless all forms are valid
         if any(self.errors):
-            # Do not check, unless all forms are valid
             return
+
         answers = []
         for i, form in enumerate(self.forms):
             if 'answer' in form.cleaned_data:
@@ -362,7 +363,8 @@ class BaseRadioPollChoiceInlineFormset(BaseInlineFormSet):
         model = RadioPollChoice
 
 
-RadioPollChoiceFormset = (inlineformset_factory(RadioPoll, RadioPollChoice,
+RadioPollChoiceFormset = (
+    inlineformset_factory(RadioPoll, RadioPollChoice,
                           formset=BaseRadioPollChoiceInlineFormset, extra=1,
                           exclude='votes', can_delete=True))
 
@@ -454,9 +456,10 @@ class BaseRadioPollInlineFormSet(BaseInlineFormSet):
 
         Check that each Radio Poll has a unique name.
         """
+        # Do not check, unless all forms are valid
         if any(self.errors):
-            # Do not check, unless all forms are valid
             return
+
         questions = []
         for i, form in enumerate(self.forms):
             if 'question' in form.cleaned_data:

@@ -6,7 +6,7 @@ from django.core import mail
 
 import fudge
 
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 from test_utils import TestCase
 
 from remo.base.utils import datetime2pdt
@@ -35,9 +35,9 @@ class VotingMailNotificationTest(TestCase):
         """Test sending emails when a new voting is added."""
         recipients = map(lambda x: '%s' % x.email,
                          User.objects.filter(groups=self.group))
-        eq_(len(mail.outbox), 2)
-        eq_(mail.outbox[0].to, recipients)
-        eq_(mail.outbox[1].to, recipients)
+        eq_(len(mail.outbox), 4)
+        ok_(mail.outbox[0].to[0] in recipients)
+        ok_(mail.outbox[1].to[0] in recipients)
 
     @fudge.patch('remo.voting.models.celery_control.revoke')
     def test_send_email_on_edit_poll(self, fake_requests_obj):
@@ -49,39 +49,39 @@ class VotingMailNotificationTest(TestCase):
         if not settings.CELERY_ALWAYS_EAGER:
             (fake_requests_obj.expects_call().returns(True))
         poll.save()
-        eq_(len(mail.outbox), 3)
+        eq_(len(mail.outbox), 6)
 
     def test_send_email_to_council_members(self):
-        """Test send emails to Council Members
-        if an automated poll is created.
+        """Test send emails to Council Members if an automated poll is created.
 
         """
         automated_poll = Poll(name='automated_poll', start=self.start,
                               end=self.end, valid_groups=self.group,
                               created_by=self.user, automated_poll=True)
         automated_poll.save()
-        eq_(len(mail.outbox), 4)
-        eq_(mail.outbox[2].to, [settings.REPS_COUNCIL_LIST])
-        eq_(mail.outbox[3].to, [settings.REPS_COUNCIL_LIST])
+        eq_(len(mail.outbox), 6)
+        for email in mail.outbox:
+            if settings.REPS_COUNCIL_LIST in email.to:
+                break
+        else:
+            raise Exception('No email sent to REPS_COUNCIL_LIST')
+
 
 
 class AutomatedRadioPollTest(TestCase):
     """Tests the automatic creation of new Radio polls."""
-    def setUp(self):
-        """Initial data for the tests."""
-        UserFactory.create(username='remobot', email='reps@mozilla.org',
-                           first_name='ReMo', last_name='bot')
+    fixtures = ['demo_users.json']
 
     def test_automated_radio_poll_valid_bug(self):
         """Test the creation of an automated radio poll."""
-        bug = BugFactory.create(flag_name='remo-review', flag_status='?',
+        bug = BugFactory.create(council_vote_requested=True,
                                 component='Budget Requests')
         poll = Poll.objects.get(bug=bug)
         eq_(poll.bug.bug_id, bug.bug_id)
         eq_(poll.description, bug.first_comment)
         eq_(poll.name, bug.summary)
 
-    def test_automated_radio_poll_invalid_bug(self):
+    def test_automated_radio_poll_no_auto_bug(self):
         """Test the creation of an automated radio
         poll with a non budget/swag bug.
 
@@ -94,7 +94,7 @@ class AutomatedRadioPollTest(TestCase):
         if the bug already exists.
 
         """
-        bug = BugFactory.create(flag_name='remo-review', flag_status='?',
+        bug = BugFactory.create(council_vote_requested=True,
                                 component='Budget Requests')
         bug.first_comment = 'My first comment.'
         bug.save()

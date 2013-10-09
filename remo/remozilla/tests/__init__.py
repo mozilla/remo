@@ -31,7 +31,6 @@ class BugFactory(factory.django.DjangoModelFactory):
     whiteboard = 'Bug whiteboard'
     resolution = fuzzy.FuzzyChoice(RESOLUTION)
     status = fuzzy.FuzzyChoice(STATUS)
-    due_date = fuzzy.FuzzyDateTime(DUE_DT)
 
     @factory.post_generation
     def add_cc_users(self, create, extracted, **kwargs):

@@ -17,6 +17,9 @@ from remo.remozilla.models import Bug
 from remo.voting.tasks import send_voting_mail
 
 
+VOTING_PERIOD_AUTOMATED_POLLS = 3 # in days
+
+
 class Poll(models.Model):
     """Poll Model."""
     name = models.CharField(max_length=300)
@@ -171,32 +174,29 @@ def voting_set_groups(app, sender, signal, **kwargs):
 @receiver(post_save, sender=Bug,
           dispatch_uid='remozilla_create_radio_poll_signal')
 def create_radio_poll(sender, instance, **kwargs):
-    """Create a radio poll automatically when a new budget or
-    swag bug is submitted.
+    """Create a radio poll automatically.
+
+    If a bug lands in our database with council_vote_requested, create
+    a new Poll and let Council members vote.
+
     """
-    # Avoid circular dependencies
-    from remo.voting.models import Poll, RadioPoll, RadioPollChoice
+    if (instance.council_vote_requested
+            and not Poll.objects.filter(bug=instance).exists()):
+        date_now = datetime2pdt()
+        remobot = User.objects.get(username='remobot')
 
-    if (instance.flag_status == '?' and
-        instance.flag_name == 'remo-review' and
-            instance.component in ('Budget Requests', 'Swag Requests')):
-        if not Poll.objects.filter(bug=instance).exists():
-            date_now = datetime2pdt()
-            remobot = User.objects.get(username='remobot')
+        poll = (Poll.objects
+                .create(name=instance.summary,
+                        description=instance.first_comment,
+                        valid_groups=Group.objects.get(name='Council'),
+                        start=date_now,
+                        end=(date_now + timedelta(days=VOTING_PERIOD_AUTOMATED_POLLS)),
+                        bug=instance,
+                        created_by=remobot,
+                        automated_poll=True))
 
-            poll = (Poll.objects
-                    .create(name=instance.summary,
-                            description=instance.first_comment,
-                            valid_groups=Group.objects.get(name='Council'),
-                            start=date_now,
-                            end=(date_now + timedelta(days=3)),
-                            bug=instance,
-                            created_by=remobot,
-                            automated_poll=True))
+        radio_poll = RadioPoll.objects.create(poll=poll,
+                                              question='Budget Approval')
 
-            radio_poll = RadioPoll.objects.create(poll=poll,
-                                                  question='Budget Approval')
-
-            for answer in ('Approved', 'Denied'):
-                RadioPollChoice.objects.create(answer=answer,
-                                               radio_poll=radio_poll)
+        for answer in ('Approved', 'Denied'):
+            RadioPollChoice.objects.create(answer=answer, radio_poll=radio_poll)

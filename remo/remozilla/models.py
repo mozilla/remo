@@ -28,10 +28,8 @@ class Bug(caching.base.CachingMixin, models.Model):
     whiteboard = models.CharField(max_length=500, default='')
     status = models.CharField(max_length=30, default='')
     resolution = models.CharField(max_length=30, default='')
-    due_date = models.DateTimeField(null=True, blank=True)
-    flag_name = models.CharField(max_length=30, default='', blank=True)
     first_comment = models.TextField(default='', blank=True)
-    flag_status = models.CharField(max_length=30, default='', blank=True)
+    council_vote_requested = models.BooleanField(default=False, blank=True)
 
     objects = caching.base.CachingManager()
 
