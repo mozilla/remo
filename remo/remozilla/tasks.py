@@ -3,13 +3,12 @@ from datetime import datetime
 from urllib import quote
 
 import django.utils.timezone as timezone
-
 from celery.task import task
 from django.conf import settings
 from django.contrib.auth.models import User
 
 import requests
-
+import pytz
 from funfactory.helpers import urlparams
 
 from remo.base.utils import get_object_or_none
@@ -22,7 +21,7 @@ COMPONENTS = ['Budget Requests', 'Community IT Requests', 'Mentorship',
 BUGZILLA_FIELDS = [u'is_confirmed', u'summary', u'creator', u'creation_time',
                    u'component', u'whiteboard', u'op_sys', u'cc', u'id',
                    u'status', u'assigned_to', u'resolution',
-                   u'last_change_time', u'cf_due_date', u'flags', u'comments']
+                   u'last_change_time', u'flags', u'comments']
 
 URL = ('https://api-dev.bugzilla.mozilla.org/latest/bug/'
        '?username={username}&password={password}&'
@@ -31,6 +30,14 @@ URL = ('https://api-dev.bugzilla.mozilla.org/latest/bug/'
        'offset={offset}&limit={limit}')
 
 LIMIT = 100
+
+
+def parse_bugzilla_time(time):
+    if not time:
+        return None
+    datetimeobj = datetime.strptime(time, '%Y-%m-%dT%H:%M:%SZ')
+    datetimeobj = timezone.make_aware(datetimeobj, pytz.timezone('US/Pacific'))
+    return datetimeobj
 
 
 @task
@@ -68,9 +75,8 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 bug.summary = bdata.get('summary', '')
                 creator_name = bdata['creator']['name']
                 bug.creator = get_object_or_none(User, email=creator_name)
-                creation_time = datetime.strptime(bdata['creation_time'],
-                                                  '%Y-%m-%dT%H:%M:%SZ')
-                bug.bug_creation_time = creation_time
+                bug.bug_creation_time = (
+                    parse_bugzilla_time(bdata['creation_time']))
                 bug.component = bdata['component']
                 bug.whiteboard = bdata.get('whiteboard', '')
 
@@ -80,21 +86,19 @@ def fetch_bugs(components=COMPONENTS, days=None):
                     if cc_user:
                         bug.cc.add(cc_user)
 
-                bug.assigned_to = (
-                    get_object_or_none(User,
-                                       email=(bdata['assigned_to']['name'])))
+                bug.assigned_to = get_object_or_none(
+                    User, email=(bdata['assigned_to']['name']))
                 bug.status = bdata['status']
                 bug.resolution = bdata.get('resolution', '')
-                bug.due_date = bdata.get('cf_due_date', None)
-                if 'last_change_time' in bdata:
-                    bug.bug_last_change_time = datetime.strptime(
-                        bdata['last_change_time'], '%Y-%m-%dT%H:%M:%SZ')
-                flags = bdata.get('flags', [])
+                bug.bug_last_change_time = parse_bugzilla_time(
+                    bdata.get('last_change_time'))
 
-                bug.flag_status = next((item['status'] for item in flags
-                                        if item['status'] == '?'), '')
-                bug.flag_name = next((item['name'] for item in flags
-                                      if item['name'] == 'remo-review'), '')
+                for flag in bdata.get('flags', []):
+                    if (flag['status'] == '?'
+                        and flag['name'] == 'remo-review'
+                        and flag['requestee']['name'] == (
+                            settings.REPS_COUNCIL_LIST)):
+                        bug.council_vote_requested = True
 
                 comments = bdata.get('comments', [])
                 if comments and comments[0].get('text', ''):

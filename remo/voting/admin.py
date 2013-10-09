@@ -45,6 +45,7 @@ class PollAdmin(admin.ModelAdmin):
     list_display = ['name', 'start', 'end', 'valid_groups']
     date_hierarchy = 'start'
     readonly_fields = ['task_start_id', 'task_end_id', 'last_notification']
+    list_filter = ['automated_poll']
 
 
 class VoteAdmin(admin.ModelAdmin):
