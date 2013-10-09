@@ -145,7 +145,7 @@ Mozilla Reps - {{ event.name }}
                 Category
               </span>
               {% for category in event.categories.all() %}
-                <a href="{{ category.name|get_event_category_link }}">
+                <a href="{{ get_event_category_link(category.name) }}">
                   {{ category.name }}</a>{% if not loop.last %}, {% endif %}
               {% endfor %}
             </p>
@@ -289,6 +289,56 @@ Mozilla Reps - {{ event.name }}
     </div>
   </div>
   <!-- END Mashup code -->
+
+  <!-- Next 3 events like this -->
+  {% if similar_events.exists() %}
+    <div class="row">
+      <div class="large-7 columns"></div>
+      <div class="large-5 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon event large"></div>
+          </div>
+          <div class="large-11 columns events-like-this">
+            <h5>Events like this</h5>
+            <ul>
+              {% for event in similar_events[:3] %}
+                {% with %}
+                  {% set start = event.local_start %}
+                  {% set end = event.local_end %}
+                  <li class="row">
+                    <div class="large-2 columns">
+                      <a href="#" class="event-date">{{ start.day }}</a>
+                    </div>
+                    <div class="event-detail large-10 columns">
+                      <a class="event-title" href="{{ get_event_link(event) }}">
+                        {{ event.name }}
+                      </a>
+                      <time datetime={{ start }}>
+                      {% if not is_multiday(start, end) %}
+                        {{ start|strftime('%d %B %Y') }}
+                      {% else %}
+                        {% if start.month == end.month %}
+                          {{ start.day }}-{{ end.day }} {{ start|strftime('%B %Y') }}
+                        {% else %}
+                          {{ start|strftime('%d %B %Y') }} - {{ end|strftime('%d %B %Y') }}
+                        {% endif %}
+                      {% endif %}
+                      </time>
+                      <p>
+                        <a href="{{ get_event_search_link(event.city) }}">{{ event.city }}</a>,
+                        <a href="{{ get_event_search_link(event.country) }}">{{ event.country }}</a>
+                      </p>
+                    </div>
+                  </li>
+                {% endwith %}
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
   {% macro display_attendee(attendee) -%}
     <div class="event-single-attendee">
       <div class="row">
