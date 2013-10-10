@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test.client import Client
+
+from funfactory.helpers import urlparams
 from jinja2 import Markup
 from nose.exc import SkipTest
 from nose.tools import eq_, ok_
@@ -119,25 +121,27 @@ class ViewsTest(TestCase):
                               'receive_email_on_edit_report': True,
                               'receive_email_on_add_comment': True}
         self.user_edit_settings_url = reverse('edit_settings')
+        self.failed_url = urlparams(settings.LOGIN_REDIRECT_URL_FAILURE,
+                                    bid_login_failed=1)
 
     def _login_attempt(self, email, assertion='assertion123'):
         with mock_browserid(email):
             r = self.client.post(
-                reverse('mozilla_browserid_verify'),
+                reverse('browserid_login'),
                 {'assertion': assertion})
         return r
 
     def test_bad_verification(self):
         """Bad verification -> failure."""
         response = self._login_attempt(None)
-        self.assertRedirects(response, reverse('login_failed'),
-                             target_status_code=302)
+        self.assertRedirects(response, self.failed_url,
+                             target_status_code=200)
 
     def test_invalid_login(self):
         """Bad BrowserID form - no assertion -> failure."""
         response = self._login_attempt(None, None)
-        self.assertRedirects(response, reverse('login_failed'),
-                             target_status_code=302)
+        self.assertRedirects(response, self.failed_url,
+                             target_status_code=200)
 
     def test_is_vouched(self):
         """Login with vouched email."""
