@@ -48,9 +48,13 @@
     {{ css('remo') }}
   {% endif %}
   {% include "includes/google_analytics.html" %}
+
+  {{ browserid_css() }}
 </head>
 
 <body data-cloudmade-api-key="{{ settings.CLOUDMADE_API }}">
+  <!-- BrowserID -->
+  {{ browserid_info() }}
 
   <!-- Wrapper for background -->
   <div id="wrapper">
@@ -75,14 +79,9 @@
               <ul>
                 <li class="account anonymous nomenu logout">
                   {% if not user.is_authenticated() %}
-                    <a id="browserid" href="#">Sign In</a>
+                    {{ browserid_login(text='Sign in') }}
                      or
                     <a href="#" data-reveal-id="join-modal">Join</a>
-                    <form method="POST" action="{{ url('mozilla_browserid_verify') }}">
-                      {{ csrf() }} {{ browserid_form.as_p() }}
-                      <input type="hidden" name="next"
-                             value="{{ get_next_url(request) }}" />
-                    </form>
                   {% else %}
                     <div class="hide-on-phones">
                       {% if user_is_rep(user) %}
@@ -92,8 +91,8 @@
                       {% else %}
                         {{ user.get_full_name()|default('user.userprofile.display_name') }}
                       {% endif %}
-                      [<a href="{{ url('edit_settings') }}">Settings</a>]
-                      [<a href="{{ url('logout') }}">Sign out</a>]
+                      [<a href="{{ url('edit_settings') }}"> Settings </a>]
+                      [{{ browserid_logout(text='Sign out') }}]
                     </div>
                     <div class="show-on-phones">
                       {% if user_is_rep(user) %}
@@ -104,8 +103,8 @@
                         {{ user.get_full_name()|default('user.userprofile.display_name') }}
                       {% endif %}
                       <div>
-                        <a href="{{ url('edit_settings') }}">Settings </a>|
-                        <a href="{{ url('logout') }}"> Sign out</a>
+                        <a href="{{ url('edit_settings') }}"> Settings </a>|
+                        {{ browserid_logout(text='Sign out') }}
                       </div>
                     </div>
                   {% endif %}
@@ -296,13 +295,13 @@
   <!-- Join modal end -->
 
   <!-- Included JS Files -->
-  <script src="https://browserid.org/include.js" type="text/javascript"></script>
   {% if get_development_environment() %}
     {{ js('common-dbg') }}
   {% else %}
     {{ js('common') }}
   {% endif %}
   <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
+  {{ browserid_js() }}
   {% block bottomextra %} {% endblock %}
 </body>
 

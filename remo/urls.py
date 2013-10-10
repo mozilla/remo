@@ -36,12 +36,6 @@ urlpatterns = patterns('',
     # custom browserid
     url(r'', include('remo.base.urls')),
 
-    # login / logout
-    url(r'^login/failed/$',
-        'remo.base.views.login_failed', name='login_failed'),
-    url(r'^logout/$', 'django.contrib.auth.views.logout',
-        {'next_page': '/'}, name='logout'),
-
     # API
     url(r'^api/', include('remo.api.urls')),
 

@@ -23,6 +23,3 @@
 [submodule "vendor-local/src/django-cache-machine"]
 	path = vendor-local/src/django-cache-machine
 	url = https://github.com/jbalogh/django-cache-machine.git
-[submodule "vendor-local/src/django-browserid"]
-	path = vendor-local/src/django-browserid
-	url = git://github.com/mozilla/django-browserid

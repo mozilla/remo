@@ -18,9 +18,8 @@ class RegisterMiddleware(object):
         if (request.user.is_authenticated() and not
             request.user.userprofile.registration_complete and not
                 request.user.groups.filter(name='Mozillians').exists()):
-
             allow_urls = [
-                reverse('logout'),
+                reverse('browserid_logout'),
                 reverse('profiles_edit',
                         kwargs={'display_name':
                                 request.user.userprofile.display_name})]

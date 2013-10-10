@@ -4,4 +4,3 @@ src/markdown
 src/django-waffle
 src/factory_boy
 src/django-cache-machine
-src/django-browserid
