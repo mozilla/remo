@@ -8,3 +8,5 @@ Installation
 
    installation-vagrant
    installation-virtualenv
+   static
+   demo-data
