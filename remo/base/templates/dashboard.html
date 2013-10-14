@@ -1,17 +1,18 @@
-{% extends "base.html" %}
+{% extends "base_fd4.html" %}
 {% block pagetitle %}Mozilla Reps - Dashboard{% endblock %}
 
 {% block content %}
+<main role="main" class="dashboard-main">
 <div class="row">
-  <div class="ten columns">
-    <h4>Dashboard</h4>
+  <div class="large-10 columns">
+    <h1>Dashboard</h1>
   </div>
   {% block mozillian_interests %}
   {% endblock %}
 </div>
 
 <div class="row">
-  <div class="twelve columns">
+  <div class="large-12 columns">
     {% block body_content %}
     {% endblock %}
   </div>
@@ -21,4 +22,5 @@
 {% endblock %}
 
 <!-- End of block from base.html -->
+</main>
 {% endblock %}

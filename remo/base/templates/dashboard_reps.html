@@ -8,29 +8,29 @@
   <!-- reports block -->
   <div class="dashboard-box">
     <div class="row">
-      <div class="seven columns">
-        <h5>Reports</h5>
+      <div class="large-7 columns">
+        <h2>Reports</h2>
       </div>
-      <div class="five columns">
+      <div class="large-5 columns">
         <dl class="sub-nav dashboard-filter">
           <dt>Filter:</dt>
           {% if monthly_reports is defined %}
             <dd class="active">
-              <a id="dashboard-reports-mine-button" href="javascript:void(0)">
+              <a id="dashboard-reports-mine-button" href="#">
                 Mine
               </a>
             </dd>
           {% endif %}
           {% if mentees_reports_grid is defined %}
             <dd {% if monthly_reports is not defined %} class="active" {% endif %}>
-              <a id="dashboard-reports-mentees-grid-button" href="javascript:void(0)">
+              <a id="dashboard-reports-mentees-grid-button" href="#">
                 My mentees grid
               </a>
             </dd>
           {% endif %}
           {% if mentees_reports_list is defined %}
             <dd>
-              <a id="dashboard-reports-mentees-list-button" href="javascript:void(0)">
+              <a id="dashboard-reports-mentees-list-button" href="#">
                 My mentees list
               </a>
             </dd>
@@ -40,7 +40,7 @@
                       mentees_reports_grid is not defined %}
                 class="active"
                 {% endif %}>
-              <a id="dashboard-reports-all-button" href="javascript:void(0)">
+              <a id="dashboard-reports-all-button" href="#">
                 All
               </a>
             </dd>
@@ -52,15 +52,15 @@
     <div class="row">
       <!-- my block -->
       {% if monthly_reports is defined %}
-        <div id="dashboard-reports-my-block">
-          {% include "monthly_reports.html" %}
+        <div id="dashboard-reports-my-block" class="large-12 columns">
+          {% include "monthly_reports_fd4.html" %}
         </div>
       {% endif %}
       <!-- end my block -->
 
       <!-- mentees list block -->
       {% if mentees_reports_list is defined %}
-        <div id="dashboard-reports-mentees-list-block" class="hidden">
+        <div id="dashboard-reports-mentees-list-block" class="large-12 hidden columns">
           {% if mentees_reports_list %}
             <table class="dashboard-table">
               <thead>
@@ -90,11 +90,15 @@
                         </a>
                       </td>
                       <td>{{ report.updated_on|format_datetime }}</td>
-                      <td class="dashboard-list-pictogram">
-                        {% if report.empty %}%{% endif %}
+                      <td class="empty-cell">
+                        {% if report.empty %}
+                          <span class="pict-table-icon tick"></span>
+                        {% endif %}
                       </td>
-                      <td class="dashboard-list-pictogram">
-                        {% if report.overdue %}%{% endif %}
+                      <td class="overdue-cell">
+                        {% if report.overdue %}
+                          <span class="pict-table-icon tick"></span>
+                        {% endif %}
                       </td>
                     </tr>
                   {% endfor %}
@@ -103,15 +107,15 @@
             </table>
           {% else %}
             <div class="row">
-              <div class="twelve columns no-bugs">
+              <div class="large-12 columns no-bugs">
                 <p>No Reports found!</p>
               </div>
             </div>
           {% endif %}
           {% if mentees_emails is not none %}
             <div class="align-right">
-              <a href="#" data-reveal-id="mail-modal"
-                 class="small white button nice radius">Email my mentees</a>
+              <button data-reveal-id="mail-modal"
+                 class="small button">Email my mentees</button>
             </div>
           {% endif %}
         </div>
@@ -121,10 +125,14 @@
       <!-- mentes grid block -->
       {% if mentees_reports_grid is defined %}
         <div id="dashboard-reports-mentees-grid-block"
-          {% if monthly_reports is defined %} class="hidden" {% endif %}>
+          {% if monthly_reports is defined %}
+            class="large-12 hidden columns"
+          {% else %}
+            class="large-12 columns"
+          {% endif %}>
           <h5>for {{ mentees_reports_grid['month'] }}</h5>
           {% if mentees_reports_grid['reports']|length > 0 %}
-            <ul class="block-grid four-up">
+            <ul class="large-block-grid-4 small-block-grid-1">
               {% for report in mentees_reports_grid['reports'] %}
                 <li>
                   <a href="{{ url('profiles_view_profile',
@@ -141,15 +149,15 @@
             </ul>
           {% else %}
             <div class="row">
-              <div class="twelve columns no-bugs">
+              <div class="large-12 columns no-bugs">
                 <p>No Reports found!</p>
               </div>
             </div>
           {% endif %}
           {% if mentees_emails is not none %}
             <div class="align-right">
-              <a href="#" data-reveal-id="mail-modal"
-                 class="small white button nice radius">Email my mentees</a>
+              <button data-reveal-id="mail-modal"
+                 class="small button">Email my mentees</button>
             </div>
           {% endif %}
         </div>
@@ -161,7 +169,9 @@
         <div id="dashboard-reports-all-block"
              {% if monthly_reports is defined or
                    mentees_reports_grid is defined %}
-                 class="hidden"
+                class="large-12 hidden columns"
+             {% else %}
+                class="large-12 columns"
              {% endif %}>
           {% if all_reports %}
             <table class="dashboard-table">
@@ -195,11 +205,15 @@
                           data-time="{{ report.updated_on|format_datetime_iso }}">
                         {{ report.updated_on|format_datetime }}
                       </td>
-                      <td class="dashboard-list-pictogram">
-                        {% if report.empty %}%{% endif %}
+                      <td class="empty-cell">
+                        {% if report.empty %}
+                          <span class="pict-table-icon tick"></span>
+                        {% endif %}
                       </td>
-                      <td class="dashboard-list-pictogram">
-                        {% if report.overdue %}%{% endif%}
+                      <td class="overdue-cell">
+                        {% if report.overdue %}
+                          <span class="pict-table-icon tick"></span>
+                        {% endif%}
                       </td>
                     </tr>
                   {% endfor %}
@@ -208,7 +222,7 @@
             </table>
           {% else %}
             <div class="row">
-              <div class="twelve columns no-bugs">
+              <div class="large-12 columns no-bugs">
                 <p>No Reports found!</p>
               </div>
             </div>
@@ -223,32 +237,34 @@
 
 
 <!-- budget requests block -->
-<div class="row dashboard-box">
-  <div class="seven columns">
-    <h5>Budget Requests</h5>
-  </div>
-  <div class="five columns">
-    <dl class="sub-nav dashboard-filter">
-      <dt>Filter:</dt>
-      <dd class="active">
-        <a id="dashboard-br-mine-button" href="javascript:void(0)">Mine</a>
-      </dd>
-      {% if mentees_budget_requests is defined %}
-        <dd>
-          <a id="dashboard-br-mentees-button" href="javascript:void(0)">My mentees</a>
+<div class="row">
+  <div class="dashboard-box">
+    <div class="large-7 columns">
+      <h2>Budget Requests</h2>
+    </div>
+    <div class="large-5 columns">
+      <dl class="sub-nav dashboard-filter">
+        <dt>Filter:</dt>
+        <dd class="active">
+          <a id="dashboard-br-mine-button" href="#">Mine</a>
         </dd>
-      {% endif %}
-      {% if all_budget_requests is defined %}
-        <dd>
-          <a id="dashboard-br-all-button" href="javascript:void(0)">All</a>
-        </dd>
-      {% endif %}
-    </dl>
+        {% if mentees_budget_requests is defined %}
+          <dd>
+            <a id="dashboard-br-mentees-button" href="#">My mentees</a>
+          </dd>
+        {% endif %}
+        {% if all_budget_requests is defined %}
+          <dd>
+            <a id="dashboard-br-all-button" href="#">All</a>
+          </dd>
+        {% endif %}
+      </dl>
+    </div>
   </div>
 </div>
 
 <div class="row">
-  <div id="dashboard-br-my-block">
+  <div id="dashboard-br-my-block" class="large-12 columns">
     {% if my_budget_requests %}
       <table class="dashboard-table">
         <thead>
@@ -277,12 +293,12 @@
                   </a>
                 </td>
                 <td>
-                  <div class="overflow-fix-outer show-on-desktops">
-                    <div class="overflow-fix-inner" title="{{ bug.summary }}">
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
                       {{ bug.summary }}
                     </div>
                   </div>
-                  <div class="show-on-phones">
+                  <div class="show-for-small">
                     {{ bug.summary }}
                   </div>
                 </td>
@@ -300,7 +316,7 @@
       </table>
     {% else %}
       <div class="row">
-        <div class="twelve columns no-bugs">
+        <div class="large-12 columns no-bugs">
           <p>No Bugs found!</p>
         </div>
       </div>
@@ -308,7 +324,7 @@
   </div> <!-- end my_budget_requests -->
 
   {% if mentees_budget_requests is defined %}
-    <div id="dashboard-br-mentees-block" class="hidden">
+    <div id="dashboard-br-mentees-block" class="large-12 hidden columns">
       {% if mentees_budget_requests %}
         <table class="dashboard-table">
           <thead>
@@ -337,12 +353,12 @@
                     </a>
                   </td>
                   <td>
-                    <div class="overflow-fix-outer show-on-desktops">
-                      <div class="overflow-fix-inner" title="{{ bug.summary }}">
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
                         {{ bug.summary }}
                       </div>
                     </div>
-                    <div class="show-on-phones">
+                    <div class="show-for-small">
                       {{ bug.summary }}
                     </div>
                   </td>
@@ -360,7 +376,7 @@
         </table>
       {% else %}
         <div class="row">
-          <div class="twelve columns no-bugs">
+          <div class="large-12 columns no-bugs">
             <p>No Bugs found!</p>
           </div>
         </div>
@@ -369,7 +385,7 @@
   {% endif %}
 
   {% if all_budget_requests is defined %}
-    <div id="dashboard-br-all-block" class="hidden">
+    <div id="dashboard-br-all-block" class="large-12 hidden columns">
       {% if all_budget_requests %}
         <table class="dashboard-table">
           <thead>
@@ -398,12 +414,12 @@
                     </a>
                   </td>
                   <td>
-                    <div class="overflow-fix-outer show-on-desktops">
-                      <div class="overflow-fix-inner" title="{{ bug.summary }}">
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
                         {{ bug.summary }}
                       </div>
                     </div>
-                    <div class="show-on-phones">
+                    <div class="show-for-small">
                       {{ bug.summary }}
                     </div>
                   </td>
@@ -421,14 +437,14 @@
         </table>
       {% else %}
         <div class="row">
-          <div class="twelve columns no-bugs">
+          <div class="large-12 columns no-bugs">
             <p>No Bugs found!</p>
           </div>
         </div>
       {% endif %}
       <div class="align-right">
         <a href="https://bugzilla.mozilla.org/buglist.cgi?list_id=2655390;resolution=---;classification=Other;query_format=advanced;component=Budget%20Requests;product=Mozilla%20Reps"
-           class="small white button nice radius" target="_blank">See all bugs</a>
+           class="small button" target="_blank" role="button">See all bugs</a>
       </div>
     </div> <!-- end all_budget_requests -->
   {% endif %}
@@ -436,10 +452,11 @@
 
 <!-- New Budget Request -->
 <div class="row">
-  <div class="twelve columns align-right dashboard-action">
+  <div class="large-12 columns align-right dashboard-action">
     <a href="https://bugzilla.mozilla.org/form.reps.budget"
        target="_blank"
-       class="small white button nice radius">
+       role="button"
+       class="small button">
       New Budget Request
     </a>
   </div>
@@ -449,32 +466,34 @@
 
 
 <!-- swag requests block -->
-<div class="row dashboard-box">
-  <div class="seven columns">
-    <h5>Swag Requests</h5>
-  </div>
-  <div class="five columns">
-    <dl class="sub-nav dashboard-filter">
-      <dt>Filter:</dt>
-      <dd class="active">
-        <a id="dashboard-sr-mine-button" href="javascript:void(0)">Mine</a>
-      </dd>
-      {% if mentees_swag_requests is defined %}
-        <dd>
-          <a id="dashboard-sr-mentees-button" href="javascript:void(0)">My mentees</a>
+<div class="row">
+  <div class=" dashboard-box">
+    <div class="large-7 columns">
+      <h2>Swag Requests</h2>
+    </div>
+    <div class="large-5 columns">
+      <dl class="sub-nav dashboard-filter">
+        <dt>Filter:</dt>
+        <dd class="active">
+          <a id="dashboard-sr-mine-button" href="#">Mine</a>
         </dd>
-      {% endif %}
-      {% if all_swag_requests is defined %}
-        <dd>
-          <a id="dashboard-sr-all-button" href="javascript:void(0)">All</a>
-        </dd>
-      {% endif %}
-    </dl>
+        {% if mentees_swag_requests is defined %}
+          <dd>
+            <a id="dashboard-sr-mentees-button" href="#">My mentees</a>
+          </dd>
+        {% endif %}
+        {% if all_swag_requests is defined %}
+          <dd>
+            <a id="dashboard-sr-all-button" href="#">All</a>
+          </dd>
+        {% endif %}
+      </dl>
+    </div>
   </div>
 </div>
 
 <div class="row">
-  <div id="dashboard-sr-my-block">
+  <div id="dashboard-sr-my-block" class="large-12 columns">
     {% if my_swag_requests %}
       <table class="dashboard-table">
         <thead>
@@ -503,12 +522,12 @@
                   </a>
                 </td>
                 <td>
-                  <div class="overflow-fix-outer show-on-desktops">
-                    <div class="overflow-fix-inner" title="{{ bug.summary }}">
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
                       {{ bug.summary }}
                     </div>
                   </div>
-                  <div class="show-on-phones">
+                  <div class="show-for-small">
                     {{ bug.summary }}
                   </div>
                 </td>
@@ -526,7 +545,7 @@
       </table>
     {% else %}
       <div class="row">
-        <div class="twelve columns no-bugs">
+        <div class="large-12 columns no-bugs">
           <p>No Bugs found!</p>
         </div>
       </div>
@@ -534,7 +553,7 @@
   </div> <!-- end my_swag_requests -->
 
   {% if mentees_swag_requests is defined %}
-    <div id="dashboard-sr-mentees-block" class="hidden">
+    <div id="dashboard-sr-mentees-block" class="large-12 hidden columns">
       {% if mentees_swag_requests %}
         <table class="dashboard-table">
           <thead>
@@ -563,12 +582,12 @@
                     </a>
                   </td>
                   <td>
-                    <div class="overflow-fix-outer show-on-desktops">
-                      <div class="overflow-fix-inner" title="{{ bug.summary }}">
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
                         {{ bug.summary }}
                       </div>
                     </div>
-                    <div class="show-on-phones">
+                    <div class="show-for-small">
                       {{ bug.summary }}
                     </div>
                   </td>
@@ -586,7 +605,7 @@
         </table>
       {% else %}
         <div class="row">
-          <div class="twelve columns no-bugs">
+          <div class="large-12 columns no-bugs">
             <p>No Bugs found!</p>
           </div>
         </div>
@@ -595,7 +614,7 @@
   {% endif %}
 
   {% if all_swag_requests is defined %}
-    <div id="dashboard-sr-all-block" class="hidden">
+    <div id="dashboard-sr-all-block" class="large-12 hidden columns">
       {% if all_swag_requests %}
         <table class="dashboard-table">
           <thead>
@@ -624,12 +643,12 @@
                     </a>
                   </td>
                   <td>
-                    <div class="overflow-fix-outer show-on-desktops">
-                      <div class="overflow-fix-inner" title="{{ bug.summary }}">
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
                         {{ bug.summary }}
                       </div>
                     </div>
-                    <div class="show-on-phones">
+                    <div class="show-for-small">
                       {{ bug.summary }}
                     </div>
                   </td>
@@ -647,14 +666,14 @@
         </table>
       {% else %}
         <div class="row">
-          <div class="twelve columns no-bugs">
+          <div class="large-12 columns no-bugs">
             <p>No Bugs found!</p>
           </div>
         </div>
       {% endif %}
       <div class="align-right">
         <a href="https://bugzilla.mozilla.org/buglist.cgi?list_id=2655390;resolution=---;classification=Other;query_format=advanced;component=Swag%20Requests;product=Mozilla%20Reps"
-           class="small white button nice radius" target="_blank">See all bugs</a>
+           class="small button" target="_blank">See all bugs</a>
       </div>
     </div> <!-- end all_swag_requests -->
   {% endif %}
@@ -662,10 +681,10 @@
 
 <!-- New Swag Request -->
 <div class="row">
-  <div class="twelve columns align-right dashboard-action">
+  <div class="large-12 columns align-right dashboard-action">
     <a href="https://bugzilla.mozilla.org/form.reps.swag"
        target="_blank"
-       class="small white button nice radius">
+       class="small button">
       New Swag Request
     </a>
   </div>
@@ -675,13 +694,13 @@
 
 <!-- community it requests block -->
 {% if my_cit_requests is defined %}
-  <div class="row dashboard-box">
-    <div class="seven columns">
-      <h5>Community IT Requests</h5>
+  <div class="row">
+    <div class="large-7 columns dashboard-box">
+      <h2>Community IT Requests</h2>
     </div>
   </div>
   <div class="row">
-    <div id="dashboard-citr-block">
+    <div id="dashboard-citr-block" class="large-12 columns">
       {% if my_cit_requests %}
         <table class="dashboard-table">
           <thead>
@@ -710,12 +729,12 @@
                     </a>
                   </td>
                   <td>
-                    <div class="overflow-fix-outer show-on-desktops">
-                      <div class="overflow-fix-inner" title="{{ bug.summary }}">
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
                         {{ bug.summary }}
                       </div>
                     </div>
-                    <div class="show-on-phones">
+                    <div class="show-for-small">
                       {{ bug.summary }}
                     </div>
                   </td>
@@ -733,7 +752,7 @@
         </table>
       {% else %}
         <div class="row">
-          <div class="twelve columns no-bugs">
+          <div class="large-12 columns no-bugs">
             <p>No Bugs found!</p>
           </div>
         </div>
@@ -745,13 +764,13 @@
 
 <!-- mentorship requests block -->
 {% if my_mentorship_requests is defined %}
-  <div class="row dashboard-box">
-    <div class="seven columns">
-      <h5>Mentorship</h5>
+  <div class="row">
+    <div class="large-7 columns dashboard-box">
+      <h2>Mentorship</h2>
     </div>
   </div>
   <div class="row">
-    <div id="dashboard-mentorship-block">
+    <div id="dashboard-mentorship-block" class="large-12 columns">
       {% if my_mentorship_requests %}
         <table class="dashboard-table">
           <thead>
@@ -780,12 +799,12 @@
                     </a>
                   </td>
                   <td>
-                    <div class="overflow-fix-outer show-on-desktops">
-                      <div class="overflow-fix-inner" title="{{ bug.summary }}">
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
                         {{ bug.summary }}
                       </div>
                     </div>
-                    <div class="show-on-phones">
+                    <div class="show-for-small">
                       {{ bug.summary }}
                     </div>
                   </td>
@@ -803,7 +822,7 @@
         </table>
     {% else %}
       <div class="row">
-        <div class="twelve columns no-bugs">
+        <div class="large-12 columns no-bugs">
           <p>No Bugs found!</p>
         </div>
       </div>
@@ -815,13 +834,13 @@
 
 <!-- planning requests block -->
 {% if my_planning_requests is defined %}
-  <div class="row dashboard-box">
-    <div class="seven columns">
-      <h5>Planning</h5>
+  <div class="row">
+    <div class="large-7 columns dashboard-box">
+      <h2>Planning</h2>
     </div>
   </div>
   <div class="row">
-    <div id="dashboard-mentorship-block">
+    <div id="dashboard-mentorship-block" class="large-12 columns">
       {% if my_planning_requests %}
         <table class="dashboard-table">
           <thead>
@@ -850,12 +869,12 @@
                     </a>
                   </td>
                   <td>
-                    <div class="overflow-fix-outer show-on-desktops">
-                      <div class="overflow-fix-inner" title="{{ bug.summary }}">
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
                         {{ bug.summary }}
                       </div>
                     </div>
-                    <div class="show-on-phones">
+                    <div class="show-for-small">
                       {{ bug.summary }}
                     </div>
                   </td>
@@ -873,7 +892,7 @@
         </table>
       {% else %}
         <div class="row">
-          <div class="twelve columns no-bugs">
+          <div class="large-12 columns no-bugs">
             <p>No Bugs found!</p>
           </div>
         </div>
@@ -885,98 +904,106 @@
 
 <!-- Admin block -->
 {% if is_admin is defined %}
-  <div class="row dashboard-box">
-    <div class="seven columns">
-      <h5>Administration</h5>
+  <div class="row">
+    <div class="large-7 columns dashboard-box">
+      <h2>Administration</h2>
     </div>
   </div>
-  <dl class="tabs">
+  <div class="section-container auto" data-section>
     {% if reps_without_mentors is defined %}
-      <dd><a href="#nomentors" class="active">No mentors</a></dd>
+    <div {% if reps_without_mentors is defined %}
+            class="active section"
+         {% else %}
+            class="section"
+         {% endif %}>
+      <p class="title">
+        <a href="#nomentors">No mentors</a>
+      </p>
+      <div id="nomentorsTab" class="content">
+        <div class="row">
+          <p class="desc">
+            Reps without mentors set are displayed here:
+          </p>
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th class="dashboard-clickable type-string">Username</th>
+                <th class="dashboard-clickable type-string">Full Name</th>
+                <th class="dashboard-clickable type-string">Account created on</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rep in reps_without_mentors %}
+                <tr>
+                  <td>
+                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                      {{ rep|get_display_name }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                      {{ rep.get_full_name() }}
+                    </a>
+                  </td>
+                  <td title="{{ rep.date_joined|format_datetime }}"
+                      data-time="{{ rep.date_joined|format_datetime_iso }}">
+                    {{ rep.date_joined|format_datetime }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
     {% endif %}
     {% if reps_without_profile is defined %}
-      <dd><a href="#emptyprofiles"
-             {% if reps_without_mentors is not defined %} class="active" {% endif %}>
-          Empty profiles</a></dd>
-    {% endif %}
-  </dl>
-  <ul class="tabs-content">
-    {% if reps_without_mentors is defined %}
-      <li id="nomentorsTab" class="active">Reps without mentors set are displayed here:
+    <div {% if reps_without_mentors is not defined %}
+            class="active section"
+         {% else %}
+            class="section"
+         {% endif %}>
+      <p class="title">
+        <a href="#emptyprofiles">Empty profiles</a>
+      </p>
+      <div id="emptyprofilesTab" class="content">
         <div class="row">
-          <div>
-            <table class="dashboard-table">
-              <thead>
+          <p class="desc">
+            Reps that are invited but not filled their profiles are displayed here:
+          </p>
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th class="dashboard-clickable type-string">Bugzilla Mail</th>
+                <th class="dashboard-clickable type-string">Invited by</th>
+                <th class="dashboard-clickable type-string">Date Invited</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rep in reps_without_profile %}
                 <tr>
-                  <th class="dashboard-clickable type-string">Username</th>
-                  <th class="dashboard-clickable type-string">Full Name</th>
-                  <th class="dashboard-clickable type-string">Account created on</th>
+                  <td>
+                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                      {{ rep.email }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    rep.userprofile.added_by|get_display_name) }}">
+                      {{ rep.userprofile.added_by|get_display_name }}
+                    </a>
+                  </td>
+                  <td title="{{ rep.date_joined|format_datetime }}"
+                      data-time="{{ rep.date_joined|format_datetime_iso }}">
+                    {{ rep.date_joined|format_datetime }}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {% for rep in reps_without_mentors %}
-                  <tr>
-                    <td>
-                      <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                        {{ rep|get_display_name }}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                        {{ rep.get_full_name() }}
-                      </a>
-                    </td>
-                    <td title="{{ rep.date_joined|format_datetime }}"
-                        data-time="{{ rep.date_joined|format_datetime_iso }}">
-                      {{ rep.date_joined|format_datetime }}
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-      </li>
-    {% endif %}
-    {% if reps_without_profile is defined %}
-      <li id="emptyprofilesTab"
-          {% if reps_without_mentors is not defined %} class="active" {% endif %}>
-        Reps that are invited but not filled their profiles are displayed here:
-        <div class="row">
-          <div>
-            <table class="dashboard-table">
-              <thead>
-                <tr>
-                  <th class="dashboard-clickable type-string">Bugzilla Mail</th>
-                  <th class="dashboard-clickable type-string">Invited by</th>
-                  <th class="dashboard-clickable type-string">Date Invited</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for rep in reps_without_profile %}
-                  <tr>
-                    <td>
-                      <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                        {{ rep.email }}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="{{ url('profiles_view_profile',
-                                      rep.userprofile.added_by|get_display_name) }}">
-                        {{ rep.userprofile.added_by|get_display_name }}
-                      </a>
-                    </td>
-                    <td title="{{ rep.date_joined|format_datetime }}"
-                        data-time="{{ rep.date_joined|format_datetime_iso }}">
-                      {{ rep.date_joined|format_datetime }}
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </li>
+      </div>
+    </div>
     {% endif %}
   </ul>
   <!-- End Admin block -->
@@ -986,11 +1013,11 @@
 {% block modals %}
 <!-- Mail my mentees Reveal Modal -->
 {% if mentees_emails is not none %}
-  <div id="mail-modal" class="reveal-modal">
+  <div id="mail-modal" class="reveal-modal small">
     <a class="close-reveal-modal">&#215;</a>
     <p class="lead">Email your mentees</p>
     <form id="email-mentees-form" method="post"
-          action="{{ url('email_mentees') }}" class="custom">
+          action="{{ url('email_mentees') }}">
       {{ csrf() }}
       {% for field in email_mentees_form %}
         {{field}} {{ field.label }}
@@ -998,8 +1025,8 @@
       {% endfor %}
 
       <div class="row">
-        <div id="send-mail" class="twelve columns align-right">
-          <button type="submit" class="medium blue button nice radius">
+        <div id="send-mail" class="align-right">
+          <button type="submit" class="medium button update">
             Send email
           </button>
         </div>
