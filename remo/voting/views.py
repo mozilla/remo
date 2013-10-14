@@ -1,6 +1,8 @@
 from django.db.models import Q
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now as now_utc
@@ -20,9 +22,19 @@ def list_votings(request):
     if not user.groups.filter(name='Admin').exists():
         polls = Poll.objects.filter(valid_groups__in=user.groups.all())
 
-    past_polls = polls.filter(end__lt=now_utc())
+    past_polls_query = polls.filter(end__lt=now_utc())
     current_polls = polls.filter(start__lt=now_utc(), end__gt=now_utc())
     future_polls = polls.filter(start__gt=now_utc())
+
+    past_polls_paginator = Paginator(past_polls_query, settings.ITEMS_PER_PAGE)
+    past_polls_page = request.GET.get('page', 1)
+
+    try:
+        past_polls = past_polls_paginator.page(past_polls_page)
+    except PageNotAnInteger:
+        past_polls = past_polls_paginator.page(1)
+    except EmptyPage:
+        past_polls = past_polls_paginator.page(past_polls_paginator.num_pages)
 
     return render(request, 'list_votings.html',
                   {'user': user,

@@ -148,3 +148,11 @@ function prettyDate() {
     'use strict';
     $('*').find('*[data-time]').prettyDate({attribute:'data-time', interval: 60000, isUTC:true});
 }
+
+function paginatorSelector(selector) {
+    'use strict';
+    selector = typeof selector !== 'undefined' ? selector : '#page-select';
+    $(selector).on('change', function() {
+        window.location = $(this).val();
+    });
+}

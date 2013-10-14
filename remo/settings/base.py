@@ -157,3 +157,6 @@ BROWSERID_REQUEST_ARGS = lazy(_request_args, dict)()
 
 # Statsd Graphite
 STATSD_CLIENT = 'django_statsd.clients.normal'
+
+# Paginator settings
+ITEMS_PER_PAGE = 25

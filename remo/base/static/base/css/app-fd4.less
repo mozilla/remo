@@ -1580,6 +1580,11 @@ ul.mreports li.editable a {
         margin-top: 10px;
         font-size: 13px;
     }
+    label {
+        font-size: 13px;
+        display: inline;
+        margin-left: .5em;
+    }
     textarea {
         height: auto;
     }
@@ -1641,6 +1646,15 @@ ul.mreports li.editable a {
         float: right;
         width: 91.75%;
     }
+    #voting-pagination {
+        text-align: right;
+        .next {
+            margin-left: 0.5em;
+        }
+    }
+    #page-select {
+        width: 100px;
+    }
 }
 
 @media only screen and (max-width: @breakMedium) {
@@ -1652,6 +1666,9 @@ ul.mreports li.editable a {
             float: none;
             width: 100%;
             margin-top: 10px;
+            text-align: center;
+        }
+        #voting-pagination {
             text-align: center;
         }
     }
@@ -1694,6 +1711,19 @@ ul.mreports li.editable a {
     h2 {
         font-size: 24px;
         letter-spacing: -0.25px;
+    }
+}
+
+#voting-pagination > ul.pagination {
+    float: right;
+    a {
+        cursor: pointer;
+    }
+    .current a {
+        color: rgb(51, 51, 51);
+        font-weight: normal;
+        background: transparent;
+        border-bottom: 2px solid rgb(41, 131, 200);
     }
 }
 
