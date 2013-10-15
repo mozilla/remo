@@ -221,5 +221,7 @@ Mozilla Reps - {{ poll.name }} - Vote
 {% endblock %}
 
 {% block bottomextra %}
-  {{ js('voting_view_voting') }}
+  {% compress js %}
+    <script src="{{ static('voting/js/voting_view_voting.js') }}"></script>
+  {% endcompress %}
 {% endblock %}

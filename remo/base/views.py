@@ -236,6 +236,13 @@ def custom_500(request):
     return http.HttpResponseServerError(render(request, '500.html'))
 
 
+def robots_txt(request):
+    """Generate a robots.txt."""
+    permission = 'Allow' if settings.ENGAGE_ROBOTS else 'Disallow'
+    return http.HttpResponse('User-agent: *\n{0}: /'.format(permission),
+                             mimetype='text/plain')
+
+
 @permission_check(group='Mentor')
 def email_mentees(request):
     """Email my mentees view."""

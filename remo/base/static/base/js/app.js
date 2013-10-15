@@ -102,5 +102,6 @@ jQuery(document).ready(function ($) {
 
 });
 
-// leaflet root
-L_ROOT_URL = '/media/leaflet/';
+if (typeof(L) != 'undefined') {
+    L.Icon.Default.imagePath = '/static/base/js/images';
+}

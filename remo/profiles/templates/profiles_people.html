@@ -192,10 +192,22 @@
 {% endblock %}
 
 {% block bottomextra %}
-{{ css('leaflet') }}
-<!--[if lte IE 8]>
-    <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
-<![endif]-->
-{{ js('leaflet') }}
-{{ js('profiles_people') }}
+  {% compress css %}
+    <link rel="stylesheet" href="{{ static('base/css/leaflet.css') }}"
+          media="screen,projection,tv" />
+    <link rel="stylesheet" href="{{ static('base/css/L.Control.Locate.css') }}"
+          media="screen,projection,tv" />
+  {% endcompress %}
+  <!--[if lte IE 8]>
+      {% compress css %}
+        <link rel="stylesheet" href="{{ static('base/css/leaflet.ie.css') }}" />
+      {% endcompress %}
+  <![endif]-->
+  {% compress js %}
+    <script src="{{ static('base/js/leaflet.js') }}"></script>
+    <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
+    <script src="{{ static('base/js/jquery.tmpl.js') }}"></script>
+    <script src="{{ static('base/js/heartcode-canvasloader-min.js') }}"></script>
+    <script src="{{ static('profiles/js/profiles_people.js') }}"></script>
+  {% endcompress %}
 {% endblock %}

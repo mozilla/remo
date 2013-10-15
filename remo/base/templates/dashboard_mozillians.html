@@ -336,5 +336,8 @@
 {% endblock %}
 
 {% block bottomextra %}
-  {{ js('base_dashboard_mozillians') }}
+  {% compress js %}
+    <script src="{{ static('base/js/stupidtable.js') }}"></script>
+    <script src="{{ static('base/js/dashboard_mozillians.js') }}"></script>
+  {% endcompress %}
 {% endblock %}

@@ -41,6 +41,9 @@ MANAGERS = ADMINS
 # on all server instances and True only for development.
 DEBUG = TEMPLATE_DEBUG = True
 
+# Disable CSS/JS compression for development
+COMPRESS_ENABLED = False
+
 # Is this a development instance? Set this to True on development/master
 # instances and False on stage/prod.
 DEV = True

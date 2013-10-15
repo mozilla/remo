@@ -24,16 +24,25 @@
   <title>
     {% block pagetitle %}Mozilla Reps{% endblock%}
   </title>
-  <link rel="shortcut icon" href="{{ MEDIA_URL }}img/remo/shortcut.ico" />
+  <link rel="shortcut icon" href="{{ static('base/img/remo/shortcut.ico') }}" />
   <!-- Included CSS Files -->
   <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet" />
-  {{ css('common-fd4') }}
+  {% compress css %}
+    <link href="{{ static('base/css/foundation-4.css') }}" rel="stylesheet"
+          media="screen,projection,tv" />
+  {% endcompress %}
+
   <!--[if lt IE 9]>
-      {{ css('common_ie_fd4') }}
+      {% compress css %}
+        <link href="{{ static('base/css/ie-fd4.css') }}" rel="stylesheet"
+              media="screen,projection,tv" />
+      {% endcompress %}
   <![endif]-->
   <!-- IE Fix for HTML5 Tags -->
   <!--[if lt IE 9]>
-      {{ js('common_ie') }}
+      {% compress js %}
+        <script src="{{ static('base/js/html5.js') }}"></script>
+      {% endcompress %}
   <![endif]-->
 
   <!-- Bing ownership verification -->
@@ -41,12 +50,10 @@
 
   {% block headextra %} {% endblock %}
   <!-- our css is always last to override stuff -->
-  {% if get_development_environment() %}
-    <link href="/media/css/remo/app-fd4.less" rel="stylesheet/less">
-    {{ js('less') }}
-  {% else %}
-    {{ css('remo-fd4') }}
-  {% endif %}
+  {% compress css %}
+    <link href="{{ static('base/css/app-fd4.less') }}" rel="stylesheet" type="text/less"
+          media="screen,projection,tv" />
+  {% endcompress %}
   {% include "includes/google_analytics.html" %}
 
   {{ browserid_css() }}
@@ -116,7 +123,7 @@
             <div class="large-3 columns" id="logo-box">
               <div class="row">
                 <a class="logo" href="{{ url('main') }}">
-                  <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
+                  <img src="{{ static('base/img/remo/remo_logo_medium.png') }}"
                        alt="Mozilla Reps logo">
                   {% block logo %}
                   <h2><span class="metabold">mozilla</span> reps</h2>
@@ -286,14 +293,21 @@
   <!-- Join modal end -->
 
   <!-- Included JS Files -->
-  {% if get_development_environment() %}
-    {{ js('common-dbg-fd4') }}
-  {% else %}
-    {{ js('common-fd4') }}
-  {% endif %}
+  {% compress js %}
+    <script src="{{ static('base/js/jquery-1.7.1.js') }}"></script>
+    <script src="{{ static('base/js/modernizr.foundation-4.js') }}"></script>
+    <script src="{{ static('base/js/foundation-4.min.js') }}"></script>
+    <script src="{{ static('base/js/jquery.prettydate.js') }}"></script>
+    <script src="{{ static('base/js/jquery.imageready.min.js') }}"></script>
+    <script src="{{ static('base/js/placeholder.min.js') }}"></script>
+    <script src="{{ static('base/js/remolib.js') }}"></script>
+  {% endcompress %}
   <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
   {% block bottomextra %} {% endblock %}
-  {{  js('init-fd4') }}
+  {% compress js %}
+    <script src="{{ static('base/js/app.js') }}"></script>
+    <script src="{{ static('base/js/init.js') }}"></script>
+  {% endcompress %}
   {{ browserid_js() }}
 </body>
 

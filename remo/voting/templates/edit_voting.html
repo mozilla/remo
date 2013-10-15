@@ -370,7 +370,7 @@
 {% endblock%}
 
 {% block bottomextra %}
-  {{ css('leaflet') }}
-  {{ js('leaflet') }}
-  {{ js('voting_edit_voting') }}
+  {% compress js %}
+    <script src="{{ static('voting/js/voting_edit_voting.js') }}"></script>
+  {% endcompress %}
 {% endblock %}

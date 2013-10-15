@@ -24,16 +24,24 @@
   <title>
     {% block pagetitle %}Mozilla Reps{% endblock%}
   </title>
-  <link rel="shortcut icon" href="{{ MEDIA_URL }}img/remo/shortcut.ico" />
+  <link rel="shortcut icon" href="{{ static('base/img/remo/shortcut.ico') }}" />
   <!-- Included CSS Files -->
   <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet" />
-  {{ css('common') }}
+  {% compress css %}
+    <link href="{{ static('base/css/foundation.css') }}" rel="stylesheet"
+          media="screen,projection,tv" />
+  {% endcompress %}
   <!--[if lt IE 9]>
-      {{ css('common_ie') }}
+      {% compress css %}
+        <link href="{{ static('base/css/ie.css') }}" rel="stylesheet"
+              media="screen,projection,tv" />
+      {% endcompress %}
   <![endif]-->
   <!-- IE Fix for HTML5 Tags -->
   <!--[if lt IE 9]>
-      {{ js('common_ie') }}
+      {% compress js %}
+        <script src="{{ static('base/js/html5.js') }}"></script>
+      {% endcompress %}
   <![endif]-->
 
   <!-- Bing ownership verification -->
@@ -41,12 +49,10 @@
 
   {% block headextra %} {% endblock %}
   <!-- our css is always last to override stuff -->
-  {% if get_development_environment() %}
-    <link href="/media/css/remo/app.less" rel="stylesheet/less">
-    {{ js('less') }}
-  {% else %}
-    {{ css('remo') }}
-  {% endif %}
+  {% compress css %}
+    <link href="{{ static('base/css/app.less') }}" rel="stylesheet" type="text/less"
+          media="screen,projection,tv" />
+  {% endcompress %}
   {% include "includes/google_analytics.html" %}
 
   {{ browserid_css() }}
@@ -120,7 +126,7 @@
             <div class="four columns" id="logo-box">
               <div class="row hide-on-phones">
                 <a href="{{ url('main') }}">
-                  <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
+                  <img src="{{ static('base/img/remo/remo_logo_medium.png') }}"
                        alt="Mozilla Reps logo">
                   <h3><span class="metabold">mozilla</span> reps</h3>
                 </a>
@@ -128,7 +134,7 @@
               <!-- Mobile Logo -->
               <div class="row show-on-phones">
                 <a href="{{ url('main') }}">
-                  <img src="{{ MEDIA_URL }}img/remo/remo_logo_medium.png"
+                  <img src="{{ static('base/img/remo/remo_logo_medium.png') }}"
                        alt="Mozilla Reps logo">
                   <h3><span class="metabold">mozilla</span> reps</h3>
                 </a>
@@ -295,11 +301,14 @@
   <!-- Join modal end -->
 
   <!-- Included JS Files -->
-  {% if get_development_environment() %}
-    {{ js('common-dbg') }}
-  {% else %}
-    {{ js('common') }}
-  {% endif %}
+  {% compress js %}
+    <script src="{{ static('base/js/jquery-1.7.1.js') }}"></script>
+    <script src="{{ static('base/js/modernizr.foundation.js') }}"></script>
+    <script src="{{ static('base/js/foundation.js') }}"></script>
+    <script src="{{ static('base/js/jquery.prettydate.js') }}"></script>
+    <script src="{{ static('base/js/remolib.js') }}"></script>
+    <script src="{{ static('base/js/app.js') }}"></script>
+  {% endcompress %}
   <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
   {{ browserid_js() }}
   {% block bottomextra %} {% endblock %}

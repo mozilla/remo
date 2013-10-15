@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
@@ -24,7 +25,7 @@ class RegisterMiddleware(object):
                         kwargs={'display_name':
                                 request.user.userprofile.display_name})]
 
-            if (not request.path.startswith('/media') and
+            if (not request.path.startswith(settings.STATIC_URL) and
                     not filter(lambda x: request.path == x, allow_urls)):
                 messages.warning(request, 'Please complete your '
                                           'profile before proceeding.')
