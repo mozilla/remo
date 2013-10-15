@@ -9,7 +9,7 @@ Mozilla Reps - {{ event.name }}
 <meta property="og:title" content="{{ event.name }} - Mozilla Reps" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="{{ event_link }}" />
-<meta property="og:image" content="{{ MEDIA_URL }}img/remo/remo-logo-og.jpg" />
+<meta property="og:image" content="{{ static('base/img/remo/remo-logo-og.jpg') }}" />
 <meta property="og:description" content="{{ event.description|truncate(200) }}">
 {% endblock %}
 
@@ -645,10 +645,22 @@ Mozilla Reps - {{ event.name }}
 {% endblock %}
 
 {% block bottomextra %}
-  {{ css('leaflet') }}
+  {% compress css %}
+    <link rel="stylesheet" href="{{ static('base/css/leaflet.css') }}"
+          media="screen,projection,tv" />
+    <link rel="stylesheet" href="{{ static('base/css/L.Control.Locate.css') }}"
+          media="screen,projection,tv" />
+  {% endcompress %}
   <!--[if lte IE 8]>
-    <link rel="stylesheet" href="{{ MEDIA_URL }}/leaflet/leaflet.ie.css" />
+    {% compress css %}
+      <link rel="stylesheet" href="{{ static('base/css/leaflet.ie.css') }}" />
+    {% endcompress %}
   <![endif]-->
-  {{ js('leaflet') }}
-  {{ js('events_view_event') }}
+  {% compress js %}
+    <script src="{{ static('base/js/leaflet.js') }}"></script>
+    <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
+    <script src="{{ static('events/js/jquery.zflickrfeed.js') }}"></script>
+    <script src="{{ static('events/js/jquery.tweet.js') }}"></script>
+    <script src="{{ static('events/js/events_view_event.js') }}"></script>
+  {% endcompress %}
 {% endblock %}

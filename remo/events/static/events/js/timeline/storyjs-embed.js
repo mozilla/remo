@@ -479,7 +479,7 @@ var WebFontConfig;
 
 if(typeof embed_path == 'undefined' || typeof embed_path == 'undefined') {
 	// REPLACE WITH YOUR BASEPATH IF YOU WANT OTHERWISE IT WILL TRY AND FIGURE IT OUT
-	var embed_path = '/media/'
+	var embed_path = '/static/'
 }
 
 function getEmbedScriptPath(scriptname) {
@@ -640,7 +640,7 @@ function createStoryJS(c, src) {
 	if (storyjs_e_config.lang.match("/")) {
 		path.locale = storyjs_e_config.lang;
 	} else {
-	    path.locale = '/media/js/libs/timeline/locale/en.js';
+	    path.locale = '/static/js/timeline/locale/en.js';
 	}
 	
 		

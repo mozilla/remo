@@ -37,7 +37,6 @@ def update_assets(ctx):
     with ctx.lcd(settings.SRC_DIR):
         # LANG=en_US.UTF-8 is sometimes necessary for the YUICompressor.
         ctx.local('LANG=en_US.UTF8 python ./manage.py collectstatic --noinput')
-        ctx.local('LANG=en_US.UTF8 python ./manage.py compress_assets')
 
 
 @task
@@ -47,6 +46,7 @@ def update_db(ctx):
     """
     with ctx.lcd(settings.SRC_DIR):
         ctx.local('python ./manage.py migrate')
+
 
 @task
 def update_product_details(ctx):
@@ -81,12 +81,12 @@ def update_celery(ctx):
 def update_info(ctx, tag):
     """Write info about the current state to a publicly visible file."""
     with ctx.lcd(settings.SRC_DIR):
-        ctx.local('date > media/revision_info.txt')
-        ctx.local('git branch >> media/revision_info.txt')
-        ctx.local('git log -3 >> media/revision_info.txt')
-        ctx.local('git status >> media/revision_info.txt')
-        ctx.local('git submodule status >> media/revision_info.txt')
-        ctx.local('git rev-parse HEAD > media/revision.txt')
+        ctx.local('date > static/revision_info.txt')
+        ctx.local('git branch >> static/revision_info.txt')
+        ctx.local('git log -3 >> static/revision_info.txt')
+        ctx.local('git status >> static/revision_info.txt')
+        ctx.local('git submodule status >> static/revision_info.txt')
+        ctx.local('git rev-parse HEAD > static/revision.txt')
 
         if NEW_RELIC_API_KEY and NEW_RELIC_APP_ID:
             print 'Post deploy event to NewRelic'
