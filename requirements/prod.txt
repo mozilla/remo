@@ -1,3 +1,2 @@
--r ../vendor/src/funfactory/funfactory/requirements/prod.txt
 south
 BeautifulSoup<4.0
