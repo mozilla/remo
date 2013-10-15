@@ -27,8 +27,8 @@ class CreateUserTest(TestCase):
 
         """
         # check if actual email sending is enabled and if yes do not run
-        if (settings.EMAIL_BACKEND !=
-            'django.core.mail.backends.locmem.EmailBackend'):
+        if ((settings.EMAIL_BACKEND !=
+             'django.core.mail.backends.locmem.EmailBackend')):
             raise ValueError('Please change local.py to avoid '
                              'sending testing emails')
 
@@ -132,15 +132,15 @@ class FetchEmailsFromWikiTest(TestCase):
              {'query': {},
               'results': {
                   'items':
-                  [{'properties':{'bugzillamail':'foo@example.com'},
-                     'uri': 'https:\/\/wiki.mozilla.org\/index.php?'
-                            'title=User:fooexample'},
-                   {'properties':{'bugzillamail':'test@example.com'},
-                    'uri': 'https:\/\/wiki.mozilla.org\/index.php?'
-                           'title=User:testexample'},
-                   {'properties':{'bugzillamail':'testexample.com'},
-                    'uri': 'https:\/\/wiki.mozilla.org\/index.php?'
-                           'title=User:bogus'}]}}})
+                  [{'properties': {'bugzillamail': 'foo@example.com'},
+                    'uri': ('https:\/\/wiki.mozilla.org\/index.php?'
+                            'title=User:fooexample')},
+                   {'properties': {'bugzillamail': 'test@example.com'},
+                    'uri': ('https:\/\/wiki.mozilla.org\/index.php?'
+                            'title=User:testexample')},
+                   {'properties': {'bugzillamail': 'testexample.com'},
+                    'uri': ('https:\/\/wiki.mozilla.org\/index.php?'
+                            'title=User:bogus')}]}}})
 
         (fake_requests_obj.expects_call().returns(request))
 
@@ -155,6 +155,7 @@ class FetchEmailsFromWikiTest(TestCase):
         eq_(lines[0], 'foo@example.com')
         eq_(lines[1], 'test@example.com')
         eq_(lines[2], '')
+
 
 class CronjobsTest(TestCase):
     """Tests for cronjobs management command."""

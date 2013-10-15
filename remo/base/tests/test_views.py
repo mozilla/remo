@@ -1,5 +1,6 @@
 # Authentication tests based on airmozilla
-# https://github.com/mozilla/airmozilla/blob/master/airmozilla/auth/tests/test_views.py
+# https://github.com/mozilla/airmozilla/blob/master/airmozilla/\
+#   auth/tests/test_views.py
 
 import base64
 import json
@@ -81,6 +82,7 @@ assert json.loads(NOT_VOUCHED_MOZILLIAN)
 
 class MozillianResponse(object):
     """Mozillians Response."""
+
     def __init__(self, content=None, status_code=200):
         self.content = content
         self.status_code = status_code
@@ -88,8 +90,10 @@ class MozillianResponse(object):
 
 class MozilliansTest(TestCase):
     """Test Moziilians."""
+
     @mock.patch('requests.get')
     def test_is_vouched(self, rget):
+
         def mocked_get(url, **options):
             if 'vouched' in url:
                 return MozillianResponse(VOUCHED_MOZILLIAN)

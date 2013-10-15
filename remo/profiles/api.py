@@ -44,7 +44,7 @@ class ProfileResource(ModelResource):
     functional_areas = fields.ToManyField(FunctionalAreasResource,
                                           attribute='functional_areas',
                                           full=True, null=True)
-    mentor = fields.ToOneField('remo.profiles.api.RepResource', 
+    mentor = fields.ToOneField('remo.profiles.api.RepResource',
                                attribute='mentor')
 
     class Meta:
@@ -142,14 +142,14 @@ class RepResource(ClientCachedResource, ModelResource):
                 for key in ('first_name__istartswith',
                             'last_name__istartswith'):
                     qset |= Q(**{key: term})
-            qset |= (Q(userprofile__display_name__istartswith=query)|
-                     Q(userprofile__local_name__istartswith=query)|
-                     Q(userprofile__irc_name__istartswith=query)|
-                     Q(email__istartswith=query)|
-                     Q(userprofile__private_email__istartswith=query)|
-                     Q(userprofile__country__istartswith=query)|
-                     Q(userprofile__region__istartswith=query)|
-                     Q(userprofile__city__istartswith=query)|
+            qset |= (Q(userprofile__display_name__istartswith=query) |
+                     Q(userprofile__local_name__istartswith=query) |
+                     Q(userprofile__irc_name__istartswith=query) |
+                     Q(email__istartswith=query) |
+                     Q(userprofile__private_email__istartswith=query) |
+                     Q(userprofile__country__istartswith=query) |
+                     Q(userprofile__region__istartswith=query) |
+                     Q(userprofile__city__istartswith=query) |
                      Q(userprofile__functional_areas__name__istartswith=query))
 
             base_object_list = base_object_list.filter(qset).distinct()

@@ -16,6 +16,7 @@ from models import Poll, RadioPoll, RadioPollChoice, RangePoll, RangePollChoice
 
 class RangePollChoiceVoteForm(happyforms.Form):
     """Range voting vote form."""
+
     def __init__(self, choices, *args, **kwargs):
         """Initialize form
 
@@ -38,13 +39,14 @@ class RangePollChoiceVoteForm(happyforms.Form):
 
 class RadioPollChoiceVoteForm(happyforms.Form):
     """Radio voting vote form."""
+
     def __init__(self, radio_poll, *args, **kwargs):
         """Initialize form
 
         Dynamically set field for the answers in a radio voting.
         """
         super(RadioPollChoiceVoteForm, self).__init__(*args, **kwargs)
-        choices = (((None, '----'),) +
+        choices = (tuple((None, '----')) +
                    tuple(radio_poll.answers.values_list('id', 'answer')))
         self.fields['radio_poll__%s' % str(radio_poll.id)] = (
             forms.ChoiceField(widget=forms.Select(),
@@ -233,6 +235,7 @@ RangePollChoiceFormset = (
 
 class BaseRangePollInlineFormSet(BaseInlineFormSet):
     """Formset for range polls."""
+
     def __init__(self, *args, **kwargs):
         self._user_list = kwargs.pop('user_list')
         """Init with minimum number of 1 form."""
@@ -335,6 +338,7 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
 
 
 class BaseRadioPollChoiceInlineFormset(BaseInlineFormSet):
+
     def __init__(self, *args, **kwargs):
         """Initialize form."""
         super(BaseRadioPollChoiceInlineFormset, self).__init__(*args, **kwargs)
@@ -371,6 +375,7 @@ RadioPollChoiceFormset = (
 
 class BaseRadioPollInlineFormSet(BaseInlineFormSet):
     """Formset for range polls."""
+
     def __init__(self, *args, **kwargs):
         """Initialize form."""
         super(BaseRadioPollInlineFormSet, self).__init__(*args, **kwargs)

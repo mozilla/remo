@@ -4,7 +4,6 @@ from models import (Poll, RadioPoll, RadioPollChoice,
                     RangePoll, RangePollChoice, Vote)
 
 
-# Range poll
 class RangePollChoiceInline(admin.StackedInline):
     """Poll Range Votes Inline."""
     model = RangePollChoice
@@ -17,7 +16,6 @@ class RangePollInline(admin.StackedInline):
     extra = 0
 
 
-# Radio poll choice
 class RadioPollChoiceInline(admin.StackedInline):
     """Radio Poll Choice Inline."""
     model = RadioPollChoice

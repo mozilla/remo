@@ -1,7 +1,9 @@
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import include, patterns, url
 from django.views.generic.simple import direct_to_template
 
-urlpatterns = patterns('',
+
+urlpatterns = patterns(
+    '',
     url(r'^browserid/', include('django_browserid.urls')),
     url(r'dashboard/$', 'remo.base.views.dashboard', name='dashboard'),
     url(r'dashboard/emailmentees/$', 'remo.base.views.email_mentees',

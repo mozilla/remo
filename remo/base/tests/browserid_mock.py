@@ -1,5 +1,6 @@
 # From Mozillians
-# https://github.com/mozilla/mozillians/blob/master/apps/common/browserid_mock.py
+# https://github.com/mozilla/mozillians/blob/master/apps/common/\
+#   browserid_mock.py
 from django.conf import settings
 from django.utils.functional import wraps
 
@@ -8,17 +9,12 @@ from mock import patch
 
 class mock_browserid(object):
     """Mock BrowserID."""
+
     def __init__(self, email=None):
         self.settings_patches = (
-            patch.object(
-                settings, 'AUTHENTICATION_BACKENDS',
-                ('django_browserid.auth.BrowserIDBackend',),
-            ),
-            patch.object(
-                settings, 'SITE_URL',
-                'http://testserver',
-            )
-        )
+            patch.object(settings, 'AUTHENTICATION_BACKENDS',
+                         ['django_browserid.auth.BrowserIDBackend']),
+            patch.object(settings, 'SITE_URL', 'http://testserver'))
         self.patcher = patch('django_browserid.base._verify_http_request')
         if email is not None:
             self.return_value = {'status': 'okay', 'email': email}
@@ -36,6 +32,7 @@ class mock_browserid(object):
         self.patcher.stop()
 
     def __call__(self, func):
+
         @wraps(func)
         def inner(*args, **kwargs):
             with self:

@@ -27,9 +27,9 @@ class EventResource(ClientCachedResource, ModelResource):
     owner_profile_url = fields.CharField()
     event_url = fields.CharField()
     multiday = fields.BooleanField()
-    categories = fields.ToManyField('remo.profiles.api.FunctionalAreasResource',
-                                    attribute='categories',
-                                    full=True, null=True)
+    categories = fields.ToManyField(
+        'remo.profiles.api.FunctionalAreasResource',
+        attribute='categories', full=True, null=True)
 
     class Meta:
         cache_control = {"max_age": 1800, "s_maxage": 1800}
@@ -45,7 +45,8 @@ class EventResource(ClientCachedResource, ModelResource):
                   'external_link', 'description', 'mozilla_event', 'owner',
                   'estimated_attendance']
         filtering = {'name': ALL, 'city': ALL, 'region': ALL, 'country': ALL,
-                     'start': ALL, 'end': ALL, 'categories': ALL_WITH_RELATIONS}
+                     'start': ALL, 'end': ALL,
+                     'categories': ALL_WITH_RELATIONS}
 
     def dehydrate_name(self, bundle):
         """Sanitize event name."""
@@ -98,13 +99,13 @@ class EventResource(ClientCachedResource, ModelResource):
                 for key in ('owner__first_name__istartswith',
                             'owner__last_name__istartswith'):
                     qset |= Q(**{key: term})
-            qset |= (Q(owner__userprofile__display_name__istartswith=query)|
-                     Q(owner__userprofile__local_name__istartswith=query)|
-                     Q(owner__email__istartswith=query)|
-                     Q(owner__userprofile__private_email__istartswith=query)|
-                     Q(country__istartswith=query)|
-                     Q(region__istartswith=query)|
-                     Q(city__istartswith=query)|
+            qset |= (Q(owner__userprofile__display_name__istartswith=query) |
+                     Q(owner__userprofile__local_name__istartswith=query) |
+                     Q(owner__email__istartswith=query) |
+                     Q(owner__userprofile__private_email__istartswith=query) |
+                     Q(country__istartswith=query) |
+                     Q(region__istartswith=query) |
+                     Q(city__istartswith=query) |
                      Q(name__icontains=query))
 
             base_object_list = base_object_list.filter(qset).distinct()

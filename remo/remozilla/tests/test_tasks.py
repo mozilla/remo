@@ -21,8 +21,8 @@ class FetchBugsTest(TestCase):
     @fudge.patch('requests.get')
     def test_connection_error(self, fake_requests_obj):
         """Test fetch_bugs connection error exception."""
-        if (not getattr(settings, 'REMOZILLA_USERNAME', None) or
-            not getattr(settings, 'REMOZILLA_PASSWORD', None)):
+        if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
+             not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME '
                            'or REMOZILLA_PASSWORD.')
         (fake_requests_obj.expects_call().raises(requests.ConnectionError))
@@ -32,8 +32,8 @@ class FetchBugsTest(TestCase):
     @fudge.patch('requests.get')
     def test_invalid_return_code(self, fake_requests_obj):
         """Test fetch_bugs invalid status code exception."""
-        if (not getattr(settings, 'REMOZILLA_USERNAME', None) or
-            not getattr(settings, 'REMOZILLA_PASSWORD', None)):
+        if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
+             not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME '
                            'or REMOZILLA_PASSWORD.')
         request = requests.Request()
@@ -45,8 +45,8 @@ class FetchBugsTest(TestCase):
     @fudge.patch('requests.get')
     def test_with_valid_data(self, fake_requests_obj):
         """Test fetch_bugs valid bug data processing."""
-        if (not getattr(settings, 'REMOZILLA_USERNAME', None) or
-            not getattr(settings, 'REMOZILLA_PASSWORD', None)):
+        if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
+             not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME.')
 
         previous_last_updated_time = get_last_updated_date()
@@ -54,32 +54,32 @@ class FetchBugsTest(TestCase):
         first_request = requests.Request()
         first_request.status_code = 200
         bug_data = {'bugs': [{'id': 7788,
-                              'summary':'This is summary',
+                              'summary': 'This is summary',
                               'creator': {'name': 'rep@example.com'},
                               'creation_time': '2010-10-5T13:45:23Z',
-                              'component':'Swag Requests',
-                              'whiteboard':'This is whiteboard',
+                              'component': 'Swag Requests',
+                              'whiteboard': 'This is whiteboard',
                               'cc': [{'name': 'mentor@example.com'},
                                      {'name': 'not_a_rep@example.com'}],
-                              'assigned_to':{'name':'mentor@example.com'},
-                              'status':'resolved',
+                              'assigned_to': {'name': 'mentor@example.com'},
+                              'status': 'resolved',
                               'flags': [
                                   {'requestee': {
                                       'ref': '',
                                       'name': 'reps-council@mozilla.com'},
                                    'status': '?',
                                    'name': 'remo-review'}],
-                              'resolution':'invalid'},
+                              'resolution': 'invalid'},
                              {'id': 1199,
-                              'summary':'New summary',
+                              'summary': 'New summary',
                               'creator': {'name': 'not_a_rep@example.com'},
                               'creation_time': '2012-12-5T11:30:23Z',
-                              'component':'Swag requests',
+                              'component': 'Swag requests',
                               'cc': [{'name': 'mentor@example.com'},
                                      {'name': 'not_a_rep@example.com'}],
-                              'assigned_to':{'name':'mentor@example.com'},
-                              'status':'resolved',
-                              'resolution':'invalid'}]}
+                              'assigned_to': {'name': 'mentor@example.com'},
+                              'status': 'resolved',
+                              'resolution': 'invalid'}]}
 
         first_request.text = json.dumps(bug_data)
 

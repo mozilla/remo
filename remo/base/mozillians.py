@@ -1,5 +1,6 @@
 # Code based on airmozilla
-# https://github.com/mozilla/airmozilla/blob/master/airmozilla/auth/mozillians.py
+# https://github.com/mozilla/airmozilla/blob/master/airmozilla/\
+#     auth/mozillians.py
 import json
 import logging
 import requests

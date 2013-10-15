@@ -21,6 +21,7 @@ class BaseEmailUsersFrom(happyforms.Form):
 
 class EmailUsersForm(BaseEmailUsersFrom):
     """Generic form to send email to multiple users."""
+
     def __init__(self, users, *args, **kwargs):
         """Initialize form.
 
@@ -113,6 +114,7 @@ class EditSettingsForm(happyforms.ModelForm):
 
 class TrackFunctionalAreasForm(happyforms.ModelForm):
     """Form for tracking interests in functional areas for Mozillians."""
+
     class Meta:
         model = UserProfile
         fields = ['tracked_functional_areas']

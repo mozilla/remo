@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
+from funfactory.helpers import urlparams
 from nose.tools import eq_
 from test_utils import TestCase
 
-from ..models import Event
-from ..helpers import *
+from remo.events.models import Event
+from remo.events.helpers import (get_contribute_link, get_event_search_link,
+                                 get_sorted_attendance_list, is_multiday)
 
 
 class HelpersTest(TestCase):
@@ -48,4 +50,5 @@ class HelpersTest(TestCase):
         """Test event search link generation."""
         search = 'SearchTerm'
         url = reverse('events_list_events')
-        eq_(get_event_search_link(search), urlparams(url, '/search/searchterm/'))
+        eq_(get_event_search_link(search),
+            urlparams(url, '/search/searchterm/'))

@@ -104,7 +104,8 @@ class Event(caching.base.CachingMixin, models.Model):
 
         Specs:
 
-        * Return future events that match the same country and one or more categories.
+        * Return future events that match the same country and one or
+          more categories.
         * If less than 3 matches, show upcoming events with the same country.
         * If less than 3 matches, show upcoming events with the same category.
         * Order by date, earliest date first.
@@ -115,7 +116,8 @@ class Event(caching.base.CachingMixin, models.Model):
         country = Q(country=self.country)
         category = Q(categories__in=self.categories.all())
 
-        if events.filter(country, category).distinct().count() < SIMILAR_EVENTS:
+        if ((events.filter(country, category).distinct().count() <
+             SIMILAR_EVENTS)):
             if events.filter(country).count() < SIMILAR_EVENTS:
                 return events.filter(category).distinct()
             return events.filter(country)

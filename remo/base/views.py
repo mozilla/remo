@@ -28,6 +28,7 @@ USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
 
 
 class BrowserIDVerify(Verify):
+
     def login_failure(self, error=None, message=None):
         """Custom login failed method.
 

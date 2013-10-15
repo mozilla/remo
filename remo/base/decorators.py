@@ -54,8 +54,8 @@ def permission_check(permissions=[], group=None,
         def wrapper(request, *args, **kwargs):
 
             def _check_if_user_has_permissions():
-                if ((permissions and request.user.has_perms(permissions)) or
-                    request.user.groups.filter(name=group).exists()):
+                if (((permissions and request.user.has_perms(permissions)) or
+                     request.user.groups.filter(name=group).exists())):
                     return True
                 return False
 
@@ -68,11 +68,10 @@ def permission_check(permissions=[], group=None,
                 return False
 
             if request.user.is_authenticated():
-                if ((not permissions and not group and not filter_field) or
-                    request.user.is_superuser or
-                    _check_if_user_owns_page() or
-                    _check_if_user_has_permissions()):
-
+                if (((not permissions and not group and not filter_field) or
+                     request.user.is_superuser or
+                     _check_if_user_owns_page() or
+                     _check_if_user_has_permissions())):
                     return func(request, *args, **kwargs)
                 else:
                     messages.error(request, 'Permission denied.')
