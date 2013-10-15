@@ -308,7 +308,9 @@ Mozilla Reps - {{ event.name }}
                   {% set end = event.local_end %}
                   <li class="row">
                     <div class="large-2 columns">
-                      <a href="#" class="event-date">{{ start.day }}</a>
+                      <div class="event-date">
+                        {{ start.day }}
+                      </div>
                     </div>
                     <div class="event-detail large-10 columns">
                       <a class="event-title" href="{{ get_event_link(event) }}">
