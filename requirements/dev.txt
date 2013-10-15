@@ -2,10 +2,9 @@
 # needed to run the site, it belongs in requirements/prod.txt. If it's a
 # package for developers (testing, docs, etc.), it goes in this file.
 
--r compiled.txt
-
-# Commenting dev.txt from functory because it brings in prod.txt
 -r ../vendor/src/funfactory/funfactory/requirements/dev.txt
+-r compiled.txt
+-r prod.txt
 
 fudge
 pyquery
