@@ -4,3 +4,4 @@ src/markdown
 src/django-waffle
 src/factory_boy
 src/django-cache-machine
+src/jingo-offline-compressor
