@@ -6,6 +6,24 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from funfactory.monkeypatches import patch
 patch()
 
+# funfactory puts the more limited CompressorExtension extension in
+# but we need the one from jingo_offline_compressor.jinja2ext otherwise we
+# might an error like this:
+#
+#    AttributeError: 'CompressorExtension' object has no attribute 'nodelist'
+#
+from jingo_offline_compressor.jinja2ext import CompressorExtension
+import jingo
+try:
+    jingo.env.extensions.pop(
+        'compressor.contrib.jinja2ext.CompressorExtension'
+    )
+except KeyError:
+    # happens if the urlconf is loaded twice
+    pass
+jingo.env.add_extension(CompressorExtension)
+
+
 handler404 = 'remo.base.views.custom_404'
 handler500 = 'remo.base.views.custom_500'
 robots_txt = 'remo.base.views.robots_txt'
