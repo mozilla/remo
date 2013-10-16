@@ -210,10 +210,10 @@ Mozilla Reps - Events
   <!--[if lte IE 8]>
       <link rel="stylesheet" href="{{ static('base/css/leaflet.ie.css') }}" />
   <![endif]-->
-  {% compress js %}
-    <script src="{{ static('events/js/timeline/timeline.js') }}"></script>
-    <script src="{{ static('events/js/timeline/storyjs-embed.js') }}"></script>
-  {% endcompress %}
+
+  <script src="{{ static('events/js/timeline/timeline.js') }}"></script>
+  <script src="{{ static('events/js/timeline/storyjs-embed.js') }}"></script>
+
   {% compress js %}
     <script src="{{ static('base/js/leaflet.js') }}"></script>
     <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
