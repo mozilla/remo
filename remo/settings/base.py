@@ -22,6 +22,7 @@ INSTALLED_APPS = ['south'] + \
                      'remo.voting',
 
                      'django_browserid',
+                     'jingo_offline_compressor',
                      'tastypie',
                      'waffle']
 
@@ -138,3 +139,4 @@ CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_ENABLE_UTC = True
 
 COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True

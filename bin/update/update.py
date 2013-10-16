@@ -37,6 +37,7 @@ def update_assets(ctx):
     with ctx.lcd(settings.SRC_DIR):
         # LANG=en_US.UTF-8 is sometimes necessary for the YUICompressor.
         ctx.local('LANG=en_US.UTF8 python ./manage.py collectstatic --noinput')
+        ctx.local('LANG=en_US.UTF8 python ./manage.py compress_jingo')
 
 
 @task
