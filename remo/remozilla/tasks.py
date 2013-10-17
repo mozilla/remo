@@ -97,7 +97,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
                     if (flag['status'] == '?'
                         and flag['name'] == 'remo-review'
                         and flag['requestee']['name'] == (
-                            settings.REPS_COUNCIL_LIST)):
+                            settings.AUTOMATED_POLL_NEEDINFO_EMAIL)):
                         bug.council_vote_requested = True
 
                 comments = bdata.get('comments', [])
