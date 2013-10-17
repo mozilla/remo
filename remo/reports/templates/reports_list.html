@@ -189,39 +189,29 @@
 
     <div class="row">
       <div class="large-12 columns" id="reports-pagination">
-        <ul class="pagination">
-          {% if reports.has_previous() %}
-            <li>
-              <a href="{{ '#'|urlparams(page=reports.previous_page_number(),
-                                        sort_key=sort_key, query=query) }}">
-                &laquo;
-              </a>
-            </li>
-          {% else %}
-            <li class="unavailable">
-              <a href="">&laquo;</a>
-            </li>
-          {% endif %}
+        {% if reports.has_previous() %}
+          <a class="prev" title="Previous page" data-tooltip
+              href="{{ '#'|urlparams(page=reports.previous_page_number(),
+                                     sort_key=sort_key, query=query) }}">
+            &laquo;
+          </a>
+        {% endif %}
+        <label for="page-select">Page: </label>
+        <select id="page-select" autocomplete="off">
           {% for i in range(1, reports.paginator.num_pages + 1) %}
-            <li {% if i == reports.number %} class="current" {% endif %}>
-              <a href="{{ '#'|urlparams(page=i, sort_key=sort_key, query=query) }}">
+            <option {% if i == reports.number %} selected {% endif %}
+                    value="{{ '#'|urlparams(page=i, sort_key=sort_key, query=query) }}">
                 {{ i }}
-              </a>
-            </li>
+            </option>
           {% endfor %}
-          {% if reports.has_next() %}
-            <li>
-              <a href="{{ '#'|urlparams(page=reports.next_page_number(),
-                                        sort_key=sort_key, query=query) }}">
-                &raquo;
-              </a>
-            </li>
-          {% else %}
-            <li class="unavailable">
-              <a href="">&raquo;</a>
-            </li>
-          {% endif %}
-        </ul>
+        </select>
+        {% if reports.has_next() %}
+          <a class="next" title="Next page" data-tooltip
+             href="{{ '#'|urlparams(page=reports.next_page_number(),
+                                    sort_key=sort_key, query=query) }}">
+            &raquo;
+          </a>
+        {% endif %}
       </div>
     </div>
   {% endif %}
@@ -237,4 +227,10 @@
   </div>
 </main>
 
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('reports/js/reports_list.js') }}"></script>
+  {% endcompress %}
 {% endblock %}
