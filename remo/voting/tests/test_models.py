@@ -61,10 +61,10 @@ class VotingMailNotificationTest(TestCase):
         automated_poll.save()
         eq_(len(mail.outbox), 6)
         for email in mail.outbox:
-            if settings.REPS_COUNCIL_LIST in email.to:
+            if settings.REPS_COUNCIL_ALIAS in email.to:
                 break
         else:
-            raise Exception('No email sent to REPS_COUNCIL_LIST')
+            raise Exception('No email sent to REPS_COUNCIL_ALIAS')
 
 
 

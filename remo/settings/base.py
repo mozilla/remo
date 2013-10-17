@@ -119,8 +119,7 @@ CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
 
 
 REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
-REPS_COUNCIL_LIST = 'reps-council@lists.mozilla.org'
-AUTOMATED_POLL_NEEDINFO_EMAIL = 'reps-council@mozilla.com'
+REPS_COUNCIL_ALIAS = 'reps-council@mozilla.com'
 
 # Mozillians API
 MOZILLIANS_API_BASE = 'https://mozillians.org'

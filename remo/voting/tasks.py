@@ -22,7 +22,7 @@ def send_voting_mail(voting_id, subject, email_template):
     if poll.automated_poll:
         message = render_to_string(email_template, data)
         send_mail(subject, message, settings.FROM_EMAIL,
-                  [settings.REPS_COUNCIL_LIST])
+                  [settings.REPS_COUNCIL_ALIAS])
     else:
         user_list = User.objects.filter(groups=poll.valid_groups)
 
