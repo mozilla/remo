@@ -87,7 +87,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
                         bug.cc.add(cc_user)
 
                 bug.assigned_to = get_object_or_none(
-                    User, email=(bdata['assigned_to']['name']))
+                    User, email=bdata['assigned_to']['name'])
                 bug.status = bdata['status']
                 bug.resolution = bdata.get('resolution', '')
                 bug.bug_last_change_time = parse_bugzilla_time(

@@ -4,7 +4,7 @@ from celery.task import control as celery_control
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.conf import settings
 from django.contrib.auth.models import Group, User
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.timezone import now as now_utc
@@ -172,19 +172,22 @@ def voting_set_groups(app, sender, signal, **kwargs):
 
 
 @receiver(post_save, sender=Bug,
-          dispatch_uid='remozilla_create_radio_poll_signal')
-def create_radio_poll(sender, instance, **kwargs):
+          dispatch_uid='remozilla_automated_poll_signal')
+def automated_poll(sender, instance, **kwargs):
     """Create a radio poll automatically.
 
     If a bug lands in our database with council_vote_requested, create
     a new Poll and let Council members vote.
 
     """
-    if (instance.council_vote_requested
-            and not Poll.objects.filter(bug=instance).exists()):
-        date_now = datetime2pdt()
-        remobot = User.objects.get(username='remobot')
+    if ((not instance.council_vote_requested
+         or Poll.objects.filter(bug=instance).exists())):
+        return
 
+    date_now = datetime2pdt()
+    remobot = User.objects.get(username='remobot')
+
+    with transaction.commit_on_success():
         poll = (Poll.objects
                 .create(name=instance.summary,
                         description=instance.first_comment,
@@ -197,6 +200,5 @@ def create_radio_poll(sender, instance, **kwargs):
 
         radio_poll = RadioPoll.objects.create(poll=poll,
                                               question='Budget Approval')
-
-        for answer in ('Approved', 'Denied'):
-            RadioPollChoice.objects.create(answer=answer, radio_poll=radio_poll)
+        RadioPollChoice.objects.create(answer='Approved', radio_poll=radio_poll)
+        RadioPollChoice.objects.create(answer='Denied', radio_poll=radio_poll)
