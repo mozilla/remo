@@ -1,9 +1,10 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib import quote
 
 import django.utils.timezone as timezone
-from celery.task import task
+
+from celery.task import periodic_task
 from django.conf import settings
 from django.contrib.auth.models import User
 
@@ -14,6 +15,7 @@ from funfactory.helpers import urlparams
 from remo.base.utils import get_object_or_none
 from remo.remozilla.models import Bug
 from remo.remozilla.utils import get_last_updated_date, set_last_updated_date
+
 
 COMPONENTS = ['Budget Requests', 'Community IT Requests', 'Mentorship',
               'Swag Requests', 'Planning']
@@ -40,9 +42,12 @@ def parse_bugzilla_time(time):
     return datetimeobj
 
 
-@task
+@periodic_task(run_every=timedelta(minutes=5))
 def fetch_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
+
+    Using a timdelta for the schedule means the task will be sent in
+    5 minutes intervals.
 
     Loop over components and fetch bugs updated the last days. Link
     Bugzilla users with users on this website, when possible.
