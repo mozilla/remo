@@ -139,3 +139,16 @@ CELERY_ENABLE_UTC = True
 
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
+
+
+def _request_args():
+    from django.conf import settings
+    from tower import ugettext_lazy as _lazy
+
+    args = {'siteName': _lazy('Mozilla Reps'), }
+
+    if settings.SITE_URL.startswith('https'):
+        args['siteLogo'] = '/static/base/img/remo/remo_logo_medium.png'
+
+    return args
+BROWSERID_REQUEST_ARGS = lazy(_request_args, dict)()
