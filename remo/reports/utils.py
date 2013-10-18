@@ -44,8 +44,8 @@ def get_reports_for_year(user, start_year, end_year=None, allow_empty=False,
                              'fullname': number2month(month.month,
                                                       full_name=True)}
 
-            if (reports.filter(month=month).exists() and
-                ((permission > 1 and month >= today) or (month < today))):
+            if ((reports.filter(month=month).exists() and
+                 ((permission > 1 and month >= today) or (month < today)))):
                 report = reports.get(month=month)
                 month_details['report'] = report
                 month_details['class'] = 'exists'
@@ -53,8 +53,8 @@ def get_reports_for_year(user, start_year, end_year=None, allow_empty=False,
             else:
                 month_details['report'] = None
 
-                if (permission < 3 or month_first_report > month or
-                    month > today):
+                if ((permission < 3 or month_first_report > month or
+                     month > today)):
                     month_details['class'] = 'unavailable'
                     month_details['link'] = '#'
                 else:

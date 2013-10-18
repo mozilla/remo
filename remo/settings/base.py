@@ -5,26 +5,26 @@ from funfactory.settings_base import *
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'remo.urls'
 
-INSTALLED_APPS = ['south'] + \
-                 list(INSTALLED_APPS) + [
-                     # Application base, containing global templates.
-                     'django.contrib.admin',
-                     'django.contrib.messages',
-                     'django.contrib.markup',
+INSTALLED_APPS = (['south'] +
+                  list(INSTALLED_APPS) + [
+                      # Application base, containing global templates.
+                      'django.contrib.admin',
+                      'django.contrib.messages',
+                      'django.contrib.markup',
 
-                     'remo.base',
-                     'remo.profiles',
-                     'remo.featuredrep',
-                     'remo.remozilla',
-                     'remo.reports',
-                     'remo.api',
-                     'remo.events',
-                     'remo.voting',
+                      'remo.base',
+                      'remo.profiles',
+                      'remo.featuredrep',
+                      'remo.remozilla',
+                      'remo.reports',
+                      'remo.api',
+                      'remo.events',
+                      'remo.voting',
 
-                     'django_browserid',
-                     'jingo_offline_compressor',
-                     'tastypie',
-                     'waffle']
+                      'django_browserid',
+                      'jingo_offline_compressor',
+                      'tastypie',
+                      'waffle'])
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:
@@ -57,8 +57,7 @@ AUTH_PROFILE_MODULE = 'profiles.UserProfile'
 
 # Add BrowserID as authentication backend
 AUTHENTICATION_BACKENDS = ('django_browserid.auth.BrowserIDBackend',
-                           'django.contrib.auth.backends.ModelBackend',
-                           )
+                           'django.contrib.auth.backends.ModelBackend')
 
 # Required for BrowserID. Very important security feature
 SITE_URL = 'https://reps.mozilla.org'

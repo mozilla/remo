@@ -8,7 +8,6 @@ from nose.tools import eq_
 from test_utils import TestCase
 
 from remo.base.utils import datetime2pdt
-from remo.profiles.tests import UserFactory
 from remo.voting.models import Poll
 
 
@@ -42,7 +41,6 @@ class VotingTestCommands(TestCase):
         eq_(len(mail.outbox), 3)
         for email in mail.outbox:
             eq_(email.to, ['counselor@example.com'])
-
 
     @patch('remo.voting.cron.datetime2pdt')
     def test_extend_voting_period_by_24hours(self, fake_datetime2pdt):

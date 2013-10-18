@@ -19,11 +19,11 @@ from remo.reports.tasks import send_remo_mail
 DISPLAY_NAME_MAX_LENGTH = 50
 
 
-# Monkey patch unicode(User)
 def user_unicode(self):
     """Return user's full name."""
     return self.get_full_name()
 
+# Monkey patch unicode(User)
 User.__unicode__ = user_unicode
 
 

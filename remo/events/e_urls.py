@@ -1,6 +1,7 @@
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, url
 
-urlpatterns = patterns('remo.events.views',
+urlpatterns = patterns(
+    'remo.events.views',
     url(r'^(?P<slug>[a-z0-9-]+)/$', 'view_event',
         name='events_view_event'),
     url(r'^(?P<slug>[a-z0-9-]+)/edit/$', 'edit_event',

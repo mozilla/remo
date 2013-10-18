@@ -17,7 +17,8 @@ from remo.remozilla.models import Bug
 from remo.voting.tasks import send_voting_mail
 
 
-VOTING_PERIOD_AUTOMATED_POLLS = 3 # in days
+# Voting period in days
+VOTING_PERIOD_AUTOMATED_POLLS = 3
 
 
 class Poll(models.Model):
@@ -193,12 +194,14 @@ def automated_poll(sender, instance, **kwargs):
                         description=instance.first_comment,
                         valid_groups=Group.objects.get(name='Council'),
                         start=date_now,
-                        end=(date_now + timedelta(days=VOTING_PERIOD_AUTOMATED_POLLS)),
+                        end=(date_now +
+                             timedelta(days=VOTING_PERIOD_AUTOMATED_POLLS)),
                         bug=instance,
                         created_by=remobot,
                         automated_poll=True))
 
         radio_poll = RadioPoll.objects.create(poll=poll,
                                               question='Budget Approval')
-        RadioPollChoice.objects.create(answer='Approved', radio_poll=radio_poll)
+        RadioPollChoice.objects.create(answer='Approved',
+                                       radio_poll=radio_poll)
         RadioPollChoice.objects.create(answer='Denied', radio_poll=radio_poll)

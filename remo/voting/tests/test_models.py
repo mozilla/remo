@@ -5,12 +5,10 @@ from django.contrib.auth.models import Group, User
 from django.core import mail
 
 import fudge
-
 from nose.tools import eq_, ok_
 from test_utils import TestCase
 
 from remo.base.utils import datetime2pdt
-from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
 from remo.voting.models import Poll
 
@@ -65,7 +63,6 @@ class VotingMailNotificationTest(TestCase):
                 break
         else:
             raise Exception('No email sent to REPS_COUNCIL_ALIAS')
-
 
 
 class AutomatedRadioPollTest(TestCase):

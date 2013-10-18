@@ -30,7 +30,9 @@ robots_txt = 'remo.base.views.robots_txt'
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
+
     # 'me' urls
     url(r'^me/$', 'remo.profiles.views.view_my_profile',
         name='profiles_view_my_profile'),
@@ -72,8 +74,10 @@ urlpatterns = patterns('',
     (r'^robots\.txt$', robots_txt),
 )
 
+
 if settings.DEBUG:
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^404/$', handler404, name='404'),
         url(r'^500/$', handler500, name='500'))
     urlpatterns += staticfiles_urlpatterns()

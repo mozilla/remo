@@ -62,8 +62,8 @@ class Command(BaseCommand):
                     continue
 
                 # sanitize input
-                if (not isinstance(email, basestring) or
-                    not email_re.match(email)):
+                if ((not isinstance(email, basestring) or
+                     not email_re.match(email))):
                     # ignoring invalid email
                     LOGGER.warning('# Invalid email: %s' % entry['uri'])
                     continue

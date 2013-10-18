@@ -171,9 +171,6 @@ class ReportEvent(models.Model):
     participation_type = models.PositiveSmallIntegerField(
         choices=PARTICIPATION_TYPE_CHOICES)
 
-    # class Meta:
-    #     unique_together = ['report', 'link']
-
 
 class ReportLink(models.Model):
     """Link in Reports Model."""

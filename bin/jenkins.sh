@@ -17,10 +17,6 @@ find . -name '*.pyc' -exec rm {} \;
 if [ ! -d "$VENV/bin" ]; then
   echo "No virtualenv found.  Making one..."
   virtualenv $VENV --no-site-packages
-  source $VENV/bin/activate
-  pip install --upgrade pip
-  pip install coverage
-  pip install django_coverage
 fi
 
 git submodule sync -q
@@ -32,6 +28,10 @@ if [ ! -d "$WORKSPACE/vendor" ]; then
 fi
 
 source $VENV/bin/activate
+pip install --upgrade pip
+pip install coverage
+pip install django_coverage
+pip install git+https://github.com/jbalogh/check.git#egg=check
 pip install -q -r requirements/compiled.txt
 pip install -q -r requirements/dev.txt
 
@@ -81,6 +81,12 @@ echo "CREATE DATABASE IF NOT EXISTS ${JOB_NAME}"|mysql -u $DB_USER -h $DB_HOST
 
 echo "Update product_details"
 python manage.py update_product_details
+
+
+echo "Linting..."
+echo ""
+
+find remo -name \*.py | grep -v \/migrations\/ | grep -v "remo/settings/local.py" | xargs check.py | grep -v "unable to detect undefined names" | awk "{ print } END { if (NF > 1) exit 1 }"
 
 echo "Starting tests..."
 export FORCE_DB=1
