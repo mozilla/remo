@@ -88,7 +88,7 @@ def manage_subscription(request, slug, subscribe=True):
 def view_event(request, slug):
     """View event view."""
     event = get_object_or_404(Event, slug=slug)
-    attendees = event.attendees.all()
+    attendees = event.attendees.exclude(groups__name='Mozillians')
     event_url = reverse('events_view_event', kwargs={'slug': slug})
     email_att_initial = {
         'subject': event.name,
