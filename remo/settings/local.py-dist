@@ -110,3 +110,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Mozillians configuration
 # MOZILLIANS_API_APPNAME = ''
 # MOZILLIANS_API_KEY = ''
+
+# STATSD_CLIENT = 'django_statsd.clients.log'
+# STATSD_HOST = 'localhost'
+# STATSD_PORT = 8125
+# STATSD_PREFIX = 'reps'

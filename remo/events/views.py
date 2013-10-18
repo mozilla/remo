@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.csrf import csrf_exempt
 
+from django_statsd.clients import statsd
 from funfactory.helpers import urlparams
 from jinja2 import Markup
 
@@ -201,6 +202,7 @@ def delete_event(request, slug):
     if request.method == 'POST':
         event = get_object_or_404(Event, slug=slug)
         event.delete()
+        statsd.incr('events.deleted')
         messages.success(request, 'Event successfully deleted.')
 
     return redirect('events_list_events')
@@ -246,6 +248,7 @@ def email_attendees(request, slug):
     if request.method == 'POST':
         email_form = EmailUsersForm(attendees, request.POST)
         if email_form.is_valid():
+            statsd.incr('events.email_attendees.total')
             email_form.send_mail(request)
         else:
             messages.error(request, 'Email not sent. Invalid data.')
