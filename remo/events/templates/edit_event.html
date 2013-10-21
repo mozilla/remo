@@ -485,14 +485,22 @@
         <p class="lead">
           Please click the venue location in map
         </p>
-        <div id="map_point" class="map300">
+        <!-- Client-side messages -->
+        <div id="map-message-container" class="hidden">
+          <div class="alert-box">
+            <a href="#" class="close">&times;</a>
+          </div>
+        </div>
+        <div id="map_point" class="map300"
+             data-lat="{{ request.user.userprofile.lat }}"
+             data-lon="{{ request.user.userprofile.lon }}">
         </div>
       </div>
     </div>
     <div class="row">
       <div class="large-6 columns">
-        <input type="text" placeholder="Latitude" class="input-text" id="lat-temp">
-        <input type="text" placeholder="Longitude" class="input-text" id="lon-temp">
+        <input type="text" placeholder="Latitude" class="input-text" id="lat-temp" readonly>
+        <input type="text" placeholder="Longitude" class="input-text" id="lon-temp" readonly>
       </div>
       <div class="large-6 columns use-these">
         <button class="small button update close-reveal-modal">

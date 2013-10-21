@@ -62,7 +62,10 @@ function initialize_map() {
 function handleLocationError() {
     // Show message when geolocation fails
     var msg = 'Sorry, we could not determine your location.';
-    showMessage(msg, 'warning');
+    showMessage({
+        'msg': msg,
+        'tag': 'warning'
+    });
 }
 
 function handleLocationFound(e) {
