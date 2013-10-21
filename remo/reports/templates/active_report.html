@@ -1,0 +1,251 @@
+{% extends "base_fd4.html" %}
+
+{% block pagetitle %}
+Mozilla Reps - {Add} {Edit} a Report
+{% endblock %}
+
+{% block content %}
+<main role="main" class="reports-main">
+  <form id="active-report-form" method="post">
+    {{ csrf() }}
+
+    <div class="row">
+      <div class="large-6 columns">
+        <h1>{Add} {Edit} a Report</h1>
+      </div>
+      <div class="large-6 columns align-right hide-for-small">
+        <button type="button" class="small button alert"
+                data-reveal-id="delete-report">Delete report</button>
+        <button type="submit" class="small button confirm">Save report</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large tag"></div>
+          </div>
+          <div class="large-11 columns">
+            <label class="required" for="activity-type">
+              What did you do?
+            </label>
+            <select id="activity-type"
+                    class="activity-type tip-left"
+                    title="Type of activity"
+                    data-tooltip
+                    data-options="disable-for-touch:true"
+                    required>
+              <option selected>Please select an activity</option>
+              <option>Met with another Mozillian</option>
+              <option>Met with someone outside Mozilla</option>
+              <option>Chaired and hosted an IRC meeting</option>
+              <option value="participated">Participated in a campaign</option>
+            </select>
+
+            <div class="campaign-panel">
+              <label class="required" for="campaign">
+                Which campaign did you participate in?
+              </label>
+              <select id="campaign"
+                      class="tip-left"
+                      title="Select a campaign"
+                      data-tooltip
+                      data-options="disable-for-touch:true"
+                      required>
+                <option selected>Please select a campaign</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large time"></div>
+          </div>
+          <div class="large-11 columns">
+            <label class="required" for="activity-date">
+              When did you do this activity?
+            </label>
+            <input id="activity-date"
+                   class="datepicker tip-left"
+                   type="text"
+                   title="Date of activity"
+                   placeholder="YYYY-MM-DD"
+                   data-tooltip
+                   data-options="disable-for-touch:true"
+                   required />
+          </div>
+        </div>
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large heart"></div>
+          </div>
+          <div class="large-11 columns">
+            <label class="required">
+              Which contribution area(s) does your activity support?
+            </label>
+            <ul id="contribution-areas">
+              <li>
+                <select class="contribution-area tip-left"
+                        title="Select contribution area"
+                        placeholder="DD/MM/YYYY"
+                        data-tooltip
+                        data-options="disable-for-touch:true"
+                        required>
+                  <option selected>Please select a contribution area</option>
+                </select>
+              </li>
+            </ul>
+            <button type="button" id="add-area" class="small button update">
+              Add contribution area
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large pin"></div>
+          </div>
+          <div class="large-11 columns">
+
+            <label for="location">
+              Where did your contribution take place?
+            </label>
+            <div class="location-inputs">
+              <input type="text"
+                     id="location"
+                     class="tip-left"
+                     title="Location of contribution"
+                     placeholder="City, Region, Country"
+                     data-tooltip
+                     data-options="disable-for-touch:true"/>
+              <button type="button"
+                      class="small button pict-button locate"
+                      title="Choose a location"
+                      data-tooltip
+                      data-options="disable-for-touch:true"
+                      data-reveal-id="map-point">Choose a location
+              </button>
+              <input id="lat" name="lat" type="hidden" />
+              <input id="lon" name="lon" type="hidden" />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large www"></div>
+          </div>
+          <div class="large-11 columns">
+            <label for="activity-url">
+              URL for your activity
+            </label>
+            <input type="text"
+                   id="activity-url"
+                   class="tip-left"
+                   placeholder="http://www.example.com"
+                   title="URL for activity"
+                   data-tooltip
+                   data-options="disable-for-touch:true" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large edit"></div>
+          </div>
+          <div class="large-11 columns">
+            <label for="description">
+              Activity description
+            </label>
+            <textarea id="description"
+                      class="flat tip-left"
+                      cols="40" rows="10"
+                      data-tooltip
+                      placeholder="Describe the activity briefly"
+                      title="Activity description"></textarea>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map Point Reveal Modal -->
+    <div id="map-point" class="reveal-modal small">
+      <a class="close-reveal-modal">&#215;</a>
+      <div class="row">
+        <div class="large-12 columns">
+          <p class="lead">
+            Please click a location in the map
+          </p>
+          <div id="map_point" class="map300">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="large-6 columns">
+          <input type="text" placeholder="Latitude" id="lat-temp">
+          <input type="text" placeholder="Longitude" id="lon-temp">
+        </div>
+        <div class="large-6 columns use-these">
+          <button type="button"
+                  class="small button update close-reveal-modal">
+            Use these geo-coordinates &raquo;
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Delete Profile Reveal Modal -->
+  <div id="delete-report" class="reveal-modal small">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">Are you sure you want to do that?</p>
+    <h2>Warning!</h2>
+    <p>
+      By pressing the following button, you will permanently and irreversibly delete this
+      report.
+    </p>
+      <form method="post"
+            action="">
+        {{ csrf() }}
+        <button type="submit"
+                class="large button alert">Delete report</button>
+      </form>
+  </div>
+</main>
+
+<script id="contribution-area-tmpl" type="text/x-jquery-tmpl">
+  <li>
+    <select id="area_id_${ count }" name="area_id_${ count }"
+            class="contribution-area tip-left"
+            title="Select contribution area"
+            placeholder="DD/MM/YYYY"
+            data-tooltip
+            data-options="disable-for-touch:true"
+            required>
+      <option selected>Please select a contribution area</option>
+    </select>
+    <label for="delete_id_${ count }">Delete</label>
+    <input id="delete_id_${ count }" type="checkbox" />
+  </li>
+</script>
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress css %}
+    <link rel="stylesheet" href="{{ static('events/css/jquery-ui-1.10.0.custom.css') }}"
+          media="screen,projection,tv" />
+  {% endcompress %}
+  <link href='//api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.css' rel='stylesheet' />
+  <!--[if lte IE 8]>
+    <link href='//api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.ie.css' rel='stylesheet' />
+  <![endif]-->
+  <script src='//api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.js'></script>
+  {% compress js %}
+    <script src="{{ static('events/js/jquery-ui-1.10.0.custom.js') }}"></script>
+    <script src="{{ static('base/js/jquery.tmpl.js') }}"></script>
+    <script src="{{ static('reports/js/active_report.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

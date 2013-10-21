@@ -304,3 +304,7 @@ def list_reports(request, mentor=None, rep=None):
                    'sort_key': sort_key,
                    'pageheader': pageheader,
                    'query': request.GET.get('query', '')})
+
+def active_report(request):
+
+    return render(request, 'active_report.html')

@@ -7,4 +7,5 @@ urlpatterns = patterns(
     url(r'^rep/(?P<rep>[A-Za-z0-9_]+)/$', 'list_reports',
         name='reports_list_rep_reports'),
     url(r'^$', 'list_reports', name='reports_list_reports'),
+    url(r'^active/$', 'active_report', name='reports_active_report'),
 )

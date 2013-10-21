@@ -1406,6 +1406,25 @@ small.error {
     padding-left: 5px;
 }
 
+.pict-button {
+    position: relative;
+    text-indent: -9999px;
+}
+
+.pict-button:after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -.5em 0 0 -.5em;
+    font-family: "ModernPictogramsNormal";
+    text-indent: 0;
+}
+
+.pict-button.locate:after {
+    content: "~";
+    font-size: 24px;
+}
+
 @media only screen and (max-width: @breakSmall) {
     .pict-icon.large {
         display: block;
@@ -1517,6 +1536,62 @@ small.error {
     }
 }
 
+#active-report-form {
+    h1 {
+        margin-bottom: 30px;
+    }
+    label {
+        display: inline-block;
+        margin-top: 10px;
+        line-height: 1.5em;
+        &.required:after {
+            content: "*";
+            margin-left: .5em;
+        }
+    }
+    input,
+    select {
+        margin-bottom: 40px;
+    }
+    textarea {
+        height: auto;
+        margin-bottom: 30px;
+    }
+    .campaign-panel {
+        display: none;
+    }
+    .location-inputs {
+        overflow: hidden;
+        input {
+            width: 85%;
+            float: left;
+        }
+        button {
+            width: 10%;
+            float: right;
+        }
+    }
+    #contribution-areas {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        li {
+            input,
+            select {
+                margin-bottom: 20px;
+            }
+        }
+    }
+    .contribution-area {
+        width: 70%;
+    }
+    #map-point {
+        input {
+            margin-bottom: 0;
+        }
+    }
+}
+
 @media only screen and (max-width: @breakSmall) {
     .reports-main {
         #search {
@@ -1543,6 +1618,16 @@ small.error {
         }
         #reports-pagination {
             text-align: center;
+        }
+    }
+
+    #active-report-form {
+        .location-inputs {
+            input,
+            button {
+                width: 100%;
+                float: none;
+            }
         }
     }
 }
