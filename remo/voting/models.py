@@ -185,7 +185,8 @@ def automated_poll(sender, instance, **kwargs):
          or Poll.objects.filter(bug=instance).exists())):
         return
 
-    date_now = datetime2pdt()
+    # Delay the start time instance by five minutes
+    date_now = datetime2pdt() + timedelta(minutes=5)
     remobot = User.objects.get(username='remobot')
 
     with transaction.commit_on_success():
