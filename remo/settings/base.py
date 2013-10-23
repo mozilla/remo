@@ -79,9 +79,11 @@ MIDDLEWARE_CLASSES = filter(
     lambda x: x != 'funfactory.middleware.LocaleURLMiddleware',
     MIDDLEWARE_CLASSES)
 
-MIDDLEWARE_CLASSES += ('django.contrib.messages.middleware.MessageMiddleware',
-                       'remo.base.middleware.RegisterMiddleware',
-                       'waffle.middleware.WaffleMiddleware')
+MIDDLEWARE_CLASSES += (
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'remo.base.middleware.RegisterMiddleware',
+    'waffle.middleware.WaffleMiddleware'
+)
 
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django_browserid.context_processors.browserid',
@@ -152,3 +154,6 @@ def _request_args():
 
     return args
 BROWSERID_REQUEST_ARGS = lazy(_request_args, dict)()
+
+# Statsd Graphite
+STATSD_CLIENT = 'django_statsd.clients.normal'

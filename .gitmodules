@@ -26,3 +26,9 @@
 [submodule "vendor-local/src/jingo-offline-compressor"]
 	path = vendor-local/src/jingo-offline-compressor
 	url = https://github.com/peterbe/django-jingo-offline-compressor.git
+[submodule "vendor-local/src/pystatsd"]
+	path = vendor-local/src/pystatsd
+	url = https://github.com/jsocol/pystatsd.git
+[submodule "vendor-local/src/django-statsd"]
+	path = vendor-local/src/django-statsd
+	url = https://github.com/andymckay/django-statsd.git
