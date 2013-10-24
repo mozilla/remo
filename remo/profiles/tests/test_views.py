@@ -1,13 +1,16 @@
+# -*- coding: utf8 -*-
 import datetime
 import time
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test.client import Client
-from nose.tools import eq_
-from test_utils import TestCase
+from django.utils.encoding import iri_to_uri
 
+import mock
+from nose.tools import eq_
 from pyquery import PyQuery as pq
+from test_utils import TestCase
 
 
 class ViewsTest(TestCase):
@@ -310,3 +313,16 @@ class ViewsTest(TestCase):
         response = c.get(url, follow=True)
         self.assertTemplateUsed(response, 'profiles_view.html',
                                 'Admin can\'t view the page')
+
+    @mock.patch('remo.profiles.views.iri_to_uri', wraps=iri_to_uri)
+    def test_view_redirect_list_profiles(self, mocked_uri):
+        """Test redirect to profiles list."""
+        c = Client()
+
+        profiles_url = '/people/Paris & Orléans'
+        response = c.get(profiles_url, follow=True)
+        mocked_uri.assert_called_once_with(u'/Paris & Orléans')
+        expected_url = '/people/#/' + iri_to_uri('Paris & Orléans')
+        self.assertRedirects(response, expected_url=expected_url,
+                             status_code=301, target_status_code=200)
+        self.assertTemplateUsed(response, 'profiles_people.html')
