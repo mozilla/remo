@@ -8,6 +8,7 @@ class RangePollChoiceInline(admin.StackedInline):
     """Poll Range Votes Inline."""
     model = RangePollChoice
     extra = 0
+    readonly_fields = ['votes']
 
 
 class RangePollInline(admin.StackedInline):
