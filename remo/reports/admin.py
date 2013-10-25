@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from remo.reports.models import Report, ReportComment, ReportEvent, ReportLink
+from remo.reports.models import (Report, ReportComment, ReportEvent,
+                                 ReportLink, NGReport, NGReportComment)
 
 
 class ReportLinkInline(admin.StackedInline):
@@ -27,4 +28,15 @@ class ReportAdmin(admin.ModelAdmin):
         return obj.user.userprofile.display_name
 
 
+class NGReportCommentInline(admin.StackedInline):
+    """NGReportComment Inline."""
+    model = NGReportComment
+    extra = 1
+
+
+class NGReportAdmin(admin.ModelAdmin):
+    """Report Admin."""
+    inlines = [NGReportCommentInline]
+
 admin.site.register(Report, ReportAdmin)
+admin.site.register(NGReport, NGReportAdmin)
