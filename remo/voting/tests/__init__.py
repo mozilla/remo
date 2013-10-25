@@ -39,7 +39,7 @@ class VoteFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Vote
 
     user = factory.SubFactory(UserFactory)
-    poll = factory.SubFactory(Poll)
+    poll = factory.SubFactory(PollFactory)
 
 
 class PollWithVoteFactory(PollFactory):

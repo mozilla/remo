@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
@@ -25,7 +25,7 @@ class Command(BaseCommand):
         rep_group = Group.objects.get(name='Rep')
         reps = rep_group.user_set.exclude(
             userprofile__registration_complete=False)
-        date = go_back_n_months(datetime.datetime.today(), 2)
+        date = go_back_n_months(datetime.today(), 2)
 
         reps_without_report = reps.exclude(reports__month__year=date.year,
                                            reports__month__month=date.month)

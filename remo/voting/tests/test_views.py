@@ -1,16 +1,21 @@
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
-from django.test.client import Client
+from django.test.client import Client, RequestFactory
 from django.utils.timezone import make_aware
 
+import mock
 from nose.tools import eq_
 from test_utils import TestCase
 
-from remo.voting.models import (Poll, RadioPoll, RadioPollChoice,
+from remo.base.utils import datetime2pdt
+from remo.profiles.tests import UserFactory
+from remo.voting.models import (Poll, PollComment, RadioPoll, RadioPollChoice,
                                 RangePoll, RangePollChoice)
+from remo.voting.tests import PollFactory
+from remo.voting.views import view_voting
 
 
 class ViewsTest(TestCase):
@@ -136,16 +141,16 @@ class ViewsTest(TestCase):
         eq_(m.tags, u'error')
         self.assertTemplateUsed(response, 'list_votings.html')
 
-    def test_view_cast_a_vote(self):
+    @mock.patch('remo.voting.views.messages')
+    def test_view_cast_a_vote(self, fake_messages):
         """Cast a vote on a voting."""
         c = Client()
         # Cast a vote as a valid user.
         c.login(username='rep', password='passwd')
         response = c.post(self.vote_url, self.post_data, follow=True)
         self.assertTemplateUsed(response, 'list_votings.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'success')
+        fake_messages.success.assert_called_once_with(
+            mock.ANY, 'Your vote has been successfully registered.')
 
         # Ensure that there is a vote for user 'rep'
         poll = Poll.objects.get(name='Current Test Voting')
@@ -154,19 +159,48 @@ class ViewsTest(TestCase):
         # Cast a vote as a valid user for a second time.
         response = c.post(self.vote_url, self.post_data, follow=True)
         self.assertTemplateUsed(response, 'list_votings.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'warning')
+        fake_messages.warning.assert_called_once_with(
+            mock.ANY, ('You have already cast your vote for this voting. '
+                       'Come back to see the results on %s UTC.'
+                       % poll.end.strftime('%Y %B %d, %H:%M')))
         eq_(poll.users_voted.filter(username='rep').count(), 1)
 
         # Cast a vote as an invalid user.
         c.login(username='mozillian1', password='passwd')
         response = c.post(self.vote_url, self.post_data, follow=True)
         self.assertTemplateUsed(response, 'list_votings.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'error')
+        fake_messages.error.assert_called_once_with(
+            mock.ANY, ('You do not have the permissions to vote '
+                       'on this voting.'))
         eq_(poll.users_voted.filter(username='mozillian1').count(), 0)
+
+    @mock.patch('remo.voting.views.messages')
+    def test_view_post_a_comment(self, fake_messages):
+        """Post a comment on poll."""
+        poll_start = datetime2pdt() - timedelta(days=5)
+        poll_user = UserFactory.create(groups=['Council'])
+        poll_group = Group.objects.get(name='Council')
+        swag_poll = PollFactory.create(name='swag poll', start=poll_start,
+                                       end=poll_start + timedelta(days=15),
+                                       created_by=poll_user,
+                                       valid_groups=poll_group,
+                                       automated_poll=True,
+                                       description='Swag poll description.',
+                                       slug='swag-poll')
+        vote_url = reverse('voting_view_voting',
+                           kwargs={'slug': 'swag-poll'})
+        factory = RequestFactory()
+        request = factory.post(vote_url, {'comment': 'This is a comment'},
+                               follow=True)
+        request.user = poll_user
+
+        response = view_voting(request, slug=swag_poll.slug)
+        self.assertTemplateUsed(response, 'list_votings.html')
+        poll_comment = PollComment.objects.get(poll=swag_poll)
+        eq_(poll_comment.user, poll_user)
+        eq_(poll_comment.comment, 'This is a comment')
+        fake_messages.success.assert_called_once_with(
+            mock.ANY, 'Your vote has been successfully registered.')
 
     def test_view_voting_results(self):
         """View the results of a voting."""

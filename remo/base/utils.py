@@ -117,6 +117,6 @@ def validate_datetime(data, **kwargs):
 
 def datetime2pdt(datetime_obj=None):
     if not datetime_obj:
-        datetime_obj = datetime.datetime.now()
+        datetime_obj = datetime.datetime.now().replace(microsecond=0)
     return timezone.make_aware(datetime_obj,
                                pytz.timezone(settings.TIME_ZONE))

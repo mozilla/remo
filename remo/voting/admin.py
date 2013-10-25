@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from models import (Poll, RadioPoll, RadioPollChoice,
+from models import (Poll, PollComment,  RadioPoll, RadioPollChoice,
                     RangePoll, RangePollChoice, Vote)
 
 
@@ -37,9 +37,14 @@ class RangePollAdmin(admin.ModelAdmin):
     inlines = [RangePollChoiceInline]
 
 
+class PollCommentInline(admin.StackedInline):
+    """PollComment Inline."""
+    model = PollComment
+
+
 class PollAdmin(admin.ModelAdmin):
     """Voting Admin."""
-    inlines = [RangePollInline, RadioPollInline]
+    inlines = [RangePollInline, RadioPollInline, PollCommentInline]
     search_fields = ['name']
     list_display = ['name', 'start', 'end', 'valid_groups']
     date_hierarchy = 'start'

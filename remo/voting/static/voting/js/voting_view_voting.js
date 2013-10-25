@@ -1,4 +1,5 @@
 function set_time_tooltip() {
+    'use strict';
     // Set time tooltip to display the time to your browser's timezone.
     var title = '';
     var item = $('#datetime-tip');
@@ -27,5 +28,7 @@ function set_time_tooltip() {
 }
 
 $(document).ready(function() {
+    'use strict';
     set_time_tooltip();
+    prettyDate();
 });

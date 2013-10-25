@@ -123,6 +123,17 @@ class RadioPollChoice(models.Model):
         ordering = ['-votes']
 
 
+class PollComment(models.Model):
+    """Comments in Poll."""
+    user = models.ForeignKey(User)
+    poll = models.ForeignKey(Poll, related_name='comments')
+    created_on = models.DateTimeField(auto_now_add=True)
+    comment = models.TextField()
+
+    class Meta:
+        ordering = ['created_on']
+
+
 @receiver(post_save, sender=Poll,
           dispatch_uid='voting_poll_email_reminder_signal')
 def poll_email_reminder(sender, instance, raw, **kwargs):
@@ -202,6 +213,7 @@ def automated_poll(sender, instance, **kwargs):
 
         radio_poll = RadioPoll.objects.create(poll=poll,
                                               question='Budget Approval')
+
         RadioPollChoice.objects.create(answer='Approved',
                                        radio_poll=radio_poll)
         RadioPollChoice.objects.create(answer='Denied', radio_poll=radio_poll)
