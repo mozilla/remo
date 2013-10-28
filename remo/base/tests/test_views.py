@@ -93,6 +93,7 @@ class MozilliansTest(TestCase):
 
     @mock.patch('requests.get')
     def test_is_vouched(self, rget):
+        """Test a user with vouched status"""
 
         def mocked_get(url, **options):
             if 'vouched' in url:
@@ -101,7 +102,6 @@ class MozilliansTest(TestCase):
                 return MozillianResponse(NOT_VOUCHED_MOZILLIAN)
             if 'trouble' in url:
                 return MozillianResponse('Failed', status_code=500)
-            raise NotImplementedError(url)
         rget.side_effect = mocked_get
 
         ok_(mozillians.is_vouched('vouched@mail.com'))
@@ -117,6 +117,31 @@ class MozilliansTest(TestCase):
             raise
         except mozillians.BadStatusCodeError, msg:
             ok_(settings.MOZILLIANS_API_KEY not in str(msg))
+
+    @override_settings(SITE_URL='http://testserver')
+    @mock.patch('remo.base.views.verify')
+    @mock.patch('remo.base.views.is_vouched')
+    @mock.patch('remo.base.views.auth.authenticate')
+    def test_mozillian_user_with_private_data(self, mocked_authenticate,
+                                              mocked_is_vouched,
+                                              mocked_verify):
+        """ Test user creation for user with private data in Mozillians."""
+        c = Client()
+        email = u'vouched@example.com'
+        mocked_verify.return_value = {'email': email}
+        mocked_is_vouched.return_value = {'is_vouched': True,
+                                          'email': email}
+
+        def authenticate(*args, **kwargs):
+            user = User.objects.get(email=email)
+            user.backend = 'Fake'
+            return user
+
+        mocked_authenticate.side_effect = authenticate
+        eq_(User.objects.filter(email=email).count(), 0)
+        c.post('/browserid/login/', data={'assertion': 'xxx'})
+        user = User.objects.get(email=email)
+        eq_(user.get_full_name(), u'Anonymous Mozillian')
 
 
 class ViewsTest(TestCase):
