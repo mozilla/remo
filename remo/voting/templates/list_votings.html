@@ -16,7 +16,7 @@
     {% endif %}
   </div>
 
-  {% macro display_polls(polls) -%}
+  {% macro display_polls(polls, show_pagination) -%}
     <div class="large-12 columns">
       <table class="dashboard-table">
         <thead>
@@ -50,6 +50,33 @@
           {% endfor %}
         </tbody>
       </table>
+      {% if show_pagination %}
+        <div class="row">
+          <div class="large-12 columns" id="voting-pagination">
+            {% if polls.has_previous() %}
+              <a class="prev" title="Previous Page" data-tooltip
+                 href="{{ '#'|urlparams(page=polls.previous_page_number()) }}">
+                &laquo;
+              </a>
+            {% endif %}
+            <label for="page-select">Page: </label>
+            <select id="page-select" autocomplete="off">
+              {% for i in range(1, polls.paginator.num_pages + 1) %}
+                <option {% if i == polls.number %} selected {% endif %}
+                        value="{{ '#'|urlparams(page=i) }}">
+                  {{ i }}
+                </option>
+              {% endfor %}
+            </select>
+            {% if polls.has_next() %}
+              <a class="next" title="Next Page" data-tooltip
+                 href="{{ '#'|urlparams(page=polls.next_page_number()) }}">
+                &raquo;
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
     </div>
   {%- endmacro%}
 
@@ -66,7 +93,7 @@
 
         <div class="row">
           {% if current_polls %}
-            {{ display_polls(current_polls) }}
+            {{ display_polls(current_polls, show_pagination=False) }}
           {% else %}
             <div class="large-12 columns no-bugs">
               <p>No current votes found!</p>
@@ -86,7 +113,7 @@
 
         <div class="row">
           {% if future_polls %}
-            {{ display_polls(future_polls) }}
+            {{ display_polls(future_polls, show_pagination=False) }}
           {% else %}
             <div class="large-12 columns no-bugs">
               <p>No future votes found!</p>
@@ -106,7 +133,7 @@
 
         <div class="row">
           {% if past_polls %}
-            {{ display_polls(past_polls) }}
+            {{ display_polls(past_polls, show_pagination=True) }}
           {% else %}
             <div class="large-12 columns no-bugs">
               <p>No past votes found!</p>

@@ -191,7 +191,7 @@
       <div class="large-12 columns" id="reports-pagination">
         {% if reports.has_previous() %}
           <a class="prev" title="Previous page" data-tooltip
-              href="{{ '#'|urlparams(page=reports.previous_page_number(),
+             href="{{ '#'|urlparams(page=reports.previous_page_number(),
                                      sort_key=sort_key, query=query) }}">
             &laquo;
           </a>
@@ -201,7 +201,7 @@
           {% for i in range(1, reports.paginator.num_pages + 1) %}
             <option {% if i == reports.number %} selected {% endif %}
                     value="{{ '#'|urlparams(page=i, sort_key=sort_key, query=query) }}">
-                {{ i }}
+              {{ i }}
             </option>
           {% endfor %}
         </select>
