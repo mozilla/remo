@@ -23,17 +23,18 @@ function set_tooltips() {
     var title = '';
     var item = $('#datetime-tip');
 
-    var start_date = new Date(item.data('date-start'));
-    var user_start_date = new Date(item.data('date-start'));
-    user_start_date.setHours(start_date.getHours(),
-                             start_date.getMinutes() - start_date.getTimezoneOffset());
-    var end_date = new Date(item.data('date-end'));
-    var user_end_date = new Date(item.data('date-end'));
-    user_end_date.setHours(end_date.getHours(),
-                           end_date.getMinutes() - end_date.getTimezoneOffset());
+    var user_start_date = new Date(item.data('date-start') + 'Z');
+    var user_end_date = new Date(item.data('date-end') + 'Z');
 
-    var local_start_date = new Date(item.data('date-local-start'));
-    var local_end_date = new Date(item.data('date-local-end'));
+    var start_date = new Date(item.data('date-local-start') + 'Z');
+    var local_start_date = new Date(item.data('date-local-start') + 'Z');
+    local_start_date.setHours(start_date.getHours(),
+                              start_date.getMinutes() + start_date.getTimezoneOffset());
+
+    var end_date = new Date(item.data('date-local-end') + 'Z');
+    var local_end_date = new Date(item.data('date-local-end') + 'Z');
+    local_end_date.setHours(end_date.getHours(),
+                            end_date.getMinutes() + end_date.getTimezoneOffset());
 
     title = ('Event starts from ' +
              format_hour(local_start_date) +
