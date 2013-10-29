@@ -9,6 +9,11 @@ Mozilla Reps - {{ poll.name }} - Vote
   <form method="post">
     {{ csrf() }}
     <div class="row">
+      {% if range_poll_choice_forms.errors or radio_poll_choice_forms.errors %}
+        <div class="large-12 columns">
+          <small class="error">Please correct the errors below.</small>
+        </div>
+      {% endif %}
       <div class="large-8 columns">
         <h1>{{ poll.name }}</h1>
       </div>

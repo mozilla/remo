@@ -10,6 +10,11 @@ Mozilla Reps - Edit Report
     {{ csrf() }}
 
     <div class="row">
+      {% if report_form.errors or report_event_formset.errors or report_link_formset.errors %}
+        <div class="large-12 columns">
+          <small class="error">Please correct the errors below.</small>
+        </div>
+      {% endif %}
       <div class="large-8 columns">
         <h1>Editing Monthly Report</h1>
       </div>

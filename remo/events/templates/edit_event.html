@@ -13,6 +13,11 @@
   <form method="post">
     {{ csrf() }}
     <div class="row">
+      {% if event_form.errors or metrics_formset.errors %}
+        <div class="large-12 columns">
+          <small class="error">Please correct the errors below.</small>
+        </div>
+      {% endif %}
       <div class="large-8 columns">
         {% if creating %}
           <h1>Creating new event</h1>
