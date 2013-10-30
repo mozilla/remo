@@ -160,3 +160,7 @@ STATSD_CLIENT = 'django_statsd.clients.normal'
 
 # Paginator settings
 ITEMS_PER_PAGE = 25
+
+# django-celery setup
+import djcelery
+djcelery.setup_loader()
