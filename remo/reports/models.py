@@ -12,10 +12,11 @@ from south.signals import post_migrate
 
 from remo.base.utils import (add_permissions_to_groups,
                              get_object_or_none, go_back_n_months)
-from remo.events.models import Attendance as EventAttendance
+from remo.events.models import Attendance as EventAttendance, Event
+from remo.profiles.models import FunctionalArea
 from remo.reports.tasks import send_remo_mail
 
-
+# OLD REPORTING SYSTEM
 OVERDUE_DAY = 7
 PARTICIPATION_TYPE_CHOICES = ((1, 'Organizer'),
                               (2, 'Mozilla\'s presence organizer'),
@@ -177,3 +178,59 @@ class ReportLink(models.Model):
     report = models.ForeignKey(Report)
     description = models.CharField(max_length=500)
     link = models.URLField()
+
+
+# NEW REPORTING SYSTEM
+class Activity(models.Model):
+    name = models.CharField(max_length=100)
+
+
+class Campaign(models.Model):
+    name = models.CharField(max_length=100)
+
+
+class NGReport(models.Model):
+    """ Continuous Reporting Model.
+
+    In order to be able to distinguish the old
+    and the new Report models, each model associated
+    with the continuous reporting system will have the
+    'NG' prefix (NG - New Generation).
+    """
+    user = models.ForeignKey(User, related_name='ng_reports')
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+    mentor = models.ForeignKey(User, null=True,
+                               on_delete=models.SET_NULL,
+                               related_name='ng_reports_mentored')
+    activity = models.ForeignKey(Activity,
+                                 related_name='ng_reports')
+    campaign = models.ForeignKey(Campaign, null=True, blank=True,
+                                 related_name='ng_reports')
+    functional_areas = models.ManyToManyField(
+        FunctionalArea, related_name='ng_reports')
+    longitude = models.FloatField(blank=False, null=True)
+    latitude = models.FloatField(blank=False, null=True)
+    location = models.CharField(max_length=150, blank=True, default='')
+    is_passive = models.BooleanField(default=False)
+    event = models.ForeignKey(Event, null=True, blank=True)
+    link = models.URLField(max_length=500)
+    link_description = models.CharField(max_length=200, blank=True, default='')
+    activity_description = models.TextField(blank=True, default='')
+
+    class Meta:
+        ordering = ['-created_on']
+
+    def __unicode__(self):
+        return self.id
+
+
+class NGReportComment(models.Model):
+    """Comments in NGReport."""
+    user = models.ForeignKey(User)
+    report = models.ForeignKey(NGReport)
+    created_on = models.DateTimeField(auto_now_add=True)
+    comment = models.TextField()
+
+    class Meta:
+        ordering = ['id']
