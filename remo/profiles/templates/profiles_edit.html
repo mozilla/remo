@@ -6,6 +6,11 @@
   <form style="custom" method="post" action="{{ url('profiles_edit', pageuser.userprofile.display_name) }}">
     {{ csrf() }}
     <div class="row">
+      {% if profileform.errors or userform.errors or datejoinedform.errors %}
+        <div class="large-12 columns">
+          <small class="error">Please correct the errors below.</small>
+        </div>
+      {% endif %}
       <div class="large-8 columns" id="title">
         <!-- Title -->
         <h1>
