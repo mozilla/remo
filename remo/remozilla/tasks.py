@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 
 import requests
 import pytz
+import waffle
 from funfactory.helpers import urlparams
 
 from remo.base.utils import get_object_or_none
@@ -94,10 +95,11 @@ def fetch_bugs(components=COMPONENTS, days=None):
                     bdata.get('last_change_time'))
 
                 for flag in bdata.get('flags', []):
-                    if (flag['status'] == '?'
-                        and flag['name'] == 'remo-review'
-                        and flag['requestee']['name'] == (
-                            settings.REPS_COUNCIL_ALIAS)):
+                    if ((flag['status'] == '?'
+                         and flag['name'] == 'remo-review'
+                         and flag['requestee']['name'] == (
+                             settings.REPS_COUNCIL_ALIAS)
+                         and waffle.switch_is_active('automated_polls'))):
                         bug.council_vote_requested = True
 
                 comments = bdata.get('comments', [])

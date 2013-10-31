@@ -7,6 +7,7 @@ from test_utils import TestCase
 
 import fudge
 import requests
+from mock import patch
 
 from remo.remozilla.models import Bug
 from remo.remozilla.tasks import fetch_bugs
@@ -42,13 +43,15 @@ class FetchBugsTest(TestCase):
         (fake_requests_obj.expects_call().returns(request))
         fetch_bugs()
 
+    @patch('remo.remozilla.tasks.waffle.switch_is_active')
     @fudge.patch('requests.get')
-    def test_with_valid_data(self, fake_requests_obj):
+    def test_with_valid_data(self, switch_is_active_mock, fake_requests_obj):
         """Test fetch_bugs valid bug data processing."""
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
              not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME.')
 
+        switch_is_active_mock.return_value = True
         previous_last_updated_time = get_last_updated_date()
 
         first_request = requests.Request()
