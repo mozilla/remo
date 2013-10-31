@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.encoding import iri_to_uri
 from django.views.decorators.cache import cache_control, never_cache
 
 from django_browserid.auth import default_username_algo
@@ -109,7 +110,7 @@ def edit(request, display_name):
 
 def redirect_list_profiles(request):
     profiles_url = reverse('profiles_list_profiles')
-    extra_path = '/' + request.path_info[len(profiles_url):]
+    extra_path = iri_to_uri('/' + request.path_info[len(profiles_url):])
     return redirect(urlparams(profiles_url, hash=extra_path), permanent=True)
 
 
