@@ -55,7 +55,7 @@ class RadioPollChoiceVoteForm(happyforms.Form):
         Dynamically set field for the answers in a radio voting.
         """
         super(RadioPollChoiceVoteForm, self).__init__(*args, **kwargs)
-        choices = (tuple((None, '----')) +
+        choices = (((None, '----'),) +
                    tuple(radio_poll.answers.values_list('id', 'answer')))
         self.fields['radio_poll__%s' % str(radio_poll.id)] = (
             forms.ChoiceField(widget=forms.Select(),
