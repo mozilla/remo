@@ -21,6 +21,7 @@ class RadioPollChoiceInline(admin.StackedInline):
     """Radio Poll Choice Inline."""
     model = RadioPollChoice
     extra = 0
+    readonly_fields = ['votes']
 
 
 class RadioPollInline(admin.StackedInline):
