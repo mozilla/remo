@@ -104,12 +104,6 @@ MANAGERS = ADMINS
 # Allow robots to crawl the site.
 ENGAGE_ROBOTS = True
 
-CLOUDMADE_API = 'bbb9265287234b89b116cdbb09f0af36'
-CLOUDMADE_MARKER_PURPLE = 'fc2feea1e8e84d0192c32a2b867073a3'
-CLOUDMADE_MARKER = '9d7b9835ddd64784ade32d16a7968e90'
-CLOUDMADE_MARKER_75 = '43d850f01ff24721bbdc7a9fa31bd829'
-CLOUDMADE_MARKER_85 = '507f4f059b1b4e2b939afd14d327ccbb'
-
 USE_TZ = True
 
 ETHERPAD_URL = 'http://etherpad.mozilla.org/'
@@ -164,3 +158,5 @@ ITEMS_PER_PAGE = 25
 # django-celery setup
 import djcelery
 djcelery.setup_loader()
+
+MAPBOX_TOKEN = 'examples.map-vyofok3q'

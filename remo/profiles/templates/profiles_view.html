@@ -63,7 +63,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
               <img id="profiles-view-avatar" src="{{ pageuser|get_avatar_url(128) }}">
             </div>
             <div id="map" class="large-8 columns smallmap-profile-container">
-              <img src="{{ get_static_map_url(256, 128, user_profile.lat, user_profile.lon, 1) }}"/>
+              <img src="{{ get_static_map_url(256, 128, user_profile.lon, user_profile.lat, 1) }}"/>
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
               <h6 class="profile-heading">
                 Featured Rep for
                 {% for featured in featured_rep %}
-                  <a href="#" 
+                  <a href="#"
                      data-reveal-id="featured-modal-{{ featured.created_on|
                                                        format_datetime_utc }}">
                     {{ featured.created_on|strftime('%B %Y') }}
@@ -455,7 +455,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 
   <!-- Featured Rep text Reveal Modal -->
   {% for featured in featured_rep %}
-    <div class="reveal-modal" 
+    <div class="reveal-modal"
          id="featured-modal-{{ featured.created_on|format_datetime_utc }}">
       <a class="close-reveal-modal">&#215;</a>
       <p class="lead">

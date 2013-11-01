@@ -68,14 +68,15 @@ def strftime(obj, style):
 @register.function
 def get_static_map_url(width, height, lon, lat, zoom=4):
     """Return static map url."""
-    api_key = settings.CLOUDMADE_API
-    marker_id = settings.CLOUDMADE_MARKER_85
-    URL = ('https://staticmaps.cloudmade.com/%(api_key)s/staticmap?'
-           'styleid=997&size=%(width)sx%(height)s&center=%(lon)s,%(lat)s'
-           '&zoom=%(zoom)s&marker=id:%(marker_id)s|%(lon)s,%(lat)s')
-    return URL % {'api_key': api_key, 'width': width, 'height': height,
-                  'marker_id': marker_id, 'lat': lat, 'lon': lon,
-                  'zoom': zoom}
+    token = settings.MAPBOX_TOKEN
+    base_url = 'https://api.tiles.mapbox.com/v3/%(tok)s/'
+    marker_query = 'pin-m(%(lon)s,%(lat)s)/'
+    center_query = '%(lon)s,%(lat)s,%(zoom)s/%(width)sx%(height)s.png'
+
+    URL = base_url + marker_query + center_query
+
+    return URL % {'tok': token, 'width': width, 'height': height,
+                  'lat': lat, 'lon': lon, 'zoom': zoom}
 
 
 @register.function

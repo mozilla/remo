@@ -16,13 +16,10 @@ def get_event_converted_visitor_callback_url(obj):
 
 
 @register.function
-def get_link_to_cloudmade(lat, lon, zoom=15):
-    """Return link to cloudmade map centered in lat, lon."""
-    return ('http://maps.cloudmade.com/?lat=%(lat)s&lng=%(lon)s'
-            '&zoom=%(zoom)s&styleId=997'
-            '&marker=%(lon)s,%(lat)s' % {'lat': lat,
-                                         'lon': lon,
-                                         'zoom': zoom})
+def get_link_to_osm(lat, lon, zoom=15):
+    """Return link to OSM centered in lat, lon."""
+    return ('http://openstreetmap.org/?mlat=%(lat)s&mlon=%(lon)s'
+            '&zoom=%(zoom)s' % {'lat': lat, 'lon': lon, 'zoom': zoom})
 
 
 @register.function
