@@ -3,21 +3,21 @@
     'use strict';
 
     var map;
-    var geocoder = L.mapbox.geocoder('examples.map-vyofok3q');
+    var MAPBOX_ΤΟΚΕN = $('body').data('mapbox-token');
+    var geocoder = L.mapbox.geocoder(MAPBOX_ΤΟΚΕN);
 
-    var $lon = $('#lon');
-    var $lat = $('#lat');
-    var $location = $('#location');
+    var $lon = $('#id_longitude');
+    var $lat = $('#id_latitude');
+    var $location = $('#id_location');
 
     var $lat_temp = $('#lat-temp');
     var $lon_temp = $('#lon-temp');
 
     function initMap () {
-
-        var cloudmade, center;
+        var center;
 
         if (!map) {
-            map = L.mapbox.map('map_point', 'mozilla-webprod.e91ef8b3');
+            map = L.mapbox.map('map_point', MAPBOX_ΤΟΚΕN);
             center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
             map.setView(center, 1);
 
@@ -63,33 +63,23 @@
 
     /*
      * Toggles the campaign input field if activity type is
-     * "Participated in an event". Makes input a required field
+     * "Participated in a campaign". Makes input a required field
      * when it is visible, removes input value when hidden.
      */
     function setCampaignPanel () {
-        var val = $('select.activity-type').find(":selected").val();
-        var panel = $('.campaign-panel');
-        var input = panel.find('input');
+        var text = $('select#id_activity').find(":selected").text();
+        var $panel = $('#campaign-panel');
+        var input = $panel.find('input');
+        var triggerInput = 'Participated in a campaign';
 
-        if (val === 'participated') {
-            panel.slideDown();
+        if (text === triggerInput) {
+            $panel.slideDown();
             input.attr('required', 'required');
         } else {
-            panel.slideUp();
+            $panel.slideUp();
             input.val('');
             input.removeAttr('required');
         }
-    }
-
-    /*
-     * Creates a new functional area using jQuery templating plugin
-     */
-    function createFunctionalArea () {
-        var total_areas = $('#contribution-areas select').length + 1;
-        var data = {
-            count: total_areas
-        };
-        $('#contribution-area-tmpl').tmpl(data).appendTo('#contribution-areas');
     }
 
     /*
@@ -100,47 +90,43 @@
         var $input = $('input.datepicker');
         $input.datepicker({
             autoSize: true,
-            dateFormat: "yy-mm-dd"
+            dateFormat: 'dd MM yy'
         });
 
         if ($input.val() === '') {
-            $input.datepicker("setDate", new Date());
+            $input.datepicker('setDate', Date.now());
+        }
+        else {
+            var date = $.datepicker.parseDate("yy-mm-dd", $input.val());
+            $input.datepicker('setDate', date);
         }
     }
 
     /*
      * Set default values and bind form events
      */
-    function init () {
-        // Set campaign input visibility on select field change
-        $('select.activity-type').on('change', setCampaignPanel);
-        // Set campaign panel visibility on page load
-        setCampaignPanel();
+    // Set campaign input visibility on select field change
+    $('#id_activity').on('change', setCampaignPanel);
+    // Set campaign panel visibility on page load
+    setCampaignPanel();
 
-        // Create a new functional area when user clicks the add button
-        $('#add-area').on('click', createFunctionalArea);
-
-        // Open map modal when user clicks the location button
-        $('#map-point').foundation('reveal', {
-            opened: function () {
-                //callback fires for any reveal on page so must check the modal id
-                if (this.id === 'map-point') {
-                     initMap();
-                }
+    // Open map modal when user clicks the location button
+    $('#map-point').foundation('reveal', {
+        opened: function () {
+            //callback fires for any reveal on page so must check the modal id
+            if (this.id === 'map-point') {
+                initMap();
             }
-        });
-
-        // Perform initial reverse lookup for contribution location
-        // if location field is empty, and we have geo-coordinates
-        // from the rep's profile
-        if ($lon.val() !== '' && $lat.val() !== '' && $location.val() === '') {
-            doReverseGeo($lon.val(), $lat.val(), $location);
         }
-        // set date picker defaults
-        initDatePicker();
-    }
+    });
 
-    init();
+    // Perform initial reverse lookup for contribution location
+    // if location field is empty, and we have geo-coordinates
+    // from the rep's profile
+    if ($lon.val() !== '' && $lat.val() !== '' && $location.val() === '') {
+        doReverseGeo($lon.val(), $lat.val(), $location);
+    }
+    // set date picker defaults
+    initDatePicker();
 
 })(jQuery);
-

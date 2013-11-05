@@ -577,28 +577,7 @@
 </main>
 
 <!-- Map Point Reveal Modal -->
-<div id="map-point" class="reveal-modal small">
-  <a class="close-reveal-modal">&#215;</a>
-  <div class="row">
-    <div class="large-12 columns">
-      <p class="lead">
-        Please click your location on the map
-      </p>
-      <div id="map_point" class="map300"></div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="large-6 columns">
-      <input type="text" placeholder="Latitude" class="input-text" id="lat-temp">
-      <input type="text" placeholder="Longitude" class="input-text" id="lon-temp">
-    </div>
-    <div class="large-6 columns use-these">
-      <a href="#" class="button small update close-reveal-modal">
-        Use these geo-coordinates &raquo;
-      </a>
-    </div>
-  </div>
-</div>
+{% include 'includes/map_modal.html' %}
 
 <!-- Delete Profile Reveal Modal -->
 <div id="delete-profile" class="reveal-modal small">

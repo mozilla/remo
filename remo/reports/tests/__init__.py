@@ -1,27 +1,29 @@
 import datetime
 from random import randint
 
+from django.db.models.signals import post_save
+from django.utils.timezone import now as now_utc
+
 import factory
 from factory import fuzzy
 
 from remo.events.tests import EventFactory
-from remo.profiles.tests import UserFactory
 from remo.profiles.models import FunctionalArea
+from remo.profiles.tests import UserFactory
 from remo.reports.models import (Report, ReportComment, ReportEvent,
                                  ReportLink, Activity, Campaign, NGReport,
-                                 NGReportComment)
+                                 NGReportComment, email_mentor_on_add_report)
 
 
 EMPTY_REPORT = False
-FUTURE_ITEMS = 'Reports text about future items'
-PAST_ITEMS = 'Reports text about past items'
-FUTURE_ITEMS = 'Reports text about future items'
+FUTURE_ITEMS = 'Report text about future items'
+PAST_ITEMS = 'Report text about past items'
+FUTURE_ITEMS = 'Report text about future items'
 RECRUITS_COMMENTS = 'Comments about recruiting new contributors'
 START_DT = datetime.date(2011, 1, 1)
 
 
-# Factories for old reporting system
-
+# Old reporting system factories
 class ReportFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Report
 
@@ -31,6 +33,20 @@ class ReportFactory(factory.django.DjangoModelFactory):
     recruits_comments = RECRUITS_COMMENTS
     past_items = PAST_ITEMS
     future_items = FUTURE_ITEMS
+
+
+class ReportFactoryWithoutSignals(ReportFactory):
+
+    @classmethod
+    def _create(cls, target_class, *args, **kwargs):
+        dispatch_uid = 'email_mentor_on_add_report_signal'
+        post_save.disconnect(email_mentor_on_add_report, Report,
+                             dispatch_uid=dispatch_uid)
+        report = super(ReportFactory, cls)._create(target_class,
+                                                   *args, **kwargs)
+        post_save.connect(email_mentor_on_add_report, Report,
+                          dispatch_uid=dispatch_uid)
+        return report
 
 
 class ReportCommentFactory(factory.django.DjangoModelFactory):
@@ -59,8 +75,7 @@ class ReportLinkFactory(factory.django.DjangoModelFactory):
     link = factory.Sequence(lambda n: 'www.example.com/e/report{0}'.format(n))
 
 
-# Factories for new reporting system
-
+# New generation reporting system factories
 class ActivityFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Activity
 
@@ -80,12 +95,14 @@ class NGReportFactory(factory.django.DjangoModelFactory):
     mentor = factory.SelfAttribute('user.userprofile.mentor')
     activity = factory.SubFactory(ActivityFactory)
     campaign = factory.SubFactory(CampaignFactory)
-    latitude = fuzzy.FuzzyInteger(-90, 90)
-    longitude = fuzzy.FuzzyInteger(-180, 180)
+    latitude = fuzzy.FuzzyDecimal(low=-180.0, high=180.0, precision=5)
+    longitude = fuzzy.FuzzyDecimal(low=-180.0, high=180.0, precision=5)
     location = 'EventLocation'
     is_passive = False
     event = factory.SubFactory(EventFactory, random_categories=True)
     link = 'www.example.com'
+    report_date = fuzzy.FuzzyDate(datetime.date(2013, 01, 01),
+                                  now_utc().date())
 
     @factory.post_generation
     def functional_areas(self, create, extracted, **kwargs):

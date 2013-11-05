@@ -13,15 +13,18 @@ from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_control, never_cache
 
+from waffle.decorators import waffle_flag
+
 import forms
 import remo.base.utils as utils
 
 from remo.base.decorators import permission_check
 from remo.events.helpers import get_attendee_role_event
 from remo.profiles.models import UserProfile
-from models import Report, ReportComment, ReportEvent, ReportLink
+from models import NGReport, Report, ReportComment, ReportEvent, ReportLink
 from utils import participation_type_to_number
 
+# Old reporting system
 LIST_REPORTS_DEFAULT_SORT = 'updated_on_desc'
 LIST_REPORTS_VALID_SHORTS = {
     'updated_on_desc': '-updated_on',
@@ -305,6 +308,66 @@ def list_reports(request, mentor=None, rep=None):
                    'pageheader': pageheader,
                    'query': request.GET.get('query', '')})
 
-def active_report(request):
 
-    return render(request, 'active_report.html')
+# New Generation reporting system
+@waffle_flag('reports_ng_report')
+@never_cache
+@permission_check(permissions=['reports.add_ngreport',
+                               'reports.change_ngreport'],
+                  filter_field='display_name', owner_field='user',
+                  model=UserProfile)
+def edit_ng_report(request, display_name='', year=None,
+                   month=None, day=None, id=None):
+    user = request.user
+    created = False
+    if not id:
+        report = NGReport()
+        created = True
+    else:
+        report = get_object_or_404(
+            NGReport, pk=id, user__userprofile__display_name=display_name)
+
+    report_form = forms.NGReportForm(request.POST or None, instance=report)
+
+    if report_form.is_valid():
+        if created:
+            report.user = user
+            report.mentor = user.userprofile.mentor
+            messages.success(request, 'Report successfully created.')
+        else:
+            messages.success(request, 'Report successfully updated.')
+        report_form.save()
+        return redirect(report.get_absolute_url())
+
+    return render(request, 'edit_ng_report.html',
+                  {'report_form': report_form,
+                   'pageuser': user,
+                   'report': report,
+                   'created': created})
+
+
+@waffle_flag('reports_ng_report')
+def view_ng_report(request, display_name, year, month, day, id):
+    return render(request, 'reports_not_implemented.html')
+
+
+@waffle_flag('reports_ng_report')
+@never_cache
+@permission_check(permissions=['reports.delete_ngreport'],
+                  filter_field='display_name', owner_field='user',
+                  model=UserProfile)
+def delete_ng_report(request, display_name, year, month, day, id):
+    user = get_object_or_404(User, userprofile__display_name=display_name)
+    if request.method == 'POST':
+        report = get_object_or_404(NGReport, id=id)
+        report.delete()
+        messages.success(request, 'Report successfully deleted.')
+
+    if request.user == user:
+        return redirect('profiles_view_my_profile')
+    return redirect('profiles_view_profile', display_name=display_name)
+
+
+@waffle_flag('reports_ng_report')
+def delete_ng_report_comment(request, display_name, year, month, day, id):
+    return render(request, 'reports_not_implemented.html')

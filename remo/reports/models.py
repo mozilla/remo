@@ -10,6 +10,7 @@ from django.dispatch import receiver
 import caching.base
 from south.signals import post_migrate
 
+import remo.base.utils as utils
 from remo.base.utils import (add_permissions_to_groups,
                              get_object_or_none, go_back_n_months)
 from remo.events.models import Attendance as EventAttendance, Event
@@ -60,7 +61,10 @@ def report_set_groups(app, sender, signal, **kwargs):
 
     perms = {'can_edit_reports': ['Admin', 'Mentor'],
              'can_delete_reports': ['Admin', 'Mentor'],
-             'can_delete_report_comments': ['Admin', 'Mentor']}
+             'can_delete_report_comments': ['Admin', 'Mentor'],
+             'add_ngreport': ['Admin'],
+             'change_ngreport': ['Admin'],
+             'delete_ngreport': ['Admin']}
 
     add_permissions_to_groups('reports', perms)
 
@@ -181,12 +185,45 @@ class ReportLink(models.Model):
 
 
 # NEW REPORTING SYSTEM
+class GenericActiveManager(models.Manager):
+    """
+    Generic custom manager used in Activity and Campaign models,
+    in order to fetch only the objects marked with an active flag.
+
+    TODO: Reminder to add this manager to FunctionalArea Model
+    """
+    def get_query_set(self):
+        return (super(GenericActiveManager, self).get_query_set()
+                .filter(active=True))
+
+
 class Activity(models.Model):
     name = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    active_objects = GenericActiveManager()
+
+    class Meta:
+        verbose_name_plural = 'Activities'
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
 
 
 class Campaign(models.Model):
     name = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    active_objects = GenericActiveManager()
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
 
 
 class NGReport(models.Model):
@@ -198,6 +235,7 @@ class NGReport(models.Model):
     'NG' prefix (NG - New Generation).
     """
     user = models.ForeignKey(User, related_name='ng_reports')
+    report_date = models.DateField()
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     mentor = models.ForeignKey(User, null=True,
@@ -214,15 +252,41 @@ class NGReport(models.Model):
     location = models.CharField(max_length=150, blank=True, default='')
     is_passive = models.BooleanField(default=False)
     event = models.ForeignKey(Event, null=True, blank=True)
-    link = models.URLField(max_length=500)
+    link = models.URLField(max_length=500, blank=True, default='')
     link_description = models.CharField(max_length=200, blank=True, default='')
     activity_description = models.TextField(blank=True, default='')
 
+    def get_absolute_url(self):
+        args = [self.user.userprofile.display_name,
+                self.report_date.year,
+                utils.number2month(self.report_date.month),
+                self.report_date.day,
+                str(self.id)]
+        return reverse('remo.reports.views.view_ng_report', args=args)
+
+    def get_absolute_edit_url(self):
+        args = [self.user.userprofile.display_name,
+                self.report_date.year,
+                utils.number2month(self.report_date.month),
+                self.report_date.day,
+                str(self.id)]
+        return reverse('remo.reports.views.edit_ng_report', args=args)
+
+    def get_absolute_delete_url(self):
+        args = [self.user.userprofile.display_name,
+                self.report_date.year,
+                utils.number2month(self.report_date.month),
+                self.report_date.day,
+                str(self.id)]
+        return reverse('remo.reports.views.delete_ng_report', args=args)
+
     class Meta:
-        ordering = ['-created_on']
+        ordering = ['-report_date', '-created_on']
 
     def __unicode__(self):
-        return self.id
+        return '%s %s, %s' % (self.report_date,
+                              self.created_on.strftime('%H:%M'),
+                              self.id)
 
 
 class NGReportComment(models.Model):
