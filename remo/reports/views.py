@@ -10,7 +10,7 @@ from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.forms.models import inlineformset_factory
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import (get_object_or_404, redirect, render)
 from django.views.decorators.cache import cache_control, never_cache
 
 import forms
@@ -22,6 +22,7 @@ from remo.profiles.models import UserProfile
 from models import Report, ReportComment, ReportEvent, ReportLink
 from utils import participation_type_to_number
 
+# Old reporting system
 LIST_REPORTS_DEFAULT_SORT = 'updated_on_desc'
 LIST_REPORTS_VALID_SHORTS = {
     'updated_on_desc': '-updated_on',
@@ -305,6 +306,19 @@ def list_reports(request, mentor=None, rep=None):
                    'pageheader': pageheader,
                    'query': request.GET.get('query', '')})
 
-def active_report(request):
 
-    return render(request, 'active_report.html')
+# New Generation reporting system
+def ng_view_report(request, display_name, year, month, day, id):
+    return render(request, 'reports_not_implemented.html')
+
+
+def ng_edit_report(request, display_name, year, month, day, id):
+    return render(request, 'ng_reports_edit_active_report.html')
+
+
+def ng_delete_report(request, display_name, year, month, day, id):
+    return render(request, 'reports_not_implemented.html')
+
+
+def ng_delete_report_comment(request, display_name, year, month, day, id):
+    return render(request, 'reports_not_implemented.html')

@@ -184,9 +184,22 @@ class ReportLink(models.Model):
 class Activity(models.Model):
     name = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name_plural = 'Activities'
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
 
 class Campaign(models.Model):
     name = models.CharField(max_length=100)
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
 
 
 class NGReport(models.Model):
@@ -222,7 +235,7 @@ class NGReport(models.Model):
         ordering = ['-created_on']
 
     def __unicode__(self):
-        return self.id
+        return '%s, %s' % (self.created_on.strftime('%d %b %Y'), self.id)
 
 
 class NGReportComment(models.Model):
