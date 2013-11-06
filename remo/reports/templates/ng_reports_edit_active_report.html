@@ -1,7 +1,7 @@
 {% extends "base_fd4.html" %}
 
 {% block pagetitle %}
-Mozilla Reps - {Add} {Edit} a Report
+  {{ super() }} -  {% if created %}Add{% else %}Edit{% endif %} a report
 {% endblock %}
 
 {% block content %}
@@ -10,12 +10,21 @@ Mozilla Reps - {Add} {Edit} a Report
     {{ csrf() }}
 
     <div class="row">
+      {% if report_form.errors %}
+        <div class="large-12 columns">
+          <small class="error">Please correct the errors below.</small>
+        </div>
+      {% endif %}
       <div class="large-6 columns">
-        <h1>{Add} {Edit} a Report</h1>
+        <h1>
+          {% if created %}Add{% else %}Edit{% endif %} a report
+        </h1>
       </div>
       <div class="large-6 columns align-right hide-for-small">
-        <button type="button" class="small button alert"
-                data-reveal-id="delete-report">Delete report</button>
+        {% if not created %}
+          <button type="button" class="small button alert"
+                  data-reveal-id="ng-delete-report">Delete report</button>
+        {% endif %}
         <button type="submit" class="small button confirm">Save report</button>
       </div>
     </div>
@@ -30,51 +39,50 @@ Mozilla Reps - {Add} {Edit} a Report
             <label class="required" for="activity-type">
               What did you do?
             </label>
-            <select id="activity-type"
-                    class="activity-type tip-left"
-                    title="Type of activity"
-                    data-tooltip
-                    data-options="disable-for-touch:true"
-                    required>
-              <option selected>Please select an activity</option>
-              <option>Met with another Mozillian</option>
-              <option>Met with someone outside Mozilla</option>
-              <option>Chaired and hosted an IRC meeting</option>
-              <option value="participated">Participated in a campaign</option>
-            </select>
+            <div id="activity-type" class="activity-type has-tip tip-left"
+                 data-tooltip data-options="disable-for-touch:true"
+                 title="Type of Activity">
+              {{ report_form.activity }}
+              <div class="required-field"></div>
+            </div>
+            {{ field_errors(report_form.activity) }}
 
             <div class="campaign-panel">
               <label class="required" for="campaign">
                 Which campaign did you participate in?
               </label>
-              <select id="campaign"
-                      class="tip-left"
-                      title="Select a campaign"
-                      data-tooltip
-                      data-options="disable-for-touch:true"
-                      required>
-                <option selected>Please select a campaign</option>
-              </select>
+              <div id="campaign"
+                   class="tip-left"
+                   title="Select a campaign"
+                   data-tooltip
+                   data-options="disable-for-touch:true"
+                   required>
+                {{ report_form.campaign  }}
+                <div class="required-field"></div>
+              </div>
+              {{ field_errors(report_form.campaign) }}
             </div>
           </div>
         </div>
+
         <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon large time"></div>
           </div>
           <div class="large-11 columns">
-            <label class="required" for="activity-date">
+            <label class="required" for="id_report_date">
               When did you do this activity?
             </label>
-            <input id="activity-date"
-                   class="datepicker tip-left"
-                   type="text"
-                   title="Date of activity"
-                   placeholder="YYYY-MM-DD"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
-                   required />
+            <span class="tip-left" title="Date of activity"
+                  placeholder="DD-MM-YYYY"
+                  data-tooltip
+                  data-options="disable-for-touch:true"
+                  required>
+              {{ report_form.report_date }}
+              <div class="required-field"></div>
+            </span>
           </div>
+          {{ field_errors(report_form.report_date) }}
         </div>
         <div class="row">
           <div class="large-1 columns">
@@ -86,20 +94,11 @@ Mozilla Reps - {Add} {Edit} a Report
             </label>
             <ul id="contribution-areas">
               <li>
-                <select class="contribution-area tip-left"
-                        title="Select contribution area"
-                        placeholder="DD/MM/YYYY"
-                        data-tooltip
-                        data-options="disable-for-touch:true"
-                        required>
-                  <option selected>Please select a contribution area</option>
-                </select>
+                {{ report_form.functional_areas }}
               </li>
             </ul>
-            <button type="button" id="add-area" class="small button update">
-              Add contribution area
-            </button>
           </div>
+          {{ field_errors(report_form.functional_areas) }}
         </div>
       </div>
       <div class="large-6 columns">
@@ -109,14 +108,16 @@ Mozilla Reps - {Add} {Edit} a Report
           </div>
           <div class="large-11 columns">
 
-            <label for="location">
+            <label for="id_location">
               Where did your contribution take place?
             </label>
             <div class="location-inputs">
               <input type="text"
-                     id="location"
+                     id="id_location"
+                     name="location"
                      class="tip-left"
                      title="Location of contribution"
+                     value="{{ report_form.location.value() }}"
                      placeholder="City, Region, Country"
                      data-tooltip
                      data-options="disable-for-touch:true"/>
@@ -127,8 +128,15 @@ Mozilla Reps - {Add} {Edit} a Report
                       data-options="disable-for-touch:true"
                       data-reveal-id="map-point">Choose a location
               </button>
-              <input id="lat" name="lat" type="hidden" />
-              <input id="lon" name="lon" type="hidden" />
+              {{ report_form.longitude }}
+              {{ report_form.latitude }}
+
+              {# Avoid displaying two separate errors for lat and lon. #}
+              {% if report_form.latitude.errors or report_form.longitude.errors %}
+                <small class="error">
+                  Please point venue in map.
+                </small>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -138,16 +146,19 @@ Mozilla Reps - {Add} {Edit} a Report
             <div class="pict-icon large www"></div>
           </div>
           <div class="large-11 columns">
-            <label for="activity-url">
+            <label for="id_link">
               URL for your activity
             </label>
             <input type="text"
-                   id="activity-url"
+                   id="id_link"
+                   name="link"
                    class="tip-left"
+                   value ="{{ report_form.link.value() }}"
                    placeholder="http://www.example.com"
                    title="URL for activity"
                    data-tooltip
                    data-options="disable-for-touch:true" />
+            {{ field_errors(report_form.link) }}
           </div>
         </div>
 
@@ -159,13 +170,14 @@ Mozilla Reps - {Add} {Edit} a Report
             <label for="description">
               Activity description
             </label>
-            <textarea id="description"
-                      class="flat tip-left"
-                      cols="40" rows="10"
-                      data-tooltip
-                      placeholder="Describe the activity briefly"
-                      title="Activity description"></textarea>
-            
+            <div id="description " data-tooltip class="has-tip tip-left"
+                 title="Activity description">
+              {{ field_with_attrs(report_form.activity_description,
+                                  class="flat",
+                                  placeholder="Describe the activity briefly") }}
+              <div class="required-field"></div>
+            </div>
+            {{ field_errors(report_form.activity_description) }}
           </div>
         </div>
       </div>
@@ -185,8 +197,8 @@ Mozilla Reps - {Add} {Edit} a Report
       </div>
       <div class="row">
         <div class="large-6 columns">
-          <input type="text" placeholder="Latitude" id="lat-temp">
           <input type="text" placeholder="Longitude" id="lon-temp">
+          <input type="text" placeholder="Latitude" id="lat-temp">
         </div>
         <div class="large-6 columns use-these">
           <button type="button"
@@ -199,7 +211,7 @@ Mozilla Reps - {Add} {Edit} a Report
   </form>
 
   <!-- Delete Profile Reveal Modal -->
-  <div id="delete-report" class="reveal-modal small">
+  <div id="ng-delete-report" class="reveal-modal small">
     <a class="close-reveal-modal">&#215;</a>
     <p class="lead">Are you sure you want to do that?</p>
     <h2>Warning!</h2>
@@ -208,29 +220,15 @@ Mozilla Reps - {Add} {Edit} a Report
       report.
     </p>
       <form method="post"
-            action="">
+            action="{{ url('ng_reports_delete_report',
+                    display_name=pageuser.userprofile.display_name,
+                    id=report.id) }}">
         {{ csrf() }}
-        <button type="submit"
-                class="large button alert">Delete report</button>
+        <button class="large button alert">Delete report</button>
       </form>
   </div>
 </main>
 
-<script id="contribution-area-tmpl" type="text/x-jquery-tmpl">
-  <li>
-    <select id="area_id_${ count }" name="area_id_${ count }"
-            class="contribution-area tip-left"
-            title="Select contribution area"
-            placeholder="DD/MM/YYYY"
-            data-tooltip
-            data-options="disable-for-touch:true"
-            required>
-      <option selected>Please select a contribution area</option>
-    </select>
-    <label for="delete_id_${ count }">Delete</label>
-    <input id="delete_id_${ count }" type="checkbox" />
-  </li>
-</script>
 {% endblock %}
 
 {% block bottomextra %}

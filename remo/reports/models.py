@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
+from django.utils.timezone import now as now_utc
 
 import caching.base
 from south.signals import post_migrate
@@ -181,8 +182,23 @@ class ReportLink(models.Model):
 
 
 # NEW REPORTING SYSTEM
+class GenericActiveManager(models.Manager):
+    # TODO: Reminder to add this manager to FunctionalArea Model
+    """Generic custom manager used in Activity and Campaign models,
+
+    in order to fetch only the objects marked with an active flag.
+    """
+    def get_query_set(self):
+        return (super(GenericActiveManager, self).get_query_set()
+                .filter(active=True))
+
+
 class Activity(models.Model):
     name = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    active_objects = GenericActiveManager()
 
     class Meta:
         verbose_name_plural = 'Activities'
@@ -194,6 +210,10 @@ class Activity(models.Model):
 
 class Campaign(models.Model):
     name = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    active_objects = GenericActiveManager()
 
     class Meta:
         ordering = ['name']
@@ -211,6 +231,7 @@ class NGReport(models.Model):
     'NG' prefix (NG - New Generation).
     """
     user = models.ForeignKey(User, related_name='ng_reports')
+    report_date = models.DateField(default=now_utc().date(), blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     mentor = models.ForeignKey(User, null=True,
@@ -227,15 +248,21 @@ class NGReport(models.Model):
     location = models.CharField(max_length=150, blank=True, default='')
     is_passive = models.BooleanField(default=False)
     event = models.ForeignKey(Event, null=True, blank=True)
-    link = models.URLField(max_length=500)
+    link = models.URLField(max_length=500, blank=True, default='')
     link_description = models.CharField(max_length=200, blank=True, default='')
     activity_description = models.TextField(blank=True, default='')
 
+    @property
+    def report_created_on(self):
+        return self.report_date.strftime('%d %b %Y')
+
     class Meta:
-        ordering = ['-created_on']
+        ordering = ['-report_date', '-created_on']
 
     def __unicode__(self):
-        return '%s, %s' % (self.created_on.strftime('%d %b %Y'), self.id)
+        return '%s %s, %s' % (self.report_date,
+                              self.created_on.strftime('%H:%M'),
+                              self.id)
 
 
 class NGReportComment(models.Model):

@@ -19,7 +19,7 @@ import remo.base.utils as utils
 from remo.base.decorators import permission_check
 from remo.events.helpers import get_attendee_role_event
 from remo.profiles.models import UserProfile
-from models import Report, ReportComment, ReportEvent, ReportLink
+from models import NGReport, Report, ReportComment, ReportEvent, ReportLink
 from utils import participation_type_to_number
 
 # Old reporting system
@@ -308,16 +308,57 @@ def list_reports(request, mentor=None, rep=None):
 
 
 # New Generation reporting system
+@never_cache
+@permission_check(permissions=['reports.add_ng_report',
+                               'reports.change_ng_report'],
+                  filter_field='display_name', owner_field='user',
+                  model=UserProfile)
+def ng_edit_report(request, display_name, year, month, day, id):
+    user = get_object_or_404(User, userprofile__display_name=display_name)
+    report, created = utils.get_or_create_instance(NGReport, user=user, id=id)
+
+    report_form = forms.NGReportForm(request.POST or None, instance=report)
+
+    if report_form.is_valid():
+        report_form.save()
+
+        if created:
+            messages.success(request, 'Report successfully created.')
+        else:
+            messages.success(request, 'Report successfully updated.')
+        month = utils.number2month(report.created_on.month)
+        return redirect(reverse('ng_reports_view_report',
+                                kwargs={'display_name': display_name,
+                                        'year': report.created_on.year,
+                                        'month': month,
+                                        'day': report.created_on.day,
+                                        'id': report.id}))
+
+    return render(request, 'ng_reports_edit_active_report.html',
+                  {'report_form': report_form,
+                   'pageuser': user,
+                   'report': report,
+                   'created': created})
+
+
 def ng_view_report(request, display_name, year, month, day, id):
     return render(request, 'reports_not_implemented.html')
 
 
-def ng_edit_report(request, display_name, year, month, day, id):
-    return render(request, 'ng_reports_edit_active_report.html')
+def ng_delete_report(request, display_name, id):
+    user = get_object_or_404(User, userprofile__display_name=display_name)
+    if request.method == 'POST':
+        report = get_object_or_404(NGReport, user=user, id=id)
+        report.delete()
+        messages.success(request, 'Report successfully deleted.')
 
-
-def ng_delete_report(request, display_name, year, month, day, id):
-    return render(request, 'reports_not_implemented.html')
+    if request.user == user:
+        return redirect('profiles_view_my_profile')
+    else:
+        redirect_url = reverse(
+            'profiles_view_profile',
+            kwargs={'display_name': user.userprofile.display_name})
+        return redirect(redirect_url)
 
 
 def ng_delete_report_comment(request, display_name, year, month, day, id):

@@ -7,14 +7,14 @@
 
     var $lon = $('#lon');
     var $lat = $('#lat');
-    var $location = $('#location');
+    var $location = $('#id_location');
 
     var $lat_temp = $('#lat-temp');
     var $lon_temp = $('#lon-temp');
 
     function initMap () {
 
-        var cloudmade, center;
+        var center;
 
         if (!map) {
             map = L.mapbox.map('map_point', 'mozilla-webprod.e91ef8b3');
@@ -63,15 +63,16 @@
 
     /*
      * Toggles the campaign input field if activity type is
-     * "Participated in an event". Makes input a required field
+     * "Participated in a campaign". Makes input a required field
      * when it is visible, removes input value when hidden.
      */
     function setCampaignPanel () {
-        var val = $('select.activity-type').find(":selected").val();
+        var text = $('select#id_activity').find(":selected").text();
         var panel = $('.campaign-panel');
         var input = panel.find('input');
+        var triggerInput = 'Participated in a campaign';
 
-        if (val === 'participated') {
+        if (text === triggerInput) {
             panel.slideDown();
             input.attr('required', 'required');
         } else {
@@ -82,17 +83,6 @@
     }
 
     /*
-     * Creates a new functional area using jQuery templating plugin
-     */
-    function createFunctionalArea () {
-        var total_areas = $('#contribution-areas select').length + 1;
-        var data = {
-            count: total_areas
-        };
-        $('#contribution-area-tmpl').tmpl(data).appendTo('#contribution-areas');
-    }
-
-    /*
      * Initialize date picker widget and set ISO date format
      * If the field is empty, pre-populate with current date
      */
@@ -100,7 +90,7 @@
         var $input = $('input.datepicker');
         $input.datepicker({
             autoSize: true,
-            dateFormat: "yy-mm-dd"
+            dateFormat: "dd M yy"
         });
 
         if ($input.val() === '') {
@@ -113,19 +103,16 @@
      */
     function init () {
         // Set campaign input visibility on select field change
-        $('select.activity-type').on('change', setCampaignPanel);
+        $('#id_activity').on('change', setCampaignPanel);
         // Set campaign panel visibility on page load
         setCampaignPanel();
-
-        // Create a new functional area when user clicks the add button
-        $('#add-area').on('click', createFunctionalArea);
 
         // Open map modal when user clicks the location button
         $('#map-point').foundation('reveal', {
             opened: function () {
                 //callback fires for any reveal on page so must check the modal id
                 if (this.id === 'map-point') {
-                     initMap();
+                    initMap();
                 }
             }
         });
