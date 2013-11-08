@@ -12,7 +12,7 @@ class ModelsTest(TestCase):
     """Tests related to Events Models."""
 
     def setUp(self):
-        self.event = EventFactory.create(random_categories=True)
+        self.event = EventFactory.create()
 
     def test_similar_events_category_country(self):
         """Test similar events functionality."""
