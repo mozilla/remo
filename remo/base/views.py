@@ -72,6 +72,9 @@ class BrowserIDVerify(Verify):
                     user = User.objects.create_user(
                         username=USERNAME_ALGO(data['email']),
                         email=data['email'])
+                    # Due to privacy settings, this might be missing
+                    if not 'full_name' in data:
+                        data['full_name'] = 'Anonymous Mozillian'
 
                     first_name, last_name = (
                         data['full_name'].split(' ', 1)
