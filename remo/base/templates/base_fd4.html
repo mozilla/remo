@@ -59,7 +59,7 @@
   {{ browserid_css() }}
 </head>
 
-<body data-cloudmade-api-key="{{ settings.CLOUDMADE_API }}">
+<body data-mapbox-token="{{ settings.MAPBOX_TOKEN }}">
   <!-- BrowserID -->
   {{ browserid_info() }}
 
@@ -214,9 +214,11 @@
       {% endif %}
 
       <!-- Client-side messages -->
-      <div id="client-message-container" class="hidden row">
-        <div class="alert-box">
-          <a href="#" class="close">&times;</a>
+      <div class="row">
+        <div id="client-message-container" class="hidden large-12 columns">
+          <div class="alert-box">
+            <a href="#" class="close">&times;</a>
+          </div>
         </div>
       </div>
 

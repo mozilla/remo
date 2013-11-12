@@ -30,21 +30,13 @@ EventsLib.offset = 0;
 EventsLib.window_offset = 450;
 EventsLib.results_batch = 21;
 
-var CLOUDMADE_API_KEY = $('body').data('cloudmade-api-key');
+var MAPBOX_TOKEN = $('body').data('mapbox-token');
 
 function initialize_map() {
     // Initialize map.
-    EventsLib.map = new L.Map('map', { minZoom: 1 });
-    var attribution = ('Map data &copy; <a href="http://openstreetmap.org">' +
-                       'OpenStreetMap</a> contributors, <a href="http://creativecommons.org/' +
-                       'licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © ' +
-                       '<a href="http://cloudmade.com">CloudMade</a>');
-    var cloudmade = new L.TileLayer('https://ssl_tiles.cloudmade.com/' +
-                                    CLOUDMADE_API_KEY +
-                                    '/997/256/{z}/{x}/{y}.png',
-                                    { attribution: attribution, maxZoom: 18 });
     var center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
-    EventsLib.map.setView(center, 2).addLayer(cloudmade);
+    EventsLib.map = L.mapbox.map('map', MAPBOX_TOKEN, {minZoom: 1});
+    EventsLib.map.setView(center, 2);
 
     L.control.locate({
         setView: false,
@@ -70,7 +62,10 @@ function initialize_map() {
 function handleLocationError() {
     // Show message when geolocation fails
     var msg = 'Sorry, we could not determine your location.';
-    showMessage(msg, 'warning');
+    showMessage({
+        'msg': msg,
+        'tag': 'warning'
+    });
 }
 
 function handleLocationFound(e) {

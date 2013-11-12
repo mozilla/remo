@@ -77,7 +77,7 @@ function append_to_formset(event) {
     var prefix = formset_obj.data('prefix');
     var total_forms_obj = formset_obj.parent().children('#id_' + prefix + '-TOTAL_FORMS');
     var append_after_obj = block_obj;
-    
+
     if (button_obj.hasClass('voting-add-rangepoll-button') ||
         button_obj.hasClass('voting-add-radiopoll-button')) {
         var input = new_block_obj.find('#inner-rangepoll-formset, #inner-radiopoll-formset');
@@ -130,18 +130,37 @@ function format_hour(date_obj) {
     return pad2(date_obj.getHours()) + ':' + pad2(date_obj.getMinutes());
 }
 
-function showMessage(msg, tag) {
-    // Show a message the same way we are using django messages
+function showMessage(options) {
+    // Show a message the same way we use django messages
     'use strict';
-    var container = $('#client-message-container').clone();
+
+    var defaults = {
+        'id': '#client-message-container',
+        'replace': false,
+        'hide': false
+    };
+
+    options = $.extend(defaults, options);
+
+    if (options.replace) {
+        $('.message').remove();
+    }
+
+    var container = $(options.id).clone();
     container.removeAttr('id');
-    container.insertAfter('#client-message-container');
+    container.addClass('message');
+    container.insertAfter(options.id);
 
     var alertbox = container.children('.alert-box');
-    alertbox.addClass(tag);
-    alertbox.prepend(msg);
+    alertbox.addClass(options.tag);
+    alertbox.prepend(options.msg);
 
     container.show();
+
+    if (options.hide) {
+        setTimeout(function() {container.hide();}, 5000);
+    }
+
 }
 
 function prettyDate() {

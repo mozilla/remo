@@ -251,7 +251,7 @@ Mozilla Reps - {{ event.name }}
                 <span class="label inline">
                   Map Link
                 </span>
-                <a href="{{ get_link_to_cloudmade(event.lat, event.lon) }}"
+                <a href="{{ get_link_to_osm(event.lat, event.lon) }}"
                    target="_blank">
                   OSM
                 </a>
@@ -648,18 +648,18 @@ Mozilla Reps - {{ event.name }}
 
 {% block bottomextra %}
   {% compress css %}
-    <link rel="stylesheet" href="{{ static('base/css/leaflet.css') }}"
+    <link rel="stylesheet" href="{{ static('base/css/mapbox.css') }}"
           media="screen,projection,tv" />
     <link rel="stylesheet" href="{{ static('base/css/L.Control.Locate.css') }}"
           media="screen,projection,tv" />
   {% endcompress %}
   <!--[if lte IE 8]>
     {% compress css %}
-      <link rel="stylesheet" href="{{ static('base/css/leaflet.ie.css') }}" />
+      <link rel="stylesheet" href="{{ static('base/css/mapbox.ie.css') }}" />
     {% endcompress %}
   <![endif]-->
   {% compress js %}
-    <script src="{{ static('base/js/leaflet.js') }}"></script>
+    <script src="{{ static('base/js/mapbox.js') }}"></script>
     <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
     <script src="{{ static('events/js/jquery.zflickrfeed.js') }}"></script>
     <script src="{{ static('events/js/jquery.tweet.js') }}"></script>
