@@ -1,8 +1,8 @@
 from datetime import timedelta
 
 from django.utils.timezone import now
+from nose.tools import eq_, ok_
 from test_utils import TestCase
-from nose.tools import eq_
 
 from remo.events.tests import EventFactory
 from remo.profiles.models import FunctionalArea
@@ -22,9 +22,9 @@ class ModelsTest(TestCase):
             'start': now() + timedelta(days=10),
             'end': now() + timedelta(days=13)}
 
-        EventFactory.create_batch(5, **kwargs)
+        EventFactory.create_batch(3, **kwargs)
         result = self.event.get_similar_events()
-        eq_(result.count(), 5)
+        eq_(result.count(), 3)
 
     def test_similar_event_country(self):
         """Test similar events functionality"""
@@ -36,9 +36,9 @@ class ModelsTest(TestCase):
             'start': now() + timedelta(days=10),
             'end': now() + timedelta(days=13)}
 
-        EventFactory.create_batch(5, **kwargs)
+        EventFactory.create_batch(3, **kwargs)
         result = self.event.get_similar_events()
-        eq_(result.count(), 5)
+        eq_(result.count(), 3)
 
     def test_similar_event_category(self):
         """Test similar events functionality"""
@@ -48,9 +48,9 @@ class ModelsTest(TestCase):
             'start': now() + timedelta(days=10),
             'end': now() + timedelta(days=13)}
 
-        EventFactory.create_batch(5, **kwargs)
+        EventFactory.create_batch(3, **kwargs)
         result = self.event.get_similar_events()
-        eq_(result.count(), 5)
+        eq_(result.count(), 3)
 
     def test_similar_event_no_match(self):
         """Test similar events functionality"""
@@ -62,6 +62,6 @@ class ModelsTest(TestCase):
             'start': now() + timedelta(days=10),
             'end': now() + timedelta(days=13)}
 
-        EventFactory.create_batch(5, **kwargs)
+        EventFactory.create_batch(3, **kwargs)
         result = self.event.get_similar_events()
-        eq_(result.exists(), False)
+        ok_(not result.exists())

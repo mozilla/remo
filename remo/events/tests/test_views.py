@@ -1,27 +1,30 @@
 # -*- coding: utf-8 -*-
 import datetime
-from pytz import timezone
+import mock
 
-from django.conf import settings
-from django.contrib.auth.models import User
-from django.core import management, mail
+from django.core import mail
 from django.core.urlresolvers import reverse
-from django.test.client import Client
+from django.test.utils import override_settings
 from django.utils.encoding import iri_to_uri
 from django.utils.timezone import make_aware
 
-import mock
-from nose.tools import eq_
+from mock import ANY
+from nose.tools import eq_, ok_
+from pytz import timezone
 from test_utils import TestCase
 
-from remo.events.models import Event, Metric
+from remo.base.tests import requires_login, requires_permission
+from remo.events.models import Event, EventComment, Metric
+from remo.events.tests import (AttendanceFactory, EventCommentFactory,
+                               EventFactory)
+from remo.profiles.tests import UserFactory
 
 
 class ViewsTest(TestCase):
     """Tests related to Events Views."""
-    fixtures = ['demo_users.json', 'demo_events.json']
 
     def setUp(self):
+
         self.data = {
             'name': u'Test edit event',
             'description': u'This is a description',
@@ -44,7 +47,6 @@ class ViewsTest(TestCase):
             'end_form_1_hour': 03,
             'end_form_1_minute': 00,
             'timezone': u'Europe/Athens',
-            'owner_form': u'Koki Foci :koki',
             'mozilla_event': u'on',
             'estimated_attendance': u'10',
             'extra_content': u'This is extra content',
@@ -61,8 +63,6 @@ class ViewsTest(TestCase):
             'metrics-TOTAL_FORMS': 3,
             'metrics-INITIAL_FORMS': 0}
 
-        self.pad_url = getattr(settings, 'ETHERPAD_URL', None)
-        self.pad_prefix = getattr(settings, 'ETHERPAD_PREFIX', None)
         self.event_edit_url = reverse('events_edit_event',
                                       kwargs={'slug': 'test-event'})
         self.event_url = reverse('events_view_event',
@@ -70,211 +70,350 @@ class ViewsTest(TestCase):
 
     def test_view_events_list(self):
         """Get list events page."""
-        c = Client()
-        response = c.get(reverse('events_list_events'))
+        response = self.client.get(reverse('events_list_events'))
         self.assertTemplateUsed(response, 'list_events.html')
 
     def test_view_event_page(self):
         """Get view event page."""
-        c = Client()
-        response = c.get(reverse('events_view_event',
-                                 kwargs={'slug': 'test-event'}))
+        EventFactory.create(slug='test-event')
+        response = self.client.get(self.event_url)
         self.assertTemplateUsed(response, 'view_event.html')
 
-    def test_subscribe_to_event(self):
-        """Subscribe to event."""
-        c = Client()
+    @mock.patch('django.contrib.messages.error')
+    def test_post_comment_on_event_unauthed(self, mock_error):
+        """Test post comment on event unauthorized."""
+        comment = 'This is a new comment'
+        EventFactory.create(slug='test-event')
+        response = self.client.post(self.event_url, {'comment': comment},
+                                    follow=True)
+        self.assertTemplateUsed(response, 'main.html')
+        mock_error.assert_called_with(ANY, 'Permission Denied')
 
-        # Anonymous user.
-        response = c.post(reverse('events_subscribe_to_event',
-                                  kwargs={'slug': 'test-event'}),
-                          follow=True)
+    @mock.patch('django.contrib.messages.success')
+    def test_post_comment_on_event_rep(self, mock_success):
+        """Test post comment on event as rep."""
+        # Test authenticated user
+        event = EventFactory.create(slug='test-event')
+        kwargs = {'groups': ['Rep'],
+                  'userprofile__receive_email_on_add_event_comment': True}
+        user = UserFactory.create(**kwargs)
+        comment = 'This is a new comment'
+
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(self.event_url, {'comment': comment},
+                                    follow=True)
+        comment = event.eventcomment_set.get(user=user)
+
+        self.assertTemplateUsed(response, 'view_event.html')
+        mock_success.assert_called_with(ANY, 'Comment saved')
+        eq_(comment.comment, 'This is a new comment')
+
+        eq_(len(mail.outbox), 1)
+
+    @requires_login()
+    def test_post_delete_event_comment_unauth(self):
+        """Test unauthorized delete event comment."""
+        event = EventFactory.create(slug='test-event')
+        user = UserFactory.create(groups=['Rep'])
+        comment = EventCommentFactory.create(event=event, user=user)
+        comment_delete = reverse('events_delete_event_comment',
+                                 kwargs={'slug': 'test-event',
+                                         'pk': comment.id})
+        self.client.post(comment_delete, {'comment': comment}, follow=True)
+        ok_(EventComment.objects.filter(pk=comment.id).exists())
+
+    @requires_permission()
+    def test_post_delete_event_comment_user_no_perms(self):
+        """Test delete event comment as rep without delete permissions."""
+        event = EventFactory.create(slug='test-event')
+        user = UserFactory.create(groups=['Rep'])
+        comment = EventCommentFactory.create(event=event)
+        comment_delete = reverse('events_delete_event_comment',
+                                 kwargs={'slug': 'test-event',
+                                         'pk': comment.id})
+        self.client.login(username=user.username, password='passwd')
+        self.client.post(comment_delete, follow=True)
+        ok_(EventComment.objects.filter(pk=comment.id).exists())
+
+    @mock.patch('django.contrib.messages.success')
+    def test_post_delete_event_comment_owner(self, mock_success):
+        """ Test delete event comment as event comment owner."""
+        event = EventFactory.create(slug='test-event')
+        user = UserFactory.create(groups=['Rep'])
+        comment = EventCommentFactory.create(event=event, user=user)
+        comment_delete = reverse('events_delete_event_comment',
+                                 kwargs={'slug': 'test-event',
+                                         'pk': comment.id})
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(comment_delete, follow=True)
+
+        mock_success.assert_called_with(ANY, 'Comment successfully deleted.')
+        ok_(not EventComment.objects.filter(pk=comment.id).exists())
+        self.assertTemplateUsed(response, 'view_event.html')
+
+    @mock.patch('django.contrib.messages.success')
+    def test_post_delete_event_comment_admin(self, mock_success):
+        """Test delete event comment as admin."""
+        event = EventFactory.create(slug='test-event')
+        user = UserFactory.create(groups=['Admin'])
+        comment = EventCommentFactory.create(event=event)
+        comment_delete = reverse('events_delete_event_comment',
+                                 kwargs={'slug': 'test-event',
+                                         'pk': comment.id})
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(comment_delete, follow=True)
+        mock_success.assert_called_with(ANY, 'Comment successfully deleted.')
+        self.assertTemplateUsed(response, 'view_event.html')
+
+    def test_subscription_management_no_perms(self):
+        """Subscribe to event without permissions."""
+        response = self.client.post(reverse('events_subscribe_to_event',
+                                            kwargs={'slug': 'test-event'}),
+                                    follow=True)
         self.assertTemplateUsed(response, 'main.html',
                                 ('Anonymous user is not returned to '
                                  'main.html to login'))
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'warning', 'Anonymous user does not get a warning.')
 
-        # Logged in user.
-        c.login(username='rep3', password='passwd')
-        response = c.post(reverse('events_subscribe_to_event',
-                                  kwargs={'slug': 'test-event'}),
-                          follow=True)
+    @mock.patch('django.contrib.messages.info')
+    def test_subscription_management_rep(self, mock_info):
+        """ Subscribe rep to event."""
+        user = UserFactory.create(groups=['Rep'])
+        EventFactory.create(slug='test-event')
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(reverse('events_subscribe_to_event',
+                                            kwargs={'slug': 'test-event'}),
+                                    follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
                                  'event page after subscribing.'))
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'info')
+        ok_(mock_info.called, 'messages.info() was not called')
 
-        # Subscribed tries again.
-        response = c.post(reverse('events_subscribe_to_event',
-                                  kwargs={'slug': 'test-event'}),
-                          follow=True)
+    @mock.patch('django.contrib.messages.warning')
+    def test_subscription_management_subscribed(self, mock_warning):
+        """ Test subscribe already subscribed user."""
+        user = UserFactory.create(groups=['Rep'])
+        event = EventFactory.create(slug='test-event')
+        AttendanceFactory.create(user=user, event=event)
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(reverse('events_subscribe_to_event',
+                                            kwargs={'slug': 'test-event'}),
+                                    follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
                                  'event page after subscribing.'))
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'warning', 'User does not get a warning message.')
+        msg = 'You are already subscribed to this event.'
+        mock_warning.assert_called_with(ANY, msg)
 
-    def test_unsubscribe_to_event(self):
-        """Unsubscribe from event"""
-        c = Client()
+    @requires_login()
+    def test_unsubscribe_from_event_unauth(self):
+        """Unsubscribe from event anonymous user."""
 
-        # Anonymous user.
-        response = c.post(reverse('events_unsubscribe_from_event',
-                                  kwargs={'slug': 'test-event'}),
-                          follow=True)
-        self.assertTemplateUsed(response, 'main.html',
-                                ('Anonymous user is not returned to '
-                                 'main.html to login'))
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'warning', 'Anonymous user does not get a warning.')
+        EventFactory.create(slug='test-event')
+        self.client.post(reverse('events_unsubscribe_from_event',
+                                 kwargs={'slug': 'test-event'}), follow=True)
 
-        # Logged in user.
-        c.login(username='mentor', password='passwd')
-        response = c.post(reverse('events_unsubscribe_from_event',
-                                  kwargs={'slug': 'test-event'}),
-                          follow=True)
+    @mock.patch('django.contrib.messages.success')
+    def test_unsubscribe_from_event_subscribed(self, mock_success):
+        """Test unsubscribe from event subscribed user."""
+        user = UserFactory.create(groups=['Rep'])
+        event = EventFactory.create(slug='test-event')
+        AttendanceFactory.create(user=user, event=event)
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(reverse('events_unsubscribe_from_event',
+                                            kwargs={'slug': 'test-event'}),
+                                    follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
                                  'event page after unsubscribing.'))
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'success', 'User does not get a success message.')
+        msg = 'You have unsubscribed from this event.'
+        mock_success.assert_called_with(ANY, msg)
 
-        # Subscribed tries again.
-        response = c.post(reverse('events_unsubscribe_from_event',
-                                  kwargs={'slug': 'test-event'}),
-                          follow=True)
+    @mock.patch('django.contrib.messages.warning')
+    def test_unsubscribe_from_event_unsubscribed(self, mock_warning):
+        """Test unsubscribe from event without subscription."""
+        user = UserFactory.create(groups=['Rep'])
+        EventFactory.create(slug='test-event')
+
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(reverse('events_unsubscribe_from_event',
+                                            kwargs={'slug': 'test-event'}),
+                                    follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
                                  'event page after unsubscribing.'))
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'warning', 'User does not get a warning message.')
+        msg = 'You are not subscribed to this event.'
+        mock_warning.assert_called_with(ANY, msg)
 
-    def test_delete_event(self):
-        """Delete event."""
-        c = Client()
+    @requires_login()
+    def test_delete_event_unauthorized(self):
+        """Test delete event unauthorized."""
+        event = EventFactory.create(slug='test-event')
+        self.client.get(reverse('events_delete_event',
+                                kwargs={'slug': 'test-event'}), follow=True)
+        ok_(Event.objects.filter(pk=event.id).exists())
 
-        # Anonymous user.
-        response = c.get(reverse('events_delete_event',
-                                 kwargs={'slug': 'test-event'}),
-                         follow=True)
-        self.assertTemplateUsed(response, 'main.html',
-                                ('Anonymous user is not returned to '
-                                 'main.html to login'))
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'warning', 'Anonymous user does not get a warning.')
-
-        # Rep (no permission).
-        c.login(username='rep3', password='passwd')
-        response = c.get(reverse('events_delete_event',
-                                 kwargs={'slug': 'test-event'}),
-                         follow=True)
+    def test_delete_event_no_permissions(self):
+        """Test delete event no permissions."""
+        user = UserFactory.create(groups=['Rep'])
+        event = EventFactory.create(slug='test-event')
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.get(reverse('events_delete_event',
+                                           kwargs={'slug': 'test-event'}),
+                                   follow=True)
         self.assertTemplateUsed(response, 'main.html',
                                 ('Rep is not returned to main.html.'))
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'error', 'Rep does not get an error.')
+        ok_(Event.objects.filter(pk=event.id).exists())
 
-        # Mentor, Admin and Owner
-        for user in ['mentor', 'admin', 'rep']:
-            c.login(username=user, password='passwd')
-            response = c.post(reverse('events_delete_event',
-                                      kwargs={'slug': 'test-event'}),
-                              follow=True)
-            self.assertTemplateUsed(response, 'list_events.html',
-                                    ('User %s not returned to '
-                                     'main.html.' % user))
-            for m in response.context['messages']:
-                pass
-            eq_(m.tags, u'success', ('User %s does not get an '
-                                     'success message.' % user))
+    @mock.patch('django.contrib.messages.success')
+    def test_delete_event_owner(self, mock_success):
+        """Test delete event with owner permissions."""
+        user = UserFactory.create(groups=['Rep'])
+        event = EventFactory.create(slug='test-event', owner=user)
+        self.client.login(username=user.username, password='passwd')
 
-            # Reload events, since they get deleted.
-            management.call_command('loaddata', 'demo_events')
+        response = self.client.post(reverse('events_delete_event',
+                                            kwargs={'slug': 'test-event'}),
+                                    follow=True)
+        self.assertTemplateUsed(response, 'list_events.html',
+                                ('User %s not returned to '
+                                 'main.html.' % user))
+        ok_(not Event.objects.filter(pk=event.id).exists())
+        mock_success.assert_called_with(ANY, 'Event successfully deleted.')
+
+    @mock.patch('django.contrib.messages.success')
+    def test_delete_event_mentor(self, mock_success):
+        """Test delete event with mentor permissions."""
+        user = UserFactory.create(groups=['Mentor'])
+        event = EventFactory.create(slug='test-event')
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(reverse('events_delete_event',
+                                            kwargs={'slug': 'test-event'}),
+                                    follow=True)
+        self.assertTemplateUsed(response, 'list_events.html',
+                                ('User %s not returned to '
+                                 'main.html.' % user))
+        ok_(not Event.objects.filter(pk=event.id).exists())
+        mock_success.assert_called_with(ANY, 'Event successfully deleted.')
+
+    @mock.patch('django.contrib.messages.success')
+    def test_delete_event_councelor(self, mock_success):
+        """Test delete event with councelor permissions."""
+        user = UserFactory.create(groups=['Council'])
+        event = EventFactory.create(slug='test-event')
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(reverse('events_delete_event',
+                                            kwargs={'slug': 'test-event'}),
+                                    follow=True)
+        self.assertTemplateUsed(response, 'list_events.html',
+                                ('User %s not returned to '
+                                 'main.html.' % user))
+        ok_(not Event.objects.filter(pk=event.id).exists())
+        mock_success.assert_called_with(ANY, 'Event successfully deleted.')
+
+    @mock.patch('django.contrib.messages.success')
+    def test_delete_event_admin(self, mock_success):
+        """Test delete event with admin permissions."""
+        user = UserFactory.create(groups=['Admin'])
+        event = EventFactory.create(slug='test-event')
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(reverse('events_delete_event',
+                                            kwargs={'slug': 'test-event'}),
+                                    follow=True)
+        self.assertTemplateUsed(response, 'list_events.html',
+                                ('User %s not returned to '
+                                 'main.html.' % user))
+        ok_(not Event.objects.filter(pk=event.id).exists())
+        mock_success.assert_called_with(ANY, 'Event successfully deleted.')
 
     def test_converted_visitors(self):
         """Test converted visitors counter."""
-        c = Client()
-        c.post(reverse('events_count_converted_visitors',
-                       kwargs={'slug': 'test-event'}))
+        event = EventFactory.create(slug='test-event')
+        converted_visitors = event.converted_visitors+1
+        self.client.post(reverse('events_count_converted_visitors',
+                                 kwargs={'slug': 'test-event'}),
+                         follow=True)
         event = Event.objects.get(slug='test-event')
-        eq_(event.converted_visitors, 2)
+        eq_(event.converted_visitors, converted_visitors)
 
     def test_export_event_to_ical(self):
         """Test ical export."""
-        c = Client()
-        response = c.get(reverse('events_icalendar_event',
-                                 kwargs={'slug': 'test-event'}))
+        EventFactory.create(slug='test-event')
+        response = self.client.get(reverse('events_icalendar_event',
+                                           kwargs={'slug': 'test-event'}))
         self.assertTemplateUsed(response, 'multi_event_ical_template.ics')
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
 
     def test_multi_event_ical_export(self):
         """Test multiple event ical export."""
-        c = Client()
+        EventFactory.create_batch(2)
 
         # Export all events to iCal
         period = 'all'
-        response = c.get(reverse('multiple_event_ical',
-                                 kwargs={'period': period}), follow=True)
+        response = self.client.get(reverse('multiple_event_ical',
+                                           kwargs={'period': period}),
+                                   follow=True)
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
         eq_(len(response.context['events']), 2)
+
+    def test_multi_event_ical_export_past(self):
+        """Test multiple past event ical export."""
+        EventFactory.create_batch(2)
 
         # Export past events to iCal
         period = 'past'
-        response = c.get(reverse('multiple_event_ical',
-                                 kwargs={'period': period}), follow=True)
+        response = self.client.get(reverse('multiple_event_ical',
+                                           kwargs={'period': period}),
+                                   follow=True)
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
         eq_(len(response.context['events']), 2)
+
+    def test_multi_event_ical_export_future(self):
+        """Test multiple past event ical export."""
+        start = datetime.datetime.now() + datetime.timedelta(days=1)
+        end = datetime.datetime.now() + datetime.timedelta(days=2)
+        EventFactory.create_batch(2, start=start, end=end)
 
         # Export future events to iCal
         period = 'future'
-        response = c.get(reverse('multiple_event_ical',
-                                 kwargs={'period': period}), follow=True)
+        response = self.client.get(reverse('multiple_event_ical',
+                                           kwargs={'period': period}),
+                                   follow=True)
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
-        eq_(len(response.context['events']), 0)
+        eq_(len(response.context['events']), 2)
 
-        # Export custom date range events to iCal
+    def test_multi_event_ical_export_custom(self):
+        """Test multiple event ical export with custom date."""
+        event_start = datetime.datetime.now() + datetime.timedelta(days=1)
+        event_end = datetime.datetime.now() + datetime.timedelta(days=2)
+        EventFactory.create_batch(2, start=event_start, end=event_end)
         period = 'custom'
-        response = c.get(reverse('multiple_event_ical',
-                                 kwargs={'period': period}), follow=True)
+        response = self.client.get(reverse('multiple_event_ical',
+                                           kwargs={'period': period}),
+                                   follow=True)
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
 
-        # Test 'start' and 'end' terms
-        start = '2012-06-25'
-        end = '2012-06-26'
+        start = (event_start-datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+        end = (event_end+datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 
-        response = c.get(reverse('multiple_event_ical',
-                                 kwargs={'period': 'custom/start/%s' % start}),
-                         follow=True)
+        query = 'custom/start/%s/end/%s' % (start, end)
+        response = self.client.get(reverse('multiple_event_ical',
+                                           kwargs={'period': query}),
+                                   follow=True)
 
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
         eq_(len(response.context['events']), 2)
 
-        response = c.get(reverse('multiple_event_ical',
-                                 kwargs={'period': 'custom/end/%s' % end}),
-                         follow=True)
-        self.failUnless(response['Content-Type'].startswith('text/calendar'))
+    def test_multi_event_ical_export_search(self):
+        """Test multiple past event ical export."""
 
-        response = c.get(reverse('multiple_event_ical',
-                                 kwargs={'period': 'custom/start/%s/end/%s' %
-                                         (start, end)}),
-                         follow=True)
-        self.failUnless(response['Content-Type'].startswith('text/calendar'))
-        eq_(len(response.context['events']), 1)
+        EventFactory.create(name='Test event')
 
         # Test 'search' query
         term = 'Test event'
-        response = c.get(reverse('multiple_event_ical',
-                                 kwargs={'period': 'custom/search/%s' % term}),
-                         follow=True)
+        search = 'custom/search/%s' % term
+        response = self.client.get(reverse('multiple_event_ical',
+                                           kwargs={'period': search}),
+                                   follow=True)
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
         eq_(len(response.context['events']), 1)
 
@@ -288,21 +427,75 @@ class ViewsTest(TestCase):
         response = self.client.get(url, follow=True)
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
 
-    def test_edit_event(self):
-        """Edit event page"""
-        c = Client()
-
-        # Login as test-event owner
-        c.login(username='rep', password='passwd')
-
-        response = c.post(self.event_edit_url, self.data, follow=True)
+    @mock.patch('django.contrib.messages.success')
+    def test_post_create_event_rep(self, mock_success):
+        """Test create new event with rep permissions."""
+        user = UserFactory.create(groups=['Rep'])
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(self.event_edit_url, self.data,
+                                    follow=True)
+        mock_success.assert_called_with(ANY, 'Event successfully created.')
+        eq_(mock_success.call_count, 1)
         eq_(response.request['PATH_INFO'], self.event_url)
-
-        # Ensure event data are saved
         event = Event.objects.get(name='Test edit event')
-
-        # Ensure times_edited field increments
         eq_(event.times_edited, 1)
+        eq_(event.owner, user)
+
+    def test_get_create_event_rep(self):
+        """Test get create event page with rep permissions."""
+        user = UserFactory.create(groups=['Rep'])
+        self.client.login(username=user.username, password='passwd')
+        url = reverse('events_new_event')
+        response = self.client.get(url, follow=True)
+        eq_(response.request['PATH_INFO'], url)
+        ok_(response.context['creating'])
+        ok_(not response.context['event_form'].editable_owner)
+        self.assertTemplateUsed('edit_event.html')
+
+    def test_get_edit_event_rep(self):
+        """Test get event edit page with rep permissions."""
+        user = UserFactory.create(groups=['Rep'])
+        EventFactory.create(slug='test-event')
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.get(self.event_edit_url, follow=True)
+        eq_(response.request['PATH_INFO'], self.event_edit_url)
+        ok_(not response.context['creating'])
+        ok_(not response.context['event_form'].editable_owner)
+        eq_(response.context['event'].slug, 'test-event')
+        self.assertTemplateUsed('edit_event.html')
+
+    @mock.patch('django.contrib.messages.success')
+    def test_get_edit_event_admin(self, mock_success):
+        """Test get event edit page with admin permissions"""
+        user = UserFactory.create(groups=['Admin'])
+        EventFactory.create(slug='test-event')
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.get(self.event_edit_url, follow=True)
+        eq_(response.request['PATH_INFO'], self.event_edit_url)
+        ok_(not response.context['creating'])
+        ok_(response.context['event_form'].editable_owner)
+        eq_(response.context['event'].slug, 'test-event')
+        self.assertTemplateUsed('edit_event.html')
+
+    @mock.patch('django.contrib.messages.success')
+    @override_settings(ETHERPAD_URL="http://example.com")
+    @override_settings(ETHERPAD_PREFIX="remo-")
+    def test_edit_event_rep(self, mock_success):
+        """Test edit event with rep permissions."""
+        user = UserFactory.create(groups=['Rep'])
+        event = EventFactory.create(slug='test-event', owner=user)
+        times_edited = event.times_edited
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.post(self.event_edit_url, self.data,
+                                    follow=True)
+        mock_success.assert_called_with(ANY, 'Event successfully updated.')
+        eq_(mock_success.call_count, 1)
+        eq_(response.request['PATH_INFO'], self.event_url)
+        event = Event.objects.get(name='Test edit event')
+        eq_(event.times_edited, times_edited+1)
+        eq_(event.owner, user)
+
+        # TODO: replace the following section with form tests
 
         # Test fields with the same name in POST data and models
         excluded = ['planning_pad_url', 'lat', 'lon', 'mozilla_event',
@@ -312,7 +505,7 @@ class ViewsTest(TestCase):
                 eq_(str(getattr(event, field)), self.data[field])
 
         # Test excluded fields
-        pad_url = self.pad_url + self.pad_prefix + event.slug
+        pad_url = 'http://example.com/remo-' + event.slug
         mozilla_event = {'on': True, 'off': False}
 
         eq_(self.data['categories'], [cat.id
@@ -354,38 +547,20 @@ class ViewsTest(TestCase):
         end = datetime.datetime(year, month, day, hour, minute)
         eq_(make_aware(end, zone), event.end)
 
-        # Test event cloning
-        c = Client()
-        c.login(username='rep3', password='passwd')
-
-        event_clone_url = reverse('events_clone_event',
-                                  kwargs={'slug': 'test-event'})
-        new_event_url = reverse('events_view_event',
-                                kwargs={'slug': 'test-edit-event'})
-
-        response = c.post(event_clone_url, self.data, follow=True)
-        cloned_event = Event.objects.get(slug='test-edit-event')
-
-        # Test if cloned event is created with the correct slug
-        # metrics and categories
-        eq_(response.request['PATH_INFO'], new_event_url)
-        eq_(Event.objects.all().count(), 3)
-        eq_(Metric.objects.all().count(), 7)
-        eq_(cloned_event.metrics.all().count(), 3)
-        eq_(cloned_event.categories.all().count(), 6)
-
     def test_required_fields(self):
         """Test required fields error handling"""
-        c = Client()
 
+        # TODO: replace the following test with form tests
         # Login as test-event owner
-        c.login(username='rep', password='passwd')
+        user = UserFactory.create(groups=['Rep'])
+        self.client.login(username=user.username, password='passwd')
 
         # Test invalid event date
         invalid_data = self.data.copy()
         invalid_data['end_form_0_year'] = invalid_data['start_form_0_year'] - 1
 
-        response = c.post(self.event_edit_url, invalid_data, follow=True)
+        response = self.client.post(self.event_edit_url, invalid_data,
+                                    follow=True)
         self.assertNotEqual(response.request['PATH_INFO'], self.event_url)
 
         # Test invalid number of metrics
@@ -397,7 +572,8 @@ class ViewsTest(TestCase):
         invalid_data.pop('metrics-2-title')
         invalid_data.pop('metrics-2-outcome')
 
-        response = c.post(self.event_edit_url, invalid_data, follow=True)
+        response = self.client.post(self.event_edit_url, invalid_data,
+                                    follow=True)
         self.assertNotEqual(response.request['PATH_INFO'], self.event_url)
 
         # Test invalid event name, description, venue, city
@@ -406,19 +582,48 @@ class ViewsTest(TestCase):
         for field in fields:
             invalid_data = self.data.copy()
             invalid_data[field] = ''
-            response = c.post(self.event_edit_url, invalid_data, follow=True)
+            response = self.client.post(self.event_edit_url, invalid_data,
+                                        follow=True)
             self.assertNotEqual(response.request['PATH_INFO'], self.event_url)
 
-    def test_email_event_attendees(self):
+    @mock.patch('django.contrib.auth.models.User.has_perm')
+    def test_edit_event_page_no_delete_perms(self, mock_perm):
+        """Test view edit event page without delete permissions."""
+        user = UserFactory.create(groups=['Admin'])
+        EventFactory.create(slug='test-event')
+        mock_perm.side_effect = [True, False]
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.get(self.event_edit_url, follow=True)
+        eq_(response.request['PATH_INFO'], self.event_edit_url)
+        ok_(not response.context['creating'])
+        ok_(response.context['event_form'].editable_owner)
+        eq_(response.context['event'].slug, 'test-event')
+        ok_(not response.context['can_delete_event'])
+
+    @mock.patch('django.contrib.messages.success')
+    def test_clone_event_rep(self, mock_success):
+        """Test clone event with rep permissions."""
+        user = UserFactory.create(groups=['Rep'])
+        self.client.login(username=user.username, password='passwd')
+        event_clone_url = reverse('events_clone_event',
+                                  kwargs={'slug': 'test-event'})
+        response = self.client.post(event_clone_url, self.data, follow=True)
+        mock_success.assert_called_with(ANY, 'Event successfully created.')
+        eq_(mock_success.call_count, 1)
+        event = Event.objects.get(name='Test edit event', owner=user)
+        cloned_event_url = reverse('events_view_event',
+                                   kwargs={'slug': event.slug})
+        eq_(event.times_edited, 1)
+        eq_(response.request['PATH_INFO'], cloned_event_url)
+
+    @mock.patch('django.contrib.messages.success')
+    def test_email_event_attendees(self, mock_success):
         """Send email to selected event attendees."""
-        c = Client()
-        c.login(username='rep', password='passwd')
-
-        #Select 2 attendees from list.
-        reps = []
-        reps.append(User.objects.get(first_name='Koki'))
-        reps.append(User.objects.get(first_name='Menis'))
-
+        user = UserFactory.create(groups=['Rep'])
+        event = EventFactory.create(slug='test-event', owner=user)
+        AttendanceFactory.create_batch(3, event=event)
+        self.client.login(username=user.username, password='passwd')
+        reps = event.attendees.all()
         valid_data = dict()
         for rep in reps:
             field_name = '%s %s <%s>' % (rep.first_name,
@@ -431,113 +636,15 @@ class ViewsTest(TestCase):
         valid_data['slug'] = 'test-event'
 
         url = reverse('email_attendees', kwargs={'slug': 'test-event'})
-        response = c.post(url, valid_data, follow=True)
+        response = self.client.post(url, valid_data, follow=True)
         self.assertTemplateUsed(response, 'view_event.html')
 
-        for m in response.context['messages']:
-            pass
-
-        eq_(m.tags, u'success')
+        mock_success.assert_called_with(ANY, 'Email sent successfully.')
         eq_(len(mail.outbox), 1)
 
         email = mail.outbox[0]
-        eq_(len(email.to), 2)
+        eq_(len(email.to), 4)
         eq_(len(email.cc), 1)
-
-    def test_post_comment_on_event(self):
-        """Test post comment on event."""
-        c = Client()
-        comment = 'This is a new comment'
-        # Test anonymous user
-        event_view_url = reverse('events_view_event',
-                                 kwargs={'slug': 'test-event'})
-        response = c.post(event_view_url, {'comment': comment}, follow=True)
-        self.assertTemplateUsed(response, 'main.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'error')
-
-        # Test authenticated user
-        c.login(username='rep3', password='passwd')
-
-        response = c.post(event_view_url, {'comment': comment}, follow=True)
-        self.assertTemplateUsed(response, 'view_event.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'success')
-        eq_(response.context['request'].POST['comment'], comment)
-
-        event = Event.objects.get(slug='test-event')
-        if event.owner.userprofile.receive_email_on_add_event_comment:
-            eq_(len(mail.outbox), 1)
-
-    def test_post_delete_event_comment(self):
-        """Test delete event comment."""
-        c = Client()
-        comment_delete = reverse('events_delete_event_comment',
-                                 kwargs={'slug': 'multi-event',
-                                         'pk': '1'})
-
-        # Test anonymous user
-        response = c.post(comment_delete, follow=True)
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'warning')
-
-        self.assertTemplateUsed(response, 'main.html')
-
-        # Test authenticated user without delete permission
-        # Rep
-        c.login(username='rep3', password='passwd')
-        response = c.post(comment_delete, follow=True)
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'error')
-
-        self.assertTemplateUsed(response, 'main.html')
-
-        # Mentor
-        c.login(username='mentor', password='passwd')
-        response = c.post(comment_delete, follow=True)
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'error')
-
-        self.assertTemplateUsed(response, 'main.html')
-
-        # Counselor
-        c.login(username='counselor', password='passwd')
-        response = c.post(comment_delete, follow=True)
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'error')
-
-        self.assertTemplateUsed(response, 'main.html')
-
-        # Test authenticated user with delete permission
-        # Comment owner
-        c.login(username='rep', password='passwd')
-        response = c.post(comment_delete, follow=True)
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'success')
-
-        self.assertTemplateUsed(response, 'view_event.html')
-
-    def test_post_delete_event_comment_admin(self):
-        """Test admin delete event comment."""
-        c = Client()
-        comment_delete = reverse('events_delete_event_comment',
-                                 kwargs={'slug': 'multi-event',
-                                         'pk': '1'})
-        # Admin
-        c.login(username='admin', password='passwd')
-        response = c.post(comment_delete, follow=True)
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'success')
-
-        self.assertTemplateUsed(response, 'view_event.html')
 
     @mock.patch('remo.events.views.iri_to_uri', wraps=iri_to_uri)
     def test_view_redirect_list_events(self, mocked_uri):
