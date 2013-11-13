@@ -17,12 +17,12 @@ urlpatterns = patterns(
 urlpatterns += patterns(
     'remo.reports.views',
     url(r'^(?P<year>\d+)/(?P<month>\w+)/(?P<day>\d+)/(?P<id>\d+)/$',
-        'ng_view_report', name='ng_reports_view_report'),
+        'view_ng_report', name='reports_ng_view_report'),
     url(r'^(?P<year>\d+)/(?P<month>\w+)/(?P<day>\d+)/(?P<id>\d+)/edit/$',
-        'ng_edit_report', name='ng_reports_edit_report'),
-    url(r'^delete/(?P<id>\d+)$', 'ng_delete_report',
-        name='ng_reports_delete_report'),
+        'edit_ng_report', name='reports_ng_edit_report'),
+    url(r'^(?P<year>\d+)/(?P<month>\w+)/(?P<day>\d+)/(?P<id>\d+)/delete/$',
+        'delete_ng_report', name='reports_ng_delete_report'),
     url((r'^(?P<year>\d+)/(?P<month>\w+)/d(?P<day>\d+)/'
          '(?P<id>\d+)/delete/comment/(?P<comment_id>\d+)/$'),
-        'ng_delete_report_comment', name='ng_reports_delete_report_comment'),
+        'delete_ng_report_comment', name='reports_ng_delete_report_comment'),
 )

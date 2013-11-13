@@ -6,11 +6,11 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
-from django.utils.timezone import now as now_utc
 
 import caching.base
 from south.signals import post_migrate
 
+import remo.base.utils as utils
 from remo.base.utils import (add_permissions_to_groups,
                              get_object_or_none, go_back_n_months)
 from remo.events.models import Attendance as EventAttendance, Event
@@ -61,7 +61,10 @@ def report_set_groups(app, sender, signal, **kwargs):
 
     perms = {'can_edit_reports': ['Admin', 'Mentor'],
              'can_delete_reports': ['Admin', 'Mentor'],
-             'can_delete_report_comments': ['Admin', 'Mentor']}
+             'can_delete_report_comments': ['Admin', 'Mentor'],
+             'add_ngreport': ['Admin'],
+             'change_ngreport': ['Admin'],
+             'delete_ngreport': ['Admin']}
 
     add_permissions_to_groups('reports', perms)
 
@@ -231,7 +234,7 @@ class NGReport(models.Model):
     'NG' prefix (NG - New Generation).
     """
     user = models.ForeignKey(User, related_name='ng_reports')
-    report_date = models.DateField(default=now_utc().date(), blank=True)
+    report_date = models.DateField()
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     mentor = models.ForeignKey(User, null=True,
@@ -252,9 +255,29 @@ class NGReport(models.Model):
     link_description = models.CharField(max_length=200, blank=True, default='')
     activity_description = models.TextField(blank=True, default='')
 
-    @property
-    def report_created_on(self):
-        return self.report_date.strftime('%d %b %Y')
+    def get_absolute_url(self):
+        args = [self.user.userprofile.display_name,
+                self.report_date.year,
+                utils.number2month(self.report_date.month),
+                self.report_date.day,
+                str(self.id)]
+        return reverse('remo.reports.views.view_ng_report', args=args)
+
+    def get_absolute_edit_url(self):
+        args = [self.user.userprofile.display_name,
+                self.report_date.year,
+                utils.number2month(self.report_date.month),
+                self.report_date.day,
+                str(self.id)]
+        return reverse('remo.reports.views.edit_ng_report', args=args)
+
+    def get_absolute_delete_url(self):
+        args = [self.user.userprofile.display_name,
+                self.report_date.year,
+                utils.number2month(self.report_date.month),
+                self.report_date.day,
+                str(self.id)]
+        return reverse('remo.reports.views.delete_ng_report', args=args)
 
     class Meta:
         ordering = ['-report_date', '-created_on']

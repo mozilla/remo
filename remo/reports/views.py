@@ -10,8 +10,10 @@ from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.forms.models import inlineformset_factory
-from django.shortcuts import (get_object_or_404, redirect, render)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_control, never_cache
+
+from waffle.decorators import waffle_flag
 
 import forms
 import remo.base.utils as utils
@@ -308,58 +310,64 @@ def list_reports(request, mentor=None, rep=None):
 
 
 # New Generation reporting system
+@waffle_flag('reports_ng_report')
 @never_cache
-@permission_check(permissions=['reports.add_ng_report',
-                               'reports.change_ng_report'],
+@permission_check(permissions=['reports.add_ngreport',
+                               'reports.change_ngreport'],
                   filter_field='display_name', owner_field='user',
                   model=UserProfile)
-def ng_edit_report(request, display_name, year, month, day, id):
-    user = get_object_or_404(User, userprofile__display_name=display_name)
-    report, created = utils.get_or_create_instance(NGReport, user=user, id=id)
+def edit_ng_report(request, display_name='', year=None,
+                   month=None, day=None, id=None):
+    user = request.user
+    created = False
+    if not id:
+        report = NGReport()
+        created = True
+    else:
+        report = get_object_or_404(
+            NGReport, pk=id, user__userprofile__display_name=display_name)
 
     report_form = forms.NGReportForm(request.POST or None, instance=report)
 
     if report_form.is_valid():
-        report_form.save()
-
         if created:
+            report.user = user
+            report.mentor = user.userprofile.mentor
             messages.success(request, 'Report successfully created.')
         else:
             messages.success(request, 'Report successfully updated.')
-        month = utils.number2month(report.created_on.month)
-        return redirect(reverse('ng_reports_view_report',
-                                kwargs={'display_name': display_name,
-                                        'year': report.created_on.year,
-                                        'month': month,
-                                        'day': report.created_on.day,
-                                        'id': report.id}))
+        report_form.save()
+        return redirect(report.get_absolute_url())
 
-    return render(request, 'ng_reports_edit_active_report.html',
+    return render(request, 'edit_ng_report.html',
                   {'report_form': report_form,
                    'pageuser': user,
                    'report': report,
                    'created': created})
 
 
-def ng_view_report(request, display_name, year, month, day, id):
+@waffle_flag('reports_ng_report')
+def view_ng_report(request, display_name, year, month, day, id):
     return render(request, 'reports_not_implemented.html')
 
 
-def ng_delete_report(request, display_name, id):
+@waffle_flag('reports_ng_report')
+@never_cache
+@permission_check(permissions=['reports.delete_ngreport'],
+                  filter_field='display_name', owner_field='user',
+                  model=UserProfile)
+def delete_ng_report(request, display_name, year, month, day, id):
     user = get_object_or_404(User, userprofile__display_name=display_name)
     if request.method == 'POST':
-        report = get_object_or_404(NGReport, user=user, id=id)
+        report = get_object_or_404(NGReport, id=id)
         report.delete()
         messages.success(request, 'Report successfully deleted.')
 
     if request.user == user:
         return redirect('profiles_view_my_profile')
-    else:
-        redirect_url = reverse(
-            'profiles_view_profile',
-            kwargs={'display_name': user.userprofile.display_name})
-        return redirect(redirect_url)
+    return redirect('profiles_view_profile', display_name=display_name)
 
 
-def ng_delete_report_comment(request, display_name, year, month, day, id):
+@waffle_flag('reports_ng_report')
+def delete_ng_report_comment(request, display_name, year, month, day, id):
     return render(request, 'reports_not_implemented.html')

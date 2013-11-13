@@ -1,13 +1,11 @@
-from datetime import datetime
-
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now as now_utc
 
 import happyforms
-import pytz
-from remo.reports.models import (Activity, Campaign, NGReport, Report,
-                                 ReportComment, ReportEvent, ReportLink)
+
+from remo.reports.models import (NGReport, Report, ReportComment, ReportEvent,
+                                 ReportLink)
 
 
 # Old reporting system
@@ -95,15 +93,7 @@ class ReportLinkForm(happyforms.ModelForm):
 
 # New Generation reporting system
 class NGReportForm(happyforms.ModelForm):
-    activity = forms.ModelChoiceField(
-        queryset=Activity.objects.all(),
-        empty_label='Please select an activity',
-        error_messages={'required': 'Please select an option from the list.'})
-    campaign = forms.ModelChoiceField(
-        queryset=Campaign.objects.all(),
-        empty_label='Please select a campaign',
-        required=False)
-    created_on = forms.DateTimeField(required=False)
+    report_date = forms.DateField(input_formats=['%d %B %Y'])
 
     def __init__(self, *args, **kwargs):
         """ Initialize form.
@@ -111,44 +101,35 @@ class NGReportForm(happyforms.ModelForm):
         Dynamically set the report date.
         """
         super(NGReportForm, self).__init__(*args, **kwargs)
-        self.fields['report_date'] = forms.DateField(
-            input_formats=['%d %b %Y'],
-            widget=forms.DateInput(attrs={'class': 'datepicker',
-                                          'readonly': 'true'}))
-
-        if self.instance.created_on:
-            self.fields['report_date'].initial = self.instance.creation_date
+        self.fields['activity'].empty_label = 'Please select an activity.'
+        self.fields['activity'].error_messages['required'] = (
+            'Please select an option from the list.')
+        self.fields['campaign'].empty_label = 'Please select a campaign.'
 
     def clean(self):
         """Clean Form."""
         super(NGReportForm, self).clean()
         cdata = self.cleaned_data
 
-        if 'report_date' not in cdata:
-            raise ValidationError('Please correct the form errors.')
-
-        creation_date = self.cleaned_data['report_date']
-        creation_datetime = (datetime.combine(creation_date, now_utc().time())
-                             .replace(tzinfo=pytz.UTC))
-        cdata['created_on'] = creation_datetime
-        if cdata['created_on'] > now_utc():
-            msg = 'Report date cannot be in the future.'
-            self._errors['report_date'] = self.error_class([msg])
-
-        if ('activity' in cdata and
-            cdata['activity'].name == 'Participated in a campaign'
-                and not cdata['campaign']):
+        activity = cdata.get('activity')
+        if (activity and activity.name == 'Participated in a campaign'
+                and not cdata.get('campaign')):
             msg = 'Please select an option from the list'
             self._errors['campaign'] = self.error_class([msg])
 
         return cdata
 
+    def clean_report_date(self):
+        """Clean report_date field."""
+        if self.cleaned_data['report_date'] > now_utc().date():
+            raise ValidationError('Report date cannot be in the future.')
+        return self.cleaned_data['report_date']
+
     class Meta:
         model = NGReport
-        fields = ['created_on', 'activity', 'campaign', 'functional_areas',
-                  'longitude', 'latitude', 'location', 'link',
-                  'link_description', 'activity_description']
-        widgets = {'longitude': forms.HiddenInput(attrs={'id': 'lon'}),
-                   'latitude': forms.HiddenInput(attrs={'id': 'lat'}),
-                   'functional_areas': forms.SelectMultiple(
-                       attrs={'class': 'contribution-area'})}
+        fields = ['report_date', 'activity', 'campaign',
+                  'functional_areas', 'longitude', 'latitude', 'location',
+                  'link', 'link_description', 'activity_description']
+        widgets = {'longitude': forms.HiddenInput(),
+                   'latitude': forms.HiddenInput(),
+                   'functional_areas': forms.SelectMultiple()}

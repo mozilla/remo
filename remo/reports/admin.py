@@ -29,16 +29,6 @@ class ReportAdmin(admin.ModelAdmin):
         return obj.user.userprofile.display_name
 
 
-class ActivityAdmin(admin.ModelAdmin):
-    """Activity model in New Generation Reporting system."""
-    model = Activity
-
-
-class CampaingAdmin(admin.ModelAdmin):
-    """Campaign model in New Generation Reporting system."""
-    model = Campaign
-
-
 class NGReportCommentInline(admin.StackedInline):
     """NGReportComment Inline."""
     model = NGReportComment
@@ -46,10 +36,23 @@ class NGReportCommentInline(admin.StackedInline):
 
 
 class NGReportAdmin(admin.ModelAdmin):
-    """Report Admin."""
+    """New Generation Report Admin."""
     inlines = [NGReportCommentInline]
+
+
+class ActivityAdmin(admin.ModelAdmin):
+    """Activity Admin."""
+    model = Activity
+    list_display = ('__unicode__', 'active')
+
+
+class CampaignAdmin(admin.ModelAdmin):
+    """Campaign Admin."""
+    model = Campaign
+    list_display = ('__unicode__', 'active')
+
 
 admin.site.register(Report, ReportAdmin)
 admin.site.register(NGReport, NGReportAdmin)
 admin.site.register(Activity, ActivityAdmin)
-admin.site.register(Campaign, CampaingAdmin)
+admin.site.register(Campaign, CampaignAdmin)

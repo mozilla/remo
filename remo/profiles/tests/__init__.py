@@ -97,14 +97,14 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    """User fixture factory."""
+    """User model factory."""
     FACTORY_FOR = User
 
     username = factory.Sequence(lambda n: 'username%s' % n)
     first_name = 'John'
     last_name = factory.Sequence(lambda n: 'Doe %s' % int2roman(n))
-    email = factory.Sequence(lambda n: 'user%s@example.com' % n)
-    password = 'sha1$caffc$30d78063d8f2a5725f60bae2aca64e48804272c3'
+    email = factory.LazyAttribute(lambda o: '%s@example.com' % o.username)
+    password = factory.PostGenerationMethodCall('set_password', 'passwd')
     is_staff = False
     is_active = True
     is_superuser = False

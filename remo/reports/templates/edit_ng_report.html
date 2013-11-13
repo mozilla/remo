@@ -1,7 +1,7 @@
 {% extends "base_fd4.html" %}
 
 {% block pagetitle %}
-  {{ super() }} -  {% if created %}Add{% else %}Edit{% endif %} a report
+  {{ super() }} -  {% if created %}Add{% else %}Edit{% endif %} report
 {% endblock %}
 
 {% block content %}
@@ -17,7 +17,7 @@
       {% endif %}
       <div class="large-6 columns">
         <h1>
-          {% if created %}Add{% else %}Edit{% endif %} a report
+          {% if created %}Add{% else %}Edit{% endif %} report
         </h1>
       </div>
       <div class="large-6 columns align-right hide-for-small">
@@ -43,22 +43,20 @@
                  data-tooltip data-options="disable-for-touch:true"
                  title="Type of Activity">
               {{ report_form.activity }}
-              <div class="required-field"></div>
             </div>
             {{ field_errors(report_form.activity) }}
 
-            <div class="campaign-panel">
+            <div id="campaign-panel">
               <label class="required" for="campaign">
                 Which campaign did you participate in?
               </label>
               <div id="campaign"
-                   class="tip-left"
+                   class="has-tip tip-left"
                    title="Select a campaign"
                    data-tooltip
                    data-options="disable-for-touch:true"
                    required>
                 {{ report_form.campaign  }}
-                <div class="required-field"></div>
               </div>
               {{ field_errors(report_form.campaign) }}
             </div>
@@ -73,54 +71,54 @@
             <label class="required" for="id_report_date">
               When did you do this activity?
             </label>
-            <span class="tip-left" title="Date of activity"
+            <span class="tip-left" title="Date of activity in UTC"
                   placeholder="DD-MM-YYYY"
                   data-tooltip
                   data-options="disable-for-touch:true"
                   required>
-              {{ report_form.report_date }}
-              <div class="required-field"></div>
+              {{ field_with_attrs(report_form.report_date,
+                                  class="datepicker",
+                                  readonly="readonly") }}
             </span>
           </div>
-          {{ field_errors(report_form.report_date) }}
         </div>
+        {{ field_errors(report_form.report_date) }}
         <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon large heart"></div>
           </div>
           <div class="large-11 columns">
-            <label class="required">
+            <label class="required" for="id_functional_areas">
               Which contribution area(s) does your activity support?
             </label>
-            <ul id="contribution-areas">
-              <li>
-                {{ report_form.functional_areas }}
-              </li>
-            </ul>
+            <span class"has-tip tip-left" title="Contribution area"
+                  data-tooltip
+                  data-options="disable-for-touch:true">
+              {{ field_with_attrs(report_form.functional_areas,
+                                  class='contribution-area',
+                                  size=18) }}
+            </span>
           </div>
-          {{ field_errors(report_form.functional_areas) }}
         </div>
+          {{ field_errors(report_form.functional_areas) }}
       </div>
       <div class="large-6 columns">
+
         <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon large pin"></div>
           </div>
           <div class="large-11 columns">
 
-            <label for="id_location">
+            <label class="required" for="id_location">
               Where did your contribution take place?
             </label>
-            <div class="location-inputs">
-              <input type="text"
-                     id="id_location"
-                     name="location"
-                     class="tip-left"
-                     title="Location of contribution"
-                     value="{{ report_form.location.value() }}"
-                     placeholder="City, Region, Country"
-                     data-tooltip
-                     data-options="disable-for-touch:true"/>
+            <div class="location-inputs has-tip tip-right"
+                 title="Location of contribution" data-tooltip
+                 data-options="disable-for-touch:true">
+              {{ field_with_attrs(report_form.location,
+                                  placeholder="City, Region, Country",
+                                  readonly='readonly') }}
               <button type="button"
                       class="small button pict-button locate"
                       title="Choose a location"
@@ -130,14 +128,13 @@
               </button>
               {{ report_form.longitude }}
               {{ report_form.latitude }}
-
-              {# Avoid displaying two separate errors for lat and lon. #}
-              {% if report_form.latitude.errors or report_form.longitude.errors %}
-                <small class="error">
-                  Please point venue in map.
-                </small>
-              {% endif %}
             </div>
+            {# Avoid displaying two separate errors for lat and lon. #}
+            {% if report_form.latitude.errors or report_form.longitude.errors %}
+              <small class="error">
+                Please point venue in map.
+              </small>
+            {% endif %}
           </div>
         </div>
 
@@ -146,19 +143,33 @@
             <div class="pict-icon large www"></div>
           </div>
           <div class="large-11 columns">
-            <label for="id_link">
+            <label for="link">
               URL for your activity
             </label>
-            <input type="text"
-                   id="id_link"
-                   name="link"
-                   class="tip-left"
-                   value ="{{ report_form.link.value() }}"
-                   placeholder="http://www.example.com"
-                   title="URL for activity"
-                   data-tooltip
-                   data-options="disable-for-touch:true" />
+            <div id="link" class="has-tip tip-right" data-tooltip
+                 data-options="disable-for-touch:true" title="URL for activity">
+              {{ field_with_attrs(report_form.link,
+                                  placeholder="http://www.example.com") }}
+            </div>
             {{ field_errors(report_form.link) }}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large edit"></div>
+          </div>
+          <div class="large-11 columns">
+            <label for="link-description">
+              URL description
+            </label>
+            <div id="link-description " data-tooltip class="has-tip tip-right"
+                 title="What is this URL for">
+              {{ field_with_attrs(report_form.link_description,
+                                  class="flat",
+                                  placeholder="What is this URL for") }}
+            </div>
+            {{ field_errors(report_form.link_description) }}
           </div>
         </div>
 
@@ -170,12 +181,11 @@
             <label for="description">
               Activity description
             </label>
-            <div id="description " data-tooltip class="has-tip tip-left"
+            <div id="description " data-tooltip class="has-tip tip-right"
                  title="Activity description">
               {{ field_with_attrs(report_form.activity_description,
                                   class="flat",
                                   placeholder="Describe the activity briefly") }}
-              <div class="required-field"></div>
             </div>
             {{ field_errors(report_form.activity_description) }}
           </div>
@@ -184,49 +194,27 @@
     </div>
 
     <!-- Map Point Reveal Modal -->
-    <div id="map-point" class="reveal-modal small">
-      <a class="close-reveal-modal">&#215;</a>
-      <div class="row">
-        <div class="large-12 columns">
-          <p class="lead">
-            Please click a location in the map
-          </p>
-          <div id="map_point" class="map300">
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="large-6 columns">
-          <input type="text" placeholder="Longitude" id="lon-temp">
-          <input type="text" placeholder="Latitude" id="lat-temp">
-        </div>
-        <div class="large-6 columns use-these">
-          <button type="button"
-                  class="small button update close-reveal-modal">
-            Use these geo-coordinates &raquo;
-          </button>
-        </div>
-      </div>
-    </div>
+    {% include 'includes/map_modal.html' %}
+
   </form>
 
   <!-- Delete Profile Reveal Modal -->
-  <div id="ng-delete-report" class="reveal-modal small">
-    <a class="close-reveal-modal">&#215;</a>
-    <p class="lead">Are you sure you want to do that?</p>
-    <h2>Warning!</h2>
-    <p>
-      By pressing the following button, you will permanently and irreversibly delete this
-      report.
-    </p>
-      <form method="post"
-            action="{{ url('ng_reports_delete_report',
-                    display_name=pageuser.userprofile.display_name,
-                    id=report.id) }}">
-        {{ csrf() }}
-        <button class="large button alert">Delete report</button>
-      </form>
-  </div>
+  {% if not created %}
+    <div id="ng-delete-report" class="reveal-modal small">
+      <a class="close-reveal-modal">&#215;</a>
+      <p class="lead">Are you sure you want to do that?</p>
+      <h2>Warning!</h2>
+      <p>
+        By pressing the following button, you will permanently and irreversibly delete this
+        report.
+      </p>
+        <form method="post"
+              action="{{ report.get_absolute_delete_url() }}">
+          {{ csrf() }}
+          <button class="large button alert">Delete report</button>
+        </form>
+    </div>
+  {% endif %}
 </main>
 
 {% endblock %}
@@ -235,15 +223,12 @@
   {% compress css %}
     <link rel="stylesheet" href="{{ static('events/css/jquery-ui-1.10.0.custom.css') }}"
           media="screen,projection,tv" />
+    <link rel="stylesheet" href="{{ static('base/css/mapbox.css') }}"
+          media="screen,projection,tv" />
   {% endcompress %}
-  <link href='//api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.css' rel='stylesheet' />
-  <!--[if lte IE 8]>
-    <link href='//api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.ie.css' rel='stylesheet' />
-  <![endif]-->
-  <script src='//api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.js'></script>
   {% compress js %}
+    <script src="{{ static('base/js/mapbox.js') }}"></script>
     <script src="{{ static('events/js/jquery-ui-1.10.0.custom.js') }}"></script>
-    <script src="{{ static('base/js/jquery.tmpl.js') }}"></script>
     <script src="{{ static('reports/js/active_report.js') }}"></script>
   {% endcompress %}
 {% endblock %}

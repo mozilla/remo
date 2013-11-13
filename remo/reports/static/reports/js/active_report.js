@@ -3,10 +3,11 @@
     'use strict';
 
     var map;
-    var geocoder = L.mapbox.geocoder('examples.map-vyofok3q');
+    var MAPBOX_ΤΟΚΕN = $('body').data('mapbox-token');
+    var geocoder = L.mapbox.geocoder(MAPBOX_ΤΟΚΕN);
 
-    var $lon = $('#lon');
-    var $lat = $('#lat');
+    var $lon = $('#id_longitude');
+    var $lat = $('#id_latitude');
     var $location = $('#id_location');
 
     var $lat_temp = $('#lat-temp');
@@ -17,7 +18,7 @@
         var center;
 
         if (!map) {
-            map = L.mapbox.map('map_point', 'mozilla-webprod.e91ef8b3');
+            map = L.mapbox.map('map_point', MAPBOX_ΤΟΚΕN);
             center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
             map.setView(center, 1);
 
@@ -68,15 +69,15 @@
      */
     function setCampaignPanel () {
         var text = $('select#id_activity').find(":selected").text();
-        var panel = $('.campaign-panel');
-        var input = panel.find('input');
+        var $panel = $('#campaign-panel');
+        var input = $panel.find('input');
         var triggerInput = 'Participated in a campaign';
 
         if (text === triggerInput) {
-            panel.slideDown();
+            $panel.slideDown();
             input.attr('required', 'required');
         } else {
-            panel.slideUp();
+            $panel.slideUp();
             input.val('');
             input.removeAttr('required');
         }
@@ -90,11 +91,15 @@
         var $input = $('input.datepicker');
         $input.datepicker({
             autoSize: true,
-            dateFormat: "dd M yy"
+            dateFormat: 'dd MM yy'
         });
 
         if ($input.val() === '') {
-            $input.datepicker("setDate", new Date());
+            $input.datepicker('setDate', new Date().format('yy-mm-dd'));
+        }
+        else {
+            var date = $.datepicker.parseDate("yy-mm-dd", $input.val());
+            $input.datepicker('setDate', date);
         }
     }
 
