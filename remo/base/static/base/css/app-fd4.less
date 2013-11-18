@@ -1479,6 +1479,33 @@ small.error {
         height: auto;
         padding: 1em .5em .5em .5em;
     }
+    h1 {
+        margin-bottom: 40px;
+    }
+    h3 {
+        margin-bottom: 20px;
+    }
+    h4 {
+        display: inline-block;
+        padding: 0 .5em;
+        margin: 10px 0 0 0;
+        .opensans;
+        font-weight: normal;
+        font-size: 11px;
+        line-height: 1.5;
+        background-color: #ccc;
+        color: #444;
+        text-shadow: none;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+    }
+    time {
+        display: block;
+        margin-top: 10px;
+        font-family: 'Open Sans Light';
+        font-size: 12px;
+    }
     .pict-icon.large.search {
         float: left;
         margin-right: 5px;
@@ -1495,10 +1522,6 @@ small.error {
     .report-item {
         margin-bottom: 20px;
     }
-    .label.warning {
-        background: red;
-        color: #fff;
-    }
     #reportform {
         h1 {
             margin-bottom: 40px;
@@ -1507,13 +1530,21 @@ small.error {
     .edit-box {
         margin-bottom: 40px;
     }
-    ul.report-admin {
+    ul.report-admin,
+    ul.contribution-areas {
         list-style-type: none;
         margin: 0;
         padding: 0;
         li {
             margin: 0;
             padding: 0;
+        }
+    }
+    ul.contribution-areas {
+        margin-top: 10px;
+        font-family: 'Open Sans Light';
+        li {
+            font-size: 12px;
         }
     }
     .comment-icon {
@@ -1524,6 +1555,7 @@ small.error {
     .comment-item {
         float: right;
         width: 95.75%;
+        font-family: 'Open Sans Light';
     }
     #reports-pagination {
         text-align: right;
@@ -1597,8 +1629,9 @@ small.error {
             display: block;
             margin: 0 auto;
         }
-        .smallmap-profile {
-            text-align: left;
+        .smallmap-profile,
+        .profile-image {
+            text-align: center;
         }
         .comment-icon,
         .comment-item {
@@ -2688,7 +2721,6 @@ ul.mreports li.editable a {
 .leaflet-control-mapbox-geocoder-form input {
     margin-top: 0px;
 }
-
 /* -----------------------------------------
    Dashboard Styles
 ----------------------------------------- */
