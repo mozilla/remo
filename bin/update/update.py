@@ -30,6 +30,8 @@ def update_code(ctx, tag):
         ctx.local('git checkout -f %s' % tag)
         ctx.local('git submodule sync')
         ctx.local('git submodule update --init --recursive')
+        ctx.local("find . -type f -name '.gitignore' -o -name '*.pyc' -delete")
+        ctx.local('git clean -xdff "vendor-local/"')
 
 
 @task
