@@ -2,24 +2,24 @@ import json
 from datetime import date
 
 from django.core.urlresolvers import reverse
-from django.test.client import Client
+
+import fudge
 from funfactory.helpers import urlparams
 from nose.tools import eq_
 from test_utils import TestCase
 
-import fudge
+from remo.profiles.tests import UserFactory
 
 
 class APITest(TestCase):
     """Tests profile API."""
-    fixtures = ['demo_users.json']
 
     def test_rep_schema(self):
         """Test for valid API schema for 'rep' resource."""
-        c = Client()
+        UserFactory.create(groups=['Rep'])
         url = reverse('api_get_schema', kwargs={'api_name': 'v1',
                                                 'resource_name': 'rep'})
-        response = c.get(url, follow=True)
+        response = self.client.get(url, follow=True)
 
         result = json.loads(response.content)
         eq_(result['allowed_detail_http_methods'], ['get'],
@@ -36,14 +36,15 @@ class APITest(TestCase):
 
     def test_rep_filter(self):
         """Test custom filtering with ?query= ."""
-        c = Client()
-
-        for query in ['rep@example', 'foci', 'koki']:
+        mentor = UserFactory.create(groups=['Mentor'],
+                                    userprofile__initial_council=True)
+        rep = UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
+        for query in [rep.email, rep.userprofile.display_name]:
             url = urlparams(reverse('api_dispatch_list',
                                     kwargs={'api_name': 'v1',
                                             'resource_name': 'rep'}),
                             query=query)
-            response = c.get(url, follow=True)
+            response = self.client.get(url, follow=True)
 
             result = json.loads(response.content)
             eq_(len(result['objects']), 1,
@@ -56,33 +57,41 @@ class APITest(TestCase):
         fake_date = date(year=2012, month=3, day=1)
         (fake_requests_obj.provides('today').returns(fake_date))
 
-        c = Client()
         url = urlparams(reverse('api_dispatch_list',
                                 kwargs={'api_name': 'v1',
                                         'resource_name': 'rep'}))
 
-        response = c.get(url, data={'format': 'csv'})
+        response = self.client.get(url, data={'format': 'csv'})
 
         self.assertTrue('Content-Disposition' in response)
         eq_(response['Content-Disposition'],
             'filename="reps-export-2012-03-01.csv"')
 
-    def test_rep_restricted_fields(self):
-        """Test authorization to restricted fields."""
-        # Unauthorized access
-        c = Client()
+    def test_rep_restricted_fields_unauth(self):
+        """Test authorization to restricted fields without perms."""
+        mentor = UserFactory.create(groups=['Mentor'],
+                                    userprofile__initial_council=True)
+        UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
         url = urlparams(reverse('api_dispatch_list',
                                 kwargs={'api_name': 'v1',
                                         'resource_name': 'rep'}))
-        response = c.get(url, follow=True)
+        response = self.client.get(url, follow=True)
         result = json.loads(response.content)
 
         for profile in result['objects']:
             self.assertFalse('email' in profile)
 
-        # Authorized access
-        c.login(username='rep', password='passwd')
-        response = c.get(url, follow=True)
+    def test_rep_restricted_fields_authorized(self):
+        """Test authorization to restricted fields with perms."""
+        mentor = UserFactory.create(groups=['Mentor'],
+                                    userprofile__initial_council=True)
+        rep = UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
+        url = urlparams(reverse('api_dispatch_list',
+                                kwargs={'api_name': 'v1',
+                                        'resource_name': 'rep'}))
+
+        self.client.login(username=rep.username, password='passwd')
+        response = self.client.get(url, follow=True)
         result = json.loads(response.content)
 
         for profile in result['objects']:

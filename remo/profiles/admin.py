@@ -1,12 +1,12 @@
 import csv
 
-from datetime import datetime
 from itertools import izip_longest
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.http import HttpResponse
+from django.utils.timezone import now
 
 from remo.profiles.models import FunctionalArea, UserAvatar, UserProfile
 
@@ -16,7 +16,7 @@ admin.site.unregister(User)
 
 def export_mentorship_csv(modeladmin, request, queryset):
     """Export mentorship csv from admin site."""
-    today = datetime.now().strftime('%Y-%m-%d-%H:%M')
+    today = now().strftime('%Y-%m-%d-%H:%M')
     filename = 'mentorship-%s.csv' % today
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = ('attachment; filename="%s"' %

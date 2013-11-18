@@ -2,7 +2,7 @@ import json
 
 from django.conf import settings
 from nose.exc import SkipTest
-from nose.tools import eq_, raises
+from nose.tools import eq_, ok_, raises
 from test_utils import TestCase
 
 import fudge
@@ -117,9 +117,9 @@ class FetchBugsTest(TestCase):
         eq_(bug.cc.all().count(), 1)
         eq_(bug.assigned_to.email, 'mentor@example.com')
         eq_(bug.resolution, 'INVALID')
-        eq_(bug.council_vote_requested, True)
+        ok_(bug.council_vote_requested)
 
         bug = Bug.objects.get(bug_id=1199)
         eq_(bug.creator, None)
         eq_(bug.cc.all().count(), 1)
-        eq_(bug.council_vote_requested, False)
+        ok_(not bug.council_vote_requested)

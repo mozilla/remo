@@ -49,7 +49,7 @@ class ModelTest(TestCase):
 
     def test_overdue_true(self):
         """Test overdue report (first test)."""
-        eq_(self.report.overdue, True)
+        ok_(self.report.overdue)
 
     @fudge.patch('datetime.date.today')
     def test_overdue_true_2(self, fake_requests_obj):
@@ -63,14 +63,14 @@ class ModelTest(TestCase):
 
         month_year = go_back_n_months(today)
         report = ReportFactory.create(user=self.user, month=month_year)
-        eq_(report.overdue, True)
+        ok_(report.overdue)
 
     def test_overdue_false(self):
         """Test not overdue report (first test)."""
         # Change report created_on, so report is not overdue
         month_year = datetime.date(year=2020, month=1, day=10)
         report = ReportFactory.create(user=self.user, month=month_year)
-        eq_(report.overdue, False)
+        ok_(not report.overdue)
 
     @fudge.patch('datetime.date.today')
     def test_overdue_false_2(self, fake_requests_obj):
@@ -85,7 +85,7 @@ class ModelTest(TestCase):
 
         month_year = go_back_n_months(today)
         report = ReportFactory.create(user=self.user, month=month_year)
-        eq_(report.overdue, False)
+        ok_(not report.overdue)
 
     def test_set_month_day(self):
         """Test that reports month always points to first day of the month."""

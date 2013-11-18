@@ -9,7 +9,7 @@ import factory
 from factory import fuzzy
 from product_details import product_details
 
-from remo.profiles.models import (UserProfile, FunctionalArea,
+from remo.profiles.models import (UserProfile, FunctionalArea, UserAvatar,
                                   email_mentor_notification, create_profile,
                                   user_set_inactive_post_save)
 
@@ -37,11 +37,17 @@ def int2roman(n):
     return result
 
 
+class FunctionalAreaFactory(factory.django.DjangoModelFactory):
+    """Factory for FunctionalArea model."""
+    FACTORY_FOR = FunctionalArea
+
+    name = factory.Sequence(lambda n: 'Functional Area #%s' % n)
+
+
 class UserProfileFactory(factory.django.DjangoModelFactory):
-    """UserProfile fixture factory."""
+    """Factory for UserProfile model."""
     FACTORY_FOR = UserProfile
 
-    registration_complete = True
     date_joined_program = fuzzy.FuzzyDateTime(START_DT)
     local_name = 'Local Name'
     birth_date = datetime.date(1992, 1, 1)
@@ -54,8 +60,12 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
     private_email = factory.Sequence(lambda n: 'personal%s@example.com' % n)
     mozillians_profile_url = 'https://mozillians.org/'
     irc_name = factory.Sequence(lambda n: 'user%s' % n)
+    twitter_account = factory.Sequence(lambda n: 'user%s' % n)
+    facebook_url = factory.Sequence(lambda n: 'http://facebook.com/user%s' % n)
+    linkedin_url = 'http://linkedin.com/profile/'
     wiki_profile_url = 'https://wiki.mozilla.org/User:'
     gender = fuzzy.FuzzyChoice([None, True, False])
+    registration_complete = True
 
     @classmethod
     def _create(cls, target_class, *args, **kwargs):
@@ -78,9 +88,8 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
                 self.functional_areas.add(area)
         else:
             # create random
-            rand_int = randint(1, 6)
-            for area in (FunctionalArea.active_objects.all()
-                         .order_by('?')[:rand_int]):
+            for i in range(randint(1, 6)):
+                area = FunctionalAreaFactory.create()
                 self.functional_areas.add(area)
 
     @factory.post_generation
@@ -128,11 +137,12 @@ class UserFactory(factory.django.DjangoModelFactory):
             return
         if extracted:
             groups = Group.objects.filter(name__in=extracted)
-            self.groups.add(*groups)
+            self.groups = groups
 
 
-class FunctionalAreaFactory(factory.django.DjangoModelFactory):
-    """FunctionalArea fixture factory."""
-    FACTORY_FOR = FunctionalArea
+class UserAvatarFactory(factory.django.DjangoModelFactory):
+    """Factory for UserAvatar model."""
+    FACTORY_FOR = UserAvatar
 
-    name = factory.Sequence(lambda n: 'Functional Area #%s' % n)
+    user = factory.SubFactory(UserFactory)
+    avatar_url = 'https://example.com'

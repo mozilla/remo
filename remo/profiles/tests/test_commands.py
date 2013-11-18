@@ -17,7 +17,6 @@ from remo.profiles.management.commands.fetch_emails_from_wiki import Command
 
 class CreateUserTest(TestCase):
     """Tests for create_user management command."""
-    fixtures = ['demo_users.json']
 
     def setUp(self):
         """Setup tests.
@@ -159,7 +158,6 @@ class FetchEmailsFromWikiTest(TestCase):
 
 class CronjobsTest(TestCase):
     """Tests for cronjobs management command."""
-    fixtures = ['demo_users.json']
 
     def test_new_reps_reminder(self):
         """Test monthly email reminder for new reps."""

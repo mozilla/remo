@@ -1,21 +1,21 @@
 import django.utils.timezone as timezone
 
-from django.contrib.auth.models import User
 from test_utils import TestCase
 
 from remo.profiles.helpers import get_avatar_url
+from remo.profiles.tests import UserFactory, UserAvatarFactory
 
 
 class HelpersTest(TestCase):
     """Tests helpers."""
-    fixtures = ['demo_users.json']
 
     def test_cached_avatar(self):
         """Test cached avatar."""
-        user = User.objects.get(email='rep@example.com')
+        rep = UserFactory.create(groups=['Rep'])
+        UserAvatarFactory.create(user=rep)
 
         # Check avatar db entry creation.
-        ua = user.useravatar
+        ua = rep.useravatar
         self.assertNotEqual(ua.avatar_url, u'', 'Avatar is empty.')
 
         # Check update.
@@ -23,14 +23,14 @@ class HelpersTest(TestCase):
                                      tzinfo=timezone.utc)
         ua.last_update = old_date
         ua.save()
-        get_avatar_url(user)
+        get_avatar_url(rep)
         self.assertGreater(ua.last_update, old_date, 'Avatar was not updated.')
 
         # Check caching.
         last_update = ua.last_update
-        get_avatar_url(user)
+        get_avatar_url(rep)
 
-        get_avatar_url(user)
+        get_avatar_url(rep)
         self.assertEqual(ua.last_update, last_update,
                          ('Avatar was updated when cached value '
                           'should have been used.'))

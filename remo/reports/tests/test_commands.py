@@ -43,7 +43,7 @@ class SecondNotificationTest(TestCase):
         fake_datetime.today.return_value = fake_date
 
         management.call_command('send_second_report_notification', [], {})
-        eq_(len(mail.outbox), 1)
+        eq_(len(mail.outbox), 0)
 
     @patch('remo.reports.management.commands'
            '.send_second_report_notification.datetime')
@@ -56,7 +56,7 @@ class SecondNotificationTest(TestCase):
         # delete existing reports
         Report.objects.all().delete()
         management.call_command('send_second_report_notification', [], {})
-        eq_(len(mail.outbox), 2)
+        eq_(len(mail.outbox), 1)
 
 
 class ThirdNotificationTest(TestCase):
@@ -78,7 +78,7 @@ class ThirdNotificationTest(TestCase):
         fake_datetime.today.return_value = fake_date
 
         management.call_command('send_third_report_notification', [], {})
-        eq_(len(mail.outbox), 1)
+        eq_(len(mail.outbox), 0)
 
     @patch('remo.reports.management.commands'
            '.send_third_report_notification.datetime')
