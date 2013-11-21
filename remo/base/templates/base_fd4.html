@@ -84,11 +84,13 @@
             <div class="large-10 small-10 columns" id="login-box">
               <div class="account anonymous nomenu logout">
                 {% if not user.is_authenticated() %}
-                  {{ browserid_login(text='Sign in') }}
-                   or
+                  <span id="login-menu-locator">
+                    {{ browserid_login(text='Sign in') }}
+                  </span>
+                  or
                   <a href="#" data-reveal-id="join-modal">Join</a>
                 {% else %}
-                  <div class="hide-for-small">
+                  <div class="hide-for-small" id="logout-menu-locator">
                     {% if user_is_rep(user) %}
                       <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
                         {{ user.get_full_name()|default('user.userprofile.display_name') }}
@@ -96,7 +98,7 @@
                     {% else %}
                       {{ user.get_full_name()|default('user.userprofile.display_name') }}
                     {% endif %}
-                    [<a href="{{ url('edit_settings') }}"> Settings </a>]
+                    [<a id="settings-menu-locator" href="{{ url('edit_settings') }}"> Settings </a>]
                     [{{ browserid_logout(text='Sign out') }}]
                   </div>
                   <div class="show-for-small">
@@ -138,32 +140,42 @@
                 <li>
                   {% if user.is_authenticated() %}
                     <a href="{{ url('dashboard') }}"
+                       id="dashboard-menu-locator"
                        class="main {{ active(request, '^/dashboard') }}">Dashboard</a>
                   {% else %}
                     <a href="{{ url('main') }}"
+                       id="main-menu-locator"
                        class="main {{ active(request, '^/$') }}">Main</a>
                   {% endif %}
                 </li>
                 <li>
                   <a href="{{ url('profiles_list_profiles') }}"
+                     id="people-menu-locator"
                      class="main {{ active(request, '^/people/') }}">People</a>
                 </li>
                 <li>
                   <a href="{{ url('events_list_events') }}"
+                     id="events-menu-locator"
                      class="main {{ active(request, '^/events/') }}">Events</a>
                 </li>
                 <li>
-                  <a href="http://planet.mozillareps.org" class="main">Planet</a>
+                  <a href="http://planet.mozillareps.org"
+                     id="planet-menu-locator"
+                     class="main">Planet</a>
                 </li>
                 <li>
-                  <a href="https://wiki.mozilla.org/ReMo" class="main">Wiki</a>
+                  <a href="https://wiki.mozilla.org/ReMo"
+                     id="wiki-menu-locator"
+                     class="main">Wiki</a>
                 </li>
                 <li>
                   <a href="{{ url('labs') }}"
+                     id="labs-menu-locator"
                      class="main {{ active(request, '^/labs/$') }}">Labs</a>
                 </li>
                 <li class="last">
                   <a href="{{ url('faq') }}"
+                     id="faq-menu-locator"
                      class="main {{ active(request, '^/faq/$') }}">FAQ</a>
                 </li>
               </ul>
