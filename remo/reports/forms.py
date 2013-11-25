@@ -4,8 +4,8 @@ from django.utils.timezone import now as now_utc
 
 import happyforms
 
-from remo.reports.models import (NGReport, Report, ReportComment, ReportEvent,
-                                 ReportLink)
+from remo.reports.models import (NGReport, NGReportComment, Report,
+                                 ReportComment, ReportEvent, ReportLink)
 
 
 # Old reporting system
@@ -133,3 +133,12 @@ class NGReportForm(happyforms.ModelForm):
         widgets = {'longitude': forms.HiddenInput(),
                    'latitude': forms.HiddenInput(),
                    'functional_areas': forms.SelectMultiple()}
+
+
+class NGReportCommentForm(happyforms.ModelForm):
+    """Model Form for new generation commenting system."""
+
+    class Meta:
+        model = NGReportComment
+        fields = ['comment']
+        widgets = {'comment': forms.TextInput()}

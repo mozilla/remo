@@ -14,9 +14,9 @@ from waffle import Flag
 from remo.base.utils import go_back_n_months
 from remo.base.tests import RemoTestCase, requires_login, requires_permission
 from remo.profiles.tests import UserFactory
-from remo.reports.models import NGReport, ReportComment
-from remo.reports.tests import (NGReportFactory, ReportCommentFactory,
-                                ReportFactory)
+from remo.reports.models import NGReport, NGReportComment, ReportComment
+from remo.reports.tests import (NGReportFactory, NGReportCommentFactory,
+                                ReportCommentFactory, ReportFactory)
 from remo.reports.views import LIST_REPORTS_VALID_SHORTS
 
 
@@ -321,7 +321,7 @@ class EditNGReportTests(RemoTestCase):
         response = self.get(url=report.get_absolute_edit_url(),
                             user=report.user)
         eq_(response.context['report'], report)
-        self.assertTemplateUsed('edit_ngreport.html')
+        self.assertTemplateUsed('edit_ng_report.html')
 
     def test_get_as_mentor(self):
         user = UserFactory.create(groups=['Mentor'])
@@ -329,7 +329,7 @@ class EditNGReportTests(RemoTestCase):
         response = self.get(url=report.get_absolute_edit_url(),
                             user=user)
         eq_(response.context['report'], report)
-        self.assertTemplateUsed('edit_ngreport.html')
+        self.assertTemplateUsed('edit_ng_report.html')
 
     def test_get_as_admin(self):
         user = UserFactory.create(groups=['Admin'])
@@ -337,7 +337,7 @@ class EditNGReportTests(RemoTestCase):
         response = self.get(url=report.get_absolute_edit_url(),
                             user=user)
         eq_(response.context['report'], report)
-        self.assertTemplateUsed('edit_ngreport.html')
+        self.assertTemplateUsed('edit_ng_report.html')
 
     @requires_permission()
     def test_get_as_other_rep(self):
@@ -447,3 +447,104 @@ class DeleteNGReportTests(RemoTestCase):
         redirect_mock.assert_called_with(
             'profiles_view_profile',
             display_name=report.user.userprofile.display_name)
+
+
+class ViewNGReportTests(RemoTestCase):
+    """Tests related to New Generation Reports view_ng_report View."""
+
+    def setUp(self):
+        """Setup tests."""
+        # Create waffle flag
+        Flag.objects.create(name='reports_ng_report', everyone=True)
+
+    def test_get(self):
+        report = NGReportFactory.create()
+        response = self.get(url=report.get_absolute_url(),
+                            user=report.user)
+        eq_(response.context['report'], report)
+        self.assertTemplateUsed('view_ng_report.html')
+
+    @patch('remo.reports.views.messages.success')
+    @patch('remo.reports.views.forms.NGReportCommentForm')
+    def test_post_a_comment(self, form_mock, messages_mock):
+        user = UserFactory.create()
+        report = NGReportFactory.create(user=user)
+        form_mock.is_valid.return_value = True
+        response = self.post(url=report.get_absolute_url(),
+                             user=user)
+        eq_(response.status_code, 200)
+        messages_mock.assert_called_with(
+            mock.ANY, 'Comment saved successfully.')
+        ok_(form_mock().save.called)
+        eq_(response.context['report'], report)
+        self.assertTemplateUsed('view_ng_report.html')
+
+    @patch('remo.reports.views.messages.error')
+    @patch('remo.reports.views.forms.NGReportCommentForm')
+    @patch('remo.reports.views.redirect', wraps=redirect)
+    def test_post_a_comment_anonymous(self, redirect_mock, form_mock,
+                                      messages_mock):
+        form_mock.is_valid.return_value = True
+        report = NGReportFactory.create()
+        c = Client()
+        c.post(report.get_absolute_url(), data={})
+        ok_(not NGReportComment.objects.filter(report=report).exists())
+
+        messages_mock.assert_called_with(mock.ANY, 'Permission denied.')
+        redirect_mock.assert_called_with('main')
+
+
+class DeleteNGReportCommentTests(RemoTestCase):
+    """Tests related to comment deletion."""
+    def setUp(self):
+        Flag.objects.create(name='reports_ng_report', everyone=True)
+
+    @patch('remo.reports.views.redirect', wraps=redirect)
+    def test_as_owner(self, redirect_mock):
+        report = NGReportFactory.create()
+        report_comment = NGReportCommentFactory.create(report=report)
+        self.post(user=report.user,
+                  url=report_comment.get_absolute_delete_url())
+        ok_(not NGReportComment.objects.filter(pk=report_comment.id).exists())
+        redirect_mock.assert_called_with(report.get_absolute_url())
+
+    @requires_login()
+    def test_as_anonymous(self):
+        report = NGReportFactory.create()
+        report_comment = NGReportCommentFactory.create(report=report)
+        client = Client()
+        client.post(report_comment.get_absolute_delete_url(), data={})
+        ok_(NGReportComment.objects.filter(pk=report_comment.id).exists())
+
+    @requires_permission()
+    def test_as_other_rep(self):
+        user = UserFactory.create()
+        report = NGReportFactory.create()
+        report_comment = NGReportCommentFactory.create(report=report)
+        self.post(user=user, url=report_comment.get_absolute_delete_url())
+        ok_(NGReportComment.objects.filter(pk=report_comment.id).exists())
+
+    def test_get(self):
+        report = NGReportFactory.create()
+        report_comment = NGReportCommentFactory.create(report=report)
+        self.get(user=report.user,
+                 url=report_comment.get_absolute_delete_url())
+        ok_(NGReportComment.objects.filter(pk=report_comment.id).exists())
+
+    @patch('remo.reports.views.redirect', wraps=redirect)
+    def test_as_mentor(self, redirect_mock):
+        user = UserFactory.create(groups=['Mentor'])
+        report = NGReportFactory.create()
+        report_comment = NGReportCommentFactory.create(report=report)
+        self.post(user=user, url=report_comment.get_absolute_delete_url())
+        ok_(not NGReportComment.objects.filter(pk=report_comment.id).exists())
+        redirect_mock.assert_called_with(report.get_absolute_url())
+
+    @patch('remo.reports.views.redirect', wraps=redirect)
+    def test_as_admin(self, redirect_mock):
+        user = UserFactory.create(groups=['Admin'])
+        report = NGReportFactory.create()
+        report_comment = NGReportCommentFactory.create(report=report)
+        self.post(user=user, url=report_comment.get_absolute_delete_url())
+        ok_(not NGReportComment.objects.filter(pk=report_comment.id).exists())
+        redirect_mock.assert_called_with(report.get_absolute_url())

@@ -21,7 +21,8 @@ import remo.base.utils as utils
 from remo.base.decorators import permission_check
 from remo.events.helpers import get_attendee_role_event
 from remo.profiles.models import UserProfile
-from models import NGReport, Report, ReportComment, ReportEvent, ReportLink
+from models import (NGReport, NGReportComment, Report, ReportComment,
+                    ReportEvent, ReportLink)
 from utils import participation_type_to_number
 
 # Old reporting system
@@ -347,10 +348,34 @@ def edit_ng_report(request, display_name='', year=None,
 
 @waffle_flag('reports_ng_report')
 def view_ng_report(request, display_name, year, month, day, id):
-    return render(request, 'reports_not_implemented.html')
+    user = get_object_or_404(User, userprofile__display_name=display_name)
+    report = get_object_or_404(NGReport, id=id)
+    comment_form = forms.NGReportCommentForm(request.POST or None)
+
+    editable = False
+    if request.user == user or request.user.has_perm('change_ngreport'):
+        editable = True
+
+    ctx_data = {'pageuser': user,
+                'user_profile': user.userprofile,
+                'report': report,
+                'editable': editable,
+                'comment_form': comment_form}
+    template = 'view_ng_report.html'
+
+    if comment_form.is_valid():
+        if not request.user.is_authenticated():
+            messages.error(request, 'Permission denied.')
+            return redirect('main')
+        obj = comment_form.save(commit=False)
+        obj.user = request.user
+        obj.report = report
+        obj.save()
+        messages.success(request, 'Comment saved successfully.')
+
+    return render(request, template, ctx_data)
 
 
-@waffle_flag('reports_ng_report')
 @never_cache
 @permission_check(permissions=['reports.delete_ngreport'],
                   filter_field='display_name', owner_field='user',
@@ -368,5 +393,14 @@ def delete_ng_report(request, display_name, year, month, day, id):
 
 
 @waffle_flag('reports_ng_report')
-def delete_ng_report_comment(request, display_name, year, month, day, id):
-    return render(request, 'reports_not_implemented.html')
+@permission_check(permissions=['reports.delete_ngreportcomment'],
+                  filter_field='display_name', owner_field='user',
+                  model=UserProfile)
+def delete_ng_report_comment(request, display_name, year, month, day, id,
+                             comment_id):
+    report = get_object_or_404(NGReport, pk=id)
+    if comment_id and request.method == 'POST':
+        report_comment = get_object_or_404(NGReportComment, pk=comment_id)
+        report_comment.delete()
+        messages.success(request, 'Comment successfully deleted.')
+    return redirect(report.get_absolute_url())
