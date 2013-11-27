@@ -143,8 +143,13 @@ def edit_event(request, slug=None, clone=None):
 
     event, created = get_or_create_instance(Event, slug=slug)
 
+    initial = {}
+
     if created:
         event.owner = request.user
+        initial = {'country': request.user.userprofile.country,
+                   'city': request.user.userprofile.city,
+                   'region': request.user.userprofile.region}
     else:
         # This is for backwards compatibility for all the events
         # that were set before the change in the minutes section
@@ -155,18 +160,13 @@ def edit_event(request, slug=None, clone=None):
         if (event.end.minute % 5) != 0:
             event.end += timedelta(minutes=(5 - (event.end.minute % 5)))
 
-    initial = {'country': request.user.userprofile.country,
-               'city': request.user.userprofile.city,
-               'region': request.user.userprofile.region}
-
+    editable = False
     if request.user.groups.filter(name='Admin').count():
-        event_form = forms.EventForm(request.POST or None,
-                                     editable_owner=True, instance=event,
-                                     initial=initial)
-    else:
-        event_form = forms.EventForm(request.POST or None,
-                                     editable_owner=False, instance=event,
-                                     initial=initial)
+        editable = True
+
+    event_form = forms.EventForm(request.POST or None,
+                                 editable_owner=editable, instance=event,
+                                 initial=initial)
 
     metrics_formset = forms.EventMetricsFormset(request.POST or None,
                                                 instance=event)
