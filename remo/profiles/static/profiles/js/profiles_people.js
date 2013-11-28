@@ -91,26 +91,6 @@ function clear_map() {
 }
 
 
-function redraw_grid() {
-    // Redraw Reps grid.
-    // Due to a bug in internet explorer we have to set clear:left css
-    // attribute on some block-grid 's. Update each block to ensure that
-    // only the leftest visible blocks get the extra attribute.
-    $('.block-grid.two-up>li').css({'clear': ''});
-    $('.block-grid.three-up>li').css({'clear': ''});
-    $('.block-grid.four-up>li').css({'clear': ''});
-    $('.block-grid.five-up>li').css({'clear': ''});
-
-    $('.block-grid.two-up>li:visible').filter(
-        function (index) {return index % 2 === 0;}).css('clear', 'left');
-    $('.block-grid.three-up>li:visible').filter(
-        function (index) {return index % 3 === 0;}).css('clear', 'left');
-    $('.block-grid.four-up>li:visible').filter(
-        function (index) {return index % 4 === 0;}).css('clear', 'left');
-    $('.block-grid.five-up>li:visible').filter(
-        function (index) {return index % 5 === 0;}).css('clear', 'left');
-}
-
 function set_number_of_reps(number_of_reps) {
     // Display the number of visible reps.
     number_of_reps = parseInt(number_of_reps, 10);
@@ -164,7 +144,6 @@ var update_results = function(data, query, newquery, update_pointers) {
     }
     else {
         ProfilesLib.griditem_tmpl_elm.tmpl(data.objects).appendTo('#grid-search-list');
-        redraw_grid();
     }
 
     ProfilesLib.searchfield_elm.data('searching', undefined);
