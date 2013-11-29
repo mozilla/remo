@@ -618,6 +618,83 @@ select {
 }
 
 /* -----------------------------------------
+   Featured reps Styles
+----------------------------------------- */
+
+.featured-reps {
+    p {
+        font-size: 13px;
+    }
+    select {
+        width: auto;
+    }
+    select + .required-field {
+        display: inline;
+        float: none;
+        top: 0;
+    }
+    textarea.flat {
+        display: inline-block;
+        width: 50%;
+        max-width: 90%;
+        height: 200px;
+        font-size: 13px;
+    }
+    textarea + .required-field {
+        display: inline;
+        float: none;
+        top: -20px;
+    }
+    .more-info {
+        text-align: left;
+    }
+    small.error {
+        width: 50%;
+        padding: 0;
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            li {
+                padding-left: 0.5em;
+                line-height: 1.5;
+            }
+        }
+    }
+}
+
+#featured-articles {
+    width: 100%;
+    border-spacing: 0 0;
+    th {
+        font-size: 14px;
+    }
+    td {
+        font-size: 12px;
+    }
+}
+
+.featured-button {
+    .top-margined;
+    margin-bottom: 20px;
+}
+
+.featured-edit,
+.featured-delete {
+    margin: 0;
+    padding: 0;
+    width: 26px;
+}
+
+.featured-edit {
+    float: left;
+}
+
+.featured-delete {
+    float: right;
+}
+
+/* -----------------------------------------
    Planet feed Styles
 ----------------------------------------- */
 
@@ -1298,6 +1375,12 @@ small.error {
 }
 .pict-icon.comment:after {
     content: "b";
+}
+.pict-icon.close:after {
+    content: "X";
+}
+.pict-icon.pencil:after {
+    content: "e";
 }
 
 .pict-table-icon {
