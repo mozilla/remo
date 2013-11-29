@@ -41,18 +41,6 @@ jQuery(document).ready(function ($) {
     /* Remove this and jquery.placeholder.min.js if you don't need :) */
     $('input, textarea').placeholder();
 
-    /* TOOLTIPS ------------ */
-    /* this is for legacy Foundation 2 TODO - remove after migration to 4 */
-    if ($.isFunction($.fn.tooltips)) {
-        $(this).tooltips();
-    }
-
-    /* UNCOMMENT THE LINE YOU WANT BELOW IF YOU WANT IE6/7/8 SUPPORT AND ARE USING .block-grids */
-    $('.block-grid.two-up>li:nth-child(2n+1)').css({clear: 'left'});
-    $('.block-grid.three-up>li:nth-child(3n+1)').css({clear: 'left'});
-    $('.block-grid.four-up>li:nth-child(4n+1)').css({clear: 'left'});
-    $('.block-grid.five-up>li:nth-child(5n+1)').css({clear: 'left'});
-
     /* DROPDOWN NAV ------------- */
     var lockNavBar = false;
     $('.nav-bar a.flyout-toggle').on('click', function(e) {

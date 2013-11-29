@@ -55,8 +55,6 @@ function hash_get_value(key) {
 function set_dropdown_value(elm, value) {
     'use strict';
     elm.val(value);
-    // We have to force trigger 'change' for foundation to update.
-    elm.trigger('change');
 }
 
 function pad2(number) {
