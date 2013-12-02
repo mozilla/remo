@@ -30,6 +30,7 @@ $(document).ready(function() {
         if (!map) {
 
             map = new L.mapbox.map('map_point', MAPBOX_TOKEN, {minZoom: 1});
+            addAttributionOSM(map);
 
             var lat = $('#map_point').data('lat');
             var lng = $('#map_point').data('lon');

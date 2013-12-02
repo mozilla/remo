@@ -18,6 +18,7 @@
 
         if (!map) {
             map = L.mapbox.map('map_point', MAPBOX_ΤΟΚΕN);
+            addAttributionOSM(map);
             center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
             map.setView(center, 1);
 

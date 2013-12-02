@@ -237,7 +237,9 @@
       {% block content %}
       {% endblock %}
 
-      <div class="end-row"></div>
+      {% block endrow %}
+        <div class="end-row"></div>
+      {% endblock %}
     </div> <!-- End of container -->
   </div> <!-- End of background wrapper -->
 

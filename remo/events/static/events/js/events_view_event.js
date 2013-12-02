@@ -9,6 +9,7 @@ function initialize_map() {
     var markerLocation = new L.LatLng(lat, lon);
     var marker = new L.Marker(markerLocation, { clickable: false });
     var center = new L.LatLng(lat, lon); // geographical point (longitude and latitude)
+    addAttributionOSM(map);
     map.setView(center, 15);
     map.addLayer(marker);
 }
