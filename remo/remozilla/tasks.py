@@ -3,13 +3,14 @@ from datetime import datetime
 from urllib import quote
 
 import django.utils.timezone as timezone
-from celery.task import task
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db import transaction
 
 import requests
 import pytz
 import waffle
+from celery.task import task
 from funfactory.helpers import urlparams
 
 from remo.base.utils import get_object_or_none
@@ -42,6 +43,7 @@ def parse_bugzilla_time(time):
 
 
 @task
+@transaction.commit_on_success
 def fetch_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
 
@@ -60,6 +62,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
                          component=quote(component),
                          fields=','.join(BUGZILLA_FIELDS),
                          timedelta=days, offset=offset, limit=LIMIT)
+
         while True:
             response = requests.get(url)
             if response.status_code != 200:
