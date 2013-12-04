@@ -9,7 +9,9 @@ from django.contrib import auth, messages
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
 from django.shortcuts import redirect, render
+from django.views import generic
 from django.views.decorators.cache import cache_control, never_cache
+from django.utils.decorators import method_decorator
 
 import forms
 import utils
@@ -277,3 +279,65 @@ def edit_settings(request):
         return redirect('dashboard')
     return render(request, 'settings.html', {'user': user,
                                              'settingsform': form})
+
+
+class PermissionMixin(object):
+    """Permission mixin for base content views."""
+    @method_decorator(permission_check(group='Admin'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(PermissionMixin, self).dispatch(request, *args, **kwargs)
+
+
+class BaseListView(PermissionMixin, generic.ListView):
+    """Base content list view."""
+    template_name = 'base_content_list.html'
+    create_object_url = None
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseListView, self).get_context_data(**kwargs)
+        context['verbose_name'] = self.model._meta.verbose_name
+        context['verbose_name_plural'] = self.model._meta.verbose_name_plural
+        context['create_object_url'] = self.create_object_url
+        return context
+
+
+class BaseCreateView(PermissionMixin, generic.CreateView):
+    """Base content create view."""
+    template_name = 'base_content_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseCreateView, self).get_context_data(**kwargs)
+        context['verbose_name'] = self.model._meta.verbose_name
+        context['creating'] = True
+        return context
+
+    def form_valid(self, form):
+        content = self.model._meta.verbose_name.capitalize()
+        messages.success(self.request, "%s succesfully created." % content)
+        return super(BaseCreateView, self).form_valid(form)
+
+
+class BaseUpdateView(PermissionMixin, generic.UpdateView):
+    """Base content edit view."""
+    template_name = 'base_content_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseUpdateView, self).get_context_data(**kwargs)
+        context['verbose_name'] = self.model._meta.verbose_name
+        context['creating'] = False
+        return context
+
+    def form_valid(self, form):
+        content = self.model._meta.verbose_name.capitalize()
+        messages.success(self.request, "%s succesfully updated." % content)
+        return super(BaseUpdateView, self).form_valid(form)
+
+
+class BaseDeleteView(PermissionMixin, generic.DeleteView):
+    """Base content delete view."""
+
+    def delete(self, request, *args, **kwargs):
+        """Override delete method to show message."""
+        content = self.model._meta.verbose_name.capitalize()
+        messages.success(self.request, '%s succesfully deleted.' % content)
+        return super(BaseDeleteView, self).delete(request, *args, **kwargs)

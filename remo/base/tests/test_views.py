@@ -24,8 +24,11 @@ from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
 from remo.base.tests.browserid_mock import mock_browserid
 from remo.base.views import robots_txt
+from remo.profiles.models import FunctionalArea
 from remo.profiles.tasks import check_mozillian_username
-from remo.profiles.tests import UserFactory
+from remo.profiles.tests import UserFactory, FunctionalAreaFactory
+from remo.reports.tests import ActivityFactory, CampaignFactory
+from remo.reports.models import Activity, Campaign
 
 
 VOUCHED_MOZILLIAN = """
@@ -443,3 +446,186 @@ class ViewsTest(TestCase):
         request = factory.get('/robots.txt')
         response = robots_txt(request)
         eq_(response.content, 'User-agent: *\nDisallow: /')
+
+    def test_base_content_activities_list(self):
+        """Test list activities."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        c.login(username=admin.username, password='passwd')
+        response = c.get(reverse('list_activities'), follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'activity')
+        eq_(response.context['verbose_name_plural'], 'activities')
+        eq_(response.context['create_object_url'], reverse('create_activity'))
+        self.assertTemplateUsed(response, 'base_content_list.html')
+
+    def test_base_content_campaigns_list(self):
+        """Test list campaigns."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        c.login(username=admin.username, password='passwd')
+        response = c.get(reverse('list_campaigns'), follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'campaign')
+        eq_(response.context['verbose_name_plural'], 'campaigns')
+        eq_(response.context['create_object_url'], reverse('create_campaign'))
+        self.assertTemplateUsed(response, 'base_content_list.html')
+
+    def test_base_content_functional_areas_list(self):
+        """Test list functional areas."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        c.login(username=admin.username, password='passwd')
+        response = c.get(reverse('list_functional_areas'), follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'functional area')
+        eq_(response.context['verbose_name_plural'], 'functional areas')
+        eq_(response.context['create_object_url'],
+            reverse('create_functional_area'))
+        self.assertTemplateUsed(response, 'base_content_list.html')
+
+    def test_base_content_activity_create_get(self):
+        """Test create activity."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        c.login(username=admin.username, password='passwd')
+        response = c.get(reverse('create_activity'), follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'activity')
+        eq_(response.context['creating'], True)
+        self.assertTemplateUsed(response, 'base_content_edit.html')
+
+    def test_base_content_campaign_create_get(self):
+        """Test create activity."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        c.login(username=admin.username, password='passwd')
+        response = c.get(reverse('create_campaign'), follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'campaign')
+        eq_(response.context['creating'], True)
+        self.assertTemplateUsed(response, 'base_content_edit.html')
+
+    def test_base_content_functional_area_create_get(self):
+        """Test create activity."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        c.login(username=admin.username, password='passwd')
+        response = c.get(reverse('create_functional_area'), follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'functional area')
+        eq_(response.context['creating'], True)
+        self.assertTemplateUsed(response, 'base_content_edit.html')
+
+    def test_base_content_activity_create_post(self):
+        """Test create activity."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        c.login(username=admin.username, password='passwd')
+        response = c.post(reverse('create_activity'),
+                          data={'name': 'test activity'}, follow=True)
+        eq_(response.status_code, 200)
+        query = Activity.objects.filter(name='test activity')
+        eq_(query.exists(), True)
+
+    def test_base_content_campaign_create_post(self):
+        """Test create campaign."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        c.login(username=admin.username, password='passwd')
+        response = c.post(reverse('create_campaign'),
+                          data={'name': 'test campaign'}, follow=True)
+        eq_(response.status_code, 200)
+        query = Campaign.objects.filter(name='test campaign')
+        eq_(query.exists(), True)
+
+    def test_base_content_functional_area_create_post(self):
+        """Test create functional area."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        c.login(username=admin.username, password='passwd')
+        response = c.post(reverse('create_functional_area'),
+                          data={'name': 'test functional area'},
+                          follow=True)
+        eq_(response.status_code, 200)
+        query = FunctionalArea.objects.filter(name='test functional area')
+        eq_(query.exists(), True)
+
+    def test_base_content_activity_edit_post(self):
+        """Test edit activity."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        activity = ActivityFactory.create(name='test activity')
+        c.login(username=admin.username, password='passwd')
+        response = c.post(reverse('edit_activity', kwargs={'pk': activity.id}),
+                          data={'name': 'edit activity'},
+                          follow=True)
+        eq_(response.status_code, 200)
+        query = Activity.objects.filter(name='edit activity')
+        eq_(query.exists(), True)
+
+    def test_base_content_campaign_edit_post(self):
+        """Test edit campaign."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        campaign = CampaignFactory.create(name='test campaign')
+        c.login(username=admin.username, password='passwd')
+        response = c.post(reverse('edit_campaign', kwargs={'pk': campaign.id}),
+                          data={'name': 'edit campaign'},
+                          follow=True)
+        eq_(response.status_code, 200)
+        query = Campaign.objects.filter(name='edit campaign')
+        eq_(query.exists(), True)
+
+    def test_base_content_functional_area_edit_post(self):
+        """Test edit campaign."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        campaign = FunctionalAreaFactory.create(name='test functional area')
+        c.login(username=admin.username, password='passwd')
+        response = c.post(reverse('edit_functional_area',
+                                  kwargs={'pk': campaign.id}),
+                          data={'name': 'edit functional area'},
+                          follow=True)
+        eq_(response.status_code, 200)
+        query = FunctionalArea.objects.filter(name='edit functional area')
+        eq_(query.exists(), True)
+
+    def test_base_content_activity_delete_post(self):
+        """Test delete activity."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        activity = ActivityFactory.create(name='test activity')
+        c.login(username=admin.username, password='passwd')
+        response = c.post(reverse('delete_activity',
+                                  kwargs={'pk': activity.id}),
+                          follow=True)
+        eq_(response.status_code, 200)
+        query = Activity.objects.filter(name='test activity')
+        eq_(query.exists(), False)
+
+    def test_base_content_campaign_delete_post(self):
+        """Test delete campaign."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        campaign = CampaignFactory.create(name='test campaign')
+        c.login(username=admin.username, password='passwd')
+        response = c.post(reverse('delete_campaign',
+                                  kwargs={'pk': campaign.id}),
+                          follow=True)
+        eq_(response.status_code, 200)
+        query = Campaign.objects.filter(name='test campaign')
+        eq_(query.exists(), False)
+
+    def test_base_content_functional_area_delete_post(self):
+        """Test delete campaign."""
+        c = Client()
+        admin = UserFactory.create(groups=['Admin'])
+        campaign = FunctionalAreaFactory.create(name='test functional area')
+        c.login(username=admin.username, password='passwd')
+        response = c.post(reverse('delete_functional_area',
+                                  kwargs={'pk': campaign.id}),
+                          follow=True)
+        eq_(response.status_code, 200)
+        query = Campaign.objects.filter(name='test functional area')
+        eq_(query.exists(), False)
