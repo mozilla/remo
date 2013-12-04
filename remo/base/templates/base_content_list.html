@@ -1,0 +1,85 @@
+{% extends "base_fd4.html" %}
+{% block pagetitle %}Mozilla Reps - {{ verbose_name_plural|capitalize }}{% endblock %}
+
+{% block content %}
+<main role="main">
+  <div class="row">
+    <div class="large-12 columns">
+      <h1>{{ verbose_name_plural|capitalize }}</h1>
+    </div>
+    <div class="large-3 columns align-right">
+      <a href="{{ create_object_url }}" class="button small update" role="button"
+         id="create-button">Create {{ verbose_name }}</a>
+    </div>
+  </div>
+
+  <div class="row base-content-list">
+    <div class="large-12 columns">
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th class="dashboard-clickable type-string">Name</th>
+            <th class="dashboard-clickable type-string">Active</th>
+            <th class="dashboard-clickable type-string">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for object in object_list %}
+            <tr>
+              <td>
+                {{ object.name }}
+              </td>
+              <td>
+                {% if object.active %}
+                  <span class="pict-table-icon tick"></span>
+                {% endif %}
+              </td>
+              <td>
+              {% if get_attr(object, 'is_editable', True)  %}
+                <a href="{{ object.get_absolute_edit_url() }}"
+                   class="pictogram-button">
+                  <span class="pict-icon large pencil"></span>
+                </a>
+                <a href="{{ object.get_absolute_delete_url() }}"
+                   class="delete-object pictogram-button"
+                   data-reveal-id="delete-modal">
+                  <span class="pict-icon large close"></span>
+                </a>
+              {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div id="delete-modal" class="reveal-modal small">
+  <a class="close-reveal-modal">&#215;</a>
+  <p class="lead">
+    Are you sure you want to do that?
+  </p>
+  <h2>
+    Warning!
+  </h2>
+  <p>
+    By pressing the following button you will permanently and
+    irreversibly delete this {{ verbose_name }}.
+  </p>
+  <form method="post" action="">
+    {{ csrf() }}
+    <button class="large button alert">
+      Delete {{ verbose_name }}
+    </button>
+  </form>
+</div>
+
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('base/js/base_content_edit.js') }}"></script>
+    <script src="{{ static('base/js/stupidtable.js') }}"></script>
+  {% endcompress %}
+{% endblock %}
