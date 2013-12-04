@@ -96,7 +96,7 @@ ANON_ALWAYS = True
 FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
 
 ADMINS = (
-    ('Mozilla Reps', 'reps@mozilla.com'),
+    ('Mozilla Reps Devs', 'reps-dev@mozilla.com'),
 )
 
 MANAGERS = ADMINS
@@ -160,3 +160,5 @@ import djcelery
 djcelery.setup_loader()
 
 MAPBOX_TOKEN = 'examples.map-vyofok3q'
+
+SERVER_EMAIL = 'reps-dev@mozilla.com'
