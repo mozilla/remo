@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from remo.reports.models import (Report, ReportComment, ReportEvent,
-                                 ReportLink, NGReport, NGReportComment)
+from remo.reports.models import (Activity, Campaign, Report, ReportComment,
+                                 ReportEvent, ReportLink, NGReport,
+                                 NGReportComment)
 
 
 class ReportLinkInline(admin.StackedInline):
@@ -35,8 +36,23 @@ class NGReportCommentInline(admin.StackedInline):
 
 
 class NGReportAdmin(admin.ModelAdmin):
-    """Report Admin."""
+    """New Generation Report Admin."""
     inlines = [NGReportCommentInline]
+
+
+class ActivityAdmin(admin.ModelAdmin):
+    """Activity Admin."""
+    model = Activity
+    list_display = ('__unicode__', 'active')
+
+
+class CampaignAdmin(admin.ModelAdmin):
+    """Campaign Admin."""
+    model = Campaign
+    list_display = ('__unicode__', 'active')
+
 
 admin.site.register(Report, ReportAdmin)
 admin.site.register(NGReport, NGReportAdmin)
+admin.site.register(Activity, ActivityAdmin)
+admin.site.register(Campaign, CampaignAdmin)

@@ -61,6 +61,9 @@ def permission_check(permissions=[], group=None,
 
             def _check_if_user_owns_page():
                 if owner_field and model:
+                    if not kwargs.get(filter_field):
+                        return True
+
                     obj = get_object_or_none(model, **{filter_field:
                                                        kwargs[filter_field]})
                     if obj and getattr(obj, owner_field) == request.user:

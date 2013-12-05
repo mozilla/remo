@@ -1,24 +1,34 @@
 import datetime
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from funfactory.helpers import urlparams
 from nose.tools import eq_, nottest
 from test_utils import TestCase
 
+import mock
+from waffle import Flag
+
 from remo.base.utils import go_back_n_months
-from remo.reports.models import Report, ReportComment
+from remo.profiles.tests import UserFactory
+from remo.reports.models import NGReport, ReportComment
+from remo.reports.tests import (ActivityFactory, CampaignFactory,
+                                NGReportFactory, ReportCommentFactory,
+                                ReportFactory)
 from remo.reports.views import LIST_REPORTS_VALID_SHORTS
 
 
 class ViewsTest(TestCase):
     """Tests related to Reports Views."""
-    fixtures = ['demo_users.json', 'demo_reports.json']
 
     def setUp(self):
         """Setup tests."""
-        self.user = User.objects.get(username='rep')
+        self.admin = UserFactory.create(username='admin', groups=['Admin'])
+        self.counselor = UserFactory.create(username='counselor')
+        self.mentor = UserFactory.create(username='mentor', groups=['Mentor'])
+        self.user = UserFactory.create(username='rep', groups=['Rep'],
+                                       userprofile__mentor=self.mentor)
         self.up = self.user.userprofile
 
         self.data = {'empty': False,
@@ -78,8 +88,8 @@ class ViewsTest(TestCase):
         self.assertTemplateUsed(response, 'edit_report.html')
 
         # If report exists, render report.
-        Report.objects.create(user=self.user, empty=True,
-                              month=go_back_n_months(datetime.date.today()))
+        ReportFactory.create(user=self.user, empty=True, mentor=self.mentor,
+                             month=go_back_n_months(datetime.date.today()))
         response = c.get(reverse('reports_view_current_report'), follow=True)
         self.assertTemplateUsed(response, 'view_report.html')
 
@@ -94,6 +104,8 @@ class ViewsTest(TestCase):
         """Test view report page."""
         # check that there is comment
         # check that there is comment form
+        ReportFactory.create(user=self.user, empty=True, mentor=self.mentor,
+                             month=datetime.date(2012, 1, 1))
         c = Client()
         response = c.get(reverse('reports_view_report',
                                  kwargs={'display_name': self.up.display_name,
@@ -116,6 +128,8 @@ class ViewsTest(TestCase):
         # test without permission other user's
         # test with permission other user's
         # test with report from the future
+        ReportFactory.create(user=self.user, empty=True, mentor=self.mentor,
+                             month=datetime.date(2011, 2, 1))
 
         edit_page_url = reverse('reports_edit_report',
                                 kwargs={'display_name': self.up.display_name,
@@ -157,6 +171,8 @@ class ViewsTest(TestCase):
         """Test post comment on report."""
         # Test with anonymous user.
         c = Client()
+        ReportFactory.create(user=self.user, empty=True, mentor=self.mentor,
+                             month=datetime.date(2012, 1, 1))
         report_view_url = reverse('reports_view_report',
                                   kwargs={'display_name': self.up.display_name,
                                           'year': '2012',
@@ -185,6 +201,8 @@ class ViewsTest(TestCase):
     def test_delete_report(self):
         """Test delete report."""
         c = Client()
+        ReportFactory.create(user=self.user, empty=True, mentor=self.mentor,
+                             month=datetime.date(2012, 2, 1))
         delete_url = reverse('reports_delete_report',
                              kwargs={'display_name': self.up.display_name,
                                      'year': '2012',
@@ -233,6 +251,10 @@ class ViewsTest(TestCase):
 
     def test_delete_comment(self):
         """Test delete report comment."""
+        report = ReportFactory.create(user=self.user, empty=True,
+                                      mentor=self.mentor,
+                                      month=datetime.date(2012, 2, 1))
+        ReportCommentFactory.create(report=report, id=9, user=self.user)
         c = Client()
         delete_url = reverse('reports_delete_report_comment',
                              kwargs={'display_name': self.up.display_name,
@@ -273,6 +295,7 @@ class ViewsTest(TestCase):
         eq_(ReportComment.objects.filter(pk=9).exists(), False)
 
         # Test with admin.
+        ReportCommentFactory.create(report=report, id=10, user=self.user)
         delete_url = reverse('reports_delete_report_comment',
                              kwargs={'display_name': self.up.display_name,
                                      'year': '2012',
@@ -285,3 +308,283 @@ class ViewsTest(TestCase):
             pass
         eq_(m.tags, u'success')
         eq_(ReportComment.objects.filter(pk=10).exists(), False)
+
+
+# New generation reports tests
+class EditNGReportTests(TestCase):
+    """Tests related to New Generation Reports edit View."""
+
+    def setUp(self):
+        """Setup tests."""
+        # Create waffle flag
+        Flag.objects.create(name='reports_ng_report', everyone=True)
+        # Give permissions to admin group
+        group = Group.objects.get(name='Admin')
+        permissions = Permission.objects.filter(codename__icontains='ngreport')
+        for perm in permissions:
+            group.permissions.add(perm)
+        self.mentor = UserFactory.create(username='mentor', groups=['Mentor'])
+        self.user = UserFactory.create(username='rep', groups=['Rep'],
+                                       userprofile__mentor=self.mentor)
+
+    @mock.patch('remo.base.decorators.messages')
+    def test_get_as_anonymous(self, fake_messages):
+        """Get edit page as anonymous user."""
+
+        year, month, day = datetime.datetime.now().strftime('%d %B %Y').split()
+        edit_report_url = (
+            reverse('reports_ng_edit_report',
+                    kwargs={'display_name': self.user.userprofile.display_name,
+                            'year': year,
+                            'month': month,
+                            'day': day,
+                            'id': '1'}))
+        c = Client()
+        response = c.get(edit_report_url, follow=True)
+        self.assertTemplateUsed(response, 'main.html')
+        fake_messages.warning.assert_called_once_with(
+            mock.ANY, 'Please login.')
+
+    def test_get_non_existing_report_rep(self):
+        """Get edit page as a user who belongs to Rep group,
+
+        for a report that does not exist."""
+
+        year, month, day = datetime.datetime.now().strftime('%d %B %Y').split()
+        edit_report_url = (
+            reverse('reports_ng_edit_report',
+                    kwargs={'display_name': self.user.userprofile.display_name,
+                            'year': year,
+                            'month': month,
+                            'day': day,
+                            'id': '1'}))
+        c = Client()
+        c.login(username='rep', password='passwd')
+        response = c.get(edit_report_url, follow=True)
+        self.assertTemplateUsed(response, '404.html')
+
+    def test_get_edit_page_rep(self):
+        """Get edit page as a user who belongs to Rep group."""
+
+        year, month, day = datetime.datetime.now().strftime('%d %B %Y').split()
+        edit_report_url = (
+            reverse('reports_ng_edit_report',
+                    kwargs={'display_name': self.user.userprofile.display_name,
+                            'year': year,
+                            'month': month,
+                            'day': day,
+                            'id': '1'}))
+        # Force a report with the same pk as the edit url
+        NGReportFactory.create(user=self.user, pk=1)
+        c = Client()
+        c.login(username='rep', password='passwd')
+        response = c.get(edit_report_url, follow=True)
+        self.assertTemplateUsed(response, 'edit_ng_report.html')
+
+    @mock.patch('remo.base.decorators.messages')
+    def test_get_edit_page_non_rep(self, fake_messages):
+        """Get edit page as a user who does not belong to Rep group."""
+
+        year, month, day = datetime.datetime.now().strftime('%d %B %Y').split()
+        edit_report_url = (
+            reverse('reports_ng_edit_report',
+                    kwargs={'display_name': self.user.userprofile.display_name,
+                            'year': year,
+                            'month': month,
+                            'day': day,
+                            'id': '1'}))
+
+        c = Client()
+        c.login(username='mentor', password='passwd')
+        response = c.get(edit_report_url, follow=True)
+        self.assertTemplateUsed(response, 'main.html')
+        fake_messages.error.assert_called_once_with(
+            mock.ANY, 'Permission denied.')
+
+    def test_get_edit_non_existing_page_admin(self):
+        """Get edit page for a report that does not exist as admin."""
+
+        year, month, day = datetime.datetime.now().strftime('%d %B %Y').split()
+        edit_report_url = (
+            reverse('reports_ng_edit_report',
+                    kwargs={'display_name': self.user.userprofile.display_name,
+                            'year': year,
+                            'month': month,
+                            'day': day,
+                            'id': '1'}))
+        UserFactory.create(username='admin', groups=['Admin', 'Rep'])
+        c = Client()
+        c.login(username='admin', password='passwd')
+        response = c.get(edit_report_url, follow=True)
+        self.assertTemplateUsed(response, '404.html')
+
+    def test_get_edit_page_admin(self):
+        """Get edit page for a report as admin."""
+
+        year, month, day = datetime.datetime.now().strftime('%d %B %Y').split()
+        edit_report_url = (
+            reverse('reports_ng_edit_report',
+                    kwargs={'display_name': self.user.userprofile.display_name,
+                            'year': year,
+                            'month': month,
+                            'day': day,
+                            'id': '1'}))
+        UserFactory.create(username='admin', groups=['Admin', 'Rep'])
+        # Force a report with the same pk as the edit url
+        NGReportFactory.create(user=self.user, pk=1)
+        c = Client()
+        c.login(username='admin', password='passwd')
+        response = c.get(edit_report_url, follow=True)
+        self.assertTemplateUsed(response, 'edit_ng_report.html')
+
+    @mock.patch('remo.reports.views.messages')
+    def test_add_report(self, fake_messages):
+        """Test adding a new report."""
+
+        now = datetime.datetime.now().strftime('%d %B %Y')
+        new_report_url = reverse('reports_new_ng_report')
+        activity = ActivityFactory.create()
+        post_data = {'activity': activity.id,
+                     'longitude': 123.123,
+                     'latitude': 456.456,
+                     'location': 'MyLocation',
+                     'link': 'http://www.example.com/',
+                     'functional_areas': [7, 15],
+                     'report_date': now}
+
+        c = Client()
+        c.login(username='rep', password='passwd')
+        response = c.post(new_report_url, post_data, follow=True)
+        report = NGReport.objects.get(user=self.user)
+        eq_(response.request['PATH_INFO'], report.get_absolute_url())
+        fake_messages.success.assert_called_once_with(
+            mock.ANY, 'Report successfully created.')
+
+    @mock.patch('remo.reports.views.messages')
+    def test_edit_report(self, fake_messages):
+        """Test editing an already saved report as owner."""
+
+        report = NGReportFactory.create(random_functional_areas=True,
+                                        user=self.user)
+        activity = ActivityFactory.create()
+        campaign = CampaignFactory.create()
+        post_data = {'activity': activity.id,
+                     'campaign': campaign.id,
+                     'longitude': 123.123,
+                     'latitude': 456.456,
+                     'location': 'MyLocation',
+                     'link': 'http://www.example.com/',
+                     'functional_areas': [7, 15],
+                     'report_date': '14 November 2013'}
+
+        c = Client()
+        c.login(username='rep', password='passwd')
+        response = c.post(report.get_absolute_edit_url(), post_data,
+                          follow=True)
+        report = NGReport.objects.get(pk=report.id)
+        eq_(response.request['PATH_INFO'], report.get_absolute_url())
+        fake_messages.success.assert_called_once_with(
+            mock.ANY, 'Report successfully updated.')
+
+        excluded = ['functional_areas', 'report_date',
+                    'activity', 'campaign', 'user', 'mentor']
+        # Test saved fields
+        for field in set(post_data).difference(set(excluded)):
+            if getattr(report, field, None):
+                eq_(getattr(report, field), post_data[field])
+        # Test excluded fields
+        eq_(datetime.datetime.strptime(post_data['report_date'],
+                                       '%d %B %Y').date(),
+            report.report_date)
+        eq_(post_data['activity'], report.activity.id)
+        eq_(post_data['campaign'], report.campaign.id)
+        eq_(len(set(post_data['functional_areas']).intersection(
+            report.functional_areas.all().values_list('id', flat=True))), 2)
+
+    @mock.patch('remo.base.decorators.messages')
+    def test_edit_report_no_owner(self, fake_messages):
+        """Test editing an already saved report without being the owner."""
+
+        UserFactory.create(username='rep1', groups=['Rep'],
+                           userprofile__mentor=self.mentor)
+        report = NGReportFactory.create(random_functional_areas=True,
+                                        user=self.user)
+        c = Client()
+        c.login(username='rep1', password='passwd')
+        response = c.get(report.get_absolute_edit_url(), follow=True)
+        self.assertTemplateUsed(response, 'main.html')
+        fake_messages.error.assert_called_once_with(
+            mock.ANY, 'Permission denied.')
+
+
+class DeleteNGReportTests(TestCase):
+    """Tests related to New Generation Reports delete View."""
+
+    def setUp(self):
+        """Setup tests."""
+
+        # Create waffle flag
+        Flag.objects.create(name='reports_ng_report', everyone=True)
+        # Give permissions to admin group
+        group = Group.objects.get(name='Admin')
+        permissions = Permission.objects.filter(codename__icontains='ngreport')
+        for perm in permissions:
+            group.permissions.add(perm)
+        self.mentor = UserFactory.create(username='mentor', groups=['Mentor'])
+        self.user = UserFactory.create(username='rep', groups=['Rep'],
+                                       userprofile__mentor=self.mentor)
+        self.report = NGReportFactory.create(random_functional_areas=True,
+                                             user=self.user)
+
+    @mock.patch('remo.base.decorators.messages')
+    def test_delete_as_anonymous(self, fake_messages):
+        """Delete a saved report as anonymous user."""
+
+        c = Client()
+        response = c.get(self.report.get_absolute_delete_url(), follow=True)
+        self.assertTemplateUsed(response, 'main.html')
+        fake_messages.warning.assert_called_once_with(
+            mock.ANY, 'Please login.')
+
+    @mock.patch('remo.base.decorators.messages')
+    def test_delete_report_mentor(self, fake_messages):
+        """Delete a saved report as owner's mentor."""
+
+        c = Client()
+        c.login(username='mentor', password='passwd')
+        response = c.get(self.report.get_absolute_delete_url(), follow=True)
+        self.assertTemplateUsed(response, 'main.html')
+        fake_messages.error.assert_called_once_with(
+            mock.ANY, 'Permission denied.')
+
+    @mock.patch('remo.base.decorators.messages')
+    def test_delete_report_rep(self, fake_messages):
+        """Delete a saved report as another rep."""
+
+        UserFactory.create(username='rep1', groups=['Rep'],
+                           userprofile__mentor=self.mentor)
+        c = Client()
+        c.login(username='rep1', password='passwd')
+        response = c.get(self.report.get_absolute_delete_url(), follow=True)
+        self.assertTemplateUsed(response, 'main.html')
+        fake_messages.error.assert_called_once_with(
+            mock.ANY, 'Permission denied.')
+
+    def test_delete_report_owner(self):
+        """Delete a saved report as owner."""
+
+        c = Client()
+        c.login(username='rep', password='passwd')
+        response = c.post(self.report.get_absolute_delete_url(), follow=True)
+        self.assertTemplateUsed(response, 'profiles_view.html')
+        eq_(NGReport.objects.filter(pk=self.report.id).count(), 0)
+
+    def test_delete_report_admin(self):
+        """Delete a saved report as admin."""
+
+        UserFactory.create(username='admin', groups=['Admin', 'Rep'])
+        c = Client()
+        c.login(username='admin', password='passwd')
+        response = c.post(self.report.get_absolute_delete_url(), follow=True)
+        self.assertTemplateUsed(response, 'profiles_view.html')
+        eq_(NGReport.objects.filter(pk=self.report.id).count(), 0)
