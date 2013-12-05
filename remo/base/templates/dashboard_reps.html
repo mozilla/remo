@@ -5,6 +5,147 @@
       mentees_reports_list is defined or
       mentees_reports_grid is defined or
       all_reports is defined %}
+
+  <!-- continuous reports block -->
+  <div class="dashboard-box">
+    <div class="row">
+      <div class="large-7 columns">
+        <h2>Reports</h2>
+      </div>
+      <div class="large-5 columns">
+        <dl class="sub-nav dashboard-filter">
+          <dt>Filter:</dt>
+            <dd class="active">
+              <a role="button" id="dashboard-continuous-reports-mine-button" href="#">
+                Mine
+              </a>
+            </dd>
+            <dd>
+              <a role="button" id="dashboard-continuous-reports-mentees-button" href="#">
+                My mentees
+              </a>
+            </dd>
+            <dd>
+              <a role="button" id="dashboard-continuous-reports-all-button" href="#">
+                All
+              </a>
+            </dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- my block -->
+      <div id="dashboard-continuous-reports-mine-block" class="large-12 columns">
+        <table class="dashboard-table">
+          <tbody>
+            <tr>
+              <td>
+                5 weeks
+                <span class="date-range">
+                  24 Jan 2013 - 28 Feb 2012
+                </span>
+              </td>
+              <td>
+                14 weeks
+                <span class="date-range">
+                  4 Sep 2012 - 11 Dec 2012
+                </span>
+              </td>
+              <td>
+                5 activities
+                <span class="date-range">
+                  14 Feb 2012 - 28 Feb 2013
+                </span>
+              </td>
+              <td>
+                23 activities
+                <span class="date-range">
+                  20 Dec 2012 - 28 Feb 2013
+                </span>
+              </td>
+              <td>
+                203 activities
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Current streak</th>
+              <th>Longest streak</th>
+              <th>Last 2 weeks</th>
+              <th>Last 10 weeks</th>
+              <th>All time</th>
+            </tr>
+          </tfoot>
+        </table>
+        <a class="dashboard-view-more" href="#">View my reports</a>
+      </div>
+      <!-- end my block -->
+
+      <!-- mentees block -->
+      <div id="dashboard-continuous-reports-mentees-block" class="large-12 columns hidden">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Current streak</th>
+              <th>Longest streak</th>
+              <th>Last 2 weeks</th>
+              <th>Last 10 weeks</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="#">Mentee name</a>
+              </td>
+              <td>12 weeks</td>
+              <td>24 weeks</td>
+              <td>5</td>
+              <td>23</td>
+              <td>57</td>
+            </tr>
+          </tbody>
+        </table>
+        <a class="dashboard-view-more" href="#">More</a>
+      </div>
+      <!-- end mentees block -->
+
+      <!-- all block -->
+      <div id="dashboard-continuous-reports-all-block" class="large-12 columns hidden">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Current streak</th>
+              <th>Longest streak</th>
+              <th>Last 2 weeks</th>
+              <th>Last 10 weeks</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="#">Rep name</a>
+              </td>
+              <td>12 weeks</td>
+              <td>24 weeks</td>
+              <td>5</td>
+              <td>23</td>
+              <td>57</td>
+            </tr>
+          </tbody>
+        </table>
+        <a class="dashboard-view-more" href="#">More</a>
+      </div>
+      <!-- end all block -->
+    </div>
+  </div>
+  <!-- end continuous reports block -->
+
   <!-- reports block -->
   <div class="dashboard-box">
     <div class="row">

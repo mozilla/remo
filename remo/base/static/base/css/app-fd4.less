@@ -2897,6 +2897,7 @@ ul.mreports li.editable a {
     }
     dt {
         font-size: 12px;
+        padding-top: 2px;
     }
 }
 
@@ -2972,5 +2973,53 @@ table tr.assigned-request:nth-of-type(2n) {
 .base-content-list {
     tr {
         height: 45px;
+    }
+}
+
+.dashboard-view-more {
+    font-size: 12px;
+    padding-left: 0.5625em;
+}
+
+#dashboard-continuous-reports-mine-block {
+    table {
+        text-align: center;
+        td {
+            font-weight: bold;
+            font-size: 16px;
+            line-height: 1.7;
+            .date-range {
+                .grayed;
+                .opensanslight;
+                display: block;
+                font-weight: normal;
+                font-size: 12px;
+            }
+        }
+        tfoot tr th {
+                    .grayed;
+            font-size: 12px;
+            text-align: center;
+        }
+    }
+    .dashboard-view-more {
+        padding-left: 0;
+    }
+}
+
+@media only screen and (max-width: @breakSmall) {
+    #dashboard-continuous-reports-mine-block {
+        td .date-range {
+            display: none;
+        }
+    }
+}
+
+#dashboard-continuous-reports-mine-block,
+#dashboard-continuous-reports-mentees-block,
+#dashboard-continuous-reports-all-block {
+    margin-bottom: 20px;
+    table {
+        margin-bottom: 10px;
     }
 }

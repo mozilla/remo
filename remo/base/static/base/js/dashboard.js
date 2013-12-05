@@ -1,13 +1,23 @@
 $(document).ready(function () {
     'use strict';
 
-    // Reports containers
+    // Continuouis reports containers
+    var $cont_reports_mine_block = $('#dashboard-continuous-reports-mine-block');
+    var $cont_reports_mentees_block = $('#dashboard-continuous-reports-mentees-block');
+    var $cont_reports_all_block = $('#dashboard-continuous-reports-all-block');
+
+    // Continuous reports buttons
+    var $cont_reports_mine_button = $('#dashboard-continuous-reports-mine-button');
+    var $cont_reports_mentees_button = $('#dashboard-continuous-reports-mentees-button');
+    var $cont_reports_all_button = $('#dashboard-continuous-reports-all-button');
+
+    // Old reports containers
     var $reports_all_block = $('#dashboard-reports-all-block');
     var $reports_my_block = $('#dashboard-reports-my-block');
     var $mentees_list_block = $('#dashboard-reports-mentees-list-block');
     var $mentees_grid_block = $('#dashboard-reports-mentees-grid-block');
 
-    // Reports buttons
+    // Old reports buttons
     var $reports_mine_button = $('#dashboard-reports-mine-button');
     var $reports_mentees_grid_button = $('#dashboard-reports-mentees-grid-button');
     var $reports_mentees_list_button = $('#dashboard-reports-mentees-list-button');
@@ -32,6 +42,39 @@ $(document).ready(function () {
     var $sr_mentees_block = $('#dashboard-sr-mentees-block');
     var $sr_all_block = $('#dashboard-sr-all-block');
     var $sr_my_block = $('#dashboard-sr-my-block');
+
+    $cont_reports_mine_button.on('click', function (e) {
+        e.preventDefault();
+        $cont_reports_mine_block.show('fast');
+        $cont_reports_mentees_block.hide('fast');
+        $cont_reports_all_block.hide('fast');
+
+        $(this).parent().addClass('active');
+        $cont_reports_mentees_button.parent().removeClass('active');
+        $cont_reports_all_button.parent().removeClass('active');
+    });
+
+    $cont_reports_mentees_button.on('click', function (e) {
+        e.preventDefault();
+        $cont_reports_mentees_block.show('fast');
+        $cont_reports_mine_block.hide('fast');
+        $cont_reports_all_block.hide('fast');
+
+        $(this).parent().addClass('active');
+        $cont_reports_mine_button.parent().removeClass('active');
+        $cont_reports_all_button.parent().removeClass('active');
+    });
+
+    $cont_reports_all_button.on('click', function (e) {
+        e.preventDefault();
+        $cont_reports_all_block.show('fast');
+        $cont_reports_mentees_block.hide('fast');
+        $cont_reports_mine_block.hide('fast');
+
+        $(this).parent().addClass('active');
+        $cont_reports_mine_button.parent().removeClass('active');
+        $cont_reports_mentees_button.parent().removeClass('active');
+    });
 
     $reports_all_button.on('click', function (e) {
         e.preventDefault();
