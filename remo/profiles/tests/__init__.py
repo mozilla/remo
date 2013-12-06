@@ -3,7 +3,6 @@ from random import randint
 
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User, Group
-from django.test.client import Client
 from django.utils.timezone import utc
 
 import factory

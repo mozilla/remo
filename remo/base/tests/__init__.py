@@ -34,8 +34,8 @@ def requires_login():
         def newfunc(*args, **kwargs):
             with nested(
                     patch('remo.base.decorators.messages.warning'),
-                    patch('remo.base.decorators.redirect', wraps=redirect)) as (
-                        messages_mock, redirect_mock):
+                    patch('remo.base.decorators.redirect',
+                          wraps=redirect)) as (messages_mock, redirect_mock):
                 func(*args, **kwargs)
             ok_(messages_mock.called, 'messages.warning() was not called.')
             redirect_mock.assert_called_with('main')
@@ -49,8 +49,8 @@ def requires_permission():
         def newfunc(*args, **kwargs):
             with nested(
                     patch('remo.base.decorators.messages.error'),
-                    patch('remo.base.decorators.redirect', wraps=redirect)) as (
-                        messages_mock, redirect_mock):
+                    patch('remo.base.decorators.redirect',
+                          wraps=redirect)) as (messages_mock, redirect_mock):
                 func(*args, **kwargs)
             ok_(messages_mock.called, 'messages.error() was not called.')
             redirect_mock.assert_called_with('main')
