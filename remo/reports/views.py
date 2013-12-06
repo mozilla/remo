@@ -328,7 +328,6 @@ def edit_ng_report(request, display_name='', year=None,
             NGReport, pk=id, user__userprofile__display_name=display_name)
 
     report_form = forms.NGReportForm(request.POST or None, instance=report)
-
     if report_form.is_valid():
         if created:
             report.user = user

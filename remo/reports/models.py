@@ -62,9 +62,9 @@ def report_set_groups(app, sender, signal, **kwargs):
     perms = {'can_edit_reports': ['Admin', 'Mentor'],
              'can_delete_reports': ['Admin', 'Mentor'],
              'can_delete_report_comments': ['Admin', 'Mentor'],
-             'add_ngreport': ['Admin'],
-             'change_ngreport': ['Admin'],
-             'delete_ngreport': ['Admin']}
+             'add_ngreport': ['Admin', 'Mentor'],
+             'change_ngreport': ['Admin', 'Mentor'],
+             'delete_ngreport': ['Admin', 'Mentor']}
 
     add_permissions_to_groups('reports', perms)
 
@@ -256,37 +256,31 @@ class NGReport(models.Model):
     link_description = models.CharField(max_length=200, blank=True, default='')
     activity_description = models.TextField(blank=True, default='')
 
-    def get_absolute_url(self):
+    def _get_url_args(self):
         args = [self.user.userprofile.display_name,
                 self.report_date.year,
                 utils.number2month(self.report_date.month),
                 self.report_date.day,
-                str(self.id)]
-        return reverse('remo.reports.views.view_ng_report', args=args)
+                self.id]
+        return args
+
+    def get_absolute_url(self):
+        return reverse('remo.reports.views.view_ng_report',
+                       args=self._get_url_args())
 
     def get_absolute_edit_url(self):
-        args = [self.user.userprofile.display_name,
-                self.report_date.year,
-                utils.number2month(self.report_date.month),
-                self.report_date.day,
-                str(self.id)]
-        return reverse('remo.reports.views.edit_ng_report', args=args)
+        return reverse('remo.reports.views.edit_ng_report',
+                       args=self._get_url_args())
 
     def get_absolute_delete_url(self):
-        args = [self.user.userprofile.display_name,
-                self.report_date.year,
-                utils.number2month(self.report_date.month),
-                self.report_date.day,
-                str(self.id)]
-        return reverse('remo.reports.views.delete_ng_report', args=args)
+        return reverse('remo.reports.views.delete_ng_report',
+                       args=self._get_url_args())
 
     class Meta:
         ordering = ['-report_date', '-created_on']
 
     def __unicode__(self):
-        return '%s %s, %s' % (self.report_date,
-                              self.created_on.strftime('%H:%M'),
-                              self.id)
+        return '%s %s' % (self.report_date, self.id)
 
 
 class NGReportComment(models.Model):

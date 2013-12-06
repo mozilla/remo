@@ -3,6 +3,7 @@ from random import randint
 
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User, Group
+from django.test.client import Client
 from django.utils.timezone import utc
 
 import factory
@@ -76,14 +77,9 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
         if extracted:
             for area in extracted:
                 self.functional_areas.add(area)
-
-    @factory.post_generation
-    def random_functional_areas(self, create, extracted, **kwargs):
-        """Add random functional areas after object generation."""
-        if not create:
-            return
-        if extracted:
-            rand_int = randint(1, FunctionalArea.objects.count())
+        else:
+            # create random
+            rand_int = randint(1, 6)
             for area in FunctionalArea.objects.all().order_by('?')[:rand_int]:
                 self.functional_areas.add(area)
 

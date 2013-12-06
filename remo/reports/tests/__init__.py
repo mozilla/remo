@@ -106,18 +106,15 @@ class NGReportFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def functional_areas(self, create, extracted, **kwargs):
+        """Add functional areas list after object generation."""
         if not create:
             return
         if extracted:
-            for functional_area in extracted:
-                self.functional_areas.add(functional_area)
-
-    @factory.post_generation
-    def random_functional_areas(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            rand_int = randint(1, FunctionalArea.objects.count())
+            for area in extracted:
+                self.functional_areas.add(area)
+        else:
+            # create random
+            rand_int = randint(1, 6)
             for area in FunctionalArea.objects.all().order_by('?')[:rand_int]:
                 self.functional_areas.add(area)
 

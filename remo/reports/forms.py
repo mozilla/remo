@@ -114,7 +114,7 @@ class NGReportForm(happyforms.ModelForm):
         activity = cdata.get('activity')
         if (activity and activity.name == 'Participated in a campaign'
                 and not cdata.get('campaign')):
-            msg = 'Please select an option from the list'
+            msg = 'Please select an option from the list.'
             self._errors['campaign'] = self.error_class([msg])
 
         return cdata
