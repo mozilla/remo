@@ -786,7 +786,8 @@
           <tbody>
             {% cache my_mentorship_requests %}
               {% for bug in my_mentorship_requests %}
-                <tr class='my-mentorship-request'>
+                <tr class='my-mentorship-request
+                    {{ bug.assigned_to|ifeq(request.user, 'assigned-request') }}'>
                   <td>
                     <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
                       {{ bug.bug_id }}
@@ -856,7 +857,8 @@
           <tbody>
             {% cache my_planning_requests %}
               {% for bug in my_planning_requests %}
-                <tr class='my-planning-request'>
+                <tr class='my-planning-request
+                    {{ bug.assigned_to|ifeq(request.user, 'assigned-request') }}'>
                   <td>
                     <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
                       {{ bug.bug_id }}
