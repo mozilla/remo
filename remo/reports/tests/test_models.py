@@ -9,8 +9,8 @@ import fudge
 from remo.base.utils import go_back_n_months
 from remo.profiles.tests import UserFactory
 from remo.reports.models import OVERDUE_DAY
-from remo.reports.tests import (NGReportFactory, ReportCommentFactory,
-                                ReportFactory)
+from remo.reports.tests import (NGReportFactory, NGReportCommentFactory,
+                                ReportCommentFactory, ReportFactory)
 
 
 class ModelTest(TestCase):
@@ -213,3 +213,14 @@ class NGReport(TestCase):
         eq_(report.get_absolute_delete_url(),
             ('/u/%s/r/2012/January/1/9999/delete/'
              % report.user.userprofile.display_name))
+
+
+class NGReportComment(TestCase):
+    def test_get_absolute_delete_url(self):
+        report = NGReportFactory.create(
+            report_date=datetime.date(2012, 01, 01), id=9999)
+        report_comment = NGReportCommentFactory.create(report=report,
+                                                       user=report.user)
+        eq_(report_comment.get_absolute_delete_url(),
+            ('/u/%s/r/2012/January/1/9999/comment/%s/delete/'
+             % (report.user.userprofile.display_name, report_comment.id)))

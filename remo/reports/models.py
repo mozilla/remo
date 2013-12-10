@@ -64,7 +64,8 @@ def report_set_groups(app, sender, signal, **kwargs):
              'can_delete_report_comments': ['Admin', 'Mentor'],
              'add_ngreport': ['Admin', 'Mentor'],
              'change_ngreport': ['Admin', 'Mentor'],
-             'delete_ngreport': ['Admin', 'Mentor']}
+             'delete_ngreport': ['Admin', 'Mentor'],
+             'delete_ngreportcomment': ['Admin', 'Mentor']}
 
     add_permissions_to_groups('reports', perms)
 
@@ -289,6 +290,19 @@ class NGReportComment(models.Model):
     report = models.ForeignKey(NGReport)
     created_on = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
+
+    def _get_url_args(self):
+        args = [self.report.user.userprofile.display_name,
+                self.report.report_date.year,
+                utils.number2month(self.report.report_date.month),
+                self.report.report_date.day,
+                self.report.id,
+                self.id]
+        return args
+
+    def get_absolute_delete_url(self):
+        return reverse('remo.reports.views.delete_ng_report_comment',
+                       args=self._get_url_args())
 
     class Meta:
         ordering = ['id']

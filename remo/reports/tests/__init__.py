@@ -123,5 +123,5 @@ class NGReportCommentFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = NGReportComment
 
     user = factory.SubFactory(UserFactory, userprofile__initial_council=True)
-    report = factory.SubFactory(NGReportFactory, random_functional_areas=True)
+    report = factory.SubFactory(NGReportFactory)
     comment = factory.Sequence(lambda n: 'Comment #{0}'.format(n))
