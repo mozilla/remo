@@ -227,7 +227,7 @@ class Campaign(models.Model):
         return self.name
 
 
-class NGReport(models.Model):
+class NGReport(caching.base.CachingMixin, models.Model):
     """ Continuous Reporting Model.
 
     In order to be able to distinguish the old
@@ -256,6 +256,8 @@ class NGReport(models.Model):
     link = models.URLField(max_length=500, blank=True, default='')
     link_description = models.CharField(max_length=200, blank=True, default='')
     activity_description = models.TextField(blank=True, default='')
+
+    objects = caching.base.CachingManager()
 
     def _get_url_args(self):
         args = [self.user.userprofile.display_name,
