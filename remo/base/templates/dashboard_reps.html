@@ -1,12 +1,8 @@
 {% extends "dashboard.html" %}
 
 {% block body_content %}
-{% if monthly_reports is defined or
-      mentees_reports_list is defined or
-      mentees_reports_grid is defined or
-      all_reports is defined %}
-
-  <!-- continuous reports block -->
+<!-- continuous reports block -->
+{% if ng_reports %}
   <div class="dashboard-box">
     <div class="row">
       <div class="large-7 columns">
@@ -15,21 +11,25 @@
       <div class="large-5 columns">
         <dl class="sub-nav dashboard-filter">
           <dt>Filter:</dt>
-            <dd class="active">
-              <a role="button" id="dashboard-continuous-reports-mine-button" href="#">
-                Mine
-              </a>
-            </dd>
+          <dd class="active">
+            <a role="button" id="dashboard-continuous-reports-mine-button" href="#">
+              Mine
+            </a>
+          </dd>
+          {% if mentees_ng_reportees %}
             <dd>
               <a role="button" id="dashboard-continuous-reports-mentees-button" href="#">
                 My mentees
               </a>
             </dd>
+          {% endif %}
+          {% if all_ng_reportees %}
             <dd>
               <a role="button" id="dashboard-continuous-reports-all-button" href="#">
                 All
               </a>
             </dd>
+          {% endif %}
         </dl>
       </div>
     </div>
@@ -41,31 +41,56 @@
           <tbody>
             <tr>
               <td>
-                5 weeks
-                <span class="date-range">
-                  24 Jan 2013 - 28 Feb 2012
-                </span>
+                {% set activities=get_ng_reports(user, current_streak=True) %}
+                {{ activities }}
+                {% if activities > 0 %}
+                  &nbsp;activities<br>
+                  <span class="date-range">
+                    {{ user.userprofile.current_streak_start|strftime('%d %b %Y')}}
+                    &nbsp;-&nbsp;
+                    {{ user.userprofile.current_streak_end|strftime('%d %b %Y')}}
+                  </span>
+                {% endif %}
               </td>
               <td>
-                14 weeks
-                <span class="date-range">
-                  4 Sep 2012 - 11 Dec 2012
-                </span>
+                {% set activities=get_ng_reports(user, longest_streak=True) %}
+                {{ activities }}
+                {% if activities > 0 %}
+                  {% set streak_end=user.userprofile.longest_streak_end %}
+                  &nbsp;activities<br>
+                  <span class="date-range">
+                    {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
+                    &nbsp;-&nbsp;
+                    {{ user.userprofile.longest_streak_end|strftime('%d %b %Y')}}
+                  </span>
+                {% endif %}
               </td>
               <td>
-                5 activities
-                <span class="date-range">
-                  14 Feb 2012 - 28 Feb 2013
-                </span>
+                {% set activities=get_ng_reports(user, period=2) %}
+                {{ activities }}
+                {% if activities > 0 %}
+                  &nbsp;activities<br>
+                  <span class="date-range">
+                    {{ get_date_n_days_before(today, 14)|strftime('%d %b %Y')}}
+                    &nbsp;-&nbsp;
+                    {{ today|strftime('%d %b %Y')}}
+                  </span>
+                {% endif %}
               </td>
               <td>
-                23 activities
-                <span class="date-range">
-                  20 Dec 2012 - 28 Feb 2013
-                </span>
+                {% set activities=get_ng_reports(user, period=10) %}
+                {{ activities }}
+                {% if activities > 0 %}
+                  &nbsp;activities<br>
+                  <span class="date-range">
+                    {{ get_date_n_days_before(today, 70)|strftime('%d %b %Y')}}
+                    &nbsp;-&nbsp;
+                    {{ today|strftime('%d %b %Y')}}
+                  </span>
+                {% endif %}
               </td>
               <td>
-                203 activities
+                {{ get_ng_reports(user) }} activities
               </td>
             </tr>
           </tbody>
@@ -79,73 +104,105 @@
             </tr>
           </tfoot>
         </table>
-        <a class="dashboard-view-more" href="#">View my reports</a>
+        <a class="dashboard-view-more"
+           href="{{ url('list_ng_reports_rep', user.userprofile.display_name) }}">
+           View my reports
+        </a>
       </div>
       <!-- end my block -->
 
       <!-- mentees block -->
-      <div id="dashboard-continuous-reports-mentees-block" class="large-12 columns hidden">
-        <table class="dashboard-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Current streak</th>
-              <th>Longest streak</th>
-              <th>Last 2 weeks</th>
-              <th>Last 10 weeks</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <a href="#">Mentee name</a>
-              </td>
-              <td>12 weeks</td>
-              <td>24 weeks</td>
-              <td>5</td>
-              <td>23</td>
-              <td>57</td>
-            </tr>
-          </tbody>
-        </table>
-        <a class="dashboard-view-more" href="#">More</a>
-      </div>
+      {% if mentees_ng_reportees %}
+        <div id="dashboard-continuous-reports-mentees-block" class="large-12 columns hidden">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Current streak</th>
+                <th>Longest streak</th>
+                <th>Last 2 weeks</th>
+                <th>Last 10 weeks</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% cache mentees_ng_reportees %}
+                {% for reportee in mentees_ng_reportees %}
+                  <tr>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      reportee|get_display_name) }}">
+                        {{ reportee.get_full_name() }}
+                      </a>
+                    </td>
+                    <td>{{ get_ng_reports(reportee, current_streak=True) }} days</td>
+                    <td>{{ get_ng_reports(reportee, longest_streak=True) }} days</td>
+                    <td>{{ get_ng_reports(reportee, period=2) }} activities</td>
+                    <td>{{ get_ng_reports(reportee, period=10) }} activities</td>
+                    <td>{{ get_ng_reports(reportee) }} activities</td>
+                  </tr>
+                {% endfor %}
+              {% endcache %}
+            </tbody>
+          </table>
+            <a class="dashboard-view-more"
+              href="{{ url('list_ng_reports_mentor', user.userprofile.display_name) }}">
+              More
+            </a>
+        </div>
+      {% endif %}
       <!-- end mentees block -->
 
       <!-- all block -->
-      <div id="dashboard-continuous-reports-all-block" class="large-12 columns hidden">
-        <table class="dashboard-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Current streak</th>
-              <th>Longest streak</th>
-              <th>Last 2 weeks</th>
-              <th>Last 10 weeks</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <a href="#">Rep name</a>
-              </td>
-              <td>12 weeks</td>
-              <td>24 weeks</td>
-              <td>5</td>
-              <td>23</td>
-              <td>57</td>
-            </tr>
-          </tbody>
-        </table>
-        <a class="dashboard-view-more" href="#">More</a>
-      </div>
+      {% if all_ng_reportees %}
+        <div id="dashboard-continuous-reports-all-block" class="large-12 columns hidden">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Current streak</th>
+                <th>Longest streak</th>
+                <th>Last 2 weeks</th>
+                <th>Last 10 weeks</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% cache all_ng_reportees %}
+                {% for reportee in all_ng_reportees %}
+                  <tr>
+                    <td>
+                      <a href="{{ url('profiles_view_profile',
+                                      reportee|get_display_name) }}">
+                        {{ reportee.get_full_name() }}
+                      </a>
+                    </td>
+                    <td>{{ get_ng_reports(reportee, current_streak=True) }} days</td>
+                    <td>{{ get_ng_reports(reportee, longest_streak=True) }} days</td>
+                    <td>{{ get_ng_reports(reportee, period=2) }} activities</td>
+                    <td>{{ get_ng_reports(reportee, period=10) }} activities</td>
+                    <td>{{ get_ng_reports(reportee) }} activities</td>
+                  </tr>
+                {% endfor %}
+              {% endcache %}
+            </tbody>
+          </table>
+          <a class="dashboard-view-more"
+            href="{{ url('list_ng_reports') }}">
+            More
+          </a>
+        </div>
+      {% endif %}
       <!-- end all block -->
     </div>
   </div>
   <!-- end continuous reports block -->
+{% endif %}
 
+{% if monthly_reports is defined or
+      mentees_reports_list is defined or
+      mentees_reports_grid is defined or
+      all_reports is defined %}
   <!-- reports block -->
   <div class="dashboard-box">
     <div class="row">

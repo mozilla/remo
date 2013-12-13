@@ -482,7 +482,7 @@ def list_ng_reports(request, mentor=None, rep=None):
     except (EmptyPage, InvalidPage):
         reports = paginator.page(paginator.num_pages)
 
-    return render(request, 'ng_reports_list.html',
+    return render(request, 'list_ng_reports.html',
                   {'reports': reports,
                    'number_of_reports': number_of_reports,
                    'sort_key': sort_key,

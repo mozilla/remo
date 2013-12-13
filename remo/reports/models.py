@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models.signals import (m2m_changed, post_save, pre_delete,
                                       pre_save)
 from django.dispatch import receiver
+from django.utils.timezone import now as utc_now
 
 import caching.base
 from south.signals import post_migrate
@@ -296,11 +297,49 @@ class NGReport(caching.base.CachingMixin, models.Model):
     def get_report_date(self):
         return self.report_date.strftime('%d %b %Y')
 
+    @property
+    def is_future_report(self):
+        if self.report_date > utc_now().date():
+            return True
+        return False
+
     def save(self, *args, **kwargs):
-        """Override save method for custom functionality."""
+        """Override save method."""
+        up = self.user.userprofile
+        one_day = datetime.timedelta(1)
+
+        # Save the mentor of the user if no mentor is defined.
         if not self.mentor:
-            self.mentor = self.user.userprofile.mentor
-        super(NGReport, self).save(*args, **kwargs)
+            self.mentor = up.mentor
+
+        # Calculate the current and longest streak for a user.
+        if not self.is_future_report:
+            if (up.current_streak_start and up.current_streak_end and
+                (self.report_date >= up.current_streak_start - one_day) and
+                    (self.report_date <= up.current_streak_end + one_day)):
+                if self.report_date < up.current_streak_start:
+                    up.current_streak_start = self.report_date
+                if self.report_date > up.current_streak_end:
+                    up.current_streak_end = self.report_date
+            else:
+                up.current_streak_start = self.report_date
+                up.current_streak_end = self.report_date
+
+            # Longest streak
+            if (up.current_streak_start and up.current_streak_end and
+                    up.longest_streak_start and up.longest_streak_end):
+                longest_streak_diff = (up.longest_streak_end -
+                                       up.longest_streak_start)
+                current_streak_diff = (up.current_streak_end -
+                                       up.current_streak_start)
+                if current_streak_diff > longest_streak_diff:
+                    up.longest_streak_start = up.current_streak_start
+                    up.longest_streak_end = up.current_streak_end
+            else:
+                up.longest_streak_start = self.report_date
+                up.longest_streak_end = self.report_date
+            up.save()
+        super(NGReport, self).save()
 
     class Meta:
         ordering = ['-report_date', '-created_on']
@@ -350,7 +389,7 @@ def create_passive_attendance_report(sender, instance, **kwargs):
             'user': instance.user,
             'event': instance.event,
             'activity': activity,
-            'report_date': instance.event.start,
+            'report_date': instance.event.start.date(),
             'longitude': instance.event.lon,
             'latitude': instance.event.lat,
             'location': "%s, %s, %s" % (instance.event.city,
@@ -370,7 +409,7 @@ def create_update_passive_event_report(sender, instance, created, **kwargs):
     """Automatically create/update a passive report on event creation."""
 
     attrs = {
-        'report_date': instance.start,
+        'report_date': instance.start.date(),
         'longitude': instance.lon,
         'latitude': instance.lat,
         'location': "%s, %s, %s" % (instance.city,

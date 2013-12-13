@@ -41,3 +41,12 @@ def get_mentees(user):
     return [mentee_profile.user for mentee_profile in
             user.mentees.exclude(registration_complete=False)
                         .order_by('user__last_name', 'user__first_name')]
+
+
+@register.function
+def count_ng_reports(obj, current_streak=False, longest_streak=False,
+                     period=0):
+    # Avoid circular dependencies
+    import utils
+    return utils.user_commited_reports(obj, current_streak,
+                                       longest_streak, period)
