@@ -151,23 +151,33 @@ def view_profile(request, display_name):
             'usergroups': usergroups}
 
     today = date.today()
-    if ((request.user.is_authenticated() and
-         user in request.user.mentees.all()) or
-            user == request.user):
-        reports = get_reports_for_year(
-            user, start_year=2011, end_year=today.year,
-            permission=REPORTS_PERMISSION_LEVEL['owner'])
-    elif request.user.is_authenticated():
-        reports = get_reports_for_year(
-            user, start_year=2011, end_year=today.year,
-            permission=REPORTS_PERMISSION_LEVEL['authenticated'])
+
+    ngreport_flag = False
+
+    if user.ng_reports.exists():
+        ngreport_flag = True
+
+    if not ngreport_flag:
+        if ((request.user.is_authenticated() and
+             user in request.user.mentees.all()) or
+                user == request.user):
+            reports = get_reports_for_year(
+                user, start_year=2011, end_year=today.year,
+                permission=REPORTS_PERMISSION_LEVEL['owner'])
+        elif request.user.is_authenticated():
+            reports = get_reports_for_year(
+                user, start_year=2011, end_year=today.year,
+                permission=REPORTS_PERMISSION_LEVEL['authenticated'])
+        else:
+            reports = get_reports_for_year(
+                user, start_year=2011, end_year=today.year,
+                permission=REPORTS_PERMISSION_LEVEL['anonymous'])
+        data['monthly_reports'] = reports
     else:
-        reports = get_reports_for_year(
-            user, start_year=2011, end_year=today.year,
-            permission=REPORTS_PERMISSION_LEVEL['anonymous'])
+        data['ng_reports'] = user.ng_reports.all().order_by('-created_on')
 
     past_user_events = get_events_for_user(user, to_date=today)
-    data['monthly_reports'] = reports
+
     data['future_events'] = get_events_for_user(user, from_date=today)
     data['past_events'] = past_user_events.reverse()[:10]
     data['featured_rep'] = FeaturedRep.objects.filter(user=user)
