@@ -71,7 +71,7 @@ class FetchBugsTest(TestCase):
                                       'ref': '',
                                       'name': 'reps-council@mozilla.com'},
                                    'status': '?',
-                                   'name': 'remo-review'}],
+                                   'name': 'remo-approval'}],
                               'resolution': 'invalid'},
                              {'id': 1199,
                               'summary': 'New summary',
