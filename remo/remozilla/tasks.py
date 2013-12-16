@@ -99,7 +99,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
                 for flag in bdata.get('flags', []):
                     if ((flag['status'] == '?'
-                         and flag['name'] == 'remo-review'
+                         and flag['name'] == 'remo-approval'
                          and flag['requestee']['name'] == (
                              settings.REPS_COUNCIL_ALIAS)
                          and waffle.switch_is_active('automated_polls'))):
