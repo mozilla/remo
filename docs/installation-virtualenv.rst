@@ -186,15 +186,3 @@ When you want to start contributing...
       Fetching bugzilla bug requires a Mozilla Reps Admin account on
       Bugzilla. Ping `giorgos` on #remo-dev to give you access if
       your project requires it.
-
-#. **Start django devserver.**
-
-   Within your virtual environment you can start django devserver by
-   running::
-
-     (venv)$ ./manage.py runserver
-
-
-#. **Visit our local installation of the ReMo Portal.**
-
-   You are done! Point Firefox to `<http://127.0.0.1:8000>`_.

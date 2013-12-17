@@ -9,4 +9,5 @@ Installation
    installation-vagrant
    installation-virtualenv
    static
+   runserver
    demo-data
