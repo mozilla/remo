@@ -7,6 +7,8 @@ from remo.base.utils import number2month
 from remo.reports.tasks import send_remo_mail
 from remo.base.utils import go_back_n_months
 
+from optparse import make_option
+
 
 class Command(BaseCommand):
     """Command to send email reminder to Mentors about Reps
@@ -14,6 +16,12 @@ class Command(BaseCommand):
 
     """
     help = 'Send email reminder to Mentors about Reps without reports.'
+    option_list = list(BaseCommand.option_list) + [
+        make_option('--dry-run',
+                    default=False,
+                    action='store_true',
+                    dest='dry_run',
+                    help='Run the command without sending emails')]
     SUBJECT = '[Report] Your mentees with no reports for %s'
     EMAIL_TEMPLATE = 'emails/mentor_notification.txt'
 
@@ -37,4 +45,9 @@ class Command(BaseCommand):
         data = {'year': date.year, 'month': month,
                 'reps_without_report': reps_without_report}
 
-        send_remo_mail(mentors, subject, self.EMAIL_TEMPLATE, data)
+        if options['dry_run']:
+            for mentor in mentors:
+                msg = 'Email sent to mentor: %d' % mentor
+                print(msg)
+        else:
+            send_remo_mail(mentors, subject, self.EMAIL_TEMPLATE, data)
