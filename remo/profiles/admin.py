@@ -56,7 +56,7 @@ class UserAvatarAdmin(admin.ModelAdmin):
 class FunctionalAreaAdmin(admin.ModelAdmin):
     """FunctionalArea Admin."""
     list_display = ('name', 'registered_reps', 'registered_mozillians',
-                    'registered_events')
+                    'registered_events', 'active')
 
     def registered_reps(self, obj):
         return obj.users_matching.count()
@@ -67,6 +67,8 @@ class FunctionalAreaAdmin(admin.ModelAdmin):
     def registered_events(self, obj):
         return obj.events_categories.count()
 
+    def queryset(self, request):
+        return self.model.objects.get_query_set()
 
 admin.site.register(User, UserAdmin)
 admin.site.register(FunctionalArea, FunctionalAreaAdmin)

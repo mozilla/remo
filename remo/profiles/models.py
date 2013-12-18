@@ -13,6 +13,7 @@ from django.dispatch import receiver
 import caching.base
 from south.signals import post_migrate
 
+from remo.base.models import GenericActiveManager
 from remo.base.utils import add_permissions_to_groups
 from remo.reports.tasks import send_remo_mail
 
@@ -55,6 +56,10 @@ def _validate_mentor(data, **kwargs):
 class FunctionalArea(models.Model):
     """Mozilla functional areas."""
     name = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
+
+    active_objects = GenericActiveManager()
+    objects = models.Manager()
 
     class Meta:
         ordering = ['name']
