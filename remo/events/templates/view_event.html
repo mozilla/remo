@@ -290,11 +290,42 @@ Mozilla Reps - {{ event.name }}
   </div>
   <!-- END Mashup code -->
 
-  <!-- Next 3 events like this -->
-  {% if similar_events.exists() %}
-    <div class="row">
-      <div class="large-7 columns"></div>
-      <div class="large-5 columns">
+  {% macro display_attendee(attendee) -%}
+    <div class="event-single-attendee">
+      <div class="row">
+        <div class="large-3 small-3 columns grid-profile-image">
+          <img src="{{ attendee|get_avatar_url }}"
+               class="profiles-people-avatar"
+               alt="Avatar">
+        </div>
+        <div class="large-9 small-9 columns grid-profile-text">
+          <h6>{{ attendee.get_full_name() }}</h6>
+          <p class="event-single-attendee-text">
+            {{ get_attendee_role_event(attendee, event) }}
+          </p>
+        </div>
+      </div>
+    </div>
+  {%- endmacro %}
+  <div class="row">
+    <div class="large-7 columns">
+      {% if event.extra_content %}
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large news"></div>
+          </div>
+          <div class="large-11 columns">
+            <!-- Editable Content wiki like -->
+            <div class="markdown">
+              {{ event.extra_content|markdown }}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <div class="large-5 columns">
+      <!-- Next 3 events like this -->
+      {% if similar_events.exists() %}
         <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon event large"></div>
@@ -338,44 +369,7 @@ Mozilla Reps - {{ event.name }}
             </ul>
           </div>
         </div>
-      </div>
-    </div>
-  {% endif %}
-  {% macro display_attendee(attendee) -%}
-    <div class="event-single-attendee">
-      <div class="row">
-        <div class="large-3 small-3 columns grid-profile-image">
-          <img src="{{ attendee|get_avatar_url }}"
-               class="profiles-people-avatar"
-               alt="Avatar">
-        </div>
-        <div class="large-9 small-9 columns grid-profile-text">
-          <h6>{{ attendee.get_full_name() }}</h6>
-          <p class="event-single-attendee-text">
-            {{ get_attendee_role_event(attendee, event) }}
-          </p>
-        </div>
-      </div>
-    </div>
-  {%- endmacro %}
-  <div class="row">
-    <div class="large-7 columns">
-      {% if event.extra_content %}
-        <div class="row">
-          <div class="large-1 columns">
-            <div class="pict-icon large news"></div>
-          </div>
-          <div class="large-11 columns">
-            <!-- Editable Content wiki like -->
-            <div class="markdown">
-              {{ event.extra_content|markdown }}
-            </div>
-          </div>
-        </div>
       {% endif %}
-
-    </div>
-    <div class="large-5 columns">
       <div class="row">
         <div class="large-1 columns">
           <div class="pict-icon large people"></div>
