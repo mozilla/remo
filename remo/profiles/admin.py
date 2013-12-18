@@ -67,6 +67,9 @@ class FunctionalAreaAdmin(admin.ModelAdmin):
     def registered_events(self, obj):
         return obj.events_categories.count()
 
+    def queryset(self, request):
+        return FunctionalArea.objects
+
 
 admin.site.register(User, UserAdmin)
 admin.site.register(FunctionalArea, FunctionalAreaAdmin)

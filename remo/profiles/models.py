@@ -52,9 +52,20 @@ def _validate_mentor(data, **kwargs):
     return data
 
 
+class ActiveFunctionalAreaManager(models.Manager):
+    """Manager to ensure only active Functional Areas are returned"""
+    def get_query_set(self):
+        return (super(ActiveFunctionalAreaManager, self)
+                .get_query_set().filter(active=True))
+
+
 class FunctionalArea(models.Model):
     """Mozilla functional areas."""
     name = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
+
+    active_objects = ActiveFunctionalAreaManager()
+    objects = models.Manager()
 
     class Meta:
         ordering = ['name']
