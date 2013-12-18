@@ -31,7 +31,11 @@ Vagrant Installation
 
 #. **Visit our local installation of the ReMo Portal.**
 
-   You are done! Point Firefox to `<http://127.0.0.1:8000>`_.
+   You are done! Point Firefox to |vagrant_link|.
+
+   .. |vagrant_link| raw:: html
+
+      <a href="http://127.0.0.1:8000" target="_blank">127.0.0.1:8000</a>
 
 VirtualEnv Installation
 -----------------------
@@ -46,4 +50,8 @@ VirtualEnv Installation
 
 #. **Visit our local installation of the ReMo Portal.**
 
-   You are done! Point Firefox to `<http://127.0.0.1:8000>`_.
+   You are done! Point Firefox to |virtualenv_link|.
+
+   .. |virtualenv_link| raw:: html
+
+      <a href="http://127.0.0.1:8000" target="_blank">127.0.0.1:8000</a>
