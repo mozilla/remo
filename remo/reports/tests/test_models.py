@@ -10,8 +10,9 @@ from remo.base.utils import go_back_n_months
 from remo.events.helpers import get_event_link
 from remo.events.tests import EventFactory, AttendanceFactory
 from remo.profiles.tests import UserFactory
-from remo.reports.models import (OVERDUE_DAY, NGReport,
-                                 EVENT_ATTENDANCE_ACTIVITY)
+from remo.reports.models import (Activity, NGReport, EVENT_ATTENDANCE_ACTIVITY,
+                                 EVENT_CREATION_ACTIVITY, OVERDUE_DAY)
+
 from remo.reports.tests import (NGReportFactory, NGReportCommentFactory,
                                 ReportCommentFactory, ReportFactory)
 
@@ -230,18 +231,21 @@ class NGReportComment(TestCase):
 
 
 class NGReportSignalsTest(TestCase):
-    def test_create_passive_event_attendance_report_owner(self):
+    def test_create_attendance_report_owner(self):
         """Test creating a passive attendance report for event owner."""
+        activity = Activity.objects.get(name=EVENT_ATTENDANCE_ACTIVITY)
         user = UserFactory.create(groups=['Rep', 'Mentor'],
                                   userprofile__initial_council=True)
         event = EventFactory.create(owner=user)
-        report = NGReport.objects.get(event=event, user=user)
+        report = NGReport.objects.get(event=event, user=user,
+                                      activity=activity)
 
+        location = '%s, %s, %s' % (event.city, event.region, event.country)
         eq_(report.mentor, user.userprofile.mentor)
         eq_(report.activity.name, EVENT_ATTENDANCE_ACTIVITY)
         eq_(report.latitude, event.lat)
         eq_(report.longitude, event.lon)
-        eq_(report.location, event.venue)
+        eq_(report.location, location)
         eq_(report.is_passive, True)
         eq_(report.link, get_event_link(event))
         eq_(report.activity_description, event.description)
@@ -249,19 +253,22 @@ class NGReportSignalsTest(TestCase):
                                  [e.name for e in event.categories.all()],
                                  lambda x: x.name)
 
-    def test_create_passive_event_attendance_report(self):
+    def test_create_attendance_report_attendee(self):
         """Test creating a passive report after attending an event."""
+        activity = Activity.objects.get(name=EVENT_ATTENDANCE_ACTIVITY)
         event = EventFactory.create()
         user = UserFactory.create(groups=['Rep', 'Mentor'],
                                   userprofile__initial_council=True)
         AttendanceFactory.create(event=event, user=user)
-        report = NGReport.objects.get(event=event, user=user)
+        report = NGReport.objects.get(event=event, user=user,
+                                      activity=activity)
 
+        location = '%s, %s, %s' % (event.city, event.region, event.country)
         eq_(report.mentor, user.userprofile.mentor)
         eq_(report.activity.name, EVENT_ATTENDANCE_ACTIVITY)
         eq_(report.latitude, event.lat)
         eq_(report.longitude, event.lon)
-        eq_(report.location, event.venue)
+        eq_(report.location, location)
         eq_(report.is_passive, True)
         eq_(report.link, get_event_link(event))
         eq_(report.activity_description, event.description)
@@ -269,17 +276,56 @@ class NGReportSignalsTest(TestCase):
                                  [e.name for e in event.categories.all()],
                                  lambda x: x.name)
 
-    def test_delete_passive_event_attendance_report(self):
+    def test_create_event_report(self):
+        """Test creating a passive report after creating an event."""
+        activity = Activity.objects.get(name=EVENT_CREATION_ACTIVITY)
+        event = EventFactory.build()
+        event.owner = UserFactory.create()
+        event.save()
+        report = NGReport.objects.get(event=event, user=event.owner,
+                                      activity=activity)
+
+        location = '%s, %s, %s' % (event.city, event.region, event.country)
+        eq_(report.mentor, event.owner.userprofile.mentor)
+        eq_(report.activity.name, EVENT_CREATION_ACTIVITY)
+        eq_(report.latitude, event.lat)
+        eq_(report.longitude, event.lon)
+        eq_(report.location, location)
+        eq_(report.is_passive, True)
+        eq_(report.link, get_event_link(event))
+        eq_(report.activity_description, event.description)
+        self.assertQuerysetEqual(report.functional_areas.all(),
+                                 [e.name for e in event.categories.all()],
+                                 lambda x: x.name)
+
+    def test_delete_attendance_report(self):
         """Test delete passive report after attendance delete."""
+        activity = Activity.objects.get(name=EVENT_ATTENDANCE_ACTIVITY)
         event = EventFactory.create()
         user = UserFactory.create(groups=['Rep', 'Mentor'],
                                   userprofile__initial_council=True)
         attendance = AttendanceFactory.create(event=event, user=user)
         ok_(NGReport.objects.filter(event=event, user=user).exists())
         attendance.delete()
-        ok_(not NGReport.objects.filter(event=event, user=user).exists())
+        query = NGReport.objects.filter(event=event, user=user,
+                                        activity=activity)
+        ok_(not query.exists())
 
-    def test_update_report_after_event_edit(self):
+    def test_delete_event_report(self):
+        """Test delete passive report after event delete."""
+        activity = Activity.objects.get(name=EVENT_CREATION_ACTIVITY)
+        event = EventFactory.create()
+        user = event.owner
+        query = NGReport.objects.filter(event=event, user=user,
+                                        activity=activity)
+        ok_(query.exists())
+        event.delete()
+
+        query = NGReport.objects.filter(event=event, user=user,
+                                        activity=activity)
+        ok_(not query.exists())
+
+    def test_update_event_report(self):
         """Test update report after event edit."""
         event = EventFactory.create()
         report = NGReportFactory.create(user=event.owner, event=event,
@@ -289,11 +335,23 @@ class NGReportSignalsTest(TestCase):
         event.start += datetime.timedelta(days=5)
         event.end += datetime.timedelta(days=5)
         event.save()
-
-        report = NGReport.objects.get(event=event, user=event.owner)
+        report = NGReport.objects.get(pk=report.id)
         eq_(report.report_date.day, event.start.day)
 
-    def test_update_report_after_event_functional_areas_edit(self):
+    def test_edit_event_report_owner(self):
+        """Test change event ownership."""
+        owner = UserFactory.create()
+        event = EventFactory.build(owner=owner)
+        event.save()
+        report = NGReport.objects.get(user=owner)
+        new_owner = UserFactory.create()
+        report.event.owner = new_owner
+        report.event.save()
+        report = NGReport.objects.get(pk=report.id)
+        eq_(report.user, new_owner)
+        eq_(report.mentor, new_owner.userprofile.mentor)
+
+    def test_edit_event_report_functional_areas(self):
         """Test update report after changes in event's functional areas."""
         event = EventFactory.create()
         categories = event.categories.all()
@@ -301,6 +359,7 @@ class NGReportSignalsTest(TestCase):
                                         functional_areas=categories)
 
         event.categories = categories[:1]
+        report = NGReport.objects.get(pk=report.id)
         self.assertQuerysetEqual(report.functional_areas.all(),
                                  [e.name for e in categories.all()[:1]],
                                  lambda x: x.name)

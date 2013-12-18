@@ -332,7 +332,6 @@ def edit_ng_report(request, display_name='', year=None,
     if report_form.is_valid():
         if created:
             report.user = user
-            report.mentor = user.userprofile.mentor
             messages.success(request, 'Report successfully created.')
         else:
             messages.success(request, 'Report successfully updated.')

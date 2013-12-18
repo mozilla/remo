@@ -190,6 +190,7 @@ class ReportLink(models.Model):
 
 # NEW REPORTING SYSTEM
 EVENT_ATTENDANCE_ACTIVITY = 'Attended an Event'
+EVENT_CREATION_ACTIVITY = 'Created an Event'
 
 
 class Activity(models.Model):
@@ -277,6 +278,11 @@ class NGReport(caching.base.CachingMixin, models.Model):
     def get_report_date(self):
         return self.report_date.strftime('%d %b %Y')
 
+    def save(self, *args, **kwargs):
+        """Override save method for custom functionality."""
+        self.mentor = self.user.userprofile.mentor
+        super(NGReport, self).save(*args, **kwargs)
+
     class Meta:
         ordering = ['-report_date', '-created_on']
 
@@ -319,16 +325,46 @@ def create_passive_attendance_report(sender, instance, **kwargs):
             'event': instance.event,
             'activity': activity,
             'report_date': instance.event.start,
-            'mentor': instance.user.userprofile.mentor,
             'longitude': instance.event.lon,
             'latitude': instance.event.lat,
-            'location': instance.event.venue,
+            'location': "%s, %s, %s" % (instance.event.city,
+                                        instance.event.region,
+                                        instance.event.country),
             'is_passive': True,
             'link': get_event_link(instance.event),
             'activity_description': instance.event.description}
 
         report = NGReport.objects.create(**attrs)
         report.functional_areas.add(*instance.event.categories.all())
+
+
+@receiver(post_save, sender=Event,
+          dispatch_uid='create_update_passive_event_creation_report_signal')
+def create_update_passive_event_report(sender, instance, created, **kwargs):
+    """Automatically create/update a passive report on event creation."""
+
+    attrs = {
+        'report_date': instance.start,
+        'longitude': instance.lon,
+        'latitude': instance.lat,
+        'location': "%s, %s, %s" % (instance.city,
+                                    instance.region,
+                                    instance.country),
+        'link': get_event_link(instance),
+        'activity_description': instance.description}
+
+    if created:
+        activity = Activity.objects.get(name=EVENT_CREATION_ACTIVITY)
+        attrs.update({
+            'user': instance.owner,
+            'event': instance,
+            'activity': activity,
+            'is_passive': True})
+
+        report = NGReport.objects.create(**attrs)
+        report.functional_areas.add(*instance.categories.all())
+    else:
+        NGReport.objects.filter(event=instance).update(**attrs)
 
 
 @receiver(pre_delete, sender=EventAttendance,
@@ -343,19 +379,27 @@ def delete_passive_attendance_report(sender, instance, **kwargs):
     NGReport.objects.filter(**attrs).delete()
 
 
-@receiver(post_save, sender=Event,
-          dispatch_uid='update_passive_report_event_signal')
-def update_passive_report_event(sender, instance, **kwargs):
-    """Automatically update passive report's event related fields."""
-    attrs = {
-        'report_date': instance.start,
-        'longitude': instance.lon,
-        'latitude': instance.lat,
-        'location': instance.venue,
-        'event': instance,
-        'link': get_event_link(instance)}
+@receiver(pre_delete, sender=Event,
+          dispatch_uid='delete_passive_report_event_signal')
+def delete_passive_event_report(sender, instance, **kwargs):
+    """Automatically delete a passive report after an event is deleted."""
+    NGReport.objects.filter(event=instance).delete()
 
-    NGReport.objects.filter(event=instance).update(**attrs)
+
+@receiver(pre_save, sender=Event,
+          dispatch_uid='pre_update_passive_report_event_signal')
+def update_passive_report_event_owner(sender, instance, **kwargs):
+    """Automatically update passive reports event owner."""
+    if instance.id:
+        previous_owner = Event.objects.get(pk=instance.id).owner
+        if previous_owner != instance.owner:
+            attrs = {
+                'user': previous_owner,
+                'event': instance,
+                'activity': Activity.objects.get(name=EVENT_CREATION_ACTIVITY)}
+            mentor = instance.owner.userprofile.mentor
+            NGReport.objects.filter(**attrs).update(user=instance.owner,
+                                                    mentor=mentor)
 
 
 @receiver(m2m_changed, sender=Event.categories.through,
