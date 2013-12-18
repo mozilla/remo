@@ -173,3 +173,8 @@ function paginatorSelector(selector) {
         window.location = $(this).val();
     });
 }
+
+function addAttributionOSM(map) {
+    var attribution = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    map.attributionControl.addAttribution(attribution);
+}

@@ -245,6 +245,10 @@
 </main>
 {% endblock %}
 
+{% block endrow %}
+  {% include 'includes/osm_attribution.html' %}
+{% endblock %}
+
 {% block bottomextra %}
   {% compress js %}
     <script src="{{ static('reports/js/profiles_view_report.js') }}"></script>

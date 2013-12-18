@@ -33,6 +33,7 @@ function initialize_map() {
     // Initialize map.
     var center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
     ProfilesLib.map = new L.mapbox.map('map', MAPBOX_TOKEN, {minZoom: 1});
+    addAttributionOSM(ProfilesLib.map);
     ProfilesLib.map.setView(center, 2);
 
     // When user clicks on map and a search filter exists, remove filter.
