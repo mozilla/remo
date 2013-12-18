@@ -95,7 +95,7 @@ class NGReportFactory(factory.django.DjangoModelFactory):
     mentor = factory.SelfAttribute('user.userprofile.mentor')
     activity = factory.SubFactory(ActivityFactory)
     campaign = factory.SubFactory(CampaignFactory)
-    latitude = fuzzy.FuzzyDecimal(low=-180.0, high=180.0, precision=5)
+    latitude = fuzzy.FuzzyDecimal(low=-90.0, high=90.0, precision=5)
     longitude = fuzzy.FuzzyDecimal(low=-180.0, high=180.0, precision=5)
     location = 'EventLocation'
     is_passive = False
