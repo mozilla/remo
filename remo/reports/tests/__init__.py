@@ -99,7 +99,7 @@ class NGReportFactory(factory.django.DjangoModelFactory):
     longitude = fuzzy.FuzzyDecimal(low=-180.0, high=180.0, precision=5)
     location = 'EventLocation'
     is_passive = False
-    event = factory.SubFactory(EventFactory, random_categories=True)
+    event = factory.SubFactory(EventFactory)
     link = 'www.example.com'
     report_date = fuzzy.FuzzyDate(datetime.date(2013, 01, 01),
                                   now_utc().date())

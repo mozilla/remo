@@ -1,44 +1,5 @@
 [
     {
-        "pk": 1,
-        "model": "events.attendance",
-        "fields": {
-            "email": true,
-            "date_subscribed": "2012-06-25T08:44:50Z",
-            "user": 7,
-            "event": 3
-        }
-    },
-    {
-        "pk": 2,
-        "model": "events.attendance",
-        "fields": {
-            "email": true,
-            "date_subscribed": "2012-06-25T08:44:50Z",
-            "user": 7,
-            "event": 4
-        }
-    },
-    {
-        "pk": 4,
-        "model": "events.attendance",
-        "fields": {
-            "email": true,
-            "date_subscribed": "2012-06-25T08:44:50Z",
-            "user": 6,
-            "event": 3
-        }
-    },
-    {
-        "pk": 1,
-        "model": "events.metric",
-        "fields": {
-             "event": 3,
-             "title": "First metric",
-             "outcome": "Successful outcome description"
-        }
-    },
-    {
         "pk": 3,
         "model": "events.event",
         "fields": {
@@ -98,6 +59,45 @@
             "lon": 23.73140,
             "hashtag": "#multievent",
             "timezone": "Europe/Berlin"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "events.attendance",
+        "fields": {
+            "email": true,
+            "date_subscribed": "2012-06-25T08:44:50Z",
+            "user": 7,
+            "event": 3
+        }
+    },
+    {
+        "pk": 2,
+        "model": "events.attendance",
+        "fields": {
+            "email": true,
+            "date_subscribed": "2012-06-25T08:44:50Z",
+            "user": 7,
+            "event": 4
+        }
+    },
+    {
+        "pk": 4,
+        "model": "events.attendance",
+        "fields": {
+            "email": true,
+            "date_subscribed": "2012-06-25T08:44:50Z",
+            "user": 6,
+            "event": 3
+        }
+    },
+    {
+        "pk": 1,
+        "model": "events.metric",
+        "fields": {
+             "event": 3,
+             "title": "First metric",
+             "outcome": "Successful outcome description"
         }
     },
     {

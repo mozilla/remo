@@ -4,7 +4,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models.signals import post_save, pre_delete, pre_save
+from django.db.models.signals import (m2m_changed, post_save, pre_delete,
+                                      pre_save)
 from django.dispatch import receiver
 
 import caching.base
@@ -13,6 +14,7 @@ from south.signals import post_migrate
 import remo.base.utils as utils
 from remo.base.utils import (add_permissions_to_groups,
                              get_object_or_none, go_back_n_months)
+from remo.events.helpers import get_event_link
 from remo.events.models import Attendance as EventAttendance, Event
 from remo.profiles.models import FunctionalArea
 from remo.reports.tasks import send_remo_mail
@@ -186,6 +188,9 @@ class ReportLink(models.Model):
 
 
 # NEW REPORTING SYSTEM
+EVENT_ATTENDANCE_ACTIVITY = 'Attended an Event'
+
+
 class GenericActiveManager(models.Manager):
     """
     Generic custom manager used in Activity and Campaign models,
@@ -308,3 +313,75 @@ class NGReportComment(models.Model):
 
     class Meta:
         ordering = ['id']
+
+
+@receiver(post_save, sender=EventAttendance,
+          dispatch_uid='create_passive_attendance_report_signal')
+def create_passive_attendance_report(sender, instance, **kwargs):
+    """Automatically create a passive report after event attendance save."""
+    if instance.user.groups.filter(name='Rep').exists():
+        activity = Activity.objects.get(name=EVENT_ATTENDANCE_ACTIVITY)
+        attrs = {
+            'user': instance.user,
+            'event': instance.event,
+            'activity': activity,
+            'report_date': instance.event.start,
+            'mentor': instance.user.userprofile.mentor,
+            'longitude': instance.event.lon,
+            'latitude': instance.event.lat,
+            'location': instance.event.venue,
+            'is_passive': True,
+            'link': get_event_link(instance.event),
+            'activity_description': instance.event.description}
+
+        report = NGReport.objects.create(**attrs)
+        report.functional_areas.add(*instance.event.categories.all())
+
+
+@receiver(pre_delete, sender=EventAttendance,
+          dispatch_uid='delete_passive_report_attendance_signal')
+def delete_passive_attendance_report(sender, instance, **kwargs):
+    """Automatically delete a passive report after event attendance delete."""
+    attrs = {
+        'user': instance.user,
+        'event': instance.event,
+        'activity': Activity.objects.get(name=EVENT_ATTENDANCE_ACTIVITY)}
+
+    NGReport.objects.filter(**attrs).delete()
+
+
+@receiver(post_save, sender=Event,
+          dispatch_uid='update_passive_report_event_signal')
+def update_passive_report_event(sender, instance, **kwargs):
+    """Automatically update passive report's event related fields."""
+    attrs = {
+        'report_date': instance.start,
+        'longitude': instance.lon,
+        'latitude': instance.lat,
+        'location': instance.venue,
+        'event': instance,
+        'link': get_event_link(instance)}
+
+    NGReport.objects.filter(event=instance).update(**attrs)
+
+
+@receiver(m2m_changed, sender=Event.categories.through,
+          dispatch_uid='update_passive_report_categories_signal')
+def update_passive_report_functional_areas(sender, instance, action, pk_set,
+                                           **kwargs):
+    """Automatically update passive report's functional areas."""
+    reports = NGReport.objects.filter(event=instance)
+
+    for report in reports:
+        if action == 'post_add':
+            for pk in pk_set:
+                obj = FunctionalArea.objects.get(id=pk)
+                report.functional_areas.add(obj)
+
+        if action == 'post_remove':
+            for pk in pk_set:
+                obj = FunctionalArea.objects.get(id=pk)
+                report.functional_areas.remove(obj)
+
+        if action == 'post_clear':
+            report.functional_areas.clear()

@@ -51,13 +51,9 @@ class EventFactory(factory.django.DjangoModelFactory):
         if extracted:
             for category in extracted:
                 self.categories.add(category)
-
-    @factory.post_generation
-    def random_categories(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            rand_int = randint(1, FunctionalArea.objects.count())
+        else:
+            # create random
+            rand_int = randint(1, 6)
             for area in FunctionalArea.objects.all().order_by('?')[:rand_int]:
                 self.categories.add(area)
 
