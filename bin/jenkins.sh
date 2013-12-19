@@ -73,6 +73,7 @@ REMOZILLA_PASSWORD='demo'
 MOZILLIANS_API_KEY='demo'
 MOZILLIANS_API_APPNAME='demo'
 COMPRESS_OFFLINE = False
+COVERAGE_PATH_EXCLUDES = [r'.+remo/settings/__init__.py']
 SETTINGS
 
 echo "Database name: ${JOB_NAME}"
