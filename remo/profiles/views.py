@@ -128,7 +128,7 @@ def list_profiles(request):
     return render(request, 'profiles_people.html',
                   {'countries': countries,
                    'reps': reps,
-                   'areas': FunctionalArea.objects.all()})
+                   'areas': FunctionalArea.active_objects.all()})
 
 
 @cache_control(private=True, max_age=60*5)

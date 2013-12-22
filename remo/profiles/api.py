@@ -24,7 +24,7 @@ class FunctionalAreasResource(ModelResource):
     """Functional Areas Resource."""
 
     class Meta:
-        queryset = FunctionalArea.objects.all()
+        queryset = FunctionalArea.active_objects.all()
         resource_name = 'functionalareas'
         authentication = Authentication()
         authorization = ReadOnlyAuthorization()

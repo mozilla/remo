@@ -54,7 +54,8 @@ class EventFactory(factory.django.DjangoModelFactory):
         else:
             # create random
             rand_int = randint(1, 6)
-            for area in FunctionalArea.objects.all().order_by('?')[:rand_int]:
+            for area in (FunctionalArea.active_objects.all()
+                         .order_by('?')[:rand_int]):
                 self.categories.add(area)
 
 

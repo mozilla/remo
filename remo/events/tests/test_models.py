@@ -30,7 +30,7 @@ class ModelsTest(TestCase):
         """Test similar events functionality"""
         categories = self.event.categories.all()
         kwargs = {
-            'categories': (FunctionalArea.objects
+            'categories': (FunctionalArea.active_objects
                            .exclude(pk__in=categories)[:4]),
             'country': self.event.country,
             'start': now() + timedelta(days=10),
@@ -56,7 +56,7 @@ class ModelsTest(TestCase):
         """Test similar events functionality"""
         categories = self.event.categories.all()
         kwargs = {
-            'categories': (FunctionalArea.objects
+            'categories': (FunctionalArea.active_objects
                            .exclude(pk__in=categories)[:4]),
             'country': 'CountryName',
             'start': now() + timedelta(days=10),

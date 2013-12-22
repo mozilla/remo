@@ -14,6 +14,7 @@ from south.signals import post_migrate
 import remo.base.utils as utils
 from remo.base.utils import (add_permissions_to_groups,
                              get_object_or_none, go_back_n_months)
+from remo.base.models import GenericActiveManager
 from remo.events.helpers import get_event_link
 from remo.events.models import Attendance as EventAttendance, Event
 from remo.profiles.models import FunctionalArea
@@ -189,18 +190,6 @@ class ReportLink(models.Model):
 
 # NEW REPORTING SYSTEM
 EVENT_ATTENDANCE_ACTIVITY = 'Attended an Event'
-
-
-class GenericActiveManager(models.Manager):
-    """
-    Generic custom manager used in Activity and Campaign models,
-    in order to fetch only the objects marked with an active flag.
-
-    TODO: Reminder to add this manager to FunctionalArea Model
-    """
-    def get_query_set(self):
-        return (super(GenericActiveManager, self).get_query_set()
-                .filter(active=True))
 
 
 class Activity(models.Model):

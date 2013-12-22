@@ -37,7 +37,7 @@ def redirect_list_events(request):
 def list_events(request):
     """List events view."""
     events = Event.objects.all()
-    categories = FunctionalArea.objects.all()
+    categories = FunctionalArea.active_objects.all()
     return render(request, 'list_events.html',
                   {'events': events, 'categories': categories})
 

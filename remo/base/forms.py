@@ -66,7 +66,7 @@ class EmailRepsForm(BaseEmailUsersFrom):
     """Generic form to send email to multiple users."""
 
     functional_area = forms.ModelChoiceField(
-        queryset=FunctionalArea.objects.all(), empty_label=None,
+        queryset=FunctionalArea.active_objects.all(), empty_label=None,
         widget=forms.HiddenInput())
 
     def send_email(self, request, users):
