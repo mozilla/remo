@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import datetime
 from pytz import timezone
 
@@ -6,7 +7,10 @@ from django.contrib.auth.models import User
 from django.core import management, mail
 from django.core.urlresolvers import reverse
 from django.test.client import Client
+from django.utils.encoding import iri_to_uri
 from django.utils.timezone import make_aware
+
+import mock
 from nose.tools import eq_
 from test_utils import TestCase
 
@@ -524,3 +528,14 @@ class ViewsTest(TestCase):
         eq_(m.tags, u'success')
 
         self.assertTemplateUsed(response, 'view_event.html')
+
+    @mock.patch('remo.events.views.iri_to_uri', wraps=iri_to_uri)
+    def test_view_redirect_list_events(self, mocked_uri):
+        """Test redirect to events list."""
+        events_url = '/events/Paris & Orléans'
+        response = self.client.get(events_url, follow=True)
+        mocked_uri.assert_called_once_with(u'/Paris & Orléans')
+        expected_url = '/events/#/Paris%20&%20Orl%C3%A9ans'
+        self.assertRedirects(response, expected_url=expected_url,
+                             status_code=301, target_status_code=200)
+        self.assertTemplateUsed(response, 'list_events.html')

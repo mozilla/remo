@@ -322,7 +322,7 @@ class ViewsTest(TestCase):
         profiles_url = '/people/Paris & Orléans'
         response = c.get(profiles_url, follow=True)
         mocked_uri.assert_called_once_with(u'/Paris & Orléans')
-        expected_url = '/people/#/' + iri_to_uri('Paris & Orléans')
+        expected_url = '/people/#/Paris%20&%20Orl%C3%A9ans'
         self.assertRedirects(response, expected_url=expected_url,
                              status_code=301, target_status_code=200)
         self.assertTemplateUsed(response, 'profiles_people.html')

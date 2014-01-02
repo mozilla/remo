@@ -10,6 +10,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.encoding import iri_to_uri
 from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.csrf import csrf_exempt
 
@@ -29,7 +30,7 @@ from models import Attendance, Event, EventComment
 @never_cache
 def redirect_list_events(request):
     events_url = reverse('events_list_events')
-    extra_path = '/' + request.path_info[len(events_url):]
+    extra_path = iri_to_uri('/' + request.path_info[len(events_url):])
     return redirect(urlparams(events_url, hash=extra_path), permanent=True)
 
 
