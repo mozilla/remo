@@ -175,6 +175,6 @@ function paginatorSelector(selector) {
 }
 
 function addAttributionOSM(map) {
-    var attribution = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    var attribution = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
     map.attributionControl.addAttribution(attribution);
 }
