@@ -78,6 +78,7 @@
                   required>
               {{ field_with_attrs(report_form.report_date,
                                   class="datepicker",
+                                  autocomplete="off",
                                   readonly="readonly") }}
             </span>
           </div>
@@ -121,9 +122,6 @@
                                   readonly='readonly') }}
               <button type="button"
                       class="small button pict-button locate"
-                      title="Choose a location"
-                      data-tooltip
-                      data-options="disable-for-touch:true"
                       data-reveal-id="map-point">Choose a location
               </button>
               {{ report_form.longitude }}
@@ -225,10 +223,14 @@
           media="screen,projection,tv" />
     <link rel="stylesheet" href="{{ static('base/css/mapbox.css') }}"
           media="screen,projection,tv" />
+    <link rel="stylesheet" href="{{ static('base/css/L.Control.Locate.css') }}"
+          media="screen,projection,tv">
   {% endcompress %}
   {% compress js %}
     <script src="{{ static('base/js/mapbox.js') }}"></script>
+    <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
     <script src="{{ static('events/js/jquery-ui-1.10.0.custom.js') }}"></script>
+    <script src="{{ static('base/js/map_modal.js') }}"></script>
     <script src="{{ static('reports/js/edit_ng_report.js') }}"></script>
   {% endcompress %}
 {% endblock %}

@@ -1577,7 +1577,9 @@ small.error {
         margin-top: 10px;
         line-height: 1.5em;
         &.required:after {
-            content: "*";
+            .grayed;
+            font-family: 'ModernPictogramsNormal';
+            content: '\*';
             margin-left: .5em;
         }
     }
