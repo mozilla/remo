@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 import datetime
 from pytz import timezone
 
@@ -277,6 +277,16 @@ class ViewsTest(TestCase):
                          follow=True)
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
         eq_(len(response.context['events']), 1)
+
+    def test_multi_event_ical_export_extra_chars(self):
+        """Test multi event ical export with extra chars.
+
+        See bug 956271 for details.
+        """
+
+        url = '/events/period/future/search/méxico.!@$%&*()/ical/'
+        response = self.client.get(url, follow=True)
+        self.failUnless(response['Content-Type'].startswith('text/calendar'))
 
     def test_edit_event(self):
         """Edit event page"""
