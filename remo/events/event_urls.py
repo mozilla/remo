@@ -4,7 +4,7 @@ from django.conf.urls.defaults import patterns, url
 RE_PERIOD = r'period/(?P<period>\w+)/'
 RE_START = r'(start/(?P<start>\d{4}\-\d{2}\-\d{2})/)?'
 RE_END = r'(end/(?P<end>\d{4}\-\d{2}\-\d{2})/)?'
-RE_SEARCH = r'(search/(?P<search>[\w,\s]+)/)?'
+RE_SEARCH = r'(search/(?P<search>.+?)/)?'
 
 urlpatterns = patterns(
     '',
