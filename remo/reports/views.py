@@ -32,7 +32,7 @@ LIST_REPORTS_VALID_SHORTS = {
     'updated_on_asc': 'updated_on',
     'reporter_desc': '-user__last_name,user__first_name',
     'reporter_asc': 'user__last_name,user__first_name',
-    'mentor_desc': 'mentor__last_name,mentor__first_name',
+    'mentor_desc': '-mentor__last_name,mentor__first_name',
     'mentor_asc': 'mentor__last_name,mentor__first_name',
     'empty_desc': '-empty',
     'empty_asc': 'empty',

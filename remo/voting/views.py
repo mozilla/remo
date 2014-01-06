@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -14,33 +14,96 @@ from remo.base.utils import datetime2pdt, get_or_create_instance
 from remo.voting.models import Poll, PollComment, RadioPoll, RangePoll, Vote
 
 
+LIST_VOTINGS_VALID_SORTS = {
+    'name': {
+        'asc': 'name',
+        'desc': '-name'
+    },
+    'start': {
+        'asc': 'start',
+        'desc': '-start'
+    },
+    'end': {
+        'asc': 'end',
+        'desc': '-end'
+    },
+    'groups': {
+        'asc': 'valid_groups__name',
+        'desc': '-valid_groups__name'
+    },
+    'voted': {
+        'asc': 'voted_count',
+        'desc': '-voted_count'
+    }
+}
+
+LIST_VOTINGS_VALID_ORDERS = ['asc', 'desc']
+LIST_VOTINGS_DEFAULT_SORT = 'end'
+LIST_VOTINGS_DEFAULT_ORDER = 'desc'
+
+
 @permission_check()
 def list_votings(request):
     """List votings view."""
     user = request.user
-    polls = Poll.objects.all()
     if not user.groups.filter(name='Admin').exists():
-        polls = Poll.objects.filter(valid_groups__in=user.groups.all())
+        polls = (Poll.objects.filter(valid_groups__in=user.groups.all())
+                 .annotate(voted_count=Count('users_voted')))
+    else:
+        polls = Poll.objects.all().annotate(voted_count=Count('users_voted'))
 
-    past_polls_query = polls.filter(end__lt=now_utc())
+    past_polls = polls.filter(end__lt=now_utc())
     current_polls = polls.filter(start__lt=now_utc(), end__gt=now_utc())
     future_polls = polls.filter(start__gt=now_utc())
-
-    past_polls_paginator = Paginator(past_polls_query, settings.ITEMS_PER_PAGE)
-    past_polls_page = request.GET.get('page', 1)
-
-    try:
-        past_polls = past_polls_paginator.page(past_polls_page)
-    except PageNotAnInteger:
-        past_polls = past_polls_paginator.page(1)
-    except EmptyPage:
-        past_polls = past_polls_paginator.page(past_polls_paginator.num_pages)
 
     return render(request, 'list_votings.html',
                   {'user': user,
                    'past_polls': past_polls,
                    'current_polls': current_polls,
                    'future_polls': future_polls})
+
+
+@permission_check()
+def list_votings_archive(request, period):
+    """List voting archives."""
+    user = request.user
+    if not user.groups.filter(name='Admin').exists():
+        qs = (Poll.objects.filter(valid_groups__in=user.groups.all())
+              .annotate(voted_count=Count('users_voted')))
+    else:
+        qs = Poll.objects.all().annotate(voted_count=Count('users_voted'))
+
+    if period == 'past':
+        qs.filter(end__lt=now_utc())
+
+    sort_key = request.GET.get('sort_key', LIST_VOTINGS_DEFAULT_SORT)
+    sort_order = request.GET.get('sort_order', LIST_VOTINGS_DEFAULT_ORDER)
+
+    if sort_key not in LIST_VOTINGS_VALID_SORTS:
+        sort_key = LIST_VOTINGS_DEFAULT_SORT
+
+    if sort_order not in LIST_VOTINGS_VALID_ORDERS:
+        sort_order = LIST_VOTINGS_DEFAULT_ORDER
+
+    sort_by = LIST_VOTINGS_VALID_SORTS[sort_key][sort_order]
+    qs = qs.order_by(sort_by)
+
+    polls_paginator = Paginator(qs, settings.ITEMS_PER_PAGE)
+    page = request.GET.get('page', 1)
+
+    try:
+        polls = polls_paginator.page(page)
+    except PageNotAnInteger:
+        polls = polls_paginator.page(1)
+    except EmptyPage:
+        polls = polls_paginator.page(polls_paginator.num_pages)
+
+    return render(request, 'list_votings_archive.html',
+                  {'user': user,
+                   'polls': polls,
+                   'period': period,
+                   'sort_key': sort_key,
+                   'sort_order': sort_order})
 
 
 @permission_check(permissions=['voting.add_poll', 'voting.change_poll'])
