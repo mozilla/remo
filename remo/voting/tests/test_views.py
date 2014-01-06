@@ -10,11 +10,12 @@ import mock
 from nose.tools import eq_
 from test_utils import TestCase
 
+from remo.base.tests import RemoTestCase, requires_login
 from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
 from remo.voting.models import (Poll, PollComment, RadioPoll, RadioPollChoice,
                                 RangePoll, RangePollChoice)
-from remo.voting.tests import PollFactory
+from remo.voting.tests import PollFactory, VoteFactory
 from remo.voting.views import view_voting
 
 
@@ -431,3 +432,69 @@ class ViewsTest(TestCase):
         for m in response.context['messages']:
             pass
         eq_(m.tags, u'success')
+
+
+class VotingsArchivesTests(RemoTestCase):
+    """Test related to voting archives."""
+
+    @requires_login()
+    def test_get_unauthed(self):
+        """Get past votings as unauthorized user."""
+        self.get(reverse('voting_list_past_votings'))
+
+    def test_get_authed(self):
+        """Get past votings as authorized user."""
+        user = UserFactory.create()
+        data = {'sort_key': 'name', 'sort_order': 'asc'}
+        response = self.get(reverse('voting_list_past_votings'), data, user)
+        eq_(response.status_code, 200)
+        self.assertTemplateUsed('list_votings_archive.html')
+        eq_(response.context['sort_key'], data['sort_key'])
+        eq_(response.context['sort_order'], data['sort_order'])
+
+    def test_poll_qs_annotation_admin(self):
+        """Test past votings annotation and objects as admin."""
+        user = UserFactory.create(groups=['Admin'])
+        start = now() - timedelta(days=20)
+        end = now() - timedelta(days=15)
+        poll = PollFactory.create(start=start, end=end)
+        VoteFactory.create(poll=poll)
+        response = self.get(reverse('voting_list_past_votings'), user=user)
+        eq_(response.context['polls'].object_list[0], poll)
+        eq_(response.context['polls'].object_list[0].voted_count, 1)
+
+    def test_poll_qs_annotation_user(self):
+        """Test past votings annotation and objects as user."""
+        user = UserFactory.create(groups=['Rep'])
+        start = now() - timedelta(days=20)
+        end = now() - timedelta(days=15)
+        poll = PollFactory.create(valid_groups=Group.objects.get(name='Rep'),
+                                  start=start, end=end)
+        VoteFactory.create(poll=poll)
+        response = self.get(reverse('voting_list_past_votings'), user=user)
+        eq_(response.context['polls'].object_list[0], poll)
+        eq_(response.context['polls'].object_list[0].voted_count, 1)
+
+    def test_get_valid_groups(self):
+        """Test objects returned according to poll's valid groups."""
+        user = UserFactory.create(groups=['Mentor'])
+        start = now() - timedelta(days=20)
+        end = now() - timedelta(days=15)
+        council = Group.objects.get(name='Council')
+        mentors = Group.objects.get(name='Mentor')
+        PollFactory.create(valid_groups=council, start=start, end=end)
+        poll = PollFactory.create(valid_groups=mentors, start=start, end=end)
+        response = self.get(reverse('voting_list_past_votings'), user=user)
+        eq_(response.context['polls'].object_list.count(), 1)
+        eq_(response.context['polls'].object_list[0], poll)
+
+    def test_get_invalid_data(self):
+        """Test get past votings with invalid GET data."""
+        user = UserFactory.create(groups=['Admin'])
+        PollFactory.create()
+        data = {'sort_key': 'foo', 'sort_order': 'foo'}
+        response = self.get(reverse('voting_list_past_votings'), data, user)
+        eq_(response.status_code, 200)
+        self.assertTemplateUsed('list_votings_archive.html')
+        eq_(response.context['sort_key'], 'end')
+        eq_(response.context['sort_order'], 'desc')

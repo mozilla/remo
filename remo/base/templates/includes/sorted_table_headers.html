@@ -1,0 +1,11 @@
+{% macro sorted_table_header(name, key, response_key, response_order) -%}
+  {% if response_key == key %}
+    <a href="{{ '#'|urlparams(sort_key=key, sort_order=change_order(response_order)) }}">
+      {{ name|capitalize }} <span class="pict-table-icon {{ response_order }}"></span>
+    </a>
+  {% else %}
+    <a href="{{ '#'|urlparams(sort_key=key, sort_order=response_order) }}">
+      {{ name|capitalize }}
+    </a>
+  {% endif %}
+{%- endmacro %}

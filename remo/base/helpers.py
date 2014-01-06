@@ -256,3 +256,10 @@ def absolutify(url):
 def get_date_n_weeks_before(date, weeks=0):
     """Return the date X weeks before date."""
     return date - timedelta(weeks=weeks)
+
+
+@register.function
+def change_order(order):
+    if order == 'asc':
+        return 'desc'
+    return 'asc'

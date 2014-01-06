@@ -1,0 +1,34 @@
+{% extends "base_fd4.html" %}
+{% from "includes/display_polls.html" import display_paginated_polls %}
+
+{% block pagetitle %}Mozilla Reps - {{ period|capitalize }} votings{% endblock %}
+
+{% block content %}
+<main role="main" class="voting-main">
+  <div class="row">
+    <div class="large-10 columns">
+      <h1>{{ period|capitalize }} votings</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="large-12 columns">
+      <div class="row">
+        {% if polls %}
+          {{ display_paginated_polls(polls, sort_key, sort_order) }}
+        {% else %}
+          <div class="large-12 columns no-bugs">
+            <p>No votes found!</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('voting/js/voting_list_archives.js') }}"></script>
+  {% endcompress %}
+{% endblock %}
