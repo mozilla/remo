@@ -1,0 +1,25 @@
+<div class="row">
+  <div class="large-12 columns">
+    <table class="profile-events-table ng-reports">
+      <thead>
+        <tr>
+          <td>Activity</td>
+          <td>Date</td>
+        </tr>
+      </thead>
+    {% for report in ng_reports[:10] %}
+      <tr>
+        <td><a href="{{ report.get_absolute_url() }}">{{ report.activity }}</a></td>
+        <td>{{ report.get_report_date }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+    {% if ng_reports.count() > 10 %}
+      <p>
+        <a class="view-more"
+           href="{{ url('reports_list_rep_reports',
+                    pageuser|get_display_name) }}">View more reports</a>
+      </p>
+    {% endif %}
+  </div>
+</div>

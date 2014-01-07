@@ -273,6 +273,10 @@ class NGReport(caching.base.CachingMixin, models.Model):
         return reverse('remo.reports.views.delete_ng_report',
                        args=self._get_url_args())
 
+    @property
+    def get_report_date(self):
+        return self.report_date.strftime('%d %b %Y')
+
     class Meta:
         ordering = ['-report_date', '-created_on']
 
