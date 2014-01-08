@@ -28,7 +28,7 @@ if [ ! -d "$WORKSPACE/vendor" ]; then
 fi
 
 source $VENV/bin/activate
-pip install --upgrade pip setuptools
+pip install --no-use-wheel --upgrade pip setuptools
 pip install coverage
 pip install django_coverage
 pip install git+https://github.com/jbalogh/check.git#egg=check
