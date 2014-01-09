@@ -321,6 +321,14 @@
         </div>
       </div>
     {% endif %}
+    <div class="align-right">
+      <a href="https://bugzilla.mozilla.org/buglist.cgi?emailcc1=1&emailreporter1=1&email1={{ user.email|urlencode }}&component=Budget%20Requests&product=Mozilla%20Reps"
+         target="_blank"
+         role="button"
+         class="small button">
+        View on Bugzilla
+      </a>
+    </div>
   </div> <!-- end my_budget_requests -->
 
   {% if mentees_budget_requests is defined %}
@@ -550,6 +558,14 @@
         </div>
       </div>
     {% endif %}
+    <div class="align-right">
+      <a href="https://bugzilla.mozilla.org/buglist.cgi?emailcc1=1&emailreporter1=1&email1={{ user.email|urlencode }}&component=Swag%20Requests&product=Mozilla%20Reps"
+         target="_blank"
+         role="button"
+         class="small button">
+        View on Bugzilla
+      </a>
+    </div>
   </div> <!-- end my_swag_requests -->
 
   {% if mentees_swag_requests is defined %}
