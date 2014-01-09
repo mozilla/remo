@@ -1,32 +1,36 @@
+import datetime
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from funfactory.helpers import urlparams
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 from test_utils import TestCase
 
-from remo.events.models import Event
 from remo.events.helpers import (get_contribute_link, get_event_search_link,
                                  get_sorted_attendance_list, is_multiday)
+from remo.events.tests import AttendanceFactory, EventFactory, START_DT
 
 
 class HelpersTest(TestCase):
     """Tests related to Events' Helpers."""
-    fixtures = ['demo_users.json', 'demo_events.json']
+
+    def setUp(self):
+        self.single_day_end = START_DT + datetime.timedelta(hours=4)
 
     def test_is_multiday(self):
         """Test is_multiday filter."""
-        e = Event.objects.get(slug='multi-event')
-        eq_(is_multiday(e.local_start, e.local_end), True,
-            'Multiday event validates to False')
+        e = EventFactory.create()
+        ok_(is_multiday(e.start, e.end), 'Multiday event validates to False')
 
-        e = Event.objects.get(slug='test-event')
-        eq_(is_multiday(e.local_start, e.local_end), False,
+        e = EventFactory.create(start=START_DT, end=self.single_day_end)
+        ok_(not is_multiday(e.start, e.end),
             'Single day event validates to True')
 
     def test_attendance_list_sorting(self):
         """Test sorting of event attendance list."""
-        e = Event.objects.get(slug='test-event')
+        e = EventFactory.create(start=START_DT, end=self.single_day_end)
+        AttendanceFactory.create_batch(2, event=e)
 
         sorted_list = get_sorted_attendance_list(e)
         eq_(sorted_list[0], e.owner, 'Owner is not first.')
@@ -39,7 +43,7 @@ class HelpersTest(TestCase):
 
     def test_contribute_link(self):
         """Test /contribute link generation."""
-        e = Event.objects.get(slug='test-event')
+        e = EventFactory.create(start=START_DT, end=self.single_day_end)
         url = (settings.CONTRIBUTE_URL %
                {'callbackurl': (settings.SITE_URL +
                                 reverse('events_count_converted_visitors',

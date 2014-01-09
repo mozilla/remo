@@ -289,7 +289,7 @@ class ViewsTest(TestCase):
         for m in response.context['messages']:
             pass
         eq_(m.tags, u'success')
-        eq_(ReportComment.objects.filter(pk=9).exists(), False)
+        ok_(not ReportComment.objects.filter(pk=9).exists())
 
         # Test with admin.
         ReportCommentFactory.create(report=report, id=10, user=self.user)
@@ -304,7 +304,7 @@ class ViewsTest(TestCase):
         for m in response.context['messages']:
             pass
         eq_(m.tags, u'success')
-        eq_(ReportComment.objects.filter(pk=10).exists(), False)
+        ok_(not ReportComment.objects.filter(pk=10).exists())
 
 
 # New generation reports tests

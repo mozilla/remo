@@ -1,326 +1,256 @@
 # -*- coding: utf-8 -*-
-import datetime
-import time
-
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test.client import Client
 from django.utils.encoding import iri_to_uri
 
 import mock
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 from pyquery import PyQuery as pq
 from test_utils import TestCase
+
+from remo.base.tests import requires_permission, requires_login
+from remo.profiles.tests import UserFactory
 
 
 class ViewsTest(TestCase):
     """Tests related to Profiles Views."""
-    fixtures = ['demo_users.json',
-                'demo_bugs.json']
 
     def setUp(self):
         """Setup tests."""
-        self.data = {'display_name': u'Koki',
-                     'first_name': u'first',
-                     'email': u'rep@example.com',
-                     'last_name': u'last',
-                     'local_name': u'local',
-                     'birth_date': u'1980-01-01',
-                     'private_email': u'private_email@bar.com',
-                     'twitter_account': u'foobar',
-                     'city': u'city',
-                     'region': u'region',
-                     'country': u'Greece',
-                     'lon': 12.23,
-                     'lat': 12.23,
-                     'mozillians_profile_url': u'http://mozillians.org/',
-                     'wiki_profile_url': u'https://wiki.mozilla.org/User:',
+        self.mentor = UserFactory.create(groups=['Rep', 'Mentor'],
+                                         userprofile__initial_council=True)
+        self.rep = UserFactory.create(groups=['Rep'],
+                                      userprofile__mentor=self.mentor)
+
+        profile = self.rep.userprofile
+
+        self.data = {'display_name': profile.display_name,
+                     'first_name': self.rep.first_name,
+                     'email': self.rep.email,
+                     'last_name': self.rep.last_name,
+                     'local_name': profile.local_name,
+                     'private_email': self.rep.email,
+                     'twitter_account': profile.twitter_account,
+                     'city': profile.city,
+                     'region': profile.region,
+                     'country': profile.country,
+                     'lon': profile.lat,
+                     'lat': profile.lon,
+                     'mozillians_profile_url': profile.mozillians_profile_url,
+                     'wiki_profile_url': profile.wiki_profile_url,
                      'jabber_id': u'foo@jabber.org',
-                     'irc_name': u'ircname',
+                     'irc_name': profile.irc_name,
                      'linkedin_url': u'http://www.linkedin.com/',
                      'facebook_url': u'http://www.facebook.com/',
                      'diaspora_url': u'https://joindiaspora.com/',
                      'personal_website_url': u'http://www.example.com/',
                      'personal_blog_feed': u'http://example.com/',
-                     'bio': u'bio foo',
+                     'bio': u'This is my bio.',
                      'date_joined_program': '2011-07-01',
-                     'mentor': 6,
+                     'mentor': profile.mentor.id,
                      'functional_areas': 3}
-        self.user_url = reverse('profiles_view_profile',
-                                kwargs={'display_name': 'Koki'})
-        self.user_edit_url = reverse('profiles_edit',
-                                     kwargs={'display_name': 'Koki'})
-        self.user_delete_url = reverse('profiles_delete',
-                                       kwargs={'display_name': 'Koki'})
+
+        display_name = {'display_name': profile.display_name}
+
+        self.user_url = reverse('profiles_view_profile', kwargs=display_name)
+        self.user_edit_url = reverse('profiles_edit', kwargs=display_name)
+        self.user_delete_url = reverse('profiles_delete', kwargs=display_name)
 
     def test_view_my_profile_page(self):
         """Get my profile page."""
-        c = Client()
-        c.login(username='mentor', password='passwd')
-        response = c.get(reverse('profiles_view_my_profile'))
+        self.client.login(username=self.mentor.username, password='passwd')
+        response = self.client.get(reverse('profiles_view_my_profile'))
         self.assertTemplateUsed(response, 'profiles_view.html')
 
     def test_view_invite_page(self):
         """Get invite page."""
-        c = Client()
-        c.login(username='mentor', password='passwd')
-        response = c.get(reverse('profiles_invite'))
+        self.client.login(username=self.mentor.username, password='passwd')
+        response = self.client.get(reverse('profiles_invite'))
         self.assertTemplateUsed(response, 'profiles_invite.html')
 
     def test_view_list_profiles_page(self):
         """Get list profiles page."""
-        c = Client()
-        response = c.get(reverse('profiles_list_profiles'))
+        response = self.client.get(reverse('profiles_list_profiles'))
         self.assertTemplateUsed(response, 'profiles_people.html')
 
     def test_view_profile_page(self):
         """Get profile page."""
-        c = Client()
-        response = c.get(reverse('profiles_view_profile',
-                                 kwargs={'display_name': 'koki'}))
+        response = self.client.get(self.user_url)
         self.assertTemplateUsed(response, 'profiles_view.html')
 
     def test_view_edit_profile_page(self):
         """Get edit profile page."""
-        c = Client()
-        c.login(username='rep', password='passwd')
-        response = c.get(reverse('profiles_edit',
-                                 kwargs={'display_name': 'koki'}))
+        self.client.login(username=self.rep.username, password='passwd')
+        response = self.client.get(self.user_edit_url)
         self.assertTemplateUsed(response, 'profiles_edit.html')
 
     def test_view_delete_profile_page(self):
         """Get delete profile page."""
-        c = Client()
-        c.login(username='admin', password='passwd')
-        response = c.get(reverse('profiles_delete',
-                                 kwargs={'display_name': 'koki'}), follow=True)
+        admin = UserFactory.create(groups=['Admin'])
+        self.client.login(username=admin.username, password='passwd')
+        response = self.client.get(self.user_delete_url, follow=True)
         self.assertTemplateUsed(response, 'main.html')
 
     def test_invite_user(self):
         """Test that user is invited."""
-        c = Client()
-        c.login(username='mentor', password='passwd')
-        c.post(reverse('profiles_invite'), {'email': 'foobar@example.com'})
+        self.client.login(username=self.mentor.username, password='passwd')
+        self.client.post(reverse('profiles_invite'),
+                         {'email': 'foobar@example.com'})
 
         u = User.objects.get(email='foobar@example.com')
-        eq_(u.userprofile.added_by, User.objects.get(username='mentor'))
-        eq_(u.groups.filter(name='Rep').exists(), True)
+        eq_(u.userprofile.added_by, self.mentor)
+        ok_(u.groups.filter(name='Rep').exists())
 
-    def test_edit_profile_permissions(self):
-        """Test user permissions to edit profiles."""
-        # user edits own profile
-        c = Client()
-        c.login(username='rep', password='passwd')
-        response = c.get(self.user_edit_url, follow=True)
+    def test_edit_profile_permissions_owner(self):
+        """Test owner permissions to edit profiles."""
+        self.client.login(username=self.rep.username, password='passwd')
+        response = self.client.get(self.user_edit_url, follow=True)
         self.assertTemplateUsed(response, 'profiles_edit.html')
 
-        # admin edits user's profile
-        c = Client()
-        c.login(username='admin', password='passwd')
-        response = c.get(self.user_edit_url, follow=True)
+    def test_edit_profile_permissions_admin(self):
+        """Test admin permission to edit profile."""
+        admin = UserFactory.create(groups=['Admin'])
+        self.client.login(username=admin.username, password='passwd')
+        response = self.client.get(self.user_edit_url, follow=True)
         self.assertTemplateUsed(response, 'profiles_edit.html')
 
-        # third user denied permission to edit user's profile
-        c = Client()
-        c.login(username='mentor', password='passwd')
-        response = c.get(self.user_edit_url, follow=True)
-        self.assertTemplateUsed(response, 'main.html')
+    @requires_permission()
+    def test_edit_profile_no_permissions(self):
+        """Test user edit other user profile without permission."""
+        self.client.login(username=self.mentor.username, password='passwd')
+        self.client.get(self.user_edit_url, follow=True)
 
-    def test_edit_profile_redirect(self):
-        """Test that after profile redirection is correct.
-
-        When a user edit his own profile must be redirected to
-        reverse('profiles_view_my_profile') whereas when editing
-        another user's profile, then user must be redirected to
-        profile view of the just edited profile.
-
-        """
-        c = Client()
-        c.login(username='admin', password='passwd')
-        response = c.post(self.user_edit_url, self.data, follow=True)
+    def test_edit_profile_redirect_admin(self):
+        """Test that after edit profile redirection is correct."""
+        admin = UserFactory.create(groups=['Admin'])
+        self.client.login(username=admin.username, password='passwd')
+        response = self.client.post(self.user_edit_url, self.data, follow=True)
         eq_(response.request['PATH_INFO'], self.user_url)
 
-        c = Client()
-        user = User.objects.get(pk=7)
-        c.login(username=user.username, password='passwd')
-        response = c.post(self.user_edit_url, self.data, follow=True)
+    def test_edit_owner_profile_redirect(self):
+        """Test that after edit profile redirection is correct."""
+        self.client.login(username=self.rep.username, password='passwd')
+        response = self.client.post(self.user_edit_url, self.data, follow=True)
         eq_(response.request['PATH_INFO'], reverse('profiles_view_my_profile'))
 
-    def test_edit_profile(self):
-        """Test correct edit of user profile."""
-        c = Client()
-        c.login(username='rep', password='passwd')
-
-        # edit with correct data
-        response = c.post(self.user_edit_url, self.data, follow=True)
-        eq_(response.request['PATH_INFO'], reverse('profiles_view_my_profile'))
-
-        # ensure that all user data was saved for user with username 'rep
-        user = User.objects.get(pk=7)
-        eq_(user.email, self.data['email'])
-        eq_(user.first_name, self.data['first_name'])
-        eq_(user.last_name, self.data['last_name'])
-
-        temp_data = self.data.copy()
-
-        eq_(user.userprofile.mentor.id, temp_data['mentor'])
-        eq_(user.userprofile.birth_date,
-            datetime.date(*(time.strptime(temp_data['birth_date'],
-                                          '%Y-%m-%d')[0:3])))
-
-        eq_(user.userprofile.functional_areas.all().count(), 1)
-        eq_(user.userprofile.functional_areas.all()[0].id, 3)
-
-        # delete already checked items
-        for item in ['email', 'first_name', 'last_name',
-                     'birth_date', 'mentor', 'date_joined_program',
-                     'functional_areas']:
-            del(temp_data[item])
-
-        # ensure that all user profile data was saved
-        for field in temp_data.keys():
-            eq_(getattr(user.userprofile, field), temp_data[field])
-
-        # test with missing mandatory fields
-        mandatory_fields = ['first_name', 'last_name', 'email',
-                            'private_email', 'city', 'region',
-                            'country', 'lon', 'lat', 'mozillians_profile_url',
-                            'irc_name', 'wiki_profile_url', 'functional_areas']
-        for field in mandatory_fields:
-            # remove a mandatory field and ensure that edit fails
-            temp_data = self.data.copy()
-            del(temp_data[field])
-            response = c.post(self.user_edit_url, temp_data, follow=True)
-            self.assertTemplateUsed(response, 'profiles_edit.html')
-
-    def test_delete_profile(self):
-        """Test profile deletion."""
-        # user can't delete own profile
-        c = Client()
-        c.login(username='rep', password='passwd')
-        response = c.post(self.user_delete_url, follow=True)
+    def test_delete_own_profile(self):
+        """Test owner can't delete his profile."""
+        self.client.login(username=self.rep.username, password='passwd')
+        response = self.client.post(self.user_delete_url, follow=True)
         self.assertTemplateUsed(response, 'main.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'error')
+        ok_(User.objects.filter(pk=self.rep.id).exists())
 
-        # admin can delete user's profile
-        c = Client()
-        c.login(username='admin', password='passwd')
-        response = c.post(self.user_delete_url, {'delete': 'true'},
-                          follow=True)
-        self.assertTemplateUsed(response, 'main.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'success')
+    @requires_permission()
+    def test_delete_user_delete_profile_no_perms(self):
+        """Test user can't delete profile without permissions."""
+        user = UserFactory.create(groups=['Rep'])
+        self.client.login(username=user.username, password='passwd')
+        self.client.post(self.user_delete_url, follow=True)
+        ok_(User.objects.filter(pk=self.rep.id).exists())
 
-        # third user can't delete user's profile
-        c = Client()
-        c.login(username='mentor', password='passwd')
-        response = c.post(self.user_delete_url, follow=True)
+    def test_delete_profile_admin(self):
+        """Test admin can delete profile."""
+        admin = UserFactory.create(groups=['Admin'])
+        self.client.login(username=admin.username, password='passwd')
+        response = self.client.post(self.user_delete_url, {'delete': 'true'},
+                                    follow=True)
         self.assertTemplateUsed(response, 'main.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'error')
+        ok_(not User.objects.filter(pk=self.rep.id).exists())
 
     def test_profiles_me(self):
         """Test that user gets own profile rendered."""
         # user gets own profile page rendered
-        c = Client()
-        c.login(username='rep', password='passwd')
-        response = c.get(reverse('profiles_view_my_profile'), follow=True)
+        self.client.login(username=self.rep.username, password='passwd')
+        response = self.client.get(reverse('profiles_view_my_profile'),
+                                   follow=True)
         self.assertTemplateUsed(response, 'profiles_view.html')
 
+    @requires_login()
+    def test_profiles_me_anonymous(self):
         # anonymous user get message to login first
-        c = Client()
-        response = c.get(reverse('profiles_view_my_profile'), follow=True)
-        self.assertTemplateUsed(response, 'main.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'warning')
+        self.client.get(reverse('profiles_view_my_profile'), follow=True)
 
     def test_incomplete_profile(self):
-        """Test that user with incomplete profile gets redirected to edit
-        page.
-
-        """
-        c = Client()
-        c.login(username='rep2', password='passwd')
-        response = c.get(reverse('profiles_view_my_profile'), follow=True)
+        """Test user redirection when profile is incomplete"""
+        # First name is empty to keep registration_complete=False
+        user = UserFactory.create(groups=['Rep'], first_name='',
+                                  userprofile__registration_complete=False)
+        self.client.login(username=user.username, password='passwd')
+        response = self.client.get(reverse('profiles_view_my_profile'),
+                                   follow=True)
         self.assertTemplateUsed(response, 'profiles_edit.html')
 
     def test_case_insensitive_profile_url(self):
         """Test the display_name is case insensitive in profile urls."""
-        c = Client()
-        c.login(username='rep', password='passwd')
-
-        response = c.get(reverse('profiles_view_profile',
-                                 kwargs={'display_name': 'koki'}), follow=True)
+        self.client.login(username=self.rep.username, password='passwd')
+        name = self.rep.userprofile.display_name.upper()
+        response = self.client.get(reverse('profiles_view_profile',
+                                           kwargs={'display_name': name}),
+                                   follow=True)
         self.assertTemplateUsed(response, 'profiles_view.html')
 
-        response = c.get(reverse('profiles_view_profile',
-                                 kwargs={'display_name': 'Koki'}), follow=True)
-        self.assertTemplateUsed(response, 'profiles_view.html')
-
-        response = c.get(reverse('profiles_edit',
-                                 kwargs={'display_name': 'koki'}), follow=True)
+        response = self.client.get(reverse('profiles_edit',
+                                           kwargs={'display_name': name}),
+                                   follow=True)
         self.assertTemplateUsed(response, 'profiles_edit.html')
 
-        response = c.get(reverse('profiles_edit',
-                                 kwargs={'display_name': 'Koki'}), follow=True)
-        self.assertTemplateUsed(response, 'profiles_edit.html')
-
-    def test_number_of_reps_visibility(self):
+    def test_number_of_reps_visibility_unauthed(self):
         """Test visibility of number of reps based on authentication status."""
-        c = Client()
-
-        # try anonymous
-        response = c.get(reverse('profiles_list_profiles'), follow=True)
+        response = self.client.get(reverse('profiles_list_profiles'),
+                                   follow=True)
         d = pq(response.content)
         eq_(len(d('#profiles-number-of-reps')), 0)
 
-        # try logged in
-        c.login(username='rep', password='passwd')
-        response = c.get(reverse('profiles_list_profiles'), follow=True)
+    def test_number_of_reps_visibility_authenticated(self):
+        """Test visibility of number of reps based on authentication status."""
+        self.client.login(username=self.rep.username, password='passwd')
+        response = self.client.get(reverse('profiles_list_profiles'),
+                                   follow=True)
         d = pq(response.content)
         eq_(len(d('#profiles-number-of-reps')), 1)
 
-    def test_view_incomplete_profile_page(self):
-        """Test permission to view incomplete profile pages.
-
-        Only users with profiles.can_edit_profiles permission can view
-        profiles of users with incomplete profiles.
-
-        """
-        c = Client()
-
-        # Test as anonymous.
+    def test_view_incomplete_profile_page_unauthed(self):
+        """Test permission to view incomplete profile page unauthenticated."""
+        user = UserFactory.create(groups=['Rep'], first_name='',
+                                  userprofile__registration_complete=False)
+        name = user.userprofile.display_name
         url = reverse('profiles_view_profile',
-                      kwargs={'display_name': 'rep2'})
+                      kwargs={'display_name': name})
 
-        response = c.get(url, follow=True)
+        response = self.client.get(url, follow=True)
         self.assertTemplateUsed(response, '404.html',
                                 'Anonymous can view the page')
 
-        # Test as logged in w/o permissions.
-        c.login(username='rep', password='passwd')
-        response = c.get(url, follow=True)
+    def test_view_incomplete_profile_page_authenticated(self):
+        """Test view incomplete profile page without permissions."""
+        user = UserFactory.create(groups=['Rep'], first_name='',
+                                  userprofile__registration_complete=False)
+        name = user.userprofile.display_name
+        url = reverse('profiles_view_profile',
+                      kwargs={'display_name': name})
+        self.client.login(username=self.rep.username, password='passwd')
+        response = self.client.get(url, follow=True)
         self.assertTemplateUsed(response, '404.html',
                                 'Rep without permission can view the page')
 
-        # Test as admin.
-        c.login(username='admin', password='passwd')
-        response = c.get(url, follow=True)
+    def test_view_incomplete_profile_page_admin(self):
+        """Test permission to view incomplete profile page as admin."""
+        admin = UserFactory.create(groups=['Admin'])
+        user = UserFactory.create(groups=['Rep'], first_name='',
+                                  userprofile__registration_complete=False)
+        name = user.userprofile.display_name
+        url = reverse('profiles_view_profile',
+                      kwargs={'display_name': name})
+        self.client.login(username=admin.username, password='passwd')
+        response = self.client.get(url, follow=True)
         self.assertTemplateUsed(response, 'profiles_view.html',
                                 'Admin can\'t view the page')
 
     @mock.patch('remo.profiles.views.iri_to_uri', wraps=iri_to_uri)
     def test_view_redirect_list_profiles(self, mocked_uri):
         """Test redirect to profiles list."""
-        c = Client()
-
         profiles_url = '/people/Paris & Orléans'
-        response = c.get(profiles_url, follow=True)
+        response = self.client.get(profiles_url, follow=True)
         mocked_uri.assert_called_once_with(u'/Paris & Orléans')
         expected_url = '/people/#/Paris%20&%20Orl%C3%A9ans'
         self.assertRedirects(response, expected_url=expected_url,

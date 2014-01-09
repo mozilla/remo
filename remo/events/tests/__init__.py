@@ -8,9 +8,8 @@ from factory import fuzzy
 from product_details import product_details
 from pytz import common_timezones
 
-from remo.events.models import Event, Attendance
-from remo.profiles.models import FunctionalArea
-from remo.profiles.tests import UserFactory
+from remo.events.models import Event, Attendance, EventComment, Metric
+from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 from remo.remozilla.tests import BugFactory
 
 
@@ -21,11 +20,12 @@ ATTENDANCE_CHOICES = [0, 10, 50, 100, 500, 1000, 2000]
 
 
 class EventFactory(factory.django.DjangoModelFactory):
+    """Factory for Event model."""
     FACTORY_FOR = Event
 
     name = factory.Sequence(lambda n: 'Event #%s' % n)
     start = fuzzy.FuzzyDateTime(START_DT, END_DT)
-    end = fuzzy.FuzzyDateTime(END_DT)
+    end = fuzzy.FuzzyDateTime(END_DT + datetime.timedelta(days=3))
     timezone = fuzzy.FuzzyChoice(common_timezones)
     venue = 'VenueName'
     city = 'CityName'
@@ -42,26 +42,56 @@ class EventFactory(factory.django.DjangoModelFactory):
     hashtag = 'EventHashtag'
     converted_visitors = fuzzy.FuzzyInteger(100)
     swag_bug = factory.SubFactory(BugFactory)
+    budget_bug = factory.SubFactory(BugFactory)
     times_edited = fuzzy.FuzzyInteger(10)
 
     @factory.post_generation
     def categories(self, create, extracted, **kwargs):
+        """Add event categories after event creation."""
         if not create:
             return
         if extracted:
             for category in extracted:
                 self.categories.add(category)
         else:
-            # create random
-            rand_int = randint(1, 6)
-            for area in (FunctionalArea.active_objects.all()
-                         .order_by('?')[:rand_int]):
+            # add random number of categories
+            for i in range(randint(1, 6)):
+                area = FunctionalAreaFactory.create()
                 self.categories.add(area)
+
+    @factory.post_generation
+    def metrics(self, create, extracted, **kwargs):
+        """Add event metrics after event creation."""
+        if not create:
+            return
+
+        # create 2 metrics by default
+        MetricFactory.create_batch(2, event=self)
 
 
 class AttendanceFactory(factory.django.DjangoModelFactory):
+    """Factory for Attendance model."""
     FACTORY_FOR = Attendance
 
     user = factory.SubFactory(UserFactory)
     event = factory.SubFactory(EventFactory)
     email = factory.SelfAttribute('user.email')
+
+
+class EventCommentFactory(factory.django.DjangoModelFactory):
+    """Factory for EventComment model."""
+    FACTORY_FOR = EventComment
+
+    user = factory.SubFactory(UserFactory)
+    event = factory.SubFactory(EventFactory)
+    comment = factory.LazyAttribute(lambda o: 'Comment for %s from %s'
+                                    % (o.event, o.user))
+
+
+class MetricFactory(factory.django.DjangoModelFactory):
+    """Factory for Metric model."""
+    FACTORY_FOR = Metric
+
+    event = factory.SubFactory(EventFactory)
+    title = factory.Sequence(lambda n: 'Event Metric #%s' % n)
+    outcome = factory.Sequence(lambda n: 'Event Outcome #%s' % n)

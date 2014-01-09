@@ -7,24 +7,26 @@ from remo.profiles.tests import UserFactory
 
 class ChangeUserFormTest(TestCase):
 
-    def setUp(self):
-        self.first_user = UserFactory.create()
-        self.second_user = UserFactory.create()
-
     def test_change_valid_bugzilla_email(self):
         """Test change bugzilla email with a valid one."""
-        data = {'first_name': self.first_user.first_name,
-                'last_name': self.first_user.last_name,
-                'email': self.first_user.email}
+        mentor = UserFactory.create(groups=['Mentor'],
+                                    userprofile__initial_council=True)
+        rep = UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
+        data = {'first_name': rep.first_name,
+                'last_name': rep.last_name,
+                'email': rep.email}
 
-        form = ChangeUserForm(data=data, instance=self.first_user)
+        form = ChangeUserForm(data=data, instance=rep)
         ok_(form.is_valid())
 
     def test_change_invalid_bugzilla_email(self):
         """Test change bugzilla email with an invalid one."""
-        data = {'first_name': self.first_user.first_name,
-                'last_name': self.first_user.last_name,
-                'email': self.second_user.email}
+        mentor = UserFactory.create(groups=['Mentor'],
+                                    userprofile__initial_council=True)
+        rep = UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
+        data = {'first_name': rep.first_name,
+                'last_name': rep.last_name,
+                'email': mentor.email}
 
-        form = ChangeUserForm(data=data, instance=self.first_user)
+        form = ChangeUserForm(data=data, instance=rep)
         ok_(not form.is_valid())
