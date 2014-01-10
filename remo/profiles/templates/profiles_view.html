@@ -82,17 +82,6 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           </div>
         {% endif %}
       </div>
-      {% if monthly_reports %}
-        <div class="row">
-          <div class="large-1 columns pictogram">
-            <div class="pict-icon large report"></div>
-          </div>
-          <div class="large-11 columns">
-            <h5 class="profile-heading">Monthly Reports</h5>
-            {% include "monthly_reports_fd4.html" %}
-          </div>
-        </div>
-      {% endif %}
       {% if ng_reports %}
         <div class="row">
           <div class="large-1 columns pictogram">
@@ -101,6 +90,17 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           <div class="large-11 columns">
             <h5 class="profile-heading">Reports</h5>
             {% include "view_ng_reports_profile.html" %}
+          </div>
+        </div>
+      {% endif %}
+      {% if monthly_reports %}
+        <div class="row">
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large report"></div>
+          </div>
+          <div class="large-11 columns">
+            <h5 class="profile-heading">Monthly Reports</h5>
+            {% include "monthly_reports_fd4.html" %}
           </div>
         </div>
       {% endif %}
@@ -487,4 +487,10 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 
 {% block endrow %}
   {% include 'includes/osm_attribution.html' %}
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('reports/js/profiles_view_report.js') }}"></script>
+  {% endcompress %}
 {% endblock %}
