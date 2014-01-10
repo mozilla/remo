@@ -336,14 +336,22 @@ def edit_ng_report(request, display_name='', year=None,
                    month=None, day=None, id=None):
     user = request.user
     created = False
+    initial = {}
+
     if not id:
         report = NGReport()
         created = True
+        initial = {'location': '%s, %s, %s' % (user.userprofile.city,
+                                               user.userprofile.region,
+                                               user.userprofile.country),
+                   'latitude': user.userprofile.lat,
+                   'longitude': user.userprofile.lon}
     else:
         report = get_object_or_404(
             NGReport, pk=id, user__userprofile__display_name=display_name)
 
-    report_form = forms.NGReportForm(request.POST or None, instance=report)
+    report_form = forms.NGReportForm(request.POST or None, instance=report,
+                                     initial=initial)
     if report_form.is_valid():
         if created:
             report.user = user
