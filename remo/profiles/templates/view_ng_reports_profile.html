@@ -9,8 +9,20 @@
       </thead>
     {% for report in ng_reports[:10] %}
       <tr>
-        <td><a href="{{ report.get_absolute_url() }}">{{ report.activity }}</a></td>
-        <td>{{ report.get_report_date }}</td>
+        <td>
+          <a href="{{ report.get_absolute_url() }}">
+            {% if report.campaign %}
+              Participated in campaign "{{ report.campaign.name }}"
+            {% elif report.event %}
+              Attended event "{{ report.event.name }}"
+            {% else %}
+              {{ report.activity }}
+            {% endif %}
+          </a>
+        </td>
+        <td data-time="{{ report.report_date|format_datetime_iso }}">
+          {{ report.get_report_date }}
+        </td>
       </tr>
     {% endfor %}
     </table>
