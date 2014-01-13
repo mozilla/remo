@@ -54,7 +54,7 @@ def is_multiday(start, end):
     and return True only if all pairs match.
     """
 
-    return not reduce(lambda x, y: (x == y) is True,
+    return not reduce(lambda x, y: (x is y is True),
                       map(lambda x: (getattr(end, x) == getattr(start, x)),
                           ['year', 'month', 'day']))
 
