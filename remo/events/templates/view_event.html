@@ -53,7 +53,7 @@ Mozilla Reps - {{ event.name }}
                 <div class="event-single-date">
                   <div class="row">
                       {% if not is_multiday(event.local_start, event.local_end) %}
-                      {# this is single event #}
+                      {# Single day event #}
                       <div class="large-3 small-3 columns">
                         <div class="number">
                           {{ event.local_start|strftime('%d') }}
@@ -88,7 +88,6 @@ Mozilla Reps - {{ event.name }}
                       </div>
                     {% else %}
                       {# Event is multiday #}
-                      <!-- Voting is multiday -->
                       <div class="large-12 columns">
                         <div class="large-11 small-11 columns">
                           <div class="row">
