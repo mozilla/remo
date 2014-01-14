@@ -20,7 +20,8 @@
             {% endif %}
           </a>
         </td>
-        <td data-time="{{ report.report_date|format_datetime_iso }}">
+        <td data-time="{{ report.report_date|format_datetime_iso }}"
+            title="{{ report.get_report_date }}">
           {{ report.get_report_date }}
         </td>
       </tr>
