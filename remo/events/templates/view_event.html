@@ -420,15 +420,13 @@ Mozilla Reps - {{ event.name }}
               <div id="event-attend-button" class="large-6 columns align-right">
                 <form method="post" action="{{ url('events_subscribe_to_event', slug=event.slug) }}">
                   {{ csrf() }}
-                  {% if is_past_event(event) %}
-                    <button class="small button">
+                  <button class="small button">
+                    {% if is_past_event(event) %}
                       I attended this event
-                    </button>
-                  {% else %}
-                    <button class="small button">
+                    {% else %}
                       I will attend this event
-                    </button>
-                  {% endif %}
+                    {% endif %}
+                  </button>
                 </form>
               </div>
             {% elif request.user != event.owner %}
@@ -436,7 +434,11 @@ Mozilla Reps - {{ event.name }}
                 <form method="post" action="{{ url('events_unsubscribe_from_event', slug=event.slug) }}">
                   {{ csrf() }}
                   <button class="small button alert">
-                    I will miss this event
+                    {% if is_past_event(event) %}
+                      I missed this event
+                    {% else %}
+                      I will miss this event
+                    {% endif %}
                   </button>
                 </form>
               </div>
