@@ -143,7 +143,7 @@ def _request_args():
 
     args = {'siteName': _lazy('Mozilla Reps'), }
 
-    if settings.SITE_URL.startswith('https'):
+    if settings.SESSION_COOKIE_SECURE:
         args['siteLogo'] = '/static/base/img/remo/remo_logo_medium.png'
 
     return args
