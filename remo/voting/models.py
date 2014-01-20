@@ -9,6 +9,7 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.timezone import now as now_utc
 
+from django_statsd.clients import statsd
 from south.signals import post_migrate
 from uuslug import uuslug
 
@@ -217,3 +218,5 @@ def automated_poll(sender, instance, **kwargs):
         RadioPollChoice.objects.create(answer='Approved',
                                        radio_poll=radio_poll)
         RadioPollChoice.objects.create(answer='Denied', radio_poll=radio_poll)
+
+        statsd.incr('voting.create_automated_poll')
