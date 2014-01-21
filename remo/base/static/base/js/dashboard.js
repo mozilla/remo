@@ -118,7 +118,7 @@ $(document).ready(function () {
     $sr_all_button.on('click', function (e) {
         e.preventDefault();
         $(this).parent().addClass('active');
-        $br_my_block.hide('fast');
+        $sr_my_block.hide('fast');
         $sr_mine_button.parent().removeClass('active');
         $sr_mentees_block.hide('fast');
         $sr_mentees_button.parent().removeClass('active');
