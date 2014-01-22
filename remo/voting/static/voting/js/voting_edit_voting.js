@@ -18,6 +18,54 @@ $(document).ready(function() {
         });
     });
 
-    $('form').on('click', '.voting-add-answer-button, .voting-add-radiopoll-button, .voting-add-nominee-button, .voting-add-rangepoll-button', append_to_formset);
+    // adds a poll copyblock to the form using JS template
+    function add_poll_to_form($tpl, target, block) {
+        var $formset_obj = $(target).closest('.formset');
+        var prefix = $formset_obj.data('prefix');
+        var $total_fields = $('#id_' + prefix + '-TOTAL_FORMS');
+        var $last_obj = $formset_obj.find(block).last();
+        var number_of_fields = parseInt($total_fields.val(), 10);
 
+        // form data to pass to the template
+        var data = {
+            prefix: prefix,
+            count: number_of_fields
+        };
+
+        // insert the new given poll as last object in the formset
+        $tpl.tmpl(data).insertAfter($last_obj);
+
+        // update the total number of given fields
+        $total_fields.val(number_of_fields + 1);
+    }
+
+    // add choice to radio poll from template
+    function add_radio_choice_to_poll(e) {
+        e.preventDefault();
+        add_poll_to_form($('#radio-choice-tmpl'), e.currentTarget, '.radio-choice');
+    }
+
+    // add nominee to range poll from template
+    function add_nominee_to_poll(e) {
+        e.preventDefault();
+        add_poll_to_form($('#nominee-tmpl'), e.currentTarget, '.nominee');
+    }
+
+    // creates a new radio poll from template
+    function add_radio_poll(e) {
+        e.preventDefault();
+        add_poll_to_form($('#radio-poll-tmpl'), e.currentTarget, '.voting-poll');
+    }
+
+    // creates a new range poll from template
+    function add_range_poll(e) {
+        e.preventDefault();
+        add_poll_to_form($('#range-poll-tmpl'), e.currentTarget, '.voting-poll');
+    }
+
+    // bind events
+    $('#radio-poll-voting').on('click', '.voting-add-answer-button', add_radio_choice_to_poll);
+    $('#range-poll-voting').on('click', '.voting-add-nominee-button', add_nominee_to_poll);
+    $('.voting-add-rangepoll-button').on('click', add_range_poll);
+    $('.voting-add-radiopoll-button').on('click', add_radio_poll);
 });

@@ -1,0 +1,167 @@
+<script id="radio-poll-tmpl" type="text/x-jquery-tmpl">
+  <input name="${ prefix }-${ count }-id" id="id_${ prefix }-${ count }-id" type="hidden">
+  <div class="copyblock voting-poll">
+    <div class="poll-block">
+      <div data-tooltip class="has-tip tip-left" title="Radio Poll Title">
+        <input id="id_${ prefix }-${ count }-question"
+               placeholder="Radio Poll Title"
+               name="${ prefix }-${ count }-question"
+               maxlength="500"
+               type="text">
+      </div>
+      <div class="required-field"></div>
+      <div class="formset" data-prefix="${ prefix }-${ count }_radio_choices">
+        <input name="${ prefix }-${ count }_radio_choices-0-id"
+               id="id_${ prefix }-${ count }_radio_choices-0-id"
+               type="hidden">
+        <div class="copyblock radio-choice">
+          <div title="Radio Poll Answer" data-tooltip class="has-tip tip-left">
+            <input id="id_${ prefix }-${ count }_radio_choices-0-answer"
+                   placeholder="Radio Poll Answer"
+                   name="${ prefix }-${ count }_radio_choices-0-answer"
+                   maxlength="500"
+                   type="text">
+          </div>
+          <div class="required-field"></div>
+          <div class="align-right">
+            <label for="id_${ prefix }-${ count }_radio_choices-0-DELETE">
+              Delete
+            </label>
+            <input name="${ prefix }-${ count }_radio_choices-0-DELETE"
+                   id="id_${ prefix }-${ count }_radio_choices-0-DELETE"
+                   type="checkbox">
+          </div>
+        </div>
+        <button class="voting-add-answer-button small button">
+          Add Choice
+        </button>
+      </div>
+      <input name="${ prefix }-${ count }_radio_choices-TOTAL_FORMS"
+             value="1"
+             id="id_${ prefix }-${ count }_radio_choices-TOTAL_FORMS"
+             type="hidden">
+      <input name="${ prefix }-${ count }_radio_choices-INITIAL_FORMS"
+             value="0"
+             id="id_${ prefix }-${ count }_radio_choices-INITIAL_FORMS"
+             type="hidden">
+      <input name="${ prefix }-${ count }_radio_choices-MAX_NUM_FORMS"
+             value="1000"
+             id="id_${ prefix }-${ count }_radio_choices-MAX_NUM_FORMS"
+             type="hidden">
+    </div>
+  </div>
+</script>
+
+<script id="range-poll-tmpl" type="text/x-jquery-tmpl">
+  <input id="id_${ prefix }-${ count }-id" type="hidden" name="${ prefix }-${ count }-id">
+  <div class="copyblock voting-poll">
+    <div class="poll-block">
+      <div title="Range Poll Name" data-tooltip class="has-tip tip-left">
+        <input name="${ prefix }-${ count }-name"
+               placeholder="Range Poll Name"
+               maxlength="500"
+               id="id_${ prefix }-${ count }-name"
+               type="text">
+      </div>
+      <div class="required-field"></div>
+      <div class="formset" data-prefix="${ prefix }-${ count }_range_choices">
+        <input name="${ prefix }-${ count }_range_choices-0-id"
+               id="id_${ prefix }-${ count }_range_choices-0-id"
+               type="hidden">
+        <div class="copyblock nominee">
+          <div class="select-nominee-group">
+            <div title="Select Nominee"
+                 data-tooltip
+                 class="has-tip tip-left select-nominee">
+              <select id="id_${ prefix }-${ count }_range_choices-0-nominee"
+                      name="${ prefix }-${ count }_range_choices-0-nominee">
+                <option selected="selected" value="">---------</option>
+                {% for nominee in nominee_list %}
+                  <option value="{{ nominee.id }}">{{ nominee }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="required-field"></div>
+          </div>
+          <div class="delete-nominee-group">
+            <label for="id_${ prefix }-${ count }_range_choices-0-DELETE">
+              Delete
+            </label>
+            <input name="${ prefix }-${ count }_range_choices-0-DELETE"
+                   id="id_${ prefix }-${ count }_range_choices-0-DELETE"
+                   type="checkbox">
+          </div>
+        </div>
+        <button class="voting-add-nominee-button small button">
+          Add Nominee
+        </button>
+      </div>
+      <input name="${ prefix }-${ count }_range_choices-TOTAL_FORMS"
+             id="id_${ prefix }-${ count }_range_choices-TOTAL_FORMS"
+             value="1"
+             type="hidden">
+      <input name="${ prefix }-${ count }_range_choices-INITIAL_FORMS"
+             id="id_${ prefix }-${ count }_range_choices-INITIAL_FORMS"
+             value="0"
+             type="hidden">
+      <input name="${ prefix }-${ count }_range_choices-MAX_NUM_FORMS"
+             id="id_${ prefix }-${ count }_range_choices-MAX_NUM_FORMS"
+             value="1000"
+             type="hidden">
+    </div>
+  </div>
+</script>
+
+<script id="radio-choice-tmpl" type="text/x-jquery-tmpl">
+  <input name="${ prefix }-${ count }-id"
+         id="id_${ prefix }-${ count }-id"
+         type="hidden">
+  <div class="copyblock radio-choice">
+    <div title="Radio Poll Answer" data-tooltip class="has-tip tip-left">
+      <input id="id_${ prefix }-${ count }-answer"
+             placeholder="Radio Poll Answer"
+             name="${ prefix }-${ count }-answer"
+             maxlength="500"
+             type="text">
+    </div>
+    <div class="required-field"></div>
+    <div class="align-right">
+      <label for="id_${ prefix }-${ count }-DELETE">
+        Delete
+      </label>
+      <input name="${ prefix }-${ count }-DELETE"
+             id="id_${ prefix }-${ count }-DELETE"
+             type="checkbox">
+    </div>
+  </div>
+</script>
+
+<script id="nominee-tmpl" type="text/x-jquery-tmpl">
+  <input name="${ prefix }-${ count }-id"
+         id="id_${ prefix }-${ count }-id"
+         type="hidden">
+  <div class="copyblock nominee">
+    <div class="select-nominee-group">
+      <div title="Select Nominee"
+           data-tooltip
+           class="has-tip tip-left select-nominee">
+        <select id="id_${ prefix }-${ count }-nominee"
+                name="${ prefix }-${ count }-nominee">
+          <option selected="selected" value="">---------</option>
+          {% for nominee in nominee_list %}
+            <option value="{{ nominee.id }}">{{ nominee }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="required-field"></div>
+    </div>
+    <div class="delete-nominee-group">
+      <label for="id_${ prefix }-${ count }-DELETE">
+        Delete
+      </label>
+      <input name="${ prefix }-${ count }-DELETE"
+             id="id_${ prefix }-${ count }-DELETE"
+             type="checkbox">
+    </div>
+  </div>
+</script>
