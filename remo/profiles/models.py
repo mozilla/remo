@@ -181,13 +181,15 @@ class UserProfile(caching.base.CachingMixin, models.Model):
         return age
 
 
-class UserAvatar(models.Model):
+class UserAvatar(caching.base.CachingMixin, models.Model):
     """User Avatar Model."""
     user = models.OneToOneField(User)
     avatar_url = models.URLField(max_length=400, default='')
     last_update = models.DateTimeField(default=(timezone.now() -
                                                 datetime.timedelta(hours=25)),
                                        auto_now=True)
+
+    objects = caching.base.CachingManager()
 
     def __unicode__(self):
         return "UserAvatar:%s" % self.user.userprofile.display_name
