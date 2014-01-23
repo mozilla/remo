@@ -256,3 +256,13 @@ class ViewsTest(TestCase):
         self.assertRedirects(response, expected_url=expected_url,
                              status_code=301, target_status_code=200)
         self.assertTemplateUsed(response, 'profiles_people.html')
+
+    def test_functional_areas_type(self):
+        """Test that functional area type is integer."""
+        self.client.login(username=self.rep.username, password='passwd')
+
+        # Post form with invalid data
+        self.data['wiki_profile_url'] = 'www.example.com'
+        response = self.client.post(self.user_edit_url, self.data, follow=True)
+
+        eq_(response.context['functional_areas'], [3])
