@@ -100,13 +100,16 @@ def edit(request, display_name):
 
     pageuser = get_object_or_404(User, userprofile__display_name=display_name)
 
+    functional_areas = map(int, profileform['functional_areas'].value())
+
     return render(request, 'profiles_edit.html',
                   {'userform': userform,
                    'profileform': profileform,
                    'datejoinedform': datejoinedform,
                    'pageuser': pageuser,
                    'group_bits': group_bits,
-                   'range_years': range(1950, datetime.today().year - 11)})
+                   'range_years': range(1950, datetime.today().year - 11),
+                   'functional_areas': functional_areas})
 
 
 def redirect_list_profiles(request):
@@ -132,7 +135,7 @@ def list_profiles(request):
                    'areas': FunctionalArea.active_objects.all()})
 
 
-@cache_control(private=True, max_age=60*5)
+@cache_control(private=True, max_age=60 * 5)
 def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User,
