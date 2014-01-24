@@ -562,7 +562,7 @@
             <label for="{{ choice.1 }}-bit">
               <input type="checkbox" name="functional_areas" value="{{ choice.0 }}"
                      id="id_functional_areas"
-                     {% if choice.0 in profileform.functional_areas.value() %}
+                     {% if choice.0 in functional_areas %}
                        checked="checked"
                      {% endif %}/>
               {{ choice.1 }}
