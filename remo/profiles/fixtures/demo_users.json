@@ -162,26 +162,6 @@
         }
     },
     {
-        "pk": 12,
-        "model": "auth.user",
-        "fields": {
-            "username": "remobot",
-            "first_name": "ReMo",
-            "last_name": "bot",
-            "is_active": true,
-            "is_superuser": false,
-            "is_staff": false,
-            "last_login": "2013-09-19T10:01:11Z",
-            "groups": [
-                1
-            ],
-            "user_permissions": [],
-            "password": "",
-            "email": "reps@mozilla.org",
-            "date_joined": "2013-09-19T10:01:11Z"
-        }
-    },
-    {
         "pk": 4,
         "model": "profiles.userprofile",
         "fields": {
@@ -468,45 +448,6 @@
                 2
             ],
             "tracked_functional_areas": []
-        }
-    },
-    {
-        "pk": 12,
-        "model": "profiles.userprofile",
-        "fields": {
-            "personal_website_url": "",
-            "receive_email_on_add_report": false,
-            "mozillians_profile_url": "",
-            "tracked_functional_areas": [],
-            "gender": null,
-            "city": "",
-            "twitter_account": "",
-            "jabber_id": "",
-            "display_name": "ReMo bot",
-            "receive_email_on_edit_report": false,
-            "irc_name": "remobot",
-            "lon": null,
-            "functional_areas": [],
-            "wiki_profile_url": "",
-            "added_by": null,
-            "bio": "",
-            "private_email": "",
-            "facebook_url": "",
-            "user": 12,
-            "date_joined_program": "2007-07-01",
-            "lat": null,
-            "receive_email_on_add_comment": false,
-            "receive_email_on_add_event_comment": false,
-            "country": "",
-            "region": "",
-            "irc_channels": "",
-            "linkedin_url": "",
-            "registration_complete": true,
-            "mentor": null,
-            "local_name": "",
-            "birth_date": null,
-            "diaspora_url": "",
-            "personal_blog_feed": ""
         }
     },
     {

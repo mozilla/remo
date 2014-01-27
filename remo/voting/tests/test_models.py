@@ -9,6 +9,7 @@ from nose.tools import eq_, ok_
 from test_utils import TestCase
 
 from remo.base.utils import datetime2pdt
+from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
 from remo.voting.models import Poll
 
@@ -33,7 +34,7 @@ class VotingMailNotificationTest(TestCase):
         """Test sending emails when a new voting is added."""
         recipients = map(lambda x: '%s' % x.email,
                          User.objects.filter(groups=self.group))
-        eq_(len(mail.outbox), 4)
+        eq_(len(mail.outbox), 2)
         ok_(mail.outbox[0].to[0] in recipients)
         ok_(mail.outbox[1].to[0] in recipients)
 
@@ -47,7 +48,7 @@ class VotingMailNotificationTest(TestCase):
         if not settings.CELERY_ALWAYS_EAGER:
             (fake_requests_obj.expects_call().returns(True))
         poll.save()
-        eq_(len(mail.outbox), 6)
+        eq_(len(mail.outbox), 3)
 
     def test_send_email_to_council_members(self):
         """Test send emails to Council Members if an automated poll is created.
@@ -57,7 +58,7 @@ class VotingMailNotificationTest(TestCase):
                               end=self.end, valid_groups=self.group,
                               created_by=self.user, automated_poll=True)
         automated_poll.save()
-        eq_(len(mail.outbox), 6)
+        eq_(len(mail.outbox), 4)
         for email in mail.outbox:
             if settings.REPS_COUNCIL_ALIAS in email.to:
                 break
@@ -71,6 +72,7 @@ class AutomatedRadioPollTest(TestCase):
 
     def test_automated_radio_poll_valid_bug(self):
         """Test the creation of an automated radio poll."""
+        UserFactory.create(username='remobot')
         bug = BugFactory.create(council_vote_requested=True,
                                 component='Budget Requests')
         poll = Poll.objects.get(bug=bug)
@@ -91,6 +93,7 @@ class AutomatedRadioPollTest(TestCase):
         if the bug already exists.
 
         """
+        UserFactory.create(username='remobot')
         bug = BugFactory.create(council_vote_requested=True,
                                 component='Budget Requests')
         bug.first_comment = 'My first comment.'
