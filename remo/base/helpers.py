@@ -230,3 +230,9 @@ def ical_format_lines(text):
         ret_line += char
 
     return ret_line
+
+
+@register.function
+def get_attr(obj, value, default):
+    """Add a gettatr helper in templates."""
+    return getattr(obj, value, default)

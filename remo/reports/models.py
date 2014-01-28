@@ -209,10 +209,15 @@ class Activity(models.Model):
         return self.name
 
     def get_absolute_delete_url(self):
-        return reverse('delete_activity', kwargs={'pk': str(self.id)})
+        return reverse('delete_activity', kwargs={'pk': self.id})
 
     def get_absolute_edit_url(self):
-        return reverse('edit_activity', kwargs={'pk': str(self.id)})
+        return reverse('edit_activity', kwargs={'pk': self.id})
+
+    @property
+    def is_editable(self):
+        """Make initial activities uneditable."""
+        return not self.name in settings.BASE_ACTIVITIES
 
 
 class Campaign(models.Model):
@@ -231,10 +236,10 @@ class Campaign(models.Model):
         return self.name
 
     def get_absolute_delete_url(self):
-        return reverse('delete_campaign', kwargs={'pk': str(self.id)})
+        return reverse('delete_campaign', kwargs={'pk': self.id})
 
     def get_absolute_edit_url(self):
-        return reverse('edit_campaign', kwargs={'pk': str(self.id)})
+        return reverse('edit_campaign', kwargs={'pk': self.id})
 
 
 class NGReport(caching.base.CachingMixin, models.Model):

@@ -9,14 +9,13 @@ from django.contrib import auth, messages
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
 from django.shortcuts import redirect, render
-from django.views import generic
 from django.views.decorators.cache import cache_control, never_cache
-from django.utils.decorators import method_decorator
+from django.views import generic
 
 import forms
 import utils
 
-from remo.base.decorators import permission_check
+from remo.base.decorators import permission_check, PermissionMixin
 from remo.base.mozillians import is_vouched, BadStatusCodeError
 from remo.events.models import Event
 from remo.featuredrep.models import FeaturedRep
@@ -279,13 +278,6 @@ def edit_settings(request):
         return redirect('dashboard')
     return render(request, 'settings.html', {'user': user,
                                              'settingsform': form})
-
-
-class PermissionMixin(object):
-    """Permission mixin for base content views."""
-    @method_decorator(permission_check(group='Admin'))
-    def dispatch(self, request, *args, **kwargs):
-        return super(PermissionMixin, self).dispatch(request, *args, **kwargs)
 
 
 class BaseListView(PermissionMixin, generic.ListView):

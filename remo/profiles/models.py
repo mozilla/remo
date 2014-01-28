@@ -63,10 +63,10 @@ class FunctionalArea(models.Model):
     objects = models.Manager()
 
     def get_absolute_delete_url(self):
-        return reverse('delete_functional_area', kwargs={'pk': str(self.id)})
+        return reverse('delete_functional_area', kwargs={'pk': self.id})
 
     def get_absolute_edit_url(self):
-        return reverse('edit_functional_area', kwargs={'pk': str(self.id)})
+        return reverse('edit_functional_area', kwargs={'pk': self.id})
 
     class Meta:
         ordering = ['name']

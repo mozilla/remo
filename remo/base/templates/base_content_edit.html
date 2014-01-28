@@ -20,10 +20,12 @@
         {% endif %}
       </div>
     </div>
-    <div class="row">
+    <div class="row base-content-edit">
       <div class="large-6 columns">
         {{ field_with_attrs(form.name, placeholder='Name', title='Name') }}
         {{ field_errors(form.name) }}
+        <label for="id_active">Active</label>
+        {{ form.active }}
       </div>
     </div>
     <div class="row">

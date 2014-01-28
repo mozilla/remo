@@ -2,6 +2,7 @@ from functools import wraps
 
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
 
 from remo.base.utils import get_object_or_none
 
@@ -86,3 +87,10 @@ def permission_check(permissions=[], group=None,
 
         return wrapper
     return decorator
+
+
+class PermissionMixin(object):
+    """Permission mixin for base content views."""
+    @method_decorator(permission_check(group='Admin'))
+    def dispatch(self, request, *args, **kwargs):
+        return super(PermissionMixin, self).dispatch(request, *args, **kwargs)

@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <div class="row">
+  <div class="row base-content-list">
     <div class="large-12 columns">
       <table class="dashboard-table">
         <thead>
@@ -29,6 +29,7 @@
                 {{ object.name }}
               </td>
               <td>
+              {% if get_attr(object, 'is_editable', True)  %}
                 <a href="{{ object.get_absolute_edit_url() }}"
                    class="pictogram-button">
                   <span class="pict-icon large pencil"></span>
@@ -38,6 +39,9 @@
                    data-reveal-id="delete-modal">
                   <span class="pict-icon large close"></span>
                 </a>
+              {% else %}
+                &nbsp;
+              {% endif %}
               </td>
             </tr>
           {% endfor %}

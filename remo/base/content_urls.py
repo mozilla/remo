@@ -1,8 +1,8 @@
 from django.conf.urls.defaults import patterns, url
 from django.core.urlresolvers import reverse_lazy
 
-from remo.base.views import (BaseListView, BaseCreateView, BaseUpdateView,
-                             BaseDeleteView)
+from remo.base.views import (BaseCreateView, BaseDeleteView, BaseListView,
+                             BaseUpdateView)
 from remo.profiles.forms import FunctionalAreaForm
 from remo.profiles.models import FunctionalArea
 from remo.reports.forms import ActivityForm, CampaignForm

@@ -4,9 +4,9 @@ from django.utils.timezone import now as now_utc
 
 import happyforms
 
-from remo.reports.models import (NGReport, NGReportComment, Report,
-                                 ReportComment, ReportEvent, ReportLink,
-                                 Activity, Campaign)
+from remo.reports.models import (Activity, Campaign, NGReport, NGReportComment,
+                                 Report, ReportComment, ReportEvent,
+                                 ReportLink)
 
 
 # Old reporting system
