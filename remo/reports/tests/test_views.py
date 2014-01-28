@@ -17,7 +17,8 @@ from remo.profiles.tests import UserFactory
 from remo.reports.models import NGReport, NGReportComment, ReportComment
 from remo.reports.tests import (NGReportFactory, NGReportCommentFactory,
                                 ReportCommentFactory, ReportFactory)
-from remo.reports.views import LIST_REPORTS_VALID_SHORTS
+from remo.reports.views import (LIST_NG_REPORTS_VALID_SORTS,
+                                LIST_REPORTS_VALID_SORTS)
 
 
 class ViewsTest(TestCase):
@@ -62,7 +63,7 @@ class ViewsTest(TestCase):
         response = c.get(reverse('reports_list_reports'))
         self.assertTemplateUsed(response, 'reports_list.html')
 
-        for sort_key in LIST_REPORTS_VALID_SHORTS:
+        for sort_key in LIST_REPORTS_VALID_SORTS:
             response = c.get(urlparams(reverse('reports_list_reports'),
                                        sort_key=sort_key))
             self.assertTemplateUsed(response, 'reports_list.html')
@@ -548,3 +549,33 @@ class DeleteNGReportCommentTests(RemoTestCase):
         self.post(user=user, url=report_comment.get_absolute_delete_url())
         ok_(not NGReportComment.objects.filter(pk=report_comment.id).exists())
         redirect_mock.assert_called_with(report.get_absolute_url())
+
+
+class ListNGReportTests(RemoTestCase):
+    """Tests related to report listing."""
+    def setUp(self):
+        Flag.objects.create(name='reports_ng_report', everyone=True)
+
+    def test_view_reports_list(self):
+        """Test view report list page."""
+        response = self.get(reverse('ng_reports_list_reports'))
+        self.assertTemplateUsed(response, 'ng_reports_list.html')
+
+        for sort_key in LIST_NG_REPORTS_VALID_SORTS:
+            response = self.get(urlparams(reverse('ng_reports_list_reports'),
+                                          sort_key=sort_key))
+            self.assertTemplateUsed(response, 'ng_reports_list.html')
+
+        # Test pagination.
+        response = self.get(urlparams(reverse('ng_reports_list_reports'),
+                                      page=1))
+        self.assertTemplateUsed(response, 'ng_reports_list.html')
+
+    def test_page_header(self):
+        """Test page header context."""
+        user = UserFactory.create(groups=['Rep'], first_name='Foo',
+                                  last_name='Bar')
+        name = user.userprofile.display_name
+        response = self.get(url=reverse('ng_reports_list_reports'),
+                            user=name)
+        eq_(response.context['pageheader'], 'Activities for Foo Bar')

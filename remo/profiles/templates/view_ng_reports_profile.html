@@ -30,8 +30,8 @@
     {% if ng_reports.count() > 10 %}
       <p>
         <a class="view-more"
-           href="{{ url('reports_list_rep_reports',
-                    pageuser|get_display_name) }}">View more reports</a>
+           href="{{ url('ng_reports_list_rep_reports',
+                    user_profile.display_name) }}">View more reports</a>
       </p>
     {% endif %}
   </div>
