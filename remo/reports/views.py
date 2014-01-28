@@ -1,6 +1,7 @@
 import datetime
 import re
 
+from datetime import date
 from urlparse import urljoin
 
 from django.conf import settings
@@ -25,14 +26,27 @@ from models import (NGReport, NGReportComment, Report, ReportComment,
                     ReportEvent, ReportLink)
 from utils import participation_type_to_number
 
+# New reporting system
+LIST_NG_REPORTS_DEFAULT_SORT = 'report_date_desc'
+LIST_NG_REPORTS_VALID_SORTS = {
+    'reporter_desc': '-user__last_name,user__first_name',
+    'reporter_asc': 'user__last_name,user__first_name',
+    'mentor_desc': '-mentor__last_name,mentor__first_name',
+    'mentor_asc': 'mentor__last_name,mentor__first_name',
+    'activity_desc': '-activity__name',
+    'activity_asc': 'activity__name',
+    'report_date_desc': '-report_date',
+    'report_date_asc': 'report_date'}
+LIST_REPORTS_NUMBER_OF_REPORTS_PER_PAGE = 25
+
 # Old reporting system
 LIST_REPORTS_DEFAULT_SORT = 'updated_on_desc'
-LIST_REPORTS_VALID_SHORTS = {
+LIST_REPORTS_VALID_SORTS = {
     'updated_on_desc': '-updated_on',
     'updated_on_asc': 'updated_on',
     'reporter_desc': '-user__last_name,user__first_name',
     'reporter_asc': 'user__last_name,user__first_name',
-    'mentor_desc': 'mentor__last_name,mentor__first_name',
+    'mentor_desc': '-mentor__last_name,mentor__first_name',
     'mentor_asc': 'mentor__last_name,mentor__first_name',
     'empty_desc': '-empty',
     'empty_asc': 'empty',
@@ -40,7 +54,6 @@ LIST_REPORTS_VALID_SHORTS = {
     'overdue_asc': 'overdue',
     'month_desc': '-month',
     'month_asc': 'month'}
-LIST_REPORTS_NUMBER_OF_REPORTS_PER_PAGE = 25
 
 
 @permission_check()
@@ -282,10 +295,10 @@ def list_reports(request, mentor=None, rep=None):
     number_of_reports = report_list.count()
 
     sort_key = request.GET.get('sort_key', LIST_REPORTS_DEFAULT_SORT)
-    if sort_key not in LIST_REPORTS_VALID_SHORTS:
+    if sort_key not in LIST_REPORTS_VALID_SORTS:
         sort_key = LIST_REPORTS_DEFAULT_SORT
 
-    sort_by = LIST_REPORTS_VALID_SHORTS[sort_key]
+    sort_by = LIST_REPORTS_VALID_SORTS[sort_key]
     report_list = report_list.order_by(*sort_by.split(','))
 
     paginator = Paginator(report_list, LIST_REPORTS_NUMBER_OF_REPORTS_PER_PAGE)
@@ -404,3 +417,72 @@ def delete_ng_report_comment(request, display_name, year, month, day, id,
         report_comment.delete()
         messages.success(request, 'Comment successfully deleted.')
     return redirect(report.get_absolute_url())
+
+
+@waffle_flag('reports_ng_report')
+def list_ng_reports(request, mentor=None, rep=None):
+    today = date.today()
+    report_list = NGReport.objects.filter(report_date__lte=today)
+    pageheader = 'Activities for Reps'
+
+    if mentor or rep:
+        user = get_object_or_404(
+            User, userprofile__display_name__iexact=mentor or rep)
+
+        if mentor:
+            report_list = report_list.filter(mentor=user)
+            pageheader += ' mentored by %s' % user.get_full_name()
+        elif rep:
+            report_list = report_list.filter(user=user)
+            pageheader = 'Activities for %s' % user.get_full_name()
+
+    if 'query' in request.GET:
+        query = request.GET['query'].strip()
+        report_list = report_list.filter(
+            Q(ngreportcomment__comment__icontains=query) |
+            Q(activity__name__icontains=query) |
+            Q(activity_description__icontains=query) |
+            Q(campaign__name__icontains=query) |
+            Q(functional_areas__name__icontains=query) |
+            Q(location__icontains=query) |
+            Q(link__icontains=query) |
+            Q(link_description__icontains=query) |
+            Q(user__first_name__icontains=query) |
+            Q(user__last_name__icontains=query) |
+            Q(user__userprofile__local_name__icontains=query) |
+            Q(user__userprofile__display_name__icontains=query) |
+            Q(mentor__first_name__icontains=query) |
+            Q(mentor__last_name__icontains=query) |
+            Q(mentor__userprofile__local_name__icontains=query) |
+            Q(mentor__userprofile__display_name__icontains=query))
+
+    report_list = report_list.distinct()
+    number_of_reports = report_list.count()
+
+    sort_key = request.GET.get('sort_key', LIST_NG_REPORTS_DEFAULT_SORT)
+    if sort_key not in LIST_NG_REPORTS_VALID_SORTS:
+        sort_key = LIST_NG_REPORTS_DEFAULT_SORT
+
+    sort_by = LIST_NG_REPORTS_VALID_SORTS[sort_key]
+    report_list = report_list.order_by(*sort_by.split(','))
+
+    paginator = Paginator(report_list, LIST_REPORTS_NUMBER_OF_REPORTS_PER_PAGE)
+
+    # Make sure page request is an int. If not, deliver first page.
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # If page request (9999) is out of range, deliver last page of results.
+    try:
+        reports = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        reports = paginator.page(paginator.num_pages)
+
+    return render(request, 'ng_reports_list.html',
+                  {'reports': reports,
+                   'number_of_reports': number_of_reports,
+                   'sort_key': sort_key,
+                   'pageheader': pageheader,
+                   'query': request.GET.get('query', '')})

@@ -1,0 +1,193 @@
+{% extends "base_fd4.html" %}
+{% block pagetitle %}Mozilla Reps - Reports{% endblock %}
+
+{% block logo %}
+  <h1><span class="metabold">mozilla</span> reps</h1>
+{% endblock %}
+
+{% block content %}
+
+<main role="main" class="reports-main">
+  <div class="row">
+    <div class="large-12 columns">
+      <h2>{{ pageheader }}</h2>
+    </div>
+  </div>
+
+  <form method="get" id="searchform-reports" role="search">
+    <!-- Search box -->
+    <div class="row">
+      <div class="large-10 columns" id="search">
+        <div class="pict-icon large search"></div>
+        <input type="text" placeholder="Search using any keyword"
+               id="searchfield" name="query" value="{{ query }}">
+      </div>
+      <div class="large-2 columns align-right" id="search-reports">
+        <button type="submit" class="small button update">
+          Search
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Reports are here -->
+  {% if number_of_reports > 0 %}
+    <div class="row">
+      <div class="large-12 columns" id="reports-list">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>
+                {% if sort_key == 'reporter_asc' %}
+                  {# We use '#' instead of url() to feed the urlparams
+                     filter because this template is used by three
+                     different urls and therefore we want the link to
+                     relative to the current url. #}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='reporter_desc', query=query) }}">
+                    Reporter <span class="pict-table-icon desc"></span>
+                  </a>
+                {% elif sort_key == 'reporter_desc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='reporter_asc', query=query) }}">
+                    Reporter <span class="pict-table-icon asc"></span>
+                  </a>
+                {% else %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='reporter_asc', query=query) }}">
+                    Reporter
+                  </a>
+                {% endif %}
+              </th>
+              <th>
+                {% if sort_key == 'mentor_asc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='mentor_desc', query=query) }}">
+                    Mentor <span class="pict-table-icon desc"></span>
+                  </a>
+                {% elif sort_key == 'mentor_desc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='mentor_asc', query=query) }}">
+                    Mentor <span class="pict-table-icon asc"></span>
+                  </a>
+                {% else %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='mentor_asc', query=query) }}">
+                    Mentor
+                  </a>
+                {% endif %}
+              </th>
+              <th>
+                {% if sort_key == 'report_date_asc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='report_date_desc', query=query) }}">
+                    Activity date <span class="pict-table-icon desc"></span>
+                  </a>
+                {% elif sort_key == 'report_date_desc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='report_date_asc', query=query) }}">
+                    Activity date <span class="pict-table-icon asc"></span>
+                  </a>
+                {% else %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='report_date_asc', query=query) }}">
+                    Activity date
+                  </a>
+                {% endif %}
+              </th>
+              <th>
+                {% if sort_key == 'activity_asc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='activity_desc', query=query) }}">
+                    Activity <span class="pict-table-icon desc"></span>
+                  </a>
+                {% elif sort_key == 'activity_desc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='activity_asc', query=query) }}">
+                    Activity <span class="pict-table-icon asc"></span>
+                  </a>
+                {% else %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='activity_asc', query=query) }}">
+                    Activity
+                  </a>
+                {% endif %}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for report in reports.object_list %}
+              <tr>
+                <td>
+                  <a href="{{ url('ng_reports_list_rep_reports',
+                           report.user.userprofile.display_name) }}">
+                    {{ report.user.get_full_name() }}
+                  </a>
+                  <a href="{{ url('profiles_view_profile',
+                           report.user.userprofile.display_name) }}">
+                    <span class="pict-table-icon share"></span>
+                  </a>
+                </td>
+                <td>
+                  {% if report.mentor %}
+                    <a href="{{ url('ng_reports_list_mentor_reports',
+                             report.mentor.userprofile.display_name) }}">
+                      {{ report.mentor.get_full_name() }}
+                    </a>
+                    <a href="{{ url('profiles_view_profile',
+                             report.mentor.userprofile.display_name) }}">
+                      <span class="pict-table-icon share"></span>
+                    </a>
+                  {% endif %}
+                </td>
+                <td title="{{ report.report_date|format_datetime }}"
+                    data-time="{{ report.report_date|format_datetime_iso }}">
+                  {{ report.report_date|strftime("%d %b %Y") }}
+                </td>
+                <td>
+                  <a href="{{ report.get_absolute_url() }}">
+                    {{ report.activity }}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns" id="reports-pagination">
+        {% if reports.has_previous() %}
+          <a class="prev" title="Previous page" data-tooltip
+             href="{{ '#'|urlparams(page=reports.previous_page_number(),
+                                    sort_key=sort_key, query=query) }}">
+            &laquo;
+          </a>
+        {% endif %}
+        <label for="page-select">Page: </label>
+        <select id="page-select" autocomplete="off">
+          {% for i in range(1, reports.paginator.num_pages + 1) %}
+            <option {% if i == reports.number %} selected {% endif %}
+                    value="{{ '#'|urlparams(page=i, sort_key=sort_key, query=query) }}">
+              {{ i }}
+            </option>
+          {% endfor %}
+        </select>
+        {% if reports.has_next() %}
+          <a class="next" title="Next page" data-tooltip
+             href="{{ '#'|urlparams(page=reports.next_page_number(),
+                                    sort_key=sort_key, query=query) }}">
+            &raquo;
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="large-12 columns reports-found">
+      {% if number_of_reports == 0 %}
+        <p>No Reports found!</p>
+      {% else %}
+        <p>{{ number_of_reports }} reports found</p>
+      {% endif %}
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('reports/js/reports_list.js') }}"></script>
+  {% endcompress %}
+{% endblock %}
