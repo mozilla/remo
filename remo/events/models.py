@@ -7,7 +7,7 @@ from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
 
@@ -85,9 +85,25 @@ class Event(caching.base.CachingMixin, models.Model):
         return obj.astimezone(t)
 
     def save(self, *args, **kwargs):
-        """Overrides save() method to increment number of event edits."""
+        """Override save method for custom functionality."""
+
+        # Increment number of event edits
         self.times_edited += 1
+
+        # Create unique slug
+        if not self.slug:
+            self.slug = slugify(self.name, instance=self)
+
+        # Calculate planning pad url
+        if not self.planning_pad_url:
+            url = urljoin(settings.ETHERPAD_URL,
+                          getattr(settings, 'ETHERPAD_PREFIX', '') + self.slug)
+            self.planning_pad_url = url
+
         super(Event, self).save(*args, **kwargs)
+
+        # Subscribe owner to event
+        Attendance.objects.get_or_create(event=self, user=self.owner)
 
     @property
     def local_start(self):
@@ -148,26 +164,6 @@ class Metric(models.Model):
     event = models.ForeignKey('Event', related_name='metrics')
     title = models.CharField(max_length=300)
     outcome = models.CharField(max_length=300)
-
-
-@receiver(pre_save, sender=Event, dispatch_uid='create_slug_signal')
-def create_slug(sender, instance, raw, **kwargs):
-    """Auto create unique slug and calculate planning_pad_url."""
-    if not instance.slug:
-        instance.slug = slugify(instance.name, instance=instance)
-
-    if not instance.planning_pad_url:
-        url = urljoin(settings.ETHERPAD_URL,
-                      getattr(settings, 'ETHERPAD_PREFIX', '') + instance.slug)
-        instance.planning_pad_url = url
-
-
-@receiver(post_save, sender=Event,
-          dispatch_uid='subscribe_owner_to_event_signal')
-def subscribe_owner_to_event(sender, instance, raw, **kwargs):
-    """Auto subscribe owner to Event."""
-    if not raw:
-        Attendance.objects.get_or_create(event=instance, user=instance.owner)
 
 
 @receiver(post_migrate, dispatch_uid='event_set_groups_signal')
