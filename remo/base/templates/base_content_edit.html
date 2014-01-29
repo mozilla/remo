@@ -24,7 +24,7 @@
       <div class="large-6 columns">
         {{ field_with_attrs(form.name, placeholder='Name', title='Name') }}
         {{ field_errors(form.name) }}
-        <label for="id_active">Active</label>
+        <label for="id_active">Set this {{ verbose_name }} as active</label>
         {{ form.active }}
       </div>
     </div>

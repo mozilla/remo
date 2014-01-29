@@ -7,7 +7,7 @@
     <div class="large-12 columns">
       <h1>{{ verbose_name_plural|capitalize }}</h1>
     </div>
-    <div class="large-2 columns align-right">
+    <div class="large-3 columns align-right">
       <a href="{{ create_object_url }}" class="button small update" role="button"
          id="create-button">Create {{ verbose_name }}</a>
     </div>
@@ -39,8 +39,6 @@
                    data-reveal-id="delete-modal">
                   <span class="pict-icon large close"></span>
                 </a>
-              {% else %}
-                &nbsp;
               {% endif %}
               </td>
             </tr>
