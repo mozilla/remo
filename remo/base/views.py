@@ -7,6 +7,7 @@ from django_browserid.views import Verify
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.models import Group, User
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views.decorators.cache import cache_control, never_cache
@@ -324,12 +325,24 @@ class BaseUpdateView(PermissionMixin, generic.UpdateView):
         messages.success(self.request, "%s succesfully updated." % content)
         return super(BaseUpdateView, self).form_valid(form)
 
+    def get(self, request, *args, **kwargs):
+        if getattr(self.get_object(), 'is_editable', True):
+            return super(BaseUpdateView, self).get(request, *args, **kwargs)
+        raise ValidationError('Object cannot be updated.')
+
+    def post(self, request, *args, **kwargs):
+        if getattr(self.get_object(), 'is_editable', True):
+            return super(BaseUpdateView, self).post(request, *args, **kwargs)
+        raise ValidationError('Object cannot be updated.')
+
 
 class BaseDeleteView(PermissionMixin, generic.DeleteView):
     """Base content delete view."""
 
     def delete(self, request, *args, **kwargs):
         """Override delete method to show message."""
-        content = self.model._meta.verbose_name.capitalize()
-        messages.success(self.request, '%s succesfully deleted.' % content)
-        return super(BaseDeleteView, self).delete(request, *args, **kwargs)
+        if getattr(self.get_object(), 'is_editable', True):
+            content = self.model._meta.verbose_name.capitalize()
+            messages.success(self.request, '%s succesfully deleted.' % content)
+            return super(BaseDeleteView, self).delete(request, *args, **kwargs)
+        raise ValidationError('Object cannot be deleted')
