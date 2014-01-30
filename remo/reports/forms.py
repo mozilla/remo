@@ -95,6 +95,8 @@ class ReportLinkForm(happyforms.ModelForm):
 # New Generation reporting system
 class NGReportForm(happyforms.ModelForm):
     report_date = forms.DateField(input_formats=['%d %B %Y'])
+    activity = forms.ModelChoiceField(queryset=Activity.active_objects.all())
+    campaign = forms.ModelChoiceField(queryset=Campaign.active_objects.all())
 
     def __init__(self, *args, **kwargs):
         """ Initialize form.
