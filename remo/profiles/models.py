@@ -59,8 +59,8 @@ class FunctionalArea(models.Model):
     name = models.CharField(max_length=100)
     active = models.BooleanField(default=True)
 
-    active_objects = GenericActiveManager()
     objects = models.Manager()
+    active_objects = GenericActiveManager()
 
     def get_absolute_delete_url(self):
         return reverse('delete_functional_area', kwargs={'pk': self.id})
