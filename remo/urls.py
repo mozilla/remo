@@ -50,6 +50,7 @@ urlpatterns = patterns(
     url(r'^events/', include('remo.events.event_urls')),
 
     # reports
+    url(r'^ng-reports/', include('remo.reports.ng_report_urls')),
     url(r'^reports/', include('remo.reports.report_urls')),
 
     # featuredrep
