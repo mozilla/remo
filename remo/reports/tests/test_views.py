@@ -17,8 +17,7 @@ from remo.profiles.tests import UserFactory
 from remo.reports.models import NGReport, NGReportComment, ReportComment
 from remo.reports.tests import (NGReportFactory, NGReportCommentFactory,
                                 ReportCommentFactory, ReportFactory)
-from remo.reports.views import (LIST_NG_REPORTS_VALID_SORTS,
-                                LIST_REPORTS_VALID_SORTS)
+from remo.reports.views import LIST_REPORTS_VALID_SORTS
 
 
 class ViewsTest(TestCase):
@@ -560,22 +559,34 @@ class ListNGReportTests(RemoTestCase):
         """Test view report list page."""
         response = self.get(reverse('ng_reports_list_reports'))
         self.assertTemplateUsed(response, 'ng_reports_list.html')
+        eq_(response.status_code, 200)
 
-        for sort_key in LIST_NG_REPORTS_VALID_SORTS:
-            response = self.get(urlparams(reverse('ng_reports_list_reports'),
-                                          sort_key=sort_key))
-            self.assertTemplateUsed(response, 'ng_reports_list.html')
-
-        # Test pagination.
-        response = self.get(urlparams(reverse('ng_reports_list_reports'),
-                                      page=1))
-        self.assertTemplateUsed(response, 'ng_reports_list.html')
-
-    def test_page_header(self):
-        """Test page header context."""
+    def test_page_header_rep(self):
+        """Test page header context for rep."""
         user = UserFactory.create(groups=['Rep'], first_name='Foo',
                                   last_name='Bar')
         name = user.userprofile.display_name
-        response = self.get(url=reverse('ng_reports_list_reports'),
-                            user=name)
+        response = self.get(url=reverse('ng_reports_list_rep_reports',
+                                        kwargs={'rep': name}), user=user)
         eq_(response.context['pageheader'], 'Activities for Foo Bar')
+
+    def test_page_header_mentor(self):
+        """Test page header context for mentor."""
+        user = UserFactory.create(groups=['Mentor'], first_name='Foo',
+                                  last_name='Bar')
+        name = user.userprofile.display_name
+        response = self.get(url=reverse('ng_reports_list_mentor_reports',
+                                        kwargs={'mentor': name}), user=user)
+        msg = 'Activities for Reps mentored by Foo Bar'
+        eq_(response.context['pageheader'], msg)
+
+    def test_page_header_default(self):
+        """Test default page header context."""
+        response = self.get(url=reverse('ng_reports_list_reports'))
+        eq_(response.context['pageheader'], 'Activities for Reps')
+
+    def test_get_invalid_order(self):
+        """Test get invalid sort order."""
+        response = self.get(url=reverse('ng_reports_list_reports'),
+                            data={'sort_key': 'invalid'})
+        eq_(response.context['sort_key'], 'report_date_desc')
