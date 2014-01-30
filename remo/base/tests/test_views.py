@@ -497,7 +497,7 @@ class BaseCreateViewTest(RemoTestCase):
     """Test generic BaseCreateView class."""
 
     def test_base_content_activity_create_get(self):
-        """Test create activity."""
+        """Test get create activity."""
         admin = UserFactory.create(groups=['Admin'])
         response = self.get(reverse('create_activity'), user=admin,
                             follow=True)
@@ -507,7 +507,7 @@ class BaseCreateViewTest(RemoTestCase):
         self.assertTemplateUsed(response, 'base_content_edit.html')
 
     def test_base_content_campaign_create_get(self):
-        """Test create activity."""
+        """Test get create campaign."""
         admin = UserFactory.create(groups=['Admin'])
         response = self.get(reverse('create_campaign'), user=admin,
                             follow=True)
@@ -517,7 +517,7 @@ class BaseCreateViewTest(RemoTestCase):
         self.assertTemplateUsed(response, 'base_content_edit.html')
 
     def test_base_content_functional_area_create_get(self):
-        """Test create activity."""
+        """Test get create functional area."""
         admin = UserFactory.create(groups=['Admin'])
         response = self.get(reverse('create_functional_area'), user=admin,
                             follow=True)
@@ -527,7 +527,7 @@ class BaseCreateViewTest(RemoTestCase):
         self.assertTemplateUsed(response, 'base_content_edit.html')
 
     def test_base_content_activity_create_post(self):
-        """Test create activity."""
+        """Test post create activity."""
         admin = UserFactory.create(groups=['Admin'])
         response = self.post(reverse('create_activity'), user=admin,
                              data={'name': 'test activity'}, follow=True)
@@ -536,7 +536,7 @@ class BaseCreateViewTest(RemoTestCase):
         eq_(query.exists(), True)
 
     def test_base_content_campaign_create_post(self):
-        """Test create campaign."""
+        """Test post create campaign."""
         admin = UserFactory.create(groups=['Admin'])
         response = self.post(reverse('create_campaign'),
                              data={'name': 'test campaign'},
@@ -546,7 +546,7 @@ class BaseCreateViewTest(RemoTestCase):
         eq_(query.exists(), True)
 
     def test_base_content_functional_area_create_post(self):
-        """Test create functional area."""
+        """Test post create functional area."""
         admin = UserFactory.create(groups=['Admin'])
         response = self.post(reverse('create_functional_area'),
                              data={'name': 'test functional area'},
@@ -568,7 +568,7 @@ class BaseUpdateViewTest(RemoTestCase):
     """Test generic BaseUpdateView class."""
 
     def test_base_content_activity_edit_post(self):
-        """Test edit activity."""
+        """Test post edit activity."""
         admin = UserFactory.create(groups=['Admin'])
         activity = ActivityFactory.create(name='test activity')
         response = self.post(reverse('edit_activity',
@@ -580,7 +580,7 @@ class BaseUpdateViewTest(RemoTestCase):
         eq_(query.exists(), True)
 
     def test_base_content_campaign_edit_post(self):
-        """Test edit campaign."""
+        """Test post edit campaign."""
         admin = UserFactory.create(groups=['Admin'])
         campaign = CampaignFactory.create(name='test campaign')
         response = self.post(reverse('edit_campaign',
@@ -592,7 +592,7 @@ class BaseUpdateViewTest(RemoTestCase):
         eq_(query.exists(), True)
 
     def test_base_content_functional_area_edit_post(self):
-        """Test edit campaign."""
+        """Test post edit functional area."""
         admin = UserFactory.create(groups=['Admin'])
         area = FunctionalAreaFactory.create(name='test functional area')
         response = self.post(reverse('edit_functional_area',
@@ -639,7 +639,7 @@ class BaseDeleteViewTest(RemoTestCase):
         eq_(query.exists(), False)
 
     def test_base_content_functional_area_delete_post(self):
-        """Test delete campaign."""
+        """Test delete functional area."""
         admin = UserFactory.create(groups=['Admin'])
         area = FunctionalAreaFactory.create(name='test functional area')
         response = self.post(reverse('delete_functional_area',
