@@ -18,6 +18,7 @@ from remo.base.models import GenericActiveManager
 from remo.events.helpers import get_event_link
 from remo.events.models import Attendance as EventAttendance, Event
 from remo.profiles.models import FunctionalArea
+from remo.reports import READONLY_ACTIVITIES
 from remo.reports.tasks import send_remo_mail
 
 # OLD REPORTING SYSTEM
@@ -216,8 +217,8 @@ class Activity(models.Model):
 
     @property
     def is_editable(self):
-        """Make initial activities uneditable."""
-        return not self.name in settings.BASE_ACTIVITIES
+        """Check if activity is editable."""
+        return not self.name in READONLY_ACTIVITIES
 
 
 class Campaign(models.Model):

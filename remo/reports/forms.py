@@ -4,6 +4,7 @@ from django.utils.timezone import now as now_utc
 
 import happyforms
 
+from remo.reports import UNLISTED_ACTIVITIES
 from remo.reports.models import (Activity, Campaign, NGReport, NGReportComment,
                                  Report, ReportComment, ReportEvent,
                                  ReportLink)
@@ -95,8 +96,10 @@ class ReportLinkForm(happyforms.ModelForm):
 # New Generation reporting system
 class NGReportForm(happyforms.ModelForm):
     report_date = forms.DateField(input_formats=['%d %B %Y'])
-    activity = forms.ModelChoiceField(queryset=Activity.active_objects.all())
-    campaign = forms.ModelChoiceField(queryset=Campaign.active_objects.all())
+    activity = forms.ModelChoiceField(
+        queryset=Activity.active_objects.exclude(name__in=UNLISTED_ACTIVITIES))
+    campaign = forms.ModelChoiceField(queryset=Campaign.active_objects.all(),
+                                      required=False)
 
     def __init__(self, *args, **kwargs):
         """ Initialize form.
