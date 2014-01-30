@@ -16,11 +16,11 @@ AUTHENTICATION_BACKENDS = (
 
 @override_settings(AUTHENTICATION_BACKENDS=AUTHENTICATION_BACKENDS)
 class RemoTestCase(BaseTestCase):
-    def get(self, url, user=None, follow=True):
+    def get(self, url, data={}, user=None, follow=True):
         client = Client()
         if user:
             client.login(email=user.email)
-        return client.get(url, follow=follow)
+        return client.get(url, data, follow=follow)
 
     def post(self, url, data={}, user=None, follow=True):
         client = Client()

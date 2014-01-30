@@ -1,0 +1,112 @@
+{% from "includes/sorted_table_headers.html" import sorted_table_header %}
+
+{% macro display_polls(polls, length=None) -%}
+  <div class="large-12 columns">
+    <table class="dashboard-table">
+      <thead>
+        <tr>
+          <th class="dashboard-clickable type-string">Name</th>
+          <th class="dashboard-clickable type-string">Start Date</th>
+          <th class="dashboard-clickable type-string">End Date</th>
+          <th class="dashboard-clickable type-string">Eligible Groups</th>
+          <th class="dashboard-clickable type-string align-center">Voted</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for poll in polls[:length] %}
+          <tr>
+            <td>
+              <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
+                {{ poll.name }}
+              </a>
+            </td>
+            <td title="{{ poll.start|format_datetime }}"
+                data-time="{{ poll.start|format_datetime_iso }}">
+              {{ poll.start|format_datetime }}
+            </td>
+            <td title="{{ poll.end|format_datetime }}"
+                data-time="{{ poll.end|format_datetime_iso }}">
+              {{ poll.end|format_datetime }}
+            </td>
+            <td>{{ poll.valid_groups }}</td>
+            <td class="align-center">{{ poll.voted_count}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{%- endmacro %}
+
+{% macro display_paginated_polls(polls, sort_key, sort_order) -%}
+  <div class="large-12 columns">
+    <table class="dashboard-table">
+      <thead>
+        <tr>
+          <th class="dashboard-clickable type-string">
+            {{ sorted_table_header('Name', 'name', sort_key, sort_order) }}
+          </th>
+          <th class="dashboard-clickable type-string">
+            {{ sorted_table_header('Start Date', 'start', sort_key, sort_order) }}
+          </th>
+          <th class="dashboard-clickable type-string">
+            {{ sorted_table_header('End Date', 'end', sort_key, sort_order) }}
+          </th>
+          <th class="dashboard-clickable type-string">
+            {{ sorted_table_header('Eligible Groups', 'groups', sort_key, sort_order) }}
+          </th>
+          <th class="dashboard-clickable type-string align-center">
+            {{ sorted_table_header('Voted', 'voted', sort_key, sort_order) }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for poll in polls %}
+          <tr>
+            <td>
+              <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
+                {{ poll.name }}
+              </a>
+            </td>
+            <td title="{{ poll.start|format_datetime }}"
+                data-time="{{ poll.start|format_datetime_iso }}">
+              {{ poll.start|format_datetime }}
+            </td>
+            <td title="{{ poll.end|format_datetime }}"
+                data-time="{{ poll.end|format_datetime_iso }}">
+              {{ poll.end|format_datetime }}
+            </td>
+            <td>{{ poll.valid_groups }}</td>
+            <td class="align-center">{{ poll.voted_count}}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="row">
+      <div class="large-12 columns" id="voting-pagination">
+        {% if polls.has_previous() %}
+          <a class="prev" title="Previous Page" data-tooltip
+             href="{{ '#'|urlparams(page=polls.previous_page_number(),
+                                    sort_key=sort_key, sort_order=sort_order) }}">
+            &laquo;
+          </a>
+        {% endif %}
+        <label for="page-select">Page: </label>
+        <select id="page-select" autocomplete="off">
+          {% for i in range(1, polls.paginator.num_pages + 1) %}
+            <option {% if i == polls.number %} selected {% endif %}
+                    value="{{ '#'|urlparams(page=i) }}">
+              {{ i }}
+            </option>
+          {% endfor %}
+        </select>
+        {% if polls.has_next() %}
+          <a class="next" title="Next Page" data-tooltip
+             href="{{ '#'|urlparams(page=polls.next_page_number(),
+                                    sort_key=sort_key, sort_order=sort_order) }}">
+            &raquo;
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{%- endmacro %}

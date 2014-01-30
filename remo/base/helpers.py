@@ -230,3 +230,10 @@ def ical_format_lines(text):
         ret_line += char
 
     return ret_line
+
+
+@register.function
+def change_order(order):
+    if order == 'asc':
+        return 'desc'
+    return 'asc'
