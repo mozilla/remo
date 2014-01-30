@@ -7,14 +7,16 @@ from django_browserid.views import Verify
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.models import Group, User
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views.decorators.cache import cache_control, never_cache
+from django.views import generic
 
 import forms
 import utils
 
-from remo.base.decorators import permission_check
+from remo.base.decorators import permission_check, PermissionMixin
 from remo.base.mozillians import is_vouched, BadStatusCodeError
 from remo.events.models import Event
 from remo.featuredrep.models import FeaturedRep
@@ -277,3 +279,70 @@ def edit_settings(request):
         return redirect('dashboard')
     return render(request, 'settings.html', {'user': user,
                                              'settingsform': form})
+
+
+class BaseListView(PermissionMixin, generic.ListView):
+    """Base content list view."""
+    template_name = 'base_content_list.html'
+    create_object_url = None
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseListView, self).get_context_data(**kwargs)
+        context['verbose_name'] = self.model._meta.verbose_name
+        context['verbose_name_plural'] = self.model._meta.verbose_name_plural
+        context['create_object_url'] = self.create_object_url
+        return context
+
+
+class BaseCreateView(PermissionMixin, generic.CreateView):
+    """Base content create view."""
+    template_name = 'base_content_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseCreateView, self).get_context_data(**kwargs)
+        context['verbose_name'] = self.model._meta.verbose_name
+        context['creating'] = True
+        return context
+
+    def form_valid(self, form):
+        content = self.model._meta.verbose_name.capitalize()
+        messages.success(self.request, "%s succesfully created." % content)
+        return super(BaseCreateView, self).form_valid(form)
+
+
+class BaseUpdateView(PermissionMixin, generic.UpdateView):
+    """Base content edit view."""
+    template_name = 'base_content_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseUpdateView, self).get_context_data(**kwargs)
+        context['verbose_name'] = self.model._meta.verbose_name
+        context['creating'] = False
+        return context
+
+    def form_valid(self, form):
+        content = self.model._meta.verbose_name.capitalize()
+        messages.success(self.request, "%s succesfully updated." % content)
+        return super(BaseUpdateView, self).form_valid(form)
+
+    def get(self, request, *args, **kwargs):
+        if getattr(self.get_object(), 'is_editable', True):
+            return super(BaseUpdateView, self).get(request, *args, **kwargs)
+        raise ValidationError('Object cannot be updated.')
+
+    def post(self, request, *args, **kwargs):
+        if getattr(self.get_object(), 'is_editable', True):
+            return super(BaseUpdateView, self).post(request, *args, **kwargs)
+        raise ValidationError('Object cannot be updated.')
+
+
+class BaseDeleteView(PermissionMixin, generic.DeleteView):
+    """Base content delete view."""
+
+    def delete(self, request, *args, **kwargs):
+        """Override delete method to show message."""
+        if getattr(self.get_object(), 'is_editable', True):
+            content = self.model._meta.verbose_name.capitalize()
+            messages.success(self.request, '%s succesfully deleted.' % content)
+            return super(BaseDeleteView, self).delete(request, *args, **kwargs)
+        raise ValidationError('Object cannot be deleted')

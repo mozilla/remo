@@ -11,7 +11,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django_browserid.auth import default_username_algo
 from product_details import product_details
 
-from remo.profiles.models import UserProfile
+from remo.profiles.models import UserProfile, FunctionalArea
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
@@ -154,3 +154,10 @@ class ChangeDateJoinedForm(happyforms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['date_joined_program']
+
+
+class FunctionalAreaForm(happyforms.ModelForm):
+    """Form of functional areas."""
+
+    class Meta:
+        model = FunctionalArea

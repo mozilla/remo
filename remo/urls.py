@@ -70,6 +70,9 @@ urlpatterns = patterns(
     url(r'^voting/', include('remo.voting.voting_urls')),
     url(r'^v/', include('remo.voting.v_urls')),
 
+    # Portal base content
+    url(r'^content/', include('remo.base.content_urls')),
+
     # Generate a robots.txt
     (r'^robots\.txt$', robots_txt),
 )

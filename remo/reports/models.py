@@ -201,11 +201,23 @@ class Activity(models.Model):
     active_objects = GenericActiveManager()
 
     class Meta:
-        verbose_name_plural = 'Activities'
         ordering = ['name']
+        verbose_name = 'activity'
+        verbose_name_plural = 'activities'
 
     def __unicode__(self):
         return self.name
+
+    def get_absolute_delete_url(self):
+        return reverse('delete_activity', kwargs={'pk': self.id})
+
+    def get_absolute_edit_url(self):
+        return reverse('edit_activity', kwargs={'pk': self.id})
+
+    @property
+    def is_editable(self):
+        """Make initial activities uneditable."""
+        return not self.name in settings.BASE_ACTIVITIES
 
 
 class Campaign(models.Model):
@@ -217,9 +229,17 @@ class Campaign(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = 'campaign'
+        verbose_name_plural = 'campaigns'
 
     def __unicode__(self):
         return self.name
+
+    def get_absolute_delete_url(self):
+        return reverse('delete_campaign', kwargs={'pk': self.id})
+
+    def get_absolute_edit_url(self):
+        return reverse('edit_campaign', kwargs={'pk': self.id})
 
 
 class NGReport(caching.base.CachingMixin, models.Model):

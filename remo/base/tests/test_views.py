@@ -22,10 +22,14 @@ from test_utils import TestCase
 
 from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
+from remo.base.tests import requires_permission, RemoTestCase
 from remo.base.tests.browserid_mock import mock_browserid
 from remo.base.views import robots_txt
+from remo.profiles.models import FunctionalArea
 from remo.profiles.tasks import check_mozillian_username
-from remo.profiles.tests import UserFactory
+from remo.profiles.tests import UserFactory, FunctionalAreaFactory
+from remo.reports.models import Activity, Campaign
+from remo.reports.tests import ActivityFactory, CampaignFactory
 
 
 VOUCHED_MOZILLIAN = """
@@ -443,3 +447,212 @@ class ViewsTest(TestCase):
         request = factory.get('/robots.txt')
         response = robots_txt(request)
         eq_(response.content, 'User-agent: *\nDisallow: /')
+
+
+class BaseListViewTest(RemoTestCase):
+    """Test generic BaseListView class."""
+
+    def test_base_content_activities_list(self):
+        """Test list activities."""
+        admin = UserFactory.create(groups=['Admin'])
+        response = self.get(reverse('list_activities'), user=admin,
+                            follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'activity')
+        eq_(response.context['verbose_name_plural'], 'activities')
+        eq_(response.context['create_object_url'], reverse('create_activity'))
+        self.assertTemplateUsed(response, 'base_content_list.html')
+
+    def test_base_content_campaigns_list(self):
+        """Test list campaigns."""
+        admin = UserFactory.create(groups=['Admin'])
+        response = self.get(reverse('list_campaigns'), user=admin,
+                            follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'campaign')
+        eq_(response.context['verbose_name_plural'], 'campaigns')
+        eq_(response.context['create_object_url'], reverse('create_campaign'))
+        self.assertTemplateUsed(response, 'base_content_list.html')
+
+    def test_base_content_functional_areas_list(self):
+        """Test list functional areas."""
+        admin = UserFactory.create(groups=['Admin'])
+        response = self.get(reverse('list_functional_areas'), user=admin,
+                            follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'functional area')
+        eq_(response.context['verbose_name_plural'], 'functional areas')
+        eq_(response.context['create_object_url'],
+            reverse('create_functional_area'))
+        self.assertTemplateUsed(response, 'base_content_list.html')
+
+    @requires_permission()
+    def test_base_content_list_unauthed(self):
+        """Test list base content unauthorized."""
+        user = UserFactory.create(groups=['Rep'])
+        self.get(reverse('list_activities'), user=user, follow=True)
+
+
+class BaseCreateViewTest(RemoTestCase):
+    """Test generic BaseCreateView class."""
+
+    def test_base_content_activity_create_get(self):
+        """Test create activity."""
+        admin = UserFactory.create(groups=['Admin'])
+        response = self.get(reverse('create_activity'), user=admin,
+                            follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'activity')
+        eq_(response.context['creating'], True)
+        self.assertTemplateUsed(response, 'base_content_edit.html')
+
+    def test_base_content_campaign_create_get(self):
+        """Test create activity."""
+        admin = UserFactory.create(groups=['Admin'])
+        response = self.get(reverse('create_campaign'), user=admin,
+                            follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'campaign')
+        eq_(response.context['creating'], True)
+        self.assertTemplateUsed(response, 'base_content_edit.html')
+
+    def test_base_content_functional_area_create_get(self):
+        """Test create activity."""
+        admin = UserFactory.create(groups=['Admin'])
+        response = self.get(reverse('create_functional_area'), user=admin,
+                            follow=True)
+        eq_(response.status_code, 200)
+        eq_(response.context['verbose_name'], 'functional area')
+        eq_(response.context['creating'], True)
+        self.assertTemplateUsed(response, 'base_content_edit.html')
+
+    def test_base_content_activity_create_post(self):
+        """Test create activity."""
+        admin = UserFactory.create(groups=['Admin'])
+        response = self.post(reverse('create_activity'), user=admin,
+                             data={'name': 'test activity'}, follow=True)
+        eq_(response.status_code, 200)
+        query = Activity.objects.filter(name='test activity')
+        eq_(query.exists(), True)
+
+    def test_base_content_campaign_create_post(self):
+        """Test create campaign."""
+        admin = UserFactory.create(groups=['Admin'])
+        response = self.post(reverse('create_campaign'),
+                             data={'name': 'test campaign'},
+                             user=admin, follow=True)
+        eq_(response.status_code, 200)
+        query = Campaign.objects.filter(name='test campaign')
+        eq_(query.exists(), True)
+
+    def test_base_content_functional_area_create_post(self):
+        """Test create functional area."""
+        admin = UserFactory.create(groups=['Admin'])
+        response = self.post(reverse('create_functional_area'),
+                             data={'name': 'test functional area'},
+                             user=admin, follow=True)
+        eq_(response.status_code, 200)
+        query = FunctionalArea.objects.filter(name='test functional area')
+        eq_(query.exists(), True)
+
+    @requires_permission()
+    def test_base_content_create_unauthed(self):
+        """Test create base content unauthorized."""
+        user = UserFactory.create(groups=['Rep'])
+        self.post(reverse('create_functional_area'),
+                  data={'name': 'test functional area'},
+                  user=user, follow=True)
+
+
+class BaseUpdateViewTest(RemoTestCase):
+    """Test generic BaseUpdateView class."""
+
+    def test_base_content_activity_edit_post(self):
+        """Test edit activity."""
+        admin = UserFactory.create(groups=['Admin'])
+        activity = ActivityFactory.create(name='test activity')
+        response = self.post(reverse('edit_activity',
+                                     kwargs={'pk': activity.id}),
+                             user=admin, data={'name': 'edit activity'},
+                             follow=True)
+        eq_(response.status_code, 200)
+        query = Activity.objects.filter(name='edit activity')
+        eq_(query.exists(), True)
+
+    def test_base_content_campaign_edit_post(self):
+        """Test edit campaign."""
+        admin = UserFactory.create(groups=['Admin'])
+        campaign = CampaignFactory.create(name='test campaign')
+        response = self.post(reverse('edit_campaign',
+                                     kwargs={'pk': campaign.id}),
+                             data={'name': 'edit campaign'},
+                             user=admin, follow=True)
+        eq_(response.status_code, 200)
+        query = Campaign.objects.filter(name='edit campaign')
+        eq_(query.exists(), True)
+
+    def test_base_content_functional_area_edit_post(self):
+        """Test edit campaign."""
+        admin = UserFactory.create(groups=['Admin'])
+        area = FunctionalAreaFactory.create(name='test functional area')
+        response = self.post(reverse('edit_functional_area',
+                                     kwargs={'pk': area.id}),
+                             data={'name': 'edit functional area'},
+                             user=admin, follow=True)
+        eq_(response.status_code, 200)
+        query = FunctionalArea.objects.filter(name='edit functional area')
+        eq_(query.exists(), True)
+
+    @requires_permission()
+    def test_base_content_update_unauthed(self):
+        """Test update base content unauthorized."""
+        user = UserFactory.create(groups=['Rep'])
+        campaign = CampaignFactory.create(name='test campaign')
+        self.post(reverse('edit_campaign', kwargs={'pk': campaign.id}),
+                  data={'name': 'edit campaign'},
+                  user=user, follow=True)
+
+
+class BaseDeleteViewTest(RemoTestCase):
+    """Test generic BaseDeleteView class."""
+
+    def test_base_content_activity_delete_post(self):
+        """Test delete activity."""
+        admin = UserFactory.create(groups=['Admin'])
+        activity = ActivityFactory.create(name='test activity')
+        response = self.post(reverse('delete_activity',
+                                     kwargs={'pk': activity.id}), user=admin,
+                             follow=True)
+        eq_(response.status_code, 200)
+        query = Activity.objects.filter(name='test activity')
+        eq_(query.exists(), False)
+
+    def test_base_content_campaign_delete_post(self):
+        """Test delete campaign."""
+        admin = UserFactory.create(groups=['Admin'])
+        campaign = CampaignFactory.create(name='test campaign')
+        response = self.post(reverse('delete_campaign',
+                                     kwargs={'pk': campaign.id}), user=admin,
+                             follow=True)
+        eq_(response.status_code, 200)
+        query = Campaign.objects.filter(name='test campaign')
+        eq_(query.exists(), False)
+
+    def test_base_content_functional_area_delete_post(self):
+        """Test delete campaign."""
+        admin = UserFactory.create(groups=['Admin'])
+        area = FunctionalAreaFactory.create(name='test functional area')
+        response = self.post(reverse('delete_functional_area',
+                                     kwargs={'pk': area.id}), user=admin,
+                             follow=True)
+        eq_(response.status_code, 200)
+        query = Campaign.objects.filter(name='test functional area')
+        eq_(query.exists(), False)
+
+    @requires_permission()
+    def test_base_content_delete_unauthed(self):
+        """Test delete base content unauthorized."""
+        user = UserFactory.create(groups=['Rep'])
+        area = FunctionalAreaFactory.create(name='test functional area')
+        self.post(reverse('delete_functional_area', kwargs={'pk': area.id}),
+                  user=user, follow=True)
