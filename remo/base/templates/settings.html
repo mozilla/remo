@@ -12,11 +12,6 @@ Mozilla Reps - Settings
       <div class="large-10 columns">
         <h1>Settings</h1>
       </div>
-      <div class="large-2 columns align-right hide-for-small">
-        <button id="save-settings" type="submit" class="button small confirm">
-          Save
-        </button>
-      </div>
     </div>
 
     <div class="row">
@@ -24,9 +19,9 @@ Mozilla Reps - Settings
         <div class="section-container auto" data-section>
           <section>
             <p class="title" data-section-title>
-              <a href="#mailPreferences">Mail Preferences</a>
+              <a href="#personalSettings">Personal Settings</a>
             </p>
-            <div class="content" data-section-content id="mailPreferencesTab">
+            <div class="content" data-section-content id="personalSettingsTab">
               {% if user_is_mozillian(user) %}
                 <p>Nothing to see here yet!</p>
               {% else %}
@@ -50,17 +45,33 @@ Mozilla Reps - Settings
                   {{ settingsform.receive_email_on_add_event_comment }}
                   {{ settingsform.receive_email_on_add_event_comment.label }}
                 </p>
+                <button id="save-settings" type="submit" class="button small confirm">
+                  Save
+                </button>
               {% endif %}
             </div>
           </section>
+          {% if user_is_admin(user) %}
+            <section>
+              <p class="title" data-section-title>
+                <a href="#portalSettings">Portal Settings</a>
+              </p>
+              <div class="content" data-section-content id="portalSettingsTab">
+                <h2>Content</h2>
+                <p>
+                  <a href="{{ url('list_functional_areas') }}">Edit functional areas</a>
+                </p>
+                <p>
+                  <a href="{{ url('list_activities') }}">Edit activities</a>
+                </p>
+                <p>
+                  <a href="{{ url('list_campaigns') }}">Edit campaigns</a>
+                </p>
+              </div>
+            </section>
+          {% endif %}
         </div>
       </div>
-    </div>
-
-    <div class="large-2 columns align-right show-for-small">
-      <button id="save-settings-for-phone" type="submit" class="button small confirm">
-        Save
-      </button>
     </div>
   </form>
 </main>

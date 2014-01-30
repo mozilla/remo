@@ -5,6 +5,7 @@ import django.utils.timezone as timezone
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.signals import post_save, pre_save
@@ -61,8 +62,16 @@ class FunctionalArea(models.Model):
     active_objects = GenericActiveManager()
     objects = models.Manager()
 
+    def get_absolute_delete_url(self):
+        return reverse('delete_functional_area', kwargs={'pk': self.id})
+
+    def get_absolute_edit_url(self):
+        return reverse('edit_functional_area', kwargs={'pk': self.id})
+
     class Meta:
         ordering = ['name']
+        verbose_name = 'functional area'
+        verbose_name_plural = 'functional areas'
 
     def __unicode__(self):
         return self.name
