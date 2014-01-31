@@ -7,7 +7,6 @@ from django.utils.timezone import now as now_utc
 import factory
 from factory import fuzzy
 
-from remo.events.tests import EventFactory
 from remo.profiles.models import FunctionalArea
 from remo.profiles.tests import UserFactory
 from remo.reports.models import (Report, ReportComment, ReportEvent,
@@ -94,12 +93,10 @@ class NGReportFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory, userprofile__initial_council=True)
     mentor = factory.SelfAttribute('user.userprofile.mentor')
     activity = factory.SubFactory(ActivityFactory)
-    campaign = factory.SubFactory(CampaignFactory)
     latitude = fuzzy.FuzzyDecimal(low=-90.0, high=90.0, precision=5)
     longitude = fuzzy.FuzzyDecimal(low=-180.0, high=180.0, precision=5)
-    location = 'EventLocation'
+    location = 'Activity Location'
     is_passive = False
-    event = factory.SubFactory(EventFactory)
     link = 'www.example.com'
     report_date = fuzzy.FuzzyDate(datetime.date(2013, 01, 01),
                                   now_utc().date())
