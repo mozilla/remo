@@ -555,38 +555,54 @@ class ListNGReportTests(RemoTestCase):
     def setUp(self):
         Flag.objects.create(name='reports_ng_report', everyone=True)
 
-    def test_view_reports_list(self):
+    def test_list(self):
         """Test view report list page."""
+        report = NGReportFactory.create()
         response = self.get(reverse('ng_reports_list_reports'))
         self.assertTemplateUsed(response, 'ng_reports_list.html')
+        eq_(response.context['pageheader'], 'Activities for Reps')
         eq_(response.status_code, 200)
+        eq_(set(response.context['reports'].object_list),
+            set([report]))
 
-    def test_page_header_rep(self):
+    def test_list_rep(self):
         """Test page header context for rep."""
         user = UserFactory.create(groups=['Rep'], first_name='Foo',
                                   last_name='Bar')
         name = user.userprofile.display_name
+        report = NGReportFactory.create(user=user)
+        NGReportFactory.create()
         response = self.get(url=reverse('ng_reports_list_rep_reports',
                                         kwargs={'rep': name}), user=user)
         eq_(response.context['pageheader'], 'Activities for Foo Bar')
+        eq_(set(response.context['reports'].object_list),
+            set([report]), 'Other Rep reports are listed')
 
-    def test_page_header_mentor(self):
+    def test_list_mentor(self):
         """Test page header context for mentor."""
-        user = UserFactory.create(groups=['Mentor'], first_name='Foo',
-                                  last_name='Bar')
-        name = user.userprofile.display_name
+        mentor = UserFactory.create(groups=['Mentor'], first_name='Foo',
+                                    last_name='Bar')
+        name = mentor.userprofile.display_name
+
+        report_1 = NGReportFactory.create(mentor=mentor)
+        report_2 = NGReportFactory.create(mentor=mentor)
+        NGReportFactory.create()
         response = self.get(url=reverse('ng_reports_list_mentor_reports',
-                                        kwargs={'mentor': name}), user=user)
+                                        kwargs={'mentor': name}), user=mentor)
         msg = 'Activities for Reps mentored by Foo Bar'
         eq_(response.context['pageheader'], msg)
-
-    def test_page_header_default(self):
-        """Test default page header context."""
-        response = self.get(url=reverse('ng_reports_list_reports'))
-        eq_(response.context['pageheader'], 'Activities for Reps')
+        eq_(set(response.context['reports'].object_list),
+            set([report_1, report_2]), 'Other Mentor reports are listed')
 
     def test_get_invalid_order(self):
         """Test get invalid sort order."""
         response = self.get(url=reverse('ng_reports_list_reports'),
                             data={'sort_key': 'invalid'})
         eq_(response.context['sort_key'], 'report_date_desc')
+
+    def test_future_not_listed(self):
+        report = NGReportFactory.create()
+        NGReportFactory.create(report_date=datetime.date(2999, 1, 1))
+        response = self.get(reverse('ng_reports_list_reports'))
+        eq_(set(response.context['reports'].object_list),
+            set([report]))
