@@ -584,8 +584,11 @@ class ListNGReportTests(RemoTestCase):
                                     last_name='Bar')
         name = mentor.userprofile.display_name
 
-        report_1 = NGReportFactory.create(mentor=mentor)
-        report_2 = NGReportFactory.create(mentor=mentor)
+        user_1 = UserFactory.create(userprofile__mentor=mentor)
+        user_2 = UserFactory.create(userprofile__mentor=mentor)
+
+        report_1 = NGReportFactory.create(mentor=mentor, user=user_1)
+        report_2 = NGReportFactory.create(mentor=mentor, user=user_2)
         NGReportFactory.create()
         response = self.get(url=reverse('ng_reports_list_mentor_reports',
                                         kwargs={'mentor': name}), user=mentor)
