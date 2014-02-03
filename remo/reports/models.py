@@ -448,3 +448,34 @@ def update_passive_report_functional_areas(sender, instance, action, pk_set,
 
         if action == 'post_clear':
             report.functional_areas.clear()
+
+
+@receiver(post_save, sender=NGReportComment,
+          dispatch_uid='email_commenters_on_add_ng_report_comment_signal')
+def email_commenters_on_add_ng_report_comment(sender, instance, **kwargs):
+    """Email a user when a comment is added to a continuous report instance."""
+    subject = '[Report] User {0} commented on {1}'
+    email_template = 'emails/user_notification_on_add_ng_report_comment.txt'
+    report = instance.report
+
+    # Send an email to all users commented so far on the report except fom
+    # the user who made the comment. Dedup the list with unique IDs.
+    commenters = set(NGReportComment.objects.filter(report=report)
+                     .exclude(user=instance.user)
+                     .values_list('user', flat=True))
+
+    # Add the owner of the report in the list
+    if report.user.id not in commenters:
+        commenters.add(report.user.id)
+
+    for user_id in commenters:
+        user = User.objects.get(pk=user_id)
+        if (user.userprofile.receive_email_on_add_comment and
+                user != instance.user):
+            ctx_data = {'report': report, 'user': user,
+                        'commenter': instance.user,
+                        'comment': instance.comment,
+                        'created_on': instance.created_on}
+            subject = subject.format(instance.user.get_full_name(), report)
+            send_remo_mail.delay([user_id], subject,
+                                 email_template, ctx_data)
