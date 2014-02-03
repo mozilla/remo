@@ -1,3 +1,7 @@
-READONLY_ACTIVITIES = ['Attended an Event', 'Created an Event',
-                       'Participated in a campaign']
-UNLISTED_ACTIVITIES = ['Attended an Event', 'Created an Event']
+ACTIVITY_EVENT_ATTEND = 'Attended an Event'
+ACTIVITY_EVENT_CREATE = 'Created an Event'
+ACTIVITY_CAMPAIGN = 'Participated in a campaign'
+
+READONLY_ACTIVITIES = [ACTIVITY_CAMPAIGN, ACTIVITY_EVENT_ATTEND,
+                       ACTIVITY_EVENT_CREATE]
+UNLISTED_ACTIVITIES = [ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE]

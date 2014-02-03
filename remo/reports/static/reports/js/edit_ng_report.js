@@ -36,7 +36,7 @@
         var text = $('select#id_activity').find(":selected").text();
         var $panel = $('#campaign-panel');
         var input = $panel.find('input');
-        var triggerInput = 'Participated in a campaign';
+        var triggerInput = $('#active-report-form').data('campaign-trigger');
 
         if (text === triggerInput) {
             $panel.slideDown();

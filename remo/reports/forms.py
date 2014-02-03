@@ -4,7 +4,7 @@ from django.utils.timezone import now as now_utc
 
 import happyforms
 
-from remo.reports import UNLISTED_ACTIVITIES
+from remo.reports import ACTIVITY_CAMPAIGN, UNLISTED_ACTIVITIES
 from remo.reports.models import (Activity, Campaign, NGReport, NGReportComment,
                                  Report, ReportComment, ReportEvent,
                                  ReportLink)
@@ -118,7 +118,7 @@ class NGReportForm(happyforms.ModelForm):
         cdata = self.cleaned_data
 
         activity = cdata.get('activity')
-        if (activity and activity.name == 'Participated in a campaign'
+        if (activity and activity.name == ACTIVITY_CAMPAIGN
                 and not cdata.get('campaign')):
             msg = 'Please select an option from the list.'
             self._errors['campaign'] = self.error_class([msg])

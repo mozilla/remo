@@ -3,10 +3,11 @@ from datetime import datetime
 from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
+from remo.profiles.tests import FunctionalAreaFactory, UserFactory
+from remo.reports import ACTIVITY_CAMPAIGN
 from remo.reports.forms import NGReportForm
 from remo.reports.models import NGReport
 from remo.reports.tests import ActivityFactory
-from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
 class NGReportFormTests(RemoTestCase):
@@ -51,8 +52,7 @@ class NGReportFormTests(RemoTestCase):
             'Report date cannot be in the future.')
 
     def test_campain_activity_without_campaign(self):
-        activity = ActivityFactory.create(
-            name='Participated in a campaign')
+        activity = ActivityFactory.create(name=ACTIVITY_CAMPAIGN)
         data = {
             'activity': activity.id
         }

@@ -18,7 +18,8 @@ from remo.base.models import GenericActiveManager
 from remo.events.helpers import get_event_link
 from remo.events.models import Attendance as EventAttendance, Event
 from remo.profiles.models import FunctionalArea
-from remo.reports import READONLY_ACTIVITIES
+from remo.reports import (ACTIVITY_CAMPAIGN, ACTIVITY_EVENT_ATTEND,
+                          ACTIVITY_EVENT_CREATE, READONLY_ACTIVITIES)
 from remo.reports.tasks import send_remo_mail
 
 # OLD REPORTING SYSTEM
@@ -190,10 +191,6 @@ class ReportLink(models.Model):
 
 
 # NEW REPORTING SYSTEM
-EVENT_ATTENDANCE_ACTIVITY = 'Attended an Event'
-EVENT_CREATION_ACTIVITY = 'Created an Event'
-
-
 class Activity(models.Model):
     name = models.CharField(max_length=100)
     active = models.BooleanField(default=True)
@@ -301,14 +298,22 @@ class NGReport(caching.base.CachingMixin, models.Model):
 
     def save(self, *args, **kwargs):
         """Override save method for custom functionality."""
-        self.mentor = self.user.userprofile.mentor
+        if not self.mentor:
+            self.mentor = self.user.userprofile.mentor
         super(NGReport, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['-report_date', '-created_on']
 
     def __unicode__(self):
-        return '%s %s' % (self.report_date, self.id)
+        if self.activity.name == ACTIVITY_EVENT_ATTEND:
+            return 'Attended event "%s"' % self.event.name
+        elif self.activity.name == ACTIVITY_EVENT_CREATE:
+            return 'Created event "%s"' % self.event.name
+        elif self.activity.name == ACTIVITY_CAMPAIGN:
+            return 'Participated in campaign "%s"' % self.campaign.name
+        else:
+            return self.activity.name
 
 
 class NGReportComment(models.Model):
@@ -340,7 +345,7 @@ class NGReportComment(models.Model):
 def create_passive_attendance_report(sender, instance, **kwargs):
     """Automatically create a passive report after event attendance save."""
     if instance.user.groups.filter(name='Rep').exists():
-        activity = Activity.objects.get(name=EVENT_ATTENDANCE_ACTIVITY)
+        activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
         attrs = {
             'user': instance.user,
             'event': instance.event,
@@ -375,7 +380,7 @@ def create_update_passive_event_report(sender, instance, created, **kwargs):
         'activity_description': instance.description}
 
     if created:
-        activity = Activity.objects.get(name=EVENT_CREATION_ACTIVITY)
+        activity = Activity.objects.get(name=ACTIVITY_EVENT_CREATE)
         attrs.update({
             'user': instance.owner,
             'event': instance,
@@ -395,7 +400,7 @@ def delete_passive_attendance_report(sender, instance, **kwargs):
     attrs = {
         'user': instance.user,
         'event': instance.event,
-        'activity': Activity.objects.get(name=EVENT_ATTENDANCE_ACTIVITY)}
+        'activity': Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)}
 
     NGReport.objects.filter(**attrs).delete()
 
@@ -417,7 +422,7 @@ def update_passive_report_event_owner(sender, instance, **kwargs):
             attrs = {
                 'user': previous_owner,
                 'event': instance,
-                'activity': Activity.objects.get(name=EVENT_CREATION_ACTIVITY)}
+                'activity': Activity.objects.get(name=ACTIVITY_EVENT_CREATE)}
             mentor = instance.owner.userprofile.mentor
             NGReport.objects.filter(**attrs).update(user=instance.owner,
                                                     mentor=mentor)

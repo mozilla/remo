@@ -22,9 +22,11 @@ import remo.base.utils as utils
 from remo.base.decorators import permission_check
 from remo.events.helpers import get_attendee_role_event
 from remo.profiles.models import UserProfile
-from models import (NGReport, NGReportComment, Report, ReportComment,
-                    ReportEvent, ReportLink)
-from utils import participation_type_to_number
+from remo.reports import ACTIVITY_CAMPAIGN
+from remo.reports.models import (NGReport, NGReportComment, Report,
+                                 ReportComment, ReportEvent, ReportLink)
+from remo.reports.utils import participation_type_to_number
+
 
 # New reporting system
 LIST_NG_REPORTS_DEFAULT_SORT = 'report_date_desc'
@@ -355,7 +357,8 @@ def edit_ng_report(request, display_name='', year=None,
                   {'report_form': report_form,
                    'pageuser': user,
                    'report': report,
-                   'created': created})
+                   'created': created,
+                   'campaign_trigger': ACTIVITY_CAMPAIGN})
 
 
 @waffle_flag('reports_ng_report')
