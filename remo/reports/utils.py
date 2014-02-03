@@ -112,7 +112,7 @@ def participation_type_to_number(participation_type):
             return number
 
 
-def user_commited_reports(user, current_streak=False,
+def count_user_ng_reports(user, current_streak=False,
                           longest_streak=False, period=0):
     """Return the number of reports of a user over
 

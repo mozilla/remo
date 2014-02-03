@@ -48,5 +48,5 @@ def count_ng_reports(obj, current_streak=False, longest_streak=False,
                      period=0):
     # Avoid circular dependencies
     import utils
-    return utils.user_commited_reports(obj, current_streak,
+    return utils.count_user_ng_reports(obj, current_streak,
                                        longest_streak, period)

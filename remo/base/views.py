@@ -169,7 +169,7 @@ def dashboard(request):
 
     # Mozillians block
     if user.groups.filter(name='Mozillians').exists():
-        dashboard_mozillians(request, user)
+        return dashboard_mozillians(request, user)
 
     # Reps block
     q_closed = Q(status='RESOLVED') | Q(status='VERIFIED')

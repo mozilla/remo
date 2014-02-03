@@ -322,11 +322,11 @@ class ViewsTest(TestCase):
                 'body': 'This is my body\n Multiline of course',
                 'functional_area': 2}
         response = c.post(reverse('dashboard'), data, follow=True)
-        self.assertTemplateUsed(response, 'dashboard_mozillians.html')
         for m in response.context['messages']:
             pass
         eq_(m.tags, u'success')
         eq_(len(mail.outbox), 1)
+        self.assertTemplateUsed(response, 'dashboard_mozillians.html')
 
     def test_view_about_page(self):
         """Get about page."""

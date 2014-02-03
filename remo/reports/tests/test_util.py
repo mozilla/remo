@@ -9,7 +9,7 @@ from waffle import Flag
 from remo.base.tests import RemoTestCase
 from remo.profiles.tests import UserFactory
 from remo.reports.tests import NGReportFactory, ReportFactory
-from remo.reports.utils import (get_reports_for_year, user_commited_reports,
+from remo.reports.utils import (get_reports_for_year, count_user_ng_reports,
                                 REPORTS_PERMISSION_LEVEL)
 
 
@@ -64,7 +64,7 @@ class UtilsTest(TestCase):
 
 
 class TestUserCommitedReports(RemoTestCase):
-    """Tests for user_commited_reports utility."""
+    """Tests for count_user_ng_reports utility."""
     def setUp(self):
         Flag.objects.create(name='reports_ng_report', everyone=True)
 
@@ -75,7 +75,7 @@ class TestUserCommitedReports(RemoTestCase):
             NGReportFactory.create(user=user,
                                    report_date=(utc_now().date() -
                                                 timedelta(days=i)))
-        eq_(user_commited_reports(user, current_streak=True), 4)
+        eq_(count_user_ng_reports(user, current_streak=True), 4)
 
     def test_longest_streak(self):
         user = UserFactory.create()
@@ -89,7 +89,7 @@ class TestUserCommitedReports(RemoTestCase):
             NGReportFactory.create(user=user,
                                    report_date=(utc_now().date() -
                                                 timedelta(days=i)))
-        eq_(user_commited_reports(user, longest_streak=True), 7)
+        eq_(count_user_ng_reports(user, longest_streak=True), 7)
 
     def test_get_last_two_weeks_reports(self):
         user = UserFactory.create()
@@ -99,7 +99,7 @@ class TestUserCommitedReports(RemoTestCase):
                                    report_date=(utc_now().date() -
                                                 timedelta(days=i)))
         # Get the reports added in the last two weeks
-        eq_(user_commited_reports(user, period=2), 4)
+        eq_(count_user_ng_reports(user, period=2), 4)
 
     def test_get_last_ten_weeks_reports(self):
         user = UserFactory.create()
@@ -109,4 +109,4 @@ class TestUserCommitedReports(RemoTestCase):
                                    report_date=(utc_now().date() -
                                                 timedelta(days=i)))
         # Get the reports added in the last 10 weeks
-        eq_(user_commited_reports(user, period=10), 4)
+        eq_(count_user_ng_reports(user, period=10), 4)
