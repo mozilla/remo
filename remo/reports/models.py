@@ -306,9 +306,9 @@ class NGReport(caching.base.CachingMixin, models.Model):
         ordering = ['-report_date', '-created_on']
 
     def __unicode__(self):
-        if self.activity.name == ACTIVITY_EVENT_ATTEND:
+        if self.activity.name == ACTIVITY_EVENT_ATTEND and self.event:
             return 'Attended event "%s"' % self.event.name
-        elif self.activity.name == ACTIVITY_EVENT_CREATE:
+        elif self.activity.name == ACTIVITY_EVENT_CREATE and self.event:
             return 'Created event "%s"' % self.event.name
         elif self.activity.name == ACTIVITY_CAMPAIGN:
             return 'Participated in campaign "%s"' % self.campaign.name
