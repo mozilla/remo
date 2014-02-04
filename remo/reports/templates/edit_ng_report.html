@@ -6,7 +6,7 @@
 
 {% block content %}
 <main role="main" class="reports-main">
-  <form id="active-report-form" method="post">
+  <form id="active-report-form" method="post" data-campaign-trigger="{{ campaign_trigger }}">
     {{ csrf() }}
 
     <div class="row">

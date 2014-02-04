@@ -1,0 +1,15 @@
+Hi {{ mentor.first_name|capitalize }},
+
+
+Here are reports from your mentees, created on or related to {{ datestring }}:
+
+{% for rep, user_reports in reports|groupby('user') %}
+{{ rep.get_full_name() }}:
+{% for report in user_reports %}
+  - {{ report }} ( {{ report.get_absolute_url()|absolutify }} )
+{% endfor %}
+{% endfor %}
+
+
+Cheers,
+Your lovely ReMo bot.

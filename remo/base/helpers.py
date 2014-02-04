@@ -9,10 +9,11 @@ from django.contrib.markup.templatetags import markup
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 
+from Crypto.Cipher import AES
+from funfactory import utils
 from jingo import register
 from jinja2 import Markup
 
-from Crypto.Cipher import AES
 
 AES_PADDING = 16
 AES_IV_LENGTH = 16
@@ -236,3 +237,8 @@ def ical_format_lines(text):
 def get_attr(obj, value, default):
     """Add a gettatr helper in templates."""
     return getattr(obj, value, default)
+
+
+@register.filter
+def absolutify(url):
+    return utils.absolutify(url)

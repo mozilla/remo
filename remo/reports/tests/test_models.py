@@ -10,9 +10,8 @@ from remo.base.utils import go_back_n_months
 from remo.events.helpers import get_event_link
 from remo.events.tests import EventFactory, AttendanceFactory
 from remo.profiles.tests import UserFactory
-from remo.reports.models import (Activity, NGReport, EVENT_ATTENDANCE_ACTIVITY,
-                                 EVENT_CREATION_ACTIVITY, OVERDUE_DAY)
-
+from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
+from remo.reports.models import Activity, NGReport, OVERDUE_DAY
 from remo.reports.tests import (NGReportFactory, NGReportCommentFactory,
                                 ReportCommentFactory, ReportFactory)
 
@@ -233,7 +232,7 @@ class NGReportComment(TestCase):
 class NGReportSignalsTest(TestCase):
     def test_create_attendance_report_owner(self):
         """Test creating a passive attendance report for event owner."""
-        activity = Activity.objects.get(name=EVENT_ATTENDANCE_ACTIVITY)
+        activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
         user = UserFactory.create(groups=['Rep', 'Mentor'],
                                   userprofile__initial_council=True)
         event = EventFactory.create(owner=user)
@@ -242,7 +241,7 @@ class NGReportSignalsTest(TestCase):
 
         location = '%s, %s, %s' % (event.city, event.region, event.country)
         eq_(report.mentor, user.userprofile.mentor)
-        eq_(report.activity.name, EVENT_ATTENDANCE_ACTIVITY)
+        eq_(report.activity.name, ACTIVITY_EVENT_ATTEND)
         eq_(report.latitude, event.lat)
         eq_(report.longitude, event.lon)
         eq_(report.location, location)
@@ -255,7 +254,7 @@ class NGReportSignalsTest(TestCase):
 
     def test_create_attendance_report_attendee(self):
         """Test creating a passive report after attending an event."""
-        activity = Activity.objects.get(name=EVENT_ATTENDANCE_ACTIVITY)
+        activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
         event = EventFactory.create()
         user = UserFactory.create(groups=['Rep', 'Mentor'],
                                   userprofile__initial_council=True)
@@ -265,7 +264,7 @@ class NGReportSignalsTest(TestCase):
 
         location = '%s, %s, %s' % (event.city, event.region, event.country)
         eq_(report.mentor, user.userprofile.mentor)
-        eq_(report.activity.name, EVENT_ATTENDANCE_ACTIVITY)
+        eq_(report.activity.name, ACTIVITY_EVENT_ATTEND)
         eq_(report.latitude, event.lat)
         eq_(report.longitude, event.lon)
         eq_(report.location, location)
@@ -278,7 +277,7 @@ class NGReportSignalsTest(TestCase):
 
     def test_create_event_report(self):
         """Test creating a passive report after creating an event."""
-        activity = Activity.objects.get(name=EVENT_CREATION_ACTIVITY)
+        activity = Activity.objects.get(name=ACTIVITY_EVENT_CREATE)
         event = EventFactory.build()
         event.owner = UserFactory.create()
         event.save()
@@ -287,7 +286,7 @@ class NGReportSignalsTest(TestCase):
 
         location = '%s, %s, %s' % (event.city, event.region, event.country)
         eq_(report.mentor, event.owner.userprofile.mentor)
-        eq_(report.activity.name, EVENT_CREATION_ACTIVITY)
+        eq_(report.activity.name, ACTIVITY_EVENT_CREATE)
         eq_(report.latitude, event.lat)
         eq_(report.longitude, event.lon)
         eq_(report.location, location)
@@ -300,7 +299,7 @@ class NGReportSignalsTest(TestCase):
 
     def test_delete_attendance_report(self):
         """Test delete passive report after attendance delete."""
-        activity = Activity.objects.get(name=EVENT_ATTENDANCE_ACTIVITY)
+        activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
         event = EventFactory.create()
         user = UserFactory.create(groups=['Rep', 'Mentor'],
                                   userprofile__initial_council=True)
@@ -313,7 +312,7 @@ class NGReportSignalsTest(TestCase):
 
     def test_delete_event_report(self):
         """Test delete passive report after event delete."""
-        activity = Activity.objects.get(name=EVENT_CREATION_ACTIVITY)
+        activity = Activity.objects.get(name=ACTIVITY_EVENT_CREATE)
         event = EventFactory.create()
         user = event.owner
         query = NGReport.objects.filter(event=event, user=user,
