@@ -11,7 +11,9 @@ from remo.profiles.models import FunctionalArea
 from remo.profiles.tests import UserFactory
 from remo.reports.models import (Report, ReportComment, ReportEvent,
                                  ReportLink, Activity, Campaign, NGReport,
-                                 NGReportComment, email_mentor_on_add_report)
+                                 NGReportComment,
+                                 email_commenters_on_add_ng_report_comment,
+                                 email_mentor_on_add_report)
 
 
 EMPTY_REPORT = False
@@ -123,3 +125,19 @@ class NGReportCommentFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory, userprofile__initial_council=True)
     report = factory.SubFactory(NGReportFactory)
     comment = factory.Sequence(lambda n: 'Comment #{0}'.format(n))
+
+
+class NGReportCommentFactoryNoSignals(NGReportCommentFactory):
+
+    @classmethod
+    def _create(cls, target_class, *args, **kwargs):
+        dispatch_uid = 'email_commenters_on_add_ng_report_comment_signal'
+        post_save.disconnect(email_commenters_on_add_ng_report_comment,
+                             NGReportComment,
+                             dispatch_uid=dispatch_uid)
+        comment = super(NGReportCommentFactory, cls)._create(target_class,
+                                                             *args, **kwargs)
+        post_save.connect(email_commenters_on_add_ng_report_comment,
+                          NGReportComment,
+                          dispatch_uid=dispatch_uid)
+        return comment
