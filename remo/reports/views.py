@@ -387,6 +387,7 @@ def view_ng_report(request, display_name, year, month, day, id):
         obj.report = report
         obj.save()
         messages.success(request, 'Comment saved successfully.')
+        ctx_data['comment_form'] = forms.NGReportCommentForm()
 
     return render(request, template, ctx_data)
 
