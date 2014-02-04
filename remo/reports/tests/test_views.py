@@ -316,6 +316,19 @@ class EditNGReportTests(RemoTestCase):
         # Create waffle flag
         Flag.objects.create(name='reports_ng_report', everyone=True)
 
+    def test_new_report_initial_data(self):
+        user = UserFactory.create(groups=['Mentor'], userprofile__city='City',
+                                  userprofile__region='Region',
+                                  userprofile__country='Country',
+                                  userprofile__lat=0,
+                                  userprofile__lon=90)
+        response = self.get(url=reverse('reports_new_ng_report'),
+                            user=user)
+        initial = response.context['report_form'].initial
+        eq_(initial['location'], 'City, Region, Country')
+        eq_(initial['latitude'], 0)
+        eq_(initial['longitude'], 90)
+
     def test_get_as_owner(self):
         report = NGReportFactory.create()
         response = self.get(url=report.get_absolute_edit_url(),
