@@ -2,6 +2,7 @@ import base64
 import binascii
 import re
 import time
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -241,4 +242,11 @@ def get_attr(obj, value, default):
 
 @register.filter
 def absolutify(url):
+    """Prepend the SITE_URL to the url."""
     return utils.absolutify(url)
+
+
+@register.function
+def get_date_n_weeks_before(date, weeks=0):
+    """Return the date X weeks before date."""
+    return date - timedelta(weeks=weeks)

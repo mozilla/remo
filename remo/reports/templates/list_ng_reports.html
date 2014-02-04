@@ -107,7 +107,7 @@
             {% for report in reports.object_list %}
               <tr>
                 <td>
-                  <a href="{{ url('ng_reports_list_rep_reports',
+                  <a href="{{ url('list_ng_reports_rep',
                            report.user.userprofile.display_name) }}">
                     {{ report.user.get_full_name() }}
                   </a>
@@ -118,7 +118,7 @@
                 </td>
                 <td>
                   {% if report.mentor %}
-                    <a href="{{ url('ng_reports_list_mentor_reports',
+                    <a href="{{ url('list_ng_reports_mentor',
                              report.mentor.userprofile.display_name) }}">
                       {{ report.mentor.get_full_name() }}
                     </a>

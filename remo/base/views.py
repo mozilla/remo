@@ -9,9 +9,11 @@ from django.contrib import auth, messages
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
 from django.shortcuts import redirect, render
+from django.utils.timezone import now as utc_now
 from django.views import generic
 from django.views.decorators.cache import cache_control, never_cache
 
+import waffle
 import forms
 import utils
 
@@ -111,6 +113,53 @@ def main(request):
     return render(request, 'main.html', {'featuredrep': featured_rep})
 
 
+def dashboard_mozillians(request, user):
+    args = {}
+    user_profile = user.userprofile
+    interestform = forms.TrackFunctionalAreasForm(request.POST or None,
+                                                  instance=user_profile)
+    reps_email_form = forms.EmailRepsForm(request.POST or None)
+    if interestform.is_valid():
+        interestform.save()
+        messages.success(request, 'Interests successfully saved')
+        return redirect('dashboard')
+    if reps_email_form.is_valid():
+        functional_area = reps_email_form.cleaned_data['functional_area']
+        reps = (User.objects
+                .filter(groups__name='Rep')
+                .filter(userprofile__functional_areas=functional_area))
+        reps_email_form.send_email(request, reps)
+        return redirect('dashboard')
+
+    # Get the reps who match the specified interests
+    interests = user.userprofile.tracked_functional_areas.all()
+    tracked_interests = {}
+    reps_reports = {}
+    reps_past_events = {}
+    reps_current_events = {}
+    now = datetime.now()
+    for interest in interests:
+        # Get the Reps with the specified interest
+        reps = User.objects.filter(groups__name='Rep').filter(
+            userprofile__functional_areas=interest)
+        tracked_interests[interest.name] = {
+            'id': interest.id, 'reps': reps}
+        # Get the reports of the Reps with the specified interest
+        reps_reports[interest.name] = Report.objects.filter(
+            user__in=reps).order_by('created_on')[:20]
+        # Get the events with the specified category
+        events = Event.objects.filter(categories=interest)
+        reps_past_events[interest.name] = events.filter(start__lt=now)[:50]
+        reps_current_events[interest.name] = events.filter(start__gte=now)
+    args['interestform'] = interestform
+    args['reps_reports'] = reps_reports
+    args['reps_past_events'] = reps_past_events
+    args['reps_current_events'] = reps_current_events
+    args['tracked_interests'] = tracked_interests
+    args['reps_email_form'] = reps_email_form
+    return render(request, 'dashboard_mozillians.html', args)
+
+
 @never_cache
 @permission_check()
 def dashboard(request):
@@ -120,49 +169,7 @@ def dashboard(request):
 
     # Mozillians block
     if user.groups.filter(name='Mozillians').exists():
-        user_profile = user.userprofile
-        interestform = forms.TrackFunctionalAreasForm(request.POST or None,
-                                                      instance=user_profile)
-        reps_email_form = forms.EmailRepsForm(request.POST or None)
-        if interestform.is_valid():
-            interestform.save()
-            messages.success(request, 'Interests successfully saved')
-            return redirect('dashboard')
-        if reps_email_form.is_valid():
-            functional_area = reps_email_form.cleaned_data['functional_area']
-            reps = (User.objects
-                    .filter(groups__name='Rep')
-                    .filter(userprofile__functional_areas=functional_area))
-            reps_email_form.send_email(request, reps)
-            return redirect('dashboard')
-
-        # Get the reps who match the specified interests
-        interests = user.userprofile.tracked_functional_areas.all()
-        tracked_interests = {}
-        reps_reports = {}
-        reps_past_events = {}
-        reps_current_events = {}
-        now = datetime.now()
-        for interest in interests:
-            # Get the Reps with the specified interest
-            reps = User.objects.filter(groups__name='Rep').filter(
-                userprofile__functional_areas=interest)
-            tracked_interests[interest.name] = {
-                'id': interest.id, 'reps': reps}
-            # Get the reports of the Reps with the specified interest
-            reps_reports[interest.name] = Report.objects.filter(
-                user__in=reps).order_by('created_on')[:20]
-            # Get the events with the specified category
-            events = Event.objects.filter(categories=interest)
-            reps_past_events[interest.name] = events.filter(start__lt=now)[:50]
-            reps_current_events[interest.name] = events.filter(start__gte=now)
-        args['interestform'] = interestform
-        args['reps_reports'] = reps_reports
-        args['reps_past_events'] = reps_past_events
-        args['reps_current_events'] = reps_current_events
-        args['tracked_interests'] = tracked_interests
-        args['reps_email_form'] = reps_email_form
-        return render(request, 'dashboard_mozillians.html', args)
+        return dashboard_mozillians(request, user)
 
     # Reps block
     q_closed = Q(status='RESOLVED') | Q(status='VERIFIED')
@@ -178,6 +185,23 @@ def dashboard(request):
                          exclude(q_closed))
 
     today = date.today()
+    # NG Reports
+    if waffle.flag_is_active(request, 'reports_ng_report'):
+        if user.groups.filter(name='Rep').exists():
+            args['ng_reports'] = (user.ng_reports
+                                  .filter(report_date__lte=today)
+                                  .order_by('-report_date'))
+            args['today'] = utc_now()
+
+        if user.groups.filter(name='Mentor').exists():
+            args['mentees_ng_reportees'] = User.objects.filter(
+                ng_reports__isnull=False, ng_reports__mentor=user).distinct()
+
+        if user.groups.filter(Q(name='Admin') | Q(name='Council')).exists():
+            args['all_ng_reportees'] = User.objects.filter(
+                ng_reports__isnull=False).distinct()
+
+    # Old reporting system and dashboard data
     if user.groups.filter(name='Rep').exists():
         args['monthly_reports'] = get_reports_for_year(
             user, start_year=2011, end_year=today.year,
@@ -215,7 +239,8 @@ def dashboard(request):
         args['all_swag_requests'] = swag_requests.all()[:20]
         args['my_cit_requests'] = cit_requests
         args['my_planning_requests'] = planning_requests
-        args['all_reports'] = Report.objects.all().order_by('-created_on')[:20]
+        args['all_reports'] = (Report.objects.all()
+                               .order_by('-created_on')[:20])
     else:
         args['my_planning_requests'] = (planning_requests.
                                         filter(my_q_assigned).

@@ -571,8 +571,8 @@ class ListNGReportTests(RemoTestCase):
     def test_list(self):
         """Test view report list page."""
         report = NGReportFactory.create()
-        response = self.get(reverse('ng_reports_list_reports'))
-        self.assertTemplateUsed(response, 'ng_reports_list.html')
+        response = self.get(reverse('list_ng_reports'))
+        self.assertTemplateUsed(response, 'list_ng_reports.html')
         eq_(response.context['pageheader'], 'Activities for Reps')
         eq_(response.status_code, 200)
         eq_(set(response.context['reports'].object_list),
@@ -585,7 +585,7 @@ class ListNGReportTests(RemoTestCase):
         name = user.userprofile.display_name
         report = NGReportFactory.create(user=user)
         NGReportFactory.create()
-        response = self.get(url=reverse('ng_reports_list_rep_reports',
+        response = self.get(url=reverse('list_ng_reports_rep',
                                         kwargs={'rep': name}), user=user)
         eq_(response.context['pageheader'], 'Activities for Foo Bar')
         eq_(set(response.context['reports'].object_list),
@@ -597,13 +597,10 @@ class ListNGReportTests(RemoTestCase):
                                     last_name='Bar')
         name = mentor.userprofile.display_name
 
-        user_1 = UserFactory.create(userprofile__mentor=mentor)
-        user_2 = UserFactory.create(userprofile__mentor=mentor)
-
-        report_1 = NGReportFactory.create(mentor=mentor, user=user_1)
-        report_2 = NGReportFactory.create(mentor=mentor, user=user_2)
+        report_1 = NGReportFactory.create(mentor=mentor)
+        report_2 = NGReportFactory.create(mentor=mentor)
         NGReportFactory.create()
-        response = self.get(url=reverse('ng_reports_list_mentor_reports',
+        response = self.get(url=reverse('list_ng_reports_mentor',
                                         kwargs={'mentor': name}), user=mentor)
         msg = 'Activities for Reps mentored by Foo Bar'
         eq_(response.context['pageheader'], msg)
@@ -612,13 +609,13 @@ class ListNGReportTests(RemoTestCase):
 
     def test_get_invalid_order(self):
         """Test get invalid sort order."""
-        response = self.get(url=reverse('ng_reports_list_reports'),
+        response = self.get(url=reverse('list_ng_reports'),
                             data={'sort_key': 'invalid'})
         eq_(response.context['sort_key'], 'report_date_desc')
 
     def test_future_not_listed(self):
         report = NGReportFactory.create()
         NGReportFactory.create(report_date=datetime.date(2999, 1, 1))
-        response = self.get(reverse('ng_reports_list_reports'))
+        response = self.get(reverse('list_ng_reports'))
         eq_(set(response.context['reports'].object_list),
             set([report]))

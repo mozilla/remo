@@ -328,7 +328,7 @@ class ViewsTest(TestCase):
     def test_converted_visitors(self):
         """Test converted visitors counter."""
         event = EventFactory.create(slug='test-event')
-        converted_visitors = event.converted_visitors+1
+        converted_visitors = event.converted_visitors + 1
         self.client.post(reverse('events_count_converted_visitors',
                                  kwargs={'slug': 'test-event'}),
                          follow=True)
@@ -392,8 +392,8 @@ class ViewsTest(TestCase):
                                    follow=True)
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
 
-        start = (event_start-datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-        end = (event_end+datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+        start = (event_start - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+        end = (event_end + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 
         query = 'custom/start/%s/end/%s' % (start, end)
         response = self.client.get(reverse('multiple_event_ical',
@@ -492,7 +492,7 @@ class ViewsTest(TestCase):
         eq_(mock_success.call_count, 1)
         eq_(response.request['PATH_INFO'], self.event_url)
         event = Event.objects.get(name='Test edit event')
-        eq_(event.times_edited, times_edited+1)
+        eq_(event.times_edited, times_edited + 1)
         eq_(event.owner, user)
 
         # TODO: replace the following section with form tests
