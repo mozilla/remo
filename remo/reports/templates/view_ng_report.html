@@ -40,13 +40,17 @@
               (that's you!)
             </span>
           {% endif %}
-          <!-- Activity type -->
-          <section class="report-item">
-            <h4>What you did</h4>
-            <p>
-              {{ report.activity.name }}
-            </p>
-          </section>
+          {% if report.mentor %}
+            <section class="report-item">
+              <h4>Mentored by</h4>
+              <p>
+                <a href="{{ url('profiles_view_profile', 
+                                report.mentor.userprofile.display_name) }}">
+                  {{ report.mentor }}
+                </a>
+              </p>
+            </section>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -80,11 +84,13 @@
         <div class="large-1 columns">
         </div>
         <section class="large-11 columns report-item">
-          <h4>Campaign</h4>
+          <h4>Activity</h4>
+          <p>
+            {{ report.activity.name }}
+          </p>
           {% if report.campaign %}
+            <h4>Campaign</h4>
             <p>{{ report.campaign.name }}</p>
-          {% else %}
-            <p>No campaigns selected.</p>
           {% endif %}
         </section>
       </div>
@@ -147,11 +153,11 @@
           </div>
           <section class="large-11 columns report-item">
             <h4>Contribution areas</h4>
-            <ul class="contribution-areas">
+            <p>
               {% for functional_area in report.functional_areas.all() %}
-                <li>{{ functional_area }}</li>
+                {{ functional_area }}</a>{% if not loop.last %}, {% endif %}
               {% endfor %}
-            </ul>
+            </p>
           </section>
       </div>
     </div>
