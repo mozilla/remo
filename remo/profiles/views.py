@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib import messages
@@ -154,7 +154,7 @@ def view_profile(request, display_name):
             'mentor': user.userprofile.mentor,
             'usergroups': usergroups}
 
-    today = date.today()
+    today = datetime.utcnow().date()
 
     # Enable NGReports if waffle flag is active
     if waffle.flag_is_active(request, 'reports_ng_report'):
