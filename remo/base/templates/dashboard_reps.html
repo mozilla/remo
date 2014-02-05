@@ -209,17 +209,19 @@
   </div>
   <!-- end continuous reports block -->
 {% endif %}
-<div class="row">
-  <div class="large-12 columns align-right dashboard-action">
-    <a href="{{ url('reports_new_ng_report') }}"
-       target="_blank"
-       role="button"
-       class="small button">
-      Add new report
-    </a>
+{% if waffle.flag('reports_ng_report') %}
+  <div class="row">
+    <div class="large-12 columns align-right dashboard-action">
+      <a href="{{ url('reports_new_ng_report') }}"
+         target="_blank"
+         role="button"
+         class="small button">
+        Add new report
+      </a>
+    </div>
   </div>
-</div>
-
+{% endif %}
+  
 {% if monthly_reports is defined or
       mentees_reports_list is defined or
       mentees_reports_grid is defined or
