@@ -1,7 +1,6 @@
-import datetime
 import re
 
-from datetime import date
+from datetime import date, datetime
 from urlparse import urljoin
 
 from django.conf import settings
@@ -62,7 +61,7 @@ LIST_REPORTS_VALID_SORTS = {
 @cache_control(private=True, no_cache=True)
 def current_report(request, edit=False):
     display_name = request.user.userprofile.display_name
-    previous_month = utils.go_back_n_months(datetime.date.today(),
+    previous_month = utils.go_back_n_months(date.today(),
                                             first_day=True)
     month_name = utils.number2month(previous_month.month)
     report = utils.get_object_or_none(
@@ -158,8 +157,8 @@ def delete_report(request, display_name, year, month):
     """Delete report view."""
     user = get_object_or_404(User, userprofile__display_name=display_name)
     if request.method == 'POST':
-        year_month = datetime.datetime(year=int(year),
-                                       month=utils.month2number(month), day=1)
+        year_month = datetime(year=int(year),
+                              month=utils.month2number(month), day=1)
         report = get_object_or_404(Report, user=user, month=year_month)
         report.delete()
         messages.success(request, 'Report successfully deleted.')
@@ -180,8 +179,8 @@ def delete_report(request, display_name, year, month):
 def edit_report(request, display_name, year, month):
     """Edit report view."""
     user = get_object_or_404(User, userprofile__display_name=display_name)
-    year_month = datetime.datetime(year=int(year),
-                                   month=utils.month2number(month), day=1)
+    year_month = datetime(year=int(year),
+                          month=utils.month2number(month), day=1)
     report, created = utils.get_or_create_instance(Report, user=user,
                                                    month=year_month)
 
@@ -432,7 +431,7 @@ def delete_ng_report_comment(request, display_name, year, month, day, id,
 
 @waffle_flag('reports_ng_report')
 def list_ng_reports(request, mentor=None, rep=None):
-    today = date.today()
+    today = datetime.utcnow().date()
     report_list = NGReport.objects.filter(report_date__lte=today)
     pageheader = 'Activities for Reps'
 
