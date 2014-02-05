@@ -13,7 +13,7 @@ from waffle import Flag
 
 from remo.base.utils import go_back_n_months
 from remo.base.tests import RemoTestCase, requires_login, requires_permission
-from remo.profiles.tests import UserFactory
+from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 from remo.reports.models import NGReport, NGReportComment, ReportComment
 from remo.reports.tests import (NGReportFactory, NGReportCommentFactory,
                                 ReportCommentFactory, ReportFactory)
@@ -619,3 +619,37 @@ class ListNGReportTests(RemoTestCase):
         response = self.get(reverse('list_ng_reports'))
         eq_(set(response.context['reports'].object_list),
             set([report]))
+
+    def test_functional_area_list(self):
+        functional_area_1 = FunctionalAreaFactory.create()
+        functional_area_2 = FunctionalAreaFactory.create()
+        report = NGReportFactory.create(functional_areas=[functional_area_1])
+        NGReportFactory.create(functional_areas=[functional_area_2])
+        url = reverse('list_ng_reports_functional_area',
+                      kwargs={'functional_area_slug': functional_area_1.slug})
+        response = self.get(url=url)
+        eq_(set(response.context['reports'].object_list), set([report]))
+
+    def test_rep_functional_area_list(self):
+        user = UserFactory.create(groups=['Rep'])
+        functional_area = FunctionalAreaFactory.create()
+        report = NGReportFactory.create(user=user,
+                                        functional_areas=[functional_area])
+        NGReportFactory.create(functional_areas=[functional_area])
+        url = reverse('list_ng_reports_rep_functional_area',
+                      kwargs={'functional_area_slug': functional_area.slug,
+                              'rep': user.userprofile.display_name})
+        response = self.get(url=url)
+        eq_(set(response.context['reports'].object_list), set([report]))
+
+    def test_mentor_functional_area_list(self):
+        mentor = UserFactory.create(groups=['Mentor'])
+        functional_area = FunctionalAreaFactory.create()
+        report = NGReportFactory.create(mentor=mentor,
+                                        functional_areas=[functional_area])
+        NGReportFactory.create(functional_areas=[functional_area])
+        url = reverse('list_ng_reports_mentor_functional_area',
+                      kwargs={'functional_area_slug': functional_area.slug,
+                              'mentor': mentor.userprofile.display_name})
+        response = self.get(url=url)
+        eq_(set(response.context['reports'].object_list), set([report]))

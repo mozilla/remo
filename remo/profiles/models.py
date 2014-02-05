@@ -13,6 +13,7 @@ from django.dispatch import receiver
 
 import caching.base
 from south.signals import post_migrate
+from uuslug import uuslug as slugify
 
 from remo.base.models import GenericActiveManager
 from remo.base.utils import add_permissions_to_groups
@@ -56,11 +57,18 @@ def _validate_mentor(data, **kwargs):
 
 class FunctionalArea(models.Model):
     """Mozilla functional areas."""
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(blank=True, max_length=100)
     active = models.BooleanField(default=True)
 
     active_objects = GenericActiveManager()
     objects = models.Manager()
+
+    def save(self, *args, **kwargs):
+        # Create unique slug
+        if not self.slug:
+            self.slug = slugify(self.name, instance=self)
+        super(FunctionalArea, self).save(*args, **kwargs)
 
     def get_absolute_delete_url(self):
         return reverse('delete_functional_area', kwargs={'pk': self.id})
@@ -68,13 +76,13 @@ class FunctionalArea(models.Model):
     def get_absolute_edit_url(self):
         return reverse('edit_functional_area', kwargs={'pk': self.id})
 
+    def __unicode__(self):
+        return self.name
+
     class Meta:
         ordering = ['name']
         verbose_name = 'functional area'
         verbose_name_plural = 'functional areas'
-
-    def __unicode__(self):
-        return self.name
 
 
 class UserProfile(caching.base.CachingMixin, models.Model):
