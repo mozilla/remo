@@ -126,7 +126,8 @@ def count_user_ng_reports(user, current_streak=False,
     if current_streak:
         start_period = user.userprofile.current_streak_start
         end_period = user.userprofile.current_streak_end
-        if utc_now().date() - end_period > timedelta(days=1):
+        if (not end_period or
+                (utc_now().date() - end_period > timedelta(days=1))):
             return 0
     elif longest_streak:
         start_period = user.userprofile.longest_streak_start
