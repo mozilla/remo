@@ -1,4 +1,6 @@
 from django.core.urlresolvers import reverse
+from django.utils.timezone import now as utc_now
+
 from jingo import register
 
 from remo.base.utils import number2month
@@ -50,3 +52,10 @@ def count_ng_reports(obj, current_streak=False, longest_streak=False,
     import utils
     return utils.count_user_ng_reports(obj, current_streak,
                                        longest_streak, period)
+
+
+@register.filter
+def is_date_today(date):
+    if date == utc_now().date():
+        return True
+    return False
