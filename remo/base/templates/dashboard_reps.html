@@ -47,9 +47,14 @@
                   {% if activities > 0 %}
                     &nbsp;activities<br>
                     <span class="date-range">
-                      {{ user.userprofile.current_streak_start|strftime('%d %b %Y')}}
-                      &nbsp;-&nbsp;
-                      {{ user.userprofile.current_streak_end|strftime('%d %b %Y')}}
+                      {% if (user.userprofile.current_streak_start|is_date_today and
+                             user.userprofile.current_streak_end|is_date_today) %}
+                         Today
+                      {% else %}
+                          {{ user.userprofile.current_streak_start|strftime('%d %b %Y')}}
+                          &nbsp;-&nbsp;
+                          {{ user.userprofile.current_streak_end|strftime('%d %b %Y')}}
+                      {% endif %}
                     </span>
                   {% endif %}
                 </td>
@@ -57,12 +62,16 @@
                   {% set activities=count_ng_reports(user, longest_streak=True) %}
                   {{ activities }}
                   {% if activities > 0 %}
-                    {% set streak_end=user.userprofile.longest_streak_end %}
-                    &nbsp;activities<br>
                     <span class="date-range">
-                      {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
-                      &nbsp;-&nbsp;
-                      {{ user.userprofile.longest_streak_end|strftime('%d %b %Y')}}
+                      {% if (user.userprofile.current_streak_start|is_date_today and
+                             user.userprofile.current_streak_end|is_date_today) %}
+                         Today
+                      {% else %}
+                        &nbsp;activities<br>
+                          {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
+                          &nbsp;-&nbsp;
+                          {{ user.userprofile.longest_streak_end|strftime('%d %b %Y')}}
+                      {% endif %}
                     </span>
                   {% endif %}
                 </td>
