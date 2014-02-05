@@ -20,7 +20,7 @@ import remo.base.utils as utils
 
 from remo.base.decorators import permission_check
 from remo.events.helpers import get_attendee_role_event
-from remo.profiles.models import UserProfile
+from remo.profiles.models import FunctionalArea, UserProfile
 from remo.reports import ACTIVITY_CAMPAIGN
 from remo.reports.models import (NGReport, NGReportComment, Report,
                                  ReportComment, ReportEvent, ReportLink)
@@ -430,10 +430,12 @@ def delete_ng_report_comment(request, display_name, year, month, day, id,
 
 
 @waffle_flag('reports_ng_report')
-def list_ng_reports(request, mentor=None, rep=None):
+def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
     today = datetime.utcnow().date()
     report_list = NGReport.objects.filter(report_date__lte=today)
     pageheader = 'Activities for Reps'
+    user = None
+    pageuser_is_mentor = False
 
     if mentor or rep:
         user = get_object_or_404(
@@ -442,9 +444,16 @@ def list_ng_reports(request, mentor=None, rep=None):
         if mentor:
             report_list = report_list.filter(mentor=user)
             pageheader += ' mentored by %s' % user.get_full_name()
+            pageuser_is_mentor = True
         elif rep:
             report_list = report_list.filter(user=user)
             pageheader = 'Activities for %s' % user.get_full_name()
+
+    if functional_area_slug:
+        functional_area = get_object_or_404(FunctionalArea,
+                                            slug=functional_area_slug)
+        report_list = report_list.filter(functional_areas=functional_area)
+        pageheader += ' for area %s' % functional_area.name
 
     if 'query' in request.GET:
         query = request.GET['query'].strip()
@@ -495,4 +504,6 @@ def list_ng_reports(request, mentor=None, rep=None):
                    'number_of_reports': number_of_reports,
                    'sort_key': sort_key,
                    'pageheader': pageheader,
+                   'pageuser': user,
+                   'pageuser_is_mentor': pageuser_is_mentor,
                    'query': request.GET.get('query', '')})

@@ -101,6 +101,9 @@
                   </a>
                 {% endif %}
               </th>
+              <th>
+                Functional Areas
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -136,6 +139,29 @@
                   <a href="{{ report.get_absolute_url() }}">
                     {{ report }}
                   </a>
+                </td>
+                <td>
+                  {% for functional_area in report.functional_areas.all() %}
+                    {% if pageuser %}
+                      {% if pageuser_is_mentor %}
+                        {% set fa_url = url('list_ng_reports_mentor_functional_area',
+                                            pageuser.userprofile.display_name,
+                                            functional_area.slug) %}
+                      {% else %}
+                        {% set fa_url = url('list_ng_reports_rep_functional_area',
+                                            pageuser.userprofile.display_name,
+                                            functional_area.slug) %}
+                      {% endif %}
+                    {% else %}
+                      {% set fa_url = url('list_ng_reports_functional_area', functional_area.slug) %}
+                    {% endif %}
+                    <a href="{{ fa_url }}">
+                      {{ functional_area.name }}</a>{% if not loop.last %}, {% endif %}
+                      {% if loop.index == 3 %}
+                        ...
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
                 </td>
               </tr>
             {% endfor %}
