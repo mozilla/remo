@@ -19,6 +19,7 @@ from jinja2 import Markup
 from nose.exc import SkipTest
 from nose.tools import eq_, ok_
 from test_utils import TestCase
+from waffle import Flag
 
 from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
@@ -315,6 +316,7 @@ class ViewsTest(TestCase):
 
     def test_email_reps_as_mozillian(self):
         """Email all the reps associated with a functional area."""
+        Flag.objects.create(name='reports_ng_report', everyone=True)
 
         c = Client()
         c.login(username='mozillian1', password='passwd')

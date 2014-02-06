@@ -22,7 +22,7 @@ from remo.base.mozillians import BadStatusCodeError, is_vouched
 from remo.events.models import Event
 from remo.featuredrep.models import FeaturedRep
 from remo.remozilla.models import Bug
-from remo.reports.models import Report
+from remo.reports.models import NGReport, Report
 from remo.reports.utils import get_mentee_reports_for_month
 from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
 
@@ -138,12 +138,23 @@ def dashboard_mozillians(request, user):
     reps_past_events = {}
     reps_current_events = {}
     now = datetime.now()
+    reps_ng_reports = {}
+    today = datetime.utcnow().date()
+
     for interest in interests:
         # Get the Reps with the specified interest
         reps = User.objects.filter(groups__name='Rep').filter(
             userprofile__functional_areas=interest)
         tracked_interests[interest.name] = {
             'id': interest.id, 'reps': reps}
+
+        # Continuous reporting section
+        ng_reports = NGReport.objects.filter(report_date__lte=today,
+                                             functional_areas=interest,
+                                             user__in=reps)
+        reps_ng_reports[interest.name] = (ng_reports
+                                          .order_by('-report_date')[:10])
+
         # Get the reports of the Reps with the specified interest
         reps_reports[interest.name] = Report.objects.filter(
             user__in=reps).order_by('created_on')[:20]
@@ -151,6 +162,10 @@ def dashboard_mozillians(request, user):
         events = Event.objects.filter(categories=interest)
         reps_past_events[interest.name] = events.filter(start__lt=now)[:50]
         reps_current_events[interest.name] = events.filter(start__gte=now)
+
+    if waffle.flag_is_active(request, 'reports_ng_report'):
+        args['reps_ng_reports'] = reps_ng_reports
+
     args['interestform'] = interestform
     args['reps_reports'] = reps_reports
     args['reps_past_events'] = reps_past_events

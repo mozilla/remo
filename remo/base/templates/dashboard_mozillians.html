@@ -95,58 +95,120 @@
                   </div>
                   <!-- end people grid block -->
 
-                  <!-- reports list block -->
-                  <div class="dashboard-mozillians-reps-reports-block hidden">
-                    {% if reps_reports[key] %}
-                      <table class="dashboard-table">
-                        <thead>
-                          <tr>
-                            <th class="dashboard-clickable type-string">Fullname</th>
-                            <th class="dashboard-clickable type-int">Year</th>
-                            <th class="dashboard-clickable type-string">Month</th>
-                            <th class="dashboard-clickable type-string">Date filled</th>
-                            <th class="dashboard-clickable type-string align-center">Empty</th>
-                            <th class="dashboard-clickable type-string align-center">Overdue</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for report in reps_reports[key] %}
+                  <!-- continuous reports block -->
+                  {% if reps_ng_reports and reps_ng_reports[key].exists() %}
+                    <div class="dashboard-box">
+                      <div id="dashboard-continuous-reports-all-block"
+                           class="dashboard-mozillians-reps-reports-block
+                                  large-12 columns hidden">
+                        <table class="dashboard-table">
+                          <thead>
                             <tr>
-                              <td>
-                                <a href="{{ url('profiles_view_profile',
-                                            report.user|get_display_name) }}">
-                                   {{ report.user.get_full_name() }}
-                                </a>
-                              </td>
-                              <td>{{ report.month.strftime('%Y') }}</td>
-                              <td>
-                                <a href="{{ report|get_report_view_url }}">
-                                   {{ report.month.strftime('%B') }}
-                                </a>
-                              </td>
-                              <td>{{ report.updated_on|format_datetime }}</td>
-                              <td class="empty-cell">
-                                {% if report.empty %}
-                                  <span class="pict-table-icon tick"></span>
-                                {% endif %}
-                              </td>
-                              <td class="overdue-cell">
-                                {% if report.overdue %}
-                                  <span class="pict-table-icon tick"></span>
-                                {% endif %}
-                              </td>
+                              <th>Name</th>
+                              <th>Current streak</th>
+                              <th>Longest streak</th>
+                              <th>Last 2 weeks</th>
+                              <th>Last 10 weeks</th>
+                              <th>Total</th>
                             </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                    {% else %}
-                      <div class="row">
-                        <div class="large-12 columns no-bugs">
-                          <p>No Reports found!</p>
+                          </thead>
+                          <tbody>
+                            {% cache reps_ng_reports[key] %}
+                              {% for report in reps_ng_reports[key] %}
+                                <tr>
+                                  <td>
+                                    <a href="{{ url('profiles_view_profile',
+                                                    report.user|get_display_name) }}">
+                                    {{ report.user.get_full_name() }}
+                                    </a>
+                                  </td>
+                                  <td>
+                                    {{ count_ng_reports(report.user, current_streak=True) }} days
+                                  </td>
+                                  <td>
+                                    {{ count_ng_reports(report.user, longest_streak=True) }} days
+                                  </td>
+                                  <td>
+                                    {{ count_ng_reports(report.user, period=2) }} activities
+                                  </td>
+                                  <td>
+                                    {{ count_ng_reports(report.user, period=10) }} activities
+                                  </td>
+                                  <td>
+                                    {{ count_ng_reports(report.user) }} activities
+                                  </td>
+                                </tr>
+                              {% endfor %}
+                            {% endcache %}
+                          </tbody>
+                        </table>
+                        <div class="align-right">
+                          {% set functional_area=key|get_functional_area %}
+                          <a href="{{ url('list_ng_reports_functional_area',
+                                          functional_area.slug) }}"
+                             role="button"
+                             class="small button">
+                            All reports
+                          </a>
                         </div>
                       </div>
-                    {% endif %}
-                  </div>
+                    </div>
+                  <!-- end continuous reports block -->
+                  {% else %}
+
+                  <!-- reports list block -->
+                    <div class="dashboard-mozillians-reps-reports-block hidden">
+                      {% if reps_reports[key] %}
+                        <table class="dashboard-table">
+                          <thead>
+                            <tr>
+                              <th class="dashboard-clickable type-string">Fullname</th>
+                              <th class="dashboard-clickable type-int">Year</th>
+                              <th class="dashboard-clickable type-string">Month</th>
+                              <th class="dashboard-clickable type-string">Date filled</th>
+                              <th class="dashboard-clickable type-string align-center">Empty</th>
+                              <th class="dashboard-clickable type-string align-center">Overdue</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for report in reps_reports[key] %}
+                              <tr>
+                                <td>
+                                  <a href="{{ url('profiles_view_profile',
+                                              report.user|get_display_name) }}">
+                                     {{ report.user.get_full_name() }}
+                                  </a>
+                                </td>
+                                <td>{{ report.month.strftime('%Y') }}</td>
+                                <td>
+                                  <a href="{{ report|get_report_view_url }}">
+                                     {{ report.month.strftime('%B') }}
+                                  </a>
+                                </td>
+                                <td>{{ report.updated_on|format_datetime }}</td>
+                                <td class="empty-cell">
+                                  {% if report.empty %}
+                                    <span class="pict-table-icon tick"></span>
+                                  {% endif %}
+                                </td>
+                                <td class="overdue-cell">
+                                  {% if report.overdue %}
+                                    <span class="pict-table-icon tick"></span>
+                                  {% endif %}
+                                </td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      {% else %}
+                        <div class="row">
+                          <div class="large-12 columns no-bugs">
+                            <p>No Reports found!</p>
+                          </div>
+                        </div>
+                      {% endif %}
+                    </div>
+                  {% endif %}
                 <!-- end reports list block -->
                 </div>
               </div>
