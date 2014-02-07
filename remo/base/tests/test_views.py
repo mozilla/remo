@@ -317,10 +317,13 @@ class ViewsTest(TestCase):
         """Email all the reps associated with a functional area."""
 
         c = Client()
+        area = FunctionalAreaFactory.create()
+        UserFactory.create(groups=['Rep'],
+                           userprofile__functional_areas=[area])
         c.login(username='mozillian1', password='passwd')
         data = {'subject': 'This is subject',
                 'body': 'This is my body\n Multiline of course',
-                'functional_area': 2}
+                'functional_area': area.id}
         response = c.post(reverse('dashboard'), data, follow=True)
         for m in response.context['messages']:
             pass

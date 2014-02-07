@@ -17,7 +17,7 @@ from remo.base.tests import requires_login, requires_permission
 from remo.events.models import Event, EventComment, Metric
 from remo.events.tests import (AttendanceFactory, EventCommentFactory,
                                EventFactory)
-from remo.profiles.tests import UserFactory
+from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
 class ViewsTest(TestCase):
@@ -25,11 +25,12 @@ class ViewsTest(TestCase):
 
     def setUp(self):
 
+        categories = FunctionalAreaFactory.create_batch(3)
         self.data = {
             'name': u'Test edit event',
             'description': u'This is a description',
             'external_link': '',
-            'categories': [3, 4, 5, 12, 18, 20],
+            'categories': [x.id for x in categories],
             'venue': u'Hackerspace.GR',
             'lat': 38.01697,
             'lon': 23.7314,
