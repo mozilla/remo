@@ -13,7 +13,7 @@ class Bug(caching.base.CachingMixin, models.Model):
     """Bug model definition."""
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-    bug_id = models.PositiveIntegerField()
+    bug_id = models.PositiveIntegerField(unique=True)
     bug_creation_time = models.DateTimeField(blank=True, null=True)
     bug_last_change_time = models.DateTimeField(blank=True, null=True)
     creator = models.ForeignKey(User, null=True, blank=True,

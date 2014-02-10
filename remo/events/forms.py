@@ -184,7 +184,7 @@ class EventForm(happyforms.ModelForm):
 
         return cdata
 
-    def _clean_bug(self, bug_id, component):
+    def _clean_bug(self, bug_id):
         """Get or create Bug with bug_id and component. """
         if bug_id == '':
             return None
@@ -194,20 +194,18 @@ class EventForm(happyforms.ModelForm):
         except ValueError:
             raise ValidationError('Please provide a number')
 
-        bug, created = Bug.objects.get_or_create(bug_id=bug_id,
-                                                 component=component)
-
+        bug, created = Bug.objects.get_or_create(bug_id=bug_id)
         return bug
 
     def clean_swag_bug_form(self):
         """Clean swag_bug_form field."""
         data = self.cleaned_data['swag_bug_form']
-        return self._clean_bug(data, 'Swag Requests')
+        return self._clean_bug(data)
 
     def clean_budget_bug_form(self):
         """Clean budget_bug_form field."""
         data = self.cleaned_data['budget_bug_form']
-        return self._clean_bug(data, 'Budget Requests')
+        return self._clean_bug(data)
 
     def save(self, *args, **kwargs):
         """Override save on clone event."""
