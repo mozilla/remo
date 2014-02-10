@@ -456,10 +456,10 @@ def delete_passive_event_report(sender, instance, **kwargs):
 def update_passive_report_event_owner(sender, instance, **kwargs):
     """Automatically update passive reports event owner."""
     if instance.id:
-        previous_owner = Event.objects.get(pk=instance.id).owner
-        if previous_owner != instance.owner:
+        event = get_object_or_none(Event, pk=instance.id)
+        if event and event.owner != instance.owner:
             attrs = {
-                'user': previous_owner,
+                'user': event.owner,
                 'event': instance,
                 'activity': Activity.objects.get(name=ACTIVITY_EVENT_CREATE)}
             mentor = instance.owner.userprofile.mentor
