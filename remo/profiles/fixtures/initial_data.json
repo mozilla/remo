@@ -38,52 +38,5 @@
             "name": "Mozillians",
             "permissions": []
         }
-    },
-    {
-        "pk": 1,
-        "model": "auth.user",
-        "fields": {
-            "username": "giorgos",
-            "first_name": "Giorgos",
-            "last_name": "Logiotatidis",
-            "is_active": true,
-            "is_superuser": true,
-            "is_staff": true,
-            "last_login": "2012-01-30 03:56:09+00:00",
-            "groups": [
-                1
-            ],
-            "user_permissions": [],
-            "password": "!",
-            "email": "giorgos@mozilla.com",
-            "date_joined": "2012-01-30 03:56:09+00:00"
-        }
-    },
-    {
-        "pk": 1,
-        "model": "profiles.userprofile",
-        "fields": {
-            "facebook_url": "",
-            "city": "Athens",
-            "twitter_account": "glogiotatidis",
-            "display_name": "giorgos",
-            "private_email": "",
-            "country": "Greece",
-            "region": "Attica",
-            "irc_channels": "",
-            "lon": 23.722532,
-            "irc_name": "",
-            "lat": 38.015628,
-            "linkedin_url": "http://www.linkedin.com/in/glogiotatidis",
-            "user": 1,
-            "birth_date": null,
-            "personal_website_url": "",
-            "diaspora_url": "",
-            "personal_blog_feed": "",
-            "mozillians_profile_url": "",
-            "gender":"False",
-            "registration_complete":"True",
-            "date_joined_program": "2011-07-01"
-        }
     }
 ]

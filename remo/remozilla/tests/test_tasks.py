@@ -9,6 +9,7 @@ import fudge
 import requests
 from mock import patch
 
+from remo.profiles.tests import UserFactory
 from remo.remozilla.models import Bug
 from remo.remozilla.tasks import fetch_bugs
 from remo.remozilla.utils import get_last_updated_date
@@ -47,6 +48,7 @@ class FetchBugsTest(TestCase):
     @fudge.patch('requests.get')
     def test_with_valid_data(self, switch_is_active_mock, fake_requests_obj):
         """Test fetch_bugs valid bug data processing."""
+        UserFactory.create(username='remobot')
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
              not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME.')
