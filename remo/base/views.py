@@ -14,6 +14,8 @@ from django.views import generic
 from django.views.decorators.cache import cache_control, never_cache
 
 import waffle
+from django_statsd.clients import statsd
+
 import forms
 import utils
 
@@ -299,6 +301,8 @@ def edit_settings(request):
                                   instance=user.userprofile)
     if request.method == 'POST' and form.is_valid():
         form.save()
+        for field in form.changed_data:
+            statsd.incr('base.edit_setting_%s' % field)
         messages.success(request, 'Settings successfully edited.')
         return redirect('dashboard')
     return render(request, 'settings.html', {'user': user,

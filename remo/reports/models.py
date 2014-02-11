@@ -10,6 +10,7 @@ from django.dispatch import receiver
 from django.utils.timezone import now as utc_now
 
 import caching.base
+from django_statsd.clients import statsd
 from south.signals import post_migrate
 
 import remo.base.utils as utils
@@ -401,6 +402,7 @@ def create_passive_attendance_report(sender, instance, **kwargs):
 
         report = NGReport.objects.create(**attrs)
         report.functional_areas.add(*instance.event.categories.all())
+        statsd.incr('reports.create_passive_attendance')
 
 
 @receiver(post_save, sender=Event,
@@ -428,8 +430,10 @@ def create_update_passive_event_report(sender, instance, created, **kwargs):
 
         report = NGReport.objects.create(**attrs)
         report.functional_areas.add(*instance.categories.all())
+        statsd.incr('reports.create_passive_event')
     else:
         NGReport.objects.filter(event=instance).update(**attrs)
+        statsd.incr('reports.update_passive_event')
 
 
 @receiver(pre_delete, sender=EventAttendance,
@@ -442,6 +446,7 @@ def delete_passive_attendance_report(sender, instance, **kwargs):
         'activity': Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)}
 
     NGReport.objects.filter(**attrs).delete()
+    statsd.incr('reports.delete_passive_attendance')
 
 
 @receiver(pre_delete, sender=Event,
@@ -449,6 +454,7 @@ def delete_passive_attendance_report(sender, instance, **kwargs):
 def delete_passive_event_report(sender, instance, **kwargs):
     """Automatically delete a passive report after an event is deleted."""
     NGReport.objects.filter(event=instance).delete()
+    statsd.incr('reports.delete_passive_event')
 
 
 @receiver(pre_save, sender=Event,

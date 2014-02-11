@@ -7,6 +7,8 @@ from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now as now_utc
 
+from django_statsd.clients import statsd
+
 import forms
 
 from remo.base.decorators import permission_check
@@ -91,8 +93,16 @@ def edit_voting(request, slug=None):
 
         if created:
             messages.success(request, 'Voting successfully created.')
+            statsd.incr('voting.create_voting')
         else:
             messages.success(request, 'Voting successfully edited.')
+            statsd.incr('voting.edit_voting')
+
+        if not current_voting_edit:
+            statsd.incr('voting.create_range_poll',
+                        poll_form.radio_poll_formset.total_form_count())
+            statsd.incr('voting.create_radio_poll',
+                        poll_form.range_poll_formset.total_form_count())
 
         return redirect('voting_edit_voting', slug=poll.slug)
 
@@ -175,9 +185,11 @@ def view_voting(request, slug):
                 radio_poll_form.save()
             if poll.automated_poll:
                 poll_comment_form.save()
+                statsd.incr('voting.create_automated_poll_comment')
             Vote.objects.create(user=user, poll=poll)
             messages.success(request, ('Your vote has been '
                                        'successfully registered.'))
+            statsd.incr('voting.vote_voting')
             return redirect('voting_list_votings')
 
     data['range_poll_choice_forms'] = range_poll_choice_forms
@@ -194,4 +206,5 @@ def delete_voting(request, slug):
         voting = get_object_or_404(Poll, slug=slug)
         voting.delete()
         messages.success(request, 'Voting successfully deleted.')
+        statsd.incr('voting.delete_voting')
     return redirect('voting_list_votings')

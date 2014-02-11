@@ -13,6 +13,7 @@ from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_control, never_cache
 
+from django_statsd.clients import statsd
 from waffle.decorators import waffle_flag
 
 import forms
@@ -355,8 +356,10 @@ def edit_ng_report(request, display_name='', year=None,
         if created:
             report.user = user
             messages.success(request, 'Report successfully created.')
+            statsd.incr('reports.create_report')
         else:
             messages.success(request, 'Report successfully updated.')
+            statsd.incr('reports.edit_report')
         report_form.save()
         return redirect(report.get_absolute_url())
 
@@ -394,6 +397,7 @@ def view_ng_report(request, display_name, year, month, day, id):
         obj.report = report
         obj.save()
         messages.success(request, 'Comment saved successfully.')
+        statsd.incr('reports.create_comment')
         ctx_data['comment_form'] = forms.NGReportCommentForm()
 
     return render(request, template, ctx_data)
@@ -409,6 +413,7 @@ def delete_ng_report(request, display_name, year, month, day, id):
         report = get_object_or_404(NGReport, id=id)
         report.delete()
         messages.success(request, 'Report successfully deleted.')
+        statsd.incr('reports.delete_report')
 
     if request.user == user:
         return redirect('profiles_view_my_profile')
@@ -426,6 +431,7 @@ def delete_ng_report_comment(request, display_name, year, month, day, id,
         report_comment = get_object_or_404(NGReportComment, pk=comment_id)
         report_comment.delete()
         messages.success(request, 'Comment successfully deleted.')
+        statsd.incr('reports.delete_comment')
     return redirect(report.get_absolute_url())
 
 

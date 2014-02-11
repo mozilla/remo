@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.encoding import iri_to_uri
 from django.views.decorators.cache import cache_control, never_cache
 
+from django_statsd.clients import statsd
 from django_browserid.auth import default_username_algo
 from funfactory.helpers import urlparams
 from product_details import product_details
@@ -86,6 +87,7 @@ def edit(request, display_name):
                     user.groups.remove(Group.objects.get(name=group_db))
 
         messages.success(request, 'Profile successfully edited.')
+        statsd.incr('profiles.edit_profile')
 
         if request.user == user:
             return redirect('profiles_view_my_profile')
@@ -227,5 +229,6 @@ def delete_user(request, display_name):
     if request.method == 'POST':
         user.delete()
         messages.success(request, 'User was deleted.')
+        statsd.incr('profiles.delete_profile')
 
     return redirect('main')

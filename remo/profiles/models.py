@@ -12,6 +12,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 import caching.base
+from django_statsd.clients import statsd
 from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
@@ -277,6 +278,7 @@ def email_mentor_notification(sender, instance, raw, **kwargs):
                         'new_mentor': instance.mentor}
             send_remo_mail.delay(recipients, subject, email_template,
                                  ctx_data)
+            statsd.incr('profiles.change_mentor')
 
 
 @receiver(post_save, sender=User, dispatch_uid='create_profile_signal')

@@ -68,6 +68,7 @@ def manage_subscription(request, slug, subscribe=True):
                 subscribed_text = render_to_string(
                     'includes/subscribe_to_ical.html', {'event': event})
                 messages.info(request, Markup(subscribed_text))
+                statsd.incr('events.subscribe_to_event')
 
         else:
             if created:
@@ -82,6 +83,7 @@ def manage_subscription(request, slug, subscribe=True):
                 attendance.delete()
                 messages.success(request, ('You have unsubscribed '
                                            'from this event.'))
+                statsd.incr('events.unsubscribe_from_event')
 
     return redirect('events_view_event', slug=event.slug)
 
@@ -108,6 +110,7 @@ def view_event(request, slug):
         if event_comment_form.is_valid():
             event_comment_form.save()
             messages.success(request, 'Comment saved')
+            statsd.incr('events.create_comment')
 
             # provide new clean form
             event_comment_form = forms.EventCommentForm()
@@ -131,6 +134,7 @@ def delete_event_comment(request, slug, pk):
             event_comment = get_object_or_404(EventComment, pk=pk)
             event_comment.delete()
             messages.success(request, 'Comment successfully deleted.')
+            statsd.incr('events.delete_comment')
 
     event_url = reverse('events_view_event', kwargs={'slug': slug})
 
@@ -178,8 +182,13 @@ def edit_event(request, slug=None, clone=None):
 
         if created:
             messages.success(request, 'Event successfully created.')
+            if clone:
+                statsd.incr('events.clone_event')
+            else:
+                statsd.incr('events.create_event')
         else:
             messages.success(request, 'Event successfully updated.')
+            statsd.incr('events.edit_event')
 
         return redirect('events_view_event', slug=event_form.instance.slug)
 
@@ -243,6 +252,7 @@ def export_single_event_to_ical(request, slug):
     response['Filename'] = ical_filename
     response['Content-Disposition'] = ('attachment; filename="%s"' %
                                        (ical_filename))
+    statsd.incr('events.export_single_ical')
     return response
 
 
@@ -287,4 +297,5 @@ def multiple_event_ical(request, period, start=None, end=None, search=None):
     if search:
         url = urlparams(url, query=search)
 
+    statsd.incr('events.export_multiple_ical')
     return redirect(urlparams(url, format='ical', offset=0, limit=0))
