@@ -9,7 +9,7 @@ from pyquery import PyQuery as pq
 from test_utils import TestCase
 
 from remo.base.tests import requires_permission, requires_login
-from remo.profiles.tests import UserFactory
+from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
 class ViewsTest(TestCase):
@@ -21,7 +21,7 @@ class ViewsTest(TestCase):
                                          userprofile__initial_council=True)
         self.rep = UserFactory.create(groups=['Rep'],
                                       userprofile__mentor=self.mentor)
-
+        self.area = FunctionalAreaFactory.create()
         profile = self.rep.userprofile
 
         self.data = {'display_name': profile.display_name,
@@ -48,7 +48,7 @@ class ViewsTest(TestCase):
                      'bio': u'This is my bio.',
                      'date_joined_program': '2011-07-01',
                      'mentor': profile.mentor.id,
-                     'functional_areas': 3}
+                     'functional_areas': self.area.id}
 
         display_name = {'display_name': profile.display_name}
 
@@ -265,4 +265,4 @@ class ViewsTest(TestCase):
         self.data['wiki_profile_url'] = 'www.example.com'
         response = self.client.post(self.user_edit_url, self.data, follow=True)
 
-        eq_(response.context['functional_areas'], [3])
+        eq_(response.context['functional_areas'], [self.area.id])
