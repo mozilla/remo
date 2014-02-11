@@ -2,6 +2,12 @@
 Vagrant Installation
 ====================
 
+.. warning::
+
+   This documentation needs update. It is highly recommended to use the alternative
+   installation method :doc:`installation-virtualenv`
+
+
 Getting our own development environment.
 
 Preparing Your System
