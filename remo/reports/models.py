@@ -535,3 +535,56 @@ def email_commenters_on_add_ng_report_comment(sender, instance, **kwargs):
             subject = subject.format(instance.user.get_full_name(), report)
             send_remo_mail.delay([user_id], subject,
                                  email_template, ctx_data)
+
+
+@receiver(pre_delete, sender=NGReport,
+          dispatch_uid='delete_ng_report_signal')
+def delete_ng_report(sender, instance, **kwargs):
+    """Automatically update user's streak counters."""
+    up = instance.user.userprofile
+    query = (NGReport.objects.filter(user=instance.user)
+                             .exclude(pk=instance.id))
+
+    if (up.current_streak_start and not instance.is_future_report and not
+            query.filter(report_date=instance.report_date).exists()):
+
+        try:
+            next_report = instance.get_next_by_report_date(user=instance.user)
+        except NGReport.DoesNotExist:
+            next_report = None
+
+        try:
+            previous_report = instance.get_previous_by_report_date(
+                user=instance.user)
+        except NGReport.DoesNotExist:
+            previous_report = None
+
+        # There aren't any reports
+        if not next_report and not previous_report:
+            up.current_streak_start = None
+            up.longest_streak_start = None
+            up.longest_streak_end = None
+
+        # Ensure that the next report is in the date range of the counters
+        elif (next_report and not next_report.is_future_report and
+                next_report.report_date >= up.current_streak_start):
+
+            # Update longest streak counters if needed
+            if (up.current_streak_start == up.longest_streak_start):
+                old_longest_streak = query.filter(
+                    report_date__range=[up.longest_streak_start,
+                                        instance.report_date]).count()
+                new_longest_streak = query.filter(
+                    report_date__range=[instance.report_date,
+                                        up.longest_streak_end]).count()
+
+                if new_longest_streak > old_longest_streak:
+                    up.longest_streak_start = next_report.report_date
+                else:
+                    up.longest_streak_end = (instance.report_date -
+                                             datetime.timedelta(days=1))
+            up.current_streak_start = next_report.report_date
+        elif (previous_report and
+                (up.longest_streak_end == instance.report_date)):
+            up.longest_streak_end = previous_report.report_date
+        up.save()

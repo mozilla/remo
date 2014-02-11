@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.auth.models import User
 from django.core import mail
 from nose.tools import eq_, ok_
 from test_utils import TestCase
@@ -276,8 +277,8 @@ class NGReportComment(TestCase):
              % (report.user.userprofile.display_name, report_comment.id)))
 
 
-class NGReportSignalsTest(TestCase):
-    def test_create_attendance_report_owner(self):
+class NGReportAttendanceSignalTests(TestCase):
+    def test_owner(self):
         """Test creating a passive attendance report for event owner."""
         activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
         user = UserFactory.create(groups=['Rep', 'Mentor'],
@@ -299,7 +300,7 @@ class NGReportSignalsTest(TestCase):
                                  [e.name for e in event.categories.all()],
                                  lambda x: x.name)
 
-    def test_create_attendance_report_attendee(self):
+    def test_attendee(self):
         """Test creating a passive report after attending an event."""
         activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
         event = EventFactory.create()
@@ -322,7 +323,23 @@ class NGReportSignalsTest(TestCase):
                                  [e.name for e in event.categories.all()],
                                  lambda x: x.name)
 
-    def test_create_event_report(self):
+    def test_delete_attendance(self):
+        """Test delete passive report after attendance delete."""
+        activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
+        event = EventFactory.create()
+        user = UserFactory.create(groups=['Rep', 'Mentor'],
+                                  userprofile__initial_council=True)
+        attendance = AttendanceFactory.create(event=event, user=user)
+        ok_(NGReport.objects.filter(event=event, user=user).exists())
+        attendance.delete()
+        query = NGReport.objects.filter(event=event, user=user,
+                                        activity=activity)
+        ok_(not query.exists())
+
+
+class NGReportEventCreationSignalTests(TestCase):
+
+    def test_create(self):
         """Test creating a passive report after creating an event."""
         activity = Activity.objects.get(name=ACTIVITY_EVENT_CREATE)
         event = EventFactory.build()
@@ -344,20 +361,7 @@ class NGReportSignalsTest(TestCase):
                                  [e.name for e in event.categories.all()],
                                  lambda x: x.name)
 
-    def test_delete_attendance_report(self):
-        """Test delete passive report after attendance delete."""
-        activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
-        event = EventFactory.create()
-        user = UserFactory.create(groups=['Rep', 'Mentor'],
-                                  userprofile__initial_council=True)
-        attendance = AttendanceFactory.create(event=event, user=user)
-        ok_(NGReport.objects.filter(event=event, user=user).exists())
-        attendance.delete()
-        query = NGReport.objects.filter(event=event, user=user,
-                                        activity=activity)
-        ok_(not query.exists())
-
-    def test_delete_event_report(self):
+    def test_delete(self):
         """Test delete passive report after event delete."""
         activity = Activity.objects.get(name=ACTIVITY_EVENT_CREATE)
         event = EventFactory.create()
@@ -371,7 +375,7 @@ class NGReportSignalsTest(TestCase):
                                         activity=activity)
         ok_(not query.exists())
 
-    def test_update_event_report(self):
+    def test_update(self):
         """Test update report after event edit."""
         event = EventFactory.create()
         report = NGReportFactory.create(user=event.owner, event=event,
@@ -384,7 +388,7 @@ class NGReportSignalsTest(TestCase):
         report = NGReport.objects.get(pk=report.id)
         eq_(report.report_date.day, event.start.day)
 
-    def test_edit_event_report_owner(self):
+    def test_edit_owner(self):
         """Test change event ownership."""
         owner = UserFactory.create()
         event = EventFactory.build(owner=owner)
@@ -397,7 +401,7 @@ class NGReportSignalsTest(TestCase):
         eq_(report.user, new_owner)
         eq_(report.mentor, new_owner.userprofile.mentor)
 
-    def test_edit_event_report_functional_areas(self):
+    def test_edit_functional_areas(self):
         """Test update report after changes in event's functional areas."""
         event = EventFactory.create()
         categories = event.categories.all()
@@ -410,9 +414,10 @@ class NGReportSignalsTest(TestCase):
                                  [e.name for e in categories.all()[:1]],
                                  lambda x: x.name)
 
-    def test_send_email_on_report_comment_settings_True_one_user(self):
-        """Test sending email when a new comment is added on a NGReport
 
+class NGReportCommentSignalTests(TestCase):
+    def test_comment_one_user(self):
+        """Test sending email when a new comment is added on a NGReport
         and the user has the option enabled in his/her settings.
         """
         commenter = UserFactory.create()
@@ -428,9 +433,8 @@ class NGReportSignalsTest(TestCase):
                .format(commenter.get_full_name(), report))
         eq_(mail.outbox[0].subject, msg)
 
-    def test_send_email_on_report_comment_settings_False_one_user(self):
+    def test_one_user_settings_False(self):
         """Test sending email when a new comment is added on a NGReport
-
         and the user has the option disabled in his/her settings.
         """
         comment_user = UserFactory.create()
@@ -442,9 +446,8 @@ class NGReportSignalsTest(TestCase):
 
         eq_(len(mail.outbox), 0)
 
-    def test_send_email_on_report_comment_settings_True_multiple_users(self):
+    def test_comment_multiple_users(self):
         """Test sending email when a new comment is added on a NGReport
-
         and the users have the option enabled in their settings.
         """
         commenter = UserFactory.create()
@@ -469,3 +472,95 @@ class NGReportSignalsTest(TestCase):
         msg = ('[Report] User {0} commented on {1}'
                .format(commenter.get_full_name(), report))
         eq_(mail.outbox[0].subject, msg)
+
+
+class NGReportUpdateStreakCountersSignalTests(TestCase):
+
+    def test_delete_oldest_out_of_two(self):
+        """Update current and longest streak counters when the oldest
+        report out of two is deleted.
+        """
+
+        user = UserFactory.create()
+        up = user.userprofile
+        today = datetime.datetime.utcnow().date()
+        report = NGReportFactory.create(
+            user=user, report_date=today - datetime.timedelta(days=1))
+        NGReportFactory.create(user=user, report_date=today)
+        eq_(up.current_streak_start, today - datetime.timedelta(days=1))
+        eq_(up.longest_streak_start, today - datetime.timedelta(days=1))
+        eq_(up.longest_streak_end, today)
+
+        report.delete()
+
+        eq_(up.current_streak_start, today)
+        eq_(up.longest_streak_start, today)
+        eq_(up.longest_streak_end, today)
+
+    def test_delete_latest_out_of_two(self):
+        """Update current and longest streak counters when the latest
+        report out of two is deleted.
+        """
+
+        user = UserFactory.create()
+        up = user.userprofile
+        today = datetime.datetime.utcnow().date()
+        NGReportFactory.create(user=user,
+                               report_date=today - datetime.timedelta(days=1))
+        report = NGReportFactory.create(user=user, report_date=today)
+        eq_(up.current_streak_start, today - datetime.timedelta(days=1))
+        eq_(up.longest_streak_start, today - datetime.timedelta(days=1))
+        eq_(up.longest_streak_end, today)
+
+        report.delete()
+
+        eq_(up.current_streak_start, today - datetime.timedelta(days=1))
+        eq_(up.longest_streak_start, today - datetime.timedelta(days=1))
+        eq_(up.longest_streak_end, today - datetime.timedelta(days=1))
+
+    def test_delete_all_reports(self):
+        """Update current and longest streak when all reports are deleted."""
+
+        user = UserFactory.create()
+        up = user.userprofile
+        today = datetime.datetime.utcnow().date()
+        report1 = NGReportFactory.create(
+            user=user, report_date=today - datetime.timedelta(days=1))
+        report2 = NGReportFactory.create(user=user, report_date=today)
+        eq_(up.current_streak_start, today - datetime.timedelta(days=1))
+        eq_(up.longest_streak_start, today - datetime.timedelta(days=1))
+        eq_(up.longest_streak_end, today)
+
+        report1.delete()
+        report2.delete()
+
+        ok_(not up.current_streak_start)
+        ok_(not up.longest_streak_start)
+        ok_(not up.longest_streak_end)
+
+    def test_delete_fourth_out_of_five(self):
+        """Update current and longest streak counters when the fourth
+        report out of five is deleted.
+        """
+
+        user = UserFactory.create()
+        up = user.userprofile
+        today = datetime.datetime.utcnow().date()
+        # Create 5 reports
+        for i in range(0, 5):
+            NGReportFactory.create(
+                user=user, report_date=today - datetime.timedelta(days=i))
+
+        eq_(up.current_streak_start, today - datetime.timedelta(days=4))
+        eq_(up.longest_streak_start, today - datetime.timedelta(days=4))
+        eq_(up.longest_streak_end, today)
+
+        # Delete the report that the user submitted yesterday
+        NGReport.objects.filter(
+            user=user, report_date=today - datetime.timedelta(days=1)).delete()
+
+        user = User.objects.get(pk=user.id)
+        up = user.userprofile
+        eq_(up.current_streak_start, today)
+        eq_(up.longest_streak_start, today - datetime.timedelta(days=4))
+        eq_(up.longest_streak_end, today - datetime.timedelta(days=2))

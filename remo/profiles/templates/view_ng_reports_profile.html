@@ -7,19 +7,19 @@
           <td>Date</td>
         </tr>
       </thead>
-    {% for report in ng_reports[:10] %}
-      <tr>
-        <td>
-          <a href="{{ report.get_absolute_url() }}">
-            {{ report }}
-          </a>
-        </td>
-        <td data-time="{{ report.report_date|format_datetime_iso }}"
-            title="{{ report.get_report_date }}">
-          {{ report.get_report_date }}
-        </td>
-      </tr>
-    {% endfor %}
+      {% for report in ng_reports[:10] %}
+        <tr>
+          <td>
+            <a href="{{ report.get_absolute_url() }}">
+              {{ report }}
+            </a>
+          </td>
+          <td data-time="{{ report.report_date|format_datetime_iso }}"
+              title="{{ report.get_report_date }}">
+            {{ report.get_report_date }}
+          </td>
+        </tr>
+      {% endfor %}
     </table>
     {% if ng_reports.count() > 10 %}
       <p>
