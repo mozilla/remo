@@ -12,14 +12,14 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
-from remo.api import ClientCachedResource
+from remo.api import HttpCache
 from remo.base.serializers import iCalSerializer
 
 from helpers import is_multiday
 from models import Event
 
 
-class EventResource(ClientCachedResource, ModelResource):
+class EventResource(ModelResource):
     """Event Resource."""
     local_start = fields.DateTimeField()
     local_end = fields.DateTimeField()
@@ -32,7 +32,8 @@ class EventResource(ClientCachedResource, ModelResource):
         attribute='categories', full=True, null=True)
 
     class Meta:
-        cache_control = {"max_age": 1800, "s_maxage": 1800}
+        cache = HttpCache(control={'max_age': 1800, 's_maxage': 1800,
+                                   'public': True})
         queryset = Event.objects.all()
         resource_name = 'event'
         authentication = Authentication()

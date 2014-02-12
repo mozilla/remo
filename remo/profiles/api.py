@@ -13,8 +13,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
-from remo.api import ClientCachedResource
-from remo.api.authorisers import WebAuthorization
+from remo.api import HttpCache
 from remo.base.serializers import CSVSerializer
 from remo.profiles.helpers import get_avatar_url
 from remo.profiles.models import UserProfile, FunctionalArea
@@ -97,23 +96,23 @@ class ProfileResource(ModelResource):
         return bundle.obj.user.groups.filter(name='Council').count() == 1
 
 
-class RepResource(ClientCachedResource, ModelResource):
+class RepResource(ModelResource):
     """Rep Resource."""
     fullname = fields.CharField(attribute='get_full_name')
     profile = fields.ToOneField(ProfileResource, attribute='userprofile',
                                 full=True, null=True)
 
     class Meta:
-        cache_control = {'max_age': 3600, 'private': True}
+        cache = HttpCache(control={'max_age': 3600, 'public': True,
+                                   's-maxage': 3600})
         queryset = User.objects.filter(userprofile__registration_complete=True,
                                        groups__name='Rep')
         resource_name = 'rep'
         authentication = Authentication()
-        authorization = WebAuthorization()
+        authorization = ReadOnlyAuthorization()
         serializer = CSVSerializer(formats=['json', 'jsonp', 'csv'])
         allowed_methods = ['get']
-        fields = ['first_name', 'last_name', 'email']
-        restricted_fields = ['email']
+        fields = ['first_name', 'last_name']
         ordering = ['profile', 'first_name', 'last_name']
         filtering = {'first_name': ALL,
                      'last_name': ALL,
@@ -172,10 +171,6 @@ class RepResource(ClientCachedResource, ModelResource):
         """Prepare bundle.data for CSV export."""
         if bundle.request.method == 'GET':
             req = bundle.request.GET
-            if not req.get('restricted', 'False') == 'True':
-                for field in self._meta.restricted_fields:
-                    bundle.data.pop(field)
-
             if req.get('format') == 'csv':
                 bundle.data.pop('fullname', None)
                 bundle.data.pop('resource_uri', None)

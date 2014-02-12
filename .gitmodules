@@ -33,3 +33,6 @@
 [submodule "vendor-local/src/django-statsd"]
 	path = vendor-local/src/django-statsd
 	url = https://github.com/andymckay/django-statsd.git
+[submodule "vendor-local/src/django-tastypie"]
+	path = vendor-local/src/django-tastypie
+	url = https://github.com/toastdriven/django-tastypie.git
