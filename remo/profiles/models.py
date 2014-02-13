@@ -170,6 +170,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     current_streak_end = models.DateField(null=True, blank=True)
     longest_streak_start = models.DateField(null=True, blank=True)
     longest_streak_end = models.DateField(null=True, blank=True)
+    last_report_notification = models.DateField(null=True, blank=True)
 
     objects = caching.base.CachingManager()
 

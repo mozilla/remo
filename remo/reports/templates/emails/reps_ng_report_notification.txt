@@ -1,0 +1,20 @@
+Hi {{ user.first_name }},
+
+It has been over 3 weeks since you last reported your activities :)
+These reports are really important for the success of the Mozilla Reps program and
+they are also valuable for your mentor.
+
+You can report your activities here:
+{{ SITE_URL }}{{ url('reports_new_ng_report') }}
+
+We understand you are busy, and if you have not had time to work on Mozilla Reps stuff,
+please take a moment to send a note to your mentor to let them know.
+
+{{ mentor.get_full_name() }}
+{{ SITE_URL }}
+{{- url('profiles_view_profile', display_name=mentor.userprofile.display_name) }}
+{{ mentor.email }}
+
+Cheers!
+
+The Mozilla Reps Council
