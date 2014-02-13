@@ -169,6 +169,10 @@ When you want to start contributing...
 
      (venv)$ ./manage.py loaddata demo_users
 
+   To load *demo functional areas* run::
+
+     (venv)$ ./manage.py loaddata demo_functional_areas
+
    To load *demo reports* run::
 
      (venv)$ ./manage.py loaddata demo_reports
@@ -176,10 +180,6 @@ When you want to start contributing...
    To load *demo events* run::
 
      (venv)$ ./manage.py loaddata demo_events
-
-   To load *demo functional areas* run::
-
-     (venv)$ ./manage.py loaddata demo_functional_areas
 
    To fetch *bugzilla bugs* run::
 
