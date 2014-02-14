@@ -232,10 +232,11 @@
             <div class="large-11 columns">
 
               <!-- Range poll voting -->
-              <div class="formset" data-prefix="{{ range_poll_formset.prefix }}">
+              <div id="range-poll-voting" class="formset"
+                   data-prefix="{{ range_poll_formset.prefix }}">
                 {% for range_poll_form in range_poll_formset %}
                   {{ range_poll_form.id }}
-                  <div class="copyblock">
+                  <div class="copyblock voting-poll">
                     <div class="poll-block">
                       <div data-tooltip class="has-tip tip-left" title="Range Poll Name">
                         {{ field_with_attrs(range_poll_form.name,
@@ -289,10 +290,11 @@
             <div class="large-11 columns">
 
               <!-- Radio poll voting -->
-              <div class="formset" data-prefix="{{ radio_poll_formset.prefix }}">
+              <div id="radio-poll-voting" class="formset"
+                   data-prefix="{{ radio_poll_formset.prefix }}">
                 {% for radio_poll_form in radio_poll_formset %}
                   {{ radio_poll_form.id }}
-                  <div class="copyblock">
+                  <div class="copyblock voting-poll">
                     <div class="poll-block">
                       <div data-tooltip class="has-tip tip-left" title="Radio Poll Title">
                         {{ field_with_attrs(radio_poll_form.question,
@@ -304,7 +306,7 @@
                         <div class="formset" data-prefix="{{ radio_poll_form.nested[0].prefix }}">
                           {% for answer_form in radio_poll_form.nested[0] %}
                             {{ answer_form.id }}
-                            <div id="inner-radiopoll-formset" class="copyblock">
+                            <div id="inner-radiopoll-formset" class="copyblock radio-choice">
                               <div data-tooltip class="has-tip tip-left" title="Radio Poll Answer">
                                 {{ field_with_attrs(answer_form.answer,
                                                     placeholder='Radio Poll Answer') }}
@@ -372,10 +374,15 @@
     </div>
   {% endif %}
 </main>
+
+<!-- Voting templates -->
+{% include 'includes/voting_templates.html' %}
+
 {% endblock%}
 
 {% block bottomextra %}
   {% compress js %}
+    <script src="{{ static('base/js/jquery.tmpl.js') }}"></script>
     <script src="{{ static('voting/js/voting_edit_voting.js') }}"></script>
   {% endcompress %}
 {% endblock %}

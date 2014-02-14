@@ -67,6 +67,8 @@ def edit_voting(request, slug=None):
         if poll.start < date_now and poll.end > date_now:
             current_voting_edit = True
 
+    nominee_list = User.objects.filter(
+        groups__name='Rep', userprofile__registration_complete=True)
     if current_voting_edit:
         poll_form = forms.PollEditForm(request.POST or None, instance=poll)
     else:
@@ -77,8 +79,6 @@ def edit_voting(request, slug=None):
                             formset=forms.BaseRadioPollInlineFormSet,
                             extra=extra, can_delete=True))
 
-        nominee_list = User.objects.filter(
-            groups__name='Rep', userprofile__registration_complete=True)
         range_poll_formset = RangePollFormset(request.POST or None,
                                               instance=poll,
                                               user_list=nominee_list)
@@ -113,7 +113,8 @@ def edit_voting(request, slug=None):
                    'range_poll_formset': range_poll_formset,
                    'radio_poll_formset': radio_poll_formset,
                    'can_delete_voting': can_delete_voting,
-                   'current_voting_edit': current_voting_edit})
+                   'current_voting_edit': current_voting_edit,
+                   'nominee_list': nominee_list})
 
 
 @permission_check()
