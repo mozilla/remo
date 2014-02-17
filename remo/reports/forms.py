@@ -1,9 +1,11 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.utils.timezone import now as now_utc
 
 import happyforms
 
+from remo.profiles.models import FunctionalArea
 from remo.reports import ACTIVITY_CAMPAIGN, UNLISTED_ACTIVITIES
 from remo.reports.models import Activity, Campaign, NGReport, NGReportComment
 
@@ -15,6 +17,8 @@ class NGReportForm(happyforms.ModelForm):
         queryset=Activity.active_objects.exclude(name__in=UNLISTED_ACTIVITIES))
     campaign = forms.ModelChoiceField(queryset=Campaign.active_objects.all(),
                                       required=False)
+    functional_areas = forms.ModelMultipleChoiceField(
+        queryset=FunctionalArea.active_objects.all())
 
     def __init__(self, *args, **kwargs):
         """ Initialize form.
@@ -26,6 +30,13 @@ class NGReportForm(happyforms.ModelForm):
         self.fields['activity'].error_messages['required'] = (
             'Please select an option from the list.')
         self.fields['campaign'].empty_label = 'Please select a campaign.'
+
+        # Dynamic functional_areas field
+        if self.instance.id:
+            current_areas = self.instance.functional_areas.all()
+            query = Q(active=True) | Q(id__in=current_areas)
+            areas = FunctionalArea.objects.filter(query)
+            self.fields['functional_areas'].queryset = areas
 
     def clean(self):
         """Clean Form."""

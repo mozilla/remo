@@ -16,7 +16,7 @@ from remo.remozilla.tests import BugFactory
 COUNTRIES = product_details.get_regions('en').values()
 START_DT = datetime.datetime(2011, 1, 1, tzinfo=utc)
 END_DT = datetime.datetime(2011, 2, 1, tzinfo=utc)
-ATTENDANCE_CHOICES = [0, 10, 50, 100, 500, 1000, 2000]
+ATTENDANCE_CHOICES = [10, 50, 100, 500, 1000, 2000]
 
 
 class EventFactory(factory.django.DjangoModelFactory):

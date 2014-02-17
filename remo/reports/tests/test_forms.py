@@ -1,4 +1,5 @@
 from datetime import date
+from django.forms.models import model_to_dict
 
 from nose.tools import eq_, ok_
 
@@ -7,7 +8,7 @@ from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 from remo.reports import ACTIVITY_CAMPAIGN
 from remo.reports.forms import NGReportForm
 from remo.reports.models import NGReport
-from remo.reports.tests import ActivityFactory
+from remo.reports.tests import ActivityFactory, NGReportFactory
 
 
 class NGReportFormTests(RemoTestCase):
@@ -61,3 +62,22 @@ class NGReportFormTests(RemoTestCase):
         ok_('campaign' in form.errors)
         ok_(form.errors['campaign'],
             'Please select an option from the list.')
+
+
+class InactiveCategoriesTest(RemoTestCase):
+
+    def test_edit_event(self):
+        """Edit NGReport with inactive categories."""
+        activity = ActivityFactory.create()
+        active_area = FunctionalAreaFactory.create()
+        inactive_areas = FunctionalAreaFactory.create_batch(2, active=False)
+        report = NGReportFactory.create(activity=activity,
+                                        functional_areas=inactive_areas)
+        data = model_to_dict(report)
+        areas = [active_area.id] + [x.id for x in inactive_areas]
+        data['functional_areas'] = areas
+        form = NGReportForm(data, instance=report)
+        ok_(form.is_valid())
+        result = form.save()
+        for area in inactive_areas + [active_area]:
+            ok_(area in result.functional_areas.all())

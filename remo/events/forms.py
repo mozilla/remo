@@ -1,6 +1,7 @@
 import happyforms
 from datetime import datetime
 from django import forms
+from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -12,6 +13,7 @@ from pytz import common_timezones, timezone
 from datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.helpers import get_full_name
 from remo.base.utils import validate_datetime
+from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
 
 from models import Event, Metric, EventComment
@@ -75,6 +77,8 @@ EventMetricsFormset = forms.models.inlineformset_factory(
 
 class EventForm(happyforms.ModelForm):
     """Form of an event."""
+    categories = forms.ModelMultipleChoiceField(
+        queryset=FunctionalArea.active_objects.all())
     country = forms.ChoiceField(
         choices=[],
         error_messages={'required': 'Please select one option from the list.'})
@@ -99,6 +103,12 @@ class EventForm(happyforms.ModelForm):
             del(kwargs['editable_owner'])
 
         super(EventForm, self).__init__(*args, **kwargs)
+
+        # Dynamic categories field.
+        if self.instance.id:
+            query = Q(active=True) | Q(id__in=self.instance.categories.all())
+            categories = FunctionalArea.objects.filter(query)
+            self.fields['categories'].queryset = categories
 
         # Dynamic countries field.
         countries = product_details.get_regions('en').values()
@@ -208,13 +218,12 @@ class EventForm(happyforms.ModelForm):
         return self._clean_bug(data)
 
     def save(self, *args, **kwargs):
-        """Override save on clone event."""
+        """Override save method for custom functionality."""
         clone = kwargs.pop('clone', None)
         if clone:
             self.instance.pk = None
             self.instance.slug = None
             self.instance.metrics = []
-
         return super(EventForm, self).save()
 
     class Meta:
