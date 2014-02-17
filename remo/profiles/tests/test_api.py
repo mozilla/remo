@@ -66,33 +66,3 @@ class APITest(TestCase):
         self.assertTrue('Content-Disposition' in response)
         eq_(response['Content-Disposition'],
             'filename="reps-export-2012-03-01.csv"')
-
-    def test_rep_restricted_fields_unauth(self):
-        """Test authorization to restricted fields without perms."""
-        mentor = UserFactory.create(groups=['Mentor'],
-                                    userprofile__initial_council=True)
-        UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
-        url = urlparams(reverse('api_dispatch_list',
-                                kwargs={'api_name': 'v1',
-                                        'resource_name': 'rep'}))
-        response = self.client.get(url, follow=True)
-        result = json.loads(response.content)
-
-        for profile in result['objects']:
-            self.assertFalse('email' in profile)
-
-    def test_rep_restricted_fields_authorized(self):
-        """Test authorization to restricted fields with perms."""
-        mentor = UserFactory.create(groups=['Mentor'],
-                                    userprofile__initial_council=True)
-        rep = UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
-        url = urlparams(reverse('api_dispatch_list',
-                                kwargs={'api_name': 'v1',
-                                        'resource_name': 'rep'}))
-
-        self.client.login(username=rep.username, password='passwd')
-        response = self.client.get(url, follow=True)
-        result = json.loads(response.content)
-
-        for profile in result['objects']:
-            self.assertTrue('email' in profile)
