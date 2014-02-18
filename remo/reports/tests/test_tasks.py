@@ -1,16 +1,19 @@
 from datetime import date, datetime, timedelta
 
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from mock import ANY as mockany, patch
 from nose.tools import ok_
 
 from remo.base.tests import RemoTestCase
+from remo.base.utils import get_date
 from remo.events.tests import EventFactory
 from remo.profiles.tests import UserFactory
 from remo.reports import ACTIVITY_EVENT_ATTEND
 from remo.reports.models import Activity, NGReport
-from remo.reports.tasks import send_ng_report_notification, send_report_digest
+from remo.reports.tasks import (send_ng_report_notification,
+                                send_report_digest, zero_current_streak)
 from remo.reports.tests import NGReportFactory
 
 
@@ -108,3 +111,17 @@ class SendInactivityNotifications(RemoTestCase):
         with patch('remo.reports.tasks.send_mail') as send_mail_mock:
             send_ng_report_notification()
         ok_(not send_mail_mock.called)
+
+
+class UpdateCurrentStreakCountersTest(RemoTestCase):
+    def test_base(self):
+        past_day = get_date(-8)
+        user = UserFactory.create(groups=['Rep'])
+        NGReportFactory.create(user=user, report_date=past_day)
+        user.userprofile.current_streak_start = past_day
+        user.userprofile.save()
+
+        zero_current_streak()
+        user = User.objects.get(pk=user.id)
+
+        ok_(not user.userprofile.current_streak_start)
