@@ -308,39 +308,50 @@ class NGReport(caching.base.CachingMixin, models.Model):
         """Override save method."""
         up = self.user.userprofile
         one_day = datetime.timedelta(1)
+        today = datetime.datetime.utcnow().date()
+        yesterday = today - datetime.timedelta(days=1)
 
         # Save the mentor of the user if no mentor is defined.
         if not self.mentor:
             self.mentor = up.mentor
+        super(NGReport, self).save()
+
+        if self.is_future_report:
+            return
 
         # Calculate the current and longest streak for a user.
-        if not self.is_future_report:
-            if (up.current_streak_start and up.current_streak_end and
-                (self.report_date >= up.current_streak_start - one_day) and
-                    (self.report_date <= up.current_streak_end + one_day)):
-                if self.report_date < up.current_streak_start:
-                    up.current_streak_start = self.report_date
-                if self.report_date > up.current_streak_end:
-                    up.current_streak_end = self.report_date
-            else:
-                up.current_streak_start = self.report_date
-                up.current_streak_end = self.report_date
+        if (up.current_streak_start and
+                (self.report_date >= up.current_streak_start - one_day)):
 
-            # Longest streak
-            if (up.current_streak_start and up.current_streak_end and
-                    up.longest_streak_start and up.longest_streak_end):
-                longest_streak_diff = (up.longest_streak_end -
-                                       up.longest_streak_start)
-                current_streak_diff = (up.current_streak_end -
-                                       up.current_streak_start)
-                if current_streak_diff > longest_streak_diff:
-                    up.longest_streak_start = up.current_streak_start
-                    up.longest_streak_end = up.current_streak_end
-            else:
+            if self.report_date < up.current_streak_start:
+                up.current_streak_start = self.report_date
+
+        elif self.report_date in (today, yesterday):
+            up.current_streak_start = self.report_date
+
+        # Longest streak
+        if (up.current_streak_start and up.longest_streak_start and
+                up.longest_streak_end):
+            longest_streak_diff = (up.longest_streak_end -
+                                   up.longest_streak_start)
+            current_streak_diff = today - up.current_streak_start
+
+            if current_streak_diff > longest_streak_diff:
+                up.longest_streak_start = up.current_streak_start
+                up.longest_streak_end = today
+
+        elif (up.longest_streak_start and up.longest_streak_end and
+                (self.report_date >= up.longest_streak_start - one_day) and
+                (self.report_date <= up.longest_streak_end)):
+            # Setup longest streak counters
+            if self.report_date < up.longest_streak_start:
                 up.longest_streak_start = self.report_date
+            elif self.report_date > up.longest_streak_end:
                 up.longest_streak_end = self.report_date
-            up.save()
-        super(NGReport, self).save()
+        else:
+            up.longest_streak_start = self.report_date
+            up.longest_streak_end = self.report_date
+        up.save()
 
     class Meta:
         ordering = ['-report_date', '-created_on']
