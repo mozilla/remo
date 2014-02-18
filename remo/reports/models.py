@@ -533,8 +533,6 @@ def delete_ng_report(sender, instance, **kwargs):
     up = instance.user.userprofile
     query = (NGReport.objects.filter(user=instance.user)
                              .exclude(pk=instance.id))
-    next_report = None
-    previous_report = None
 
     if (up.current_streak_start and up.current_streak_end and not
         instance.is_future_report and not
@@ -543,13 +541,13 @@ def delete_ng_report(sender, instance, **kwargs):
         try:
             next_report = instance.get_next_by_report_date(user=instance.user)
         except NGReport.DoesNotExist:
-            pass
+            next_report = None
 
         try:
             previous_report = instance.get_previous_by_report_date(
                 user=instance.user)
         except NGReport.DoesNotExist:
-            pass
+            previous_report = None
 
         # There aren't any reports
         if not next_report and not previous_report:
@@ -559,7 +557,8 @@ def delete_ng_report(sender, instance, **kwargs):
             up.longest_streak_end = None
 
         # Ensure that the next report is in the date range of the counters
-        elif next_report and not next_report.is_future_report:
+        elif (next_report and not next_report.is_future_report and
+                next_report.report_date >= up.current_streak_start):
 
             # Update longest streak counters if needed
             if (up.current_streak_start == up.longest_streak_start):
