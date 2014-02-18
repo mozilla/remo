@@ -51,17 +51,21 @@ def edit_voting(request, slug=None):
     poll, created = get_or_create_instance(Poll, slug=slug)
 
     can_delete_voting = False
-    extra = 0
+    extra_range_polls = 0
+    extra_radio_polls = 0
     current_voting_edit = False
     range_poll_formset = None
     radio_poll_formset = None
+
     if created:
         poll.created_by = request.user
-        extra = 1
+        extra_range_polls = 1
+        extra_radio_polls = 1
     else:
-        if (RangePoll.objects.filter(poll=poll).count() or
-                RadioPoll.objects.filter(poll=poll).count()) == 0:
-            extra = 1
+        if not poll.range_polls.exists():
+            extra_range_polls = 1
+        if not poll.radio_polls.exists():
+            extra_radio_polls = 1
         can_delete_voting = True
         date_now = datetime2pdt()
         if poll.start < date_now and poll.end > date_now:
@@ -74,10 +78,10 @@ def edit_voting(request, slug=None):
     else:
         RangePollFormset = (inlineformset_factory(Poll, RangePoll,
                             formset=forms.BaseRangePollInlineFormSet,
-                            extra=extra, can_delete=True))
+                            extra=extra_range_polls, can_delete=True))
         RadioPollFormset = (inlineformset_factory(Poll, RadioPoll,
                             formset=forms.BaseRadioPollInlineFormSet,
-                            extra=extra, can_delete=True))
+                            extra=extra_radio_polls, can_delete=True))
 
         range_poll_formset = RangePollFormset(request.POST or None,
                                               instance=poll,
