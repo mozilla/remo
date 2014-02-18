@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.template.loader import render_to_string
 
+from celery.schedules import crontab
 from celery.task import periodic_task, task
 
 from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
@@ -97,3 +98,20 @@ def send_ng_report_notification():
             up.last_report_notification = today
             send_mail(subject, message, settings.FROM_EMAIL, [rep.email])
         up.save()
+
+
+@periodic_task(run_every=crontab(hour=0, minute=0))
+def update_current_streak_counters():
+    """Reset streak counters if a user has not
+    submitted a report for more than a day.
+
+    """
+
+    today = datetime.utcnow().date()
+    reps = User.objects.filter(
+        ~Q(ng_reports__report_date__range=[today - timedelta(days=1), today]),
+        groups__name='Rep')
+
+    for rep in reps:
+        rep.userprofile.current_streak_start = None
+        rep.userprofile.save()
