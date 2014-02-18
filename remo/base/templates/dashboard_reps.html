@@ -47,13 +47,14 @@
                   {% if activities > 0 %}
                     &nbsp;activities<br>
                     <span class="date-range">
-                      {% if (user.userprofile.current_streak_start|is_date_today and
-                             user.userprofile.current_streak_end|is_date_today) %}
+                      {{ date_to_weeks(user.userprofile.current_streak_start,
+                                       today.date()) }} weeks<br>
+                      {% if user.userprofile.current_streak_start|is_date_today %}
                          Today
                       {% else %}
                           {{ user.userprofile.current_streak_start|strftime('%d %b %Y')}}
                           &nbsp;-&nbsp;
-                          {{ user.userprofile.current_streak_end|strftime('%d %b %Y')}}
+                          {{ today|strftime('%d %b %Y')}}
                       {% endif %}
                     </span>
                   {% endif %}
@@ -64,8 +65,9 @@
                   {% if activities > 0 %}
                     &nbsp;activities<br>
                     <span class="date-range">
-                      {% if (user.userprofile.current_streak_start|is_date_today and
-                             user.userprofile.current_streak_end|is_date_today) %}
+                      {{ date_to_weeks(user.userprofile.longest_streak_start,
+                                       user.userprofile.longest_streak_end) }} weeks<br>
+                      {% if user.userprofile.longest_streak_start|is_date_today %}
                          Today
                       {% else %}
                           {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}

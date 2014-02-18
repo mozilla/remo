@@ -1,3 +1,4 @@
+from math import ceil
 from django.core.urlresolvers import reverse
 from django.utils.timezone import now as utc_now
 
@@ -59,3 +60,14 @@ def is_date_today(date):
     if date == utc_now().date():
         return True
     return False
+
+
+@register.function
+def date_to_weeks(end_date, start_date=None):
+    """Given a past date, return the number of
+    weeks passed compared to today.
+    """
+    if not start_date:
+        start_date = utc_now().date()
+    number_of_weeks = ceil(float((start_date - end_date).days) / float(7))
+    return int(number_of_weeks) or 1

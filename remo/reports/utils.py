@@ -1,10 +1,10 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 
 from django.core.urlresolvers import reverse
 from django.utils.timezone import now as utc_now
 
 from remo.base.utils import (get_object_or_none, go_back_n_months,
-                             go_fwd_n_months, number2month)
+                             go_fwd_n_months, number2month, get_date)
 
 from helpers import get_mentees, get_report_view_url
 from models import PARTICIPATION_TYPE_CHOICES, Report
@@ -125,15 +125,11 @@ def count_user_ng_reports(user, current_streak=False,
 
     if current_streak:
         start_period = user.userprofile.current_streak_start
-        end_period = user.userprofile.current_streak_end
-        if (not end_period or
-                (utc_now().date() - end_period > timedelta(days=1))):
-            return 0
     elif longest_streak:
         start_period = user.userprofile.longest_streak_start
         end_period = user.userprofile.longest_streak_end
     elif period > 0:
-            start_period = utc_now().date() - timedelta(days=(period * 7))
+        start_period = get_date(-(period * 7))
 
     query = user.ng_reports.filter(report_date__range=(start_period,
                                                        end_period))

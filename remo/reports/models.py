@@ -17,6 +17,7 @@ import remo.base.utils as utils
 from remo.base.utils import (add_permissions_to_groups,
                              get_object_or_none, go_back_n_months)
 from remo.base.models import GenericActiveManager
+from remo.base.utils import daterange, get_date
 from remo.events.helpers import get_event_link
 from remo.events.models import Attendance as EventAttendance, Event
 from remo.profiles.models import FunctionalArea
@@ -306,41 +307,68 @@ class NGReport(caching.base.CachingMixin, models.Model):
 
     def save(self, *args, **kwargs):
         """Override save method."""
-        up = self.user.userprofile
-        one_day = datetime.timedelta(1)
+        one_week = datetime.timedelta(7)
+        today = get_date()
+        current_start = self.user.userprofile.current_streak_start or None
+        longest_start = self.user.userprofile.longest_streak_start or None
+        longest_end = self.user.userprofile.longest_streak_end or None
 
         # Save the mentor of the user if no mentor is defined.
         if not self.mentor:
-            self.mentor = up.mentor
-
-        # Calculate the current and longest streak for a user.
-        if not self.is_future_report:
-            if (up.current_streak_start and up.current_streak_end and
-                (self.report_date >= up.current_streak_start - one_day) and
-                    (self.report_date <= up.current_streak_end + one_day)):
-                if self.report_date < up.current_streak_start:
-                    up.current_streak_start = self.report_date
-                if self.report_date > up.current_streak_end:
-                    up.current_streak_end = self.report_date
-            else:
-                up.current_streak_start = self.report_date
-                up.current_streak_end = self.report_date
-
-            # Longest streak
-            if (up.current_streak_start and up.current_streak_end and
-                    up.longest_streak_start and up.longest_streak_end):
-                longest_streak_diff = (up.longest_streak_end -
-                                       up.longest_streak_start)
-                current_streak_diff = (up.current_streak_end -
-                                       up.current_streak_start)
-                if current_streak_diff > longest_streak_diff:
-                    up.longest_streak_start = up.current_streak_start
-                    up.longest_streak_end = up.current_streak_end
-            else:
-                up.longest_streak_start = self.report_date
-                up.longest_streak_end = self.report_date
-            up.save()
+            self.mentor = self.user.userprofile.mentor
         super(NGReport, self).save()
+
+        if self.is_future_report:
+            return
+
+        # If there is already a running streak and the report date
+        # is within this streak, update the current streak counter.
+        if (current_start and self.report_date < current_start and
+            self.report_date in daterange((current_start - one_week),
+                                          current_start)):
+            current_start = self.report_date
+        # If there isn't any current streak, and the report date
+        # is within the current week, let's start the counting.
+        elif (not current_start and
+                self.report_date in daterange(get_date(-7), today)):
+            current_start = self.report_date
+
+        # Longest streak section
+        # If longest streak already exists, let's update it.
+        if longest_start and longest_end:
+
+            # Compare the number of reports registered during
+            # the current streak and the number of reports
+            # during the longest streak. If current streak is bigger
+            # than the previous longest streak, update the longest streak.
+            longest_streak_count = NGReport.objects.filter(
+                report_date__range=(longest_start, longest_end),
+                user=self.user).count()
+            current_streak_count = NGReport.objects.filter(
+                report_date__range=(current_start, today),
+                user=self.user).count()
+            if current_start and current_streak_count > longest_streak_count:
+                longest_start = current_start
+                longest_end = today
+
+            # This happens only when a user appends a report, dated in the
+            # range of longest streak counters and it's out of the range
+            # of current streak counter.
+            elif self.report_date in daterange(longest_start - one_week,
+                                               longest_end + one_week):
+                if self.report_date < longest_start:
+                    longest_start = self.report_date
+                elif self.report_date > longest_end:
+                    longest_end = self.report_date
+        else:
+            # Longest streak counters are empty, let's setup their value
+            longest_start = self.report_date
+            longest_end = self.report_date
+        # Assign the calculated values, to user's profile.
+        self.user.userprofile.current_streak_start = current_start
+        self.user.userprofile.longest_streak_start = longest_start
+        self.user.userprofile.longest_streak_end = longest_end
+        self.user.userprofile.save()
 
     class Meta:
         ordering = ['-report_date', '-created_on']
