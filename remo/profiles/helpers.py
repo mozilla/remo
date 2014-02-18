@@ -10,7 +10,7 @@ from jingo import register
 
 from libravatar import libravatar_url
 
-from remo.profiles.models import UserAvatar
+from remo.profiles.models import FunctionalArea, UserAvatar
 
 
 @register.filter
@@ -42,3 +42,12 @@ def get_avatar_url(user, size=50):
         avatar_url = urlparams(avatar_url, size=size)
 
     return avatar_url
+
+
+@register.filter
+def get_functional_area(name):
+    """Return the Functional Area object given the name."""
+    try:
+        return FunctionalArea.objects.get(name=name)
+    except FunctionalArea.DoesNotExist:
+        return None
