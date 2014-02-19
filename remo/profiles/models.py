@@ -89,6 +89,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     """Definition of UserProfile Model."""
     user = models.OneToOneField(User)
     registration_complete = models.BooleanField(default=False)
+    inactive = models.BooleanField(default=False)
     date_joined_program = models.DateField(blank=True)
     local_name = models.CharField(max_length=100, blank=True, default='')
     birth_date = models.DateField(validators=[_validate_birth_date],

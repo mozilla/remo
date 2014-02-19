@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.utils.timezone import now
 
 from celery.task import periodic_task, task
 
@@ -24,6 +25,7 @@ def send_generic_mail(recipient_list, subject, email_template, data={}):
 
 @periodic_task(run_every=timedelta(hours=8))
 def check_mozillian_username():
+    """Find changes in mozillians name/username and update userprofile."""
     mozillians = User.objects.filter(groups__name='Mozillians')
 
     for user in mozillians:
@@ -48,3 +50,26 @@ def check_mozillian_username():
 def check_celery():
     """Dummy celery task to check that everything runs smoothly."""
     pass
+
+
+@periodic_task(run_every=timedelta(days=1))
+def check_inactive_reps():
+    """Check for users without activities in a period of 6 weeks."""
+    reps = User.objects.filter(groups__name='Rep')
+
+    today = now().date()
+    start = today - timedelta(weeks=3)
+    end = today + timedelta(weeks=3)
+
+    inactive_reps = reps.exclude(ng_reports__report_date__range=[start, end])
+    active_reps = reps.filter(ng_reports__report_date__range=[start, end])
+
+    for rep in inactive_reps:
+        up = rep.userprofile
+        up.inactive = True
+        up.save()
+
+    for rep in active_reps:
+        up = rep.userprofile
+        up.inactive = False
+        up.save()
