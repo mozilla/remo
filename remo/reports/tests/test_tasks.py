@@ -1,16 +1,18 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from mock import ANY as mockany, patch
-from nose.tools import ok_
+from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
 from remo.events.tests import EventFactory
 from remo.profiles.tests import UserFactory
 from remo.reports import ACTIVITY_EVENT_ATTEND
 from remo.reports.models import Activity, NGReport
-from remo.reports.tasks import send_report_digest
+from remo.reports.tasks import (send_report_digest,
+                                update_current_streak_counters)
 from remo.reports.tests import NGReportFactory
 
 
@@ -63,3 +65,23 @@ class SendReportDigestTests(RemoTestCase):
         with patch('remo.reports.tasks.send_mail') as send_mail_mock:
             send_report_digest()
         ok_(send_mail_mock.called)
+
+
+class UpdateCurrentStreakCountersTest(RemoTestCase):
+    def test_base(self):
+        user = UserFactory.create(groups=['Rep'])
+        past_day = datetime.utcnow().date() - timedelta(days=5)
+        NGReportFactory.create(user=user,
+                               report_date=past_day)
+        NGReportFactory.create(user=user,
+                               report_date=past_day + timedelta(days=1))
+
+        eq_(user.userprofile.current_streak_start, past_day)
+        eq_(user.userprofile.current_streak_end,
+            past_day + timedelta(days=1))
+
+        update_current_streak_counters.apply()
+        user = User.objects.get(pk=user.id)
+
+        ok_(not user.userprofile.current_streak_start)
+        ok_(not user.userprofile.current_streak_end)

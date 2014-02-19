@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.template.loader import render_to_string
 
-from celery.task import task
+from celery.task import task, periodic_task
 
 from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
 
@@ -71,3 +71,19 @@ def send_report_digest():
         # escaped by the template and this makes the message look bad.
         message = message.replace('&#34;', '"').replace('&#39;', "'")
         send_mail(subject, message, settings.FROM_EMAIL, [mentor.email])
+
+
+@periodic_task(run_every=timedelta(days=1))
+def update_current_streak_counters():
+    """Reset streak counters if a user has not
+    submitted a report for more than a day."""
+
+    today = datetime.utcnow().date()
+    reps = User.objects.filter(
+        ~Q(ng_reports__report_date__range=[today - timedelta(days=1), today]),
+        groups__name='Rep')
+
+    for rep in reps:
+        rep.userprofile.current_streak_start = None
+        rep.userprofile.current_streak_end = None
+        rep.userprofile.save()
