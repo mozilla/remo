@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from django.conf import settings
 
@@ -10,7 +10,7 @@ from remo.events.tests import EventFactory
 from remo.profiles.tests import UserFactory
 from remo.reports import ACTIVITY_EVENT_ATTEND
 from remo.reports.models import Activity, NGReport
-from remo.reports.tasks import send_report_digest
+from remo.reports.tasks import send_ng_report_notification, send_report_digest
 from remo.reports.tests import NGReportFactory
 
 
@@ -63,3 +63,48 @@ class SendReportDigestTests(RemoTestCase):
         with patch('remo.reports.tasks.send_mail') as send_mail_mock:
             send_report_digest()
         ok_(send_mail_mock.called)
+
+
+class SendInactivityNotifications(RemoTestCase):
+    def test_base(self):
+        mentor = UserFactory.create(groups=['Mentor'])
+        today = datetime.utcnow().date()
+        rep = UserFactory.create(
+            groups=['Rep'], userprofile__mentor=mentor,
+            userprofile__last_report_notification=today - timedelta(weeks=4))
+        NGReportFactory.create(user=rep,
+                               report_date=today - timedelta(weeks=5))
+
+        subject = '[Reminder] Please share your recent activities'
+
+        with patch('remo.reports.tasks.send_mail') as send_mail_mock:
+            send_ng_report_notification()
+
+        send_mail_mock.assert_called_with(
+            subject, mockany, settings.FROM_EMAIL, [rep.email])
+
+    def test_with_report_filled(self):
+        mentor = UserFactory.create(groups=['Mentor'])
+        today = datetime.utcnow().date()
+        rep = UserFactory.create(
+            groups=['Rep'], userprofile__mentor=mentor,
+            userprofile__last_report_notification=today - timedelta(weeks=4))
+        NGReportFactory.create(user=rep,
+                               report_date=today - timedelta(weeks=2))
+
+        with patch('remo.reports.tasks.send_mail') as send_mail_mock:
+            send_ng_report_notification()
+        ok_(not send_mail_mock.called)
+
+    def test_with_no_report_filled_and_one_notification(self):
+        mentor = UserFactory.create(groups=['Mentor'])
+        today = datetime.utcnow().date()
+        rep = UserFactory.create(
+            groups=['Rep'], userprofile__mentor=mentor,
+            userprofile__last_report_notification=today - timedelta(weeks=1))
+        NGReportFactory.create(user=rep,
+                               report_date=today - timedelta(weeks=2))
+
+        with patch('remo.reports.tasks.send_mail') as send_mail_mock:
+            send_ng_report_notification()
+        ok_(not send_mail_mock.called)

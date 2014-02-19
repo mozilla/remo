@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.template.loader import render_to_string
 
-from celery.task import task
+from celery.task import periodic_task, task
 
 from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
 
@@ -71,3 +71,29 @@ def send_report_digest():
         # escaped by the template and this makes the message look bad.
         message = message.replace('&#34;', '"').replace('&#39;', "'")
         send_mail(subject, message, settings.FROM_EMAIL, [mentor.email])
+
+
+@periodic_task(run_every=timedelta(days=1))
+def send_ng_report_notification():
+    today = datetime.utcnow().date()
+    start = today - timedelta(weeks=3)
+    end = today + timedelta(weeks=3)
+    reps = (User.objects.filter(groups__name='Rep')
+            .exclude(ng_reports__report_date__range=[start, end]))
+
+    subject = '[Reminder] Please share your recent activities'
+    mail_body = 'emails/reps_ng_report_notification.txt'
+
+    for rep in reps:
+        # Check if the user has ever received a notification.
+        up = rep.userprofile
+        if not up.last_report_notification:
+            up.last_report_notification = today
+        elif today - up.last_report_notification >= timedelta(weeks=3):
+            ctx_data = {'mentor': rep.userprofile.mentor,
+                        'user': rep,
+                        'SITE_URL': settings.SITE_URL}
+            message = render_to_string(mail_body, ctx_data)
+            up.last_report_notification = today
+            send_mail(subject, message, settings.FROM_EMAIL, [rep.email])
+        up.save()
