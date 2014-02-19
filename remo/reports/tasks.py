@@ -81,8 +81,10 @@ def send_ng_report_notification():
     reps = (User.objects.filter(groups__name='Rep')
             .exclude(ng_reports__report_date__range=[start, end]))
 
-    subject = '[Reminder] Please share your recent activities'
-    mail_body = 'emails/reps_ng_report_notification.txt'
+    rep_subject = '[Reminder] Please share your recent activities'
+    rep_mail_body = 'emails/reps_ng_report_notification.txt'
+    mentor_subject = '[Report] Mentee without report for the last 3 weeks'
+    mentor_mail_body = 'emails/mentor_ng_report_notification.txt'
 
     for rep in reps:
         # Check if the user has ever received a notification.
@@ -93,7 +95,11 @@ def send_ng_report_notification():
             ctx_data = {'mentor': rep.userprofile.mentor,
                         'user': rep,
                         'SITE_URL': settings.SITE_URL}
-            message = render_to_string(mail_body, ctx_data)
+            rep_message = render_to_string(rep_mail_body, ctx_data)
+            mentor_message = render_to_string(mentor_mail_body, ctx_data)
             up.last_report_notification = today
-            send_mail(subject, message, settings.FROM_EMAIL, [rep.email])
+            send_mail(rep_subject, rep_message, settings.FROM_EMAIL,
+                      [rep.email])
+            send_mail(mentor_subject, mentor_message, settings.FROM_EMAIL,
+                      [rep.userprofile.mentor.email])
         up.save()
