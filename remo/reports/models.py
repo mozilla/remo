@@ -308,39 +308,50 @@ class NGReport(caching.base.CachingMixin, models.Model):
         """Override save method."""
         up = self.user.userprofile
         one_day = datetime.timedelta(1)
+        today = datetime.datetime.utcnow().date()
+        yesterday = today - datetime.timedelta(days=1)
 
         # Save the mentor of the user if no mentor is defined.
         if not self.mentor:
             self.mentor = up.mentor
+        super(NGReport, self).save()
+
+        if self.is_future_report:
+            return
 
         # Calculate the current and longest streak for a user.
-        if not self.is_future_report:
-            if (up.current_streak_start and up.current_streak_end and
-                (self.report_date >= up.current_streak_start - one_day) and
-                    (self.report_date <= up.current_streak_end + one_day)):
-                if self.report_date < up.current_streak_start:
-                    up.current_streak_start = self.report_date
-                if self.report_date > up.current_streak_end:
-                    up.current_streak_end = self.report_date
-            else:
-                up.current_streak_start = self.report_date
-                up.current_streak_end = self.report_date
+        if (up.current_streak_start and
+                (self.report_date >= up.current_streak_start - one_day)):
 
-            # Longest streak
-            if (up.current_streak_start and up.current_streak_end and
-                    up.longest_streak_start and up.longest_streak_end):
-                longest_streak_diff = (up.longest_streak_end -
-                                       up.longest_streak_start)
-                current_streak_diff = (up.current_streak_end -
-                                       up.current_streak_start)
-                if current_streak_diff > longest_streak_diff:
-                    up.longest_streak_start = up.current_streak_start
-                    up.longest_streak_end = up.current_streak_end
-            else:
+            if self.report_date < up.current_streak_start:
+                up.current_streak_start = self.report_date
+
+        elif self.report_date in (today, yesterday):
+            up.current_streak_start = self.report_date
+
+        # Longest streak
+        if (up.current_streak_start and up.longest_streak_start and
+                up.longest_streak_end):
+            longest_streak_diff = (up.longest_streak_end -
+                                   up.longest_streak_start)
+            current_streak_diff = today - up.current_streak_start
+
+            if current_streak_diff > longest_streak_diff:
+                up.longest_streak_start = up.current_streak_start
+                up.longest_streak_end = today
+
+        elif (up.longest_streak_start and up.longest_streak_end and
+                (self.report_date >= up.longest_streak_start - one_day) and
+                (self.report_date <= up.longest_streak_end)):
+            # Setup longest streak counters
+            if self.report_date < up.longest_streak_start:
                 up.longest_streak_start = self.report_date
+            elif self.report_date > up.longest_streak_end:
                 up.longest_streak_end = self.report_date
-            up.save()
-        super(NGReport, self).save()
+        else:
+            up.longest_streak_start = self.report_date
+            up.longest_streak_end = self.report_date
+        up.save()
 
     class Meta:
         ordering = ['-report_date', '-created_on']
@@ -524,3 +535,56 @@ def email_commenters_on_add_ng_report_comment(sender, instance, **kwargs):
             subject = subject.format(instance.user.get_full_name(), report)
             send_remo_mail.delay([user_id], subject,
                                  email_template, ctx_data)
+
+
+@receiver(pre_delete, sender=NGReport,
+          dispatch_uid='delete_ng_report_signal')
+def delete_ng_report(sender, instance, **kwargs):
+    """Automatically update user's streak counters."""
+    up = instance.user.userprofile
+    query = (NGReport.objects.filter(user=instance.user)
+                             .exclude(pk=instance.id))
+
+    if (up.current_streak_start and not instance.is_future_report and not
+            query.filter(report_date=instance.report_date).exists()):
+
+        try:
+            next_report = instance.get_next_by_report_date(user=instance.user)
+        except NGReport.DoesNotExist:
+            next_report = None
+
+        try:
+            previous_report = instance.get_previous_by_report_date(
+                user=instance.user)
+        except NGReport.DoesNotExist:
+            previous_report = None
+
+        # There aren't any reports
+        if not next_report and not previous_report:
+            up.current_streak_start = None
+            up.longest_streak_start = None
+            up.longest_streak_end = None
+
+        # Ensure that the next report is in the date range of the counters
+        elif (next_report and not next_report.is_future_report and
+                next_report.report_date >= up.current_streak_start):
+
+            # Update longest streak counters if needed
+            if (up.current_streak_start == up.longest_streak_start):
+                old_longest_streak = query.filter(
+                    report_date__range=[up.longest_streak_start,
+                                        instance.report_date]).count()
+                new_longest_streak = query.filter(
+                    report_date__range=[instance.report_date,
+                                        up.longest_streak_end]).count()
+
+                if new_longest_streak > old_longest_streak:
+                    up.longest_streak_start = next_report.report_date
+                else:
+                    up.longest_streak_end = (instance.report_date -
+                                             datetime.timedelta(days=1))
+            up.current_streak_start = next_report.report_date
+        elif (previous_report and
+                (up.longest_streak_end == instance.report_date)):
+            up.longest_streak_end = previous_report.report_date
+        up.save()

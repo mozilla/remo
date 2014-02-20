@@ -167,7 +167,6 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     mozillian_username = models.CharField(blank=True, default='',
                                           max_length=40)
     current_streak_start = models.DateField(null=True, blank=True)
-    current_streak_end = models.DateField(null=True, blank=True)
     longest_streak_start = models.DateField(null=True, blank=True)
     longest_streak_end = models.DateField(null=True, blank=True)
     last_report_notification = models.DateField(null=True, blank=True)
