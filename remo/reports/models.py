@@ -308,6 +308,8 @@ class NGReport(caching.base.CachingMixin, models.Model):
         """Override save method."""
         up = self.user.userprofile
         one_day = datetime.timedelta(1)
+        today = datetime.datetime.utcnow().date()
+        yesterday = today - datetime.timedelta(days=1)
 
         # Save the mentor of the user if no mentor is defined.
         if not self.mentor:
@@ -322,7 +324,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
                     up.current_streak_start = self.report_date
                 if self.report_date > up.current_streak_end:
                     up.current_streak_end = self.report_date
-            else:
+            elif self.report_date in (today, yesterday):
                 up.current_streak_start = self.report_date
                 up.current_streak_end = self.report_date
 
@@ -336,6 +338,13 @@ class NGReport(caching.base.CachingMixin, models.Model):
                 if current_streak_diff > longest_streak_diff:
                     up.longest_streak_start = up.current_streak_start
                     up.longest_streak_end = up.current_streak_end
+            elif (up.longest_streak_start and up.longest_streak_end and
+                  (self.report_date >= up.longest_streak_start - one_day) and
+                    (self.report_date <= up.longest_streak_end + one_day)):
+                if self.report_date < up.longest_streak_start:
+                    up.longest_streak_start = self.report_date
+                if self.report_date > up.longest_streak_end:
+                    up.longest_streak_end = self.report_date
             else:
                 up.longest_streak_start = self.report_date
                 up.longest_streak_end = self.report_date
