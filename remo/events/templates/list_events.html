@@ -14,7 +14,7 @@ Mozilla Reps - Events
   <div class="row">
     <div class="large-12 columns align-right">
       {% if perms.events.can_edit_events %}
-        <a href="{{ url('events_new_event') }}" target="_blank"
+        <a href="{{ url('events_new_event') }}"
            class="small button update" id="events-create-button">Create event</a>
       {% endif %}
       <dl id="events-viz-switcher" class="sub-nav dashboard-filter hide-for-small">
