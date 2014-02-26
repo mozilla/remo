@@ -154,53 +154,60 @@ Mozilla Reps - {{ poll.name }} - Vote
           </div>
         </div>
         {% endif %}
+
       </div>
-      
+
       <div class="large-6 columns">
         {% if range_poll_choice_forms %}
-        <div class="row">
-          <div class="large-1 columns">
-            <div class="pict-icon large people"></div>
-          </div>
-          <div class="large-11 columns">
-	    <meter min="0" optimum="0.85" value="{{ poll|get_users_voted/poll|get_voters_per_group }}" max="1" high="0.8">
-	      <div class="progressbar">
-		<span class="progressspan" style="width: {{ poll|get_users_voted/poll|get_voters_per_group*100 }}%;"></span>
-	      </div>
-	    </meter>
-            <p>
-              {% for range_poll, choice_form in range_poll_choice_forms.items() %}
-              <span class="label">
-                Range vote for {{ range_poll.name }}
-              </span>
-              {% for choice in choice_form %}
-              <div class="row poll-choice">
-                <div class="large-10 columns">
-                  {{ choice.label_tag() }}
-                </div>
-                <div class="large-2 columns">
-                  {{ choice }}
-                </div>
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large people"></div>
+            </div>
+            <div class="large-11 columns">
+              <div class="meter-container">
+                <span class="meter_text">{{ poll|get_meter_value }}%</span>
+                <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                  <div class="progressbar">
+                    <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
+                  </div>
+                </meter>
               </div>
-              {{ field_errors(choice) }}
-              {% endfor %}
-              {%endfor%}
-            </p>
+              <p>
+                {% for range_poll, choice_form in range_poll_choice_forms.items() %}
+                  <span class="label">
+                    Range vote for {{ range_poll.name }}
+                  </span>
+                  {% for choice in choice_form %}
+                    <div class="row poll-choice">
+                      <div class="large-10 columns">
+                        {{ choice.label_tag() }}
+                      </div>
+                      <div class="large-2 columns">
+                        {{ choice }}
+                      </div>
+                    </div>
+                    {{ field_errors(choice) }}
+                  {% endfor %}
+                {% endfor %}
+              </p>
+            </div>
           </div>
-        </div>
         {% endif %}
-	
+
         {% if radio_poll_choice_forms %}
         <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon large list"></div>
           </div>
           <div class="large-11 columns">
-	    <meter min="0" optimum="0.85" value="{{ poll|get_users_voted/poll|get_voters_per_group }}" max="1" high="0.8">
-	      <div class="progressbar">
-		<span class="progressspan" style="width: {{ poll|get_users_voted/poll|get_voters_per_group*100 }}%;"></span>
-	      </div>
-	    </meter>
+            <div class="meter-container">
+              <span class="meter_text">{{ poll|get_meter_value }}%</span>
+              <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                <div class="progressbar">
+                  <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
+                </div>
+              </meter>
+            </div>
             <p>
               {% for radio_poll, choice_form in radio_poll_choice_forms.items() %}
                 <span class="label">

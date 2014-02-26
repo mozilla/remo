@@ -1,10 +1,6 @@
 {% extends "base_fd4.html" %}
 {% block pagetitle %}Mozilla Reps - Voting{% endblock %}
 
-    <link href="/remo/voting/staic/voting/css/app-fd4.less" rel="stylesheet"
-          media="screen,projection,tv" />
-
-
 {% block content %}
 <main role="main" class="voting-main">
   <div class="row">
@@ -19,9 +15,9 @@
       </div>
     {% endif %}
   </div>
+
   
-  <div id="row">
-    {% macro display_polls(polls, show_pagination) -%}
+  {% macro display_polls(polls, show_pagination) -%}
     <div class="large-12 columns">
       <table class="dashboard-table">
         <thead>
@@ -31,13 +27,13 @@
             <th class="dashboard-clickable type-string">End Date</th>
             <th class="dashboard-clickable type-string">Eligible Groups</th>
             <th class="dashboard-clickable type-string align-center">Voted</th>
-	    <th class="dashboard-clickable type-string align-center">Progress Bar</th>
+            <th class="dashboard-clickable type-string align-center">Voting Progress</th>
           </tr>
         </thead>
         <tbody>
           {% for poll in polls %}
-          <tr>
-            <td>
+            <tr>
+              <td>
                 <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
                   {{ poll.name }}
                 </a>
@@ -52,35 +48,36 @@
               </td>
               <td>{{ poll.valid_groups }}</td>
               <td class="align-center">{{ poll|get_users_voted }}</td>
-	      <td>
-		<meter min="0" optimum="0.85" value="{{ poll|get_users_voted/poll|get_voters_per_group }}" max="1" high="0.8">
-		  <div class="progressbar">
-		    <span class="progressspan" data-percent="{{ poll|get_users_voted/poll|get_voters_per_group*100 }}" data-type="bar" data-fill="#ddd"></span>
-		  </div>
-		</meter>
-	      </td>
-          </tr>
+              <td>
+                <span class="meter_text">{{ poll|get_meter_value }}%</span>
+                <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                  <div class="progressbar">
+                    <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
+                  </div>
+                </meter>
+              </td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
       {% if show_pagination %}
-        <div class="row">
-          <div class="large-12 columns" id="voting-pagination">
-            {% if polls.has_previous() %}
-              <a class="prev" title="Previous Page" data-tooltip
-                 href="{{ '#'|urlparams(page=polls.previous_page_number()) }}">
-                &laquo;
-              </a>
-            {% endif %}
-            <label for="page-select">Page: </label>
-            <select id="page-select" autocomplete="off">
-              {% for i in range(1, polls.paginator.num_pages + 1) %}
-                <option {% if i == polls.number %} selected {% endif %}
-                        value="{{ '#'|urlparams(page=i) }}">
-                  {{ i }}
-                </option>
-              {% endfor %}
-            </select>
+      <div class="row">
+        <div class="large-12 columns" id="voting-pagination">
+          {% if polls.has_previous() %}
+            <a class="prev" title="Previous Page" data-tooltip
+               href="{{ '#'|urlparams(page=polls.previous_page_number()) }}">
+              &laquo;
+            </a>
+          {% endif %}
+          <label for="page-select">Page: </label>
+          <select id="page-select" autocomplete="off">
+            {% for i in range(1, polls.paginator.num_pages + 1) %}
+              <option {% if i == polls.number %} selected {% endif %}
+                      value="{{ '#'|urlparams(page=i) }}">
+                {{ i }}
+              </option>
+            {% endfor %}
+          </select>
             {% if polls.has_next() %}
               <a class="next" title="Next Page" data-tooltip
                  href="{{ '#'|urlparams(page=polls.next_page_number()) }}">

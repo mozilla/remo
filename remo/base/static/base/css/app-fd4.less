@@ -1934,18 +1934,24 @@ ul.mreports li.editable a {
 }
 
 /* progress bar */
-meter {   
+meter {
     border: 0;
     height: 12px;
     border-radius: 17px;
-    width: 100%;
+    width: 60%;
+    float: right;
     position: relative;
     -webkit-appearance: none; /*reset appearance */
-    -moz-appearance: none
+    -moz-appearance: none;
+    -o-appearance: none;
     appearance: none;
     background-color: #f5f5f5;
     box-shadow: 0 5px 5px -5px #333 inset;
-   
+    overflow: hidden;
+}
+
+div .meter-container {
+    margin-top: 10px;
 }
 
 /* The current value of the meter elem. By default is green
@@ -1961,7 +1967,7 @@ meter::-moz-meter-bar {
         rgba(255, 255, 255, 0.2) 100%
     );
     background-size: 100% 100%;
-    border-radius: 15%;
+    border-radius: 17%;
 }
 
 meter:-moz-meter-optimum::-moz-meter-bar {
@@ -1998,6 +2004,13 @@ meter::-webkit-meter-bar {
 when the value attr falls inside the low-high range */
 meter::-webkit-meter-optimum-value {
     background-color: #00a6fc;
+    background-image: -webkit-linear-gradient(
+        top,
+        rgba(255, 255, 255, 0.6) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.0) 51%,
+        rgba(255, 255, 255, 0.2) 100%
+    );
     background-image: linear-gradient(
         to bottom,
         rgba(255, 255, 255, 0.6) 0%,
@@ -2011,6 +2024,13 @@ meter::-webkit-meter-optimum-value {
 
 meter::-webkit-meter-suboptimum-value {
     background-color: #5b8737;
+    background-image: -webkit-linear-gradient(
+        top,
+        rgba(255, 255, 255, 0.6) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.0) 51%,
+        rgba(255, 255, 255, 0.2) 100%
+    );
     background-image: linear-gradient(
         to bottom,
         rgba(255, 255, 255, 0.6) 0%,
@@ -2021,33 +2041,74 @@ meter::-webkit-meter-suboptimum-value {
     border-radius: 17%;
 }
 
+meter::-o-meter-bar {
+    -o-apperance: meter;
+    background-color: #00a6fc;
+    background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.6) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.0) 51%,
+        rgba(255, 255, 255, 0.2) 100%
+    );
+    background-size: 100% 100%;
+    border-radius: 17%;
+}
+
+meter::-o-meter-optimum-value {
+    background-color: #00a6fc;
+    background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.6) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.0) 51%,
+        rgba(255, 255, 255, 0.2) 100%
+    );
+}
+
+meter::-o-meter-suboptimum-value {
+    background-color: #5b8737;
+    background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.6) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.0) 51%,
+        rgba(255, 255, 255, 0.2) 100%
+    );
+}
+
 /* Used for style progress bar on IE */
 .progressbar {
     border: 1px solid #ccc;
     border-radius: 17px;
     background-color: #f5f5f5;
     box-shadow: 0 5px 5px -5px #333 inset;
-    width: 100%;     
+    width: 100%;
     height: 12px;
     display: block;
-   
+    overflow: hidden;
 }
 
 .progressbar > span {
-						 
     height: inherit;
     box-shadow: 0 5px 5px -5px #999 inset;
     background-color: #00a6fc;
     background-image: linear-gradient(
-			110deg,
-			rgba(255, 255, 255, 0.6) 0%,
-			rgba(255, 255, 255, 0.3) 50%,
-			rgba(255, 255, 255, 0.0) 51%,
-			rgba(100, 100, 100, 0.3) 80%,
-			rgba(255, 255, 255, 0.2) 100%	
+        to bottom,
+        rgba(255, 255, 255, 0.6) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.0) 51%,
+        rgba(255, 255, 255, 0.2) 100%
     );
     background-size: 100% 100%;
     display: inline-block;
+}
+
+.meter_text {
+    text-align: right;
+    display: inline-block;
+    padding: 0 5px;
+    .opensanslight;
 }
 
 /* -----------------------------------------

@@ -14,7 +14,6 @@ import forms
 from remo.base.decorators import permission_check
 from remo.base.utils import get_or_create_instance
 from remo.voting.models import Poll, PollComment, RadioPoll, RangePoll, Vote
-from remo.voting.helpers import get_users_voted
 
 
 @permission_check()
@@ -22,7 +21,6 @@ def list_votings(request):
     """List votings view."""
     user = request.user
     polls = Poll.objects.all()
-
     if not user.groups.filter(name='Admin').exists():
         polls = Poll.objects.filter(valid_groups__in=user.groups.all())
 
@@ -202,8 +200,6 @@ def view_voting(request, slug):
     data['range_poll_choice_forms'] = range_poll_choice_forms
     data['radio_poll_choice_forms'] = radio_poll_choice_forms
     data['poll_comment_form'] = poll_comment_form
-    data['all_group_voters'] = User.objects.filter(groups=poll.valid_groups).count()
-    data['users_voted'] = get_users_voted(poll)
 
     return render(request, 'vote_voting.html', data)
 
