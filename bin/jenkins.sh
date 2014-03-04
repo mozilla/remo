@@ -86,7 +86,7 @@ python manage.py update_product_details
 echo "Linting..."
 echo ""
 
-find remo -name \*.py | grep -v \/migrations\/ | grep -v "remo/settings/local.py" | xargs check.py | grep -v "unable to detect undefined names" | awk "{ print } END { if (NF > 1) exit 1 }"
+flake8 remo
 
 echo "Starting tests..."
 export FORCE_DB=1
