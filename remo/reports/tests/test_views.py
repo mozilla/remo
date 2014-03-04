@@ -364,6 +364,14 @@ class EditNGReportTests(RemoTestCase):
         client = Client()
         client.get(report.get_absolute_edit_url())
 
+    @patch('remo.reports.views.messages.warning')
+    def test_get_passive(self, messages_mock):
+        report = NGReportFactory.create(is_passive=True)
+        self.get(url=report.get_absolute_edit_url(),
+                 user=report.user, follow=True)
+        messages_mock.assert_called_with(
+            mock.ANY, 'You cannot edit a passive report.')
+
     @patch('remo.reports.views.messages.success')
     @patch('remo.reports.views.redirect', wraps=redirect)
     @patch('remo.reports.views.forms.NGReportForm')
@@ -505,6 +513,11 @@ class ViewNGReportTests(RemoTestCase):
 
         messages_mock.assert_called_with(mock.ANY, 'Permission denied.')
         redirect_mock.assert_called_with('main')
+
+    def test_get_passive_uneditable(self):
+        report = NGReportFactory.create(is_passive=True)
+        response = self.get(url=report.get_absolute_url(), user=report.user)
+        ok_(not response.context['editable'])
 
 
 class DeleteNGReportCommentTests(RemoTestCase):
