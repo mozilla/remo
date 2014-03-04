@@ -214,10 +214,6 @@ def dashboard(request):
             args['mentees_ng_reportees'] = User.objects.filter(
                 ng_reports__isnull=False, ng_reports__mentor=user).distinct()
 
-        if user.groups.filter(Q(name='Admin') | Q(name='Council')).exists():
-            args['all_ng_reportees'] = User.objects.filter(
-                ng_reports__isnull=False).distinct()
-
     # Old reporting system and dashboard data
     if user.groups.filter(name='Rep').exists():
         args['monthly_reports'] = get_reports_for_year(
