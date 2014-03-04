@@ -23,13 +23,11 @@
               </a>
             </dd>
           {% endif %}
-          {% if all_ng_reportees %}
-            <dd>
-              <a role="button" id="dashboard-continuous-reports-all-button" href="#">
-                All
-              </a>
-            </dd>
-          {% endif %}
+          <dd>
+            <a role="button" href="{{ url('list_ng_reports') }}">
+              All
+            </a>
+          </dd>
         </dl>
       </div>
     </div>
@@ -171,51 +169,6 @@
         </div>
       {% endif %}
       <!-- end mentees block -->
-
-      <!-- all block -->
-      {% if all_ng_reportees %}
-        <div id="dashboard-continuous-reports-all-block" class="large-12 columns hidden">
-          <table class="dashboard-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Current streak</th>
-                <th>Longest streak</th>
-                <th>Last 2 weeks</th>
-                <th>Last 10 weeks</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% cache all_ng_reportees %}
-                {% for reportee in all_ng_reportees %}
-                  <tr>
-                    <td>
-                      <a href="{{ url('profiles_view_profile',
-                                      reportee|get_display_name) }}">
-                        {{ reportee.get_full_name() }}
-                      </a>
-                    </td>
-                    <td>{{ count_ng_reports(reportee, current_streak=True) }} days</td>
-                    <td>{{ count_ng_reports(reportee, longest_streak=True) }} days</td>
-                    <td>{{ count_ng_reports(reportee, period=2) }} activities</td>
-                    <td>{{ count_ng_reports(reportee, period=10) }} activities</td>
-                    <td>{{ count_ng_reports(reportee) }} activities</td>
-                  </tr>
-                {% endfor %}
-              {% endcache %}
-            </tbody>
-          </table>
-          <div class="align-right">
-            <a href="{{ url('list_ng_reports') }}"
-               role="button"
-               class="small button">
-               All reports
-            </a>
-          </div>
-        </div>
-      {% endif %}
-      <!-- end all block -->
     </div>
   </div>
   <!-- end continuous reports block -->
