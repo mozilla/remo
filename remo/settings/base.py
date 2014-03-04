@@ -1,6 +1,6 @@
 # This is your project's main settings file that can be committed to your
 # repo. If you need to override a setting locally, use settings_local.py
-from funfactory.settings_base import *
+from funfactory.settings_base import *  # noqa
 
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'remo.urls'
