@@ -14,10 +14,16 @@
             {{ report }}
           </a>
         </td>
-        <td data-time="{{ report.report_date|format_datetime_iso }}"
-            title="{{ report.get_report_date }}">
-          {{ report.get_report_date }}
-        </td>
+        {% if report.report_date|is_date_today %}
+          <td>
+            Today
+          </td>
+        {% else %}
+          <td data-time="{{ report.report_date|format_datetime_iso }}"
+              title="{{ report.get_report_date }}">
+              {{ report.get_report_date }}
+          </td>
+        {% endif %}
       </tr>
     {% endfor %}
     </table>
