@@ -218,6 +218,52 @@ class NGReportTest(TestCase):
             ('/u/%s/r/2012/January/1/9999/delete/'
              % report.user.userprofile.display_name))
 
+    def test_current_longest_streak(self):
+        today = datetime.datetime.utcnow().date()
+        user = UserFactory.create()
+
+        for i in range(0, 2):
+            NGReportFactory.create(
+                user=user, report_date=today - datetime.timedelta(days=i))
+
+        eq_(user.userprofile.current_streak_start,
+            today - datetime.timedelta(days=1))
+        eq_(user.userprofile.longest_streak_start,
+            today - datetime.timedelta(days=1))
+        eq_(user.userprofile.longest_streak_end, today)
+
+    def test_different_current_longest_streak(self):
+        today = datetime.datetime.utcnow().date()
+        past_day = (datetime.datetime.utcnow().date() -
+                    datetime.timedelta(days=30))
+        user = UserFactory.create()
+        #longest streak
+        for i in range(0, 3):
+            NGReportFactory.create(
+                user=user, report_date=past_day - datetime.timedelta(days=i))
+
+        # current streak
+        for i in range(0, 2):
+            NGReportFactory.create(
+                user=user, report_date=today - datetime.timedelta(days=i))
+
+        eq_(user.userprofile.current_streak_start,
+            today - datetime.timedelta(days=1))
+        eq_(user.userprofile.longest_streak_start,
+            past_day - datetime.timedelta(days=2))
+        eq_(user.userprofile.longest_streak_end, past_day)
+
+    def test_current_streak_counter_with_past_reports(self):
+        past_day = (datetime.datetime.utcnow().date() -
+                    datetime.timedelta(days=30))
+
+        user = UserFactory.create()
+        for i in range(0, 5):
+            NGReportFactory.create(
+                user=user, report_date=past_day - datetime.timedelta(days=i))
+
+        ok_(not user.userprofile.current_streak_start)
+
 
 class NGReportComment(TestCase):
     def test_get_absolute_delete_url(self):
@@ -415,9 +461,11 @@ class NGReportSignalsTest(TestCase):
                                       comment='This is a comment')
 
         eq_(len(mail.outbox), 3)
-        eq_(reporter.email, mail.outbox[0].to[0])
-        eq_(users_with_comments[0].email, mail.outbox[1].to[0])
-        eq_(users_with_comments[1].email, mail.outbox[2].to[0])
+        recipients = [reporter.email, users_with_comments[0].email,
+                      users_with_comments[1].email]
+        receivers = [mail.outbox[0].to[0], mail.outbox[1].to[0],
+                     mail.outbox[2].to[0]]
+        eq_(set(recipients), set(receivers))
         msg = ('[Report] User {0} commented on {1}'
                .format(commenter.get_full_name(), report))
         eq_(mail.outbox[0].subject, msg)

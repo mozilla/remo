@@ -71,7 +71,7 @@ class TestUserCommitedReports(RemoTestCase):
     def test_current_streak(self):
         user = UserFactory.create()
         # Add a report every 22 hours for the last 4 days (5 reports)
-        for i in range(4, 0, -1):
+        for i in range(0, 4):
             NGReportFactory.create(user=user,
                                    report_date=(utc_now().date() -
                                                 timedelta(days=i)))
@@ -81,11 +81,12 @@ class TestUserCommitedReports(RemoTestCase):
         user = UserFactory.create()
         past_day = utc_now().date() - timedelta(days=30)
         # Add 7 continuous reports somewhere in the past
-        for i in range(7, 0, -1):
+        for i in range(0, 7):
             NGReportFactory.create(user=user,
                                    report_date=(past_day - timedelta(days=i)))
-        # Add a report, one each day for the last 4 days (5 reports)
-        for i in range(6, 0, -1):
+
+        # Add a report, one each day for the last 4 days (6 reports)
+        for i in range(0, 3):
             NGReportFactory.create(user=user,
                                    report_date=(utc_now().date() -
                                                 timedelta(days=i)))
