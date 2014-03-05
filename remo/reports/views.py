@@ -350,6 +350,10 @@ def edit_ng_report(request, display_name='', year=None,
         report = get_object_or_404(
             NGReport, pk=id, user__userprofile__display_name=display_name)
 
+    if not created and report.is_passive:
+        messages.warning(request, 'You cannot edit a passive report.')
+        return redirect(report.get_absolute_url())
+
     report_form = forms.NGReportForm(request.POST or None, instance=report,
                                      initial=initial)
     if report_form.is_valid():
@@ -378,7 +382,8 @@ def view_ng_report(request, display_name, year, month, day, id):
     comment_form = forms.NGReportCommentForm(request.POST or None)
 
     editable = False
-    if request.user == user or request.user.has_perm('change_ngreport'):
+    if ((request.user == user or request.user.has_perm('change_ngreport'))
+            and not report.is_passive):
         editable = True
 
     ctx_data = {'pageuser': user,
