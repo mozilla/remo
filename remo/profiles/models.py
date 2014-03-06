@@ -152,12 +152,6 @@ class UserProfile(caching.base.CachingMixin, models.Model):
         FunctionalArea, related_name='users_matching')
     tracked_functional_areas = models.ManyToManyField(
         FunctionalArea, related_name='users_tracking')
-    receive_email_on_add_report = models.BooleanField(null=False,
-                                                      blank=True,
-                                                      default=True)
-    receive_email_on_edit_report = models.BooleanField(null=False,
-                                                       blank=True,
-                                                       default=False)
     receive_email_on_add_comment = models.BooleanField(null=False,
                                                        blank=True,
                                                        default=True)

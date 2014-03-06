@@ -154,62 +154,7 @@
                       </div>
                     </div>
                   <!-- end continuous reports block -->
-                  {% else %}
-
-                  <!-- reports list block -->
-                    <div class="dashboard-mozillians-reps-reports-block hidden">
-                      {% if reps_reports[key] %}
-                        <table class="dashboard-table">
-                          <thead>
-                            <tr>
-                              <th class="dashboard-clickable type-string">Fullname</th>
-                              <th class="dashboard-clickable type-int">Year</th>
-                              <th class="dashboard-clickable type-string">Month</th>
-                              <th class="dashboard-clickable type-string">Date filled</th>
-                              <th class="dashboard-clickable type-string align-center">Empty</th>
-                              <th class="dashboard-clickable type-string align-center">Overdue</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for report in reps_reports[key] %}
-                              <tr>
-                                <td>
-                                  <a href="{{ url('profiles_view_profile',
-                                              report.user|get_display_name) }}">
-                                     {{ report.user.get_full_name() }}
-                                  </a>
-                                </td>
-                                <td>{{ report.month.strftime('%Y') }}</td>
-                                <td>
-                                  <a href="{{ report|get_report_view_url }}">
-                                     {{ report.month.strftime('%B') }}
-                                  </a>
-                                </td>
-                                <td>{{ report.updated_on|format_datetime }}</td>
-                                <td class="empty-cell">
-                                  {% if report.empty %}
-                                    <span class="pict-table-icon tick"></span>
-                                  {% endif %}
-                                </td>
-                                <td class="overdue-cell">
-                                  {% if report.overdue %}
-                                    <span class="pict-table-icon tick"></span>
-                                  {% endif %}
-                                </td>
-                              </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      {% else %}
-                        <div class="row">
-                          <div class="large-12 columns no-bugs">
-                            <p>No Reports found!</p>
-                          </div>
-                        </div>
-                      {% endif %}
-                    </div>
                   {% endif %}
-                <!-- end reports list block -->
                 </div>
               </div>
               <!-- end people block -->

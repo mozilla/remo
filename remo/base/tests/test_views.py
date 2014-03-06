@@ -19,7 +19,6 @@ from jinja2 import Markup
 from nose.exc import SkipTest
 from nose.tools import eq_, ok_
 from test_utils import TestCase
-from waffle import Flag
 
 from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
@@ -191,9 +190,7 @@ class ViewsTest(TestCase):
     fixtures = ['demo_users.json']
 
     def setUp(self):
-        self.settings_data = {'receive_email_on_add_report': False,
-                              'receive_email_on_edit_report': True,
-                              'receive_email_on_add_comment': True}
+        self.settings_data = {'receive_email_on_add_comment': True}
         self.user_edit_settings_url = reverse('edit_settings')
         self.failed_url = urlparams(settings.LOGIN_REDIRECT_URL_FAILURE,
                                     bid_login_failed=1)
@@ -316,8 +313,6 @@ class ViewsTest(TestCase):
 
     def test_email_reps_as_mozillian(self):
         """Email all the reps associated with a functional area."""
-        Flag.objects.create(name='reports_ng_report', everyone=True)
-
         c = Client()
         area = FunctionalAreaFactory.create()
         UserFactory.create(groups=['Rep'],
@@ -408,21 +403,6 @@ class ViewsTest(TestCase):
         c.login(username='mentor', password='passwd')
         response = c.get(self.user_edit_settings_url)
         self.assertTemplateUsed(response, 'settings.html')
-
-    def test_edit_settings_mentor(self):
-        """Test correct edit settings mail preferences as mentor."""
-        c = Client()
-        c.login(username='mentor', password='passwd')
-        response = c.post(self.user_edit_settings_url,
-                          self.settings_data, follow=True)
-        eq_(response.request['PATH_INFO'], reverse('dashboard'))
-
-        # Ensure that settings data were saved
-        user = User.objects.get(username='mentor')
-        eq_(user.userprofile.receive_email_on_add_report,
-            self.settings_data['receive_email_on_add_report'])
-        eq_(user.userprofile.receive_email_on_edit_report,
-            self.settings_data['receive_email_on_edit_report'])
 
     def test_edit_settings_rep(self):
         """Test correct edit settings mail preferences as rep."""

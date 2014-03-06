@@ -36,10 +36,6 @@ urlpatterns = patterns(
     # 'me' urls
     url(r'^me/$', 'remo.profiles.views.view_my_profile',
         name='profiles_view_my_profile'),
-    url(r'^me/currentreport/$', 'remo.reports.views.current_report',
-        name='reports_view_current_report'),
-    url(r'^me/currentreport/edit/$', 'remo.reports.views.current_report',
-        dict({'edit': True}), name='reports_edit_current_report'),
 
     # profiles
     url(r'^u/', include('remo.profiles.user_urls')),
@@ -50,7 +46,6 @@ urlpatterns = patterns(
     url(r'^events/', include('remo.events.event_urls')),
 
     # reports
-    url(r'^ng-reports/', include('remo.reports.ng_report_urls')),
     url(r'^reports/', include('remo.reports.report_urls')),
 
     # featuredrep

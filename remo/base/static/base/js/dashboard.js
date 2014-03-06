@@ -11,18 +11,6 @@ $(document).ready(function () {
     var $cont_reports_mentees_button = $('#dashboard-continuous-reports-mentees-button');
     var $cont_reports_all_button = $('#dashboard-continuous-reports-all-button');
 
-    // Old reports containers
-    var $reports_all_block = $('#dashboard-reports-all-block');
-    var $reports_my_block = $('#dashboard-reports-my-block');
-    var $mentees_list_block = $('#dashboard-reports-mentees-list-block');
-    var $mentees_grid_block = $('#dashboard-reports-mentees-grid-block');
-
-    // Old reports buttons
-    var $reports_mine_button = $('#dashboard-reports-mine-button');
-    var $reports_mentees_grid_button = $('#dashboard-reports-mentees-grid-button');
-    var $reports_mentees_list_button = $('#dashboard-reports-mentees-list-button');
-    var $reports_all_button = $('#dashboard-reports-all-button');
-
     // Budget request buttons
     var $br_all_button = $('#dashboard-br-all-button');
     var $br_mine_button = $('#dashboard-br-mine-button');
@@ -74,58 +62,6 @@ $(document).ready(function () {
         $(this).parent().addClass('active');
         $cont_reports_mine_button.parent().removeClass('active');
         $cont_reports_mentees_button.parent().removeClass('active');
-    });
-
-    $reports_all_button.on('click', function (e) {
-        e.preventDefault();
-        $reports_all_block.show('fast');
-        $reports_my_block.hide('fast');
-        $mentees_list_block.hide('fast');
-        $mentees_grid_block.hide('fast');
-
-        $(this).parent().addClass('active');
-        $reports_mine_button.parent().removeClass('active');
-        $reports_mentees_grid_button.parent().removeClass('active');
-        $reports_mentees_list_button.parent().removeClass('active');
-    });
-
-    $reports_mine_button.on('click', function (e) {
-        e.preventDefault();
-        $reports_my_block.show('fast');
-        $reports_all_block.hide('fast');
-        $mentees_list_block.hide('fast');
-        $mentees_grid_block.hide('fast');
-
-        $(this).parent().addClass('active');
-        $reports_all_button.parent().removeClass('active');
-        $reports_mentees_grid_button.parent().removeClass('active');
-        $reports_mentees_list_button.parent().removeClass('active');
-    });
-
-    $reports_mentees_list_button.on('click', function (e) {
-        e.preventDefault();
-        $mentees_list_block.show('fast');
-        $reports_my_block.hide('fast');
-        $reports_all_block.hide('fast');
-        $mentees_grid_block.hide('fast');
-
-        $(this).parent().addClass('active');
-        $reports_all_button.parent().removeClass('active');
-        $reports_mentees_grid_button.parent().removeClass('active');
-        $reports_mine_button.parent().removeClass('active');
-    });
-
-    $reports_mentees_grid_button.on('click', function (e) {
-        e.preventDefault();
-        $mentees_grid_block.show('fast');
-        $mentees_list_block.hide('fast');
-        $reports_my_block.hide('fast');
-        $reports_all_block.hide('fast');
-
-        $(this).parent().addClass('active');
-        $reports_all_button.parent().removeClass('active');
-        $reports_mentees_list_button.parent().removeClass('active');
-        $reports_mine_button.parent().removeClass('active');
     });
 
     $br_all_button.on('click', function (e) {

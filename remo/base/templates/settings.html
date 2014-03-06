@@ -30,16 +30,6 @@ Mozilla Reps - Settings
                   {{ settingsform.receive_email_on_add_comment }}
                   {{ settingsform.receive_email_on_add_comment.label }}
                 </p>
-                {% if user_is_mentor(user) %}
-                <p>
-                  {{ settingsform.receive_email_on_add_report }}
-                  {{ settingsform.receive_email_on_add_report.label }}
-                </p>
-                <p>
-                  {{ settingsform.receive_email_on_edit_report }}
-                  {{ settingsform.receive_email_on_edit_report.label }}
-                </p>
-                {% endif %}
                 <h2>Events</h2>
                 <p>
                   {{ settingsform.receive_email_on_add_event_comment }}

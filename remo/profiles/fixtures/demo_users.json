@@ -265,8 +265,6 @@
                 3,
                 2
             ],
-            "receive_email_on_add_report": "True",
-            "receive_email_on_edit_report": "False",
             "receive_email_on_add_comment": "True",
             "tracked_functional_areas": []
         }
@@ -377,7 +375,6 @@
         "model": "profiles.userprofile",
         "fields": {
             "personal_website_url": "",
-            "receive_email_on_add_report": true,
             "mozillians_profile_url": "",
             "tracked_functional_areas": [
                 7,
@@ -388,7 +385,6 @@
             "twitter_account": "",
             "jabber_id": "",
             "display_name": "antoni_remo",
-            "receive_email_on_edit_report": false,
             "irc_name": "",
             "lon": null,
             "functional_areas": [],
