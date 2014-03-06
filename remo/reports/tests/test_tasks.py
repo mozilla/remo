@@ -3,8 +3,8 @@ from datetime import date, datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from mock import ANY as mockany, patch
-from nose.tools import ok_
+from mock import ANY as mockany, call, patch
+from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
 from remo.base.utils import get_date
@@ -78,13 +78,17 @@ class SendInactivityNotifications(RemoTestCase):
         NGReportFactory.create(user=rep,
                                report_date=today - timedelta(weeks=5))
 
-        subject = '[Reminder] Please share your recent activities'
+        rep_subject = '[Reminder] Please share your recent activities'
+        mentor_subject = '[Report] Mentee without report for the last 3 weeks'
 
         with patch('remo.reports.tasks.send_mail') as send_mail_mock:
             send_ng_report_notification()
 
-        send_mail_mock.assert_called_with(
-            subject, mockany, settings.FROM_EMAIL, [rep.email])
+        eq_(send_mail_mock.call_count, 2)
+        expected_call_list = [
+            call(rep_subject, mockany, settings.FROM_EMAIL, [rep.email]),
+            call(mentor_subject, mockany, settings.FROM_EMAIL, [mentor.email])]
+        eq_(send_mail_mock.call_args_list, expected_call_list)
 
     def test_with_report_filled(self):
         mentor = UserFactory.create(groups=['Mentor'])
