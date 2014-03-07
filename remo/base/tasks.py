@@ -1,5 +1,6 @@
-from celery.task import task
 from django.core.mail import EmailMessage
+
+from celery.task import task
 
 
 @task

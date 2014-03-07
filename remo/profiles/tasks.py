@@ -42,3 +42,9 @@ def check_mozillian_username():
             user.userprofile.mozillian_username = ''
         user.save()
         user.userprofile.save()
+
+
+@task(ignore_result=False)
+def check_celery():
+    """Dummy celery task to check that everything runs smoothly."""
+    pass

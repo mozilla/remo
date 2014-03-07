@@ -1,14 +1,19 @@
-import csv
-
 from itertools import izip_longest
+from socket import error as socket_error
 
-from django.contrib import admin
+from django.conf.urls.defaults import patterns, url
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.timezone import now
 
+import csv
+from functools import update_wrapper
+
 from remo.profiles.models import FunctionalArea, UserAvatar, UserProfile
+from remo.profiles.tasks import check_celery
 
 # Unregister User from Administration to attach UserProfileInline
 admin.site.unregister(User)
@@ -43,6 +48,37 @@ class UserAdmin(UserAdmin):
     """User Admin."""
     inlines = [UserProfileInline]
     actions = [export_mentorship_csv]
+
+    def get_urls(self):
+        """Return custom and UserAdmin urls."""
+
+        def wrap(view):
+
+            def wrapper(*args, **kwargs):
+                return self.admin_site.admin_view(view)(*args, **kwargs)
+            return update_wrapper(wrapper, view)
+
+        urls = super(UserAdmin, self).get_urls()
+        my_urls = patterns('', url(r'check_celery', wrap(self.check_celery),
+                                   name='users_check_celery'))
+        return my_urls + urls
+
+    def check_celery(self, request):
+        try:
+            investigator = check_celery.delay()
+        except socket_error as e:
+            messages.error(request, 'Cannot connect to broker: %s' % e)
+        finally:
+            return HttpResponseRedirect(reverse('admin:auth_user_changelist'))
+
+        try:
+            investigator.get(timeout=5)
+        except investigator.TimeoutError as e:
+            messages.error(request, 'Worker timeout: %s' % e)
+        else:
+            messages.success(request, 'Celery is OK')
+        finally:
+            return HttpResponseRedirect(reverse('admin:auth_user_changelist'))
 
 
 class UserAvatarAdmin(admin.ModelAdmin):
