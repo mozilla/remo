@@ -68,7 +68,6 @@ class UserAdmin(UserAdmin):
             investigator = check_celery.delay()
         except socket_error as e:
             messages.error(request, 'Cannot connect to broker: %s' % e)
-        finally:
             return HttpResponseRedirect(reverse('admin:auth_user_changelist'))
 
         try:
