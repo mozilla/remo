@@ -356,3 +356,21 @@ class ListNGReportTests(RemoTestCase):
                               'mentor': mentor.userprofile.display_name})
         response = self.get(url=url)
         eq_(set(response.context['reports'].object_list), set([report]))
+
+
+class LegacyReportingTests(RemoTestCase):
+    def test_old_report_redirect(self):
+        """Test old report url redirects to list of reports for that month."""
+        user = UserFactory.create(groups=['Rep'])
+        report_date = datetime.date(2011, 01, 05)
+        NGReportFactory.create_batch(3, user=user, report_date=report_date)
+
+        display_name = user.userprofile.display_name
+        url = reverse('reports_ng_view_report',
+                      kwargs={'display_name': display_name,
+                              'month': 'January',
+                              'year': 2011})
+        response = self.get(url, follow=True)
+        redirect_url = '/reports/rep/%s/?year=2011&month=January'
+        self.assertRedirects(response, redirect_url % display_name)
+        eq_(response.context['number_of_reports'], 3)

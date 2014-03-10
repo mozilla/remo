@@ -3,15 +3,18 @@ from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
 
 from django_statsd.clients import statsd
+from funfactory.helpers import urlparams
 
 import forms
 
 from remo.base.decorators import permission_check
+from remo.base.utils import month2number
 from remo.profiles.models import FunctionalArea, UserProfile
 from remo.reports import ACTIVITY_CAMPAIGN
 from remo.reports.models import NGReport, NGReportComment
@@ -79,7 +82,11 @@ def edit_ng_report(request, display_name='', year=None,
                    'campaign_trigger': ACTIVITY_CAMPAIGN})
 
 
-def view_ng_report(request, display_name, year, month, day, id):
+def view_ng_report(request, display_name, year, month, day=None, id=None):
+    if not day and not id:
+        url = reverse('list_ng_reports_rep', kwargs={'rep': display_name})
+        return redirect(urlparams(url, year=year, month=month))
+
     user = get_object_or_404(User, userprofile__display_name=display_name)
     report = get_object_or_404(NGReport, id=id)
     comment_form = forms.NGReportCommentForm(request.POST or None)
@@ -166,6 +173,12 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
                                             slug=functional_area_slug)
         report_list = report_list.filter(functional_areas=functional_area)
         pageheader += ' for area %s' % functional_area.name
+
+    if 'month' and 'year' in request.GET:
+        month = month2number(request.GET['month'])
+        year = request.GET['year']
+        report_list = report_list.filter(report_date__year=year,
+                                         report_date__month=month)
 
     if 'query' in request.GET:
         query = request.GET['query'].strip()
