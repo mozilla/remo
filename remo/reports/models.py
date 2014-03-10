@@ -552,3 +552,89 @@ def email_commenters_on_add_ng_report_comment(sender, instance, **kwargs):
             subject = subject.format(instance.user.get_full_name(), report)
             send_remo_mail.delay([user_id], subject,
                                  email_template, ctx_data)
+
+
+@receiver(pre_delete, sender=NGReport,
+          dispatch_uid='delete_ng_report_signal')
+def delete_ng_report(sender, instance, **kwargs):
+    """Automatically update user's streak counters."""
+    today = get_date()
+    current_start = instance.user.userprofile.current_streak_start or None
+    longest_start = instance.user.userprofile.longest_streak_start or None
+    longest_end = instance.user.userprofile.longest_streak_end or None
+
+    # If instance is in the future or there is another
+    # report that date, don't do anything
+    if (instance.is_future_report or
+        (NGReport.objects
+         .filter(user=instance.user, report_date=instance.report_date)
+         .exclude(pk=instance.id).exists())):
+        return
+
+    try:
+        next_report = instance.get_next_by_report_date(
+            user=instance.user, report_date__lte=today)
+    except NGReport.DoesNotExist:
+        next_report = None
+
+    try:
+        previous_report = instance.get_previous_by_report_date(
+            user=instance.user)
+    except NGReport.DoesNotExist:
+        previous_report = None
+
+    # There aren't any reports
+    if not next_report and not previous_report:
+        current_start = None
+        longest_start = None
+        longest_end = None
+
+    # If the deleted report is between the range of the longest
+    # streak counters, we need to update them.
+    elif (longest_start and longest_end and
+          instance.report_date in daterange(longest_start, longest_end)):
+
+        if longest_start == instance.report_date and next_report:
+            longest_start = next_report.report_date
+        elif longest_end == instance.report_date and previous_report:
+            longest_end = previous_report.report_date
+        elif (previous_report and next_report and
+              (next_report.report_date -
+               previous_report.report_date).days > 7):
+            # Compare the number of reports registered from the starting point
+            # of the longest streak up until the date of the deleted report,
+            # with the number of reports registered from the date of the
+            # deleted report until the end of the longest streak.
+            lower_half_report_count = NGReport.objects.filter(
+                report_date__range=(longest_start, instance.report_date),
+                user=instance.user).count()
+            upper_half_report_count = NGReport.objects.filter(
+                report_date__range=(instance.report_date, longest_end),
+                user=instance.user).count()
+
+            # If the first time slice contains more reports, then we need
+            # to move the end of the longest streak, just before
+            # the deletion point. If the opposite is true, move the starting
+            # point of the longest streak just after the deletion point.
+            if (lower_half_report_count >= upper_half_report_count and
+                    previous_report.report_date >= longest_start):
+                longest_end = previous_report.report_date
+            elif (upper_half_report_count > lower_half_report_count and
+                    next_report.report_date <= longest_end):
+                longest_start = next_report.report_date
+
+    # If the deleted report is between the range of the current
+    # streak counter and today, then we need to update the counter.
+    if (current_start and
+            instance.report_date in daterange(current_start, today)):
+        if current_start == instance.report_date and next_report:
+            current_start = next_report.report_date
+        elif (previous_report and next_report and
+                (next_report.report_date -
+                 previous_report.report_date).days > 7):
+            current_start = next_report.report_date
+
+    instance.user.userprofile.current_streak_start = current_start
+    instance.user.userprofile.longest_streak_start = longest_start
+    instance.user.userprofile.longest_streak_end = longest_end
+    instance.user.userprofile.save()
