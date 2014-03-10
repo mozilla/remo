@@ -46,7 +46,7 @@
                   <span class="date-range">
                     {{ date_to_weeks(user.userprofile.current_streak_start,
                                       today.date()) }} weeks<br>
-                    {% if user.userprofile.current_streak_start|is_date_today %}
+                    {% if is_same_day(user.userprofile.current_streak_start) %}
                         Today
                     {% else %}
                         {{ user.userprofile.current_streak_start|strftime('%d %b %Y')}}
@@ -64,8 +64,11 @@
                   <span class="date-range">
                     {{ date_to_weeks(user.userprofile.longest_streak_start,
                                       user.userprofile.longest_streak_end) }} weeks<br>
-                    {% if user.userprofile.longest_streak_start|is_date_today %}
+                    {% if is_same_day(user.userprofile.longest_streak_start) %}
                         Today
+                    {% elif is_same_day(user.userprofile.longest_streak_start,
+                                        user.userprofile.longest_streak_end) %}
+                        {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
                     {% else %}
                         {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
                         &nbsp;-&nbsp;
