@@ -120,3 +120,46 @@ def zero_current_streak():
     for rep in reps:
         rep.userprofile.current_streak_start = None
         rep.userprofile.save()
+
+
+@periodic_task(run_every=timedelta(days=1))
+def calculate_longest_streaks():
+    """Calculate user's longest streaks."""
+    from remo.reports.models import NGReport
+
+    reps = (User.objects.filter(groups__name='Rep')
+            .exclude(userprofile__longest_streak_start=None)
+            .exclude(userprofile__longest_streak_end=None))
+
+    for rep in reps:
+
+        streak_count = 0
+        longest_start = None
+        longest_end = None
+        reports = NGReport.objects.filter(user=rep).order_by('report_date')
+
+        if reports:
+
+            start = reports[0].report_date
+            end = reports[0].report_date
+
+            for report in reports:
+                try:
+                    next_report = report.get_next_by_report_date(user=rep)
+                except NGReport.DoesNotExist:
+                    if (end - start).days > streak_count:
+                        longest_start = start
+                        longest_end = end
+                    break
+
+                if (next_report.report_date - report.report_date).days > 7:
+                    if (end - start).days > streak_count:
+                        streak_count = (end - start).days
+                        longest_start = start
+                        longest_end = end
+                    start = next_report.report_date
+                end = next_report.report_date
+
+        rep.userprofile.longest_streak_start = longest_start
+        rep.userprofile.longest_streak_end = longest_end
+        rep.userprofile.save()
