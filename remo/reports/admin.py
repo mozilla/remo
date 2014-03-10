@@ -39,6 +39,8 @@ class NGReportAdmin(admin.ModelAdmin):
     """New Generation Report Admin."""
     inlines = [NGReportCommentInline]
     list_display = ('user', 'report_date', 'created_on', 'updated_on')
+    search_fields = ['user__first_name', 'user__last_name',
+                     'user__userprofile__display_name']
 
 
 class ActivityAdmin(admin.ModelAdmin):
