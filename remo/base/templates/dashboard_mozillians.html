@@ -123,19 +123,49 @@
                                     </a>
                                   </td>
                                   <td>
-                                    {{ count_ng_reports(report.user, current_streak=True) }} days
+                                    {% set day_count=count_ng_reports(report.user, current_streak=True) %}
+                                    {% if day_count > 0 %}
+                                      {{ day_count }}&nbsp;
+                                      {% if day_count == 1 %}day{% else %}days{% endif %}
+                                    {% else %}
+                                      0
+                                    {% endif %}
                                   </td>
                                   <td>
-                                    {{ count_ng_reports(report.user, longest_streak=True) }} days
+                                    {% set day_count=count_ng_reports(report.user, longest_streak=True) %}
+                                    {% if day_count > 0 %}
+                                      {{ day_count }}&nbsp;
+                                      {% if day_count == 1 %}day{% else %}days{% endif %}
+                                    {% else %}
+                                      0
+                                    {% endif %}
                                   </td>
                                   <td>
-                                    {{ count_ng_reports(report.user, period=2) }} activities
+                                    {% set activity_count=count_ng_reports(report.user, period=2) %}
+                                    {% if activity_count > 0 %}
+                                      {{ activity_count }}&nbsp;
+                                      {% if activity_count == 1 %}activity{% else %}activities{% endif %}
+                                    {% else %}
+                                      0
+                                    {% endif %}
                                   </td>
                                   <td>
-                                    {{ count_ng_reports(report.user, period=10) }} activities
+                                    {% set activity_count=count_ng_reports(report.user, period=10) %}
+                                    {% if activity_count > 0 %}
+                                      {{ activity_count }}&nbsp;
+                                      {% if activity_count == 1 %}activity{% else %}activities{% endif %}
+                                    {% else %}
+                                      0
+                                    {% endif %}
                                   </td>
                                   <td>
-                                    {{ count_ng_reports(report.user) }} activities
+                                    {% set activity_count=count_ng_reports(report.user) %}
+                                    {% if activity_count > 0 %}
+                                      {{ activity_count }}&nbsp;
+                                      {% if activity_count == 1 %}activity{% else %}activities{% endif %}
+                                    {% else %}
+                                      0
+                                    {% endif %}
                                   </td>
                                 </tr>
                               {% endfor %}
