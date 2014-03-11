@@ -13,7 +13,6 @@ from django.utils.timezone import now as utc_now
 from django.views import generic
 from django.views.decorators.cache import cache_control, never_cache
 
-import waffle
 from django_statsd.clients import statsd
 
 import forms
@@ -24,9 +23,7 @@ from remo.base.mozillians import BadStatusCodeError, is_vouched
 from remo.events.models import Event
 from remo.featuredrep.models import FeaturedRep
 from remo.remozilla.models import Bug
-from remo.reports.models import NGReport, Report
-from remo.reports.utils import get_mentee_reports_for_month
-from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
+from remo.reports.models import NGReport
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
@@ -136,7 +133,6 @@ def dashboard_mozillians(request, user):
     # Get the reps who match the specified interests
     interests = user.userprofile.tracked_functional_areas.all()
     tracked_interests = {}
-    reps_reports = {}
     reps_past_events = {}
     reps_current_events = {}
     now = datetime.now()
@@ -150,26 +146,20 @@ def dashboard_mozillians(request, user):
         tracked_interests[interest.name] = {
             'id': interest.id, 'reps': reps}
 
-        # Continuous reporting section
+        # Get the reports of the Reps with the specified interest
         ng_reports = NGReport.objects.filter(report_date__lte=today,
                                              functional_areas=interest,
                                              user__in=reps)
         reps_ng_reports[interest.name] = (ng_reports
                                           .order_by('-report_date')[:10])
 
-        # Get the reports of the Reps with the specified interest
-        reps_reports[interest.name] = Report.objects.filter(
-            user__in=reps).order_by('created_on')[:20]
         # Get the events with the specified category
         events = Event.objects.filter(categories=interest)
         reps_past_events[interest.name] = events.filter(start__lt=now)[:50]
         reps_current_events[interest.name] = events.filter(start__gte=now)
 
-    if waffle.flag_is_active(request, 'reports_ng_report'):
-        args['reps_ng_reports'] = reps_ng_reports
-
+    args['reps_ng_reports'] = reps_ng_reports
     args['interestform'] = interestform
-    args['reps_reports'] = reps_reports
     args['reps_past_events'] = reps_past_events
     args['reps_current_events'] = reps_current_events
     args['tracked_interests'] = tracked_interests
@@ -203,23 +193,13 @@ def dashboard(request):
 
     today = date.today()
     # NG Reports
-    if waffle.flag_is_active(request, 'reports_ng_report'):
-        if user.groups.filter(name='Rep').exists():
-            args['ng_reports'] = (user.ng_reports
-                                  .filter(report_date__lte=today)
-                                  .order_by('-report_date'))
-            args['today'] = utc_now()
-
-        if user.groups.filter(name='Mentor').exists():
-            args['mentees_ng_reportees'] = User.objects.filter(
-                ng_reports__isnull=False, ng_reports__mentor=user).distinct()
-
-    # Old reporting system and dashboard data
     if user.groups.filter(name='Rep').exists():
-        args['monthly_reports'] = get_reports_for_year(
-            user, start_year=2011, end_year=today.year,
-            permission=REPORTS_PERMISSION_LEVEL['owner'])
+        args['ng_reports'] = (user.ng_reports
+                              .filter(report_date__lte=today)
+                              .order_by('-report_date'))
+        args['today'] = utc_now()
 
+    # Dashboard data
     my_q = (Q(cc=user) | Q(creator=user))
     my_q_assigned = (my_q | Q(assigned_to=user))
     my_mentees = User.objects.filter(userprofile__mentor=user,
@@ -229,6 +209,8 @@ def dashboard(request):
     args['my_swag_requests'] = swag_requests.filter(my_q).distinct()
 
     if user.groups.filter(name='Mentor').exists():
+        args['mentees_ng_reportees'] = User.objects.filter(
+            ng_reports__isnull=False, ng_reports__mentor=user).distinct()
         args['mentees_budget_requests'] = (budget_requests.
                                            filter(creator__in=my_mentees).
                                            distinct())
@@ -238,10 +220,6 @@ def dashboard(request):
         my_mentorship_requests = mentorship_requests.filter(my_q_assigned)
         my_mentorship_requests = my_mentorship_requests.order_by('whiteboard')
         args['my_mentorship_requests'] = my_mentorship_requests.distinct()
-        args['mentees_reports_list'] = (Report.objects.filter(mentor=user).
-                                        order_by('-created_on').
-                                        distinct()[:20])
-        args['mentees_reports_grid'] = get_mentee_reports_for_month(user)
         args['mentees_emails'] = (
             my_mentees.values_list('first_name', 'last_name', 'email') or
             None)
@@ -252,8 +230,6 @@ def dashboard(request):
         args['all_swag_requests'] = swag_requests.all()[:20]
         args['my_cit_requests'] = cit_requests
         args['my_planning_requests'] = planning_requests
-        args['all_reports'] = (Report.objects.all()
-                               .order_by('-created_on')[:20])
     else:
         args['my_planning_requests'] = (planning_requests.
                                         filter(my_q_assigned).

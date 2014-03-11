@@ -16,14 +16,12 @@ from funfactory.helpers import urlparams
 from product_details import product_details
 
 import forms
-import waffle
 
 from remo.base.decorators import permission_check
 from remo.events.utils import get_events_for_user
 from remo.featuredrep.models import FeaturedRep
 from remo.profiles.models import UserProfile
 from remo.profiles.models import FunctionalArea
-from remo.reports.utils import REPORTS_PERMISSION_LEVEL, get_reports_for_year
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
@@ -158,27 +156,10 @@ def view_profile(request, display_name):
 
     today = datetime.utcnow().date()
 
-    # Enable NGReports if waffle flag is active
-    if waffle.flag_is_active(request, 'reports_ng_report'):
-        data['ng_reports'] = (user.ng_reports
-                              .filter(report_date__lte=today)
-                              .order_by('-report_date'))
-
-    if ((request.user.is_authenticated() and
-         user in request.user.mentees.all()) or
-            user == request.user):
-        reports = get_reports_for_year(
-            user, start_year=2011, end_year=today.year,
-            permission=REPORTS_PERMISSION_LEVEL['owner'])
-    elif request.user.is_authenticated():
-        reports = get_reports_for_year(
-            user, start_year=2011, end_year=today.year,
-            permission=REPORTS_PERMISSION_LEVEL['authenticated'])
-    else:
-        reports = get_reports_for_year(
-            user, start_year=2011, end_year=today.year,
-            permission=REPORTS_PERMISSION_LEVEL['anonymous'])
-    data['monthly_reports'] = reports
+    # NGReports
+    data['ng_reports'] = (user.ng_reports
+                          .filter(report_date__lte=today)
+                          .order_by('-report_date'))
 
     past_user_events = get_events_for_user(user, to_date=today)
 

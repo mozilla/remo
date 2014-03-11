@@ -91,12 +91,6 @@ class EmailRepsForm(BaseEmailUsersFrom):
 
 class EditSettingsForm(happyforms.ModelForm):
     """Form to edit user settings regarding mail preferences."""
-    receive_email_on_add_report = forms.BooleanField(
-        required=False, initial=True,
-        label=('Receive email when a mentee files a new report.'))
-    receive_email_on_edit_report = forms.BooleanField(
-        required=False, initial=False,
-        label=('Receive email when a mentee edits a report.'))
     receive_email_on_add_comment = forms.BooleanField(
         required=False, initial=True,
         label=('Receive email when a user comments on a report.'))
@@ -106,9 +100,7 @@ class EditSettingsForm(happyforms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['receive_email_on_add_report',
-                  'receive_email_on_edit_report',
-                  'receive_email_on_add_comment',
+        fields = ['receive_email_on_add_comment',
                   'receive_email_on_add_event_comment']
 
 

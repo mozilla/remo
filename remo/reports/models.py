@@ -15,7 +15,7 @@ from south.signals import post_migrate
 
 import remo.base.utils as utils
 from remo.base.utils import (add_permissions_to_groups,
-                             get_object_or_none, go_back_n_months)
+                             get_object_or_none)
 from remo.base.models import GenericActiveManager
 from remo.base.utils import daterange, get_date
 from remo.events.helpers import get_event_link
@@ -94,47 +94,6 @@ def report_set_month_day_pre_save(sender, instance, **kwargs):
                                        month=instance.month.month, day=1)
 
 
-@receiver(pre_save, sender=Report,
-          dispatch_uid='report_set_overdue_pre_save_signal')
-def report_set_overdue_pre_save(sender, instance, raw, **kwargs):
-    """Set overdue on Report object creation."""
-    today = datetime.date.today()
-    previous_month = go_back_n_months(today, first_day=True)
-
-    if not instance.id and not raw:
-        if (previous_month > instance.month
-            or (previous_month == instance.month
-                and today.day > OVERDUE_DAY)):
-            instance.overdue = True
-
-
-@receiver(post_save, sender=Report,
-          dispatch_uid='email_mentor_on_add_report_signal')
-def email_mentor_on_add_report(sender, instance, created, **kwargs):
-    """Email a mentor when a user adds or edits a report."""
-    subject = '[Report] Your mentee, %s %s a report for %s %s.'
-    email_template = 'emails/mentor_notification_report_added_or_edited.txt'
-    month = instance.month.strftime('%B')
-    year = instance.month.strftime('%Y')
-    rep_user = instance.user
-    rep_profile = instance.user.userprofile
-    mentor_profile = instance.mentor.userprofile
-    ctx_data = {'rep_user': rep_user, 'rep_profile': rep_profile,
-                'new_report': created, 'month': month, 'year': year}
-    if created:
-        if mentor_profile.receive_email_on_add_report:
-            subject = subject % ((rep_profile.display_name,
-                                  'added', month, year))
-            send_remo_mail.delay([instance.mentor.id], subject, email_template,
-                                 ctx_data)
-    else:
-        if mentor_profile.receive_email_on_edit_report:
-            subject = subject % (rep_profile.display_name, 'edited',
-                                 month, year)
-            send_remo_mail.delay([instance.mentor.id], subject, email_template,
-                                 ctx_data)
-
-
 @receiver(pre_delete, sender=EventAttendance,
           dispatch_uid='report_remove_event_signal')
 def report_remove_event(sender, instance, **kwargs):
@@ -158,22 +117,6 @@ class ReportComment(models.Model):
 
     class Meta:
         ordering = ['id']
-
-
-@receiver(post_save, sender=ReportComment,
-          dispatch_uid='email_user_on_add_comment_signal')
-def email_user_on_add_comment(sender, instance, **kwargs):
-    """Email a user when a comment is added to a report."""
-    subject = '[Report] User %s commented on your report of %s'
-    email_template = 'emails/user_notification_on_add_comment.txt'
-    report = instance.report
-    owner = instance.report.user
-    ctx_data = {'report': report, 'owner': owner, 'user': instance.user,
-                'comment': instance.comment, 'created_on': instance.created_on}
-    if owner.userprofile.receive_email_on_add_comment:
-        subject = subject % (instance.user.get_full_name(),
-                             report.month.strftime('%B %Y'))
-        send_remo_mail.delay([owner.id], subject, email_template, ctx_data)
 
 
 class ReportEvent(models.Model):
