@@ -213,7 +213,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
     is_passive = models.BooleanField(default=False)
     event = models.ForeignKey(Event, null=True, blank=True)
     link = models.URLField(max_length=500, blank=True, default='')
-    link_description = models.CharField(max_length=200, blank=True, default='')
+    link_description = models.CharField(max_length=500, blank=True, default='')
     activity_description = models.TextField(blank=True, default='')
 
     objects = caching.base.CachingManager()
