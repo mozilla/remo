@@ -13,9 +13,9 @@ def count_ng_reports(obj, current_streak=False, longest_streak=False,
                                        longest_streak, period)
 
 
-@register.filter
-def is_date_today(date):
-    if date == utc_now().date():
+@register.function
+def is_same_day(first_date, second_date=None):
+    if first_date == (second_date or utc_now().date()):
         return True
     return False
 
