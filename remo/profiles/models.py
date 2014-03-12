@@ -62,8 +62,8 @@ class FunctionalArea(models.Model):
     slug = models.SlugField(blank=True, max_length=100)
     active = models.BooleanField(default=True)
 
-    active_objects = GenericActiveManager()
     objects = models.Manager()
+    active_objects = GenericActiveManager()
 
     def save(self, *args, **kwargs):
         # Create unique slug
