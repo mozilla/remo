@@ -14,7 +14,7 @@
               {{ report }}
             </a>
           </td>
-          {% if report.report_date|is_date_today %}
+          {% if is_same_day(report.report_date) %}
             <td title="{{ report.get_report_date }}">
               Today
             </td>
