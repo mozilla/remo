@@ -16,7 +16,7 @@ import forms
 from remo.base.decorators import permission_check
 from remo.base.utils import month2number
 from remo.profiles.models import FunctionalArea, UserProfile
-from remo.reports import ACTIVITY_CAMPAIGN
+from remo.reports import ACTIVITY_CAMPAIGN, UNLISTED_ACTIVITIES
 from remo.reports.models import NGReport, NGReportComment
 
 
@@ -57,8 +57,8 @@ def edit_ng_report(request, display_name='', year=None,
         report = get_object_or_404(
             NGReport, pk=id, user__userprofile__display_name=display_name)
 
-    if not created and report.is_passive:
-        messages.warning(request, 'You cannot edit a passive report.')
+    if not created and report.activity.name in UNLISTED_ACTIVITIES:
+        messages.warning(request, 'You cannot edit this report.')
         return redirect(report.get_absolute_url())
 
     report_form = forms.NGReportForm(request.POST or None, instance=report,
@@ -93,7 +93,7 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
 
     editable = False
     if ((request.user == user or request.user.has_perm('change_ngreport'))
-            and not report.is_passive):
+            and not report.activity.name in UNLISTED_ACTIVITIES):
         editable = True
 
     ctx_data = {'pageuser': user,
