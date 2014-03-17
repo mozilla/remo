@@ -324,12 +324,29 @@
           </div>
         </div>
 
-        <!-- Categories -->
+        <!-- Categories/Goals Section -->
         <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large medal"></div>
+          </div>
+          <!-- Goals -->
+          <div class="large-11 columns category-goal-select">
+            <button class="small button"
+               data-reveal-id="goals-modal">
+               Select event goals
+            </button>
+            {% if event_form.goals.errors %}
+            <small class="error">
+              Please mark event goals
+            </small>
+            {% endif %}
+            <div class="required-field"></div>
+          </div>
+          <!-- Categories -->
           <div class="large-1 columns">
             <div class="pict-icon large heart"></div>
           </div>
-          <div class="large-11 columns category-select">
+          <div class="large-11 columns category-goal-select">
             <button class="small button"
                data-reveal-id="category-modal">
                Select event category
@@ -339,7 +356,7 @@
               Please mark event category
             </small>
             {% endif %}
-             <div class="required-field"></div>
+            <div class="required-field"></div>
           </div>
         </div>
 
@@ -447,6 +464,8 @@
       </button>
     </div>
 
+    <!-- Modals section -->
+
     <!-- Category modal -->
     <div id="category-modal" class="reveal-modal event-categories">
       <a class="close-reveal-modal">&#215;</a>
@@ -457,14 +476,16 @@
         Event categories
       </h3>
       <ul class="large-block-grid-3 small-block-grid-1">
-        {% for choice in event_form.categories.field.choices %}
+        {% for category_choice in event_form.categories.field.choices %}
           <li>
-            <label for="{{ choice.1 }}-bit">
-              <input type="checkbox" id="{{ choice.1 }}-bit" name="categories" value="{{ choice.0 }}"
-                     {% if choice.0 in selected_categories %}
+            <label for="{{ category_choice.1 }}-bit">
+              <input type="checkbox" id="{{ category_choice.1 }}-bit"
+                     name="categories" value="{{ category_choice.0 }}"
+                     {% if category_choice.0 in selected_categories %}
                        checked="checked"
                      {% endif %}/>
-              {{ choice.1 }}
+              {{ category_choice.1 }}
+            </label>
           </li>
         {% endfor %}
       </ul>
@@ -473,9 +494,34 @@
       </button>
     </div>
 
+    <!-- Event Goals modal -->
+    <div id="goals-modal" class="reveal-modal event-goals">
+      <a class="close-reveal-modal">&#215;</a>
+      <p class="lead">
+        Select goals for this event
+      </p>
+      <h3>
+        Event goals
+      </h3>
+      <ul class="large-block-grid-3 small-block-grid-1">
+        {% for goal_choice in event_form.goals.field.choices %}
+          <li>
+            <label for="{{ goal_choice.1 }}-bit">
+              <input type="checkbox" id="{{ goal_choice.1 }}-bit"
+                     name="goals" value="{{ goal_choice.0 }}"
+                     {% if goal_choice.0 in selected_goals %}
+                       checked="checked"
+                     {% endif %}/>
+              {{ goal_choice.1 }}
+            </label>
+          </li>
+        {% endfor %}
+      </ul>
+      <button class="small button update close-reveal-modal">
+        Choose these goals &raquo;
+      </button>
+    </div>
   </form>
-
-  <!-- Modals section -->
 
   <!-- Map Point Reveal Modal -->
   {% include 'includes/map_modal.html' %}

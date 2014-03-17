@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from models import Attendance, Metric, Event
+from models import Attendance, Event, EventGoal, Metric
 
 
 class AttendanceInline(admin.StackedInline):
@@ -13,9 +13,14 @@ class MetricInline(admin.StackedInline):
     model = Metric
 
 
+class EventGoalAdmin(admin.ModelAdmin):
+    """Metric Inline."""
+    model = EventGoal
+
+
 class EventAdmin(admin.ModelAdmin):
     """Event Admin."""
-    inlines = [MetricInline, AttendanceInline]
+    inlines = [AttendanceInline, MetricInline]
     model = Event
     list_display = ('name', 'start', 'end')
     search_fields = ('name', 'country', 'region', 'venue')
@@ -25,3 +30,4 @@ class EventAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Event, EventAdmin)
+admin.site.register(EventGoal, EventGoalAdmin)

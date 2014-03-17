@@ -15,6 +15,7 @@ import caching.base
 from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
+from remo.base.models import GenericActiveManager
 from remo.base.utils import add_permissions_to_groups
 from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
@@ -33,6 +34,36 @@ class Attendance(models.Model):
 
     def __unicode__(self):
         return '%s %s' % (self.user, self.event)
+
+
+class EventGoal(models.Model):
+    """Event Goals Model."""
+    name = models.CharField(max_length=127, unique=True)
+    slug = models.SlugField(blank=True, max_length=127)
+    active = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    active_objects = GenericActiveManager()
+
+    def save(self, *args, **kwargs):
+        # Create unique slug
+        if not self.slug:
+            self.slug = slugify(self.name, instance=self)
+        super(EventGoal, self).save(*args, **kwargs)
+
+    def get_absolute_delete_url(self):
+        return reverse('delete_event_goal', kwargs={'pk': self.id})
+
+    def get_absolute_edit_url(self):
+        return reverse('edit_event_goal', kwargs={'pk': self.id})
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'event goal'
+        verbose_name_plural = 'event goals'
 
 
 class Event(caching.base.CachingMixin, models.Model):
@@ -70,6 +101,7 @@ class Event(caching.base.CachingMixin, models.Model):
     times_edited = models.PositiveIntegerField(default=0, editable=False)
     categories = models.ManyToManyField(FunctionalArea,
                                         related_name='events_categories')
+    goals = models.ManyToManyField(EventGoal, related_name='events_goals')
 
     objects = caching.base.CachingManager()
 
