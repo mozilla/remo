@@ -190,6 +190,16 @@
       </div>
     </div>
 
+    <div class="row show-for-small">
+      <div class="large-12 columns">
+        {% if not created %}
+          <button type="button" class="small button alert"
+                  data-reveal-id="ng-delete-report">Delete report</button>
+        {% endif %}
+        <button type="submit" class="small button confirm">Save report</button>
+      </div>
+    </div>
+
     <!-- Map Point Reveal Modal -->
     {% include 'includes/map_modal.html' %}
 
