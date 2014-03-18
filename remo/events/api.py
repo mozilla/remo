@@ -1,9 +1,9 @@
-from datetime import date
 from urllib import unquote
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.utils.timezone import now
 
 from jinja2 import escape
 from tastypie import fields
@@ -119,7 +119,7 @@ class EventResource(ModelResource):
             request, data, **response_kwargs)
 
         if self.determine_format(request) == 'text/calendar':
-            today = date.today()
+            today = now().date()
             filename = today.strftime('ical-export-%Y-%m-%d.ics')
             response['Content-Disposition'] = 'filename="%s"' % filename
 

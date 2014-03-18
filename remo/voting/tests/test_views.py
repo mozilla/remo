@@ -4,13 +4,12 @@ from datetime import datetime, timedelta
 from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
 from django.test.client import Client, RequestFactory
-from django.utils.timezone import make_aware
+from django.utils.timezone import make_aware, now
 
 import mock
 from nose.tools import eq_
 from test_utils import TestCase
 
-from remo.base.utils import datetime2pdt
 from remo.profiles.tests import UserFactory
 from remo.voting.models import (Poll, PollComment, RadioPoll, RadioPollChoice,
                                 RangePoll, RangePollChoice)
@@ -177,7 +176,7 @@ class ViewsTest(TestCase):
     @mock.patch('remo.voting.views.messages')
     def test_view_post_a_comment(self, fake_messages):
         """Post a comment on poll."""
-        poll_start = datetime2pdt() - timedelta(days=5)
+        poll_start = now() - timedelta(days=5)
         poll_user = UserFactory.create(groups=['Council'])
         poll_group = Group.objects.get(name='Council')
         swag_poll = PollFactory.create(name='swag poll', start=poll_start,

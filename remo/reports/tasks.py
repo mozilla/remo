@@ -1,10 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.template.loader import render_to_string
+from django.utils.timezone import now
 
 from celery.task import periodic_task, task
 
@@ -40,7 +41,7 @@ def send_remo_mail(user_ids_list, subject, email_template, data=None):
 @task()
 def send_report_digest():
     from remo.reports.models import NGReport
-    today = datetime.utcnow().date()
+    today = now().date()
     # This would include reports created today about past events or
     # non-events, and reports created in the past for events that
     # occurred today, but not reports created today for future events
@@ -76,7 +77,7 @@ def send_report_digest():
 
 @periodic_task(run_every=timedelta(days=1))
 def send_ng_report_notification():
-    today = datetime.utcnow().date()
+    today = now().date()
     start = today - timedelta(weeks=3)
     end = today + timedelta(weeks=3)
     reps = (User.objects.filter(groups__name='Rep')

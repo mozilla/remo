@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.utils.timezone import now as utc_now
+from django.utils.timezone import now
 
 from remo.base.utils import get_date
 
@@ -13,7 +13,7 @@ def count_user_ng_reports(user, current_streak=False,
     current streak of a user. Arg period expects weeks
     eg 2 means 2 * 7 = 14 days.
     """
-    end_period = utc_now()
+    end_period = now()
     start_period = datetime(2011, 01, 01)
 
     if current_streak:

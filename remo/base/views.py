@@ -1,5 +1,3 @@
-from datetime import date, datetime
-
 from django import http
 from django_browserid import BrowserIDException, get_audience, verify
 from django_browserid.auth import default_username_algo
@@ -9,7 +7,7 @@ from django.contrib import auth, messages
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
 from django.shortcuts import redirect, render
-from django.utils.timezone import now as utc_now
+from django.utils.timezone import now
 from django.views import generic
 from django.views.decorators.cache import cache_control, never_cache
 
@@ -135,9 +133,8 @@ def dashboard_mozillians(request, user):
     tracked_interests = {}
     reps_past_events = {}
     reps_current_events = {}
-    now = datetime.now()
     reps_ng_reports = {}
-    today = datetime.utcnow().date()
+    today = now().date()
 
     for interest in interests:
         # Get the Reps with the specified interest
@@ -155,8 +152,8 @@ def dashboard_mozillians(request, user):
 
         # Get the events with the specified category
         events = Event.objects.filter(categories=interest)
-        reps_past_events[interest.name] = events.filter(start__lt=now)[:50]
-        reps_current_events[interest.name] = events.filter(start__gte=now)
+        reps_past_events[interest.name] = events.filter(start__lt=now())[:50]
+        reps_current_events[interest.name] = events.filter(start__gte=now())
 
     args['reps_ng_reports'] = reps_ng_reports
     args['interestform'] = interestform
@@ -191,13 +188,13 @@ def dashboard(request):
     planning_requests = (Bug.objects.filter(component='Planning').
                          exclude(q_closed))
 
-    today = date.today()
+    today = now().date()
     # NG Reports
     if user.groups.filter(name='Rep').exists():
         args['ng_reports'] = (user.ng_reports
                               .filter(report_date__lte=today)
                               .order_by('-report_date'))
-        args['today'] = utc_now()
+        args['today'] = now()
 
     # Dashboard data
     my_q = (Q(cc=user) | Q(creator=user))

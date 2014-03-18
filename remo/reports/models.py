@@ -7,7 +7,7 @@ from django.db import models
 from django.db.models.signals import (m2m_changed, post_save, pre_delete,
                                       pre_save)
 from django.dispatch import receiver
-from django.utils.timezone import now as utc_now
+from django.utils.timezone import now
 
 import caching.base
 from django_statsd.clients import statsd
@@ -244,7 +244,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
 
     @property
     def is_future_report(self):
-        if self.report_date > utc_now().date():
+        if self.report_date > now().date():
             return True
         return False
 

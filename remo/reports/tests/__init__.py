@@ -2,7 +2,7 @@ import datetime
 from random import randint
 
 from django.db.models.signals import post_save
-from django.utils.timezone import now as now_utc
+from django.utils.timezone import now
 
 import factory
 from factory import fuzzy
@@ -37,8 +37,7 @@ class NGReportFactory(factory.django.DjangoModelFactory):
     location = 'Activity Location'
     is_passive = False
     link = 'www.example.com'
-    report_date = fuzzy.FuzzyDate(datetime.date(2013, 01, 01),
-                                  now_utc().date())
+    report_date = fuzzy.FuzzyDate(datetime.date(2013, 01, 01), now().date())
 
     @factory.post_generation
     def functional_areas(self, create, extracted, **kwargs):

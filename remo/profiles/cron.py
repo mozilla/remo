@@ -1,6 +1,5 @@
-from datetime import date
-
 from django.conf import settings
+from django.utils.timezone import now
 
 from cronjobs import register
 
@@ -13,7 +12,7 @@ from remo.base.utils import go_back_n_months
 def new_reps_reminder():
     """Send email to reps-mentors listing new subscribers the past month."""
 
-    prev = go_back_n_months(date.today())
+    prev = go_back_n_months(now().date())
     prev_date = prev.strftime('%B %Y')
 
     reps = UserProfile.objects

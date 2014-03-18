@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.core import mail
+from django.utils.timezone import now
 from nose.tools import eq_, ok_
 from test_utils import TestCase
 
@@ -39,7 +40,7 @@ class NGReportTest(TestCase):
              % report.user.userprofile.display_name))
 
     def test_current_longest_streak(self):
-        today = datetime.datetime.utcnow().date()
+        today = now().date()
         user = UserFactory.create()
 
         for i in range(0, 2):
@@ -53,9 +54,8 @@ class NGReportTest(TestCase):
         eq_(user.userprofile.longest_streak_end, today)
 
     def test_different_current_longest_streak(self):
-        today = datetime.datetime.utcnow().date()
-        past_day = (datetime.datetime.utcnow().date() -
-                    datetime.timedelta(days=30))
+        today = now().date()
+        past_day = now().date() - datetime.timedelta(days=30)
         user = UserFactory.create()
         #longest streak
         for i in range(0, 3):
@@ -74,8 +74,7 @@ class NGReportTest(TestCase):
         eq_(user.userprofile.longest_streak_end, past_day)
 
     def test_current_streak_counter_with_past_reports(self):
-        past_day = (datetime.datetime.utcnow().date() -
-                    datetime.timedelta(days=30))
+        past_day = now().date() - datetime.timedelta(days=30)
 
         user = UserFactory.create()
         for i in range(0, 5):
@@ -302,7 +301,7 @@ class NGReportDeleteSignalTests(TestCase):
 
         user = UserFactory.create()
         up = user.userprofile
-        today = datetime.datetime.utcnow().date()
+        today = now().date()
         report = NGReportFactory.create(
             user=user, report_date=today - datetime.timedelta(days=1))
         NGReportFactory.create(user=user, report_date=today)
@@ -323,7 +322,7 @@ class NGReportDeleteSignalTests(TestCase):
 
         user = UserFactory.create()
         up = user.userprofile
-        today = datetime.datetime.utcnow().date()
+        today = now().date()
         NGReportFactory.create(user=user,
                                report_date=today - datetime.timedelta(days=1))
         report = NGReportFactory.create(user=user, report_date=today)
@@ -342,7 +341,7 @@ class NGReportDeleteSignalTests(TestCase):
 
         user = UserFactory.create()
         up = user.userprofile
-        today = datetime.datetime.utcnow().date()
+        today = now().date()
         report1 = NGReportFactory.create(
             user=user, report_date=today - datetime.timedelta(days=1))
         report2 = NGReportFactory.create(user=user, report_date=today)

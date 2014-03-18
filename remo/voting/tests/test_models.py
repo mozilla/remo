@@ -3,12 +3,12 @@ import datetime
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.core import mail
+from django.utils.timezone import now
 
 import fudge
 from nose.tools import eq_, ok_
 from test_utils import TestCase
 
-from remo.base.utils import datetime2pdt
 from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
 from remo.voting.models import Poll
@@ -22,7 +22,7 @@ class VotingMailNotificationTest(TestCase):
         """Initial data for the tests."""
         self.user = User.objects.get(username='admin')
         self.group = Group.objects.get(name='Admin')
-        self._now = datetime2pdt()
+        self._now = now()
         self.now = self._now.replace(microsecond=0)
         self.start = self.now
         self.end = self.now + datetime.timedelta(days=5)

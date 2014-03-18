@@ -2,13 +2,12 @@ import json
 from datetime import datetime
 from urllib import quote
 
-import django.utils.timezone as timezone
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.utils import timezone
 
 import requests
-import pytz
 import waffle
 from celery.task import task
 from funfactory.helpers import urlparams
@@ -38,7 +37,7 @@ def parse_bugzilla_time(time):
     if not time:
         return None
     datetimeobj = datetime.strptime(time, '%Y-%m-%dT%H:%M:%SZ')
-    datetimeobj = timezone.make_aware(datetimeobj, pytz.timezone('US/Pacific'))
+    datetimeobj = timezone.make_aware(datetimeobj, timezone.utc)
     return datetimeobj
 
 
