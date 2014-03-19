@@ -66,10 +66,18 @@ def get_sorted_attendance_list(event):
 
     """
 
-    attendees = list(event.attendees.all().order_by('last_name', 'first_name'))
+    query = event.attendees.exclude(groups__name='Mozillians',
+                                    userprofile__mozillian_username='')
+    attendees = list(query.order_by('last_name', 'first_name'))
     attendees.remove(event.owner)
     attendees.insert(0, event.owner)
     return attendees
+
+
+@register.filter
+def get_total_attendees(event):
+    """Return the total number of people attending an event."""
+    return event.attendees.all().count()
 
 
 @register.function

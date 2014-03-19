@@ -374,6 +374,11 @@ Mozilla Reps - {{ event.name }}
           <div class="pict-icon large people"></div>
         </div>
         <div class="large-11 columns">
+          <p>
+            <span class="label inline">
+              {{ event|get_total_attendees }} attending, including...
+            </span>
+          </p>
           <!-- Listing of organizer and attendees -->
           {% for attendee in get_sorted_attendance_list(event) %}
             {% if user_is_rep(attendee) %}
