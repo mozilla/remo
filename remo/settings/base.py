@@ -104,6 +104,7 @@ MANAGERS = ADMINS
 # Allow robots to crawl the site.
 ENGAGE_ROBOTS = True
 
+TIME_ZONE = 'UTC'
 USE_TZ = True
 
 ETHERPAD_URL = 'http://etherpad.mozilla.org/'

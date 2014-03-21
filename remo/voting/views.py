@@ -5,14 +5,14 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.timezone import now as now_utc
+from django.utils.timezone import now
 
 from django_statsd.clients import statsd
 
 import forms
 
 from remo.base.decorators import permission_check
-from remo.base.utils import datetime2pdt, get_or_create_instance
+from remo.base.utils import get_or_create_instance
 from remo.voting.models import Poll, PollComment, RadioPoll, RangePoll, Vote
 
 
@@ -24,9 +24,9 @@ def list_votings(request):
     if not user.groups.filter(name='Admin').exists():
         polls = Poll.objects.filter(valid_groups__in=user.groups.all())
 
-    past_polls_query = polls.filter(end__lt=now_utc())
-    current_polls = polls.filter(start__lt=now_utc(), end__gt=now_utc())
-    future_polls = polls.filter(start__gt=now_utc())
+    past_polls_query = polls.filter(end__lt=now())
+    current_polls = polls.filter(start__lt=now(), end__gt=now())
+    future_polls = polls.filter(start__gt=now())
 
     past_polls_paginator = Paginator(past_polls_query, settings.ITEMS_PER_PAGE)
     past_polls_page = request.GET.get('page', 1)
@@ -67,8 +67,8 @@ def edit_voting(request, slug=None):
         if not poll.radio_polls.exists():
             extra_radio_polls = 1
         can_delete_voting = True
-        date_now = datetime2pdt()
-        if poll.start < date_now and poll.end > date_now:
+
+        if poll.start < now() and poll.end > now():
             current_voting_edit = True
 
     nominee_list = User.objects.filter(
@@ -139,9 +139,9 @@ def view_voting(request, slug):
     data = {'poll': poll}
 
     # if the voting period has ended, display the results
-    if now_utc() > poll.end:
+    if now() > poll.end:
         return render(request, 'view_voting.html', data)
-    if now_utc() < poll.start:
+    if now() < poll.start:
         # Admin can edit future votings
         if user.groups.filter(name='Admin').exists():
             return redirect('voting_edit_voting', slug=poll.slug)

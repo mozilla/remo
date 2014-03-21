@@ -6,7 +6,7 @@ from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from django.utils.encoding import iri_to_uri
-from django.utils.timezone import make_aware
+from django.utils.timezone import make_aware, now
 
 from mock import ANY
 from nose.tools import eq_, ok_
@@ -372,8 +372,8 @@ class ViewsTest(TestCase):
 
     def test_multi_event_ical_export_future(self):
         """Test multiple past event ical export."""
-        start = datetime.datetime.now() + datetime.timedelta(days=1)
-        end = datetime.datetime.now() + datetime.timedelta(days=2)
+        start = now() + datetime.timedelta(days=1)
+        end = now() + datetime.timedelta(days=2)
         EventFactory.create_batch(2, start=start, end=end)
 
         # Export future events to iCal
@@ -386,8 +386,8 @@ class ViewsTest(TestCase):
 
     def test_multi_event_ical_export_custom(self):
         """Test multiple event ical export with custom date."""
-        event_start = datetime.datetime.now() + datetime.timedelta(days=1)
-        event_end = datetime.datetime.now() + datetime.timedelta(days=2)
+        event_start = now() + datetime.timedelta(days=1)
+        event_end = now() + datetime.timedelta(days=2)
         EventFactory.create_batch(2, start=event_start, end=event_end)
         period = 'custom'
         response = self.client.get(reverse('multiple_event_ical',

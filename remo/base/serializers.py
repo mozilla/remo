@@ -1,9 +1,6 @@
 import codecs
 import csv
 import cStringIO
-import pytz
-
-from datetime import datetime
 
 from django.conf import settings
 from django.template import Context
@@ -154,7 +151,7 @@ class iCalSerializer(Serializer):
 
         events = [event.obj for event in data['objects']]
 
-        date_now = timezone.make_aware(datetime.now(), pytz.UTC)
+        date_now = timezone.now()
         ical = get_template('multi_event_ical_template.ics')
 
         return ical.render(Context({'events': events, 'date_now': date_now,

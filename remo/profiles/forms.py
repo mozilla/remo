@@ -1,12 +1,12 @@
 import happyforms
 import re
-from datetime import datetime
 
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms.extras.widgets import SelectDateWidget
+from django.utils.timezone import now
 
 from django_browserid.auth import default_username_algo
 from product_details import product_details
@@ -149,7 +149,7 @@ class ChangeDateJoinedForm(happyforms.ModelForm):
     """Form to change userprofile date_joined_program field."""
     date_joined_program = forms.DateField(
         required=False,
-        widget=SelectDateWidget(years=range(2011, datetime.today().year + 1),
+        widget=SelectDateWidget(years=range(2011, now().date().year + 1),
                                 required=False))
 
     class Meta:

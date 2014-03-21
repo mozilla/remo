@@ -1,8 +1,6 @@
 import datetime
 import re
 
-import django.utils.timezone as timezone
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -10,6 +8,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 import caching.base
 from django_statsd.clients import statsd
@@ -33,7 +32,7 @@ User.__unicode__ = user_unicode
 
 def _validate_birth_date(data, **kwargs):
     """Validator to ensure age of at least 12 years old."""
-    today = datetime.date.today()
+    today = timezone.now().date()
     youth_threshold_day = (datetime.date(today.year - 12, today.month,
                                          today.day) +
                            datetime.timedelta(hours=24))
@@ -190,7 +189,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
         Snippet from http://djangosnippets.org/snippets/557/
 
         """
-        d = datetime.date.today()
+        d = timezone.now().date()
         age = ((d.year - self.birth_date.year) -
                int((d.month, d.day) <
                    (self.birth_date.month, self.birth_date.day)))
@@ -216,7 +215,7 @@ class UserAvatar(caching.base.CachingMixin, models.Model):
 def userprofile_set_date_joined_program_pre_save(sender, instance, **kwargs):
     """Set date_joined_program to today when empty."""
     if not instance.date_joined_program:
-        instance.date_joined_program = datetime.date.today()
+        instance.date_joined_program = timezone.now().date()
 
 
 @receiver(pre_save, sender=UserProfile,

@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.utils.timezone import now as now_utc
+from django.utils.timezone import now
 
 import happyforms
 
@@ -53,7 +53,7 @@ class NGReportForm(happyforms.ModelForm):
 
     def clean_report_date(self):
         """Clean report_date field."""
-        if self.cleaned_data['report_date'] > now_utc().date():
+        if self.cleaned_data['report_date'] > now().date():
             raise ValidationError('Report date cannot be in the future.')
         return self.cleaned_data['report_date']
 

@@ -1,5 +1,5 @@
 from math import ceil
-from django.utils.timezone import now as utc_now
+from django.utils.timezone import now
 
 from jingo import register
 
@@ -15,7 +15,7 @@ def count_ng_reports(obj, current_streak=False, longest_streak=False,
 
 @register.function
 def is_same_day(first_date, second_date=None):
-    if first_date == (second_date or utc_now().date()):
+    if first_date == (second_date or now().date()):
         return True
     return False
 
@@ -26,6 +26,6 @@ def date_to_weeks(end_date, start_date=None):
     weeks passed compared to today.
     """
     if not start_date:
-        start_date = utc_now().date()
+        start_date = now().date()
     number_of_weeks = ceil(float((start_date - end_date).days) / float(7))
     return int(number_of_weeks) or 1

@@ -7,13 +7,13 @@ from django.contrib.auth.models import Group, User
 from django.db import models, transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-from django.utils.timezone import now as now_utc
+from django.utils.timezone import now
 
 from django_statsd.clients import statsd
 from south.signals import post_migrate
 from uuslug import uuslug
 
-from remo.base.utils import add_permissions_to_groups, datetime2pdt
+from remo.base.utils import add_permissions_to_groups
 from remo.remozilla.models import Bug
 from remo.voting.tasks import send_voting_mail
 
@@ -45,13 +45,13 @@ class Poll(models.Model):
 
     @property
     def is_future_voting(self):
-        if self.start > now_utc():
+        if self.start > now():
             return True
         return False
 
     @property
     def is_current_voting(self):
-        if self.start < now_utc() and self.end > now_utc():
+        if self.start < now() and self.end > now():
             return True
         return False
 
@@ -197,7 +197,6 @@ def automated_poll(sender, instance, **kwargs):
          or Poll.objects.filter(bug=instance).exists())):
         return
 
-    date_now = datetime2pdt()
     remobot = User.objects.get(username='remobot')
 
     with transaction.commit_on_success():
@@ -205,8 +204,8 @@ def automated_poll(sender, instance, **kwargs):
                 .create(name=instance.summary,
                         description=instance.first_comment,
                         valid_groups=Group.objects.get(name='Council'),
-                        start=date_now,
-                        end=(date_now +
+                        start=now(),
+                        end=(now() +
                              timedelta(days=VOTING_PERIOD_AUTOMATED_POLLS)),
                         bug=instance,
                         created_by=remobot,

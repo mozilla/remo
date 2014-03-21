@@ -1,11 +1,10 @@
-from datetime import datetime
-
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 
 from django_statsd.clients import statsd
@@ -150,7 +149,7 @@ def delete_ng_report_comment(request, display_name, year, month, day, id,
 
 
 def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
-    today = datetime.utcnow().date()
+    today = now().date()
     report_list = NGReport.objects.filter(report_date__lte=today)
     pageheader = 'Activities for Reps'
     user = None

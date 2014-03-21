@@ -1,11 +1,10 @@
 import happyforms
-from datetime import datetime
 from django import forms
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.utils.timezone import make_naive
+from django.utils.timezone import make_naive, now
 from product_details import product_details
 
 from pytz import common_timezones, timezone
@@ -139,11 +138,10 @@ class EventForm(happyforms.ModelForm):
 
         instance = self.instance
         # Dynamically set the year portion of the datetime widget
-        now = datetime.now()
-        start_year = min(getattr(self.instance.start, 'year', now.year),
-                         now.year - 1)
-        end_year = min(getattr(self.instance.end, 'year', now.year),
-                       now.year - 1)
+        start_year = min(getattr(self.instance.start, 'year', now().year),
+                         now().year - 1)
+        end_year = min(getattr(self.instance.end, 'year', now().year),
+                       now().year - 1)
 
         self.fields['start_form'] = forms.DateTimeField(
             widget=SplitSelectDateTimeWidget(

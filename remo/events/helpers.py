@@ -1,5 +1,3 @@
-import pytz
-from datetime import datetime
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils import timezone
@@ -86,8 +84,7 @@ def get_contribute_link(event):
 def is_past_event(event):
     """Checks if an event has already taken place."""
 
-    now = timezone.make_aware(datetime.now(), pytz.UTC)
-    return now > event.end
+    return timezone.now() > event.end
 
 
 @register.filter

@@ -1,4 +1,3 @@
-from datetime import date
 from urllib import unquote
 
 from django.conf import settings
@@ -6,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import QueryDict
+from django.utils.timezone import now
 
 from tastypie import fields
 from tastypie.authentication import Authentication
@@ -195,7 +195,7 @@ class RepResource(ModelResource):
             request, data, **response_kwargs)
 
         if self.determine_format(request) == 'text/csv':
-            today = date.today()
+            today = now().date()
             filename = today.strftime('reps-export-%Y-%m-%d.csv')
             response['Content-Disposition'] = 'filename="%s"' % filename
 

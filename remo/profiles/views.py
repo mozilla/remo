@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
@@ -7,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.utils.encoding import iri_to_uri
 from django.views.decorators.cache import cache_control, never_cache
 
@@ -108,7 +107,7 @@ def edit(request, display_name):
                    'datejoinedform': datejoinedform,
                    'pageuser': pageuser,
                    'group_bits': group_bits,
-                   'range_years': range(1950, datetime.today().year - 11),
+                   'range_years': range(1950, timezone.now().date().year - 11),
                    'functional_areas': functional_areas})
 
 
@@ -154,7 +153,7 @@ def view_profile(request, display_name):
             'mentor': user.userprofile.mentor,
             'usergroups': usergroups}
 
-    today = datetime.utcnow().date()
+    today = timezone.now().date()
 
     # NGReports
     data['ng_reports'] = (user.ng_reports
