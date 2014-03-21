@@ -161,7 +161,7 @@ class Event(caching.base.CachingMixin, models.Model):
         """
 
         events = Event.objects.filter(start__gte=now()).exclude(pk=self.pk)
-        country = Q(country=self.country)
+        country = Q(country = self.country)
         category = Q(categories__in=self.categories.all())
 
         if ((events.filter(country, category).distinct().count() <
