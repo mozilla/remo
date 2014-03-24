@@ -142,6 +142,9 @@ Mozilla Reps - Events
             <div class="{{ '{{if $item.is_multimonth()}} events-table-date-month-multiple {{else}} events-table-date-month {{/if}}' }}">
               ${ $item.getMonth() }
             </div>
+            <div class="events-table-date-year">
+              ${ $item.getYear() }
+            </div>
           </div>
           <!-- Event name only in phones -->
           <div class="events-table-name show-for-small">
