@@ -181,6 +181,39 @@
 
   </div>
 
+  <!-- Report verification box -->
+  {% if user_is_mentor(request.user) or user_is_council(request.user) %}
+    <form id="view-ngreport-form" method="post" data-verification-trigger="{{ report.activity }}"
+          actions="{{ report.get_absolute_url() }}" class="content">
+      {{ csrf() }}
+      <div id="verification-checkbox" class="row">
+        <div class="large-6 columns">
+          <div class="row report-box">
+            <div class="large-1 columns">
+              <div class="pict-icon large tick"></div>
+            </div>
+            <section class="large-11 columns report-item">
+              <h4>Report verification</h4>
+              <p>
+                {{ verification_form.verified_recruitment }}
+                <label for="id_verified_recruitment">
+                  I have verified this activity
+                </label>
+                {{ field_errors(verification_form.verified_recruitment) }}
+              </p>
+              <div class="align-left">
+                <button type="submit" class="small button confirm">
+                  Save
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </form>
+  {% endif %}
+  <!-- End of report verification box -->
+
   {% if editable %}
     <!-- Edit report -->
     <div class="row">
@@ -259,5 +292,6 @@
 {% block bottomextra %}
   {% compress js %}
     <script src="{{ static('reports/js/profiles_view_report.js') }}"></script>
+    <script src="{{ static('reports/js/view_ng_report.js') }}"></script>
   {% endcompress %}
 {% endblock %}

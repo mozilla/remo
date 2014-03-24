@@ -215,6 +215,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
     link = models.URLField(max_length=500, blank=True, default='')
     link_description = models.CharField(max_length=500, blank=True, default='')
     activity_description = models.TextField(blank=True, default='')
+    verified_recruitment = models.BooleanField(blank=True, default=False)
 
     objects = caching.base.CachingManager()
 

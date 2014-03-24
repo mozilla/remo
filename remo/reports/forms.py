@@ -67,6 +67,17 @@ class NGReportForm(happyforms.ModelForm):
                    'functional_areas': forms.SelectMultiple()}
 
 
+class NGVerifyReportForm(happyforms.ModelForm):
+    """Form to verify a recruitment."""
+    verified_recruitment = forms.BooleanField(
+        required=False, initial=False,
+        label=('I have verified this activity'))
+
+    class Meta:
+        model = NGReport
+        fields = ['verified_recruitment']
+
+
 class NGReportCommentForm(happyforms.ModelForm):
     """Model Form for new generation commenting system."""
 
