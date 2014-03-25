@@ -41,6 +41,9 @@ def edit(request, display_name):
     /u/giorgos are the same person.
 
     """
+    # Mozillian users should not be here
+    if request.user.groups.filter(name='Mozillians').exists():
+        raise Http404
 
     def date_joined_form_validation(form):
         """Convenience function to only validate datejoinedform when
@@ -111,6 +114,16 @@ def edit(request, display_name):
                    'functional_areas': functional_areas})
 
 
+@never_cache
+@permission_check(filter_field='display_name', owner_field='user',
+                  model=UserProfile, group='Mozillians')
+def edit_mozillian_profile(request, display_name):
+    pageuser = get_object_or_404(User, userprofile__display_name=display_name)
+
+    return render(request, 'profiles_edit_mozillian_profile.html',
+                  {'pageuser': pageuser})
+
+
 def redirect_list_profiles(request):
     profiles_url = reverse('profiles_list_profiles')
     extra_path = iri_to_uri('/' + request.path_info[len(profiles_url):])
@@ -139,11 +152,10 @@ def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
-    if not user.groups.filter(name='Rep').exists():
-        raise Http404
 
     if (not user.userprofile.registration_complete and
-            not request.user.has_perm('profiles.can_edit_profiles')):
+        not request.user.has_perm('profiles.can_edit_profiles') or
+            request.user.groups.filter(name='Mozillians')):
             raise Http404
 
     usergroups = user.groups.filter(Q(name='Mentor') | Q(name='Council'))
@@ -172,6 +184,9 @@ def view_profile(request, display_name):
 @permission_check()
 def view_my_profile(request):
     """View logged-in user profile."""
+    if request.user.groups.filter(name='Mozillians').exists():
+        return edit_mozillian_profile(
+            request, display_name=request.user.userprofile.display_name)
     return view_profile(request,
                         display_name=request.user.userprofile.display_name)
 
@@ -201,10 +216,41 @@ def invite(request):
     return render(request, 'profiles_invite.html', {'form': form})
 
 
+@never_cache
+@permission_check()
+def delete(request, display_name):
+    """Delete logged-in user profile."""
+    user = get_object_or_404(User, userprofile__display_name=display_name)
+    if user.groups.filter(name='Mozillians').exists():
+        return delete_mozillian_user(
+            request, display_name=user.userprofile.display_name)
+    return delete_user(request,
+                       display_name=user.userprofile.display_name)
+
+
+@never_cache
 @permission_check(permissions=['profiles.can_delete_profiles'])
 def delete_user(request, display_name):
     """Delete a user."""
     user = get_object_or_404(User, userprofile__display_name=display_name)
+
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, 'User was deleted.')
+        statsd.incr('profiles.delete_profile')
+
+    return redirect('main')
+
+
+@never_cache
+@permission_check(filter_field='display_name', owner_field='user',
+                  model=UserProfile, group='Mozillians')
+def delete_mozillian_user(request, display_name):
+    """Delete a user."""
+    user = get_object_or_404(User, userprofile__display_name=display_name)
+
+    if user != request.user:
+        raise Http404
 
     if request.method == 'POST':
         user.delete()

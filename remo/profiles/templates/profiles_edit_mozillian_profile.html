@@ -1,0 +1,53 @@
+{% extends "base_fd4.html" %}
+{% block pagetitle %}Mozilla Reps - Edit Profile{% endblock %}
+
+{% block content %}
+<main role="main" class="profile-edit-main">
+  <form style="custom" method="post"
+        action="{{ url('profiles_edit_mozillian_profile',
+                       pageuser.userprofile.display_name) }}">
+    {{ csrf() }}
+    <div class="row">
+      <div class="large-8 columns" id="title">
+        <!-- Title -->
+        <h1>
+          Editing profile of user {{ pageuser.userprofile.display_name }}
+          {% if pageuser == request.user %}
+            <small class="grayed">
+              (that's you!)
+            </small>
+          {% endif %}
+        </h1>
+      </div>
+      <!-- Deleting -->
+      <div class="large-4 columns hide-for-small align-right"
+           id="save-delete-buttons">
+        <button class="button small alert" id="delete-profile-button"
+                data-reveal-id="delete-profile">Delete profile</button>
+      </div>
+    </div>
+  </form>
+</main>
+
+<!-- Delete Profile Reveal Modal -->
+<div id="delete-profile" class="reveal-modal small">
+  <a class="close-reveal-modal">&#215;</a>
+  <p class="lead">
+    Are you sure you want to do that?
+  </p>
+  <h2>
+    Warning!
+  </h2>
+  <p>
+    By pressing the following button you will permanently and irreversibly delete the
+    profile of this Rep.
+  </p>
+    <form method="post" action="{{ url('profiles_delete', pageuser.userprofile.display_name) }}">
+      {{ csrf() }}
+      <button class="button large alert" id="delete-profile-verification">
+        Delete profile
+      </button>
+    </form>
+</div>
+
+{% endblock %}
