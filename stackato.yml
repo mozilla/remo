@@ -18,7 +18,6 @@ requirements:
 services:
   ${name}-mysql: mysql
   ${name}-memcached: memcached
-  ${name}-rabbitmq: rabbitmq
 
 mem: 512M
 
