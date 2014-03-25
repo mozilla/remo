@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group, User
 from django.core import mail
 from django.utils.timezone import now
 
-import fudge
+from mock import patch
 from nose.tools import eq_, ok_
 from test_utils import TestCase
 
@@ -38,15 +38,15 @@ class VotingMailNotificationTest(TestCase):
         ok_(mail.outbox[0].to[0] in recipients)
         ok_(mail.outbox[1].to[0] in recipients)
 
-    @fudge.patch('remo.voting.models.celery_control.revoke')
-    def test_send_email_on_edit_poll(self, fake_requests_obj):
+    @patch('remo.voting.models.celery_control.revoke')
+    def test_send_email_on_edit_poll(self, fake_revoke):
         """Test sending emails when the poll is edited."""
         Poll.objects.filter(pk=self.voting.id).update(task_start_id='1234',
                                                       task_end_id='1234')
         poll = Poll.objects.get(pk=self.voting.id)
         poll.name = 'Edit Voting'
         if not settings.CELERY_ALWAYS_EAGER:
-            (fake_requests_obj.expects_call().returns(True))
+            fake_revoke.return_value = True
         poll.save()
         eq_(len(mail.outbox), 3)
 

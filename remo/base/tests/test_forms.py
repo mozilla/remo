@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test.client import RequestFactory
+
+from mock import ANY, patch
 from nose.tools import eq_, ok_
 from test_utils import TestCase
-
-import fudge
 
 from remo.base.forms import EmailRepsForm
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
@@ -24,11 +24,9 @@ class EmailRepsFormsTest(TestCase):
         ok_(not form.is_valid())
         eq_(len(form.errors['functional_area']), 1)
 
-    @fudge.patch('remo.base.forms.messages')
+    @patch('remo.base.forms.messages.success')
     def test_send_mail(self, fake_messages):
         """Test EmailRepsForm email sending functionality."""
-
-        fake_messages.expects('success')
 
         data = {'subject': 'Test email subject',
                 'body': 'Test email body',
@@ -56,3 +54,4 @@ class EmailRepsFormsTest(TestCase):
         eq_(set(mail.outbox[0].to), set(recipients))
         eq_(mail.outbox[0].subject, data['subject'])
         eq_(mail.outbox[0].body, data['body'])
+        fake_messages.assert_called_with(ANY, 'Email sent successfully.')
