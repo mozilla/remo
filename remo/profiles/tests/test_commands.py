@@ -6,11 +6,11 @@ import tempfile
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import management, mail
-from nose.tools import eq_, raises
-from test_utils import TestCase
 
-import fudge
 import requests
+from mock import ANY, patch
+from nose.tools import eq_
+from test_utils import TestCase
 
 from remo.profiles.management.commands.fetch_emails_from_wiki import Command
 
@@ -85,29 +85,30 @@ class CreateUserTest(TestCase):
 class FetchEmailsFromWikiTest(TestCase):
     """Tests for fetch_emails_from_wiki management command."""
 
-    @raises(SystemExit)
-    @fudge.patch('requests.get')
-    def test_command_with_connection_error(self, fake_requests_obj):
+    @patch('requests.get')
+    def test_command_with_connection_error(self, fake_get):
         """Test that command exits with SystemExit exception on connection
         error.
 
         """
-        (fake_requests_obj.expects_call().raises(requests.ConnectionError))
-        management.call_command('fetch_emails_from_wiki')
+        fake_get.side_effect = requests.ConnectionError()
+        with self.assertRaises(SystemExit):
+            management.call_command('fetch_emails_from_wiki')
+        fake_get.assert_called_with(ANY)
 
-    @raises(SystemExit)
-    @fudge.patch('requests.get')
-    def test_command_with_invalid_code(self, fake_requests_obj):
+    @patch('requests.get')
+    def test_command_with_invalid_code(self, fake_get):
         """Test that command exits with SystemExit exception on 404 error."""
         request = requests.Request()
         request.status_code = 404
         request.text = 'foo'
-        (fake_requests_obj.expects_call().returns(request))
-        management.call_command('fetch_emails_from_wiki')
+        fake_get.return_value = request
+        with self.assertRaises(SystemExit):
+            management.call_command('fetch_emails_from_wiki')
+        fake_get.assert_called_with(ANY)
 
-    @raises(SystemExit)
-    @fudge.patch('requests.get')
-    def test_command_with_bogus_data(self, fake_requests_obj):
+    @patch('requests.get')
+    def test_command_with_bogus_data(self, fake_get):
         """Test that command exits with SystemExit exception on json decode
         error.
 
@@ -115,11 +116,13 @@ class FetchEmailsFromWikiTest(TestCase):
         request = requests.Request()
         request.status_code = 200
         request.text = 'foo'
-        (fake_requests_obj.expects_call().returns(request))
-        management.call_command('fetch_emails_from_wiki')
+        fake_get.return_value = request
+        with self.assertRaises(SystemExit):
+            management.call_command('fetch_emails_from_wiki')
+        fake_get.assert_called_with(ANY)
 
-    @fudge.patch('requests.get')
-    def test_command_with_valid_data(self, fake_requests_obj):
+    @patch('remo.profiles.management.commands.fetch_emails_from_wiki.requests')
+    def test_command_with_valid_data(self, fake_requests):
         """Test that command successfully fetches data and prints out
         emails.
 
@@ -141,7 +144,7 @@ class FetchEmailsFromWikiTest(TestCase):
                     'uri': ('https:\/\/wiki.mozilla.org\/index.php?'
                             'title=User:bogus')}]}}})
 
-        (fake_requests_obj.expects_call().returns(request))
+        fake_requests.get.return_value = request
 
         output = StringIO.StringIO()
         cmd_obj = Command()

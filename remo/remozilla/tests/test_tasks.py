@@ -5,9 +5,8 @@ from nose.exc import SkipTest
 from nose.tools import eq_, ok_, raises
 from test_utils import TestCase
 
-import fudge
 import requests
-from mock import patch
+from mock import ANY, patch
 
 from remo.profiles.tests import UserFactory
 from remo.remozilla.models import Bug
@@ -20,19 +19,20 @@ class FetchBugsTest(TestCase):
                 'demo_bugs.json']
 
     @raises(requests.ConnectionError)
-    @fudge.patch('requests.get')
-    def test_connection_error(self, fake_requests_obj):
+    @patch('requests.get')
+    def test_connection_error(self, fake_get):
         """Test fetch_bugs connection error exception."""
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
              not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME '
                            'or REMOZILLA_PASSWORD.')
-        (fake_requests_obj.expects_call().raises(requests.ConnectionError))
+        fake_get.side_effect = requests.ConnectionError()
         fetch_bugs()
+        fake_get.assert_called_with(ANY)
 
     @raises(ValueError)
-    @fudge.patch('requests.get')
-    def test_invalid_return_code(self, fake_requests_obj):
+    @patch('requests.get')
+    def test_invalid_return_code(self, fake_get):
         """Test fetch_bugs invalid status code exception."""
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
              not getattr(settings, 'REMOZILLA_PASSWORD', None))):
@@ -41,12 +41,13 @@ class FetchBugsTest(TestCase):
         request = requests.Request()
         request.status_code = 500
         request.text = 'Foobar'
-        (fake_requests_obj.expects_call().returns(request))
+        fake_get.return_value = request
         fetch_bugs()
+        fake_get.assert_called_with(ANY)
 
     @patch('remo.remozilla.tasks.waffle.switch_is_active')
-    @fudge.patch('requests.get')
-    def test_with_valid_data(self, switch_is_active_mock, fake_requests_obj):
+    @patch('requests.get')
+    def test_with_valid_data(self, fake_get, switch_is_active_mock):
         """Test fetch_bugs valid bug data processing."""
         UserFactory.create(username='remobot')
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
@@ -100,11 +101,8 @@ class FetchBugsTest(TestCase):
         empty_request.status_code = 200
         empty_request.text = json.dumps({'bugs': []})
 
-        fake_requests_obj.expects_call()
-        fake_requests_obj.returns(first_request)
-        fake_requests_obj.next_call().returns(empty_request)
-        fake_requests_obj.next_call().returns(second_request)
-        fake_requests_obj.next_call().returns(empty_request)
+        values = [first_request, empty_request, second_request, empty_request]
+        fake_get.side_effect = values
 
         fetch_bugs(components=['Planning', 'Swag Requests'])
 
