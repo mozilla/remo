@@ -1,7 +1,11 @@
+import json
 import os
 import urlparse
 
 from . import base
+
+
+vcap_application = json.loads(os.environ['VCAP_APPLICATION'])
 
 DB_URL = os.environ.get('DATABASE_URL')
 if DB_URL:
@@ -44,9 +48,9 @@ DEV = False
 
 # Playdoh ships with Bcrypt+HMAC by default because it's the most secure.
 # To use bcrypt, fill in a secret HMAC key. It cannot be blank.
-# HMAC_KEYS = {
-#     '2012-06-06': 'replace with some secret',
-# }
+HMAC_KEYS = {
+    '2012-06-06': os.environ.get('HMAC_KEY'),
+}
 
 # Cache backend settings. Enables Cache Machine's memcache backend.
 CACHE_URL = os.environ.get('MEMCACHE_URL')
@@ -62,7 +66,7 @@ from django_sha2 import get_password_hashers
 PASSWORD_HASHERS = get_password_hashers(base.BASE_PASSWORD_HASHERS, HMAC_KEYS)
 
 # Make this unique, and don't share it with anybody.  It cannot be blank.
-# SECRET_KEY = 'replace with your secret key'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 SESSION_COOKIE_SECURE = True
 
@@ -77,8 +81,8 @@ CELERY_ALWAYS_EAGER = True
 # This might also need some extra ALLOWED_HOSTS (proxy IP) depending on the PaaS
 # routing of HTTP requests.
 
-# ALLOWED_HOSTS = ['reps.paas.allizom.org']
-# SITE_URL = 'https://reps.paas.allizom.org'
+ALLOWED_HOSTS = vcap_application['uris']
+SITE_URL = 'https://%s' % ALLOWED_HOSTS[0]
 
 # STATSD_CLIENT = 'django_statsd.clients.log'
 # STATSD_PREFIX = 'reps'
@@ -88,8 +92,8 @@ COMPRESS_PRECOMPILERS = (
 )
 
 # HTTP proxy configuration. Uncomment if you are using HTTPS.
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 # Remozilla configuration
 # REMOZILLA_USERNAME = ''

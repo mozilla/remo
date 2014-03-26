@@ -6,10 +6,13 @@ ignores:
   - "*.pyo"
   - "*.swp"
   - "*~"
+  - "remo/settings/local.py"
 
 env:
   DJANGO_SETTINGS_MODULE: remo.settings
   PIP_REQUIREMENTS_FILE: requirements/stackato.txt
+  HMAC_KEY: ${random-word}
+  SECRET_KEY: ${random-word}
 
 requirements:
   pypm:
