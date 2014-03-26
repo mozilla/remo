@@ -320,7 +320,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
         if self.activity.name == ACTIVITY_EVENT_ATTEND and self.event:
             return 'Attended event "%s"' % self.event.name
         elif self.activity.name == ACTIVITY_EVENT_CREATE and self.event:
-            return 'Created event "%s"' % self.event.name
+            return 'Organized event "%s"' % self.event.name
         elif self.activity.name == ACTIVITY_CAMPAIGN:
             return 'Participated in campaign "%s"' % self.campaign.name
         else:

@@ -1,5 +1,5 @@
 ACTIVITY_EVENT_ATTEND = 'Attended an Event'
-ACTIVITY_EVENT_CREATE = 'Created an Event'
+ACTIVITY_EVENT_CREATE = 'Organized an Event'
 ACTIVITY_CAMPAIGN = 'Participated in a campaign'
 ACTIVITY_MONTH_PLANNING = 'Month planning'
 ACTIVITY_MONTH_RECAP = 'Month recap'

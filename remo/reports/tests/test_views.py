@@ -10,6 +10,7 @@ from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase, requires_login, requires_permission
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
+from remo.reports import ACTIVITY_EVENT_CREATE
 from remo.reports.models import NGReport, NGReportComment
 from remo.reports.tests import NGReportFactory, NGReportCommentFactory
 
@@ -209,7 +210,7 @@ class ViewNGReportTests(RemoTestCase):
         redirect_mock.assert_called_with('main')
 
     def test_get_uneditable(self):
-        report = NGReportFactory.create(activity__name='Created an Event')
+        report = NGReportFactory.create(activity__name=ACTIVITY_EVENT_CREATE)
         response = self.get(url=report.get_absolute_url(), user=report.user)
         ok_(not response.context['editable'])
 
