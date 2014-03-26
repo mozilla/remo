@@ -1,4 +1,6 @@
 from datetime import timedelta
+
+from django.forms.models import inlineformset_factory
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user
@@ -16,13 +18,12 @@ from django_statsd.clients import statsd
 from funfactory.helpers import urlparams
 from jinja2 import Markup
 
+import forms
 from remo.base.decorators import permission_check
 from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_or_create_instance
+from remo.events.models import Attendance, Event, EventComment, Metric
 from remo.profiles.models import FunctionalArea
-
-import forms
-from models import Attendance, Event, EventComment
 
 
 @never_cache
@@ -143,10 +144,10 @@ def delete_event_comment(request, slug, pk):
 @permission_check(permissions=['events.can_edit_events'])
 def edit_event(request, slug=None, clone=None):
     """Edit event view."""
+    initial = {}
+    extra_formsets = 2
 
     event, created = get_or_create_instance(Event, slug=slug)
-
-    initial = {}
 
     if created:
         event.owner = request.user
@@ -163,6 +164,9 @@ def edit_event(request, slug=None, clone=None):
         if (event.end.minute % 5) != 0:
             event.end += timedelta(minutes=(5 - (event.end.minute % 5)))
 
+        # If an event is edited, do not add any more formsets
+        extra_formsets = 0
+
     editable = False
     if request.user.groups.filter(name='Admin').count():
         editable = True
@@ -171,8 +175,11 @@ def edit_event(request, slug=None, clone=None):
                                  editable_owner=editable, instance=event,
                                  initial=initial)
 
-    metrics_formset = forms.EventMetricsFormset(request.POST or None,
-                                                instance=event)
+    EventMetricsFormset = inlineformset_factory(
+        Event, Metric, formset=forms.MinBaseInlineFormSet,
+        extra=extra_formsets)
+    metrics_formset = EventMetricsFormset(request.POST or None,
+                                          instance=event)
 
     if (event_form.is_valid() and metrics_formset.is_valid() and request.POST):
         event_form.save(clone=clone)

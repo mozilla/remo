@@ -16,7 +16,7 @@ from remo.events.models import EventGoal
 from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
 
-from models import Event, Metric, EventComment
+from models import Event, EventComment
 
 EST_ATTENDANCE_CHOICES = (('', 'Estimated attendance'),
                           (10, '1-10'),
@@ -70,9 +70,6 @@ class MinBaseInlineFormSet(forms.models.BaseInlineFormSet):
             for form in self.initial_forms:
                 form.changed_data.append('id')
         return super(MinBaseInlineFormSet, self).save()
-
-EventMetricsFormset = forms.models.inlineformset_factory(
-    Event, Metric, formset=MinBaseInlineFormSet, extra=2)
 
 
 class EventForm(happyforms.ModelForm):
