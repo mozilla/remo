@@ -5,13 +5,13 @@ from django.utils.timezone import now
 
 import mock
 from funfactory.helpers import urlparams
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
 from remo.base.utils import month2number
 from remo.profiles.tests import UserFactory
 from remo.reports.tests import NGReportFactory
-from remo.reports.utils import count_user_ng_reports
+from remo.reports.utils import count_user_ng_reports, get_last_report
 
 
 class TestUserCommitedReports(RemoTestCase):
@@ -72,3 +72,28 @@ class Month2NumberTest(RemoTestCase):
         response = self.client.get(reports_url, follow=True)
         mocked_month2number.assert_called_once_with(u'Apri')
         eq_(response.status_code, 404)
+
+
+class GetUserLastReportTest(RemoTestCase):
+    """Test get last report date helper."""
+
+    def test_get_last_report_past(self):
+        report_date = now().date() - timedelta(weeks=5)
+        user = UserFactory.create(groups=['Rep'])
+        NGReportFactory.create(user=user, report_date=report_date)
+        eq_(get_last_report(user).report_date, report_date)
+
+    def test_get_last_report_future(self):
+        past_date = now().date() - timedelta(weeks=5)
+        future_date = now().date() + timedelta(weeks=2)
+        user = UserFactory.create(groups=['Rep'])
+        NGReportFactory.create(user=user, report_date=past_date)
+        NGReportFactory.create(user=user, report_date=future_date)
+        eq_(get_last_report(user).report_date, past_date)
+
+    def test_last_report_date_none(self):
+        user = UserFactory.create(groups=['Rep'])
+        ok_(not get_last_report(user))
+        future_date = now().date() + timedelta(weeks=2)
+        NGReportFactory.create(user=user, report_date=future_date)
+        ok_(not get_last_report(user))

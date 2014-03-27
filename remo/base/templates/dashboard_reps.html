@@ -5,7 +5,7 @@
 <div class="dashboard-box">
   <div class="row">
     <div class="large-7 columns">
-      <h2>Reports</h2>
+      <h2>Activities</h2>
     </div>
     <div class="large-5 columns">
       <dl class="sub-nav dashboard-filter">
@@ -78,7 +78,7 @@
                 {% endif %}
               </td>
               <td>
-                {% set activities=count_ng_reports(user, period=2) %}
+                {% set activities=count_ng_reports(user, period=4) %}
                 {{ activities }}
                 {% if activities > 0 %}
                   &nbsp;activities<br>
@@ -90,7 +90,7 @@
                 {% endif %}
               </td>
               <td>
-                {% set activities=count_ng_reports(user, period=10) %}
+                {% set activities=count_ng_reports(user, period=8) %}
                 {{ activities }}
                 {% if activities > 0 %}
                   &nbsp;activities<br>
@@ -110,8 +110,8 @@
             <tr>
               <th>Current streak</th>
               <th>Longest streak</th>
-              <th>Last 2 weeks</th>
-              <th>Last 10 weeks</th>
+              <th>Last 4 weeks</th>
+              <th>Last 8 weeks</th>
               <th>All time</th>
             </tr>
           </tfoot>
@@ -136,8 +136,8 @@
               <th>Name</th>
               <th>Current streak</th>
               <th>Longest streak</th>
-              <th>Last 2 weeks</th>
-              <th>Last 10 weeks</th>
+              <th>Last 4 weeks</th>
+              <th>Last 8 weeks</th>
               <th>Total</th>
             </tr>
           </thead>
@@ -145,7 +145,7 @@
             {% cache mentees_ng_reportees %}
               {% for reportee in mentees_ng_reportees %}
                 <tr>
-                  <td>
+                  <td class="{{ reportee|get_activity_level }}">
                     <a href="{{ url('profiles_view_profile',
                                     reportee|get_display_name) }}">
                       {{ reportee.get_full_name() }}
@@ -153,14 +153,24 @@
                   </td>
                   <td>{{ count_ng_reports(reportee, current_streak=True) }} weeks</td>
                   <td>{{ count_ng_reports(reportee, longest_streak=True) }} weeks</td>
-                  <td>{{ count_ng_reports(reportee, period=2) }} activities</td>
-                  <td>{{ count_ng_reports(reportee, period=10) }} activities</td>
+                  <td>{{ count_ng_reports(reportee, period=4) }} activities</td>
+                  <td>{{ count_ng_reports(reportee, period=8) }} activities</td>
                   <td>{{ count_ng_reports(reportee) }} activities</td>
                 </tr>
               {% endfor %}
             {% endcache %}
           </tbody>
         </table>
+        <div class="inactive-reference">
+          <ul>
+            <li class="inactive-reference-high">
+              No activities in past 8 weeks.
+            </li>
+            <li class="inactive-reference-low">
+              No activities in past 4 weeks.
+            </li>
+          </ul>
+        </div>
         <div class="align-right">
           <a href="{{ url('list_ng_reports_mentor', user.userprofile.display_name) }}"
               role="button"
@@ -979,7 +989,7 @@
       </div>
     </div>
     {% endif %}
-  </ul>
+  </div>
   <!-- End Admin block -->
 {% endif %}
 {% endblock %}
