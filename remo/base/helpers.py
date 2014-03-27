@@ -195,6 +195,12 @@ def user_is_admin(user):
     return user.groups.filter(name='Admin').exists()
 
 
+@register.function
+def user_is_council(user):
+    """Check if a user belongs to Council's group."""
+    return user.groups.filter(name='Council').exists()
+
+
 @register.filter
 def ical_escape_char(text):
     """Escape characters as defined in RFC5545.

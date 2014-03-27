@@ -88,7 +88,8 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
 
     user = get_object_or_404(User, userprofile__display_name=display_name)
     report = get_object_or_404(NGReport, id=id)
-    comment_form = forms.NGReportCommentForm(request.POST or None)
+    comment_form = forms.NGReportCommentForm()
+    verification_form = forms.NGVerifyReportForm(instance=report)
 
     editable = False
     if ((request.user == user or request.user.has_perm('change_ngreport'))
@@ -99,20 +100,40 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
                 'user_profile': user.userprofile,
                 'report': report,
                 'editable': editable,
-                'comment_form': comment_form}
+                'comment_form': comment_form,
+                'verification_form': verification_form}
     template = 'view_ng_report.html'
 
-    if comment_form.is_valid():
-        if not request.user.is_authenticated():
-            messages.error(request, 'Permission denied.')
-            return redirect('main')
-        obj = comment_form.save(commit=False)
-        obj.user = request.user
-        obj.report = report
-        obj.save()
-        messages.success(request, 'Comment saved successfully.')
-        statsd.incr('reports.create_comment')
-        ctx_data['comment_form'] = forms.NGReportCommentForm()
+    if request.method == 'POST':
+        # Process comment form
+        if 'comment' in request.POST:
+            comment_form = forms.NGReportCommentForm(request.POST)
+            if comment_form.is_valid():
+                if not request.user.is_authenticated():
+                    messages.error(request, 'Permission denied.')
+                    return redirect('main')
+                obj = comment_form.save(commit=False)
+                obj.user = request.user
+                obj.report = report
+                obj.save()
+                messages.success(request, 'Comment saved successfully.')
+                statsd.incr('reports.create_comment')
+                ctx_data['comment_form'] = forms.NGReportCommentForm()
+
+        # Process verification form
+        else:
+            verification_form = forms.NGVerifyReportForm(request.POST,
+                                                         instance=report)
+            if verification_form.is_valid():
+                if ((not request.user.is_authenticated()) or
+                    (not request.user.groups.filter(
+                        Q(name='Council') | Q(name='Mentor')).exists())):
+                    messages.error(request, 'Permission denied.')
+                    return redirect('main')
+                verification_form.save()
+                messages.success(request, 'Report verified successfully.')
+                ctx_data['verification_form'] = forms.NGVerifyReportForm(
+                    instance=report)
 
     return render(request, template, ctx_data)
 

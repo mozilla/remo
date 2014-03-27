@@ -187,13 +187,46 @@ class ViewNGReportTests(RemoTestCase):
         report = NGReportFactory.create(user=user)
         form_mock.is_valid.return_value = True
         response = self.post(url=report.get_absolute_url(),
-                             user=user)
+                             user=user, data={'comment': 'This is a comment'})
         eq_(response.status_code, 200)
         messages_mock.assert_called_with(
             mock.ANY, 'Comment saved successfully.')
         ok_(form_mock().save.called)
         eq_(response.context['report'], report)
         self.assertTemplateUsed('view_ng_report.html')
+
+    @patch('remo.reports.views.messages.success')
+    @patch('remo.reports.views.forms.NGVerifyReportForm')
+    def test_verify_report(self, form_mock, messages_mock):
+        user = UserFactory.create(groups=['Mentor'])
+        report = NGReportFactory.create(user=user)
+        form_mock.is_valid.return_value = True
+        response = self.post(url=report.get_absolute_url(),
+                             user=user,
+                             data={'verified_recruitment': 'on'})
+        eq_(response.status_code, 200)
+        messages_mock.assert_called_with(
+            mock.ANY, 'Report verified successfully.')
+        ok_(form_mock().save.called)
+        eq_(response.context['report'], report)
+        self.assertTemplateUsed('view_ng_report.html')
+
+    @patch('remo.reports.views.messages.error')
+    @patch('remo.reports.views.forms.NGVerifyReportForm')
+    @patch('remo.reports.views.redirect', wraps=redirect)
+    def test_verify_report_without_permissions(self, redirect_mock, form_mock,
+                                               messages_mock):
+        user = UserFactory.create(groups=['Rep'])
+        report = NGReportFactory.create(user=user)
+        form_mock.is_valid.return_value = True
+        response = self.post(url=report.get_absolute_url(),
+                             user=user,
+                             data={'verified_recruitment': 'on'})
+        eq_(response.status_code, 200)
+        ok_(not form_mock().save.called)
+        messages_mock.assert_called_with(mock.ANY, 'Permission denied.')
+        redirect_mock.assert_called_with('main')
+        self.assertTemplateUsed('main.html')
 
     @patch('remo.reports.views.messages.error')
     @patch('remo.reports.views.forms.NGReportCommentForm')
@@ -205,7 +238,6 @@ class ViewNGReportTests(RemoTestCase):
         c = Client()
         c.post(report.get_absolute_url(), data={})
         ok_(not NGReportComment.objects.filter(report=report).exists())
-
         messages_mock.assert_called_with(mock.ANY, 'Permission denied.')
         redirect_mock.assert_called_with('main')
 
