@@ -1,0 +1,43 @@
+name: reps
+
+ignores:
+  - ".git"
+  - "*.pyc"
+  - "*.pyo"
+  - "*.swp"
+  - "*~"
+  - "remo/settings/local.py"
+
+env:
+  DJANGO_SETTINGS_MODULE: remo.settings
+  PIP_REQUIREMENTS_FILE: requirements/stackato.txt
+  HMAC_KEY: ${random-word}
+  SECRET_KEY: ${random-word}
+
+requirements:
+  pypm:
+    - mysql-python
+
+services:
+  ${name}-mysql: mysql
+  ${name}-memcached: memcached
+
+mem: 512M
+
+framework:
+  type: python
+  start-file: wsgi/playdoh.wsgi
+  runtime: python27
+
+processes:
+    web: $STACKATO_UWSGI --static-map /static=$HOME/static/
+
+hooks:
+  post-staging:
+    - npm config set registry http://registry.npmjs.org/
+    - npm install less
+    - python manage.py syncdb --noinput
+    - python manage.py migrate
+    - python manage.py update_product_details
+    - python manage.py collectstatic --noinput
+    - python manage.py compress_jingo --force
