@@ -22,9 +22,11 @@ from remo.base.mozillians import BadStatusCodeError, is_vouched
 from remo.events.models import Event
 from remo.featuredrep.models import FeaturedRep
 from remo.profiles.forms import UserStatusForm
+from remo.profiles.helpers import INACTIVE_HIGH, INACTIVE_LOW
 from remo.profiles.models import UserProfile, UserStatus
 from remo.remozilla.models import Bug
 from remo.reports.models import NGReport
+
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
@@ -281,8 +283,28 @@ def email_mentees(request):
 
 def stats_dashboard(request):
     """Stats dashboard view."""
+    today = now().date()
+    reps = User.objects.filter(groups__name='Rep')
+
+    inactive_l_start = today - INACTIVE_LOW
+    inactive_l_end = today + INACTIVE_LOW
+    inactive_h_start = today - INACTIVE_HIGH
+    inactive_h_end = today + INACTIVE_HIGH
+
+    query_l = Q(
+        ng_reports__report_date__range=[inactive_l_start, inactive_l_end])
+    query_h = Q(
+        ng_reports__report_date__range=[inactive_h_start, inactive_h_end])
+
+    active = reps.filter(query_l).distinct().count()
+    inactive_l = reps.filter(query_h & ~query_l).distinct().count()
+    inactive_h = reps.filter(~query_h).distinct().count()
+
     args = {}
-    args['reps'] = User.objects.filter(groups__name='Rep').count()
+    args['active_users'] = active
+    args['inactive_low_users'] = inactive_l
+    args['inactive_high_users'] = inactive_h
+    args['reps'] = reps.count()
     args['past_events'] = Event.objects.filter(start__lt=now()).count()
     args['future_events'] = Event.objects.filter(start__gte=now()).count()
     args['activities'] = NGReport.objects.all().count()

@@ -6,6 +6,8 @@ import base64
 import json
 import mock
 
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import mail
@@ -14,6 +16,7 @@ from django.shortcuts import redirect
 from django.test import RequestFactory
 from django.test.client import Client
 from django.test.utils import override_settings
+from django.utils.timezone import now
 
 from funfactory.helpers import urlparams
 from jinja2 import Markup
@@ -27,13 +30,14 @@ from remo.base.tests import requires_login, requires_permission, RemoTestCase
 from remo.base.tests.browserid_mock import mock_browserid
 from remo.base.views import robots_txt
 from remo.events.models import EventGoal
-from remo.events.tests import EventGoalFactory
+from remo.events.tests import EventFactory, EventGoalFactory
 from remo.profiles.models import FunctionalArea
 from remo.profiles.tasks import check_mozillian_username
 from remo.profiles.tests import (FunctionalAreaFactory, UserFactory,
                                  UserStatusFactory)
 from remo.reports.models import Activity, Campaign
-from remo.reports.tests import ActivityFactory, CampaignFactory
+from remo.reports.tests import (ActivityFactory, CampaignFactory,
+                                NGReportFactory)
 
 
 VOUCHED_MOZILLIAN = """
@@ -744,3 +748,88 @@ class EditUserStatusTests(RemoTestCase):
             mock.ANY, 'Request submitted successfully.')
         redirect_mock.assert_called_with('dashboard')
         ok_(form_mock().save.called)
+
+
+class StatsDashboardTest(RemoTestCase):
+    """Test stats dashboard."""
+
+    def test_base(self):
+        response = self.get(reverse('stats_dashboard'))
+        eq_(response.status_code, 200)
+        self.assertTemplateUsed(response, 'stats_dashboard.html')
+
+    def test_overview(self):
+        UserFactory.create_batch(10, groups=['Rep'])
+        NGReportFactory.create_batch(12)
+
+        # Past events
+        EventFactory.create_batch(5)
+        # Current and future events
+        EventFactory.create_batch(10, start=now() + timedelta(days=3),
+                                  end=now() + timedelta(days=4))
+
+        response = self.get(reverse('stats_dashboard'))
+
+        eq_(response.status_code, 200)
+        self.assertTemplateUsed(response, 'stats_dashboard.html')
+        eq_(response.context['reps'], 10)
+        eq_(response.context['past_events'], 5)
+        eq_(response.context['future_events'], 10)
+        eq_(response.context['activities'], 27)
+
+    def test_inactive(self):
+        reps = UserFactory.create_batch(12, groups=['Rep'])
+        active = timedelta(days=5)
+        inactive_low = timedelta(weeks=5)
+        inactive_high = timedelta(weeks=9)
+
+        active_reps = reps[:5]
+        inactive_low_reps = reps[5:9]
+        inactive_high_reps = reps[9:]
+
+        for user in active_reps:
+            # Activities in future and past 4 weeks
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() - active)
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() + active)
+
+            # Activities in future and past 4+ weeks
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() - inactive_low)
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() + inactive_low)
+
+            # Activities in future and past 8+ weeks
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() - inactive_high)
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() + inactive_high)
+
+        for user in inactive_low_reps:
+            # Activities in future and past 4+ weeks
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() - inactive_low)
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() + inactive_low)
+
+            # Activities in future and past 8+ weeks
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() - inactive_high)
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() + inactive_high)
+
+        for user in inactive_high_reps:
+            # Activities in future and past 8+ weeks
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() - inactive_high)
+            NGReportFactory.create(user=user,
+                                   report_date=now().date() + inactive_high)
+
+        response = self.get(reverse('stats_dashboard'))
+
+        eq_(response.status_code, 200)
+        self.assertTemplateUsed(response, 'stats_dashboard.html')
+        eq_(response.context['active_users'], 5)
+        eq_(response.context['inactive_low_users'], 4)
+        eq_(response.context['inactive_high_users'], 3)

@@ -33,6 +33,28 @@
         </table>
       </div>
     </div>
+    <div class="large-6 columns">
+      <h2>Activities</h2>
+      <p>When have Reps done activities recently?</p>
+      <div class="dashboard-stats-activities-block">
+        <table class="dashboard-table">
+          <tbody>
+            <tr>
+              <td>{{ active_users }}</td>
+              <td>{{ inactive_low_users }}</td>
+              <td>{{ inactive_high_users }}</td>
+            </tr>
+          </tbody>
+          <thead>
+            <tr>
+              <th>Past or upcoming 4 weeks</th>
+              <th>Past or upcoming 4-8 weeks</th>
+              <th>Past or upcoming 8+ weeks</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
   </div>
 </main>
 {% endblock %}
