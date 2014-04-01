@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 from cronjobs import register
 
-from remo.reports.tasks import send_remo_mail
+from remo.base.tasks import send_remo_mail
 from remo.voting.models import Poll
 
 # Intervals in seconds
@@ -36,8 +36,9 @@ def poll_vote_reminder():
                        'for "%s" now!' % poll.name)
             template_reminder = 'emails/voting_vote_reminder.txt'
             ctx_data = {'poll': poll}
-            send_remo_mail.delay(recipients, subject,
-                                 template_reminder, ctx_data)
+            send_remo_mail.delay(subject=subject, recipients_list=recipients,
+                                 email_template=template_reminder,
+                                 data=ctx_data)
             Poll.objects.filter(pk=poll.pk).update(last_notification=now())
 
 

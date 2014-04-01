@@ -16,6 +16,7 @@ import remo.base.utils as utils
 from remo.base.utils import (add_permissions_to_groups,
                              get_object_or_none)
 from remo.base.models import GenericActiveManager
+from remo.base.tasks import send_remo_mail
 from remo.base.utils import daterange, get_date
 from remo.events.helpers import get_event_link
 from remo.events.models import Attendance as EventAttendance, Event
@@ -23,7 +24,6 @@ from remo.profiles.models import FunctionalArea
 from remo.reports import (ACTIVITY_CAMPAIGN, ACTIVITY_EVENT_ATTEND,
                           ACTIVITY_EVENT_CREATE, READONLY_ACTIVITIES,
                           VERIFIABLE_ACTIVITIES)
-from remo.reports.tasks import send_remo_mail
 
 
 @receiver(post_migrate, dispatch_uid='report_set_groups_signal')
@@ -405,8 +405,8 @@ def email_commenters_on_add_ng_report_comment(sender, instance, **kwargs):
                         'comment': instance.comment,
                         'created_on': instance.created_on}
             subject = subject.format(instance.user.get_full_name(), report)
-            send_remo_mail.delay([user_id], subject,
-                                 email_template, ctx_data)
+            send_remo_mail.delay(subject=subject, recipients_list=[user_id],
+                                 email_template=email_template, data=ctx_data)
 
 
 @receiver(pre_delete, sender=NGReport,

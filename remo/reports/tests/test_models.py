@@ -57,7 +57,7 @@ class NGReportTest(TestCase):
         today = now().date()
         past_day = now().date() - datetime.timedelta(days=30)
         user = UserFactory.create()
-        #longest streak
+        # longest streak
         for i in range(0, 3):
             NGReportFactory.create(
                 user=user, report_date=past_day - datetime.timedelta(days=i))
@@ -246,7 +246,8 @@ class NGReportCommentSignalTests(TestCase):
                                       comment='This is a comment')
 
         eq_(len(mail.outbox), 1)
-        eq_(reporter.email, mail.outbox[0].to[0])
+        eq_('%s <%s>' % (reporter.get_full_name(), reporter.email),
+            mail.outbox[0].to[0])
         msg = ('[Report] User {0} commented on {1}'
                .format(commenter.get_full_name(), report))
         eq_(mail.outbox[0].subject, msg)
@@ -282,8 +283,11 @@ class NGReportCommentSignalTests(TestCase):
                                       comment='This is a comment')
 
         eq_(len(mail.outbox), 3)
-        recipients = [reporter.email, users_with_comments[0].email,
-                      users_with_comments[1].email]
+        recipients = ['%s <%s>' % (reporter.get_full_name(), reporter.email),
+                      '%s <%s>' % (users_with_comments[0].get_full_name(),
+                                   users_with_comments[0].email),
+                      '%s <%s>' % (users_with_comments[1].get_full_name(),
+                                   users_with_comments[1].email)]
         receivers = [mail.outbox[0].to[0], mail.outbox[1].to[0],
                      mail.outbox[2].to[0]]
         eq_(set(recipients), set(receivers))

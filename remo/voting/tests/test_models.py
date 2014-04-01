@@ -54,16 +54,20 @@ class VotingMailNotificationTest(TestCase):
         """Test send emails to Council Members if an automated poll is created.
 
         """
+        bug = BugFactory.create()
         automated_poll = Poll(name='automated_poll', start=self.start,
                               end=self.end, valid_groups=self.group,
-                              created_by=self.user, automated_poll=True)
+                              created_by=self.user, automated_poll=True,
+                              bug=bug)
         automated_poll.save()
-        eq_(len(mail.outbox), 4)
-        for email in mail.outbox:
-            if settings.REPS_COUNCIL_ALIAS in email.to:
-                break
-        else:
+        eq_(len(mail.outbox), 5)
+        if [settings.REPS_COUNCIL_ALIAS] not in [email.to
+                                                 for email in mail.outbox]:
             raise Exception('No email sent to REPS_COUNCIL_ALIAS')
+        subject = '[Bug %s] Budget request discussion' % bug.id
+        error_message = 'No email sent to council for a new budget request.'
+        if subject not in [email.subject for email in mail.outbox]:
+            raise Exception(error_message)
 
 
 class AutomatedRadioPollTest(TestCase):

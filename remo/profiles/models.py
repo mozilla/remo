@@ -16,8 +16,8 @@ from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
 from remo.base.models import GenericActiveManager
+from remo.base.tasks import send_remo_mail
 from remo.base.utils import add_permissions_to_groups
-from remo.reports.tasks import send_remo_mail
 
 DISPLAY_NAME_MAX_LENGTH = 50
 
@@ -269,8 +269,8 @@ def email_mentor_notification(sender, instance, raw, **kwargs):
                           instance.mentor.id]
             ctx_data = {'rep_user': instance.user,
                         'new_mentor': instance.mentor}
-            send_remo_mail.delay(recipients, subject, email_template,
-                                 ctx_data)
+            send_remo_mail.delay(recipients_list=recipients, subject=subject,
+                                 email_template=email_template, data=ctx_data)
             statsd.incr('profiles.change_mentor')
 
 

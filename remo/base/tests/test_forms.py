@@ -46,12 +46,16 @@ class EmailRepsFormsTest(TestCase):
 
         form.send_email(request, reps)
 
-        eq_(len(mail.outbox), 1)
+        eq_(len(mail.outbox), 20)
 
         address = lambda u: '%s %s <%s>' % (u.first_name, u.last_name, u.email)
         recipients = map(address, reps)
 
-        eq_(set(mail.outbox[0].to), set(recipients))
-        eq_(mail.outbox[0].subject, data['subject'])
-        eq_(mail.outbox[0].body, data['body'])
+        receivers = []
+        for i in range(0, len(mail.outbox)):
+            eq_(mail.outbox[i].subject, data['subject'])
+            eq_(mail.outbox[i].body, data['body'])
+            receivers.append(mail.outbox[i].to[0])
+
+        eq_(set(receivers), set(recipients))
         fake_messages.assert_called_with(ANY, 'Email sent successfully.')
