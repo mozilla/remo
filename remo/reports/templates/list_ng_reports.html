@@ -138,6 +138,12 @@
                 <td>
                   <a href="{{ report.get_absolute_url() }}">
                     {{ report }}
+                    <!-- show a checkmark on the dashboard -->
+                    {% if report.verified_recruitment and
+                      (user_is_council(request.user) or user_is_mentor(request.user)) %}
+                      &nbsp;
+                      &#10004;
+                    {% endif %}
                   </a>
                 </td>
                 <td>
