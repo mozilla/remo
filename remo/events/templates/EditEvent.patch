@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html>
+
+<!--{% extends "base_fd4.html" %}
+
+{% block pagetitle %}
+{% if creating %}
+  Mozilla Reps - Create Event
+{% else %}
+  Mozilla Reps - Edit {{ event.name }}
+{% endif %}
+{% endblock %}
+
+{% block content %} -->
+<main role="main" class="events-main">
+  <form method="post">
+    <!--{{ csrf() }} -->
+    <div class="row">
+      <!--{% if event_form.errors or metrics_formset.errors %} -->
+        <div class="large-12 columns">
+       <!--   <small class="error">Please correct the errors below.</small>
+        </div>
+      <!--{% endif %} -->
+      <div class="large-8 columns">
+        <!--{% if creating %} -->
+         <!-- <h4>Creating new event</h4> -->
+        <!-- {% else %} -->
+          <h3>Editing Event <!--{{ event.name }} --></h3>
+      <!--  {% endif %} -->
+      </div>
+      
+    </div>
+
+    <div class="row">
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large tag"></div>
+          </div>
+          <div class="large-11 columns">
+           <!-- {{ field_with_attrs(event_form.name,
+                                placeholder='Event name',
+                                class='input-text big has-tip tip-left',
+                                title='Event name') }} -->
+            <div class="required-field"></div>
+            <!-- {{ field_errors(event_form.name) }} -->
+
+<!--            {{ field_with_attrs(event_form.description,
+                                class='flat has-tip tip-left',
+                                title='Event description',
+                                placeholder='Description of event') }} -->
+            <div class="required-field"></div>
+            <p class="more-info">Minimum 20 characters.<br> Any practical
+            info should be added in the additional info section below.</p>
+            <!--{{ field_errors(event_form.description) }}
+
+
+            {{ field_with_attrs(event_form.external_link,
+                                placeholder='External link',
+                                class='input-text big has-tip tip-left',
+                                title='External link') }}
+            {{ field_errors(event_form.external_link) }} -->
+
+          </div>
+        </div>
+      </div>
+	  <head>
+<style>
+ul.a {list-style-type:circle;}
+ul.b {list-style-type:square;}
+ol.c {list-style-type:upper-roman;}
+ol.d {list-style-type:lower-alpha;}
+ul.e {list-style-type:upper-roman;}
+</style>
+
+</head>
+
+<body>
+
+<form action="edit_event.html" method="get">
+<p class="required">* Required</p>
+<div class="fieldSet">
+	<fieldset>
+		<legend>Events Edit</legend>
+		<p><label class="field" for="Num"><span>*</span>Enter Event number to edit:</label><input type="text" name="Name" class="textbox-300" /></p>
+		<p><label class="field" for="Name"><span>*</span>Name:</label><input type="text" name="Name" class="textbox-300" /></p>
+		<p><label class="field" for="City"><span>*</span>City:</label><input type="text" name="City" class="textbox-300" /></p>
+		<p><label class="field" for="Region"><span>*</span>Region:</label><input type="text" name="Region" class="textbox-300" /></p>
+		<p><label class="field" for="Description"><span>*</span>Description:</label><input type="text" name="Description" class="textbox-300" /></p>
+	  <p><label class="field" for="Venue"><span>*</span>Venue:</label><input type="text" name="Venue" class="textbox-300" /></p>
+		
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large pin"></div>
+          </div>
+          <div class="large-11 columns map-point-select">
+<!--            {{ field_with_attrs(event_form.venue,
+                                placeholder='Venue',
+                                title='Event venue',
+                                class='input-text big has-tip tip-right') }} -->
+            <div class="required-field"></div>
+    <!--        {{ field_errors(event_form.venue) }} -->
+	
+	<p class="more-info">If you don't know the name of venue yet, please type "TBD"</p>
+
+            <button class="small button" data-reveal-id="map-point">
+              Point event venue in map
+            </button>
+            <div class="required-field"></div>
+<!--            {{ event_form.lat }}
+            {{ event_form.lon }}
+
+            {# Avoid displaying two separate errors for lat and lon. #}
+            {% if event_form.lat.errors or event_form.lon.errors %} -->
+              <small class="error">
+                Please point venue in map.
+              </small></div>
+    <!--        {% endif %}
+
+            {{ field_with_attrs(event_form.city,
+                                placeholder='City',
+                                title='City',
+                                class='input-text big has-tip tip-right') }}
+            <div class="required-field"></div>
+            {{ field_errors(event_form.city) }} -->
+            <label><span>*</span>Start</label>
+			 <p>Select Beginning date for event:
+  <input type="date" name="bday" max="2013-12-31"></p>
+			 <label><span>*</span>End</label>
+			 <p>Enter end date for event:
+  <input type="date" name="bday" min="2010-01-02"><br></p>
+				<label><span>*</span>TimeZone</label>
+			<select>
+	<option timeZoneId="1" gmtAdjustment="GMT-12:00" useDaylightTime="0" value="-12">(GMT-12:00) International Date Line West</option>
+	<option timeZoneId="2" gmtAdjustment="GMT-11:00" useDaylightTime="0" value="-11">(GMT-11:00) Midway Island, Samoa</option>
+	<option timeZoneId="3" gmtAdjustment="GMT-10:00" useDaylightTime="0" value="-10">(GMT-10:00) Hawaii</option>
+	<option timeZoneId="4" gmtAdjustment="GMT-09:00" useDaylightTime="1" value="-9">(GMT-09:00) Alaska</option>
+	<option timeZoneId="5" gmtAdjustment="GMT-08:00" useDaylightTime="1" value="-8">(GMT-08:00) Pacific Time (US & Canada)</option>
+	<option timeZoneId="6" gmtAdjustment="GMT-08:00" useDaylightTime="1" value="-8">(GMT-08:00) Tijuana, Baja California</option>
+	<option timeZoneId="7" gmtAdjustment="GMT-07:00" useDaylightTime="0" value="-7">(GMT-07:00) Arizona</option>
+	<option timeZoneId="8" gmtAdjustment="GMT-07:00" useDaylightTime="1" value="-7">(GMT-07:00) Chihuahua, La Paz, Mazatlan</option>
+	<option timeZoneId="9" gmtAdjustment="GMT-07:00" useDaylightTime="1" value="-7">(GMT-07:00) Mountain Time (US & Canada)</option>
+	<option timeZoneId="10" gmtAdjustment="GMT-06:00" useDaylightTime="0" value="-6">(GMT-06:00) Central America</option>
+	<option timeZoneId="11" gmtAdjustment="GMT-06:00" useDaylightTime="1" value="-6">(GMT-06:00) Central Time (US & Canada)</option>
+	<option timeZoneId="12" gmtAdjustment="GMT-06:00" useDaylightTime="1" value="-6">(GMT-06:00) Guadalajara, Mexico City, Monterrey</option>
+	<option timeZoneId="13" gmtAdjustment="GMT-06:00" useDaylightTime="0" value="-6">(GMT-06:00) Saskatchewan</option>
+	<option timeZoneId="14" gmtAdjustment="GMT-05:00" useDaylightTime="0" value="-5">(GMT-05:00) Bogota, Lima, Quito, Rio Branco</option>
+	<option timeZoneId="15" gmtAdjustment="GMT-05:00" useDaylightTime="1" value="-5">(GMT-05:00) Eastern Time (US & Canada)</option>
+	<option timeZoneId="16" gmtAdjustment="GMT-05:00" useDaylightTime="1" value="-5">(GMT-05:00) Indiana (East)</option>
+	<option timeZoneId="17" gmtAdjustment="GMT-04:00" useDaylightTime="1" value="-4">(GMT-04:00) Atlantic Time (Canada)</option>
+	<option timeZoneId="18" gmtAdjustment="GMT-04:00" useDaylightTime="0" value="-4">(GMT-04:00) Caracas, La Paz</option>
+	<option timeZoneId="19" gmtAdjustment="GMT-04:00" useDaylightTime="0" value="-4">(GMT-04:00) Manaus</option>
+	<option timeZoneId="20" gmtAdjustment="GMT-04:00" useDaylightTime="1" value="-4">(GMT-04:00) Santiago</option>
+	<option timeZoneId="21" gmtAdjustment="GMT-03:30" useDaylightTime="1" value="-3.5">(GMT-03:30) Newfoundland</option>
+	<option timeZoneId="22" gmtAdjustment="GMT-03:00" useDaylightTime="1" value="-3">(GMT-03:00) Brasilia</option>
+	<option timeZoneId="23" gmtAdjustment="GMT-03:00" useDaylightTime="0" value="-3">(GMT-03:00) Buenos Aires, Georgetown</option>
+	<option timeZoneId="24" gmtAdjustment="GMT-03:00" useDaylightTime="1" value="-3">(GMT-03:00) Greenland</option>
+	<option timeZoneId="25" gmtAdjustment="GMT-03:00" useDaylightTime="1" value="-3">(GMT-03:00) Montevideo</option>
+	<option timeZoneId="26" gmtAdjustment="GMT-02:00" useDaylightTime="1" value="-2">(GMT-02:00) Mid-Atlantic</option>
+	<option timeZoneId="27" gmtAdjustment="GMT-01:00" useDaylightTime="0" value="-1">(GMT-01:00) Cape Verde Is.</option>
+	<option timeZoneId="28" gmtAdjustment="GMT-01:00" useDaylightTime="1" value="-1">(GMT-01:00) Azores</option>
+	<option timeZoneId="29" gmtAdjustment="GMT+00:00" useDaylightTime="0" value="0">(GMT+00:00) Casablanca, Monrovia, Reykjavik</option>
+	<option timeZoneId="30" gmtAdjustment="GMT+00:00" useDaylightTime="1" value="0">(GMT+00:00) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London</option>
+	<option timeZoneId="31" gmtAdjustment="GMT+01:00" useDaylightTime="1" value="1">(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>
+	<option timeZoneId="32" gmtAdjustment="GMT+01:00" useDaylightTime="1" value="1">(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>
+	<option timeZoneId="33" gmtAdjustment="GMT+01:00" useDaylightTime="1" value="1">(GMT+01:00) Brussels, Copenhagen, Madrid, Paris</option>
+	<option timeZoneId="34" gmtAdjustment="GMT+01:00" useDaylightTime="1" value="1">(GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>
+	<option timeZoneId="35" gmtAdjustment="GMT+01:00" useDaylightTime="1" value="1">(GMT+01:00) West Central Africa</option>
+	<option timeZoneId="36" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Amman</option>
+	<option timeZoneId="37" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Athens, Bucharest, Istanbul</option>
+	<option timeZoneId="38" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Beirut</option>
+	<option timeZoneId="39" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Cairo</option>
+	<option timeZoneId="40" gmtAdjustment="GMT+02:00" useDaylightTime="0" value="2">(GMT+02:00) Harare, Pretoria</option>
+	<option timeZoneId="41" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius</option>
+	<option timeZoneId="42" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Jerusalem</option>
+	<option timeZoneId="43" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Minsk</option>
+	<option timeZoneId="44" gmtAdjustment="GMT+02:00" useDaylightTime="1" value="2">(GMT+02:00) Windhoek</option>
+	<option timeZoneId="45" gmtAdjustment="GMT+03:00" useDaylightTime="0" value="3">(GMT+03:00) Kuwait, Riyadh, Baghdad</option>
+	<option timeZoneId="46" gmtAdjustment="GMT+03:00" useDaylightTime="1" value="3">(GMT+03:00) Moscow, St. Petersburg, Volgograd</option>
+	<option timeZoneId="47" gmtAdjustment="GMT+03:00" useDaylightTime="0" value="3">(GMT+03:00) Nairobi</option>
+	<option timeZoneId="48" gmtAdjustment="GMT+03:00" useDaylightTime="0" value="3">(GMT+03:00) Tbilisi</option>
+	<option timeZoneId="49" gmtAdjustment="GMT+03:30" useDaylightTime="1" value="3.5">(GMT+03:30) Tehran</option>
+	<option timeZoneId="50" gmtAdjustment="GMT+04:00" useDaylightTime="0" value="4">(GMT+04:00) Abu Dhabi, Muscat</option>
+	<option timeZoneId="51" gmtAdjustment="GMT+04:00" useDaylightTime="1" value="4">(GMT+04:00) Baku</option>
+	<option timeZoneId="52" gmtAdjustment="GMT+04:00" useDaylightTime="1" value="4">(GMT+04:00) Yerevan</option>
+	<option timeZoneId="53" gmtAdjustment="GMT+04:30" useDaylightTime="0" value="4.5">(GMT+04:30) Kabul</option>
+	<option timeZoneId="54" gmtAdjustment="GMT+05:00" useDaylightTime="1" value="5">(GMT+05:00) Yekaterinburg</option>
+	<option timeZoneId="55" gmtAdjustment="GMT+05:00" useDaylightTime="0" value="5">(GMT+05:00) Islamabad, Karachi, Tashkent</option>
+	<option timeZoneId="56" gmtAdjustment="GMT+05:30" useDaylightTime="0" value="5.5">(GMT+05:30) Sri Jayawardenapura</option>
+	<option timeZoneId="57" gmtAdjustment="GMT+05:30" useDaylightTime="0" value="5.5">(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
+	<option timeZoneId="58" gmtAdjustment="GMT+05:45" useDaylightTime="0" value="5.75">(GMT+05:45) Kathmandu</option>
+	<option timeZoneId="59" gmtAdjustment="GMT+06:00" useDaylightTime="1" value="6">(GMT+06:00) Almaty, Novosibirsk</option>
+	<option timeZoneId="60" gmtAdjustment="GMT+06:00" useDaylightTime="0" value="6">(GMT+06:00) Astana, Dhaka</option>
+	<option timeZoneId="61" gmtAdjustment="GMT+06:30" useDaylightTime="0" value="6.5">(GMT+06:30) Yangon (Rangoon)</option>
+	<option timeZoneId="62" gmtAdjustment="GMT+07:00" useDaylightTime="0" value="7">(GMT+07:00) Bangkok, Hanoi, Jakarta</option>
+	<option timeZoneId="63" gmtAdjustment="GMT+07:00" useDaylightTime="1" value="7">(GMT+07:00) Krasnoyarsk</option>
+	<option timeZoneId="64" gmtAdjustment="GMT+08:00" useDaylightTime="0" value="8">(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>
+	<option timeZoneId="65" gmtAdjustment="GMT+08:00" useDaylightTime="0" value="8">(GMT+08:00) Kuala Lumpur, Singapore</option>
+	<option timeZoneId="66" gmtAdjustment="GMT+08:00" useDaylightTime="0" value="8">(GMT+08:00) Irkutsk, Ulaan Bataar</option>
+	<option timeZoneId="67" gmtAdjustment="GMT+08:00" useDaylightTime="0" value="8">(GMT+08:00) Perth</option>
+	<option timeZoneId="68" gmtAdjustment="GMT+08:00" useDaylightTime="0" value="8">(GMT+08:00) Taipei</option>
+	<option timeZoneId="69" gmtAdjustment="GMT+09:00" useDaylightTime="0" value="9">(GMT+09:00) Osaka, Sapporo, Tokyo</option>
+	<option timeZoneId="70" gmtAdjustment="GMT+09:00" useDaylightTime="0" value="9">(GMT+09:00) Seoul</option>
+	<option timeZoneId="71" gmtAdjustment="GMT+09:00" useDaylightTime="1" value="9">(GMT+09:00) Yakutsk</option>
+	<option timeZoneId="72" gmtAdjustment="GMT+09:30" useDaylightTime="0" value="9.5">(GMT+09:30) Adelaide</option>
+	<option timeZoneId="73" gmtAdjustment="GMT+09:30" useDaylightTime="0" value="9.5">(GMT+09:30) Darwin</option>
+	<option timeZoneId="74" gmtAdjustment="GMT+10:00" useDaylightTime="0" value="10">(GMT+10:00) Brisbane</option>
+	<option timeZoneId="75" gmtAdjustment="GMT+10:00" useDaylightTime="1" value="10">(GMT+10:00) Canberra, Melbourne, Sydney</option>
+	<option timeZoneId="76" gmtAdjustment="GMT+10:00" useDaylightTime="1" value="10">(GMT+10:00) Hobart</option>
+	<option timeZoneId="77" gmtAdjustment="GMT+10:00" useDaylightTime="0" value="10">(GMT+10:00) Guam, Port Moresby</option>
+	<option timeZoneId="78" gmtAdjustment="GMT+10:00" useDaylightTime="1" value="10">(GMT+10:00) Vladivostok</option>
+	<option timeZoneId="79" gmtAdjustment="GMT+11:00" useDaylightTime="1" value="11">(GMT+11:00) Magadan, Solomon Is., New Caledonia</option>
+	<option timeZoneId="80" gmtAdjustment="GMT+12:00" useDaylightTime="1" value="12">(GMT+12:00) Auckland, Wellington</option>
+	<option timeZoneId="81" gmtAdjustment="GMT+12:00" useDaylightTime="0" value="12">(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>
+	<option timeZoneId="82" gmtAdjustment="GMT+13:00" useDaylightTime="0" value="13">(GMT+13:00) Nuku'alofa</option>
+</select>		
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large people"></div>
+          </div>
+          <div class="large-11 columns">
+            <div class="has-tip tip-right auto-width" title="Event Owner">
+        <!--      {{ event_form.owner_form }} -->
+            </div>
+<!--            {{ field_errors(event_form.owner_form) }} -->
+            <div class="required-field"></div>
+            <p class="more-info">Please specify the event owner.</p>
+<p><label class="field" for="Owner"><span>*</span>Event Owner:</label><input type="text" name="Owner" class="textbox-300" /></p>
+		<p>
+			<div class="required-field"></div>
+<!--            {{ field_with_attrs(event_form.region,
+                                placeholder='Region',
+                                title='Region',
+                                class='input-text big has-tip tip-right') }}
+            {{ field_errors(event_form.region) }} -->
+
+            <div class="has-tip tip-right auto-width" title="Country">
+              <!--{{ event_form.country }} -->
+            </div>
+            <div class="required-field"></div>
+<!--            {{ field_errors(event_form.country) }} -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large time"></div>
+          </div>
+          <div class="large-11 columns">
+            <!-- NOTE: Supress the afterload JS that appends style attributes to tags bellow -->
+
+            <!-- The real start and end time elements. -->
+            <div class="hidden">
+<!--              {{ event_form.start_form }}
+              {{ event_form.end_form }} -->
+            </div>
+
+            <!-- Start Date -->
+            <div class="row">
+              <div class="large-12">
+                <div class="has-tip tip-left" title="Event start date">
+                  <div id="start-month"
+                       class="large-6 small-6 columns events-edit-date">
+                    <!-- month -->
+                  </div>
+
+                  <div id="start-day"
+                       class="large-3 small-3 columns events-edit-date">
+                    <!-- day -->
+                  </div>
+
+                  <div id="start-year"
+                       class="large-3 small-3 columns events-edit-date">
+                    <!-- year -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Start Hour -->
+            <div class="row">
+              <div class="large-12">
+                <div class="has-tip tip-left" title="Event start hour">
+                  <div id="start-hour" class="large-3 small-3 columns">
+                    <!-- hour -->
+                  </div>
+
+                  <div id="start-minute" class="large-3 small-3 end columns">
+                    <!-- minute -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="required-field"></div>
+
+
+            <!-- End Date -->
+            <div class="row">
+              <div class="large-12">
+                <div class="has-tip tip-left" title="Event end date">
+                  <div id="end-month"
+                       class="large-6 small-6 columns events-edit-date ">
+                    <!-- month -->
+                  </div>
+
+                  <div id="end-day"
+                       class="large-3 small-3 columns events-edit-date">
+                    <!-- day -->
+                  </div>
+
+                  <div id="end-year"
+                       class="large-3 small-3 columns events-edit-date">
+                    <!-- year -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- End Hour -->
+            <div class="row">
+              <div class="large-12">
+                <div class="has-tip tip-left" title="Event end hour">
+                  <div id="end-hour"
+                       class="large-3 small-3 columns events-edit-date">
+                    <!-- hour -->
+                  </div>
+
+                  <div id="end-minute"
+                       class="large-3 small-3 end columns events-edit-date">
+                    <!-- minute -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="required-field"></div>
+
+            <div class="row">
+              <div class="large-12 columns">
+<!--                {{ field_errors(event_form.start_form) }}
+                {{ field_errors(event_form.end_form) }} -->
+              </div>
+            </div>
+
+            <!-- Timezone -->
+            <div class="has-tip tip-left auto-width" title="Event timezone">
+<!--              {{ event_form.timezone }}
+              {{ field_errors(event_form.timezone) }} -->
+            </div>
+
+            <div class="required-field"></div>
+            <!-- Dropdown for zone hour goes here -->
+            <p class="more-info">Please enter date and time local to the venue.</p>
+          </div>
+        </div>
+      </div>
+	  <fieldset>
+	  
+
+    <!--        <p>{{ event_form.mozilla_event }}
+            Is Mozilla organizing this event?</p> -->
+
+            <p class="more-info">If this event is not directly organized by<br>
+            a Mozillian (e.g. FOSDEM, OSCON) please DO NOT check this box.</p>
+
+            <div class="has-tip tip-right auto-width" title="Estimated attendance">
+              <!--{{ event_form.estimated_attendance }} -->
+            </div>
+            <div class="required-field"></div>
+<!--            {{ field_errors(event_form.estimated_attendance) }} -->
+            <p class="more-info">Please specify the estimated attendance to this event.</p>
+			<p>
+		  <label><span>*</span>Attendance</label>
+             <select id = "myList">
+               <option value = "1-1000">1-1000</option>
+               <option value = "1000-3000">1000-3000</option>
+               <option value = "3000-10000">3000-10000</option>
+               <option value = "10000-20000">10000-20000</option>
+			   <option value = "20000-30000">20000-30000</option>
+			   <option value = "30000-40000">30000-40000</option>
+			   <option value = "50000">50000+</option>
+             </select>
+			 </p>
+          </div>
+        </div>
+      </div>
+   
+    <!-- Categories -->
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large heart"></div>
+          </div>
+          <div class="large-11 columns category-select">
+            <button class="small button"
+               data-reveal-id="category-modal">
+               Select event category
+            </button>
+<!--            {% if event_form.categories.errors %} -->
+            <small class="error">
+              Please mark event category
+            </small>
+<!--            {% endif %} -->
+             <div class="required-field"></div>
+          </div>
+        </div>
+   <div class="large-4 columns align-right hide-for-small">
+      <!--  {% if can_delete_event %} -->
+          <button class="small button alert"
+              data-reveal-id="delete-event">Delete event</button>
+       <!-- {% endif %} -->
+        <button class="small button confirm">Save event</button>
+      </div>
+   </div>
+
+    <div class="row">
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large news"></div>
+          </div>
+          <div class="large-11 columns">
+        <!--    {{ field_with_attrs(event_form.extra_content,
+                                class='flat event-single-info has-tip tip-left',
+                                title='Additional info',
+                                placeholder='Additional info') }}
+            {{ field_errors(event_form.extra_content) }} -->
+            <!-- <p class="more-info">In this field you can use
+              <a href="http://en.wikipedia.org/wiki/Markdown"
+              target="_blank">Markdown</a> syntax to add extra content,
+              like <br> schedule, booth times and location, instructions
+              for participants etc.
+            </p> -->
+          </div>
+        </div>
+      </div>
+
+      <div class="large-6 columns">
+        <!-- Planning pad -->
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large edit"></div>
+          </div>
+          <div class="large-11 columns">
+         <!--   {{ field_with_attrs(event_form.planning_pad_url,
+                                placeholder='Planning pad',
+                                title='Planning pad',
+                                class='input-text big has-tip tip-right') }}
+            {{ field_errors(event_form.planning_pad_url) }} -->
+            <!-- <p class="more-info">
+              Collaborative pad to plan your events with others.<br>
+              Leave blank to create one for you.
+            </p> -->
+          </div>
+        </div>
+
+        <!-- Hashtag -->
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large speaker"></div>
+          </div>
+          <div class="large-11 columns">
+  <!--          {{ field_with_attrs(event_form.hashtag,
+                                placeholder='Event hashtag',
+                                title='Event hashtag',
+                                class='input-text big has-tip tip-right') }}
+            {{ field_errors(event_form.hashtag) }} -->
+            <!-- <p class="more-info">
+              Tag your pictures in Flickr and your tweets with this
+              hashtag.
+            </p> -->
+          </div>
+        </div>
+
+       
+
+        <!-- Budget and Swag -->
+<!--        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large tools"></div>
+          </div>
+          <div class="large-11 columns">
+            <div class="row">
+              <div class="{% if event.swag_bug %} large-12 {% else %} large-6 {% endif %} columns">
+         <!--       {{ field_with_attrs(event_form.swag_bug_form,
+                                    placeholder='Swag request',
+                                    class='input-text big') }}
+                {{ field_errors(event_form.swag_bug_form) }} -->
+            <!--    <p class="more-info">Swag Request bug number</p>
+              </div> --> 
+             <!-- {% if not event.swag_bug %} -->
+        <!--        <div class="large-6 columns align-right top-margined">
+                  <a href="https://bugzilla.mozilla.org/form.reps.swag"
+                     target="_blank"
+                     class="small button">
+                    New Swag Request
+                  </a>
+                </div> -->
+<!--              {% endif %} -->
+      <!--      </div> -->
+            <!-- <div class="row">
+              <div class="{% if event.budget_bug %} large-12 {% else %} large-6 {% endif %} columns">
+         <!--       {{ field_with_attrs(event_form.budget_bug_form,
+                                    placeholder='Budget request',
+                                    class='input-text big') }}
+                {{ field_errors(event_form.budget_bug_form) }} -->
+          <!--      <p class="more-info">Budget Request bug number</p>
+              </div> -->
+<!--              {% if not event.budget_bug %} -->
+              <!--  <div class="large-6 columns align-right top-margined">
+                  <a href="https://bugzilla.mozilla.org/form.reps.budget"
+                     target="_blank"
+                     class="small button">
+                    New Budget Request
+                  </a>
+                </div>
+<!--              {% endif %} -->
+         <!--   </div>
+          </div>
+        </div> -->
+
+        <!-- Metrics -->
+<!--        <div class="formset metric" data-prefix="{{ metrics_formset.prefix }}">
+     <!--     {% for form in metrics_formset %}
+            {{ form.id }} -->
+    <!--        <div class="row copyblock">
+              <div class="row">
+                <div class="large-1 columns">
+                  <div class="pict-icon large graph"></div>
+                </div>
+                <div class="large-11 columns">
+<!--                  {{ field_with_attrs(form.title,
+                                      placeholder='Metric',
+                                      title='Metric',
+                                      class='input-text big has-tip tip-right') }}
+                  {{ field_errors(form.title) }}
+
+                  {{ field_with_attrs(form.outcome,
+                                      placeholder='Success scenario',
+                                      title='Success scenario',
+                                      class='input-text big has-tip tip-right') }}
+                  {{ field_errors(form.outcome) }} -->
+        <!--          <div class="events-delete-metric">
+<!--                    {{ form.DELETE }} {{ form.DELETE.label_tag() }} -->
+<!--                  </div>
+                </div>
+              </div>
+            </div>
+<!--            {% if loop.index <= 2 %} -->
+    <!--          <div class="required-field"></div>
+      <!--      {% endif %}
+          {% endfor %} -->
+
+     <!--     <div class="align-right">
+            <button id="events-add-metric-button" class="small button">
+              Add another metric
+            </button>
+          </div>
+<!--          {% if metrics_formset.non_form_errors() %} -->
+         <!--   <small class="error">
+<!--              {{ metrics_formset.non_form_errors() }} -->
+          <!--  </small>
+<!--          {% endif %} -->
+     <!--   </div>
+<!--        {{ metrics_formset.management_form }} -->
+
+  <!--    </div>
+    </div>
+    <div class="large-3 columns align-right show-for-small">
+    <!--  {% if can_delete_event %} -->
+    <!--    <button class="small button alert" data-reveal-id="delete-event">
+          Delete event
+        </button>
+<!--      {% endif %} -->
+    <!--  <button id="save-event" type="submit"
+              class="small button confirm">
+        Save event
+      </button>
+    </div>
+
+    <!-- Category modal -->
+ <!--   <div id="category-modal" class="reveal-modal event-categories">
+      <a class="close-reveal-modal"><!--&#215; --><!--<span>*</span></a>
+  <!--    <p class="lead">
+        Select the event category
+      </p>
+      <h3>
+        Event categories
+      </h3>
+      <ul class="large-block-grid-3 small-block-grid-1">
+<!--        {% for choice in event_form.categories.field.choices %} -->
+   <!--       <li>
+            <label for="{{ choice.1 }}-bit">
+              <input type="checkbox" id="{{ choice.1 }}-bit" name="categories" value="{{ choice.0 }}"
+             <!--        {% if choice.0 in selected_categories %} -->
+  <!--                     checked="checked"
+       <!--              {% endif %}/>
+              {{ choice.1 }} -->
+  <!--        </li>
+<!--        {% endfor %} -->
+ <!--     </ul>
+ <!--     <button class="small button update close-reveal-modal">
+        Choose these categories &raquo;
+      </button>
+    </div>
+
+  </form>
+
+  <!-- Modals section -->
+
+  <!-- Map Point Reveal Modal -->
+<!--  {% include 'includes/map_modal.html' %} 
+
+  {% if can_delete_event %} -->
+    <!-- Delete Event Reveal Modal -->
+  <!--  <div id="delete-event" class="reveal-modal small">
+      <a class="close-reveal-modal"><!--&#215; --><!-- <span>*</span></a>
+ <!--     <p class="lead">
+        Are you sure you want to do that?
+      </p>
+      <h2>
+        Warning!
+      </h2>
+      <p>
+        By pressing the following button you will permanently and
+        irreversibly delete this event.
+      </p>
+      <form method="post" action="{{ url('events_delete_event', slug=event.slug) }}">
+   <!--     {{ csrf() }} -->
+  <!--      <button class="large button alert">
+          Delete event
+        </button>
+      </form>
+    </div>
+<!--  {% endif %} -->
+</main>
+
+<!--{% endblock %}
+{% block bottomextra %}
+  {% compress css %} -->
+    <link rel="stylesheet" href="{{ static('base/css/mapbox.css') }}"
+          media="screen,projection,tv" />
+    <link rel="stylesheet" href="{{ static('base/css/L.Control.Locate.css') }}"
+          media="screen,projection,tv" />
+<!--  {% endcompress %}
+  {% compress js %} -->
+    <script src="{{ static('base/js/mapbox.js') }}"></script>
+    <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
+    <script src="{{ static('base/js/map_modal.js') }}"></script>
+    <script src="{{ static('events/js/events_edit_event.js') }}"></script>
+<!--  {% endcompress %}
+{% endblock %} -->
+
+<style>
+div.fieldSet {
+border: solid black thin;
+width: 500px;
+background-color:hsla(290,60%,70%,0.3);
+font: normal 16px Calibri;
+}
+fieldset {
+border: none;
+margin: 0 0 0 -10px;
+padding 0;
+font: normal 16px Calibri;
+}
+legend {
+font-size: 20px;
+background-color:hsla(189,83%,11%,15);
+color: white;
+width: 100%;
+padding: 5px;
+font: normal 16px Calibri;
+}
+label.field {
+text-align: right;
+widthL: 100px;
+float: left;
+font-weight: bold;
+font: normal 16px Calibri;
+
+}
+input.textbox-300 {
+width: 300px;
+float: left;
+}
+fieldset p {
+clear: both;
+padding: 5px;
+}
+label span, .required {
+color: red;
+font-weight: bold;
+font: normal 16px Calibri;
+}
+
+
+</style>
