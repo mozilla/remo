@@ -10,7 +10,10 @@
       {% for report in ng_reports[:10] %}
         <tr>
           <td>
-            <a href="{{ report.get_absolute_url() }}">
+            <a href="{{ report.get_absolute_url() }}"
+               {% if report.verified_recruitment %}
+                 class="report-verified" title="Report verified"
+               {% endif %}>
               {{ report }}
             </a>
           </td>

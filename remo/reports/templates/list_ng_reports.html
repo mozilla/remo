@@ -136,13 +136,11 @@
                   {{ report.report_date|strftime("%d %b %Y") }}
                 </td>
                 <td>
-                  <a href="{{ report.get_absolute_url() }}">
+                  <a href="{{ report.get_absolute_url() }}"
+                     {% if report.verified_recruitment %}
+                       class="report-verified" title="Report verified"
+                     {% endif %}>
                     {{ report }}
-                    <!-- show a checkmark on the dashboard -->
-                    {% if report.verified_recruitment %}
-                      &nbsp;
-                      &#10004;
-                    {% endif %}
                   </a>
                 </td>
                 <td>
