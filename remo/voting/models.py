@@ -19,7 +19,8 @@ from remo.voting.tasks import send_voting_mail
 
 
 # Voting period in days
-VOTING_PERIOD_AUTOMATED_POLLS = 3
+BUDGET_REQUEST_PERIOD_START = 3
+BUDGET_REQUEST_PERIOD_END = 6
 
 
 class Poll(models.Model):
@@ -204,9 +205,10 @@ def automated_poll(sender, instance, **kwargs):
                 .create(name=instance.summary,
                         description=instance.first_comment,
                         valid_groups=Group.objects.get(name='Council'),
-                        start=now(),
+                        start=(now() +
+                               timedelta(BUDGET_REQUEST_PERIOD_START)),
                         end=(now() +
-                             timedelta(days=VOTING_PERIOD_AUTOMATED_POLLS)),
+                             timedelta(days=BUDGET_REQUEST_PERIOD_END)),
                         bug=instance,
                         created_by=remobot,
                         automated_poll=True))
