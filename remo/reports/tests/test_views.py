@@ -203,10 +203,10 @@ class ViewNGReportTests(RemoTestCase):
         form_mock.is_valid.return_value = True
         response = self.post(url=report.get_absolute_url(),
                              user=user,
-                             data={'verified_recruitment': 'on'})
+                             data={'verified_activity': 'on'})
         eq_(response.status_code, 200)
         messages_mock.assert_called_with(
-            mock.ANY, 'Report verified successfully.')
+            mock.ANY, 'Activity verified successfully.')
         ok_(form_mock().save.called)
         eq_(response.context['report'], report)
         self.assertTemplateUsed('view_ng_report.html')
@@ -221,7 +221,7 @@ class ViewNGReportTests(RemoTestCase):
         form_mock.is_valid.return_value = True
         response = self.post(url=report.get_absolute_url(),
                              user=user,
-                             data={'verified_recruitment': 'on'})
+                             data={'verified_activity': 'on'})
         eq_(response.status_code, 200)
         ok_(not form_mock().save.called)
         messages_mock.assert_called_with(mock.ANY, 'Permission denied.')

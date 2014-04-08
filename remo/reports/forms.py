@@ -69,13 +69,10 @@ class NGReportForm(happyforms.ModelForm):
 
 class NGVerifyReportForm(happyforms.ModelForm):
     """Form to verify a recruitment."""
-    verified_recruitment = forms.BooleanField(
-        required=False, initial=False,
-        label=('I have verified this activity'))
 
     class Meta:
         model = NGReport
-        fields = ['verified_recruitment']
+        fields = ['verified_activity']
 
 
 class NGReportCommentForm(happyforms.ModelForm):
