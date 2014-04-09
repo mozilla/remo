@@ -22,7 +22,8 @@ from remo.events.helpers import get_event_link
 from remo.events.models import Attendance as EventAttendance, Event
 from remo.profiles.models import FunctionalArea
 from remo.reports import (ACTIVITY_CAMPAIGN, ACTIVITY_EVENT_ATTEND,
-                          ACTIVITY_EVENT_CREATE, READONLY_ACTIVITIES)
+                          ACTIVITY_EVENT_CREATE, READONLY_ACTIVITIES,
+                          VERIFIABLE_ACTIVITIES)
 from remo.reports.tasks import send_remo_mail
 
 # OLD REPORTING SYSTEM
@@ -161,7 +162,14 @@ class Activity(models.Model):
     @property
     def is_editable(self):
         """Check if activity is editable."""
-        return not self.name in READONLY_ACTIVITIES
+        return self.name not in READONLY_ACTIVITIES
+
+    @property
+    def is_verifiable(self):
+        """Check if the activity is verifiable."""
+        if self.name in VERIFIABLE_ACTIVITIES:
+            return True
+        return False
 
 
 class Campaign(models.Model):
@@ -215,7 +223,8 @@ class NGReport(caching.base.CachingMixin, models.Model):
     link = models.URLField(max_length=500, blank=True, default='')
     link_description = models.CharField(max_length=500, blank=True, default='')
     activity_description = models.TextField(blank=True, default='')
-    verified_recruitment = models.BooleanField(blank=True, default=False)
+    verified_activity = models.BooleanField('I have verified this activity',
+                                            blank=True, default=False)
 
     objects = caching.base.CachingManager()
 

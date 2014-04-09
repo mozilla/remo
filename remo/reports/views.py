@@ -93,7 +93,7 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
 
     editable = False
     if ((request.user == user or request.user.has_perm('change_ngreport'))
-            and not report.activity.name in UNLISTED_ACTIVITIES):
+            and report.activity.name not in UNLISTED_ACTIVITIES):
         editable = True
 
     ctx_data = {'pageuser': user,
@@ -130,8 +130,13 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
                         Q(name='Council') | Q(name='Mentor')).exists())):
                     messages.error(request, 'Permission denied.')
                     return redirect('main')
+                if verification_form.cleaned_data['verified_activity']:
+                    messages.success(request,
+                                     ('Activity verified successfully.'))
+                else:
+                    messages.success(request,
+                                     ('Activiy invalidated successfully.'))
                 verification_form.save()
-                messages.success(request, 'Report verified successfully.')
                 ctx_data['verification_form'] = forms.NGVerifyReportForm(
                     instance=report)
 
