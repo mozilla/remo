@@ -276,6 +276,17 @@ def email_mentees(request):
     return redirect('dashboard')
 
 
+def stats_dashboard(request):
+    """Stats dashboard view."""
+    args = {}
+    args['reps'] = User.objects.filter(groups__name='Rep').count()
+    args['past_events'] = Event.objects.filter(start__lt=now()).count()
+    args['future_events'] = Event.objects.filter(start__gte=now()).count()
+    args['activities'] = NGReport.objects.all().count()
+
+    return render(request, 'stats_dashboard.html', args)
+
+
 @never_cache
 @permission_check()
 def edit_settings(request):
