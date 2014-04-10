@@ -321,8 +321,7 @@ var update_results = function(data, query, newquery, past_events) {
         set_number_of_events(data.meta.total_count);
     }
 
-    if ((parseInt(data.meta.limit, 10) === 0) ||
-        (parseInt(data.meta.offset, 10) + EventsLib.results_batch >= parseInt(data.meta.total_count, 10))) {
+    if (!data.meta.next) {
         EventsLib.allset = true;
     }
     else {
