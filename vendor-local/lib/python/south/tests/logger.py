@@ -1,8 +1,8 @@
+import io
 import logging
 import os
 import tempfile
-import unittest
-import StringIO
+from south.tests import unittest
 import sys
 
 from django.conf import settings
@@ -39,7 +39,7 @@ class TestLogger(unittest.TestCase):
         settings.SOUTH_LOGGING_ON = False
 
         # Set root logger to capture WARNING and worse
-        logging_stream = StringIO.StringIO()
+        logging_stream = io.StringIO()
         logging.basicConfig(stream=logging_stream, level=logging.WARNING)
 
         db.create_table("test12", [('email_confirmed', models.BooleanField(default=False))])

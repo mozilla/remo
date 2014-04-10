@@ -1,7 +1,11 @@
-import unittest
+from south.tests import unittest
 
 import datetime
 import sys
+try:
+    set # builtin, python >=2.6
+except NameError:
+    from sets import Set as set # in stdlib, python >=2.3
 
 from south import exceptions
 from south.migration import migrate_app
@@ -508,18 +512,19 @@ class TestMigrationLogic(Monkeypatcher):
     
     installed_apps = ["fakeapp", "otherfakeapp"]
 
+    def setUp(self):
+        super(TestMigrationLogic, self).setUp()
+        MigrationHistory.objects.all().delete()
+        
     def assertListEqual(self, list1, list2, msg=None):
-        list1 = list(list1)
-        list2 = list(list2)
-        list1.sort()
-        list2.sort()
+        list1 = set(list1)
+        list2 = set(list2)
         return self.assert_(list1 == list2, "%s is not equal to %s" % (list1, list2))
 
     def test_find_ghost_migrations(self):
         pass
     
     def test_apply_migrations(self):
-        MigrationHistory.objects.all().delete()
         migrations = Migrations("fakeapp")
         
         # We should start with no migrations
@@ -531,9 +536,9 @@ class TestMigrationLogic(Monkeypatcher):
         
         # We should finish with all migrations
         self.assertListEqual(
-            ((u"fakeapp", u"0001_spam"),
-             (u"fakeapp", u"0002_eggs"),
-             (u"fakeapp", u"0003_alter_spam"),),
+            (("fakeapp", "0001_spam"),
+             ("fakeapp", "0002_eggs"),
+             ("fakeapp", "0003_alter_spam"),),
             MigrationHistory.objects.values_list("app_name", "migration"),
         )
         
@@ -545,7 +550,6 @@ class TestMigrationLogic(Monkeypatcher):
     
     
     def test_migration_merge_forwards(self):
-        MigrationHistory.objects.all().delete()
         migrations = Migrations("fakeapp")
         
         # We should start with no migrations
@@ -558,7 +562,7 @@ class TestMigrationLogic(Monkeypatcher):
         
         # Did it go in?
         self.assertListEqual(
-            ((u"fakeapp", u"0002_eggs"),),
+            (("fakeapp", "0002_eggs"),),
             MigrationHistory.objects.values_list("app_name", "migration"),
         )
         
@@ -571,7 +575,7 @@ class TestMigrationLogic(Monkeypatcher):
                           migrations, target_name='zero', fake=False)
         try:
             migrate_app(migrations, target_name=None, fake=False)
-        except exceptions.InconsistentMigrationHistory, e:
+        except exceptions.InconsistentMigrationHistory as e:
             self.assertEqual(
                 [
                     (
@@ -583,7 +587,7 @@ class TestMigrationLogic(Monkeypatcher):
             )
         try:
             migrate_app(migrations, target_name="zero", fake=False)
-        except exceptions.InconsistentMigrationHistory, e:
+        except exceptions.InconsistentMigrationHistory as e:
             self.assertEqual(
                 [
                     (
@@ -596,7 +600,7 @@ class TestMigrationLogic(Monkeypatcher):
         
         # Nothing should have changed (no merge mode!)
         self.assertListEqual(
-            ((u"fakeapp", u"0002_eggs"),),
+            (("fakeapp", "0002_eggs"),),
             MigrationHistory.objects.values_list("app_name", "migration"),
         )
         
@@ -605,9 +609,9 @@ class TestMigrationLogic(Monkeypatcher):
         
         # We should finish with all migrations
         self.assertListEqual(
-            ((u"fakeapp", u"0001_spam"),
-             (u"fakeapp", u"0002_eggs"),
-             (u"fakeapp", u"0003_alter_spam"),),
+            (("fakeapp", "0001_spam"),
+             ("fakeapp", "0002_eggs"),
+             ("fakeapp", "0003_alter_spam"),),
             MigrationHistory.objects.values_list("app_name", "migration"),
         )
         
@@ -659,8 +663,8 @@ class TestMigrationLogic(Monkeypatcher):
         migrate_app(migrations, target_name="0002", fake=False)
         self.failIf(null_ok())
         self.assertListEqual(
-            ((u"fakeapp", u"0001_spam"),
-             (u"fakeapp", u"0002_eggs"),),
+            (("fakeapp", "0001_spam"),
+             ("fakeapp", "0002_eggs"),),
             MigrationHistory.objects.values_list("app_name", "migration"),
         )
         
@@ -668,9 +672,9 @@ class TestMigrationLogic(Monkeypatcher):
         migrate_app(migrations, target_name="0003", fake=False)
         self.assert_(null_ok(False))
         self.assertListEqual(
-            ((u"fakeapp", u"0001_spam"),
-             (u"fakeapp", u"0002_eggs"),
-             (u"fakeapp", u"0003_alter_spam"),),
+            (("fakeapp", "0001_spam"),
+             ("fakeapp", "0002_eggs"),
+             ("fakeapp", "0003_alter_spam"),),
             MigrationHistory.objects.values_list("app_name", "migration"),
         )
 
@@ -678,8 +682,8 @@ class TestMigrationLogic(Monkeypatcher):
         migrate_app(migrations, target_name="0002", fake=False)
         self.failIf(null_ok(), 'weight not null after migration')
         self.assertListEqual(
-            ((u"fakeapp", u"0001_spam"),
-             (u"fakeapp", u"0002_eggs"),),
+            (("fakeapp", "0001_spam"),
+             ("fakeapp", "0002_eggs"),),
             MigrationHistory.objects.values_list("app_name", "migration"),
         )
         
@@ -810,7 +814,7 @@ class TestUtils(unittest.TestCase):
         )
         try:
             depends(target, lambda n: graph[n])
-        except exceptions.CircularDependency, e:
+        except exceptions.CircularDependency as e:
             self.assertEqual(trace, e.trace)
 
     def test_depends_cycle(self):

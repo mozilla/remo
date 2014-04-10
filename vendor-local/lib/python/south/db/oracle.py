@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os.path
 import sys
 import re
@@ -22,9 +24,6 @@ except ImportError:
 
 from south.db import generic
 
-warnings.warn("! WARNING: South's Oracle support is still alpha. "
-              "Be wary of possible bugs.")
-
 class DatabaseOperations(generic.DatabaseOperations):    
     """
     Oracle implementation of database operations.    
@@ -33,6 +32,8 @@ class DatabaseOperations(generic.DatabaseOperations):
 
     alter_string_set_type =     'ALTER TABLE %(table_name)s MODIFY %(column)s %(type)s %(nullity)s;'
     alter_string_set_default =  'ALTER TABLE %(table_name)s MODIFY %(column)s DEFAULT %(default)s;'
+    alter_string_update_nulls_to_default = \
+                                'UPDATE %(table_name)s SET %(column)s = %(default)s WHERE %(column)s IS NULL;'
     add_column_string =         'ALTER TABLE %s ADD %s;'
     delete_column_string =      'ALTER TABLE %s DROP COLUMN %s;'
     add_constraint_string =     'ALTER TABLE %(table_name)s ADD CONSTRAINT %(constraint)s %(clause)s'
@@ -82,7 +83,12 @@ class DatabaseOperations(generic.DatabaseOperations):
         columns = []
         autoinc_sql = ''
 
+
         for field_name, field in fields:
+            
+            # avoid default values in CREATE TABLE statements (#925)
+            field._suppress_default = True
+
             col = self.column_sql(table_name, field_name, field)
             if not col:
                 continue
@@ -127,7 +133,7 @@ END;
         
         if self.dry_run:
             if self.debug:
-                print '   - no dry run output for alter_column() due to dynamic DDL, sorry'
+                print('   - no dry run output for alter_column() due to dynamic DDL, sorry')
             return
 
         qn = self.quote_name(table_name)
@@ -156,13 +162,25 @@ END;
         if field.null:
             params['nullity'] = 'NULL'
 
-        if not field.null and field.has_default():
-            params['default'] = self._default_value_workaround(field.get_default())
-
         sql_templates = [
             (self.alter_string_set_type, params),
-            (self.alter_string_set_default, params.copy()),
+            (self.alter_string_set_default, params),
         ]
+        if not field.null and field.has_default():
+            # Use default for rows that had nulls. To support the case where
+            # the new default does not fit the old type, we need to first change
+            # the column type to the new type, but null=True; then set the default;
+            # then complete the type change. 
+            def change_params(**kw):
+                "A little helper for non-destructively changing the params"
+                p = params.copy()
+                p.update(kw)
+                return p
+            sql_templates[:0] = [
+                (self.alter_string_set_type, change_params(nullity='NULL')),
+                (self.alter_string_update_nulls_to_default, change_params(default=self._default_value_workaround(field.get_default()))),
+            ]
+
 
         # drop CHECK constraints. Make sure this is executed before the ALTER TABLE statements
         # generated above, since those statements recreate the constraints we delete here.
@@ -175,8 +193,8 @@ END;
 
         for sql_template, params in sql_templates:
             try:
-                self.execute(sql_template % params)
-            except DatabaseError, exc:
+                self.execute(sql_template % params, print_all_errors=False)
+            except DatabaseError as exc:
                 description = str(exc)
                 # Oracle complains if a column is already NULL/NOT NULL
                 if 'ORA-01442' in description or 'ORA-01451' in description:
@@ -190,6 +208,7 @@ END;
                 elif 'ORA-22858' in description or 'ORA-22859' in description:
                     self._alter_column_lob_workaround(table_name, name, field)
                 else:
+                    self._print_sql_error(exc, sql_template % params)
                     raise
 
     def _alter_column_lob_workaround(self, table_name, name, field):
@@ -230,7 +249,7 @@ END;
         ))
 
     @generic.invalidate_table_constraints
-    def add_column(self, table_name, name, field, keep_default=True):
+    def add_column(self, table_name, name, field, keep_default=False):
         sql = self.column_sql(table_name, name, field)
         sql = self.adj_column_sql(sql)
 

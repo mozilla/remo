@@ -1,4 +1,4 @@
-import unittest
+from south.tests import unittest
 
 from south.creator.changes import AutoChanges, InitialChanges
 from south.migration.base import Migrations

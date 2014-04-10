@@ -27,7 +27,7 @@ def get_sentinel_object():
 class HorribleModel(models.Model):
     "A model to test the edge cases of model parsing"
     
-    ZERO, ONE = range(2)
+    ZERO, ONE = 0, 1
     
     # First, some nice fields
     name = models.CharField(max_length=255)
