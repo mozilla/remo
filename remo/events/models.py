@@ -16,10 +16,10 @@ from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
 from remo.base.models import GenericActiveManager
+from remo.base.tasks import send_remo_mail
 from remo.base.utils import add_permissions_to_groups
 from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
-from remo.reports.tasks import send_remo_mail
 
 
 SIMILAR_EVENTS = 3
@@ -227,4 +227,5 @@ def email_event_owner_on_add_comment(sender, instance, **kwargs):
     if owner.userprofile.receive_email_on_add_event_comment:
         subject = subject % (instance.user.get_full_name(),
                              instance.event.name)
-        send_remo_mail.delay([owner.id], subject, email_template, ctx_data)
+        send_remo_mail.delay(subject=subject, recipients_list=[owner.id],
+                             email_template=email_template, data=ctx_data)

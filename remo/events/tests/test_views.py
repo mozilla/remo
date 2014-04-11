@@ -630,9 +630,7 @@ class ViewsTest(TestCase):
         reps = event.attendees.all()
         valid_data = dict()
         for rep in reps:
-            field_name = '%s %s <%s>' % (rep.first_name,
-                                         rep.last_name,
-                                         rep.email)
+            field_name = '%s' % rep.id
             valid_data[field_name] = 'True'
 
         valid_data['subject'] = 'This is the mail subject'
@@ -644,11 +642,11 @@ class ViewsTest(TestCase):
         self.assertTemplateUsed(response, 'view_event.html')
 
         mock_success.assert_called_with(ANY, 'Email sent successfully.')
-        eq_(len(mail.outbox), 1)
+        eq_(len(mail.outbox), 4)
 
-        email = mail.outbox[0]
-        eq_(len(email.to), 4)
-        eq_(len(email.cc), 1)
+        for i in range(0, len(mail.outbox)):
+            eq_(len(mail.outbox[i].cc), 1)
+            eq_(len(mail.outbox[i].to), 1)
 
     @mock.patch('remo.events.views.iri_to_uri', wraps=iri_to_uri)
     def test_view_redirect_list_events(self, mocked_uri):

@@ -13,6 +13,7 @@ from django_statsd.clients import statsd
 from south.signals import post_migrate
 from uuslug import uuslug
 
+from remo.base.tasks import send_remo_mail
 from remo.base.utils import add_permissions_to_groups
 from remo.remozilla.models import Bug
 from remo.voting.tasks import send_voting_mail
@@ -21,6 +22,7 @@ from remo.voting.tasks import send_voting_mail
 # Voting period in days
 BUDGET_REQUEST_PERIOD_START = 3
 BUDGET_REQUEST_PERIOD_END = 6
+BUGZILLA_URL = 'https://bugzilla.mozilla.org/show_bug.cgi?id='
 
 
 class Poll(models.Model):
@@ -147,6 +149,18 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
     end_template = 'emails/voting_results_reminder.txt'
 
     if not instance.task_start_id or instance.is_future_voting:
+        if instance.automated_poll:
+            template = 'emails/review_budget_notify_council.txt'
+            subject = ('[Bug %s] Budget request discussion'
+                       % str(instance.bug_id))
+            data = {'bug': instance.bug,
+                    'BUGZILLA_URL': BUGZILLA_URL}
+            send_remo_mail.delay(
+                subject=subject, email_template=template,
+                recipients_list=[settings.REPS_COUNCIL_ALIAS],
+                data=data,
+                headers={'Reply-To': settings.REPS_COUNCIL_ALIAS})
+
         start_reminder = send_voting_mail.apply_async(
             eta=instance.start, kwargs={'voting_id': instance.id,
                                         'subject': subject_start,

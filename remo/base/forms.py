@@ -3,7 +3,7 @@ import happyforms
 from django import forms
 from django.contrib import messages
 
-from remo.base.tasks import send_mail_task
+from remo.base.tasks import send_remo_mail
 from remo.profiles.models import FunctionalArea, UserProfile
 
 
@@ -28,16 +28,13 @@ class EmailUsersForm(BaseEmailUsersFrom):
         Dynamically set fields for the recipients of the mail.
         """
         super(EmailUsersForm, self).__init__(*args, **kwargs)
-        recipients = users.values_list('first_name', 'last_name', 'email')
-
-        for first_name, last_name, email in recipients:
-            field_name = '%s %s <%s>' % (first_name, last_name, email)
+        for user in users:
             # Insert method is used to override the order of form fields
             form_widget = forms.CheckboxInput(
                 attrs={'class': 'input-text-big'})
-            self.fields.insert(0, field_name,
+            self.fields.insert(0, str(user.id),
                                forms.BooleanField(
-                                   label=field_name,
+                                   label=user,
                                    initial=True,
                                    required=False,
                                    widget=form_widget))
@@ -48,12 +45,13 @@ class EmailUsersForm(BaseEmailUsersFrom):
         for field in self.fields:
             if (isinstance(self.fields[field], forms.BooleanField) and
                     self.cleaned_data[field]):
-                recipients_list.append(field)
+                recipients_list.append(long(field))
+
         if recipients_list:
             from_email = '%s <%s>' % (request.user.get_full_name(),
                                       request.user.email)
-            send_mail_task.delay(sender=from_email,
-                                 recipients=recipients_list,
+            send_remo_mail.delay(sender=from_email,
+                                 recipients_list=recipients_list,
                                  subject=self.cleaned_data['subject'],
                                  message=self.cleaned_data['body'])
             messages.success(request, 'Email sent successfully.')
@@ -71,17 +69,13 @@ class EmailRepsForm(BaseEmailUsersFrom):
 
     def send_email(self, request, users):
         """Send mail to recipients list."""
-        recipients = users.values_list('first_name', 'last_name', 'email')
-        recipients_list = []
-        for first_name, last_name, email in recipients:
-            recipient = '%s %s <%s>' % (first_name, last_name, email)
-            recipients_list.append(recipient)
+        recipients = users.values_list('id', flat=True)
 
-        if recipients_list:
+        if recipients:
             from_email = '%s <%s>' % (request.user.get_full_name(),
                                       request.user.email)
-            send_mail_task.delay(sender=from_email,
-                                 recipients=recipients_list,
+            send_remo_mail.delay(sender=from_email,
+                                 recipients_list=recipients,
                                  subject=self.cleaned_data['subject'],
                                  message=self.cleaned_data['body'])
             messages.success(request, 'Email sent successfully.')

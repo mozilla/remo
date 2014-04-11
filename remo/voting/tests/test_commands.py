@@ -38,8 +38,9 @@ class VotingTestCommands(TestCase):
         args = ['poll_vote_reminder']
         management.call_command('cron', *args)
         eq_(len(mail.outbox), 3)
-        for email in mail.outbox:
-            eq_(email.to, ['counselor@example.com'])
+        eq_(mail.outbox[0].to, [u'counselor@example.com'])
+        eq_(mail.outbox[1].to, [u'counselor@example.com'])
+        eq_(mail.outbox[2].to, [u'Babis Sougias <counselor@example.com>'])
 
     @patch('remo.voting.cron.now')
     def test_extend_voting_period_by_24hours(self, fake_now):

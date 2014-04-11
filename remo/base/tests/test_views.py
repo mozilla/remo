@@ -257,14 +257,11 @@ class ViewsTest(TestCase):
         self.assertTemplateUsed(response, 'dashboard_reps.html')
 
     def test_email_my_mentees_mentor_with_send_True(self):
-        """Email mentees when mentor and checkbox
-        is checked."""
+        """Email mentees when mentor and checkbox is checked."""
         c = Client()
         c.login(username='mentor', password='passwd')
         rep1 = User.objects.get(first_name='Nick')
-        data = {'%s %s <%s>' % (rep1.first_name,
-                                rep1.last_name,
-                                rep1.email): 'True',
+        data = {'%s' % (rep1.id): 'True',
                 'subject': 'This is subject',
                 'body': ('This is my body\n',
                          'Multiline of course')}
@@ -278,14 +275,11 @@ class ViewsTest(TestCase):
         eq_(len(mail.outbox[0].cc), 1)
 
     def test_email_my_mentees_mentor_with_send_False(self):
-        """Email mentees when mentor and checkbox is
-        not checked."""
+        """Email mentees when mentor and checkbox is not checked."""
         c = Client()
         c.login(username='mentor', password='passwd')
         rep1 = User.objects.get(first_name='Nick')
-        data = {'%s %s <%s>' % (rep1.first_name,
-                                rep1.last_name,
-                                rep1.email): 'False',
+        data = {'%s' % (rep1.id): 'False',
                 'subject': 'This is subject',
                 'body': ('This is my body\n',
                          'Multiline of course')}
