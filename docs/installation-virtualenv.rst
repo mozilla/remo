@@ -173,10 +173,6 @@ When you want to start contributing...
 
      (venv)$ ./manage.py loaddata demo_functional_areas
 
-   To load *demo reports* run::
-
-     (venv)$ ./manage.py loaddata demo_reports
-
    To load *demo events* run::
 
      (venv)$ ./manage.py loaddata demo_events
