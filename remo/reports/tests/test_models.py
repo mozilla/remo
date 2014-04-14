@@ -8,6 +8,7 @@ from test_utils import TestCase
 
 import mock
 
+from remo.base.tests import RemoTestCase
 from remo.events.helpers import get_event_link
 from remo.events.tests import EventFactory, AttendanceFactory
 from remo.profiles.tests import UserFactory
@@ -391,3 +392,32 @@ class NGReportDeleteSignalTests(TestCase):
         eq_(up.current_streak_start, end_date)
         eq_(up.longest_streak_start, start_date)
         eq_(up.longest_streak_end, datetime.date(2011, 01, 15))
+
+
+class NGReportActivityNotifications(RemoTestCase):
+    def test_user_new_activity(self):
+        report_notification = now().date() - datetime.timedelta(weeks=3)
+        new_report_date = now().date() + datetime.timedelta(weeks=1)
+
+        rep = UserFactory.create(
+            groups=['Rep'],
+            userprofile__first_report_notification=report_notification
+        )
+        NGReportFactory.create(user=rep, report_date=new_report_date)
+
+        user = User.objects.get(pk=rep.id)
+        ok_(not user.userprofile.first_report_notification)
+        ok_(not user.userprofile.second_report_notification)
+
+    def test_user_new_future_activity(self):
+        report_notification = now().date() - datetime.timedelta(weeks=3)
+        new_report_date = now().date() + datetime.timedelta(weeks=6)
+
+        rep = UserFactory.create(
+            groups=['Rep'],
+            userprofile__first_report_notification=report_notification
+        )
+        NGReportFactory.create(user=rep, report_date=new_report_date)
+
+        user = User.objects.get(pk=rep.id)
+        eq_(user.userprofile.first_report_notification, report_notification)

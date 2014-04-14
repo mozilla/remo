@@ -160,9 +160,20 @@ class NGReport(caching.base.CachingMixin, models.Model):
         return False
 
     def save(self, *args, **kwargs):
-        """Override save method."""
-        one_week = datetime.timedelta(7)
+        """Override save for custom functionality."""
+
+        # Make last report notificaton date NULL on new report
         today = get_date()
+        if self.pk is None and self.user.userprofile.first_report_notification:
+            start = today - datetime.timedelta(weeks=4)
+            end = today + datetime.timedelta(weeks=4)
+            if self.report_date in daterange(start, end):
+                self.user.userprofile.first_report_notification = None
+                self.user.userprofile.second_report_notification = None
+                self.user.userprofile.save()
+
+        # User streaks functionality
+        one_week = datetime.timedelta(7)
         current_start = self.user.userprofile.current_streak_start or None
         longest_start = self.user.userprofile.longest_streak_start or None
         longest_end = self.user.userprofile.longest_streak_end or None

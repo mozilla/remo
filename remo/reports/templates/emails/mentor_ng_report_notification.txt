@@ -1,13 +1,13 @@
 Hey there {{ mentor.first_name|capitalize }},
 
 We've noticed that the following Rep you're mentoring has not filed
-a report in more than 3 weeks :( These reports are really
+a report in more than {{ weeks }} weeks :( These reports are really
 important for the success of the Mozilla Reps program as they not only
 let you see the great work your "mentees" do but they also give the
 broader community a unique opportunity to see what they've been up to
 in their region of the world.
 
-Rep without a report for over 3 weeks:
+Rep without a report for over {{ weeks }} weeks:
 - {{ user.get_full_name() }} ( {{ SITE_URL }}{{ url('profiles_view_profile', user.userprofile.display_name) }} )
 
 You can head over to the Mozilla Reps Dashboard to get a better
