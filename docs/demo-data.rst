@@ -68,6 +68,14 @@ that help in some complex definitions of our models.
    - ``random_categories``: ``Boolean``
 - ``AttendanceFactory``
 
+
+``remo.reports`` factory classes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- ``NGReportFactory``
+- ``ActivityFactory``
+- ``CampaignFactory``
+
 ``remo.remozilla`` factory classes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
