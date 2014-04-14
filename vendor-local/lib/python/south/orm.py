@@ -3,6 +3,8 @@ South's fake ORM; lets you not have to write SQL inside migrations.
 Roughly emulates the real Django ORM, to a point.
 """
 
+from __future__ import print_function
+
 import inspect
 
 from django.db import models
@@ -13,6 +15,7 @@ from south.db import db
 from south.utils import ask_for_it_by_name, datetime_utils
 from south.hacks import hacks
 from south.exceptions import UnfreezeMeLater, ORMBaseNotIncluded, ImpossibleORMUnfreeze
+from south.utils.py3 import string_types
 
 
 class ModelsLocals(object):
@@ -227,7 +230,7 @@ class _FakeORM(object):
                 if name == "SouthFieldClass":
                     raise ValueError("Cannot import the required field '%s'" % value)
                 else:
-                    print "WARNING: Cannot import '%s'" % value
+                    print("WARNING: Cannot import '%s'" % value)
         
         # Use ModelsLocals to make lookups work right for CapitalisedModels
         fake_locals = ModelsLocals(fake_locals)
@@ -248,7 +251,7 @@ class _FakeORM(object):
             # OK, add it.
             try:
                 results[key] = self.eval_in_context(code, app)
-            except (NameError, AttributeError), e:
+            except (NameError, AttributeError) as e:
                 raise ValueError("Cannot successfully create meta field '%s' for model '%s.%s': %s." % (
                     key, app, model, e
                 ))
@@ -265,7 +268,7 @@ class _FakeORM(object):
                 key = key.lower()
                 if key not in self.models:
                     raise ORMBaseNotIncluded("Cannot find ORM base %s" % key)
-                elif isinstance(self.models[key], basestring):
+                elif isinstance(self.models[key], string_types):
                     # Then the other model hasn't been unfrozen yet.
                     # We postpone ourselves; the situation will eventually resolve.
                     raise UnfreezeMeLater()
@@ -294,7 +297,7 @@ class _FakeORM(object):
                 continue
             elif not params:
                 raise ValueError("Field '%s' on model '%s.%s' has no definition." % (fname, app, name))
-            elif isinstance(params, (str, unicode)):
+            elif isinstance(params, string_types):
                 # It's a premade definition string! Let's hope it works...
                 code = params
                 extra_imports = {}
@@ -364,7 +367,7 @@ class _FakeORM(object):
                 for fname, (code, extra_imports) in model._failed_fields.items():
                     try:
                         field = self.eval_in_context(code, app, extra_imports)
-                    except (NameError, AttributeError, AssertionError, KeyError), e:
+                    except (NameError, AttributeError, AssertionError, KeyError) as e:
                         # It's failed again. Complain.
                         raise ValueError("Cannot successfully create field '%s' for model '%s': %s." % (
                             fname, modelname, e

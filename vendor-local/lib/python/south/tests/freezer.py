@@ -1,4 +1,4 @@
-import unittest
+from south.tests import unittest
 
 from south.creator.freezer import model_dependencies
 from south.tests.fakeapp import models

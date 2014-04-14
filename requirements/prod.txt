@@ -1,2 +1,2 @@
-south
+south==0.8.1
 BeautifulSoup<4.0

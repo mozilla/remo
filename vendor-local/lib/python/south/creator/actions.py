@@ -4,6 +4,8 @@ Each one has a class, which can take the action description and insert code
 blocks into the forwards() and backwards() methods, in the right place.
 """
 
+from __future__ import print_function
+
 import sys
 
 from django.db.models.fields.related import RECURSIVE_RELATIONSHIP_CONSTANT
@@ -12,6 +14,7 @@ from django.db.models.fields import FieldDoesNotExist, NOT_PROVIDED, CharField, 
 from south.modelsinspector import value_clean
 from south.creator.freezer import remove_useless_attributes, model_key
 from south.utils import datetime_utils
+from south.utils.py3 import raw_input
 
 
 class Action(object):
@@ -147,16 +150,16 @@ class _NullIssuesField(object):
             field_def[2]['default'] = repr("")
             return
         # Oh dear. Ask them what to do.
-        print " ? The field '%s.%s' does not have a default specified, yet is NOT NULL." % (
+        print(" ? The field '%s.%s' does not have a default specified, yet is NOT NULL." % (
             self.model._meta.object_name,
             field.name,
-        )
-        print " ? Since you are %s, you MUST specify a default" % self.null_reason
-        print " ? value to use for existing rows. Would you like to:"
-        print " ?  1. Quit now, and add a default to the field in models.py"
-        print " ?  2. Specify a one-off value to use for existing columns now"
+        ))
+        print(" ? Since you are %s, you MUST specify a default" % self.null_reason)
+        print(" ? value to use for existing rows. Would you like to:")
+        print(" ?  1. Quit now, and add a default to the field in models.py")
+        print(" ?  2. Specify a one-off value to use for existing columns now")
         if self.allow_third_null_option:
-            print " ?  3. Disable the backwards migration by raising an exception."
+            print(" ?  3. Disable the backwards migration by raising an exception.")
         while True:
             choice = raw_input(" ? Please select a choice: ")
             if choice == "1":
@@ -166,7 +169,7 @@ class _NullIssuesField(object):
             elif choice == "3" and self.allow_third_null_option:
                 break
             else:
-                print " ! Invalid choice."
+                print(" ! Invalid choice.")
         if choice == "2":
             self.add_one_time_default(field, field_def)
         elif choice == "3":
@@ -174,19 +177,19 @@ class _NullIssuesField(object):
 
     def add_one_time_default(self, field, field_def):
         # OK, they want to pick their own one-time default. Who are we to refuse?
-        print " ? Please enter Python code for your one-off default value."
-        print " ? The datetime module is available, so you can do e.g. datetime.date.today()"
+        print(" ? Please enter Python code for your one-off default value.")
+        print(" ? The datetime module is available, so you can do e.g. datetime.date.today()")
         while True:
             code = raw_input(" >>> ")
             if not code:
-                print " ! Please enter some code, or 'exit' (with no quotes) to exit."
+                print(" ! Please enter some code, or 'exit' (with no quotes) to exit.")
             elif code == "exit":
                 sys.exit(1)
             else:
                 try:
                     result = eval(code, {}, {"datetime": datetime_utils})
-                except (SyntaxError, NameError), e:
-                    print " ! Invalid input: %s" % e
+                except (SyntaxError, NameError) as e:
+                    print(" ! Invalid input: %s" % e)
                 else:
                     break
         # Right, add the default in.
@@ -473,16 +476,17 @@ class AddM2M(Action):
     
     FORWARDS_TEMPLATE = '''
         # Adding M2M table for field %(field_name)s on '%(model_name)s'
-        db.create_table(%(table_name)r, (
+        m2m_table_name = %(table_name)s
+        db.create_table(m2m_table_name, (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
             (%(left_field)r, models.ForeignKey(orm[%(left_model_key)r], null=False)),
             (%(right_field)r, models.ForeignKey(orm[%(right_model_key)r], null=False))
         ))
-        db.create_unique(%(table_name)r, [%(left_column)r, %(right_column)r])'''[1:] + "\n"
+        db.create_unique(m2m_table_name, [%(left_column)r, %(right_column)r])'''[1:] + "\n"
     
     BACKWARDS_TEMPLATE = '''
         # Removing M2M table for field %(field_name)s on '%(model_name)s'
-        db.delete_table('%(table_name)s')'''[1:] + "\n"
+        db.delete_table(%(table_name)s)'''[1:] + "\n"
     
     def __init__(self, model, field):
         self.model = model
@@ -495,13 +499,25 @@ class AddM2M(Action):
             self.model._meta.app_label, 
             self.model._meta.object_name,
         )
-    
+
+    def table_name(self):
+        # This is part of a workaround for the fact that Django uses
+        # different shortening for automatically generated m2m table names 
+        # (as opposed to any explicitly specified table name)
+        f = self.field
+        explicit = f.db_table
+        if explicit:
+            return "%r" % explicit
+        else:
+            auto = "%s_%s" % (self.model._meta.db_table, f.name)
+            return 'db.shorten_name(%r)' % auto
+
     def forwards_code(self):
         
         return self.FORWARDS_TEMPLATE % {
             "model_name": self.model._meta.object_name,
             "field_name": self.field.name,
-            "table_name": self.field.m2m_db_table(),
+            "table_name": self.table_name(),
             "left_field": self.field.m2m_column_name()[:-3], # Remove the _id part
             "left_column": self.field.m2m_column_name(),
             "left_model_key": model_key(self.model),
@@ -515,7 +531,7 @@ class AddM2M(Action):
         return self.BACKWARDS_TEMPLATE % {
             "model_name": self.model._meta.object_name,
             "field_name": self.field.name,
-            "table_name": self.field.m2m_db_table(),
+            "table_name": self.table_name(),
         }
 
 

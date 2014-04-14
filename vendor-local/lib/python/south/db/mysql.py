@@ -99,6 +99,7 @@ class DatabaseOperations(generic.DatabaseOperations):
 
     allows_combined_alters = False
     has_check_constraints = False
+    raises_default_errors = False
 
     geom_types = ['geometry', 'point', 'linestring', 'polygon']
     text_types = ['text', 'blob']
@@ -107,6 +108,8 @@ class DatabaseOperations(generic.DatabaseOperations):
         self._constraint_references = {}
         self._reverse_cache = {}
         super(DatabaseOperations, self).__init__(db_alias)
+        if self._has_setting('STORAGE_ENGINE') and self._get_setting('STORAGE_ENGINE'):
+            self.create_table_sql = self.create_table_sql + ' ENGINE=%s' % self._get_setting('STORAGE_ENGINE')
 
     def _is_valid_cache(self, db_name, table_name):
         cache = self._constraint_cache

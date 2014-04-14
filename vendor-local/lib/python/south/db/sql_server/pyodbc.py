@@ -5,7 +5,12 @@ from django.db.models import fields
 from south.db import generic
 from south.db.generic import delete_column_constraints, invalidate_table_constraints, copy_column_constraints
 from south.exceptions import ConstraintDropped
-from django.utils.encoding import smart_unicode
+from south.utils.py3 import string_types
+try:
+    from django.utils.encoding import smart_text                    # Django >= 1.5
+except ImportError:
+    from django.utils.encoding import smart_unicode as smart_text   # Django < 1.5
+from django.core.management.color import no_style
 
 class DatabaseOperations(generic.DatabaseOperations):
     """
@@ -41,16 +46,16 @@ class DatabaseOperations(generic.DatabaseOperations):
     def delete_column(self, table_name, name):
         q_table_name, q_name = (self.quote_name(table_name), self.quote_name(name))
 
-        # Zap the indexes
-        for ind in self._find_indexes_for_column(table_name,name):
-            params = {'table_name':q_table_name, 'index_name': ind}
-            sql = self.drop_index_string % params
-            self.execute(sql, [])
-
         # Zap the constraints
         for const in self._find_constraints_for_column(table_name,name):
             params = {'table_name':q_table_name, 'constraint_name': const}
             sql = self.drop_constraint_string % params
+            self.execute(sql, [])
+
+        # Zap the indexes
+        for ind in self._find_indexes_for_column(table_name,name):
+            params = {'table_name':q_table_name, 'index_name': ind}
+            sql = self.drop_index_string % params
             self.execute(sql, [])
 
         # Zap default if exists
@@ -67,16 +72,16 @@ class DatabaseOperations(generic.DatabaseOperations):
 
         sql = """
         SELECT si.name, si.id, sik.colid, sc.name
-        FROM dbo.sysindexes SI WITH (NOLOCK)
-        INNER JOIN dbo.sysindexkeys SIK WITH (NOLOCK)
-            ON  SIK.id = Si.id
-            AND SIK.indid = SI.indid
-        INNER JOIN dbo.syscolumns SC WITH (NOLOCK)
-            ON  SI.id = SC.id
-            AND SIK.colid = SC.colid
-        WHERE SI.indid !=0
-            AND Si.id = OBJECT_ID('%s')
-            AND SC.name = '%s'
+        FROM dbo.sysindexes si WITH (NOLOCK)
+        INNER JOIN dbo.sysindexkeys sik WITH (NOLOCK)
+            ON  sik.id = si.id
+            AND sik.indid = si.indid
+        INNER JOIN dbo.syscolumns sc WITH (NOLOCK)
+            ON  si.id = sc.id
+            AND sik.colid = sc.colid
+        WHERE si.indid !=0
+            AND si.id = OBJECT_ID('%s')
+            AND sc.name = '%s'
         """
         idx = self.execute(sql % (table_name, name), [])
         return [i[0] for i in idx]
@@ -137,7 +142,16 @@ class DatabaseOperations(generic.DatabaseOperations):
             cons_name, type = r[:2]
             if type=='PRIMARY KEY' or type=='UNIQUE':
                 cons = all.setdefault(cons_name, (type,[]))
-                cons[1].append(r[7])
+                sql = '''
+                SELECT COLUMN_NAME
+                FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE RFD
+                WHERE RFD.CONSTRAINT_CATALOG = %s
+                  AND RFD.CONSTRAINT_SCHEMA = %s
+                  AND RFD.TABLE_NAME = %s
+                  AND RFD.CONSTRAINT_NAME = %s
+                '''
+                columns = self.execute(sql, [db_name, schema_name, table_name, cons_name])
+                cons[1].extend(col for col, in columns)
             elif type=='CHECK':
                 cons = (type, r[2])
             elif type=='FOREIGN KEY':
@@ -169,6 +183,11 @@ class DatabaseOperations(generic.DatabaseOperations):
             sch = qn(self._get_schema_name())
             tab = qn(table_name)
             table = ".".join([sch, tab])
+            try:
+                self.delete_foreign_key(table_name, name)
+            except ValueError:
+                # no FK constraint on this field. That's OK.
+                pass
             constraints = self._find_constraints_for_column(table_name, name, False)
             for constraint in constraints.keys():
                 params = dict(table_name = table,
@@ -214,6 +233,9 @@ class DatabaseOperations(generic.DatabaseOperations):
                         field.rel.to._meta.get_field(field.rel.field_name).column
                     )
                 )
+                model = self.mock_model("FakeModelForIndexCreation", table_name)
+                for stmt in self._get_connection().creation.sql_indexes_for_field(model, field, no_style()):
+                    self.execute(stmt)
 
 
         return ret_val
@@ -238,8 +260,8 @@ class DatabaseOperations(generic.DatabaseOperations):
         conn = self._get_connection()
         value = field.get_db_prep_save(value, connection=conn)
         # This is still a Python object -- nobody expects to need a literal.
-        if isinstance(value, basestring):
-            return smart_unicode(value)
+        if isinstance(value, string_types):
+            return smart_text(value)
         elif isinstance(value, (date,time,datetime)):
             return value.isoformat()
         else:
@@ -280,7 +302,7 @@ class DatabaseOperations(generic.DatabaseOperations):
     # 1) The sql-server-specific call to _fix_field_definition
     # 2) Removing a default, when needed, by calling drop_default and not the more general alter_column
     @invalidate_table_constraints
-    def add_column(self, table_name, name, field, keep_default=True):
+    def add_column(self, table_name, name, field, keep_default=False):
         """
         Adds the column 'name' to the table 'table_name'.
         Uses the 'field' paramater, a django.db.models.fields.Field instance,
@@ -322,7 +344,7 @@ class DatabaseOperations(generic.DatabaseOperations):
             self._fix_field_definition(f)
 
         # Run
-        generic.DatabaseOperations.create_table(self, table_name, field_defs)
+        super(DatabaseOperations, self).create_table(table_name, field_defs)
 
     def _find_referencing_fks(self, table_name):
         "MSSQL does not support cascading FKs when dropping tables, we need to implement."
@@ -420,6 +442,6 @@ class DatabaseOperations(generic.DatabaseOperations):
         schema = self._get_schema_name()
         indexes = self.execute(find_index_sql, [schema, table_name, column])
         qn = self.quote_name
-        for index in (i[0] for i in indexes):
+        for index in (i[0] for i in indexes if i[0]): # "if i[0]" added because an empty name may return
             self.execute("DROP INDEX %s on %s.%s" % (qn(index), qn(schema), qn(table_name) ))
             

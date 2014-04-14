@@ -2,6 +2,8 @@
 Data migration creation command
 """
 
+from __future__ import print_function
+
 import sys
 import os
 import re
@@ -68,13 +70,13 @@ class Command(BaseCommand):
         
         # - is a special name which means 'print to stdout'
         if name == "-":
-            print file_contents
+            print(file_contents)
         # Write the migration file if the name isn't -
         else:
             fp = open(os.path.join(migrations.migrations_dir(), new_filename), "w")
             fp.write(file_contents)
             fp.close()
-            print >>sys.stderr, "Created %s." % new_filename
+            print("Created %s." % new_filename, file=sys.stderr)
     
     def calc_frozen_apps(self, migrations, freeze_list):
         """
@@ -98,7 +100,7 @@ class Command(BaseCommand):
         """
         Prints the error, and exits with the given code.
         """
-        print >>sys.stderr, message
+        print(message, file=sys.stderr)
         sys.exit(code)
 
 
@@ -112,7 +114,9 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-        # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
+        # Note: Don't use "from appname.models import ModelName". 
+        # Use orm.ModelName to refer to models in this application,
+        # and orm['appname.ModelName'] for models in other applications.
 
     def backwards(self, orm):
         "Write your backwards methods here."

@@ -1,14 +1,13 @@
-from south.tests import Monkeypatcher
-from south.modelsinspector import *
+
+from south.tests import Monkeypatcher, skipUnless
+from south.modelsinspector import (convert_on_delete_handler, get_value,
+    IsDefault, models, value_clean)
+
 from fakeapp.models import HorribleModel, get_sentinel_object
 
-from django.utils.functional import wraps
 
 on_delete_is_available = hasattr(models, "PROTECT") # models here is django.db.models
-
-from south.tests import skipUnless        
 skipUnlessOnDeleteAvailable = skipUnless(on_delete_is_available, "not testing on_delete -- not available on Django<1.3")                    
-
 
 class TestModelInspector(Monkeypatcher):
 

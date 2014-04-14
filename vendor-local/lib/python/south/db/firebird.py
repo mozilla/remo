@@ -1,5 +1,7 @@
 # firebird
 
+from __future__ import print_function
+
 import datetime
 
 from django.db import connection, models
@@ -7,6 +9,7 @@ from django.core.management.color import no_style
 from django.db.utils import DatabaseError
 
 from south.db import generic
+from south.utils.py3 import string_types
 
 class DatabaseOperations(generic.DatabaseOperations):
     backend_name = 'firebird'
@@ -15,7 +18,11 @@ class DatabaseOperations(generic.DatabaseOperations):
     alter_string_drop_null = ''
     add_column_string = 'ALTER TABLE %s ADD %s;'
     delete_column_string = 'ALTER TABLE %s DROP %s;'
+    rename_table_sql = ''
+
+    # Features
     allows_combined_alters = False
+    has_booleans = False
 
     def _fill_constraint_cache(self, db_name, table_name):
         self._constraint_cache.setdefault(db_name, {})
@@ -82,10 +89,10 @@ class DatabaseOperations(generic.DatabaseOperations):
             col = self.column_sql(table_name, field_name, field)
             if not col:
                 continue
-            #col = self.adj_column_sql(col)
 
             columns.append(col)
             if isinstance(field, models.AutoField):
+                field_name = field.db_column or field.column
                 autoinc_sql = connection.ops.autoinc_sql(table_name, field_name)
 
         sql = 'CREATE TABLE %s (%s);' % (qn, ', '.join([col for col in columns]))
@@ -94,6 +101,28 @@ class DatabaseOperations(generic.DatabaseOperations):
             self.execute(autoinc_sql[0])
             self.execute(autoinc_sql[1])
 
+    def rename_table(self, old_table_name, table_name):
+        """
+        Renames table is not supported by firebird.
+        This involve recreate all related objects (store procedure, views, triggers, etc)
+        """
+        pass
+
+    @generic.invalidate_table_constraints
+    def delete_table(self, table_name, cascade=False):
+        """
+        Deletes the table 'table_name'.
+        Firebird will also delete any triggers associated with the table.
+        """
+        super(DatabaseOperations, self).delete_table(table_name, cascade=False)
+
+        # Also, drop sequence if exists
+        sql = connection.ops.drop_sequence_sql(table_name)
+        if sql:
+            try:
+                self.execute(sql)
+            except:
+                pass
 
     def column_sql(self, table_name, field_name, field, tablespace='', with_name=True, field_prepared=False):
         """
@@ -143,12 +172,14 @@ class DatabaseOperations(generic.DatabaseOperations):
                         if callable(default):
                             default = default()
                         # Now do some very cheap quoting. TODO: Redesign return values to avoid this.
-                        if isinstance(default, basestring):
+                        if isinstance(default, string_types):
                             default = "'%s'" % default.replace("'", "''")
                         elif isinstance(default, (datetime.date, datetime.time, datetime.datetime)):
                             default = "'%s'" % default
+                        elif isinstance(default, bool):
+                            default = int(default)
                         # Escape any % signs in the output (bug #317)
-                        if isinstance(default, basestring):
+                        if isinstance(default, string_types):
                             default = default.replace("%", "%%")
                         # Add it in
                         sql += " DEFAULT %s"
@@ -231,7 +262,10 @@ class DatabaseOperations(generic.DatabaseOperations):
         """
 
         if self.dry_run:
+            if self.debug:
+                print('   - no dry run output for alter_column() due to dynamic DDL, sorry')
             return
+
 
         # hook for the field to do any resolution prior to it's attributes being queried
         if hasattr(field, 'south_init'):
@@ -275,7 +309,7 @@ class DatabaseOperations(generic.DatabaseOperations):
 
         # Finally, actually change the column
         if self.allows_combined_alters:
-            sqls, values = zip(*sqls)
+            sqls, values = list(zip(*sqls))
             self.execute(
                 "ALTER TABLE %s %s;" % (self.quote_name(table_name), ", ".join(sqls)),
                 generic.flatten(values),
@@ -286,7 +320,7 @@ class DatabaseOperations(generic.DatabaseOperations):
                 try:
                     self.execute("ALTER TABLE %s %s;" % (self.quote_name(table_name), sql), values)
                 except DatabaseError as e:
-                    print e
+                    print(e)
 
 
         # Execute extra sql, which don't need ALTER TABLE statement
