@@ -149,18 +149,6 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
     end_template = 'emails/voting_results_reminder.txt'
 
     if not instance.task_start_id or instance.is_future_voting:
-        if instance.automated_poll:
-            template = 'emails/review_budget_notify_council.txt'
-            subject = ('[Bug %s] Budget request discussion'
-                       % str(instance.bug_id))
-            data = {'bug': instance.bug,
-                    'BUGZILLA_URL': BUGZILLA_URL}
-            send_remo_mail.delay(
-                subject=subject, email_template=template,
-                recipients_list=[settings.REPS_COUNCIL_ALIAS],
-                data=data,
-                headers={'Reply-To': settings.REPS_COUNCIL_ALIAS})
-
         start_reminder = send_voting_mail.apply_async(
             eta=instance.start, kwargs={'voting_id': instance.id,
                                         'subject': subject_start,
@@ -173,6 +161,23 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
                                   'email_template': end_template})
     (Poll.objects.filter(pk=instance.pk)
                  .update(task_end_id=end_reminder.task_id))
+
+
+@receiver(post_save, sender=Poll,
+          dispatch_uid='voting_automated_poll_discussion_email')
+def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
+    """Send email reminders when a vote starts/ends."""
+    if instance.automated_poll and created:
+        template = 'emails/review_budget_notify_council.txt'
+        subject = ('[Bug %d] Budget request discussion' %
+                   instance.bug.bug_id)
+        data = {'bug': instance.bug,
+                'BUGZILLA_URL': BUGZILLA_URL}
+        send_remo_mail.delay(
+            subject=subject, email_template=template,
+            recipients_list=[settings.REPS_COUNCIL_ALIAS],
+            data=data,
+            headers={'Reply-To': settings.REPS_COUNCIL_ALIAS})
 
 
 @receiver(pre_delete, sender=Poll,

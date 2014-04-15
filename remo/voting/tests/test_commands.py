@@ -8,6 +8,7 @@ from mock import patch
 from nose.tools import eq_
 from test_utils import TestCase
 
+from remo.remozilla.tests import BugFactory
 from remo.voting.models import Poll
 
 
@@ -49,9 +50,10 @@ class VotingTestCommands(TestCase):
         8 hours.
 
         """
+        bug = BugFactory.create()
         automated_poll = Poll(name='poll', start=self.start, end=self.end,
                               valid_groups=self.group, created_by=self.user,
-                              automated_poll=True)
+                              automated_poll=True, bug=bug)
         automated_poll.save()
 
         # act like it's 4 hours before the end of the poll

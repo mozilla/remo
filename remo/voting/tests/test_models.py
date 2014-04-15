@@ -11,7 +11,9 @@ from test_utils import TestCase
 
 from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
-from remo.voting.models import Poll
+from remo.voting.models import (BUGZILLA_URL, Poll,
+                                automated_poll_discussion_email)
+from remo.voting.tests import PollFactory
 
 
 class VotingMailNotificationTest(TestCase):
@@ -50,25 +52,6 @@ class VotingMailNotificationTest(TestCase):
         poll.save()
         eq_(len(mail.outbox), 3)
 
-    def test_send_email_to_council_members(self):
-        """Test send emails to Council Members if an automated poll is created.
-
-        """
-        bug = BugFactory.create()
-        automated_poll = Poll(name='automated_poll', start=self.start,
-                              end=self.end, valid_groups=self.group,
-                              created_by=self.user, automated_poll=True,
-                              bug=bug)
-        automated_poll.save()
-        eq_(len(mail.outbox), 5)
-        if [settings.REPS_COUNCIL_ALIAS] not in [email.to
-                                                 for email in mail.outbox]:
-            raise Exception('No email sent to REPS_COUNCIL_ALIAS')
-        subject = '[Bug %s] Budget request discussion' % bug.id
-        error_message = 'No email sent to council for a new budget request.'
-        if subject not in [email.subject for email in mail.outbox]:
-            raise Exception(error_message)
-
 
 class AutomatedRadioPollTest(TestCase):
     """Tests the automatic creation of new Radio polls."""
@@ -103,3 +86,31 @@ class AutomatedRadioPollTest(TestCase):
         bug.first_comment = 'My first comment.'
         bug.save()
         eq_(Poll.objects.filter(automated_poll=True).count(), 1)
+
+    def test_send_discussion_email_to_council(self):
+        bug = BugFactory.create(bug_id=989812)
+        automated_poll = PollFactory.build(
+            name='automated_poll', automated_poll=True, bug=bug)
+
+        with patch('remo.voting.models.send_remo_mail') as mocked_send_mail:
+            automated_poll_discussion_email(None, automated_poll, True, {})
+
+        subject = '[Bug 989812] Budget request discussion'
+        data = {'bug': bug, 'BUGZILLA_URL': BUGZILLA_URL}
+        headers = {'Reply-To': settings.REPS_COUNCIL_ALIAS}
+        mocked_send_mail.delay.assert_called_once_with(
+            subject=subject,
+            email_template='emails/review_budget_notify_council.txt',
+            recipients_list=[settings.REPS_COUNCIL_ALIAS],
+            data=data,
+            headers=headers)
+
+    def test_send_discussion_email_to_council_edit(self):
+        bug = BugFactory.create(bug_id=989812)
+        automated_poll = PollFactory.build(
+            name='automated_poll', automated_poll=True, bug=bug)
+
+        with patch('remo.voting.models.send_remo_mail') as mocked_send_mail:
+            automated_poll_discussion_email(None, automated_poll, False, {})
+
+        ok_(not mocked_send_mail.called)
