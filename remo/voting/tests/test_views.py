@@ -11,6 +11,7 @@ from nose.tools import eq_
 from test_utils import TestCase
 
 from remo.profiles.tests import UserFactory
+from remo.remozilla.tests import BugFactory
 from remo.voting.models import (Poll, PollComment, RadioPoll, RadioPollChoice,
                                 RangePoll, RangePollChoice)
 from remo.voting.tests import PollFactory
@@ -179,10 +180,12 @@ class ViewsTest(TestCase):
         poll_start = now() - timedelta(days=5)
         poll_user = UserFactory.create(groups=['Council'])
         poll_group = Group.objects.get(name='Council')
+        bug = BugFactory.create()
         swag_poll = PollFactory.create(name='swag poll', start=poll_start,
                                        end=poll_start + timedelta(days=15),
                                        created_by=poll_user,
                                        valid_groups=poll_group,
+                                       bug=bug,
                                        automated_poll=True,
                                        description='Swag poll description.',
                                        slug='swag-poll')
