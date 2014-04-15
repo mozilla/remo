@@ -1,10 +1,14 @@
 from datetime import timedelta
 
+from django.core.urlresolvers import reverse
 from django.utils.timezone import now
 
+import mock
+from funfactory.helpers import urlparams
 from nose.tools import eq_
 
 from remo.base.tests import RemoTestCase
+from remo.base.utils import month2number
 from remo.profiles.tests import UserFactory
 from remo.reports.tests import NGReportFactory
 from remo.reports.utils import count_user_ng_reports
@@ -55,3 +59,16 @@ class TestUserCommitedReports(RemoTestCase):
                                                 timedelta(days=i)))
         # Get the reports added in the last 10 weeks
         eq_(count_user_ng_reports(user, period=10), 4)
+
+
+class Month2NumberTest(RemoTestCase):
+
+    @mock.patch('remo.reports.views.month2number', wraps=month2number)
+    def test_base(self, mocked_month2number):
+        user = UserFactory.create(groups='Rep')
+        reports_url = reverse('list_ng_reports_rep',
+                              args=(user.userprofile.display_name,))
+        reports_url = urlparams(reports_url, year='2014', month='Apri')
+        response = self.client.get(reports_url, follow=True)
+        mocked_month2number.assert_called_once_with(u'Apri')
+        eq_(response.status_code, 404)
