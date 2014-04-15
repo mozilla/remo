@@ -5,7 +5,6 @@ from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ValidationError
 from django.db.models import get_app, get_models
-from django.http import Http404
 from django.utils import timezone
 
 
@@ -72,10 +71,7 @@ def latest_object_or_none(model_class, field_name=None):
 
 def month2number(month):
     """Convert to month name to number."""
-    try:
-        return datetime.datetime.strptime(month, '%B').month
-    except ValueError:
-        raise Http404
+    return datetime.datetime.strptime(month, '%B').month
 
 
 def number2month(month, full_name=True):

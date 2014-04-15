@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
@@ -200,7 +201,10 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
         pageheader += ' for area %s' % functional_area.name
 
     if 'month' and 'year' in request.GET:
-        month = month2number(request.GET['month'])
+        try:
+            month = month2number(request.GET['month'])
+        except ValueError:
+            raise Http404()
         year = request.GET['year']
         report_list = report_list.filter(report_date__year=year,
                                          report_date__month=month)
