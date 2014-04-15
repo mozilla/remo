@@ -10,6 +10,7 @@ from django.utils.timezone import now
 
 from django_browserid.auth import default_username_algo
 from product_details import product_details
+from pytz import common_timezones
 
 from remo.profiles.models import FunctionalArea, UserProfile, UserStatus
 
@@ -99,6 +100,7 @@ class ChangeProfileForm(happyforms.ModelForm):
     country = forms.ChoiceField(
         choices=[],
         error_messages={'required': 'Please select one option from the list.'})
+    timezone = forms.ChoiceField(choices=[], required=False)
 
     def __init__(self, *args, **kwargs):
         """Initialize form.
@@ -118,6 +120,9 @@ class ChangeProfileForm(happyforms.ModelForm):
         country_choices = ([('', "Country")] +
                            [(country, country) for country in countries])
         self.fields['country'].choices = country_choices
+        timezone_choices = ([('', 'Timezone')] +
+                            zip(common_timezones, common_timezones))
+        self.fields['timezone'].choices = timezone_choices
 
     def clean_twitter_account(self):
         """Make sure that twitter_account does not start with a '@'."""
@@ -143,7 +148,7 @@ class ChangeProfileForm(happyforms.ModelForm):
                   'irc_channels', 'facebook_url', 'linkedin_url',
                   'diaspora_url', 'personal_website_url', 'personal_blog_feed',
                   'bio', 'gender', 'mentor', 'wiki_profile_url',
-                  'functional_areas')
+                  'functional_areas', 'timezone')
 
 
 class ChangeDateJoinedForm(happyforms.ModelForm):

@@ -165,6 +165,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     is_unavailable = models.BooleanField(default=False)
     first_report_notification = models.DateField(null=True, blank=True)
     second_report_notification = models.DateField(null=True, blank=True)
+    timezone = models.CharField(max_length=100, blank=True, default='')
 
     objects = caching.base.CachingManager()
 

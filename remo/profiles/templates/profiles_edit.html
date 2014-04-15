@@ -255,11 +255,22 @@
             <div class="has-tip tip-right" title="Country" data-tooltip>
               {{ profileform.country }}
             </div>
+            <div class="required-field"></div>
             {% if profileform.country.errors %}
               <small class="error">
                 {{ profileform.country.errors }}
               </small>
             {% endif %}
+            <!-- Timezone -->
+            <div class="has-tip tip-right" title="Timezone" data-tooltip>
+              {{ profileform.timezone }}
+            </div>
+            {% if profileform.timezone.errors %}
+              <small class="error">
+                {{ profileform.timezone.errors }}
+              </small>
+            {% endif %}
+
             <input type="hidden" id="lat"
                    value="{{ profileform.lat.value() }}"
                    name="lat" class="input-text">
@@ -270,7 +281,6 @@
               <button class="small white button nice radius"
                       id="map-marker-button"
                       data-reveal-id="map-point">Point your marker in map</button>
-              <div class="required-field"></div>
             </div>
             {% if profileform.lat.errors or profileform.lon.errors %}
               <small class="error">

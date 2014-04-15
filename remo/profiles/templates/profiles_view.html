@@ -232,6 +232,15 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
               {{ user_profile.country }}
             </a>
           </p>
+          {% if user_profile.timezone %}
+            <p class="profile-item">
+              <span class="label radius">
+                Timezone
+              </span>
+              &nbsp;
+              {{ user_profile.timezone }}
+            </p>
+          {% endif %}
           {% if user_profile.gender is not none %}
             <p class="profile-item">
               <span class="label radius">
