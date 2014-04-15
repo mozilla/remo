@@ -23,8 +23,6 @@ def send_remo_mail(subject, recipients_list, sender=None,
         return
     if not headers:
         headers = {}
-    if not sender:
-        sender = settings.FROM_EMAIL
     if not data:
         data = {}
     data.update({'SITE_URL': settings.SITE_URL,
@@ -50,6 +48,12 @@ def send_remo_mail(subject, recipients_list, sender=None,
         if email_template:
             message = render_to_string(email_template, data)
 
-        email = EmailMessage(subject=subject, body=message, from_email=sender,
-                             to=[to], cc=[sender], headers=headers)
+        if not sender:
+            email = EmailMessage(subject=subject, body=message,
+                                 from_email=settings.FROM_EMAIL,
+                                 to=[to], headers=headers)
+        else:
+            email = EmailMessage(subject=subject, body=message,
+                                 from_email=sender, to=[to], cc=[sender],
+                                 headers=headers)
         email.send()
