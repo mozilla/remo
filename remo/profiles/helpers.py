@@ -2,7 +2,7 @@ import urlparse
 
 from datetime import timedelta
 
-import django.utils.timezone as timezone
+from django.utils import timezone
 
 from django.conf import settings
 from funfactory.helpers import urlparams
@@ -11,6 +11,11 @@ from jingo import register
 from libravatar import libravatar_url
 
 from remo.profiles.models import FunctionalArea, UserAvatar
+from remo.reports.utils import get_last_report
+
+
+INACTIVE_HIGH = timedelta(weeks=8)
+INACTIVE_LOW = timedelta(weeks=4)
 
 
 @register.filter
@@ -51,3 +56,20 @@ def get_functional_area(name):
         return FunctionalArea.objects.get(name=name)
     except FunctionalArea.DoesNotExist:
         return None
+
+
+@register.filter
+def get_activity_level(user):
+    """Return user's inactivity level."""
+    last_report = get_last_report(user)
+    if not last_report:
+        return ''
+
+    today = timezone.now().date()
+    inactivity_period = today - last_report.report_date
+
+    if inactivity_period > INACTIVE_LOW:
+        if inactivity_period > INACTIVE_HIGH:
+            return 'inactive-high'
+        return 'inactive-low'
+    return ''

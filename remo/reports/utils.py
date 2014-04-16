@@ -3,6 +3,7 @@ from datetime import datetime
 from django.utils.timezone import now
 
 from remo.base.utils import get_date
+from remo.reports.models import NGReport
 
 
 def count_user_ng_reports(user, current_streak=False,
@@ -28,3 +29,14 @@ def count_user_ng_reports(user, current_streak=False,
                                                        end_period))
 
     return query.count()
+
+
+def get_last_report(user):
+    """Return user's last report in the past."""
+    today = now().date()
+
+    try:
+        reports = user.ng_reports.filter(report_date__lte=today)
+        return reports.latest('report_date')
+    except NGReport.DoesNotExist:
+        return None

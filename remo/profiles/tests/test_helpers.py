@@ -1,9 +1,14 @@
+from datetime import timedelta
+
 import django.utils.timezone as timezone
 
+from nose.tools import eq_, ok_
 from test_utils import TestCase
 
-from remo.profiles.helpers import get_avatar_url
+from remo.base.tests import RemoTestCase
+from remo.profiles.helpers import get_activity_level, get_avatar_url
 from remo.profiles.tests import UserFactory, UserAvatarFactory
+from remo.reports.tests import NGReportFactory
 
 
 class HelpersTest(TestCase):
@@ -34,3 +39,26 @@ class HelpersTest(TestCase):
         self.assertEqual(ua.last_update, last_update,
                          ('Avatar was updated when cached value '
                           'should have been used.'))
+
+
+class GetActivityLevelTest(RemoTestCase):
+    """Test get_activity_level helper."""
+
+    def test_get_activity_level_low(self):
+        """Test activity level helper."""
+        report_date = timezone.now().date() - timedelta(weeks=6)
+        user = UserFactory.create(groups=['Rep'])
+        NGReportFactory.create(user=user, report_date=report_date)
+        eq_(get_activity_level(user), 'inactive-low')
+
+    def test_get_activity_level_high(self):
+        """Test activity level helper."""
+        report_date = timezone.now().date() - timedelta(weeks=9)
+        user = UserFactory.create(groups=['Rep'])
+        NGReportFactory.create(user=user, report_date=report_date)
+        eq_(get_activity_level(user), 'inactive-high')
+
+    def test_get_activity_level_without_report(self):
+        """Test activity level helper."""
+        user = UserFactory.create(groups=['Rep'])
+        ok_(not get_activity_level(user))

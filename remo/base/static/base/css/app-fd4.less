@@ -3044,3 +3044,47 @@ table tr.assigned-request:nth-of-type(2n) {
         margin-bottom: 10px;
     }
 }
+
+#dashboard-continuous-reports-mentees-block {
+    .inactive-high a {
+        color: #c00000;
+	&:hover, &:active, &:focus {
+	    color: darken(#c00000, 10%);
+	}
+    }
+    .inactive-low a {
+        color: #f68b01;
+	&:hover, &:active, &:focus {
+	    color: darken(#f68b01, 10%);
+	}
+    }
+}
+
+.inactive-reference {
+    float: left;
+
+    ul {
+        list-style: none;
+        li {
+            position: relative;
+            font-size: 12px;
+            text-indent: 12px;
+        }
+    }
+    li {
+        &.inactive-reference-high:before {
+            background-color: #c00000;
+        }
+        &.inactive-reference-low:before {
+            background-color: #f68b01;
+        }
+        &:before {
+            position: absolute;
+            top: 6px;
+            left: 0;
+            content: '';
+            width: 8px;
+            height: 8px;
+        }
+    }
+}
