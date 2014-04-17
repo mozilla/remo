@@ -51,25 +51,6 @@
         }
     }
 
-    /*
-     * Initialize date picker widget and set ISO date format
-     * If the field is empty, pre-populate with current date
-     */
-    function initDatePicker () {
-        var $input = $('input.datepicker');
-        $input.datepicker({
-            autoSize: true,
-            dateFormat: 'dd MM yy'
-        });
-
-        if ($input.val() === '') {
-            $input.datepicker('setDate', Date.now());
-        }
-        else {
-            var date = $.datepicker.parseDate("yy-mm-dd", $input.val());
-            $input.datepicker('setDate', date);
-        }
-    }
 
     /*
      * Override map_modal.js click handler as reports template

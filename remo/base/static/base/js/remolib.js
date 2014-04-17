@@ -178,3 +178,23 @@ function addAttributionOSM(map) {
     var attribution = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
     map.attributionControl.addAttribution(attribution);
 }
+
+/*
+ * Initialize date picker widget and set ISO date format
+ * If the field is empty, pre-populate with current date
+ */
+function initDatePicker () {
+    var $input = $('input.datepicker');
+    $input.datepicker({
+        autoSize: true,
+        dateFormat: 'dd MM yy'
+    });
+
+    if ($input.val() === '') {
+        $input.datepicker('setDate', Date.now());
+    }
+    else {
+        var date = $.datepicker.parseDate("yy-mm-dd", $input.val());
+        $input.datepicker('setDate', date);
+    }
+}

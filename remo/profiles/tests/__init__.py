@@ -3,14 +3,15 @@ from random import randint
 
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User, Group
-from django.utils.timezone import utc
+from django.utils.timezone import now, utc
 
 import factory
 from factory import fuzzy
 from product_details import product_details
 
-from remo.profiles.models import (UserProfile, FunctionalArea, UserAvatar,
-                                  email_mentor_notification, create_profile,
+from remo.profiles.models import (FunctionalArea, UserAvatar, UserProfile,
+                                  UserStatus, create_profile,
+                                  email_mentor_notification,
                                   user_set_inactive_post_save)
 
 
@@ -146,3 +147,12 @@ class UserAvatarFactory(factory.django.DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     avatar_url = 'https://example.com'
+
+
+class UserStatusFactory(factory.django.DjangoModelFactory):
+    """Factory for UserStatus model."""
+    FACTORY_FOR = UserStatus
+
+    user = factory.SubFactory(UserFactory)
+    start_date = fuzzy.FuzzyDate(now().date() - datetime.timedelta(weeks=1),
+                                 now().date() + datetime.timedelta(weeks=1))

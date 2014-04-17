@@ -239,6 +239,13 @@ select {
     color: #141414;
 }
 
+label.required:after {
+    .grayed;
+    font-family: 'ModernPictogramsNormal';
+    content: '\*';
+    margin-left: .5em;
+}
+
 /* Setting tabzilla z-index to 30 so it is displayed below modals */
 #tabzilla {
     z-index: 30;
@@ -1599,12 +1606,6 @@ table .pictogram-button .pict-icon.large {
         display: inline-block;
         margin-top: 10px;
         line-height: 1.5em;
-        &.required:after {
-            .grayed;
-            font-family: 'ModernPictogramsNormal';
-            content: '\*';
-            margin-left: .5em;
-        }
     }
     input,
     select {
@@ -2975,6 +2976,37 @@ table tr.assigned-request:nth-of-type(2n) {
     font-size: 13px;
     position: absolute;
     bottom: 0px;
+}
+
+/* -----------------------------------------
+   Rep Availability Styles
+----------------------------------------- */
+
+.availability-main {
+    p {
+        margin-top: 10px 0 20px 0;
+    }
+    label {
+        font-size: 13px;
+        display: inline;
+        margin-left: .5em;
+    }
+    textarea {
+        height: auto;
+        padding: 1em .5em .5em .5em;
+    }
+    h1, h6 {
+        margin-bottom: 40px;
+    }
+    time {
+        display: block;
+        margin-top: 10px;
+        font-family: 'Open Sans Light';
+        font-size: 12px;
+    }
+    #replacement-rep-panel {
+        display: none;
+    }
 }
 
 /* -----------------------------------------

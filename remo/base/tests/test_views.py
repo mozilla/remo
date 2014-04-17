@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import mail
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.test import RequestFactory
 from django.test.client import Client
 from django.test.utils import override_settings
@@ -22,14 +23,15 @@ from test_utils import TestCase
 
 from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
-from remo.base.tests import requires_permission, RemoTestCase
+from remo.base.tests import requires_login, requires_permission, RemoTestCase
 from remo.base.tests.browserid_mock import mock_browserid
 from remo.base.views import robots_txt
 from remo.events.models import EventGoal
 from remo.events.tests import EventGoalFactory
 from remo.profiles.models import FunctionalArea
 from remo.profiles.tasks import check_mozillian_username
-from remo.profiles.tests import UserFactory, FunctionalAreaFactory
+from remo.profiles.tests import (FunctionalAreaFactory, UserFactory,
+                                 UserStatusFactory)
 from remo.reports.models import Activity, Campaign
 from remo.reports.tests import ActivityFactory, CampaignFactory
 
@@ -692,3 +694,53 @@ class BaseDeleteViewTest(RemoTestCase):
         area = FunctionalAreaFactory.create(name='test functional area')
         self.post(reverse('delete_functional_area', kwargs={'pk': area.id}),
                   user=user, follow=True)
+
+
+class EditUserStatusTests(RemoTestCase):
+    """Tests related to the User status edit View."""
+
+    @requires_login()
+    def test_get_as_anonymous(self):
+        user = UserFactory.create()
+        display_name = user.userprofile.display_name
+        UserStatusFactory.create(user=user)
+        client = Client()
+        client.get(reverse('edit_availability',
+                           kwargs={'display_name': display_name}))
+
+    def test_get_as_owner(self):
+        user = UserFactory.create()
+        display_name = user.userprofile.display_name
+        UserStatusFactory.create(user=user)
+        url = reverse('edit_availability',
+                      kwargs={'display_name': display_name})
+        self.get(url=url, user=user)
+        self.assertTemplateUsed('edit_availability.html')
+
+    @requires_permission()
+    def test_get_as_other_rep(self):
+        user = UserFactory.create()
+        rep = UserFactory.create()
+        display_name = user.userprofile.display_name
+        UserStatusFactory.create(user=user)
+        url = reverse('edit_availability',
+                      kwargs={'display_name': display_name})
+        self.get(url=url, user=rep)
+
+    @mock.patch('remo.base.views.messages.success')
+    @mock.patch('remo.base.views.redirect', wraps=redirect)
+    @mock.patch('remo.base.views.UserStatusForm')
+    def test_add_unavailability_status(self, form_mock, redirect_mock,
+                                       messages_mock):
+        form_mock.is_valid.return_value = True
+        user = UserFactory.create()
+        display_name = user.userprofile.display_name
+        response = self.post(url=reverse('edit_availability',
+                                         kwargs={
+                                             'display_name': display_name}),
+                             user=user)
+        eq_(response.status_code, 200)
+        messages_mock.assert_called_with(
+            mock.ANY, 'Request submitted successfully.')
+        redirect_mock.assert_called_with('dashboard')
+        ok_(form_mock().save.called)

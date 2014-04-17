@@ -11,11 +11,12 @@ from django.utils.timezone import now
 from django_browserid.auth import default_username_algo
 from product_details import product_details
 
-from remo.profiles.models import FunctionalArea, UserProfile
+from remo.profiles.models import FunctionalArea, UserProfile, UserStatus
 
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
+REPLACEMENT_REP_CHOICES = ((True, 'Yes'), (False, 'No'))
 
 
 class InviteUserForm(happyforms.Form):
@@ -162,3 +163,37 @@ class FunctionalAreaForm(happyforms.ModelForm):
 
     class Meta:
         model = FunctionalArea
+
+
+class UserStatusForm(happyforms.ModelForm):
+    """Form for displaying info regarding the availability status of a user."""
+    start_date = forms.DateField(input_formats=['%d %B %Y'])
+    is_replaced = forms.BooleanField(widget=forms.RadioSelect(
+        choices=REPLACEMENT_REP_CHOICES, attrs={'id': 'id_is_replaced'}),
+        required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(UserStatusForm, self).__init__(*args, **kwargs)
+        query = (User.objects.filter(
+            groups__name='Rep', userprofile__registration_complete=True)
+            .exclude(id=self.instance.user.id))
+        self.fields['replacement_rep'].queryset = query
+
+        if self.instance.id:
+            self.fields['start_date'].widget = forms.HiddenInput()
+
+    def clean(self):
+        """Clean Form."""
+        super(UserStatusForm, self).clean()
+        cdata = self.cleaned_data
+
+        if ('is_replaced' in cdata and
+                cdata['is_replaced'] and not cdata['replacement_rep']):
+            msg = 'Please select a replacement Rep during your absence.'
+            self._errors['replacement_rep'] = self.error_class([msg])
+
+        return cdata
+
+    class Meta:
+        model = UserStatus
+        fields = ['start_date', 'replacement_rep']

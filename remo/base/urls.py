@@ -15,6 +15,5 @@ urlpatterns = patterns(
     url(r'labs/$', TemplateView.as_view(template_name='labs.html'),
         name='labs'),
     url(r'^$', 'remo.base.views.main', name='main'),
-    url(r'settings/$', 'remo.base.views.edit_settings', name='edit_settings'),
     url(r'stats/$', 'remo.base.views.stats_dashboard', name='stats_dashboard'),
 )

@@ -163,6 +163,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     longest_streak_start = models.DateField(null=True, blank=True)
     longest_streak_end = models.DateField(null=True, blank=True)
     last_report_notification = models.DateField(null=True, blank=True)
+    is_unavailable = models.BooleanField(default=False)
 
     objects = caching.base.CachingManager()
 
@@ -208,6 +209,35 @@ class UserAvatar(caching.base.CachingMixin, models.Model):
 
     def __unicode__(self):
         return "UserAvatar:%s" % self.user.userprofile.display_name
+
+
+class UserStatus(caching.base.CachingMixin, models.Model):
+    """Model for inactiviy/unavailability data."""
+    user = models.ForeignKey(User, related_name='status')
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    replacement_rep = models.ForeignKey(User, null=True, blank=True,
+                                        related_name='replaced_rep')
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    objects = caching.base.CachingManager()
+
+    def __unicode__(self):
+        return self.user.get_full_name()
+
+    def save(self, *args, **kwargs):
+        # Save the timestamp when a Rep becomes available
+        if not self.id:
+            self.user.userprofile.is_unavailable = True
+        else:
+            self.user.userprofile.is_unavailable = False
+            self.end_date = timezone.now().date()
+        self.user.userprofile.save()
+        super(UserStatus, self).save()
+
+    class Meta:
+        verbose_name_plural = 'User Statuses'
+        ordering = ['-start_date', '-created_on']
 
 
 @receiver(pre_save, sender=UserProfile,
