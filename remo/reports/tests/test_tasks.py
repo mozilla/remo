@@ -21,19 +21,28 @@ from remo.reports.tests import NGReportFactory
 
 class SendReportDigestTests(RemoTestCase):
     def test_base(self):
-        mentor_1 = UserFactory.create(groups=['Mentor'])
-        NGReportFactory.create_batch(2, mentor=mentor_1)
+        mentor = UserFactory.create(groups=['Mentor'])
+        report_1 = NGReportFactory.create(
+            mentor=mentor, report_date=date(2013, 11, 1))
+        report_2 = NGReportFactory.create(
+            mentor=mentor, report_date=date(2014, 1, 1))
         NGReport.objects.update(created_on=date(2014, 1, 1))
-        UserFactory.create(groups=['Mentor'])
 
         with patch('remo.reports.tasks.now') as datetime_now:
             datetime_now.return_value = datetime(2014, 1, 1)
-            with patch('remo.reports.tasks.send_mail') as send_mail_mock:
-                with patch('remo.reports.tasks.DIGEST_SUBJECT', '{date}'):
-                    send_report_digest()
+            with patch('remo.reports.tasks.render_to_string') as render_mock:
+                render_mock.return_value = 'rendered'
+                with patch('remo.reports.tasks.send_mail') as send_mail_mock:
+                    with patch('remo.reports.tasks.DIGEST_SUBJECT', '{date}'):
+                        send_report_digest()
+
+        call_args = render_mock.call_args[0]
+        eq_(call_args[1]['mentor'], mentor)
+        eq_(set(call_args[1]['reports']), set([report_1, report_2]))
+        eq_(call_args[1]['datestring'], 'Wed 01 Jan 2014')
 
         send_mail_mock.assert_called_with(
-            'Wed 01 Jan 2014', mockany, settings.FROM_EMAIL, [mentor_1.email])
+            'Wed 01 Jan 2014', 'rendered', settings.FROM_EMAIL, [mentor.email])
 
     def test_other_dates_noevent_not_included(self):
         """Reports created on previous days should not be included.
