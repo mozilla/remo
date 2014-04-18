@@ -18,7 +18,6 @@ from remo.base.utils import (add_permissions_to_groups,
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import daterange, get_date
-from remo.events.helpers import get_event_link
 from remo.events.models import Attendance as EventAttendance, Event
 from remo.profiles.models import FunctionalArea
 from remo.reports import (ACTIVITY_CAMPAIGN, ACTIVITY_EVENT_ATTEND,
@@ -267,6 +266,8 @@ class NGReportComment(models.Model):
           dispatch_uid='create_passive_attendance_report_signal')
 def create_passive_attendance_report(sender, instance, **kwargs):
     """Automatically create a passive report after event attendance save."""
+    from remo.events.helpers import get_event_link
+
     if instance.user.groups.filter(name='Rep').exists():
         activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
         attrs = {
@@ -292,6 +293,7 @@ def create_passive_attendance_report(sender, instance, **kwargs):
           dispatch_uid='create_update_passive_event_creation_report_signal')
 def create_update_passive_event_report(sender, instance, created, **kwargs):
     """Automatically create/update a passive report on event creation."""
+    from remo.events.helpers import get_event_link
 
     attrs = {
         'report_date': instance.start.date(),

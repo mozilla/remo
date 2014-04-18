@@ -52,9 +52,6 @@ JINGO_EXCLUDE_APPS = [
 
 LOGGING = dict(loggers=dict(playdoh={'level': logging.DEBUG}))
 
-# Set profile module
-AUTH_PROFILE_MODULE = 'profiles.UserProfile'
-
 # Add BrowserID as authentication backend
 AUTHENTICATION_BACKENDS = ('django_browserid.auth.BrowserIDBackend',
                            'django.contrib.auth.backends.ModelBackend')
