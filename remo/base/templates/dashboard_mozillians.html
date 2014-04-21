@@ -107,8 +107,8 @@
                               <th>Name</th>
                               <th>Current streak</th>
                               <th>Longest streak</th>
-                              <th>Last 2 weeks</th>
-                              <th>Last 10 weeks</th>
+                              <th>Last 4 weeks</th>
+                              <th>Last 8 weeks</th>
                               <th>Total</th>
                             </tr>
                           </thead>
@@ -129,10 +129,10 @@
                                     {{ count_ng_reports(report.user, longest_streak=True) }} days
                                   </td>
                                   <td>
-                                    {{ count_ng_reports(report.user, period=2) }} activities
+                                    {{ count_ng_reports(report.user, period=4) }} activities
                                   </td>
                                   <td>
-                                    {{ count_ng_reports(report.user, period=10) }} activities
+                                    {{ count_ng_reports(report.user, period=8) }} activities
                                   </td>
                                   <td>
                                     {{ count_ng_reports(report.user) }} activities
