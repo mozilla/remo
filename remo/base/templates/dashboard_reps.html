@@ -83,7 +83,7 @@
                 {% if activities > 0 %}
                   &nbsp;activities<br>
                   <span class="date-range">
-                    {{ get_date_n_weeks_before(today, 2)|strftime('%d %b %Y')}}
+                    {{ get_date_n_weeks_before(today, 4)|strftime('%d %b %Y')}}
                     &nbsp;-&nbsp;
                     {{ today|strftime('%d %b %Y')}}
                   </span>
@@ -95,7 +95,7 @@
                 {% if activities > 0 %}
                   &nbsp;activities<br>
                   <span class="date-range">
-                    {{ get_date_n_weeks_before(today, 10)|strftime('%d %b %Y')}}
+                    {{ get_date_n_weeks_before(today, 8)|strftime('%d %b %Y')}}
                     &nbsp;-&nbsp;
                     {{ today|strftime('%d %b %Y')}}
                   </span>
