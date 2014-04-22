@@ -95,7 +95,7 @@ class AutomatedRadioPollTest(TestCase):
         with patch('remo.voting.models.send_remo_mail') as mocked_send_mail:
             automated_poll_discussion_email(None, automated_poll, True, {})
 
-        subject = '[Bug 989812] Budget request discussion'
+        subject = '[Bug 989812] - Bug summary'
         data = {'bug': bug, 'BUGZILLA_URL': BUGZILLA_URL}
         headers = {'Reply-To': settings.REPS_COUNCIL_ALIAS}
         mocked_send_mail.delay.assert_called_once_with(

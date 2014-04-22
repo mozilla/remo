@@ -169,8 +169,7 @@ def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
     """Send email reminders when a vote starts/ends."""
     if instance.automated_poll and created:
         template = 'emails/review_budget_notify_council.txt'
-        subject = ('[Bug %d] Budget request discussion' %
-                   instance.bug.bug_id)
+        subject = '[Bug %d] - %s' % (instance.bug.bug_id, instance.bug.summary)
         data = {'bug': instance.bug,
                 'BUGZILLA_URL': BUGZILLA_URL}
         send_remo_mail.delay(
