@@ -511,9 +511,10 @@ class ViewsTest(TestCase):
         pad_url = 'http://example.com/remo-' + event.slug
         mozilla_event = {'on': True, 'off': False}
 
-        eq_(self.data['categories'], [cat.id
-                                      for cat in event.categories.all()])
-        eq_(self.data['goals'], [goal.id for goal in event.goals.all()])
+        eq_(set(self.data['categories']),
+            set(event.categories.values_list('id', flat=True)))
+        eq_(set(self.data['goals']),
+            set(event.goals.values_list('id', flat=True)))
 
         eq_(event.planning_pad_url, pad_url)
         eq_(event.lat, self.data['lat'])

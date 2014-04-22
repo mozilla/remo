@@ -69,8 +69,14 @@ class FetchBugsTest(TestCase):
                                      {'name': 'not_a_rep@example.com'}],
                               'assigned_to': {'name': 'mentor@example.com'},
                               'status': 'resolved',
-                              'flags': [{'status': '?',
-                                         'name': 'remo-approval'}],
+                              'flags': [
+                                  {'status': '?',
+                                   'name': 'remo-approval'},
+                                  {'status': '?',
+                                   'name': 'needinfo',
+                                   'requestee': {
+                                       'name': settings.REPS_COUNCIL_ALIAS}}
+                              ],
                               'resolution': 'invalid'},
                              {'id': 1199,
                               'summary': 'New summary',
