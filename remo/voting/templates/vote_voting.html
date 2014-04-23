@@ -164,6 +164,14 @@ Mozilla Reps - {{ poll.name }} - Vote
               <div class="pict-icon large people"></div>
             </div>
             <div class="large-11 columns">
+              <div class="meter-container">
+                <span class="meter_text">{{ poll|get_meter_value }}%</span>
+                <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                  <div class="progressbar">
+                    <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
+                  </div>
+                </meter>
+              </div>
               <p>
                 {% for range_poll, choice_form in range_poll_choice_forms.items() %}
                   <span class="label">
@@ -180,7 +188,7 @@ Mozilla Reps - {{ poll.name }} - Vote
                     </div>
                     {{ field_errors(choice) }}
                   {% endfor %}
-                {%endfor%}
+                {% endfor %}
               </p>
             </div>
           </div>
@@ -192,6 +200,14 @@ Mozilla Reps - {{ poll.name }} - Vote
             <div class="pict-icon large list"></div>
           </div>
           <div class="large-11 columns">
+            <div class="meter-container">
+              <span class="meter_text">{{ poll|get_meter_value }}%</span>
+              <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                <div class="progressbar">
+                  <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
+                </div>
+              </meter>
+            </div>
             <p>
               {% for radio_poll, choice_form in radio_poll_choice_forms.items() %}
                 <span class="label">
