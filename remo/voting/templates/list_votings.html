@@ -26,6 +26,7 @@
             <th class="dashboard-clickable type-string">End Date</th>
             <th class="dashboard-clickable type-string">Eligible Groups</th>
             <th class="dashboard-clickable type-string align-center">Voted</th>
+            <th class="dashboard-clickable type-string align-center">Voting Progress</th>
           </tr>
         </thead>
         <tbody>
@@ -46,6 +47,14 @@
               </td>
               <td>{{ poll.valid_groups }}</td>
               <td class="align-center">{{ poll|get_users_voted }}</td>
+              <td>
+                <span class="meter_text">{{ poll|get_meter_value }}%</span>
+                <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                  <div class="progressbar">
+                    <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
+                  </div>
+                </meter>
+              </td>
             </tr>
           {% endfor %}
         </tbody>
