@@ -22,7 +22,7 @@ import forms
 from remo.base.decorators import permission_check
 from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_or_create_instance
-from remo.events.models import Attendance, Event, EventComment, Metric
+from remo.events.models import Attendance, Event, EventComment
 from remo.profiles.models import FunctionalArea
 from helpers import is_past_event
 
@@ -168,8 +168,13 @@ def edit_event(request, slug=None, clone=None):
         if (event.end.minute % 5) != 0:
             event.end += timedelta(minutes=(5 - (event.end.minute % 5)))
 
-        # If an event is edited, do not add any more formsets
-        extra_formsets = 0
+        # If an event is edited, do not add any more formsets.
+        # For compatibility with old metrics for events with no eventmetrics
+        # add 2 extra formsets.
+        if not event.metrics.exists():
+            extra_formsets = 2
+        else:
+            extra_formsets = 0
 
     editable = False
     if request.user.groups.filter(name='Admin').count():
@@ -180,7 +185,8 @@ def edit_event(request, slug=None, clone=None):
                                  initial=initial)
 
     EventMetricsFormset = inlineformset_factory(
-        Event, Metric, formset=forms.MinBaseInlineFormSet,
+        Event, Event.metrics.through,
+        formset=forms.BaseEventMetricsFormset,
         extra=extra_formsets)
     metrics_formset = EventMetricsFormset(request.POST or None,
                                           instance=event)
