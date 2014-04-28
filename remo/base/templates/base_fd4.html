@@ -215,9 +215,9 @@
       {% if messages %}
         <div class="row">
           <div class="large-12 columns">
-            {% for message in messages %}
-              <div class="alert-box {{ message.tags }}">
-                {{ message }}
+            {% for notification in messages %}
+              <div class="alert-box {{ notification.tags }}">
+                {{ notification.message }}
                 <a href="#" class="close">&times;</a>
               </div>
             {% endfor %}

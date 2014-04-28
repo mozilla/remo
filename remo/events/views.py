@@ -9,14 +9,14 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
-from django.utils.timezone import now
 from django.utils.encoding import iri_to_uri
+from django.utils.safestring import mark_safe
+from django.utils.timezone import now
 from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from django_statsd.clients import statsd
 from funfactory.helpers import urlparams
-from jinja2 import Markup
 
 import forms
 from remo.base.decorators import permission_check
@@ -66,7 +66,7 @@ def manage_subscription(request, slug, subscribe=True):
                 attendance.save()
                 subscribed_text = render_to_string(
                     'includes/subscribe_to_ical.html', {'event': event})
-                messages.info(request, Markup(subscribed_text))
+                messages.info(request, mark_safe(subscribed_text))
                 statsd.incr('events.subscribe_to_event')
 
         else:
