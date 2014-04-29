@@ -96,11 +96,21 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 bug.bug_last_change_time = parse_bugzilla_time(
                     bdata.get('last_change_time'))
 
+                automated_voting_trigger = 0
                 for flag in bdata.get('flags', []):
                     if ((flag['status'] == '?'
-                         and flag['name'] == 'remo-approval'
-                         and waffle.switch_is_active('automated_polls'))):
-                        bug.council_vote_requested = True
+                         and flag['name'] == 'remo-approval')):
+                        automated_voting_trigger += 1
+                    if ((flag['status'] == '?'
+                         and flag['name'] == 'needinfo'
+                         and 'requestee' in flag
+                         and flag['requestee']['name'] == (
+                             settings.REPS_COUNCIL_ALIAS))):
+                        automated_voting_trigger += 1
+
+                if ((automated_voting_trigger == 2
+                     and waffle.switch_is_active('automated_polls'))):
+                    bug.council_vote_requested = True
 
                 comments = bdata.get('comments', [])
                 if comments and comments[0].get('text', ''):
