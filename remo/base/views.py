@@ -17,9 +17,12 @@ import forms
 import utils
 
 from remo.base.decorators import PermissionMixin, permission_check
+from remo.base.forms import EmailMentorForm
 from remo.base.mozillians import BadStatusCodeError, is_vouched
 from remo.events.models import Event
 from remo.featuredrep.models import FeaturedRep
+from remo.profiles.forms import UserStatusForm
+from remo.profiles.models import UserProfile, UserStatus
 from remo.remozilla.models import Bug
 from remo.reports.models import NGReport
 
@@ -73,7 +76,7 @@ class BrowserIDVerify(Verify):
                         username=USERNAME_ALGO(data['email']),
                         email=data['email'])
                     # Due to privacy settings, this might be missing
-                    if not 'full_name' in data:
+                    if 'full_name' not in data:
                         data['full_name'] = 'Anonymous Mozillian'
                     else:
                         user.userprofile.mozillian_username = data['username']
@@ -302,6 +305,50 @@ def edit_settings(request):
         return redirect('dashboard')
     return render(request, 'settings.html', {'user': user,
                                              'settingsform': form})
+
+
+@never_cache
+@permission_check(permissions=['profiles.add_userstatus',
+                               'profiles.change_userstatus'],
+                  filter_field='display_name', owner_field='user',
+                  model=UserProfile)
+def edit_availability(request, display_name):
+    """Edit availability settings."""
+
+    user = request.user
+    args = {}
+    created = False
+
+    if user.userprofile.is_unavailable:
+        status = UserStatus.objects.filter(user=user).latest('created_on')
+    else:
+        status = UserStatus(user=user)
+        created = True
+
+    initial_data = {'is_replaced': False}
+    if not created:
+        initial_data['start_date'] = status.start_date.strftime('%d %B %Y')
+    status_form = UserStatusForm(request.POST or None,
+                                 instance=status,
+                                 initial=initial_data)
+    email_mentor_form = EmailMentorForm(request.POST or None)
+
+    if status_form.is_valid():
+        status_form.save()
+
+        if created and email_mentor_form.is_valid():
+            start_date = status_form.cleaned_data['start_date']
+            subject = ('[Rep unavailable] Mentee %s will be unavailable '
+                       'from %s' % (request.user.get_full_name(),
+                                    start_date.strftime('%d %B %Y')))
+            email_mentor_form.send_email(request, subject)
+        messages.success(request, 'Request submitted successfully.')
+        return redirect('dashboard')
+
+    args['status_form'] = status_form
+    args['email_form'] = email_mentor_form
+    args['created'] = created
+    return render(request, 'edit_availability.html', args)
 
 
 class BaseListView(PermissionMixin, generic.ListView):

@@ -12,7 +12,8 @@ from django.utils.timezone import now
 import csv
 from functools import update_wrapper
 
-from remo.profiles.models import FunctionalArea, UserAvatar, UserProfile
+from remo.profiles.models import (FunctionalArea, UserAvatar, UserProfile,
+                                  UserStatus)
 from remo.profiles.tasks import check_celery
 
 # Unregister User from Administration to attach UserProfileInline
@@ -105,6 +106,8 @@ class FunctionalAreaAdmin(admin.ModelAdmin):
     def queryset(self, request):
         return self.model.objects.get_query_set()
 
+
 admin.site.register(User, UserAdmin)
 admin.site.register(FunctionalArea, FunctionalAreaAdmin)
 admin.site.register(UserAvatar, UserAvatarAdmin)
+admin.site.register(UserStatus)

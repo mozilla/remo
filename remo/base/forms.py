@@ -83,6 +83,21 @@ class EmailRepsForm(BaseEmailUsersFrom):
             messages.error(request, 'Email not sent. An error occured.')
 
 
+class EmailMentorForm(BaseEmailUsersFrom):
+    """Generic form to send email to a user's mentor."""
+    subject = forms.CharField(required=False)
+
+    def send_email(self, request, subject=''):
+        """Send an email to user's mentor"""
+        mentor = request.user.userprofile.mentor
+        from_email = '%s <%s>' % (request.user.get_full_name(),
+                                  request.user.email)
+        send_remo_mail.delay(sender=from_email,
+                             recipients_list=[mentor.id],
+                             subject=subject,
+                             message=self.cleaned_data['body'])
+
+
 class EditSettingsForm(happyforms.ModelForm):
     """Form to edit user settings regarding mail preferences."""
     receive_email_on_add_comment = forms.BooleanField(
