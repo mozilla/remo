@@ -1,6 +1,6 @@
 Hi {{ user.first_name }},
 
-It has been over 3 weeks since you last reported your activities :)
+It has been over {{ weeks }} weeks since you last reported your activities :)
 These reports are really important for the success of the Mozilla Reps program and
 they are also valuable for your mentor.
 

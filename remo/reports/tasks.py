@@ -11,6 +11,7 @@ from celery.task import periodic_task, task
 
 from remo.base.utils import get_date
 from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
+from remo.reports.utils import send_report_notification
 
 
 DIGEST_SUBJECT = 'Your mentee activity for {date}'
@@ -54,35 +55,38 @@ def send_report_digest():
 
 
 @periodic_task(run_every=timedelta(days=1))
-def send_ng_report_notification():
-    today = now().date()
-    start = today - timedelta(weeks=3)
-    end = today + timedelta(weeks=3)
-    reps = (User.objects.filter(groups__name='Rep')
-            .exclude(ng_reports__report_date__range=[start, end]))
+def send_first_report_notification():
+    """Send inactivity notification after 4 weeks."""
+    today = get_date()
+    start = today - timedelta(weeks=4)
+    end = today + timedelta(weeks=4)
+    users = User.objects.filter(
+        groups__name='Rep',
+        userprofile__first_report_notification__isnull=True)
+    inactive_users = users.exclude(ng_reports__report_date__range=[start, end])
 
-    rep_subject = '[Reminder] Please share your recent activities'
-    rep_mail_body = 'emails/reps_ng_report_notification.txt'
-    mentor_subject = '[Report] Mentee without report for the last 3 weeks'
-    mentor_mail_body = 'emails/mentor_ng_report_notification.txt'
+    send_report_notification(inactive_users, weeks=4)
+    for user in inactive_users:
+        user.userprofile.first_report_notification = today
+        user.userprofile.save()
 
-    for rep in reps:
-        # Check if the user has ever received a notification.
-        up = rep.userprofile
-        if not up.last_report_notification:
-            up.last_report_notification = today
-        elif today - up.last_report_notification >= timedelta(weeks=3):
-            ctx_data = {'mentor': rep.userprofile.mentor,
-                        'user': rep,
-                        'SITE_URL': settings.SITE_URL}
-            rep_message = render_to_string(rep_mail_body, ctx_data)
-            mentor_message = render_to_string(mentor_mail_body, ctx_data)
-            up.last_report_notification = today
-            send_mail(rep_subject, rep_message, settings.FROM_EMAIL,
-                      [rep.email])
-            send_mail(mentor_subject, mentor_message, settings.FROM_EMAIL,
-                      [rep.userprofile.mentor.email])
-        up.save()
+
+@periodic_task(run_every=timedelta(days=1))
+def send_second_report_notification():
+    """Send inactivity notification after 8 weeks."""
+    today = get_date()
+    start = today - timedelta(weeks=8)
+    end = today + timedelta(weeks=8)
+    users = User.objects.filter(
+        groups__name='Rep',
+        userprofile__first_report_notification__gte=today - timedelta(weeks=4),
+        userprofile__second_report_notification__isnull=True)
+    inactive_users = users.exclude(ng_reports__report_date__range=[start, end])
+
+    send_report_notification(inactive_users, weeks=8)
+    for user in inactive_users:
+        user.userprofile.second_report_notification = today
+        user.userprofile.save()
 
 
 @task()

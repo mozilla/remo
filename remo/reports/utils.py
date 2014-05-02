@@ -1,7 +1,10 @@
 from datetime import datetime
 
+from django.conf import settings
+from django.template.loader import render_to_string
 from django.utils.timezone import now
 
+from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date
 from remo.reports.models import NGReport
 
@@ -40,3 +43,25 @@ def get_last_report(user):
         return reports.latest('report_date')
     except NGReport.DoesNotExist:
         return None
+
+
+def send_report_notification(reps, weeks):
+    """Send notification to inactive reps."""
+    rep_subject = '[Reminder] Please share your recent activities'
+    rep_mail_body = 'emails/reps_ng_report_notification.txt'
+    mentor_subject = ('[Report] Mentee without report for the last %d weeks'
+                      % weeks)
+    mentor_mail_body = 'emails/mentor_ng_report_notification.txt'
+
+    for rep in reps:
+        ctx_data = {'mentor': rep.userprofile.mentor,
+                    'user': rep,
+                    'SITE_URL': settings.SITE_URL,
+                    'weeks': weeks}
+
+        rep_message = render_to_string(rep_mail_body, ctx_data)
+        mentor_message = render_to_string(mentor_mail_body, ctx_data)
+        send_remo_mail(rep_subject, [rep.email], settings.FROM_EMAIL,
+                       rep_message)
+        send_remo_mail(mentor_subject, [rep.userprofile.mentor.email],
+                       settings.FROM_EMAIL, mentor_message)
