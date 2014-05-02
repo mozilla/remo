@@ -19,10 +19,10 @@ import utils
 from remo.base.decorators import PermissionMixin, permission_check
 from remo.base.forms import EmailMentorForm
 from remo.base.mozillians import BadStatusCodeError, is_vouched
+from remo.base.utils import get_date
 from remo.events.models import Event
 from remo.featuredrep.models import FeaturedRep
 from remo.profiles.forms import UserStatusForm
-from remo.profiles.helpers import INACTIVE_HIGH, INACTIVE_LOW
 from remo.profiles.models import UserProfile, UserStatus
 from remo.remozilla.models import Bug
 from remo.reports.models import NGReport
@@ -283,27 +283,21 @@ def email_mentees(request):
 
 def stats_dashboard(request):
     """Stats dashboard view."""
-    today = now().date()
     reps = User.objects.filter(groups__name='Rep')
 
-    inactive_l_start = today - INACTIVE_LOW
-    inactive_l_end = today + INACTIVE_LOW
-    inactive_h_start = today - INACTIVE_HIGH
-    inactive_h_end = today + INACTIVE_HIGH
+    q_active = Q(
+        ng_reports__report_date__range=[get_date(weeks=-4), get_date(weeks=4)])
+    q_inactive = Q(
+        ng_reports__report_date__range=[get_date(weeks=-8), get_date(weeks=8)])
 
-    query_l = Q(
-        ng_reports__report_date__range=[inactive_l_start, inactive_l_end])
-    query_h = Q(
-        ng_reports__report_date__range=[inactive_h_start, inactive_h_end])
-
-    active = reps.filter(query_l).distinct().count()
-    inactive_l = reps.filter(query_h & ~query_l).distinct().count()
-    inactive_h = reps.filter(~query_h).distinct().count()
+    active = reps.filter(q_active)
+    inactive_low = reps.filter(q_inactive & ~q_active)
+    inactive_high = reps.filter(~q_inactive)
 
     args = {}
-    args['active_users'] = active
-    args['inactive_low_users'] = inactive_l
-    args['inactive_high_users'] = inactive_h
+    args['active_users'] = active.distinct().count()
+    args['inactive_low_users'] = inactive_low.distinct().count()
+    args['inactive_high_users'] = inactive_high.distinct().count()
     args['reps'] = reps.count()
     args['past_events'] = Event.objects.filter(start__lt=now()).count()
     args['future_events'] = Event.objects.filter(start__gte=now()).count()
