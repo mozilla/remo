@@ -110,19 +110,20 @@ def calculate_longest_streaks():
     """Calculate user's longest streaks."""
     from remo.reports.models import NGReport
 
-    reps = (User.objects.filter(groups__name='Rep')
-            .exclude(userprofile__longest_streak_start=None)
-            .exclude(userprofile__longest_streak_end=None))
+    # Calculate the longest streak only for the users that
+    # submitted a report today and already have a longest streak.
+    reps = (User.objects.filter(
+        groups__name='Rep', ng_reports__created_on__range=[get_date(), now()])
+        .exclude(userprofile__longest_streak_start=None)
+        .exclude(userprofile__longest_streak_end=None))
 
     for rep in reps:
-
         streak_count = 0
         longest_start = None
         longest_end = None
         reports = NGReport.objects.filter(user=rep).order_by('report_date')
 
         if reports:
-
             start = reports[0].report_date
             end = reports[0].report_date
 
