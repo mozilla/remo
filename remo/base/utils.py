@@ -113,15 +113,15 @@ def validate_datetime(data, **kwargs):
     return data
 
 
-def get_date(number_of_days=0):
-    """Return a date in UTC timezone, given an offset in days.
+def get_date(days=0, weeks=0):
+    """Return a date in UTC timezone, given an offset in days and or weeks.
 
     The calculation is based on the current date and the
     offset can be either positive or negative.
     """
 
     return (timezone.now().date() +
-            datetime.timedelta(days=number_of_days))
+            datetime.timedelta(days=days, weeks=weeks))
 
 
 def daterange(start_date, end_date):
