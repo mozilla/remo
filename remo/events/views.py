@@ -153,7 +153,8 @@ def edit_event(request, slug=None, clone=None):
         event.owner = request.user
         initial = {'country': request.user.userprofile.country,
                    'city': request.user.userprofile.city,
-                   'region': request.user.userprofile.region}
+                   'region': request.user.userprofile.region,
+                   'timezone': request.user.userprofile.timezone}
     else:
         # This is for backwards compatibility for all the events
         # that were set before the change in the minutes section
