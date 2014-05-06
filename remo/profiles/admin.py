@@ -107,7 +107,16 @@ class FunctionalAreaAdmin(admin.ModelAdmin):
         return self.model.objects.get_query_set()
 
 
+class UserStatusAdmin(admin.ModelAdmin):
+    """User Status Admin."""
+    model = UserStatus
+    list_display = ('user', 'expected_date', 'return_date', 'created_on',
+                    'replacement_rep')
+    search_fields = ['user__first_name', 'user__last_name',
+                     'user__userprofile__display_name']
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(FunctionalArea, FunctionalAreaAdmin)
 admin.site.register(UserAvatar, UserAvatarAdmin)
-admin.site.register(UserStatus)
+admin.site.register(UserStatus, UserStatusAdmin)

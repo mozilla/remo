@@ -216,8 +216,8 @@ class UserAvatar(caching.base.CachingMixin, models.Model):
 class UserStatus(caching.base.CachingMixin, models.Model):
     """Model for inactiviy/unavailability data."""
     user = models.ForeignKey(User, related_name='status')
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
+    expected_date = models.DateField(null=True, blank=True)
+    return_date = models.DateField(null=True, blank=True)
     replacement_rep = models.ForeignKey(User, null=True, blank=True,
                                         related_name='replaced_rep')
     created_on = models.DateTimeField(auto_now_add=True)
@@ -233,13 +233,13 @@ class UserStatus(caching.base.CachingMixin, models.Model):
             self.user.userprofile.is_unavailable = True
         else:
             self.user.userprofile.is_unavailable = False
-            self.end_date = timezone.now().date()
+            self.return_date = timezone.now().date()
         self.user.userprofile.save()
         super(UserStatus, self).save()
 
     class Meta:
         verbose_name_plural = 'User Statuses'
-        ordering = ['-start_date', '-created_on']
+        ordering = ['-expected_date', '-created_on']
 
 
 @receiver(pre_save, sender=UserProfile,

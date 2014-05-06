@@ -343,7 +343,8 @@ def edit_availability(request, display_name):
 
     initial_data = {'is_replaced': False}
     if not created:
-        initial_data['start_date'] = status.start_date.strftime('%d %B %Y')
+        initial_data['expected_date'] = (status.expected_date
+                                         .strftime('%d %B %Y'))
     status_form = UserStatusForm(request.POST or None,
                                  instance=status,
                                  initial=initial_data)
@@ -353,10 +354,10 @@ def edit_availability(request, display_name):
         status_form.save()
 
         if created and email_mentor_form.is_valid():
-            start_date = status_form.cleaned_data['start_date']
+            expected_date = status_form.cleaned_data['expected_date']
             subject = ('[Rep unavailable] Mentee %s will be unavailable '
                        'from %s' % (request.user.get_full_name(),
-                                    start_date.strftime('%d %B %Y')))
+                                    expected_date.strftime('%d %B %Y')))
             email_mentor_form.send_email(request, subject)
         messages.success(request, 'Request submitted successfully.')
         return redirect('dashboard')

@@ -36,7 +36,7 @@
               <div class="pict-icon large time"></div>
             </div>
             <div class="large-11 columns">
-              <label class="required" for="id_start_date">
+              <label class="required" for="id_expected_date">
                 I plan to be active again in the Reps Program starting on
               </label>
               <div id="availability-date"
@@ -45,12 +45,12 @@
                   placeholder="DD-MM-YYYY"
                   data-tooltip
                   data-options="disable-for-touch:true">
-                {{ field_with_attrs(status_form.start_date,
+                {{ field_with_attrs(status_form.expected_date,
                                     class="datepicker",
                                     autocomplete="off",
                                     readonly="readonly") }}
               </div>
-              {{ field_errors(status_form.start_date) }}
+              {{ field_errors(status_form.expected_date) }}
             </div>
           </div>
         </div>
@@ -142,7 +142,7 @@
               Click the submit button below if you are ready
               to resume your activities
             </p>
-            {{ status_form.start_date }}
+            {{ status_form.expected_date }}
           </div>
         </div>
       </div>
