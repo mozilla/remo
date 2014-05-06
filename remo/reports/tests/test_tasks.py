@@ -93,17 +93,14 @@ class SendInactivityNotifications(RemoTestCase):
         rep_subject = '[Reminder] Please share your recent activities'
         mentor_subject = '[Report] Mentee without report for the last 4 weeks'
 
-        with patch('remo.reports.utils.send_remo_mail.delay') as mail_mock:
+        with patch('remo.reports.utils.send_remo_mail') as send_mail_mock:
             send_first_report_notification()
 
-        eq_(mail_mock.call_count, 2)
+        eq_(send_mail_mock.call_count, 2)
         expected_call_list = [
             call(rep_subject, [rep.email], settings.FROM_EMAIL, mockany),
             call(mentor_subject, [mentor.email], settings.FROM_EMAIL, mockany)]
-        eq_(mail_mock.call_args_list, expected_call_list)
-
-        user = User.objects.get(pk=rep.id)
-        eq_(user.userprofile.first_report_notification, today)
+        eq_(send_mail_mock.call_args_list, expected_call_list)
 
     def test_with_report_filled(self):
         mentor = UserFactory.create(groups=['Mentor'])
@@ -113,9 +110,9 @@ class SendInactivityNotifications(RemoTestCase):
         NGReportFactory.create(user=rep,
                                report_date=today - timedelta(weeks=2))
 
-        with patch('remo.reports.utils.send_remo_mail.delay') as mail_mock:
+        with patch('remo.reports.utils.send_remo_mail') as send_mail_mock:
             send_second_report_notification()
-        ok_(not mail_mock.called)
+        ok_(not send_mail_mock.called)
 
     def test_with_no_report_filled_and_one_notification(self):
         mentor = UserFactory.create(groups=['Mentor'])
@@ -129,17 +126,14 @@ class SendInactivityNotifications(RemoTestCase):
         rep_subject = '[Reminder] Please share your recent activities'
         mentor_subject = '[Report] Mentee without report for the last 8 weeks'
 
-        with patch('remo.reports.utils.send_remo_mail.delay') as mail_mock:
+        with patch('remo.reports.utils.send_remo_mail') as send_mail_mock:
             send_second_report_notification()
 
-        eq_(mail_mock.call_count, 2)
+        eq_(send_mail_mock.call_count, 2)
         expected_call_list = [
             call(rep_subject, [rep.email], settings.FROM_EMAIL, mockany),
             call(mentor_subject, [mentor.email], settings.FROM_EMAIL, mockany)]
-        eq_(mail_mock.call_args_list, expected_call_list)
-
-        user = User.objects.get(pk=rep.id)
-        eq_(user.userprofile.second_report_notification, today)
+        eq_(send_mail_mock.call_args_list, expected_call_list)
 
 
 class UpdateCurrentStreakCountersTest(RemoTestCase):
