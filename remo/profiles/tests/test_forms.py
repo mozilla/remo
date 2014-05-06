@@ -37,7 +37,8 @@ class ChangeUserFormTest(TestCase):
 
 class UserStatusFormTests(RemoTestCase):
     def test_base(self):
-        user = UserFactory.create()
+        mentor = UserFactory.create()
+        user = UserFactory.create(userprofile__mentor=mentor)
         date = get_date()
         data = {'expected_date': date}
         form = UserStatusForm(data, instance=UserStatus(user=user))
@@ -47,7 +48,8 @@ class UserStatusFormTests(RemoTestCase):
         eq_(db_obj.user.get_full_name(), user.get_full_name())
 
     def remove_unavailability_status(self):
-        user = UserFactory.create()
+        mentor = UserFactory.create()
+        user = UserFactory.create(userprofile__mentor=mentor)
         date = get_date()
         data = {'expected_date': date}
         user_status = UserStatusFactory.create(user=user, expected_date=date)

@@ -87,7 +87,8 @@ class EmailMentorForm(BaseEmailUsersFrom):
     """Generic form to send email to a user's mentor."""
     subject = forms.CharField(required=False)
 
-    def send_email(self, request, subject=''):
+    def send_email(self, request, subject='', message=None,
+                   template=None, data=None):
         """Send an email to user's mentor"""
         mentor = request.user.userprofile.mentor
         from_email = '%s <%s>' % (request.user.get_full_name(),
@@ -95,7 +96,9 @@ class EmailMentorForm(BaseEmailUsersFrom):
         send_remo_mail.delay(sender=from_email,
                              recipients_list=[mentor.id],
                              subject=subject,
-                             message=self.cleaned_data['body'])
+                             message=message,
+                             email_template=template,
+                             data=data)
 
 
 class EditSettingsForm(happyforms.ModelForm):

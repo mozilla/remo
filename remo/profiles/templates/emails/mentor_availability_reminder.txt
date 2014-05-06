@@ -1,0 +1,16 @@
+A while ago, your mentee {{ user_status.user.get_full_name() }} indicated they would be
+unavailable until {{ user_status.expected_date.strftime('%d %B %Y') }}.
+
+Please send a note to your mentee to see what activities they want to do,
+if they need to be unavailable for more time, or if you can help them.
+Here is their email and profile with contact information:
+
+{{ user_status.user.email }}
+{{ SITE_URL }}{{ url('profiles_view_profile',
+                      user_status.user.userprofile.display_name) }}
+
+Your mentee's profile will still show them as unavailable,
+until they update their profile settings.
+
+Cheers,
+Your lovely Remo bot!

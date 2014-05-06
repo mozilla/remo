@@ -22,6 +22,7 @@ admin.site.unregister(User)
 class UserProfileInline(admin.StackedInline):
     """ReportLink Inline."""
     model = UserProfile
+    readonly_fields = ['unavailability_task_id']
     fk_name = 'user'
 
 

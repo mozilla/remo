@@ -1,0 +1,22 @@
+Your mentee {{ user_status.user.get_full_name() }}
+just filled out the unavailability form.
+Here's what they submitted:
+
+{% if user_status.replacement_rep %}
+  {% set replacement = user_status.replacement_rep.get_full_name() %}
+{% else %}
+  {% set replacement = 'None' %}
+{% endif %}
+
+Unavailable until {{ user_status.expected_date.strftime('%d %B %Y') }}
+Rep who will replace them: {{ replacement }}
+Reason for unavailability:
+
+{{ extra_content|indent(indentfirst=True) }}
+
+Please reach out to your mentee if you have any questions.
+You will receive another email notification right before your mentee
+expects to return.
+
+Cheers,
+Your lovely Remo bot!

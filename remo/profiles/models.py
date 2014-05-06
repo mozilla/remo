@@ -1,6 +1,7 @@
 import datetime
 import re
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -11,6 +12,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 import caching.base
+from celery.task import control as celery_control
 from django_statsd.clients import statsd
 from south.signals import post_migrate
 from uuslug import uuslug as slugify
@@ -166,6 +168,9 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     first_report_notification = models.DateField(null=True, blank=True)
     second_report_notification = models.DateField(null=True, blank=True)
     timezone = models.CharField(max_length=100, blank=True, default='')
+    unavailability_task_id = models.CharField(max_length=256, blank=True,
+                                              null=True, editable=False,
+                                              default='')
 
     objects = caching.base.CachingManager()
 
@@ -246,6 +251,49 @@ class UserStatus(caching.base.CachingMixin, models.Model):
     class Meta:
         verbose_name_plural = 'User Statuses'
         ordering = ['-expected_date', '-created_on']
+
+
+@receiver(post_save, sender=UserStatus,
+          dispatch_uid='profiles_user_status_email_reminder')
+def user_status_email_reminder(sender, instance, created, raw, **kwargs):
+    rep_profile = instance.user.userprofile
+    mentor_profile = instance.user.userprofile.mentor.userprofile
+
+    if created:
+        subject_rep = 'Confirm if you are available for Reps activities'
+        subject_mentor = ('Reach out to {0} - expected to be available again'
+                          .format(instance.user.get_full_name()))
+        rep_template = 'emails/rep_availability_reminder.txt'
+        mentor_template = 'emails/mentor_availability_reminder.txt'
+        notification_datetime = datetime.datetime.combine(
+            instance.expected_date - datetime.timedelta(days=1),
+            datetime.datetime.min.time())
+        data = {'user_status': instance}
+
+        rep_reminder = send_remo_mail.apply_async(
+            eta=notification_datetime,
+            kwargs={'recipients_list': [rep_profile.user.id],
+                    'email_template': rep_template,
+                    'subject': subject_rep,
+                    'data': data})
+        mentor_reminder = send_remo_mail.apply_async(
+            eta=notification_datetime,
+            kwargs={'recipients_list': [mentor_profile.user.id],
+                    'email_template': mentor_template,
+                    'subject': subject_mentor,
+                    'data': data})
+
+        # Update user profiles with the task IDs
+        (UserProfile.objects.filter(pk=rep_profile.id)
+         .update(unavailability_task_id=rep_reminder.task_id))
+        (UserProfile.objects.filter(pk=mentor_profile.id)
+         .update(unavailability_task_id=mentor_reminder.task_id))
+    elif not settings.CELERY_ALWAYS_EAGER:
+        # revoke the tasks in case a user returns sooner
+        if rep_profile.unavailability_task_id:
+            celery_control.revoke(rep_profile.unavailability_task_id)
+        if mentor_profile.unavailability_task_id:
+            celery_control.revoke(mentor_profile.unavailability_task_id)
 
 
 @receiver(pre_save, sender=UserProfile,
