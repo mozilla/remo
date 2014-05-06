@@ -16,15 +16,22 @@ def send_remo_mail(subject, recipients_list, sender=None,
 
     """
     # Make sure that there is either a message or a template
+    if not data:
+        data = {}
+    # If there is no body for the email and not a template
+    # to render, then do nothing.
     if not message and not email_template:
         return
+    # If there is both an email body, submitted by the user,
+    # and a template to render as email body, then add
+    # user's input to extra_content key
+    elif message and email_template:
+        data.update({'extra_content': message})
     # Make sure that there is a recipient
     if not recipients_list:
         return
     if not headers:
         headers = {}
-    if not data:
-        data = {}
     data.update({'SITE_URL': settings.SITE_URL,
                  'FROM_EMAIL': settings.FROM_EMAIL})
 

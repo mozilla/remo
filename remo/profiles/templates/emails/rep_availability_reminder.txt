@@ -1,0 +1,18 @@
+Hi there,
+
+If you are ready for Reps activities again, wonderful!
+You can do that by updating your profile settings here:
+
+{{ SITE_URL }}{{ url('edit_availability',
+                      user_status.user.userprofile.display_name) }}
+
+If you need more time, that is okay.
+Your profile will still show you as unavailable until you indicate
+you are ready for Reps activities. 
+Use the link above when you are available again.
+
+Your mentor has also been reminded that you planned to become available soon.
+Whether you are ready for Reps activities or not, we suggest sending a note to them.
+
+Cheers,
+You lovely Remo bot!

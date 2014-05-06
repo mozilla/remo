@@ -7,8 +7,9 @@ from django.core.exceptions import ValidationError
 from nose.tools import eq_, ok_, raises
 from test_utils import TestCase
 
+from remo.base.tests import RemoTestCase
 from remo.profiles.models import DISPLAY_NAME_MAX_LENGTH, UserProfile
-from remo.profiles.tests import UserFactory
+from remo.profiles.tests import UserFactory, UserStatusFactory
 
 
 class UserTest(TestCase):
@@ -328,3 +329,22 @@ class EmailMentorNotification(TestCase):
         user.userprofile.mentor = new_mentor
         user.userprofile.save()
         eq_(len(mail.outbox), 3)
+
+
+class UserStatusNotification(RemoTestCase):
+    """Tests email notifications when a user becomes unavailable."""
+
+    def test_base(self):
+        mentor = UserFactory.create()
+        rep = UserFactory.create(userprofile__mentor=mentor)
+        UserStatusFactory.create(user=rep)
+        eq_(len(mail.outbox), 2)
+        eq_(mail.outbox[0].subject,
+            'Confirm if you are available for Reps activities')
+        msg = ('Reach out to {0} - expected to be available again'
+               .format(rep.get_full_name()))
+        eq_(mail.outbox[1].subject, msg)
+        eq_(mail.outbox[0].to[0],
+            '{0} <{1}>'.format(rep.get_full_name(), rep.email))
+        eq_(mail.outbox[1].to[0],
+            '{0} <{1}>'.format(mentor.get_full_name(), mentor.email))
