@@ -62,6 +62,7 @@ def send_first_report_notification():
     end = today + timedelta(weeks=4)
     users = User.objects.filter(
         groups__name='Rep',
+        userprofile__registration_complete=True,
         userprofile__first_report_notification__isnull=True)
     inactive_users = users.exclude(ng_reports__report_date__range=[start, end])
 
@@ -79,7 +80,8 @@ def send_second_report_notification():
     end = today + timedelta(weeks=8)
     users = User.objects.filter(
         groups__name='Rep',
-        userprofile__first_report_notification__gte=today - timedelta(weeks=4),
+        userprofile__registration_complete=True,
+        userprofile__first_report_notification__lte=today - timedelta(weeks=4),
         userprofile__second_report_notification__isnull=True)
     inactive_users = users.exclude(ng_reports__report_date__range=[start, end])
 
