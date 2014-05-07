@@ -172,7 +172,7 @@ class FunctionalAreaForm(happyforms.ModelForm):
 
 class UserStatusForm(happyforms.ModelForm):
     """Form for displaying info regarding the availability status of a user."""
-    start_date = forms.DateField(input_formats=['%d %B %Y'])
+    expected_date = forms.DateField(input_formats=['%d %B %Y'])
     is_replaced = forms.BooleanField(widget=forms.RadioSelect(
         choices=REPLACEMENT_REP_CHOICES, attrs={'id': 'id_is_replaced'}),
         required=False)
@@ -185,7 +185,7 @@ class UserStatusForm(happyforms.ModelForm):
         self.fields['replacement_rep'].queryset = query
 
         if self.instance.id:
-            self.fields['start_date'].widget = forms.HiddenInput()
+            self.fields['expected_date'].widget = forms.HiddenInput()
 
     def clean(self):
         """Clean Form."""
@@ -201,4 +201,4 @@ class UserStatusForm(happyforms.ModelForm):
 
     class Meta:
         model = UserStatus
-        fields = ['start_date', 'replacement_rep']
+        fields = ['expected_date', 'replacement_rep']

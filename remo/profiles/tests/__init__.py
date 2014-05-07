@@ -154,5 +154,5 @@ class UserStatusFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = UserStatus
 
     user = factory.SubFactory(UserFactory)
-    start_date = fuzzy.FuzzyDate(now().date() - datetime.timedelta(weeks=1),
-                                 now().date() + datetime.timedelta(weeks=1))
+    expected_date = fuzzy.FuzzyDate(now().date() - datetime.timedelta(weeks=1),
+                                    now().date() + datetime.timedelta(weeks=1))
