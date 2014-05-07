@@ -283,7 +283,8 @@ def email_mentees(request):
 
 def stats_dashboard(request):
     """Stats dashboard view."""
-    reps = User.objects.filter(groups__name='Rep')
+    reps = User.objects.filter(groups__name='Rep',
+                               userprofile__registration_complete=True)
 
     q_active = Q(
         ng_reports__report_date__range=[get_date(weeks=-4), get_date(weeks=4)])

@@ -62,10 +62,14 @@ def send_first_report_notification():
     end = today + timedelta(weeks=4)
     users = User.objects.filter(
         groups__name='Rep',
+        userprofile__registration_complete=True,
         userprofile__first_report_notification__isnull=True)
     inactive_users = users.exclude(ng_reports__report_date__range=[start, end])
 
     send_report_notification(inactive_users, weeks=4)
+    for user in inactive_users:
+        user.userprofile.first_report_notification = today
+        user.userprofile.save()
 
 
 @periodic_task(run_every=timedelta(days=1))
@@ -76,11 +80,15 @@ def send_second_report_notification():
     end = today + timedelta(weeks=8)
     users = User.objects.filter(
         groups__name='Rep',
-        userprofile__first_report_notification__gte=today - timedelta(weeks=4),
+        userprofile__registration_complete=True,
+        userprofile__first_report_notification__lte=today - timedelta(weeks=4),
         userprofile__second_report_notification__isnull=True)
     inactive_users = users.exclude(ng_reports__report_date__range=[start, end])
 
     send_report_notification(inactive_users, weeks=8)
+    for user in inactive_users:
+        user.userprofile.second_report_notification = today
+        user.userprofile.save()
 
 
 @task()

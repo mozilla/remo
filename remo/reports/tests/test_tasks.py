@@ -98,12 +98,9 @@ class SendInactivityNotifications(RemoTestCase):
 
         eq_(mail_mock.call_count, 2)
         expected_call_list = [
-            call(rep_subject, [rep.email], settings.FROM_EMAIL, mockany),
-            call(mentor_subject, [mentor.email], settings.FROM_EMAIL, mockany)]
+            call(rep_subject, [rep.email], message=mockany),
+            call(mentor_subject, [mentor.email], message=mockany)]
         eq_(mail_mock.call_args_list, expected_call_list)
-
-        user = User.objects.get(pk=rep.id)
-        eq_(user.userprofile.first_report_notification, today)
 
     def test_with_report_filled(self):
         mentor = UserFactory.create(groups=['Mentor'])
@@ -134,12 +131,9 @@ class SendInactivityNotifications(RemoTestCase):
 
         eq_(mail_mock.call_count, 2)
         expected_call_list = [
-            call(rep_subject, [rep.email], settings.FROM_EMAIL, mockany),
-            call(mentor_subject, [mentor.email], settings.FROM_EMAIL, mockany)]
+            call(rep_subject, [rep.email], message=mockany),
+            call(mentor_subject, [mentor.email], message=mockany)]
         eq_(mail_mock.call_args_list, expected_call_list)
-
-        user = User.objects.get(pk=rep.id)
-        eq_(user.userprofile.second_report_notification, today)
 
 
 class UpdateCurrentStreakCountersTest(RemoTestCase):
