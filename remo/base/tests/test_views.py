@@ -422,10 +422,16 @@ class ViewsTest(TestCase):
     @override_settings(ENGAGE_ROBOTS=True)
     def test_robots_allowed(self):
         """Test robots.txt generation when crawling allowed."""
+        # Include a user who's not Rep
+        UserFactory.create(userprofile__display_name='foo',
+                           groups=['Mozillian'])
         factory = RequestFactory()
         request = factory.get('/robots.txt')
         response = robots_txt(request)
-        eq_(response.content, 'User-agent: *\nAllow: /')
+        eq_(response.content,
+            ('User-agent: *\nDisallow: /reports/\nDisallow: /u/md/r/\n'
+             'Disallow: /u/koki/r/\nDisallow: /u/koufos/r/\n'
+             'Disallow: /u/js/r/\n'))
 
     @override_settings(ENGAGE_ROBOTS=False)
     def test_robots_disallowed(self):
@@ -433,7 +439,7 @@ class ViewsTest(TestCase):
         factory = RequestFactory()
         request = factory.get('/robots.txt')
         response = robots_txt(request)
-        eq_(response.content, 'User-agent: *\nDisallow: /')
+        eq_(response.content, 'User-agent: *\nDisallow: /\n')
 
 
 class BaseListViewTest(RemoTestCase):
