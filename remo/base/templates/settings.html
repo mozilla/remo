@@ -63,23 +63,25 @@ Mozilla Reps - Settings
               </div>
             </section>
           {% endif %}
-          <section>
-            <p class="title" data-section-title>
-              <a href="#availabilitySettings">Availability Settings</a>
-            </p>
-            <div class="content" data-section-content id="availabilitySettingsTab">
-              <h2>Availability</h2>
-              <p>
-                <a href="{{ url('edit_availability', user.userprofile.display_name) }}">
-                  {% if not user.userprofile.is_unavailable %}
-                    Submit a break notification
-                  {% else %}
-                    Resume your activities
-                  {% endif %}
-                </a>
+          {% if waffle.flag('unavailability_flag') %}
+            <section>
+              <p class="title" data-section-title>
+                <a href="#availabilitySettings">Availability Settings</a>
               </p>
-            </div>
-          </section>
+              <div class="content" data-section-content id="availabilitySettingsTab">
+                <h2>Availability</h2>
+                <p>
+                  <a href="{{ url('edit_availability', user.userprofile.display_name) }}">
+                    {% if not user.userprofile.is_unavailable %}
+                      Submit a break notification
+                    {% else %}
+                      Resume your activities
+                    {% endif %}
+                  </a>
+                </p>
+              </div>
+            </section>
+          {% endif %}
         </div>
       </div>
     </div>
