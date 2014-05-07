@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
 from django.views import generic
@@ -332,6 +333,9 @@ def stats_dashboard(request):
 def edit_settings(request):
     """Edit user settings."""
     user = request.user
+    if user.groups.filter(name='Mozillians').exists():
+        raise Http404
+
     form = forms.EditSettingsForm(request.POST or None,
                                   instance=user.userprofile)
     if request.method == 'POST' and form.is_valid():
@@ -355,6 +359,9 @@ def edit_availability(request, display_name):
     user = request.user
     args = {}
     created = False
+
+    if user.groups.filter(name='Mozillians').exists():
+        raise Http404()
 
     if user.userprofile.is_unavailable:
         status = UserStatus.objects.filter(user=user).latest('created_on')
