@@ -261,10 +261,23 @@ def custom_500(request):
 
 
 def robots_txt(request):
-    """Generate a robots.txt."""
-    permission = 'Allow' if settings.ENGAGE_ROBOTS else 'Disallow'
-    return http.HttpResponse('User-agent: *\n{0}: /'.format(permission),
-                             mimetype='text/plain')
+    """Generate a robots.txt.
+
+    Do not allow bots to crawl report pages (bug 923754).
+    """
+    robots = 'User-agent: *\n'
+
+    if settings.ENGAGE_ROBOTS:
+        robots += 'Disallow: /reports/\n'
+        users = User.objects.filter(groups__name='Rep',
+                                    userprofile__registration_complete=True)
+        for user in users:
+            robots += ('Disallow: /u/{display_name}/r/\n'
+                       .format(display_name=user.userprofile.display_name))
+    else:
+        robots += 'Disallow: /\n'
+
+    return http.HttpResponse(robots, mimetype='text/plain')
 
 
 @permission_check(group='Mentor')
