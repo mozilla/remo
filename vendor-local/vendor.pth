@@ -8,3 +8,4 @@ src/jingo-offline-compressor
 src/pystatsd
 src/django-statsd
 src/django-tastypie
+src/django-database-email-backend

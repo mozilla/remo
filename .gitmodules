@@ -31,3 +31,6 @@
 [submodule "vendor-local/src/django-tastypie"]
 	path = vendor-local/src/django-tastypie
 	url = https://github.com/toastdriven/django-tastypie.git
+[submodule "vendor-local/src/django-database-email-backend"]
+	path = vendor-local/src/django-database-email-backend
+	url = https://github.com/stefanfoulis/django-database-email-backend.git
