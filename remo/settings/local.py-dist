@@ -74,6 +74,10 @@ SESSION_COOKIE_SECURE=False
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Uncomment the following lines to use the database email backend for debugging.
+# INSTALLED_APPS = base.INSTALLED_APPS + ['database_email_backend']
+# EMAIL_BACKEND = 'database_email_backend.backend.DatabaseEmailBackend'
+
 # Uncomment these to activate and customize Celery:
 # CELERY_ALWAYS_EAGER = False  # required to activate celeryd
 # BROKER_HOST = 'localhost'
