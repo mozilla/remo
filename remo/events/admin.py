@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from models import Attendance, Event, EventGoal, Metric
+from models import Attendance, Event, EventGoal
+from import_export.admin import ExportMixin
 
 
 class AttendanceInline(admin.StackedInline):
@@ -8,19 +9,14 @@ class AttendanceInline(admin.StackedInline):
     model = Attendance
 
 
-class MetricInline(admin.StackedInline):
-    """Metric Inline."""
-    model = Metric
-
-
-class EventGoalAdmin(admin.ModelAdmin):
-    """Metric Inline."""
+class EventGoalAdmin(ExportMixin, admin.ModelAdmin):
+    """EventGoal Inline."""
     model = EventGoal
 
 
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(ExportMixin, admin.ModelAdmin):
     """Event Admin."""
-    inlines = [AttendanceInline, MetricInline]
+    inlines = [AttendanceInline]
     model = Event
     list_display = ('name', 'start', 'end')
     search_fields = ('name', 'country', 'region', 'venue')

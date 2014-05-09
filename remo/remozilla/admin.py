@@ -1,9 +1,10 @@
 from django.contrib import admin
 
+from import_export.admin import ExportMixin
 from remo.remozilla.models import Bug, Status
 
 
-class BugAdmin(admin.ModelAdmin):
+class BugAdmin(ExportMixin, admin.ModelAdmin):
     """Bug Admin."""
     list_display = ('__unicode__', 'summary', 'status', 'resolution')
     list_filter = ('status', 'resolution', 'council_vote_requested')

@@ -24,7 +24,8 @@ INSTALLED_APPS = (['south'] +
                       'django_browserid',
                       'jingo_offline_compressor',
                       'tastypie',
-                      'waffle'])
+                      'waffle',
+                      'import_export'])
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:

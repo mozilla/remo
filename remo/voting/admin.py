@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from import_export.admin import ExportMixin
 from models import (Poll, PollComment,  RadioPoll, RadioPollChoice,
                     RangePoll, RangePollChoice, Vote)
 
@@ -30,11 +31,11 @@ class RadioPollInline(admin.StackedInline):
     extra = 0
 
 
-class RadioPollAdmin(admin.ModelAdmin):
+class RadioPollAdmin(ExportMixin, admin.ModelAdmin):
     inlines = [RadioPollChoiceInline]
 
 
-class RangePollAdmin(admin.ModelAdmin):
+class RangePollAdmin(ExportMixin, admin.ModelAdmin):
     inlines = [RangePollChoiceInline]
 
 
@@ -43,7 +44,7 @@ class PollCommentInline(admin.StackedInline):
     model = PollComment
 
 
-class PollAdmin(admin.ModelAdmin):
+class PollAdmin(ExportMixin, admin.ModelAdmin):
     """Voting Admin."""
     inlines = [RangePollInline, RadioPollInline, PollCommentInline]
     search_fields = ['name']
@@ -54,7 +55,7 @@ class PollAdmin(admin.ModelAdmin):
     list_filter = ['automated_poll']
 
 
-class VoteAdmin(admin.ModelAdmin):
+class VoteAdmin(ExportMixin, admin.ModelAdmin):
     """Vote Admin"""
     model = Vote
 
