@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.utils.timezone import now
 
 from celery.task import periodic_task, task
+from django_statsd.clients import statsd
 
 from remo.base.utils import get_date
 from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
@@ -70,6 +71,7 @@ def send_first_report_notification():
     for user in inactive_users:
         user.userprofile.first_report_notification = today
         user.userprofile.save()
+    statsd.incr('reports.send_first_report_notification')
 
 
 @periodic_task(run_every=timedelta(days=1))
@@ -89,6 +91,7 @@ def send_second_report_notification():
     for user in inactive_users:
         user.userprofile.second_report_notification = today
         user.userprofile.save()
+    statsd.incr('reports.send_second_report_notification')
 
 
 @task()
