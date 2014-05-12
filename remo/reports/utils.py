@@ -61,6 +61,6 @@ def send_report_notification(reps, weeks):
 
         rep_message = render_to_string(rep_mail_body, ctx_data)
         mentor_message = render_to_string(mentor_mail_body, ctx_data)
-        send_remo_mail.delay(rep_subject, [rep.email], message=rep_message)
-        send_remo_mail.delay(mentor_subject, [rep.userprofile.mentor.email],
-                             message=mentor_message)
+        send_remo_mail(rep_subject, [rep.email], message=rep_message)
+        send_remo_mail(mentor_subject, [rep.userprofile.mentor.email],
+                       message=mentor_message)
