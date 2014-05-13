@@ -35,7 +35,7 @@ class EmailUsersForm(BaseEmailUsersFrom):
             self.fields.insert(0, str(user.id),
                                forms.BooleanField(
                                    label=user,
-                                   initial=True,
+                                   initial=False,
                                    required=False,
                                    widget=form_widget))
 
