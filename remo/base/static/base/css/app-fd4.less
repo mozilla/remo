@@ -1400,13 +1400,14 @@ small.error {
 .pict-icon.pencil:after {
     content: "e";
 }
-
 .pict-icon.medal:after {
     content: ")";
 }
-
 .pict-icon.tick:after {
     content: "%";
+}
+.pict-icon.triangle:after {
+    content: "!";
 }
 
 .pict-table-icon {
@@ -1436,7 +1437,6 @@ small.error {
     position: relative;
     text-indent: -9999px;
 }
-
 .pict-button:after {
     position: absolute;
     top: 50%;
@@ -1445,7 +1445,6 @@ small.error {
     font-family: "ModernPictogramsNormal";
     text-indent: 0;
 }
-
 .pict-button.locate:after {
     content: "~";
     font-size: 24px;
@@ -2178,7 +2177,8 @@ meter::-o-meter-suboptimum-value {
     }
 }
 
-.attending-event-msg {
+.attending-event-msg,
+.unavailable-profile-msg {
     font-weight: bold;
     font-size: 18px;
     line-height: 2em;
@@ -3258,7 +3258,8 @@ table tr.assigned-request:nth-of-type(2n) {
     }
 }
 
-#dashboard-continuous-reports-mentees-block {
+#dashboard-continuous-reports-mentees-block,
+.dashboard-continuous-reports-mozillians-unavailable {
     .inactive-high a {
         color: #c00000;
         &:hover, &:active, &:focus {
@@ -3271,9 +3272,16 @@ table tr.assigned-request:nth-of-type(2n) {
             color: darken(#f68b01, 10%);
         }
     }
+    .unavailable a {
+        color: #808080;
+        &:hover, &:active, &:focus {
+            color: darken(#808080, 20%);
+        }
+    }
 }
 
-.inactive-reference {
+.inactive-reference,
+.unavailable-reference {
     float: left;
 
     ul {
@@ -3284,12 +3292,15 @@ table tr.assigned-request:nth-of-type(2n) {
             text-indent: 12px;
         }
     }
-    li {
+    li, p {
         &.inactive-reference-high:before {
             background-color: #c00000;
         }
         &.inactive-reference-low:before {
             background-color: #f68b01;
+        }
+        &.unavailable-reference-marker:before {
+            background-color: #808080;
         }
         &:before {
             position: absolute;
@@ -3299,5 +3310,16 @@ table tr.assigned-request:nth-of-type(2n) {
             width: 8px;
             height: 8px;
         }
+        &.unavailable-reference-mozillians:before {
+          .pictogram;
+          content: "!";
+          position: relative;
+        }
     }
+}
+
+.unavailable-reports-mozillians:before {
+    .pictogram;
+    content: "!";
+    position: relative;
 }

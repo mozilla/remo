@@ -224,6 +224,12 @@ class UserStatus(caching.base.CachingMixin, models.Model):
 
     objects = caching.base.CachingManager()
 
+    @property
+    def is_future_date(self):
+        if self.expected_date > timezone.now().date():
+            return True
+        return False
+
     def __unicode__(self):
         return self.user.get_full_name()
 

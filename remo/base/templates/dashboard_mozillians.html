@@ -76,11 +76,23 @@
                                      class="profiles-people-avatar"
                                      alt="avatar">
                                 <h6>{{ rep.get_full_name() }}</h6>
+                                {% if rep.userprofile.is_unavailable %}
+                                  <div class="pict-icon large triangle" title="Rep Unavailable">
+                                  </div>
+                                {% endif %}
                               </div>
                             </a>
                           </li>
                         {% endfor %}
                       </ul>
+                      <!-- Display unavailable icon -->
+                      {% if unavailable_rep_exists[key] %}
+                        <div class="unavailable-reference">
+                          <p class="unavailable-reference-mozillians">
+                            Rep currently unavailable.
+                          <p>
+                        </div>
+                      {% endif %}
                       <div class="align-right">
                         <button data-reveal-id="mail-reps-modal"
                            class="small button">Email Reps</button>
@@ -100,6 +112,7 @@
                     <div class="dashboard-box">
                       <div id="dashboard-continuous-reports-all-block"
                            class="dashboard-mozillians-reps-reports-block
+                                  dashboard-continuous-reports-mozillians-unavailable
                                   large-12 columns hidden">
                         <table class="dashboard-table">
                           <thead>
@@ -116,9 +129,13 @@
                             {% cache reps_ng_reports[key] %}
                               {% for report in reps_ng_reports[key] %}
                                 <tr>
-                                  <td>
+                                  <td {% if report.user.userprofile.is_unavailable %}
+                                      class="unavailable" {% endif %}>
                                     <a href="{{ url('profiles_view_profile',
-                                                    report.user|get_display_name) }}">
+                                       report.user|get_display_name) }}"
+                                       {% if report.user.userprofile.is_unavailable %}
+                                         title="Rep Unavailable"
+                                       {% endif %}>
                                     {{ report.user.get_full_name() }}
                                     </a>
                                   </td>
@@ -142,6 +159,13 @@
                             {% endcache %}
                           </tbody>
                         </table>
+                        <div class="unavailable-reference">
+                          <ul>
+                            <li class="unavailable-reference-marker">
+                              Rep currently unavailable.
+                            </li>
+                          </ul>
+                        </div>
                         <div class="align-right">
                           {% set functional_area=key|get_functional_area %}
                           <a href="{{ url('list_ng_reports_functional_area',
