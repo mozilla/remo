@@ -140,6 +140,7 @@ def dashboard_mozillians(request, user):
     reps_current_events = {}
     reps_ng_reports = {}
     today = now().date()
+    unavailable_rep_exists = {}
 
     for interest in interests:
         # Get the Reps with the specified interest
@@ -160,6 +161,12 @@ def dashboard_mozillians(request, user):
         reps_past_events[interest.name] = events.filter(start__lt=now())[:50]
         reps_current_events[interest.name] = events.filter(start__gte=now())
 
+        # Check if there is an unavailable Rep for the specific interest
+        unavailable_val = reps.filter(
+            userprofile__is_unavailable=True).exists()
+        unavailable_rep_exists[interest.name] = unavailable_val
+
+    args['unavailable_rep_exists'] = unavailable_rep_exists
     args['reps_ng_reports'] = reps_ng_reports
     args['interestform'] = interestform
     args['reps_past_events'] = reps_past_events

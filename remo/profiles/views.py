@@ -5,8 +5,10 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.encoding import iri_to_uri
+from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_control, never_cache
 
 from django_statsd.clients import statsd
@@ -19,7 +21,7 @@ import forms
 from remo.base.decorators import permission_check
 from remo.events.utils import get_events_for_user
 from remo.featuredrep.models import FeaturedRep
-from remo.profiles.models import UserProfile
+from remo.profiles.models import UserProfile, UserStatus
 from remo.profiles.models import FunctionalArea
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
@@ -152,6 +154,13 @@ def view_profile(request, display_name):
             'added_by': user.userprofile.added_by,
             'mentor': user.userprofile.mentor,
             'usergroups': usergroups}
+
+    if user.userprofile.is_unavailable:
+        status = UserStatus.objects.filter(user=user).latest('created_on')
+        msg = render_to_string('includes/view_profile_unavailable_msg.html',
+                               {'user_status': status})
+        data['user_status'] = status
+        messages.info(request, mark_safe(msg))
 
     today = timezone.now().date()
 

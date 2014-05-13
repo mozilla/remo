@@ -72,16 +72,44 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
   </div>
   <div class="row">
     <div class="large-6 columns">
-      <div class="row">
-        {% if user_profile.bio %}
+      {% if user_profile.bio %}
+        <div class="row">
           <div class="large-1 columns pictogram">
             <div class="pict-icon large edit"></div>
           </div>
           <div class="large-11 columns markdown">
             {{ user_profile.bio|markdown }}
           </div>
-        {% endif %}
-      </div>
+        </div>
+      {% endif %}
+      {% if user_profile.is_unavailable %}
+        <div class="row">
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large triangle"></div>
+          </div>
+          <div class="large-11 columns markdown">
+            <p class="profile-item">
+              <span class="label radius inline">
+                Unavailable
+              </span>
+              {% if user_status.is_future_date %}
+                Until {{ user_status.expected_date.strftime('%d %B %Y') }}
+              {% endif %}
+            </p>
+            {% if user_status.replacement_rep %}
+              <p class="profile-item">
+                <span class="label radius inline">
+                  Replacement rep
+                </span>
+                <a href="{{ url('profiles_view_profile',
+                                user_status.replacement_rep.userprofile.display_name) }}">
+                  {{ user_status.replacement_rep.get_full_name() }}
+                </a>
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
       {% if ng_reports %}
         <div class="row">
           <div class="large-1 columns pictogram">
