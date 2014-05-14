@@ -93,15 +93,6 @@
     },
     {
         "pk": 1,
-        "model": "events.metric",
-        "fields": {
-             "event": 3,
-             "title": "First metric",
-             "outcome": "Successful outcome description"
-        }
-    },
-    {
-        "pk": 1,
         "model": "events.eventcomment",
         "fields": {
             "event": 4,

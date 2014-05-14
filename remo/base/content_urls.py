@@ -3,8 +3,8 @@ from django.core.urlresolvers import reverse_lazy
 
 from remo.base.views import (BaseCreateView, BaseDeleteView, BaseListView,
                              BaseUpdateView)
-from remo.events.models import EventGoal
-from remo.events.forms import EventGoalForm
+from remo.events.models import EventGoal, EventMetric
+from remo.events.forms import EventGoalForm, EventMetricForm
 from remo.profiles.forms import FunctionalAreaForm
 from remo.profiles.models import FunctionalArea
 from remo.reports.forms import ActivityForm, CampaignForm
@@ -89,4 +89,23 @@ urlpatterns = patterns(
             model=EventGoal, form_class=EventGoalForm,
             success_url=reverse_lazy('list_event_goals')),
         name='edit_event_goal'),
+    url('^metrics/$',
+        BaseListView.as_view(
+            model=EventMetric,
+            create_object_url=reverse_lazy('create_metric')),
+        name='list_metrics'),
+    url('^metrics/(?P<pk>\d+)/delete/$',
+        BaseDeleteView.as_view(
+            model=EventMetric, success_url=reverse_lazy('list_metrics')),
+        name='delete_metric'),
+    url('^metrics/new/$',
+        BaseCreateView.as_view(
+            model=EventMetric, form_class=EventMetricForm,
+            success_url=reverse_lazy('list_metrics')),
+        name='create_metric'),
+    url('^metrics/(?P<pk>\d+)/edit/$',
+        BaseUpdateView.as_view(
+            model=EventMetric, form_class=EventMetricForm,
+            success_url=reverse_lazy('list_metrics')),
+        name='edit_metric'),
 )

@@ -14,9 +14,10 @@ from pytz import timezone
 from test_utils import TestCase
 
 from remo.base.tests import requires_login, requires_permission
-from remo.events.models import Event, EventComment, Metric
+from remo.events.models import Event, EventComment, EventMetricOutcome
 from remo.events.tests import (AttendanceFactory, EventCommentFactory,
-                               EventFactory, EventGoalFactory)
+                               EventFactory, EventGoalFactory,
+                               EventMetricFactory)
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
@@ -27,6 +28,8 @@ class ViewsTest(TestCase):
 
         categories = FunctionalAreaFactory.create_batch(3)
         goals = EventGoalFactory.create_batch(3)
+        metrics = EventMetricFactory.create_batch(3)
+
         self.data = {
             'name': u'Test edit event',
             'description': u'This is a description',
@@ -57,14 +60,14 @@ class ViewsTest(TestCase):
             'hashtag': u'#testevent',
             'swag_bug_form': u'',
             'budget_bug_form': u'',
-            'metrics-0-title': u'First metric',
-            'metrics-0-outcome': u'First outcome',
-            'metrics-1-title': u'Second metric',
-            'metrics-1-outcome': u'Second outcome',
-            'metrics-2-title': u'Third metric',
-            'metrics-2-outcome': u'Third outcome',
-            'metrics-TOTAL_FORMS': 3,
-            'metrics-INITIAL_FORMS': 0}
+            'eventmetricoutcome_set-0-id': '',
+            'eventmetricoutcome_set-0-metric': metrics[0].id,
+            'eventmetricoutcome_set-0-outcome': 100,
+            'eventmetricoutcome_set-1-id': '',
+            'eventmetricoutcome_set-1-metric': metrics[1].id,
+            'eventmetricoutcome_set-1-outcome': 10,
+            'eventmetricoutcome_set-TOTAL_FORMS': 2,
+            'eventmetricoutcome_set-INITIAL_FORMS': 0}
 
         self.event_edit_url = reverse('events_edit_event',
                                       kwargs={'slug': 'test-event'})
@@ -522,14 +525,13 @@ class ViewsTest(TestCase):
         eq_(event.mozilla_event, mozilla_event[self.data['mozilla_event']])
 
         # Ensure event metrics are saved
-        metrics = []
-        for metric in Metric.objects.filter(event_id=event.id):
-            metrics.append((metric.title, metric.outcome))
+        metrics = (EventMetricOutcome.objects.filter(event=event)
+                   .values_list('metric__id', 'outcome'))
 
-        for i in range(0, 3):
-            title = self.data['metrics-%d-title' % i]
-            outcome = self.data['metrics-%d-outcome' % i]
-            self.assertTrue((title, outcome) in metrics)
+        for i in range(0, 2):
+            metric = self.data['eventmetricoutcome_set-%d-metric' % i]
+            outcome = self.data['eventmetricoutcome_set-%d-outcome' % i]
+            self.assertTrue((metric, outcome) in metrics)
 
         # Ensure event start/end is saved
         month = self.data['start_form_0_month']
@@ -570,12 +572,14 @@ class ViewsTest(TestCase):
 
         # Test invalid number of metrics
         invalid_data = self.data.copy()
-        invalid_data['metrics-TOTAL_FORMS'] = 1
 
-        invalid_data.pop('metrics-1-title')
-        invalid_data.pop('metrics-1-outcome')
-        invalid_data.pop('metrics-2-title')
-        invalid_data.pop('metrics-2-outcome')
+        invalid_data['eventmetricoutcome_set-TOTAL_FORMS'] = 1
+        invalid_data.pop('eventmetricoutcome_set-0-id')
+        invalid_data.pop('eventmetricoutcome_set-0-metric')
+        invalid_data.pop('eventmetricoutcome_set-0-outcome')
+        invalid_data.pop('eventmetricoutcome_set-1-id')
+        invalid_data.pop('eventmetricoutcome_set-1-metric')
+        invalid_data.pop('eventmetricoutcome_set-1-outcome')
 
         response = self.client.post(self.event_edit_url, invalid_data,
                                     follow=True)

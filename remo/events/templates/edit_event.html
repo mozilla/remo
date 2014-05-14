@@ -415,16 +415,16 @@
                   <div class="pict-icon large graph"></div>
                 </div>
                 <div class="large-11 columns">
-                  {{ field_with_attrs(form.title,
-                                      placeholder='Metric',
-                                      title='Metric',
-                                      class='input-text big has-tip tip-right') }}
-                  {{ field_errors(form.title) }}
+                  <div class='has-tip tip-right' data-tooltip
+                       data-options='disable-for-touch:true'
+                       title='Type of Metric'>
+                    {{ form.metric }}
+                  </div>
+                  {{ field_errors(form.metric) }}
 
                   {{ field_with_attrs(form.outcome,
-                                      placeholder='Success scenario',
-                                      title='Success scenario',
-                                      class='input-text big has-tip tip-right') }}
+                                      placeholder='Success scenario (numeric)',
+                                      title='Success scenario') }}
                   {{ field_errors(form.outcome) }}
                   <div class="events-delete-metric">
                     {{ form.DELETE }} {{ form.DELETE.label_tag() }}

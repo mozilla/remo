@@ -66,6 +66,27 @@ class EventGoal(models.Model):
         verbose_name_plural = 'event goals'
 
 
+class EventMetric(models.Model):
+    """New generation event metrics."""
+    name = models.CharField(max_length=100)
+    active = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    active_objects = GenericActiveManager()
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_delete_url(self):
+        return reverse('delete_metric', kwargs={'pk': self.id})
+
+    def get_absolute_edit_url(self):
+        return reverse('edit_metric', kwargs={'pk': self.id})
+
+
 class Event(caching.base.CachingMixin, models.Model):
     """Event Model."""
     name = models.CharField(max_length=100)
@@ -102,6 +123,7 @@ class Event(caching.base.CachingMixin, models.Model):
     categories = models.ManyToManyField(FunctionalArea,
                                         related_name='events_categories')
     goals = models.ManyToManyField(EventGoal, related_name='events_goals')
+    metrics = models.ManyToManyField(EventMetric, through='EventMetricOutcome')
 
     objects = caching.base.CachingManager()
 
@@ -180,6 +202,17 @@ class Event(caching.base.CachingMixin, models.Model):
                         'Can delete event comments'))
 
 
+class EventMetricOutcome(models.Model):
+    """New generation event metric stats."""
+    event = models.ForeignKey(Event)
+    metric = models.ForeignKey(EventMetric)
+    outcome = models.IntegerField()
+
+    class Meta:
+        verbose_name = 'event outcome'
+        verbose_name_plural = 'events outcome'
+
+
 class EventComment(models.Model):
     """Comments in Event."""
     user = models.ForeignKey(User)
@@ -193,7 +226,7 @@ class EventComment(models.Model):
 
 class Metric(models.Model):
     """Metrics Model."""
-    event = models.ForeignKey('Event', related_name='metrics')
+    event = models.ForeignKey('Event')
     title = models.CharField(max_length=300)
     outcome = models.CharField(max_length=300)
 

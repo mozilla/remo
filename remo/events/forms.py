@@ -12,7 +12,7 @@ from pytz import common_timezones, timezone
 from datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.helpers import get_full_name
 from remo.base.utils import validate_datetime
-from remo.events.models import EventGoal
+from remo.events.models import EventGoal, EventMetric
 from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
 
@@ -54,13 +54,52 @@ class MinBaseInlineFormSet(forms.models.BaseInlineFormSet):
 
         return super(MinBaseInlineFormSet, self).clean()
 
+
+class BaseEventMetricsFormset(MinBaseInlineFormSet):
+    """Inline form-set support for event metrics."""
+
+    def add_fields(self, form, index):
+        """Dynamically update field attributes."""
+        super(BaseEventMetricsFormset, self).add_fields(form, index)
+
+        qs = EventMetric.objects.filter(active=True)
+        if self.instance.id:
+            current_metrics = self.instance.metrics.all()
+            metrics_query = Q(active=True) | Q(pk__in=current_metrics)
+            qs = EventMetric.objects.filter(metrics_query)
+
+        error_msg = 'Please enter a number.'
+        empty_label = 'Please select an event metric.'
+        form.fields['outcome'].error_messages['invalid'] = error_msg
+        form.fields['metric'].empty_label = empty_label
+        form.fields['metric'].queryset = qs
+
+    def clean(self):
+        """Check for unique metrics inside formset."""
+        super(BaseEventMetricsFormset, self).clean()
+
+        if any(self.errors):
+            # Do not check unless are fields are valid
+            return
+
+        metrics = []
+        field_error_msg = 'This metric has already been selected.'
+        form_error_msg = 'Please correct the form errors.'
+        for i, form in enumerate(self.forms):
+            if 'metric' in form.cleaned_data:
+                metric = form.cleaned_data['metric']
+                if metric in metrics:
+                    self.errors[i]['metric'] = field_error_msg
+                    raise ValidationError({'metric': [form_error_msg]})
+                metrics.append(metric)
+
     def save_existing(self, form, instance, commit=True):
         """Override save_existing on cloned event to save metrics"""
         if self.clone:
             form.instance.id = None
             return self.save_new(form)
         else:
-            return (super(MinBaseInlineFormSet, self).
+            return (super(BaseEventMetricsFormset, self).
                     save_existing(form, instance, commit))
 
     def save(self, *args, **kwargs):
@@ -69,7 +108,7 @@ class MinBaseInlineFormSet(forms.models.BaseInlineFormSet):
         if self.clone:
             for form in self.initial_forms:
                 form.changed_data.append('id')
-        return super(MinBaseInlineFormSet, self).save()
+        return super(BaseEventMetricsFormset, self).save()
 
 
 class EventForm(happyforms.ModelForm):
@@ -225,7 +264,6 @@ class EventForm(happyforms.ModelForm):
         if clone:
             self.instance.pk = None
             self.instance.slug = None
-            self.instance.metrics = []
         return super(EventForm, self).save()
 
     class Meta:
@@ -254,3 +292,10 @@ class EventGoalForm(happyforms.ModelForm):
 
     class Meta:
         model = EventGoal
+
+
+class EventMetricForm(happyforms.ModelForm):
+    """Form for EventMetric Model."""
+
+    class Meta:
+        model = EventMetric

@@ -526,7 +526,7 @@ Mozilla Reps - {{ event.name }}
         </div>
 
         <!-- Metrics section (visible to: all authenticated) - repeat if needed-->
-        {% for metric in event.metrics.all() %}
+        {% for stat in event.eventmetricoutcome_set.all() %}
           <div class="row">
             <div class="large-1 columns">
               <div class="pict-icon large graph"></div>
@@ -536,13 +536,13 @@ Mozilla Reps - {{ event.name }}
                 <span class="label inline">
                   Metric #{{ loop.index }}
                 </span>
-                {{ metric.title }}
+                {{ stat.metric.name }}
               </p>
               <p>
                 <span class="label inline">
                   Success scenario #{{ loop.index }}
                 </span>
-                {{ metric.outcome }}
+                {{ stat.outcome }}
               </p>
             </div>
           </div>

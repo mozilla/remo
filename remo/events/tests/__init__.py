@@ -9,7 +9,8 @@ from product_details import product_details
 from pytz import common_timezones
 
 from remo.events.models import (Attendance, Event, EventComment, EventGoal,
-                                Metric)
+                                EventMetric, EventMetricOutcome)
+
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 from remo.remozilla.tests import BugFactory
 
@@ -81,15 +82,6 @@ class EventFactory(factory.django.DjangoModelFactory):
                 goal = EventGoalFactory.create()
                 self.goals.add(goal)
 
-    @factory.post_generation
-    def metrics(self, create, extracted, **kwargs):
-        """Add event metrics after event creation."""
-        if not create:
-            return
-
-        # create 2 metrics by default
-        MetricFactory.create_batch(2, event=self)
-
 
 class AttendanceFactory(factory.django.DjangoModelFactory):
     """Factory for Attendance model."""
@@ -110,10 +102,15 @@ class EventCommentFactory(factory.django.DjangoModelFactory):
                                     % (o.event, o.user))
 
 
-class MetricFactory(factory.django.DjangoModelFactory):
-    """Factory for Metric model."""
-    FACTORY_FOR = Metric
+class EventMetricFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = EventMetric
+
+    name = factory.Sequence(lambda n: 'EventMetric #{0}'.format(n))
+
+
+class EventMetricOutcomeFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = EventMetricOutcome
 
     event = factory.SubFactory(EventFactory)
-    title = factory.Sequence(lambda n: 'Event Metric #%s' % n)
-    outcome = factory.Sequence(lambda n: 'Event Outcome #%s' % n)
+    metric = factory.SubFactory(EventMetricFactory)
+    outcome = fuzzy.FuzzyInteger(0, 100)
