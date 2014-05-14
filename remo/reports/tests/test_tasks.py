@@ -93,7 +93,7 @@ class SendInactivityNotifications(RemoTestCase):
         rep_subject = '[Reminder] Please share your recent activities'
         mentor_subject = '[Report] Mentee without report for the last 4 weeks'
 
-        with patch('remo.reports.utils.send_remo_mail.delay') as mail_mock:
+        with patch('remo.reports.utils.send_remo_mail') as mail_mock:
             send_first_report_notification()
 
         eq_(mail_mock.call_count, 2)
@@ -110,7 +110,7 @@ class SendInactivityNotifications(RemoTestCase):
         NGReportFactory.create(user=rep,
                                report_date=today - timedelta(weeks=2))
 
-        with patch('remo.reports.utils.send_remo_mail.delay') as mail_mock:
+        with patch('remo.reports.utils.send_remo_mail') as mail_mock:
             send_second_report_notification()
         ok_(not mail_mock.called)
 
@@ -126,7 +126,7 @@ class SendInactivityNotifications(RemoTestCase):
         rep_subject = '[Reminder] Please share your recent activities'
         mentor_subject = '[Report] Mentee without report for the last 8 weeks'
 
-        with patch('remo.reports.utils.send_remo_mail.delay') as mail_mock:
+        with patch('remo.reports.utils.send_remo_mail') as mail_mock:
             send_second_report_notification()
 
         eq_(mail_mock.call_count, 2)
