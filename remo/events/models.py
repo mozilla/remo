@@ -171,6 +171,13 @@ class Event(caching.base.CachingMixin, models.Model):
         """Property to end datetime localized."""
         return self._make_local(self.end)
 
+    @property
+    def is_past_event(self):
+        """Property to check is event is in the past."""
+        if self.id:
+            return now() > self.end
+        return None
+
     def get_similar_events(self):
         """Implement 3-events-like-this functionality.
 

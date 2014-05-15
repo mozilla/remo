@@ -3,7 +3,8 @@ from django.forms.models import inlineformset_factory, model_to_dict
 from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
-from remo.events.forms import BaseEventMetricsFormset, EventForm
+from remo.events.forms import (BaseEventMetricsFormset, EventForm,
+                               EventMetricsForm)
 from remo.events.models import Event
 from remo.events.tests import (EventFactory, EventGoalFactory,
                                EventMetricFactory,
@@ -52,6 +53,7 @@ class EventMetricsFormset(RemoTestCase):
 
         formset = inlineformset_factory(
             Event, Event.metrics.through,
+            form=EventMetricsForm,
             formset=BaseEventMetricsFormset,
             extra=2)
 
@@ -77,8 +79,9 @@ class EventMetricsFormset(RemoTestCase):
 
         formset = inlineformset_factory(
             Event, Event.metrics.through,
+            form=EventMetricsForm,
             formset=BaseEventMetricsFormset,
-            extra=2)
+            extra=0)
 
         forms = formset(instance=event)
 
@@ -137,6 +140,7 @@ class EventMetricsFormset(RemoTestCase):
 
         formset = inlineformset_factory(
             Event, Event.metrics.through,
+            form=EventMetricsForm,
             formset=BaseEventMetricsFormset,
             extra=2)
 

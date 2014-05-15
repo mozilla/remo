@@ -113,4 +113,4 @@ class EventMetricOutcomeFactory(factory.django.DjangoModelFactory):
 
     event = factory.SubFactory(EventFactory)
     metric = factory.SubFactory(EventMetricFactory)
-    expected_outcome = fuzzy.FuzzyInteger(0, 100)
+    expected_outcome = fuzzy.FuzzyInteger(1, 100)

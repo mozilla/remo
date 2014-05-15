@@ -24,7 +24,6 @@ from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_or_create_instance
 from remo.events.models import Attendance, Event, EventComment
 from remo.profiles.models import FunctionalArea
-from helpers import is_past_event
 
 
 @never_cache
@@ -65,7 +64,7 @@ def manage_subscription(request, slug, subscribe=True):
                                            'this event.'))
             else:
                 attendance.save()
-                if not is_past_event(event):
+                if not event.is_past_event:
                     subscribed_text = render_to_string(
                         'includes/subscribe_to_ical.html', {'event': event})
                     messages.info(request, mark_safe(subscribed_text))
@@ -168,33 +167,42 @@ def edit_event(request, slug=None, clone=None):
         if (event.end.minute % 5) != 0:
             event.end += timedelta(minutes=(5 - (event.end.minute % 5)))
 
-        # If an event is edited, do not add any more formsets.
-        # For compatibility with old metrics for events with no eventmetrics
-        # add 2 extra formsets.
-        if not event.metrics.exists():
-            extra_formsets = 2
-        else:
+        if event.eventmetricoutcome_set.exists():
             extra_formsets = 0
 
     editable = False
     if request.user.groups.filter(name='Admin').count():
         editable = True
 
+    # Compatibility code for old metrics
+    min_forms = 0
+    metrics_form = forms.EventMetricsForm
     event_form = forms.EventForm(request.POST or None,
                                  editable_owner=editable, instance=event,
                                  initial=initial)
+    if event.has_new_metrics:
+        min_forms = 2
+        if event.is_past_event:
+            metrics_form = forms.PostEventMetricsForm
+            event_form = forms.PostEventForm(request.POST or None,
+                                             editable_owner=editable,
+                                             instance=event,
+                                             initial=initial)
 
     EventMetricsFormset = inlineformset_factory(
         Event, Event.metrics.through,
+        form=metrics_form,
         formset=forms.BaseEventMetricsFormset,
-        extra=extra_formsets)
-    metrics_formset = EventMetricsFormset(request.POST or None,
-                                          instance=event)
+        extra=extra_formsets
+    )
 
-    if (event_form.is_valid() and metrics_formset.is_valid() and request.POST):
+    metrics_formset = EventMetricsFormset(request.POST or None,
+                                          instance=event,
+                                          min_forms=min_forms)
+
+    if event_form.is_valid() and metrics_formset.is_valid():
         event_form.save(clone=clone)
         metrics_formset.save(clone=clone)
-
         if created:
             messages.success(request, 'Event successfully created.')
             if clone:

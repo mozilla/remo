@@ -55,6 +55,7 @@ class ViewsTest(TestCase):
             'timezone': u'Europe/Athens',
             'mozilla_event': u'on',
             'estimated_attendance': u'10',
+            'actual_attendance': u'10',
             'extra_content': u'This is extra content',
             'planning_pad_url': u'',
             'hashtag': u'#testevent',
@@ -489,7 +490,10 @@ class ViewsTest(TestCase):
     def test_edit_event_rep(self, mock_success):
         """Test edit event with rep permissions."""
         user = UserFactory.create(groups=['Rep'])
-        event = EventFactory.create(slug='test-event', owner=user)
+        start = now() + datetime.timedelta(days=10)
+        end = now() + datetime.timedelta(days=20)
+        event = EventFactory.create(slug='test-event', owner=user,
+                                    start=start, end=end)
         times_edited = event.times_edited
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(self.event_edit_url, self.data,
