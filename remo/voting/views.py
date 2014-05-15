@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -13,6 +12,7 @@ import forms
 
 from remo.base.decorators import permission_check
 from remo.base.utils import get_or_create_instance
+from remo.voting.helpers import user_has_poll_permissions
 from remo.voting.models import Poll, PollComment, RadioPoll, RangePoll, Vote
 
 
@@ -70,6 +70,9 @@ def edit_voting(request, slug=None):
 
         if poll.start < now() and poll.end > now():
             current_voting_edit = True
+        if not user_has_poll_permissions(request.user, poll):
+            messages.error(request, 'Permission denied.')
+            return redirect('voting_list_votings')
 
     nominee_list = User.objects.filter(
         groups__name='Rep', userprofile__registration_complete=True)
@@ -127,8 +130,7 @@ def view_voting(request, slug):
     user = request.user
     poll = get_object_or_404(Poll, slug=slug)
     # If the user does not belong to a valid poll group
-    if not (user.groups.filter(Q(id=poll.valid_groups.id) |
-                               Q(name='Admin')).exists()):
+    if not user_has_poll_permissions(user, poll):
         messages.error(request, ('You do not have the permissions to '
                                  'vote on this voting.'))
         return redirect('voting_list_votings')

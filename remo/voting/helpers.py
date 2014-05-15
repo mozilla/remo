@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.contrib.auth.models import User
 
 from jingo import register
@@ -27,3 +28,13 @@ def get_meter_value(poll):
         return int(val)
     except ZeroDivisionError:
         return 0
+
+
+@register.function
+def user_has_poll_permissions(user, poll):
+    """Check if a user's group has permissions for a specific poll."""
+
+    if user.groups.filter(Q(id=poll.valid_groups.id) |
+                          Q(name='Admin')).exists():
+        return True
+    return False
