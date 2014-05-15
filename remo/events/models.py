@@ -105,6 +105,7 @@ class Event(caching.base.CachingMixin, models.Model):
     owner = models.ForeignKey(User, related_name='events_created')
     planning_pad_url = models.URLField(blank=True, max_length=300)
     estimated_attendance = models.PositiveIntegerField()
+    actual_attendance = models.PositiveIntegerField(null=True, blank=True)
     description = models.TextField(validators=[MaxLengthValidator(500),
                                                MinLengthValidator(20)])
     extra_content = models.TextField(blank=True, default='')
@@ -124,6 +125,7 @@ class Event(caching.base.CachingMixin, models.Model):
                                         related_name='events_categories')
     goals = models.ManyToManyField(EventGoal, related_name='events_goals')
     metrics = models.ManyToManyField(EventMetric, through='EventMetricOutcome')
+    has_new_metrics = models.BooleanField(default=True)
 
     objects = caching.base.CachingManager()
 
@@ -206,7 +208,8 @@ class EventMetricOutcome(models.Model):
     """New generation event metric stats."""
     event = models.ForeignKey(Event)
     metric = models.ForeignKey(EventMetric)
-    outcome = models.IntegerField()
+    expected_outcome = models.IntegerField()
+    outcome = models.IntegerField(null=True, blank=True)
 
     class Meta:
         verbose_name = 'event outcome'

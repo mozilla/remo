@@ -70,7 +70,7 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
 
         error_msg = 'Please enter a number.'
         empty_label = 'Please select an event metric.'
-        form.fields['outcome'].error_messages['invalid'] = error_msg
+        form.fields['expected_outcome'].error_messages['invalid'] = error_msg
         form.fields['metric'].empty_label = empty_label
         form.fields['metric'].queryset = qs
 

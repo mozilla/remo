@@ -62,10 +62,10 @@ class ViewsTest(TestCase):
             'budget_bug_form': u'',
             'eventmetricoutcome_set-0-id': '',
             'eventmetricoutcome_set-0-metric': metrics[0].id,
-            'eventmetricoutcome_set-0-outcome': 100,
+            'eventmetricoutcome_set-0-expected_outcome': 100,
             'eventmetricoutcome_set-1-id': '',
             'eventmetricoutcome_set-1-metric': metrics[1].id,
-            'eventmetricoutcome_set-1-outcome': 10,
+            'eventmetricoutcome_set-1-expected_outcome': 10,
             'eventmetricoutcome_set-TOTAL_FORMS': 2,
             'eventmetricoutcome_set-INITIAL_FORMS': 0}
 
@@ -526,11 +526,12 @@ class ViewsTest(TestCase):
 
         # Ensure event metrics are saved
         metrics = (EventMetricOutcome.objects.filter(event=event)
-                   .values_list('metric__id', 'outcome'))
+                   .values_list('metric__id', 'expected_outcome'))
 
         for i in range(0, 2):
             metric = self.data['eventmetricoutcome_set-%d-metric' % i]
-            outcome = self.data['eventmetricoutcome_set-%d-outcome' % i]
+            outcome_key = 'eventmetricoutcome_set-%d-expected_outcome' % i
+            outcome = self.data[outcome_key]
             self.assertTrue((metric, outcome) in metrics)
 
         # Ensure event start/end is saved
@@ -576,10 +577,10 @@ class ViewsTest(TestCase):
         invalid_data['eventmetricoutcome_set-TOTAL_FORMS'] = 1
         invalid_data.pop('eventmetricoutcome_set-0-id')
         invalid_data.pop('eventmetricoutcome_set-0-metric')
-        invalid_data.pop('eventmetricoutcome_set-0-outcome')
+        invalid_data.pop('eventmetricoutcome_set-0-expected_outcome')
         invalid_data.pop('eventmetricoutcome_set-1-id')
         invalid_data.pop('eventmetricoutcome_set-1-metric')
-        invalid_data.pop('eventmetricoutcome_set-1-outcome')
+        invalid_data.pop('eventmetricoutcome_set-1-expected_outcome')
 
         response = self.client.post(self.event_edit_url, invalid_data,
                                     follow=True)

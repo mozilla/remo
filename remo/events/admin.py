@@ -35,7 +35,7 @@ class EventMetricAdmin(admin.ModelAdmin):
 class EventMetricOutcomeAdmin(admin.ModelAdmin):
     """EventMetricOutcome Admin."""
     model = EventMetricOutcome
-    list_display = ('event', 'metric', 'outcome')
+    list_display = ('event', 'metric', 'expected_outcome')
 
 admin.site.register(Event, EventAdmin)
 admin.site.register(EventGoal, EventGoalAdmin)

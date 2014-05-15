@@ -125,13 +125,13 @@ class EventMetricsFormset(RemoTestCase):
             'budget_bug_form': u'',
             'eventmetricoutcome_set-0-id': '',
             'eventmetricoutcome_set-0-metric': metrics[0].id,
-            'eventmetricoutcome_set-0-outcome': 100,
+            'eventmetricoutcome_set-0-expected_outcome': 100,
             'eventmetricoutcome_set-1-id': '',
             'eventmetricoutcome_set-1-metric': metrics[0].id,
-            'eventmetricoutcome_set-1-outcome': 10,
+            'eventmetricoutcome_set-1-expected_outcome': 10,
             'eventmetricoutcome_set-2-id': '',
             'eventmetricoutcome_set-2-metric': metrics[1].id,
-            'eventmetricoutcome_set-2-outcome': 10,
+            'eventmetricoutcome_set-2-expected_outcome': 10,
             'eventmetricoutcome_set-TOTAL_FORMS': 2,
             'eventmetricoutcome_set-INITIAL_FORMS': 0}
 

@@ -422,10 +422,10 @@
                   </div>
                   {{ field_errors(form.metric) }}
 
-                  {{ field_with_attrs(form.outcome,
+                  {{ field_with_attrs(form.expected_outcome,
                                       placeholder='Success scenario (numeric)',
                                       title='Success scenario') }}
-                  {{ field_errors(form.outcome) }}
+                  {{ field_errors(form.expected_outcome) }}
                   <div class="events-delete-metric">
                     {{ form.DELETE }} {{ form.DELETE.label_tag() }}
                   </div>
