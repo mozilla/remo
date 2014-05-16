@@ -145,9 +145,15 @@
             {% cache mentees_ng_reportees %}
               {% for reportee in mentees_ng_reportees %}
                 <tr>
-                  <td class="{{ reportee|get_activity_level }}">
+                  <td class="{{ reportee|get_activity_level }}
+                      {% if reportee.userprofile.is_unavailable %}
+                        unavailable
+                      {% endif %}">
                     <a href="{{ url('profiles_view_profile',
-                                    reportee|get_display_name) }}">
+                                    reportee|get_display_name) }}"
+                       {% if reportee.userprofile.is_unavailable %}
+                         title="Rep Unavailable"
+                       {% endif %}>
                       {{ reportee.get_full_name() }}
                     </a>
                   </td>
@@ -168,6 +174,9 @@
             </li>
             <li class="inactive-reference-high">
               No activities in past 8 weeks.
+            </li>
+            <li class="unavailable-reference-marker">
+              Rep currently unavailable.
             </li>
           </ul>
         </div>
