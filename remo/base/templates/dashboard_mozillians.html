@@ -114,7 +114,7 @@
                            class="dashboard-mozillians-reps-reports-block
                                   dashboard-continuous-reports-mozillians-unavailable
                                   large-12 columns hidden">
-                        <table class="dashboard-table">
+                        <table class="dashboard-table responsive">
                           <thead>
                             <tr>
                               <th>Name</th>
@@ -208,7 +208,7 @@
                   <!-- Current and future events block -->
                   <div class="dashboard-events-future-block">
                     {% if reps_current_events[key] %}
-                      <table class="dashboard-table">
+                      <table class="dashboard-table responsive">
                         <thead>
                           <tr>
                             <th class="dashboard-clickable type-string">Event Name</th>
@@ -256,7 +256,7 @@
                   <!-- Past events block-->
                   <div class="dashboard-events-past-block hidden">
                     {% if reps_past_events[key] %}
-                      <table class="dashboard-table">
+                      <table class="dashboard-table responsive">
                         <thead>
                           <tr>
                             <th class="dashboard-clickable type-string">Event Name</th>

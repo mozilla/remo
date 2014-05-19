@@ -35,7 +35,7 @@
     <!-- my block -->
     {% if user %}
       <div id="dashboard-continuous-reports-mine-block" class="large-12 columns">
-        <table class="dashboard-table">
+        <table class="dashboard-table responsive">
           <tbody>
             <tr>
               <td>
@@ -130,7 +130,7 @@
     <!-- mentees block -->
     {% if mentees_ng_reportees %}
       <div id="dashboard-continuous-reports-mentees-block" class="large-12 columns hidden">
-        <table class="dashboard-table">
+        <table class="dashboard-table responsive">
           <thead>
             <tr>
               <th>Name</th>
@@ -241,7 +241,7 @@
 <div class="row">
   <div id="dashboard-br-my-block" class="large-12 columns">
     {% if my_budget_requests %}
-      <table class="dashboard-table">
+      <table class="dashboard-table responsive">
         <thead>
           <tr>
             <th class="dashboard-clickable type-int">ID</th>
@@ -309,7 +309,7 @@
   {% if mentees_budget_requests is defined %}
     <div id="dashboard-br-mentees-block" class="large-12 hidden columns">
       {% if mentees_budget_requests %}
-        <table class="dashboard-table">
+        <table class="dashboard-table responsive">
           <thead>
             <tr>
               <th class="dashboard-clickable type-int">ID</th>
@@ -370,7 +370,7 @@
   {% if all_budget_requests is defined %}
     <div id="dashboard-br-all-block" class="large-12 hidden columns">
       {% if all_budget_requests %}
-        <table class="dashboard-table">
+        <table class="dashboard-table responsive">
           <thead>
             <tr>
               <th class="dashboard-clickable type-int">ID</th>
@@ -478,7 +478,7 @@
 <div class="row">
   <div id="dashboard-sr-my-block" class="large-12 columns">
     {% if my_swag_requests %}
-      <table class="dashboard-table">
+      <table class="dashboard-table responsive">
         <thead>
           <tr>
             <th class="dashboard-clickable type-int">ID</th>
@@ -546,7 +546,7 @@
   {% if mentees_swag_requests is defined %}
     <div id="dashboard-sr-mentees-block" class="large-12 hidden columns">
       {% if mentees_swag_requests %}
-        <table class="dashboard-table">
+        <table class="dashboard-table responsive">
           <thead>
             <tr>
               <th class="dashboard-clickable type-int">ID</th>
@@ -607,7 +607,7 @@
   {% if all_swag_requests is defined %}
     <div id="dashboard-sr-all-block" class="large-12 hidden columns">
       {% if all_swag_requests %}
-        <table class="dashboard-table">
+        <table class="dashboard-table responsive">
           <thead>
             <tr>
               <th class="dashboard-clickable type-int">ID</th>
@@ -693,7 +693,7 @@
   <div class="row">
     <div id="dashboard-citr-block" class="large-12 columns">
       {% if my_cit_requests %}
-        <table class="dashboard-table">
+        <table class="dashboard-table responsive">
           <thead>
             <tr>
               <th class="dashboard-clickable type-int">ID</th>
@@ -763,7 +763,7 @@
   <div class="row">
     <div id="dashboard-mentorship-block" class="large-12 columns">
       {% if my_mentorship_requests %}
-        <table class="dashboard-table">
+        <table class="dashboard-table responsive">
           <thead>
             <tr>
               <th class="dashboard-clickable type-int">ID</th>
@@ -834,7 +834,7 @@
   <div class="row">
     <div id="dashboard-mentorship-block" class="large-12 columns">
       {% if my_planning_requests %}
-        <table class="dashboard-table">
+        <table class="dashboard-table responsive">
           <thead>
             <tr>
               <th class="dashboard-clickable type-int">ID</th>
@@ -917,7 +917,7 @@
           <p class="desc">
             Reps without mentors set are displayed here:
           </p>
-          <table class="dashboard-table">
+          <table class="dashboard-table responsive">
             <thead>
               <tr>
                 <th class="dashboard-clickable type-string">Username</th>
@@ -964,7 +964,7 @@
           <p class="desc">
             Reps that are invited but not filled their profiles are displayed here:
           </p>
-          <table class="dashboard-table">
+          <table class="dashboard-table responsive">
             <thead>
               <tr>
                 <th class="dashboard-clickable type-string">Bugzilla Mail</th>
