@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from import_export.admin import ExportMixin
 from models import (Attendance, Event, EventGoal, EventMetric,
                     EventMetricOutcome)
 
@@ -9,12 +10,12 @@ class AttendanceInline(admin.StackedInline):
     model = Attendance
 
 
-class EventGoalAdmin(admin.ModelAdmin):
+class EventGoalAdmin(ExportMixin, admin.ModelAdmin):
     """EventGoal Inline."""
     model = EventGoal
 
 
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(ExportMixin, admin.ModelAdmin):
     """Event Admin."""
     inlines = [AttendanceInline]
     model = Event
@@ -25,14 +26,14 @@ class EventAdmin(admin.ModelAdmin):
         return obj.owner.userprofile.display_name
 
 
-class EventMetricAdmin(admin.ModelAdmin):
+class EventMetricAdmin(ExportMixin, admin.ModelAdmin):
     """EventMetric Admin."""
     model = EventMetric
     list_display = ('name', 'active')
     list_filter = ('active',)
 
 
-class EventMetricOutcomeAdmin(admin.ModelAdmin):
+class EventMetricOutcomeAdmin(ExportMixin, admin.ModelAdmin):
     """EventMetricOutcome Admin."""
     model = EventMetricOutcome
     list_display = ('event', 'metric', 'outcome')

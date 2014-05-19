@@ -21,7 +21,7 @@ STATUS = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED', 'READY', 'RESOLVED',
 class BugFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Bug
 
-    bug_id = fuzzy.FuzzyInteger(70000, 80000)
+    bug_id = fuzzy.FuzzyInteger(50000, 200000)
     bug_creation_time = fuzzy.FuzzyDateTime(CREATION_DT, CHANGE_DT)
     bug_last_change_time = fuzzy.FuzzyDateTime(CHANGE_DT, DUE_DT)
     creator = factory.SubFactory(UserFactory)
