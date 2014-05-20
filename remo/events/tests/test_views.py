@@ -647,11 +647,12 @@ class ViewsTest(TestCase):
         self.assertTemplateUsed(response, 'view_event.html')
 
         mock_success.assert_called_with(ANY, 'Email sent successfully.')
-        eq_(len(mail.outbox), 4)
+        eq_(len(mail.outbox), 1)
 
-        for i in range(0, len(mail.outbox)):
-            eq_(len(mail.outbox[i].cc), 1)
-            eq_(len(mail.outbox[i].to), 1)
+        eq_(len(mail.outbox[0].cc), 1)
+        eq_(len(mail.outbox[0].to), 1)
+        eq_(len(mail.outbox[0].bcc), 3)
+        eq_(len(mail.outbox[0].recipients()), 5)
 
     @mock.patch('remo.events.views.iri_to_uri', wraps=iri_to_uri)
     def test_view_redirect_list_events(self, mocked_uri):
