@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
 OPTIONAL_PARAMETER_REGEX = '(?:/(?P<day>\d+)/(?P<id>\d+))?'
 

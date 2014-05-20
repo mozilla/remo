@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from django.core.urlresolvers import reverse_lazy
 
 from remo.base.views import (BaseCreateView, BaseDeleteView, BaseListView,
