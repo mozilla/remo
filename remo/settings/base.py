@@ -159,6 +159,6 @@ ITEMS_PER_PAGE = 25
 import djcelery
 djcelery.setup_loader()
 
-MAPBOX_TOKEN = 'examples.map-vyofok3q'
+MAPBOX_TOKEN = 'examples.map-i86nkdio'
 
 SERVER_EMAIL = 'reps-dev@mozilla.com'
