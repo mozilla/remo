@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
 
 FUNCTIONAL_AREA_REGEX = 'functional-area/(?P<functional_area_slug>.+)'
