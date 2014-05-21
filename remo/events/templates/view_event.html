@@ -407,6 +407,14 @@ Mozilla Reps - {{ event.name }}
               </span>
               {{ event.estimated_attendance }}
             </p>
+            {% if event.actual_attendance %}
+              <p>
+                <span class="label inline">
+                  Actual Attendance
+                </span>
+                {{ event.actual_attendance }}
+              </p>
+            {% endif %}
           {% endif %}
 
           <!-- End of listing of organizer and attendees -->
@@ -426,7 +434,7 @@ Mozilla Reps - {{ event.name }}
                 <form method="post" action="{{ url('events_subscribe_to_event', slug=event.slug) }}">
                   {{ csrf() }}
                   <button class="small button">
-                    {% if is_past_event(event) %}
+                    {% if event.is_past_event %}
                       I attended this event
                     {% else %}
                       I will attend this event
@@ -439,7 +447,7 @@ Mozilla Reps - {{ event.name }}
                 <form method="post" action="{{ url('events_unsubscribe_from_event', slug=event.slug) }}">
                   {{ csrf() }}
                   <button class="small button alert">
-                    {% if is_past_event(event) %}
+                    {% if event.is_past_event %}
                       I missed this event
                     {% else %}
                       I will miss this event
@@ -540,14 +548,45 @@ Mozilla Reps - {{ event.name }}
               </p>
               <p>
                 <span class="label inline">
-                  Success scenario #{{ loop.index }}
+                  Goal #{{ loop.index }}
                 </span>
                 {{ stat.expected_outcome }}
               </p>
+              {% if stat.outcome and event.is_past_event %}
+                <p>
+                  <span class="label inline">
+                    Actual outcome #{{ loop.index }}
+                  </span>
+                  {{ stat.outcome }}
+                </p>
+              {% endif %}
             </div>
           </div>
         {% endfor %}
 
+        <!-- For compatibility, show legacy metrics -->
+        {% set metrics_offset = event.eventmetricoutcome_set.all().count() %}
+        {% for metric in event.metric_set.all() %}
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large graph"></div>
+            </div>
+            <div class="large-11 columns">
+              <p>
+                <span class="label inline">
+                  Metric #{{ loop.index + metrics_offset }}
+                </span>
+                {{ metric.title }}
+              </p>
+              <p>
+                <span class="label inline">
+                  Goal #{{ loop.index + metrics_offset }}
+                </span>
+                {{ metric.outcome }}
+              </p>
+            </div>
+          </div>
+        {% endfor %}
       </div>
     </div>
   {% endif %}
