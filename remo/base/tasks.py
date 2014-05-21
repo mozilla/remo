@@ -10,7 +10,7 @@ from celery.task import task
 @task
 def send_remo_mail(subject, recipients_list, sender=None,
                    message=None, email_template=None, data=None,
-                   headers=None):
+                   headers=None, bcc=False):
     """Send email from /sender/ to /recipients_list/ with /subject/ and
     /message/ as body.
 
@@ -31,6 +31,8 @@ def send_remo_mail(subject, recipients_list, sender=None,
     # Make sure subject is one line.
     subject = subject.replace('\n', ' ')
 
+    # Prepare the list of recipients
+    list_of_recipients = []
     for recipient in recipients_list:
         to = ''
         if (isinstance(recipient, long) and
@@ -43,17 +45,27 @@ def send_remo_mail(subject, recipients_list, sender=None,
         elif email_re.match(recipient):
             to = recipient
         else:
-            return
+            continue
+        list_of_recipients.append(to)
 
-        if email_template:
-            message = render_to_string(email_template, data)
+    if email_template:
+        message = render_to_string(email_template, data)
 
-        if not sender:
-            email = EmailMessage(subject=subject, body=message,
-                                 from_email=settings.FROM_EMAIL,
-                                 to=[to], headers=headers)
-        else:
-            email = EmailMessage(subject=subject, body=message,
-                                 from_email=sender, to=[to], cc=[sender],
-                                 headers=headers)
-        email.send()
+    if not list_of_recipients:
+        return
+
+    kwargs = {'subject': subject,
+              'body': message,
+              'headers': headers,
+              'from_email': settings.FROM_EMAIL,
+              'to': list_of_recipients}
+
+    if sender:
+        kwargs['from_email'] = sender
+        kwargs['cc'] = [sender]
+
+    if bcc and (len(list_of_recipients) > 1):
+        kwargs['to'] = [list_of_recipients.pop(0)]
+        kwargs['bcc'] = list_of_recipients
+
+    EmailMessage(**kwargs).send()

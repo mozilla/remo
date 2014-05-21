@@ -32,13 +32,16 @@ def poll_vote_reminder():
             valid_users = User.objects.filter(groups=poll.valid_groups)
             recipients = (valid_users.exclude(pk__in=poll.users_voted.all())
                                      .values_list('id', flat=True))
-            subject = ('[Reminder][Voting] Please cast your vote '
-                       'for "%s" now!' % poll.name)
-            template_reminder = 'emails/voting_vote_reminder.txt'
-            ctx_data = {'poll': poll}
-            send_remo_mail.delay(subject=subject, recipients_list=recipients,
-                                 email_template=template_reminder,
-                                 data=ctx_data)
+            for recipient in recipients:
+                subject = ('[Reminder][Voting] Please cast your vote '
+                           'for "%s" now!' % poll.name)
+                template_reminder = 'emails/voting_vote_reminder.txt'
+                ctx_data = {'poll': poll}
+                send_remo_mail.delay(subject=subject,
+                                     recipients_list=[recipient],
+                                     email_template=template_reminder,
+                                     data=ctx_data)
+
             Poll.objects.filter(pk=poll.pk).update(last_notification=now())
 
 

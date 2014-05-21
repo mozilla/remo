@@ -327,4 +327,13 @@ class EmailMentorNotification(TestCase):
                                   userprofile__mentor=old_mentor)
         user.userprofile.mentor = new_mentor
         user.userprofile.save()
-        eq_(len(mail.outbox), 3)
+        eq_(len(mail.outbox), 1)
+        recipients = ['%s %s <%s>' % (new_mentor.first_name,
+                                      new_mentor.last_name,
+                                      new_mentor.email),
+                      '%s %s <%s>' % (old_mentor.first_name,
+                                      old_mentor.last_name,
+                                      old_mentor.email),
+                      '%s %s <%s>' % (user.first_name, user.last_name,
+                                      user.email)]
+        eq_(set(recipients), set(mail.outbox[0].to))

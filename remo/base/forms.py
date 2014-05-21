@@ -53,7 +53,8 @@ class EmailUsersForm(BaseEmailUsersFrom):
             send_remo_mail.delay(sender=from_email,
                                  recipients_list=recipients_list,
                                  subject=self.cleaned_data['subject'],
-                                 message=self.cleaned_data['body'])
+                                 message=self.cleaned_data['body'],
+                                 bcc=True)
             messages.success(request, 'Email sent successfully.')
         else:
             messages.error(request, ('Email not sent. Please select at '
