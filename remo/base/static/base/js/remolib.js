@@ -182,15 +182,17 @@ function addAttributionOSM(map) {
 /*
  * Initialize date picker widget and set ISO date format
  * If the field is empty, pre-populate with current date
+ * unless is explicity defined not to
  */
-function initDatePicker () {
+function initDatePicker (prepopulate_date) {
+    var prepopulate_flag = (prepopulate_date === undefined) ? true : false;
     var $input = $('input.datepicker');
     $input.datepicker({
         autoSize: true,
         dateFormat: 'dd MM yy'
     });
 
-    if ($input.val() === '') {
+    if ($input.val() === '' && prepopulate_flag) {
         $input.datepicker('setDate', Date.now());
     }
     else {

@@ -41,13 +41,13 @@
               </label>
               <div id="availability-date"
                   class="has-tip tip-left"
-                  title="Date of activity in UTC"
-                  placeholder="DD-MM-YYYY"
+                  title="Expected return date"
                   data-tooltip
                   data-options="disable-for-touch:true">
                 {{ field_with_attrs(status_form.expected_date,
                                     class="datepicker",
                                     autocomplete="off",
+                                    placeholder="DD-MM-YYYY",
                                     readonly="readonly") }}
               </div>
               {{ field_errors(status_form.expected_date) }}
