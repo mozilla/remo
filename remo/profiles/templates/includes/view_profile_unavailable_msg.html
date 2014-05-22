@@ -1,7 +1,15 @@
 <div id="unavailable-profile-msg">
-  You 're currently unavailable until
-  {{ user_status.expected_date.strftime('%d %B %Y') }}.
-  Want to  <a href="{{ url('edit_availability', user_status.user.userprofile.display_name) }}">
-    become available again?
-  </a>
+  {% macro display_date() %}
+    {% if not is_past_date %}
+      until {{ user_status.expected_date.strftime('%d %B %Y') }}
+    {% endif %}
+  {% endmacro %}
+  {% if is_owner %}
+    You 're currently unavailable {{ display_date() }}.
+    Want to  <a href="{{ url('edit_availability', user_status.user.userprofile.display_name) }}">
+      become available again?
+    </a>
+  {% else %}
+    {{ user_status.user.get_full_name() }} is unavailable {{ display_date() }}.
+  {% endif %}
 </div>
