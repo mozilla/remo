@@ -141,6 +141,10 @@ def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
+    is_owner = False
+    if user == request.user:
+        is_owner = True
+
     if not user.groups.filter(name='Rep').exists():
         raise Http404
 
@@ -157,8 +161,13 @@ def view_profile(request, display_name):
 
     if user.userprofile.is_unavailable:
         status = UserStatus.objects.filter(user=user).latest('created_on')
+        is_past_date = False
+        if status.expected_date < timezone.now().date():
+            is_past_date = True
         msg = render_to_string('includes/view_profile_unavailable_msg.html',
-                               {'user_status': status})
+                               {'user_status': status,
+                                'is_owner': is_owner,
+                                'is_past_date': is_past_date})
         data['user_status'] = status
         messages.info(request, mark_safe(msg))
 
