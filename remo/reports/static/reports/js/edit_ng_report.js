@@ -64,6 +64,10 @@
         $('#id_longitude').val(lon);
 
         doReverseGeo(lon, lat, $('#id_location'));
+
+        // once the user selects a location
+        // make the field user editable
+        $('#id_location').removeAttr('readonly');
     });
 
     // Set campaign input visibility on select field change
