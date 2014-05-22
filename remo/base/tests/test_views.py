@@ -711,7 +711,8 @@ class EditUserStatusTests(RemoTestCase):
 
     @requires_login()
     def test_get_as_anonymous(self):
-        user = UserFactory.create()
+        mentor = UserFactory.create()
+        user = UserFactory.create(userprofile__mentor=mentor)
         display_name = user.userprofile.display_name
         UserStatusFactory.create(user=user)
         client = Client()
@@ -719,7 +720,8 @@ class EditUserStatusTests(RemoTestCase):
                            kwargs={'display_name': display_name}))
 
     def test_get_as_owner(self):
-        user = UserFactory.create()
+        mentor = UserFactory.create()
+        user = UserFactory.create(userprofile__mentor=mentor)
         display_name = user.userprofile.display_name
         UserStatusFactory.create(user=user)
         url = reverse('edit_availability',
@@ -729,7 +731,8 @@ class EditUserStatusTests(RemoTestCase):
 
     @requires_permission()
     def test_get_as_other_rep(self):
-        user = UserFactory.create()
+        mentor = UserFactory.create()
+        user = UserFactory.create(userprofile__mentor=mentor)
         rep = UserFactory.create()
         display_name = user.userprofile.display_name
         UserStatusFactory.create(user=user)

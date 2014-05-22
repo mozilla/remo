@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
 from django.views import generic
@@ -332,6 +333,9 @@ def stats_dashboard(request):
 def edit_settings(request):
     """Edit user settings."""
     user = request.user
+    if user.groups.filter(name='Mozillians').exists():
+        raise Http404
+
     form = forms.EditSettingsForm(request.POST or None,
                                   instance=user.userprofile)
     if request.method == 'POST' and form.is_valid():
@@ -356,6 +360,9 @@ def edit_availability(request, display_name):
     args = {}
     created = False
 
+    if user.groups.filter(name='Mozillians').exists():
+        raise Http404()
+
     if user.userprofile.is_unavailable:
         status = UserStatus.objects.filter(user=user).latest('created_on')
     else:
@@ -376,10 +383,17 @@ def edit_availability(request, display_name):
 
         if created and email_mentor_form.is_valid():
             expected_date = status_form.cleaned_data['expected_date']
+            msg = email_mentor_form.cleaned_data['body']
             subject = ('[Rep unavailable] Mentee %s will be unavailable '
                        'from %s' % (request.user.get_full_name(),
                                     expected_date.strftime('%d %B %Y')))
-            email_mentor_form.send_email(request, subject)
+            template = 'emails/mentor_unavailability_notification.txt'
+
+            subject = ('[Mentee %s] Mentee will be unavailable '
+                       'until %s' % (request.user.get_full_name(),
+                                     expected_date.strftime('%d %B %Y')))
+            email_mentor_form.send_email(request, subject, msg, template,
+                                         {'user_status': status})
         messages.success(request, 'Request submitted successfully.')
         return redirect('dashboard')
 
