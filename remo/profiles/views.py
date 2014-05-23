@@ -157,10 +157,12 @@ def view_profile(request, display_name):
 
     if user.userprofile.is_unavailable:
         status = UserStatus.objects.filter(user=user).latest('created_on')
-        msg = render_to_string('includes/view_profile_unavailable_msg.html',
-                               {'user_status': status})
         data['user_status'] = status
-        messages.info(request, mark_safe(msg))
+        if user == request.user:
+            msg = render_to_string(
+                'includes/view_profile_unavailable_msg.html',
+                {'user_status': status})
+            messages.info(request, mark_safe(msg))
 
     today = timezone.now().date()
 
