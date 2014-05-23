@@ -72,16 +72,6 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
   </div>
   <div class="row">
     <div class="large-6 columns">
-      {% if user_profile.bio %}
-        <div class="row">
-          <div class="large-1 columns pictogram">
-            <div class="pict-icon large edit"></div>
-          </div>
-          <div class="large-11 columns markdown">
-            {{ user_profile.bio|markdown }}
-          </div>
-        </div>
-      {% endif %}
       {% if user_profile.is_unavailable %}
         <div class="row">
           <div class="large-1 columns pictogram">
@@ -107,6 +97,16 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
                 </a>
               </p>
             {% endif %}
+          </div>
+        </div>
+      {% endif %}
+      {% if user_profile.bio %}
+        <div class="row">
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large edit"></div>
+          </div>
+          <div class="large-11 columns markdown">
+            {{ user_profile.bio|markdown }}
           </div>
         </div>
       {% endif %}
