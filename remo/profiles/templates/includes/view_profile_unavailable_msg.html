@@ -1,7 +1,6 @@
 <div id="unavailable-profile-msg">
-  You 're currently unavailable until
-  {{ user_status.expected_date.strftime('%d %B %Y') }}.
-  Want to  <a href="{{ url('edit_availability', user_status.user.userprofile.display_name) }}">
+  You 're currently unavailable {%- if date %} until {{ date }} {% endif -%}.
+  Want to  <a href="{{ url('edit_availability', display_name) }}">
     become available again?
   </a>
 </div>
