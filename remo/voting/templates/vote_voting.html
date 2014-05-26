@@ -25,7 +25,9 @@ Mozilla Reps - {{ poll.name }} - Vote
             Edit voting
           </a>
         {% endif %}
-        <button class="button small confirm">Vote</button>
+        {% if poll.is_current_voting and not user_voted %}
+          <button class="button small confirm">Vote</button>
+        {% endif %}
       </div>
     </div>
 
@@ -196,66 +198,30 @@ Mozilla Reps - {{ poll.name }} - Vote
         {% endif %}
 
         {% if radio_poll_choice_forms %}
-        <div class="row">
-          <div class="large-1 columns">
-            <div class="pict-icon large list"></div>
-          </div>
-          <div class="large-11 columns">
-            <div class="meter-container">
-              <span class="meter_text">{{ poll|get_meter_value }}%</span>
-              <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
-                <div class="progressbar">
-                  <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
-                </div>
-              </meter>
-            </div>
-            <p>
-              {% for radio_poll, choice_form in radio_poll_choice_forms.items() %}
-                <span class="label">
-                  Vote for {{ radio_poll.question }}
-                </span>
-                {% for choice in choice_form %}
-                  {{ choice }}
-                  {{ field_errors(choice) }}
-                {% endfor %}
-              {% endfor %}
-            </p>
-          </div>
-        </div>
-        {% endif %}
-
-        {% if poll.automated_poll %}
           <div class="row">
-            <div class="large-12 columns">
-              <div class="row report-box">
-                <div class="columns comment-icon">
-                  <div class="pict-icon large talk"></div>
-                </div>
-                <div class="columns report-item comment-item">
-                  {% for comment in poll.comments.all() %}
-                    <div class="report-comment">
-                      <span class="white radius label">
-                        Comment {{ loop.index }}
-                      </span>
-                      <span class="grayed">by </span>
-                        <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
-                          {{ comment.user.get_full_name() }}
-                        </a>
-                      <span class="grayed"
-                            data-time="{{ comment.created_on|format_datetime_iso }}"
-                            title="{{ comment.created_on }}">
-                        at {{ comment.created_on }}
-                      </span><br>
-                      {{ comment.comment }}
-                    </div>
-                  {% endfor %}
-                  <div id="report-comment-post">
-                    {{ field_with_attrs(poll_comment_form.comment,
-                                        class="flat",
-                                        placeholder="Add comment to this poll") }}
+            <div class="large-1 columns">
+              <div class="pict-icon large list"></div>
+            </div>
+            <div class="large-11 columns">
+              <div class="meter-container">
+                <span class="meter_text">{{ poll|get_meter_value }}%</span>
+                <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                  <div class="progressbar">
+                    <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
                   </div>
-                </div>
+                </meter>
               </div>
+              <p>
+                {% for radio_poll, choice_form in radio_poll_choice_forms.items() %}
+                  <span class="label">
+                    Vote for {{ radio_poll.question }}
+                  </span>
+                  {% for choice in choice_form %}
+                    {{ choice }}
+                    {{ field_errors(choice) }}
+                  {% endfor %}
+                {% endfor %}
+              </p>
             </div>
           </div>
         {% endif %}
@@ -268,13 +234,69 @@ Mozilla Reps - {{ poll.name }} - Vote
                 Edit voting
               </a>
             {% endif %}
-            <button class="button small confirm">Vote</button>
+            {% if poll.is_current_voting and not user_voted %}
+              <button class="button small confirm">Vote</button>
+            {% endif %}
           </div>
         </div>
-
       </div>
     </div>
   </form>
+
+  <!-- Comments -->
+  {% if poll.comments_allowed %}
+    <div class="row">
+      <div class="large-12 columns">
+        <div class="row report-box">
+          <div class="columns comment-icon">
+            <div class="pict-icon large talk"></div>
+          </div>
+          <div class="columns report-item comment-item">
+            {% for comment in poll.comments.all() %}
+              <div class="report-comment">
+                {% if perms.voting.delete_pollcomment or
+                      comment.user == request.user %}
+                  <form method="post" action="{{ comment.get_absolute_delete_url() }}">
+                    {{ csrf() }}
+                    <button type="submit" class="report-delete-comment">&#215;</button>
+                  </form>
+                {% endif %}
+                <span class="label inline">
+                  Comment {{ loop.index }}
+                </span>
+                <span class="grayed">by </span>
+                  <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
+                    {{ comment.user.get_full_name() }}
+                  </a>
+                <span class="grayed"
+                      data-time="{{ comment.created_on|format_datetime_iso }}"
+                      title="{{ comment.created_on }}">
+                  at {{ comment.created_on }}
+                </span><br>
+                {{ comment.comment }}
+              </div>
+            {% endfor %}
+            <div id="report-comment-post">
+              <form method="post" actions="{{ poll.get_absolute_url() }}"
+                    class="custom">
+                {{ csrf() }}
+                {{ field_with_attrs(comment_form.comment,
+                                    class="flat",
+                                    placeholder="Add comment to this poll") }}
+                {{ field_errors(comment_form.comment) }}
+                <div id="post-comment" class="align-right">
+                  <button type="submit" class="small button">
+                    Post comment
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
 </main>
 {% endblock %}
 

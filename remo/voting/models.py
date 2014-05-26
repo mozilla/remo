@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from celery.task import control as celery_control
+from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.conf import settings
 from django.contrib.auth.models import Group, User
@@ -45,6 +46,11 @@ class Poll(models.Model):
     last_notification = models.DateTimeField(null=True)
     bug = models.ForeignKey(Bug, null=True, blank=True)
     automated_poll = models.BooleanField(default=False)
+    comments_allowed = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse('remo.voting.views.view_voting',
+                       args=[self.slug])
 
     @property
     def is_future_voting(self):
@@ -55,6 +61,12 @@ class Poll(models.Model):
     @property
     def is_current_voting(self):
         if self.start < now() and self.end > now():
+            return True
+        return False
+
+    @property
+    def is_past_voting(self):
+        if self.end < now():
             return True
         return False
 
@@ -134,6 +146,10 @@ class PollComment(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
 
+    def get_absolute_delete_url(self):
+        return reverse('remo.voting.views.delete_poll_comment',
+                       args=[self.poll.slug, self.id])
+
     class Meta:
         ordering = ['created_on']
 
@@ -200,7 +216,8 @@ def voting_set_groups(app, sender, signal, **kwargs):
 
     permissions = {'add_poll': ['Admin', 'Council', 'Mentor'],
                    'delete_poll': ['Admin', 'Council', 'Mentor'],
-                   'change_poll': ['Admin', 'Council', 'Mentor']}
+                   'change_poll': ['Admin', 'Council', 'Mentor'],
+                   'delete_pollcomment': ['Admin', 'Council', 'Mentor']}
 
     add_permissions_to_groups('voting', permissions)
 

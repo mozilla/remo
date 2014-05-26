@@ -1,7 +1,7 @@
 {% extends "base_fd4.html" %}
 
 {% block pagetitle %}
-{% if creating %}
+{% if created %}
   Mozilla Reps - Create Voting
 {% else %}
   Mozilla Reps - Edit {{ poll.name }}
@@ -19,7 +19,7 @@
         </div>
       {% endif %}
       <div class="large-8 columns">
-        {% if creating %}
+        {% if created %}
           <h1>Creating new voting</h1>
         {% else %}
           <h1>Editing {{ poll.name }}</h1>
@@ -63,6 +63,13 @@
                 </small>
               {% endfor %}
             {% endif %}
+            <p>
+              {{ poll_form.comments_allowed }}
+              <label for="id_comments_allowed">
+                {{ poll_form.comments_allowed.label }}
+              </label>
+              {{ field_errors(poll_form.comments_allowed) }}
+            </p>
           </div>
         </div>
       </div>

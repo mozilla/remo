@@ -8,8 +8,8 @@ import factory
 from factory import fuzzy
 
 from remo.profiles.tests import UserFactory
-from remo.voting.models import (Poll, RadioPoll, RadioPollChoice, RangePoll,
-                                RangePollChoice, Vote)
+from remo.voting.models import (Poll, PollComment, RadioPoll, RadioPollChoice,
+                                RangePoll, RangePollChoice, Vote)
 
 
 VALID_GROUPS = [Group.objects.get(name='Admin'),
@@ -79,3 +79,11 @@ class RangePollChoiceFactory(factory.django.DjangoModelFactory):
     votes = 0
     range_poll = factory.SubFactory(RangePollFactory)
     nominee = factory.SubFactory(UserFactory)
+
+
+class PollCommentFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = PollComment
+
+    user = factory.SubFactory(UserFactory, userprofile__initial_council=True)
+    poll = factory.SubFactory(PollFactory)
+    comment = factory.Sequence(lambda n: 'Comment #{0}'.format(n))

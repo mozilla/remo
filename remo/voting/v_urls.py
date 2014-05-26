@@ -7,4 +7,7 @@ urlpatterns = patterns(
     url(r'^(?P<slug>[a-z0-9-]+)/$', 'view_voting',
         name='voting_view_voting'),
     url(r'^(?P<slug>[a-z0-9-]+)/delete/$', 'delete_voting',
-        name='voting_delete_voting'))
+        name='voting_delete_voting'),
+    url(r'^(?P<slug>[a-z0-9-]+)/comment/(?P<comment_id>\d+)/delete/$',
+        'delete_poll_comment', name='voting_delete_poll_comment'),
+)

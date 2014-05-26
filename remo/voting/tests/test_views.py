@@ -7,9 +7,10 @@ from django.test.client import Client, RequestFactory
 from django.utils.timezone import make_aware, now
 
 import mock
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 from test_utils import TestCase
 
+from remo.base.tests import RemoTestCase
 from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
 from remo.voting.models import (Poll, PollComment, RadioPoll, RadioPollChoice,
@@ -431,3 +432,22 @@ class ViewsTest(TestCase):
         for m in response.context['messages']:
             pass
         eq_(m.tags, u'success')
+
+
+class VotingCommentingSystem(RemoTestCase):
+
+    @mock.patch('remo.voting.views.messages.success')
+    @mock.patch('remo.voting.views.forms.PollCommentForm')
+    def test_post_a_comment(self, form_mock, messages_mock):
+        user = UserFactory.create(groups=['Rep'])
+        group = Group.objects.get(name='Rep')
+        poll = PollFactory.create(created_by=user, valid_groups=group)
+        form_mock.is_valid.return_value = True
+        response = self.post(url=poll.get_absolute_url(),
+                             user=user, data={'comment': 'This is a comment'})
+        eq_(response.status_code, 200)
+        messages_mock.assert_called_with(
+            mock.ANY, 'Comment saved successfully.')
+        ok_(form_mock().save.called)
+        eq_(response.context['poll'], poll)
+        self.assertTemplateUsed('vote_voting.html')
