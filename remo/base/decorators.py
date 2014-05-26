@@ -91,6 +91,17 @@ def permission_check(permissions=[], group=None,
 
 class PermissionMixin(object):
     """Permission mixin for base content views."""
-    @method_decorator(permission_check(group='Admin'))
+    groups = ['Admin']
+
+    def __init__(self, **kwargs):
+        groups = kwargs.pop('groups', None)
+        if groups:
+            self.groups = groups
+        super(PermissionMixin, self).__init__(**kwargs)
+
+    @method_decorator(permission_check())
     def dispatch(self, request, *args, **kwargs):
+        if not request.user.groups.filter(name__in=self.groups).exists():
+            messages.error(request, 'Permission denied.')
+            return redirect('main')
         return super(PermissionMixin, self).dispatch(request, *args, **kwargs)

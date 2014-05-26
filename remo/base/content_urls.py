@@ -92,19 +92,23 @@ urlpatterns = patterns(
     url('^metrics/$',
         BaseListView.as_view(
             model=EventMetric,
-            create_object_url=reverse_lazy('create_metric')),
+            create_object_url=reverse_lazy('create_metric'),
+            groups=['Admin', 'Council']),
         name='list_metrics'),
     url('^metrics/(?P<pk>\d+)/delete/$',
         BaseDeleteView.as_view(
+            groups=['Admin', 'Council'],
             model=EventMetric, success_url=reverse_lazy('list_metrics')),
         name='delete_metric'),
     url('^metrics/new/$',
         BaseCreateView.as_view(
+            groups=['Admin', 'Council'],
             model=EventMetric, form_class=EventMetricForm,
             success_url=reverse_lazy('list_metrics')),
         name='create_metric'),
     url('^metrics/(?P<pk>\d+)/edit/$',
         BaseUpdateView.as_view(
+            groups=['Admin', 'Council'],
             model=EventMetric, form_class=EventMetricForm,
             success_url=reverse_lazy('list_metrics')),
         name='edit_metric'),
