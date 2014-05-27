@@ -180,15 +180,13 @@ def view_voting(request, slug):
             if not item.is_valid():
                 forms_valid = False
                 break
-        if poll.automated_poll and not poll_comment_form.is_valid():
-            forms_valid = False
 
         if forms_valid:
             for range_poll_form in range_poll_choice_forms.values():
                 range_poll_form.save()
             for radio_poll_form in radio_poll_choice_forms.values():
                 radio_poll_form.save()
-            if poll.automated_poll:
+            if poll.automated_poll and poll_comment_form.is_valid():
                 poll_comment_form.save()
                 statsd.incr('voting.create_automated_poll_comment')
             Vote.objects.create(user=user, poll=poll)
