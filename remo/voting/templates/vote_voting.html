@@ -9,7 +9,8 @@ Mozilla Reps - {{ poll.name }} - Vote
   <form method="post">
     {{ csrf() }}
     <div class="row">
-      {% if range_poll_choice_forms.errors or radio_poll_choice_forms.errors %}
+      {% if range_poll_choice_forms|formset_errors_exist or
+            radio_poll_choice_forms|formset_errors_exist %}
         <div class="large-12 columns">
           <small class="error">Please correct the errors below.</small>
         </div>
@@ -249,8 +250,9 @@ Mozilla Reps - {{ poll.name }} - Vote
                     </div>
                   {% endfor %}
                   <div id="report-comment-post">
-                   <textarea name="comment" class="flat"
-                             placeholder="Add comment for this poll"></textarea>
+                    {{ field_with_attrs(poll_comment_form.comment,
+                                        class="flat",
+                                        placeholder="Add comment to this poll") }}
                   </div>
                 </div>
               </div>
