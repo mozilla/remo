@@ -1,5 +1,5 @@
-import datetime
 import time
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.utils.timezone import now
@@ -7,11 +7,11 @@ from django.utils.timezone import now
 from cronjobs import register
 
 from remo.base.tasks import send_remo_mail
+from remo.base.utils import get_date
 from remo.voting.models import Poll
 
-# Intervals in seconds
-NOTIFICATION_INTERVAL = 8 * 3600
-EXTEND_VOTING_PERIOD = 24 * 3600
+NOTIFICATION_INTERVAL = 24 * 3600  # 24 hours
+EXTEND_VOTING_PERIOD = 24 * 3600  # 24 hours
 
 
 @register
@@ -28,7 +28,7 @@ def poll_vote_reminder():
 
         time_diff = (time.mktime(now().timetuple()) -
                      time.mktime(last_notification.timetuple()))
-        if time_diff > NOTIFICATION_INTERVAL:
+        if time_diff >= NOTIFICATION_INTERVAL:
             valid_users = User.objects.filter(groups=poll.valid_groups)
             recipients = (valid_users.exclude(pk__in=poll.users_voted.all())
                                      .values_list('id', flat=True))
@@ -44,12 +44,14 @@ def poll_vote_reminder():
 
 @register
 def extend_voting_period():
-    """Extend the voting period by 24hours if
-    less than 50% of the Council members has voted
-    and the poll ends in less than NOTIFICATION_INTERVAL.
+    """Extend voting period by EXTEND_VOTING_PERIOD if less than 50% of
+    the Council has votes and the poll ends tomorrow.
 
     """
-    polls = Poll.objects.filter(start__lte=now(), end__gt=now(),
+    tomorrow = get_date(days=1)
+    polls = Poll.objects.filter(end__year=tomorrow.year,
+                                end__month=tomorrow.month,
+                                end__day=tomorrow.day,
                                 automated_poll=True)
 
     for poll in polls:
@@ -59,8 +61,6 @@ def extend_voting_period():
                                   .exclude(pk__in=poll.users_voted.all())
                                   .count())
         half_voted = vote_count < missing_vote_count
-        time_diff = (time.mktime(now().timetuple()) -
-                     time.mktime(poll.end.timetuple()))
-        if time_diff < NOTIFICATION_INTERVAL and half_voted:
-            poll.end += datetime.timedelta(seconds=EXTEND_VOTING_PERIOD)
+        if half_voted:
+            poll.end += timedelta(seconds=EXTEND_VOTING_PERIOD)
             poll.save()
