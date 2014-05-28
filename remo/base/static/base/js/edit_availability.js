@@ -24,7 +24,7 @@
 
 
     // set date picker defaults
-    initDatePicker();
+    initDatePicker(false);
     $('#replacement-rep-radio').on('change', setReplacementRepPanel);
     setReplacementRepPanel();
 

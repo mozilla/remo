@@ -12,6 +12,7 @@ from django_browserid.auth import default_username_algo
 from product_details import product_details
 from pytz import common_timezones
 
+from remo.base.utils import get_date
 from remo.profiles.models import FunctionalArea, UserProfile, UserStatus
 
 
@@ -191,6 +192,13 @@ class UserStatusForm(happyforms.ModelForm):
         """Clean Form."""
         super(UserStatusForm, self).clean()
         cdata = self.cleaned_data
+
+        tomorrow = get_date(days=1)
+        if cdata['expected_date'] < tomorrow:
+            msg = ('Return day cannot be earlier than {return_day}'
+                   .format(return_day=tomorrow.strftime('%d %B %Y')))
+            self._errors['expected_date'] = self.error_class([msg])
+            del cdata['expected_date']
 
         if ('is_replaced' in cdata and
                 cdata['is_replaced'] and not cdata['replacement_rep']):
