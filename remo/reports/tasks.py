@@ -65,7 +65,11 @@ def send_first_report_notification():
         groups__name='Rep',
         userprofile__registration_complete=True,
         userprofile__first_report_notification__isnull=True)
-    inactive_users = users.exclude(ng_reports__report_date__range=[start, end])
+    # Exclude users with a report filed between start and end period
+    # and users who joined the program less than one month
+    inactive_users = users.exclude(
+        ng_reports__report_date__range=[start, end],
+        userprofile__date_joined_program__gt=start)
 
     send_report_notification(inactive_users, weeks=4)
     for user in inactive_users:
@@ -85,7 +89,11 @@ def send_second_report_notification():
         userprofile__registration_complete=True,
         userprofile__first_report_notification__lte=today - timedelta(weeks=4),
         userprofile__second_report_notification__isnull=True)
-    inactive_users = users.exclude(ng_reports__report_date__range=[start, end])
+    # Exclude users with a report filed between start and end period
+    # and users who joined the program less than one month
+    inactive_users = users.exclude(
+        ng_reports__report_date__range=[start, end],
+        userprofile__date_joined_program__gt=start)
 
     send_report_notification(inactive_users, weeks=8)
     for user in inactive_users:
