@@ -8,13 +8,17 @@ from django.core.validators import MinValueValidator
 from django.utils.timezone import make_naive, now
 from product_details import product_details
 
+from django_statsd.clients import statsd
 from pytz import common_timezones, timezone
 
 from datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.helpers import get_full_name
-from remo.base.utils import validate_datetime
+from remo.base.utils import get_date, validate_datetime
 from remo.events.models import EventGoal, EventMetric
+from remo.events.helpers import get_event_link
 from remo.profiles.models import FunctionalArea
+from remo.reports import ACTIVITY_POST_EVENT_METRICS
+from remo.reports.models import Activity, NGReport
 from remo.remozilla.models import Bug
 
 from models import Event, EventComment, EventMetricOutcome
@@ -308,6 +312,32 @@ class PostEventForm(EventForm):
     actual_attendance = forms.IntegerField(
         validators=[MinValueValidator(1)],
         error_messages={'invalid': 'Please enter a number.'})
+
+    def save(self, *args, **kwargs):
+        """Create post event data report."""
+        super(PostEventForm, self).save()
+
+        event = self.instance
+        activity = Activity.objects.get(name=ACTIVITY_POST_EVENT_METRICS)
+        reports = NGReport.objects.filter(event=event, activity=activity)
+
+        if not reports:
+            up = event.owner.userprofile
+            attrs = {
+                'activity': activity,
+                'report_date': get_date(),
+                'longitude': up.lon,
+                'latitude': up.lat,
+                'location': '%s, %s, %s' % (up.city, up.region, up.country),
+                'link': get_event_link(event),
+                'is_passive': True,
+                'event': event,
+                'user': event.owner
+            }
+
+            report = NGReport.objects.create(**attrs)
+            report.functional_areas.add(*event.categories.all())
+            statsd.incr('reports.create_passive_post_event_metrics')
 
     class Meta(EventForm.Meta):
         fields = EventForm.Meta.fields + ['actual_attendance']

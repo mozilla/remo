@@ -4,12 +4,14 @@ from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
 from remo.events.forms import (BaseEventMetricsFormset, EventForm,
-                               EventMetricsForm)
+                               EventMetricsForm, PostEventForm)
 from remo.events.models import Event
 from remo.events.tests import (EventFactory, EventGoalFactory,
                                EventMetricFactory,
                                EventMetricOutcomeFactory)
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
+from remo.reports import ACTIVITY_POST_EVENT_METRICS
+from remo.reports.models import Activity, NGReport
 
 
 class InactiveCategoriesTest(RemoTestCase):
@@ -45,7 +47,7 @@ class InactiveCategoriesTest(RemoTestCase):
             ok_(area in result.categories.all())
 
 
-class EventMetricsFormset(RemoTestCase):
+class EventMetricsFormsetTest(RemoTestCase):
     def test_inactive_metrics_new(self):
         """Test active/inactive queryset in new event."""
         active_metrics = EventMetricFactory.create_batch(3)
@@ -65,7 +67,7 @@ class EventMetricsFormset(RemoTestCase):
                 ok_(metric in metric_field.queryset.all())
 
             for metric in inactive_metrics:
-                ok_(not metric in metric_field.queryset.all())
+                ok_(metric not in metric_field.queryset.all())
 
     def test_inactive_metrics_edit(self):
         """Test active/inactive queryset in event edit."""
@@ -93,39 +95,10 @@ class EventMetricsFormset(RemoTestCase):
     def test_invalid_formset(self):
         """Test unique metrics validation."""
         metrics = EventMetricFactory.create_batch(2)
-        categories = FunctionalAreaFactory.create_batch(3)
-        goals = EventGoalFactory.create_batch(3)
+        EventGoalFactory.create_batch(3)
+        FunctionalAreaFactory.create_batch(3)
 
         data = {
-            'name': u'Test edit event',
-            'description': u'This is a description',
-            'external_link': '',
-            'categories': [x.id for x in categories],
-            'goals': [x.id for x in goals],
-            'venue': u'Hackerspace.GR',
-            'lat': 38.01697,
-            'lon': 23.7314,
-            'city': u'Athens',
-            'region': u'Attica',
-            'country': u'Greece',
-            'start_form_0_month': 01,
-            'start_form_0_day': 25,
-            'start_form_0_year': 2014,
-            'start_form_1_hour': 04,
-            'start_form_1_minute': 01,
-            'end_form_0_month': 01,
-            'end_form_0_day': 03,
-            'end_form_0_year': 2018,
-            'end_form_1_hour': 03,
-            'end_form_1_minute': 00,
-            'timezone': u'Europe/Athens',
-            'mozilla_event': u'on',
-            'estimated_attendance': u'10',
-            'extra_content': u'This is extra content',
-            'planning_pad_url': u'',
-            'hashtag': u'#testevent',
-            'swag_bug_form': u'',
-            'budget_bug_form': u'',
             'eventmetricoutcome_set-0-id': '',
             'eventmetricoutcome_set-0-metric': metrics[0].id,
             'eventmetricoutcome_set-0-expected_outcome': 100,
@@ -148,3 +121,40 @@ class EventMetricsFormset(RemoTestCase):
         error_msg = 'This metric has already been selected.'
         ok_(not forms.is_valid())
         eq_(forms.errors[1]['metric'], error_msg)
+
+
+class PostEventFormTest(RemoTestCase):
+    def test_passive_report_save(self):
+        """Test that a passive report is created on form save()"""
+        start_form = {
+            'start_form_0_month': 1,
+            'start_form_0_day': 25,
+            'start_form_0_year': 2013,
+            'start_form_1_hour': 4,
+            'start_form_1_minute': 1}
+        end_form = {
+            'end_form_0_month': 1,
+            'end_form_0_day': 26,
+            'end_form_0_year': 2013,
+            'end_form_1_hour': 4,
+            'end_form_1_minute': 1}
+
+        owner = UserFactory.create(groups=['Rep', 'Mentor'])
+        areas = FunctionalAreaFactory.create_batch(2)
+        event = EventFactory.create(owner=owner, categories=areas)
+
+        data = model_to_dict(event)
+        data['categories'] = [x.id for x in areas]
+        data.update(start_form)
+        data.update(end_form)
+
+        form = PostEventForm(data=data, editable_owner=False, instance=event)
+
+        activity = Activity.objects.get(name=ACTIVITY_POST_EVENT_METRICS)
+        reports = NGReport.objects.filter(user=owner, activity=activity)
+        ok_(not reports.exists())
+        ok_(form.is_valid())
+        form.save()
+
+        reports = NGReport.objects.filter(user=owner, activity=activity)
+        ok_(reports.count(), 1)

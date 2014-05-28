@@ -44,7 +44,8 @@ class EventFactory(factory.django.DjangoModelFactory):
     lon = fuzzy.FuzzyInteger(-180, 180)
     external_link = 'example.com'
     owner = factory.SubFactory(UserFactory)
-    estimated_attendance = fuzzy.FuzzyChoice(ATTENDANCE_CHOICES)
+    estimated_attendance = fuzzy.FuzzyInteger(1, 100)
+    actual_attendance = fuzzy.FuzzyInteger(1, 100)
     description = 'This is an event description.'
     extra_content = 'Extra content for event page.'
     mozilla_event = fuzzy.FuzzyChoice([True, False])

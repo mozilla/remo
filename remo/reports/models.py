@@ -21,8 +21,8 @@ from remo.base.utils import daterange, get_date
 from remo.events.models import Attendance as EventAttendance, Event
 from remo.profiles.models import FunctionalArea
 from remo.reports import (ACTIVITY_CAMPAIGN, ACTIVITY_EVENT_ATTEND,
-                          ACTIVITY_EVENT_CREATE, READONLY_ACTIVITIES,
-                          VERIFIABLE_ACTIVITIES)
+                          ACTIVITY_EVENT_CREATE, ACTIVITY_POST_EVENT_METRICS,
+                          READONLY_ACTIVITIES, VERIFIABLE_ACTIVITIES)
 
 
 @receiver(post_migrate, dispatch_uid='report_set_groups_signal')
@@ -328,7 +328,9 @@ def create_update_passive_event_report(sender, instance, created, **kwargs):
         report.functional_areas.add(*instance.categories.all())
         statsd.incr('reports.create_passive_event')
     else:
-        NGReport.objects.filter(event=instance).update(**attrs)
+        reports = (NGReport.objects.filter(event=instance)
+                   .exclude(activity__name=ACTIVITY_POST_EVENT_METRICS))
+        reports.update(**attrs)
         statsd.incr('reports.update_passive_event')
 
 
