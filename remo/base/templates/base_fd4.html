@@ -93,7 +93,7 @@
                   <a href="#" data-reveal-id="join-modal">Join</a>
                 {% else %}
                   <div class="hide-for-small" id="logout-menu-locator">
-                    {% if not user_is_mozillian(user) %}
+                    {% if user_is_rep(user) %}
                       <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
                         {{ user.get_full_name()|default('user.userprofile.display_name') }}
                       </a>
