@@ -19,6 +19,7 @@ class PollCommentForm(happyforms.ModelForm):
     class Meta:
         model = PollComment
         fields = ['comment']
+        widgets = {'comment': forms.TextInput()}
 
 
 class RangePollChoiceVoteForm(happyforms.Form):
@@ -30,7 +31,8 @@ class RangePollChoiceVoteForm(happyforms.Form):
         Dynamically set fields for the participants in a range voting.
         """
         super(RangePollChoiceVoteForm, self).__init__(*args, **kwargs)
-        nominees = [(i, '%d' % i) for i in range(0, choices.count()+1)]
+        nominees = ((('', '----'),) +
+                    tuple((i, '%d' % i) for i in range(0, choices.count()+1)))
         for choice in choices:
             self.fields['range_poll__%s' % str(choice.id)] = (
                 forms.ChoiceField(widget=forms.Select(),
@@ -53,7 +55,7 @@ class RadioPollChoiceVoteForm(happyforms.Form):
         Dynamically set field for the answers in a radio voting.
         """
         super(RadioPollChoiceVoteForm, self).__init__(*args, **kwargs)
-        choices = (((None, '----'),) +
+        choices = ((('', '----'),) +
                    tuple(radio_poll.answers.values_list('id', 'answer')))
         self.fields['radio_poll__%s' % str(radio_poll.id)] = (
             forms.ChoiceField(widget=forms.Select(),
@@ -97,7 +99,7 @@ class PollEditForm(happyforms.ModelForm):
         cdata = self.cleaned_data
 
         # Check if key exists
-        if not 'end_form' in cdata:
+        if 'end_form' not in cdata:
             raise ValidationError('Please correct the form errors.')
 
         cdata['end'] = cdata['end_form'].replace(tzinfo=utc)
@@ -155,7 +157,7 @@ class PollAddForm(PollEditForm):
         cdata = self.cleaned_data
 
         # Check if key exists
-        if not 'start_form' in cdata:
+        if 'start_form' not in cdata:
             raise ValidationError('Please correct the form errors.')
 
         cdata['start'] = cdata['start_form'].replace(tzinfo=utc)

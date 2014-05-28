@@ -256,3 +256,11 @@ def absolutify(url):
 def get_date_n_weeks_before(date, weeks=0):
     """Return the date X weeks before date."""
     return date - timedelta(weeks=weeks)
+
+
+@register.filter
+def formset_errors_exist(formset):
+    for form in formset.values():
+        if form.errors:
+            return True
+    return False
