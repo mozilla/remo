@@ -192,15 +192,15 @@ def poll_delete_reminder(sender, instance, **kwargs):
             celery_control.revoke(instance.task_end_id)
 
 
-@receiver(post_migrate, sender=Poll, dispatch_uid='voting_set_groups_signal')
+@receiver(post_migrate, dispatch_uid='voting_set_groups_signal')
 def voting_set_groups(app, sender, signal, **kwargs):
     """Set permissions to groups."""
     if (isinstance(app, basestring) and app != 'voting'):
         return True
 
-    permissions = (('voting.add_poll', ['Admin']),
-                   ('voting.delete_poll', ['Admin']),
-                   ('voting.change_poll', ['Admin']))
+    permissions = {'add_poll': ['Admin', 'Council', 'Mentor'],
+                   'delete_poll': ['Admin', 'Council', 'Mentor'],
+                   'change_poll': ['Admin', 'Council', 'Mentor']}
 
     add_permissions_to_groups('voting', permissions)
 

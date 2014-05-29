@@ -281,7 +281,7 @@ class ViewsTest(TestCase):
 
         # Test excluded fields.
         eq_(self.edit_future_data['valid_groups'], poll.valid_groups.id)
-        #eq_(self.edit_future_data['created_by'], poll.created_by.id)
+        eq_(self.edit_future_data['created_by'], poll.created_by.id)
 
         # Ensure Range/Radio Polls are saved.
         range_poll = RangePoll.objects.get(poll_id=poll.id)

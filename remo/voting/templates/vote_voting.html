@@ -19,7 +19,7 @@ Mozilla Reps - {{ poll.name }} - Vote
         <h1>{{ poll.name }}</h1>
       </div>
       <div class="large-4 columns align-right hide-for-small">
-        {% if user_is_admin(user) %}
+        {% if user_has_poll_permissions(user, poll) %}
           <a href="{{ url('voting_edit_voting', slug=poll.slug) }}"
              class="button small alert">
             Edit voting
