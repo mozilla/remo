@@ -258,3 +258,37 @@ def automated_poll(sender, instance, **kwargs):
         RadioPollChoice.objects.create(answer='Denied', radio_poll=radio_poll)
 
         statsd.incr('voting.create_automated_poll')
+
+
+@receiver(post_save, sender=PollComment,
+          dispatch_uid='voting_email_commenters_on_add_poll_comment_signal')
+def email_commenters_on_add_poll_comment(sender, instance, **kwargs):
+    """Email a user when a comment is added to a poll."""
+    poll = instance.poll
+    if poll.comments_allowed:
+        subject = '[Voting] User {0} commented on {1}'
+        email_template = 'emails/user_notification_on_add_poll_comment.txt'
+
+        # Send an email to all users commented so far on the poll except from
+        # the user who made the comment. Dedup the list with unique IDs.
+        commenters = set(PollComment.objects.filter(poll=poll)
+                         .exclude(user=instance.user)
+                         .values_list('user', flat=True))
+
+        # Add the creator of the poll in the list
+        if poll.created_by.id not in commenters:
+            commenters.add(poll.created_by.id)
+
+        for user_id in commenters:
+            user = User.objects.get(pk=user_id)
+            if (user.userprofile.receive_email_on_add_voting_comment and
+                    user != instance.user):
+                ctx_data = {'poll': poll, 'user': user,
+                            'commenter': instance.user,
+                            'comment': instance.comment,
+                            'created_on': instance.created_on}
+                subject = subject.format(instance.user.get_full_name(), poll)
+                send_remo_mail.delay(subject=subject,
+                                     recipients_list=[user_id],
+                                     email_template=email_template,
+                                     data=ctx_data)

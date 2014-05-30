@@ -1,0 +1,15 @@
+Hey there {{ user.first_name|capitalize }},
+
+This email was generated automatically to inform you that {{ commenter.get_full_name() }} 
+added a comment on the poll [1] for {{ poll }}
+on {{ created_on|format_datetime }}.
+
+The comment was:
+
+{{ comment|indent(indentfirst=True) }}
+
+Cheers!
+
+Your lovely ReMo bot.
+
+[1] {{ poll.get_absolute_url()|absolutify }}
