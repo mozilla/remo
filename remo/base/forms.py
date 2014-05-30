@@ -109,11 +109,15 @@ class EditSettingsForm(happyforms.ModelForm):
     receive_email_on_add_event_comment = forms.BooleanField(
         required=False, initial=True,
         label=('Receive email when a user comments on an event.'))
+    receive_email_on_add_voting_comment = forms.BooleanField(
+        required=False, initial=True,
+        label=('Receive email when a user comments on an poll.'))
 
     class Meta:
         model = UserProfile
         fields = ['receive_email_on_add_comment',
-                  'receive_email_on_add_event_comment']
+                  'receive_email_on_add_event_comment',
+                  'receive_email_on_add_voting_comment']
 
 
 class TrackFunctionalAreasForm(happyforms.ModelForm):

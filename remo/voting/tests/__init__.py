@@ -1,6 +1,7 @@
 import pytz
 from datetime import datetime, timedelta
 
+from django.db.models.signals import post_save
 from django.contrib.auth.models import Group
 from django.utils.timezone import now
 
@@ -9,7 +10,9 @@ from factory import fuzzy
 
 from remo.profiles.tests import UserFactory
 from remo.voting.models import (Poll, PollComment, RadioPoll, RadioPollChoice,
-                                RangePoll, RangePollChoice, Vote)
+                                RangePoll, RangePollChoice, Vote,
+                                email_commenters_on_add_poll_comment,
+                                poll_email_reminder)
 
 
 VALID_GROUPS = [Group.objects.get(name='Admin'),
@@ -32,6 +35,19 @@ class PollFactory(factory.django.DjangoModelFactory):
     description = factory.Sequence(lambda n: ('This is a description {0}'
                                               .format(n)))
     created_by = factory.SubFactory(UserFactory)
+
+
+class PollFactoryNoSignals(PollFactory):
+
+    @classmethod
+    def _create(cls, target_class, *args, **kwargs):
+        dispatch_uid = 'voting_poll_email_reminder_signal'
+        post_save.disconnect(poll_email_reminder, Poll,
+                             dispatch_uid=dispatch_uid)
+        poll = super(PollFactory, cls)._create(target_class, *args, **kwargs)
+        post_save.connect(poll_email_reminder, Poll,
+                          dispatch_uid=dispatch_uid)
+        return poll
 
 
 class VoteFactory(factory.django.DjangoModelFactory):
@@ -87,3 +103,19 @@ class PollCommentFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory, userprofile__initial_council=True)
     poll = factory.SubFactory(PollFactory)
     comment = factory.Sequence(lambda n: 'Comment #{0}'.format(n))
+
+
+class PollCommentFactoryNoSignals(PollCommentFactory):
+
+    @classmethod
+    def _create(cls, target_class, *args, **kwargs):
+        dispatch_uid = 'voting_email_commenters_on_add_poll_comment_signal'
+        post_save.disconnect(email_commenters_on_add_poll_comment,
+                             PollComment,
+                             dispatch_uid=dispatch_uid)
+        comment = super(PollCommentFactory, cls)._create(target_class,
+                                                         *args, **kwargs)
+        post_save.connect(email_commenters_on_add_poll_comment,
+                          PollComment,
+                          dispatch_uid=dispatch_uid)
+        return comment

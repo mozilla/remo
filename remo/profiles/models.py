@@ -159,6 +159,9 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     receive_email_on_add_event_comment = models.BooleanField(null=False,
                                                              blank=True,
                                                              default=True)
+    receive_email_on_add_voting_comment = models.BooleanField(null=False,
+                                                              blank=True,
+                                                              default=True)
     mozillian_username = models.CharField(blank=True, default='',
                                           max_length=40)
     current_streak_start = models.DateField(null=True, blank=True)

@@ -177,7 +177,7 @@ class ViewsTest(TestCase):
 
     @mock.patch('remo.voting.views.messages')
     def test_view_post_a_comment(self, fake_messages):
-        """Post a comment on poll."""
+        """Post a comment on an automated poll."""
         poll_start = now() - timedelta(days=5)
         poll_user = UserFactory.create(groups=['Council'])
         poll_group = Group.objects.get(name='Council')
@@ -203,7 +203,7 @@ class ViewsTest(TestCase):
         eq_(poll_comment.user, poll_user)
         eq_(poll_comment.comment, 'This is a comment')
         fake_messages.success.assert_called_once_with(
-            mock.ANY, 'Your vote has been successfully registered.')
+            mock.ANY, 'Comment saved successfully.')
 
     def test_view_voting_results(self):
         """View the results of a voting."""
@@ -240,17 +240,7 @@ class ViewsTest(TestCase):
         response = c.get(reverse('voting_view_voting',
                                  kwargs={'slug': 'future-test-voting'}),
                          follow=True)
-        self.assertTemplateUsed(response, 'list_votings.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'warning')
-
-        # View future voting as admin
-        c.login(username='admin', password='passwd')
-        response = c.get(reverse('voting_view_voting',
-                                 kwargs={'slug': 'future-test-voting'}),
-                         follow=True)
-        self.assertTemplateUsed(response, 'edit_voting.html')
+        self.assertTemplateUsed(response, 'vote_voting.html')
 
     def test_view_edit_future_voting(self):
         """Edit future voting test."""

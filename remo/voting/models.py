@@ -189,12 +189,12 @@ def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
                    .format(id=instance.bug.bug_id,
                            summary=instance.bug.summary))
         data = {'bug': instance.bug,
-                'BUGZILLA_URL': BUGZILLA_URL}
+                'BUGZILLA_URL': BUGZILLA_URL,
+                'poll': instance}
         send_remo_mail.delay(
             subject=subject, email_template=template,
             recipients_list=[settings.REPS_COUNCIL_ALIAS],
-            data=data,
-            headers={'Reply-To': settings.REPS_COUNCIL_ALIAS})
+            data=data)
 
 
 @receiver(pre_delete, sender=Poll,
