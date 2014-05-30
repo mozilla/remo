@@ -71,7 +71,6 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-
 # Remove LocaleURLMiddleware since we are not localing our website
 MIDDLEWARE_CLASSES = filter(
     lambda x: x != 'funfactory.middleware.LocaleURLMiddleware',
@@ -86,7 +85,8 @@ MIDDLEWARE_CLASSES += (
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django_browserid.context_processors.browserid',
     'django.core.context_processors.static',
-    'django.contrib.messages.context_processors.messages')
+    'django.contrib.messages.context_processors.messages'
+)
 
 # Instruct session-csrf to always produce tokens for anonymous users
 ANON_ALWAYS = True
