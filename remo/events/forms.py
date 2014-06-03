@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.utils.timezone import make_naive, now
 from product_details import product_details
 
@@ -16,15 +17,7 @@ from remo.events.models import EventGoal, EventMetric
 from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
 
-from models import Event, EventComment
-
-EST_ATTENDANCE_CHOICES = (('', 'Estimated attendance'),
-                          (10, '1-10'),
-                          (50, '11-50'),
-                          (100, '51-100'),
-                          (500, '101-500'),
-                          (1000, '501-1000'),
-                          (2000, '1000+'))
+from models import Event, EventComment, EventMetricOutcome
 
 
 class MinBaseInlineFormSet(forms.models.BaseInlineFormSet):
@@ -32,7 +25,7 @@ class MinBaseInlineFormSet(forms.models.BaseInlineFormSet):
 
     def __init__(self, *args, **kwargs):
         """Init formset with minimum number of 2 forms."""
-        self.min_forms = kwargs.get('min_forms', 2)
+        self.min_forms = kwargs.pop('min_forms', 2)
         super(MinBaseInlineFormSet, self).__init__(*args, **kwargs)
 
     def _count_filled_forms(self):
@@ -58,22 +51,6 @@ class MinBaseInlineFormSet(forms.models.BaseInlineFormSet):
 class BaseEventMetricsFormset(MinBaseInlineFormSet):
     """Inline form-set support for event metrics."""
 
-    def add_fields(self, form, index):
-        """Dynamically update field attributes."""
-        super(BaseEventMetricsFormset, self).add_fields(form, index)
-
-        qs = EventMetric.objects.filter(active=True)
-        if self.instance.id:
-            current_metrics = self.instance.metrics.all()
-            metrics_query = Q(active=True) | Q(pk__in=current_metrics)
-            qs = EventMetric.objects.filter(metrics_query)
-
-        error_msg = 'Please enter a number.'
-        empty_label = 'Please select an event metric.'
-        form.fields['outcome'].error_messages['invalid'] = error_msg
-        form.fields['metric'].empty_label = empty_label
-        form.fields['metric'].queryset = qs
-
     def clean(self):
         """Check for unique metrics inside formset."""
         super(BaseEventMetricsFormset, self).clean()
@@ -81,6 +58,15 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
         if any(self.errors):
             # Do not check unless are fields are valid
             return
+
+        # Disable adding new forms in post event form.
+        if self.instance.is_past_event and self.instance.has_new_metrics:
+            if self.extra_forms:
+                error_msg = 'You cannot add new metrics in a past event.'
+                raise ValidationError(error_msg)
+            elif [key for key in self.cleaned_data if key.get('DELETE')]:
+                error_msg = 'You cannot delete metrics in a past event.'
+                raise ValidationError(error_msg)
 
         metrics = []
         field_error_msg = 'This metric has already been selected.'
@@ -111,6 +97,44 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
         return super(BaseEventMetricsFormset, self).save()
 
 
+class EventMetricsForm(happyforms.ModelForm):
+    """EventMetrics form."""
+    metric = forms.ModelChoiceField(
+        queryset=EventMetric.active_objects.all(),
+        empty_label='Please select an event metric.')
+    expected_outcome = forms.IntegerField(
+        error_messages={'invalid': 'Please enter a number.'})
+
+    class Meta:
+        model = EventMetricOutcome
+        fields = ('metric', 'expected_outcome')
+
+    def __init__(self, *args, **kwargs):
+        """Dynamically initialize form."""
+        super(EventMetricsForm, self).__init__(*args, **kwargs)
+
+        if self.instance.id:
+            # Dynamic queryset for active metrics in saved events
+            current_metrics = self.instance.event.metrics.all()
+            metrics_query = Q(active=True) | Q(pk__in=current_metrics)
+            qs = EventMetric.objects.filter(metrics_query)
+            self.fields['metric'].queryset = qs
+
+
+class PostEventMetricsForm(EventMetricsForm):
+    """PostEventMetrics form."""
+    outcome = forms.IntegerField(
+        error_messages={'invalid': 'Please enter a number.'})
+
+    class Meta(EventMetricsForm.Meta):
+        fields = ('metric', 'expected_outcome', 'outcome')
+
+    def __init__(self, *args, **kwargs):
+        """Make expected outcome readonly."""
+        super(PostEventMetricsForm, self).__init__(*args, **kwargs)
+        self.fields['expected_outcome'].widget.attrs['readonly'] = True
+
+
 class EventForm(happyforms.ModelForm):
     """Form of an event."""
     categories = forms.ModelMultipleChoiceField(
@@ -122,9 +146,9 @@ class EventForm(happyforms.ModelForm):
         error_messages={'required': 'Please select one option from the list.'})
     swag_bug_form = forms.CharField(required=False)
     budget_bug_form = forms.CharField(required=False)
-    estimated_attendance = forms.ChoiceField(
-        choices=EST_ATTENDANCE_CHOICES,
-        error_messages={'required': 'Please select one option from the list.'})
+    estimated_attendance = forms.IntegerField(
+        validators=[MinValueValidator(1)],
+        error_messages={'invalid': 'Please enter a number.'})
     owner = forms.IntegerField(required=False)
     timezone = forms.ChoiceField(choices=zip(common_timezones,
                                              common_timezones))
@@ -277,6 +301,21 @@ class EventForm(happyforms.ModelForm):
                    'lon': forms.HiddenInput(attrs={'id': 'lon'}),
                    'start': SplitSelectDateTimeWidget(),
                    'end': SplitSelectDateTimeWidget()}
+
+
+class PostEventForm(EventForm):
+    """Post event form."""
+    actual_attendance = forms.IntegerField(
+        validators=[MinValueValidator(1)],
+        error_messages={'invalid': 'Please enter a number.'})
+
+    class Meta(EventForm.Meta):
+        fields = EventForm.Meta.fields + ['actual_attendance']
+
+    def __init__(self, *args, **kwargs):
+        """Make estimated attendance readonly."""
+        super(PostEventForm, self).__init__(*args, **kwargs)
+        self.fields['estimated_attendance'].widget.attrs['readonly'] = True
 
 
 class EventCommentForm(happyforms.ModelForm):

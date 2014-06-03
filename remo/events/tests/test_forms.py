@@ -3,7 +3,8 @@ from django.forms.models import inlineformset_factory, model_to_dict
 from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
-from remo.events.forms import BaseEventMetricsFormset, EventForm
+from remo.events.forms import (BaseEventMetricsFormset, EventForm,
+                               EventMetricsForm)
 from remo.events.models import Event
 from remo.events.tests import (EventFactory, EventGoalFactory,
                                EventMetricFactory,
@@ -52,6 +53,7 @@ class EventMetricsFormset(RemoTestCase):
 
         formset = inlineformset_factory(
             Event, Event.metrics.through,
+            form=EventMetricsForm,
             formset=BaseEventMetricsFormset,
             extra=2)
 
@@ -77,8 +79,9 @@ class EventMetricsFormset(RemoTestCase):
 
         formset = inlineformset_factory(
             Event, Event.metrics.through,
+            form=EventMetricsForm,
             formset=BaseEventMetricsFormset,
-            extra=2)
+            extra=0)
 
         forms = formset(instance=event)
 
@@ -125,18 +128,19 @@ class EventMetricsFormset(RemoTestCase):
             'budget_bug_form': u'',
             'eventmetricoutcome_set-0-id': '',
             'eventmetricoutcome_set-0-metric': metrics[0].id,
-            'eventmetricoutcome_set-0-outcome': 100,
+            'eventmetricoutcome_set-0-expected_outcome': 100,
             'eventmetricoutcome_set-1-id': '',
             'eventmetricoutcome_set-1-metric': metrics[0].id,
-            'eventmetricoutcome_set-1-outcome': 10,
+            'eventmetricoutcome_set-1-expected_outcome': 10,
             'eventmetricoutcome_set-2-id': '',
             'eventmetricoutcome_set-2-metric': metrics[1].id,
-            'eventmetricoutcome_set-2-outcome': 10,
+            'eventmetricoutcome_set-2-expected_outcome': 10,
             'eventmetricoutcome_set-TOTAL_FORMS': 2,
             'eventmetricoutcome_set-INITIAL_FORMS': 0}
 
         formset = inlineformset_factory(
             Event, Event.metrics.through,
+            form=EventMetricsForm,
             formset=BaseEventMetricsFormset,
             extra=2)
 

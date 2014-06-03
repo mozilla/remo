@@ -253,13 +253,25 @@
             <p class="more-info">If this event is not directly organized by<br>
             a Mozillian (e.g. FOSDEM, OSCON) please DO NOT check this box.</p>
 
-            <div class="has-tip tip-right auto-width" title="Estimated attendance">
-              {{ event_form.estimated_attendance }}
+            <div class="has-tip tip-right auto-width"
+                 title="Estimated attendance" data-tooltip>
+              {{ field_with_attrs(event_form.estimated_attendance,
+                                  placeholder='Estimated attendance') }}
             </div>
             <div class="required-field"></div>
             {{ field_errors(event_form.estimated_attendance) }}
             <p class="more-info">Please specify the estimated attendance to this event.</p>
 
+            {% if event_form.actual_attendance %}
+              <div class="has-tip tip-right auto-width"
+                   title="Actual attendance" data-tooltip>
+                {{ field_with_attrs(event_form.actual_attendance,
+                                    placeholder='Actual attendance') }}
+              </div>
+              <div class="required-field"></div>
+              {{ field_errors(event_form.actual_attendance) }}
+              <p class="more-info">Please specify the actual attendance to this event.</p>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -406,50 +418,61 @@
         </div>
 
         <!-- Metrics -->
-        <div class="formset metric" data-prefix="{{ metrics_formset.prefix }}">
-          {% for form in metrics_formset %}
-            {{ form.id }}
-            <div class="row copyblock">
-              <div class="row">
-                <div class="large-1 columns">
-                  <div class="pict-icon large graph"></div>
-                </div>
-                <div class="large-11 columns">
-                  <div class='has-tip tip-right' data-tooltip
-                       data-options='disable-for-touch:true'
-                       title='Type of Metric'>
-                    {{ form.metric }}
+        {% if metrics_formset %}
+          <div class="formset metric" data-prefix="{{ metrics_formset.prefix }}">
+            {% for form in metrics_formset %}
+              {{ form.id }}
+              <div class="row copyblock">
+                <div class="row">
+                  <div class="large-1 columns">
+                    <div class="pict-icon large graph"></div>
                   </div>
-                  {{ field_errors(form.metric) }}
+                  <div class="large-11 columns">
+                    <div class='has-tip tip-right' data-tooltip
+                         data-options='disable-for-touch:true'
+                         title='Metric'>
+                      {{ form.metric }}
+                    </div>
+                    {{ field_errors(form.metric) }}
 
-                  {{ field_with_attrs(form.outcome,
-                                      placeholder='Success scenario (numeric)',
-                                      title='Success scenario') }}
-                  {{ field_errors(form.outcome) }}
-                  <div class="events-delete-metric">
-                    {{ form.DELETE }} {{ form.DELETE.label_tag() }}
+                    <div class='has-tip tip-right' title='Expected outcome' data-tooltip>
+                      {{ field_with_attrs(form.expected_outcome,
+                                          placeholder='Expected outcome (numeric)') }}
+                    </div>
+                    {{ field_errors(form.expected_outcome) }}
+
+                    {% if form.outcome %}
+                      <div class='has-tip tip-right' title='Actual outcome' data-tooltip>
+                        {{ field_with_attrs(form.outcome,
+                                            placeholder='Actual outcome (numeric)') }}
+                      </div>
+                      {{ field_errors(form.outcome) }}
+                    {% endif %}
+                    <div class="events-delete-metric">
+                      {{ form.DELETE }} {{ form.DELETE.label_tag() }}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            {% if loop.index <= 2 %}
-              <div class="required-field"></div>
+              {% if loop.index <= 2 %}
+                <div class="required-field"></div>
+              {% endif %}
+            {% endfor %}
+            {% if not event.has_new_metrics or not event.is_past_event %}
+              <div class="align-right">
+                <button id="events-add-metric-button" class="small button">
+                  Add another metric
+                </button>
+              </div>
             {% endif %}
-          {% endfor %}
-
-          <div class="align-right">
-            <button id="events-add-metric-button" class="small button">
-              Add another metric
-            </button>
+            {% if metrics_formset.non_form_errors() %}
+              <small class="error">
+                {{ metrics_formset.non_form_errors() }}
+              </small>
+            {% endif %}
           </div>
-          {% if metrics_formset.non_form_errors() %}
-            <small class="error">
-              {{ metrics_formset.non_form_errors() }}
-            </small>
-          {% endif %}
-        </div>
-        {{ metrics_formset.management_form }}
-
+          {{ metrics_formset.management_form }}
+        {% endif %}
       </div>
     </div>
     <div class="large-3 columns align-right show-for-small">
