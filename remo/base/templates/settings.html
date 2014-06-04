@@ -56,25 +56,27 @@ Mozilla Reps - Settings
               </div>
             </section>
           {% endif %}
-          {% if user_is_admin(user) %}
+          {% if user_is_admin(user) or user_is_council(user) %}
             <section>
               <p class="title" data-section-title>
                 <a href="#portalSettings">Portal Settings</a>
               </p>
               <div class="content" data-section-content id="portalSettingsTab">
                 <h2>Content</h2>
-                <p>
-                  <a href="{{ url('list_functional_areas') }}">Edit functional areas</a>
-                </p>
-                <p>
-                  <a href="{{ url('list_activities') }}">Edit activities</a>
-                </p>
-                <p>
-                  <a href="{{ url('list_campaigns') }}">Edit campaigns</a>
-                </p>
-                <p>
-                  <a href="{{ url('list_event_goals') }}">Edit event goals</a>
-                </p>
+                {% if user_is_admin(user) %}
+                  <p>
+                    <a href="{{ url('list_functional_areas') }}">Edit functional areas</a>
+                  </p>
+                  <p>
+                    <a href="{{ url('list_activities') }}">Edit activities</a>
+                  </p>
+                  <p>
+                    <a href="{{ url('list_campaigns') }}">Edit campaigns</a>
+                  </p>
+                  <p>
+                    <a href="{{ url('list_event_goals') }}">Edit event goals</a>
+                  </p>
+                {% endif %}
                 <p>
                   <a href="{{ url('list_metrics') }}">Edit event metrics</a>
                 </p>
