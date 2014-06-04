@@ -1,0 +1,10 @@
+Hey there {{ event.owner.first_name|capitalize }},
+
+This email was generated automatically to inform you that it's time to add
+the actual metrics for your recent event [1].
+
+Cheers!
+
+Your lovely ReMo bot.
+
+[1] {{ event.get_absolute_edit_url()|absolutify }} 

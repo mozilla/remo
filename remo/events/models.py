@@ -129,6 +129,9 @@ class Event(caching.base.CachingMixin, models.Model):
 
     objects = caching.base.CachingManager()
 
+    def get_absolute_edit_url(self):
+        return reverse('events_edit_event', kwargs={'slug': self.slug})
+
     def __unicode__(self):
         """Event unicode representation."""
         return self.name

@@ -202,6 +202,14 @@ def dashboard(request):
                          exclude(q_closed))
 
     today = now().date()
+
+    # Post event metrics notifications
+    owned_events = Event.objects.filter(
+        owner=user, end__lt=now(),
+        eventmetricoutcome__outcome__isnull=True,
+        has_new_metrics=True).distinct()
+    args['owned_events'] = owned_events
+
     # NG Reports
     if user.groups.filter(name='Rep').exists():
         args['ng_reports'] = (user.ng_reports
