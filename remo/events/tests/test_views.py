@@ -493,7 +493,8 @@ class ViewsTest(TestCase):
         start = now() + datetime.timedelta(days=10)
         end = now() + datetime.timedelta(days=20)
         event = EventFactory.create(slug='test-event', owner=user,
-                                    start=start, end=end)
+                                    start=start, end=end,
+                                    actual_attendance=None)
         times_edited = event.times_edited
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(self.event_edit_url, self.data,
