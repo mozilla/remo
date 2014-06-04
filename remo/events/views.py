@@ -100,6 +100,15 @@ def view_event(request, slug):
         'body': '%s\n%s' % (event.name, settings.SITE_URL + event_url)}
     email_att_form = EmailUsersForm(attendees, initial=email_att_initial)
 
+    # Display a message if the event owner needs to submit post event data
+    if (request.user == event.owner and event.is_past_event and
+        event.has_new_metrics and not
+            any([metric.outcome
+                 for metric in event.eventmetricoutcome_set.all()])):
+        msg = render_to_string('includes/view_post_event_metrics.html',
+                               {'event': event})
+        messages.info(request, mark_safe(msg))
+
     if request.method == 'POST':
         if not request.user.is_authenticated():
             messages.error(request, 'Permission Denied')

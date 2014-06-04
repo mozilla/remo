@@ -1,6 +1,31 @@
 {% extends "dashboard.html" %}
 
 {% block body_content %}
+<!-- Post event metrics notifications -->
+{% if owned_events %}
+  <div class="row">
+    <div class="large-12 columns">
+      <h2>Notifications</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns post-event-notifications">
+      <p>
+        Looks like you need to add the actual metrics for your recent event(s)
+      <p>
+      <ul>
+        {% for event in owned_events %}
+          <li>
+            <a href="{{ url('events_edit_event', slug=event.slug) }}">
+              {{ event.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
 <!-- continuous reports block -->
 <div class="dashboard-box">
   <div class="row">
