@@ -10,13 +10,14 @@
     {{ csrf() }}
 
     {% if created %}
-      <div class="row">
-        {% if status_form.errors %}
+      {% if status_form.errors %}
+        <div class="row">
           <div class="large-12 columns">
             <small role="alert" class="error">Please correct the errors below.</small>
           </div>
-        {% endif %}
-
+        </div>
+      {% endif %}
+      <div class="row">
         <div class="large-6 columns">
           <h1>
             Taking a break notification
