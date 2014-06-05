@@ -5,12 +5,15 @@ from south.v2 import DataMigration
 from django.db import models
 from django.utils.timezone import now
 
+
 class Migration(DataMigration):
 
     def forwards(self, orm):
         """Do not force new metrics in past events."""
         Event = orm['events.Event']
-        for event in Event.objects.filter(start__lt=now()):
+        events = Event.objects.filter(
+            start__lt=datetime.datetime(2014, 06, 16, 0, 0, 0))
+        for event in events:
             event.has_new_metrics = False
             event.save()
 
