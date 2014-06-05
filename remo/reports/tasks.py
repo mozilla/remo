@@ -67,9 +67,9 @@ def send_first_report_notification():
         userprofile__first_report_notification__isnull=True)
     # Exclude users with a report filed between start and end period
     # and users who joined the program less than one month
-    inactive_users = users.exclude(
-        ng_reports__report_date__range=[start, end],
-        userprofile__date_joined_program__gt=start)
+    inactive_users = (users
+                      .exclude(ng_reports__report_date__range=[start, end])
+                      .exclude(userprofile__date_joined_program__gt=start))
 
     send_report_notification(inactive_users, weeks=4)
     for user in inactive_users:
@@ -91,9 +91,9 @@ def send_second_report_notification():
         userprofile__second_report_notification__isnull=True)
     # Exclude users with a report filed between start and end period
     # and users who joined the program less than one month
-    inactive_users = users.exclude(
-        ng_reports__report_date__range=[start, end],
-        userprofile__date_joined_program__gt=start)
+    inactive_users = (users
+                      .exclude(ng_reports__report_date__range=[start, end])
+                      .exclude(userprofile__date_joined_program__gt=start))
 
     send_report_notification(inactive_users, weeks=8)
     for user in inactive_users:

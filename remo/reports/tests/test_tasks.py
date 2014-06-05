@@ -86,7 +86,8 @@ class SendInactivityNotifications(RemoTestCase):
         mentor = UserFactory.create(groups=['Mentor'])
         today = now().date()
         rep = UserFactory.create(
-            groups=['Rep'], userprofile__mentor=mentor)
+            groups=['Rep'], userprofile__mentor=mentor,
+            userprofile__date_joined_program=get_date(days=-100))
         NGReportFactory.create(user=rep,
                                report_date=today - timedelta(weeks=5))
 
