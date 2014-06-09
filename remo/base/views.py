@@ -174,6 +174,7 @@ def dashboard_mozillians(request, user):
     args['reps_current_events'] = reps_current_events
     args['tracked_interests'] = tracked_interests
     args['reps_email_form'] = reps_email_form
+    statsd.incr('base.dashboard_mozillians')
     return render(request, 'dashboard_mozillians.html', args)
 
 
@@ -261,6 +262,7 @@ def dashboard(request):
         args['reps_without_profile'] = reps.filter(
             userprofile__registration_complete=False)
 
+    statsd.incr('base.dashboard_reps')
     return render(request, 'dashboard_reps.html', args)
 
 
