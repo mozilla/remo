@@ -99,8 +99,10 @@ class SendInactivityNotifications(RemoTestCase):
 
         eq_(mail_mock.call_count, 2)
         expected_call_list = [
-            call(rep_subject, [rep.email], message=mockany),
-            call(mentor_subject, [mentor.email], message=mockany)]
+            call(rep_subject, [rep.email], message=mockany,
+                 headers={'Reply-To': mentor.email}),
+            call(mentor_subject, [mentor.email], message=mockany,
+                 headers={'Reply-To': rep.email})]
         eq_(mail_mock.call_args_list, expected_call_list)
 
     def test_with_report_filled(self):
@@ -132,8 +134,10 @@ class SendInactivityNotifications(RemoTestCase):
 
         eq_(mail_mock.call_count, 2)
         expected_call_list = [
-            call(rep_subject, [rep.email], message=mockany),
-            call(mentor_subject, [mentor.email], message=mockany)]
+            call(rep_subject, [rep.email], message=mockany,
+                 headers={'Reply-To': mentor.email}),
+            call(mentor_subject, [mentor.email], message=mockany,
+                 headers={'Reply-To': rep.email})]
         eq_(mail_mock.call_args_list, expected_call_list)
 
 

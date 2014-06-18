@@ -54,13 +54,15 @@ def send_report_notification(reps, weeks):
     mentor_mail_body = 'emails/mentor_ng_report_notification.txt'
 
     for rep in reps:
-        ctx_data = {'mentor': rep.userprofile.mentor,
+        mentor = rep.userprofile.mentor
+        ctx_data = {'mentor': mentor,
                     'user': rep,
                     'SITE_URL': settings.SITE_URL,
                     'weeks': weeks}
 
         rep_message = render_to_string(rep_mail_body, ctx_data)
         mentor_message = render_to_string(mentor_mail_body, ctx_data)
-        send_remo_mail(rep_subject, [rep.email], message=rep_message)
-        send_remo_mail(mentor_subject, [rep.userprofile.mentor.email],
-                       message=mentor_message)
+        send_remo_mail(rep_subject, [rep.email], message=rep_message,
+                       headers={'Reply-To': mentor.email})
+        send_remo_mail(mentor_subject, [mentor.email], message=mentor_message,
+                       headers={'Reply-To': rep.email})
