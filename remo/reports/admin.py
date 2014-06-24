@@ -26,9 +26,12 @@ class NGReportAdmin(ExportMixin, admin.ModelAdmin):
     """New Generation Report Admin."""
     resource_class = NGReportResource
     inlines = [NGReportCommentInline]
+
     list_display = ('user', 'report_date', 'created_on', 'updated_on')
     search_fields = ['user__first_name', 'user__last_name',
-                     'user__userprofile__display_name']
+                     'user__userprofile__display_name', 'activity__name',
+                     'campaign__name']
+    list_filter = ['activity__name', 'campaign__name']
 
 
 class ActivityAdmin(ExportMixin, admin.ModelAdmin):
