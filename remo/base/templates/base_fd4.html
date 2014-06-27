@@ -97,10 +97,12 @@
                       <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
                         {{ user.get_full_name()|default('user.userprofile.display_name') }}
                       </a>
-                      [<a id="settings-menu-locator"
-                          href="{{ url('edit_settings') }}"> Settings </a>]
                     {% else %}
                       {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                    {% endif %}
+                    {% if not user_is_mozillian(user) %}
+                      [<a id="settings-menu-locator"
+                          href="{{ url('edit_settings') }}"> Settings </a>]
                     {% endif %}
                     [{{ browserid_logout(text='Sign out') }}]
                   </div>
@@ -112,9 +114,12 @@
                     {% else %}
                       {{ user.get_full_name()|default('user.userprofile.display_name') }}
                     {% endif %}
+                    {% if not user_is_mozillian(user) %}
+                      [<a id="settings-menu-locator"
+                          href="{{ url('edit_settings') }}"> Settings </a>]
+                    {% endif %}
                     <div>
-                      <a href="{{ url('edit_settings') }}"> Settings </a>|
-                      {{ browserid_logout(text='Sign out') }}
+                      [{{ browserid_logout(text='Sign out') }}]
                     </div>
                   </div>
                 {% endif %}
