@@ -13,7 +13,8 @@ from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
 from remo.voting.models import (BUGZILLA_URL, Poll,
                                 automated_poll_discussion_email)
-from remo.voting.tests import PollFactory
+from remo.voting.tests import (PollCommentFactory, PollCommentFactoryNoSignals,
+                               PollFactory, PollFactoryNoSignals)
 
 
 class VotingMailNotificationTest(TestCase):
@@ -96,14 +97,13 @@ class AutomatedRadioPollTest(TestCase):
             automated_poll_discussion_email(None, automated_poll, True, {})
 
         subject = 'Discuss [Bug 989812] - Bug summary'
-        data = {'bug': bug, 'BUGZILLA_URL': BUGZILLA_URL}
-        headers = {'Reply-To': settings.REPS_COUNCIL_ALIAS}
+        data = {'bug': bug, 'BUGZILLA_URL': BUGZILLA_URL,
+                'poll': automated_poll}
         mocked_send_mail.delay.assert_called_once_with(
             subject=subject,
             email_template='emails/review_budget_notify_council.txt',
             recipients_list=[settings.REPS_COUNCIL_ALIAS],
-            data=data,
-            headers=headers)
+            data=data)
 
     def test_send_discussion_email_to_council_edit(self):
         bug = BugFactory.create(bug_id=989812)
@@ -114,3 +114,67 @@ class AutomatedRadioPollTest(TestCase):
             automated_poll_discussion_email(None, automated_poll, False, {})
 
         ok_(not mocked_send_mail.called)
+
+
+class VotingCommentSignalTests(TestCase):
+    def test_comment_one_user(self):
+        """Test sending email when a new comment is added on a Poll
+        and the user has the option enabled in his/her settings.
+        """
+        commenter = UserFactory.create()
+        creator = UserFactory.create(
+            userprofile__receive_email_on_add_voting_comment=True)
+        # Disable notifications related to the creation of a poll
+        poll = PollFactoryNoSignals.create(created_by=creator)
+        PollCommentFactory.create(user=commenter, poll=poll,
+                                  comment='This is a comment')
+
+        eq_(len(mail.outbox), 1)
+        eq_('%s <%s>' % (creator.get_full_name(), creator.email),
+            mail.outbox[0].to[0])
+        msg = ('[Voting] User {0} commented on {1}'
+               .format(commenter.get_full_name(), poll))
+        eq_(mail.outbox[0].subject, msg)
+
+    def test_one_user_settings_False(self):
+        """Test sending email when a new comment is added on a Poll
+        and the user has the option disabled in his/her settings.
+        """
+        comment_user = UserFactory.create()
+        user = UserFactory.create(
+            userprofile__receive_email_on_add_voting_comment=False)
+        poll = PollFactoryNoSignals.create(created_by=user)
+        PollCommentFactory.create(user=comment_user, poll=poll,
+                                  comment='This is a comment')
+
+        eq_(len(mail.outbox), 0)
+
+    def test_comment_multiple_users(self):
+        """Test sending email when a new comment is added on a Poll
+        and the users have the option enabled in their settings.
+        """
+        commenter = UserFactory.create()
+        creator = UserFactory.create(
+            userprofile__receive_email_on_add_voting_comment=True)
+        poll = PollFactory.create(created_by=creator)
+        users_with_comments = UserFactory.create_batch(
+            2, userprofile__receive_email_on_add_voting_comment=True)
+        # disconnect the signals in order to add two users in PollComment
+        for user_obj in users_with_comments:
+            PollCommentFactoryNoSignals.create(
+                user=user_obj, poll=poll, comment='This is a comment')
+        PollCommentFactory.create(user=commenter, poll=poll,
+                                  comment='This is a comment')
+
+        eq_(len(mail.outbox), 3)
+        recipients = ['%s <%s>' % (creator.get_full_name(), creator.email),
+                      '%s <%s>' % (users_with_comments[0].get_full_name(),
+                                   users_with_comments[0].email),
+                      '%s <%s>' % (users_with_comments[1].get_full_name(),
+                                   users_with_comments[1].email)]
+        receivers = [mail.outbox[0].to[0], mail.outbox[1].to[0],
+                     mail.outbox[2].to[0]]
+        eq_(set(recipients), set(receivers))
+        msg = ('[Voting] User {0} commented on {1}'
+               .format(commenter.get_full_name(), poll))
+        eq_(mail.outbox[0].subject, msg)

@@ -1,7 +1,7 @@
 Hello Council,
 
 A budget request is ready for your review [0].
-Reply all to this email to discuss the request with the Council,
+You can comment in the poll to discuss the request with the Council,
 and comment in the bug if you need more information from the Rep.
 You will receive a notification in 72 hours so that you can vote on this request.
 
@@ -10,6 +10,7 @@ You will receive a notification in 72 hours so that you can vote on this request
 {{ bug.summary }}
 
 [0] {{ BUGZILLA_URL }}{{ bug.bug_id }}
+[1] {{ poll.get_absolute_url()|absolutify }}
 
 Cheers!
 

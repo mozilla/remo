@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from celery.task import control as celery_control
+from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.conf import settings
 from django.contrib.auth.models import Group, User
@@ -45,6 +46,11 @@ class Poll(models.Model):
     last_notification = models.DateTimeField(null=True)
     bug = models.ForeignKey(Bug, null=True, blank=True)
     automated_poll = models.BooleanField(default=False)
+    comments_allowed = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse('remo.voting.views.view_voting',
+                       args=[self.slug])
 
     @property
     def is_future_voting(self):
@@ -55,6 +61,12 @@ class Poll(models.Model):
     @property
     def is_current_voting(self):
         if self.start < now() and self.end > now():
+            return True
+        return False
+
+    @property
+    def is_past_voting(self):
+        if self.end < now():
             return True
         return False
 
@@ -134,6 +146,10 @@ class PollComment(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
 
+    def get_absolute_delete_url(self):
+        return reverse('remo.voting.views.delete_poll_comment',
+                       args=[self.poll.slug, self.id])
+
     class Meta:
         ordering = ['created_on']
 
@@ -173,12 +189,12 @@ def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
                    .format(id=instance.bug.bug_id,
                            summary=instance.bug.summary))
         data = {'bug': instance.bug,
-                'BUGZILLA_URL': BUGZILLA_URL}
+                'BUGZILLA_URL': BUGZILLA_URL,
+                'poll': instance}
         send_remo_mail.delay(
             subject=subject, email_template=template,
             recipients_list=[settings.REPS_COUNCIL_ALIAS],
-            data=data,
-            headers={'Reply-To': settings.REPS_COUNCIL_ALIAS})
+            data=data)
 
 
 @receiver(pre_delete, sender=Poll,
@@ -200,7 +216,8 @@ def voting_set_groups(app, sender, signal, **kwargs):
 
     permissions = {'add_poll': ['Admin', 'Council', 'Mentor'],
                    'delete_poll': ['Admin', 'Council', 'Mentor'],
-                   'change_poll': ['Admin', 'Council', 'Mentor']}
+                   'change_poll': ['Admin', 'Council', 'Mentor'],
+                   'delete_pollcomment': ['Admin', 'Council', 'Mentor']}
 
     add_permissions_to_groups('voting', permissions)
 
@@ -241,3 +258,37 @@ def automated_poll(sender, instance, **kwargs):
         RadioPollChoice.objects.create(answer='Denied', radio_poll=radio_poll)
 
         statsd.incr('voting.create_automated_poll')
+
+
+@receiver(post_save, sender=PollComment,
+          dispatch_uid='voting_email_commenters_on_add_poll_comment_signal')
+def email_commenters_on_add_poll_comment(sender, instance, **kwargs):
+    """Email a user when a comment is added to a poll."""
+    poll = instance.poll
+    if poll.comments_allowed:
+        subject = '[Voting] User {0} commented on {1}'
+        email_template = 'emails/user_notification_on_add_poll_comment.txt'
+
+        # Send an email to all users commented so far on the poll except from
+        # the user who made the comment. Dedup the list with unique IDs.
+        commenters = set(PollComment.objects.filter(poll=poll)
+                         .exclude(user=instance.user)
+                         .values_list('user', flat=True))
+
+        # Add the creator of the poll in the list
+        if poll.created_by.id not in commenters:
+            commenters.add(poll.created_by.id)
+
+        for user_id in commenters:
+            user = User.objects.get(pk=user_id)
+            if (user.userprofile.receive_email_on_add_voting_comment and
+                    user != instance.user):
+                ctx_data = {'poll': poll, 'user': user,
+                            'commenter': instance.user,
+                            'comment': instance.comment,
+                            'created_on': instance.created_on}
+                subject = subject.format(instance.user.get_full_name(), poll)
+                send_remo_mail.delay(subject=subject,
+                                     recipients_list=[user_id],
+                                     email_template=email_template,
+                                     data=ctx_data)

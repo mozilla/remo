@@ -12,6 +12,7 @@ import forms
 
 from remo.base.decorators import permission_check
 from remo.base.utils import get_or_create_instance
+from remo.profiles.models import UserProfile
 from remo.voting.helpers import user_has_poll_permissions
 from remo.voting.models import Poll, PollComment, RadioPoll, RangePoll, Vote
 
@@ -68,7 +69,7 @@ def edit_voting(request, slug=None):
             extra_radio_polls = 1
         can_delete_voting = True
 
-        if poll.start < now() and poll.end > now():
+        if poll.is_current_voting:
             current_voting_edit = True
         if not user_has_poll_permissions(request.user, poll):
             messages.error(request, 'Permission denied.')
@@ -114,7 +115,7 @@ def edit_voting(request, slug=None):
         return redirect('voting_edit_voting', slug=poll.slug)
 
     return render(request, 'edit_voting.html',
-                  {'creating': created,
+                  {'created': created,
                    'poll': poll,
                    'poll_form': poll_form,
                    'range_poll_formset': range_poll_formset,
@@ -137,29 +138,30 @@ def view_voting(request, slug):
 
     range_poll_choice_forms = {}
     radio_poll_choice_forms = {}
+    user_voted = False
+    comment_form = forms.PollCommentForm()
 
-    data = {'poll': poll}
+    data = {'poll': poll,
+            'comment_form': comment_form}
 
     # if the voting period has ended, display the results
-    if now() > poll.end:
+    if poll.is_past_voting:
         return render(request, 'view_voting.html', data)
-    if now() < poll.start:
-        # Admin can edit future votings
-        if user.groups.filter(name='Admin').exists():
-            return redirect('voting_edit_voting', slug=poll.slug)
-        else:
-            messages.warning(request, ('This vote has not yet begun. '
-                                       'You can cast your vote on %s UTC.' %
-                                       poll.start.strftime('%Y %B %d, %H:%M')))
-            return redirect('voting_list_votings')
 
     # avoid multiple votes from the same user
     if Vote.objects.filter(poll=poll, user=user).exists():
-        messages.warning(request, ('You have already cast your vote for this '
-                                   'voting. Come back to see the results on '
-                                   '%s UTC.'
-                                   % poll.end.strftime('%Y %B %d, %H:%M')))
-        return redirect('voting_list_votings')
+        if not poll.comments_allowed:
+            messages.warning(request, ('You have already cast your vote for '
+                                       'this voting. Come back to see the '
+                                       'results on %s UTC.'
+                                       % poll.end.strftime('%Y %B %d, %H:%M')))
+            return redirect('voting_list_votings')
+        # If the poll allows comments, display them along with an info msg
+        user_voted = True
+        data['user_voted'] = user_voted
+
+        msg = "You have already cast your vote for this voting."
+        messages.info(request, msg)
 
     # pack the forms for rendering
     for item in poll.range_polls.all():
@@ -170,36 +172,42 @@ def view_voting(request, slug):
         radio_poll_choice_forms[item] = forms.RadioPollChoiceVoteForm(
             data=request.POST or None, radio_poll=item)
 
-    poll_comment = PollComment(poll=poll, user=request.user)
-    poll_comment_form = forms.PollCommentForm(data=request.POST or None,
-                                              instance=poll_comment)
-
     if request.method == 'POST':
-        forms_valid = True
-        # validate all forms
-        for item in (range_poll_choice_forms.values()
-                     + radio_poll_choice_forms.values()):
-            if not item.is_valid():
-                forms_valid = False
-                break
+        # Process comment form
+        if 'comment' in request.POST and poll.comments_allowed:
+            comment_form = forms.PollCommentForm(request.POST)
+            if comment_form.is_valid():
+                obj = comment_form.save(commit=False)
+                obj.user = request.user
+                obj.poll = poll
+                obj.save()
+                messages.success(request, 'Comment saved successfully.')
+                data['comment_form'] = forms.PollCommentForm()
+            return redirect(poll.get_absolute_url())
+        else:
+            # Process poll form
+            forms_valid = True
+            # validate all forms
+            for item in (range_poll_choice_forms.values()
+                         + radio_poll_choice_forms.values()):
+                if not item.is_valid():
+                    forms_valid = False
+                    break
 
-        if forms_valid:
-            for range_poll_form in range_poll_choice_forms.values():
-                range_poll_form.save()
-            for radio_poll_form in radio_poll_choice_forms.values():
-                radio_poll_form.save()
-            if poll.automated_poll and poll_comment_form.is_valid():
-                poll_comment_form.save()
-                statsd.incr('voting.create_automated_poll_comment')
-            Vote.objects.create(user=user, poll=poll)
-            messages.success(request, ('Your vote has been '
-                                       'successfully registered.'))
-            statsd.incr('voting.vote_voting')
-            return redirect('voting_list_votings')
+            if forms_valid and poll.is_current_voting:
+                for range_poll_form in range_poll_choice_forms.values():
+                    range_poll_form.save()
+                for radio_poll_form in radio_poll_choice_forms.values():
+                    radio_poll_form.save()
+
+                Vote.objects.create(user=user, poll=poll)
+                messages.success(request, ('Your vote has been '
+                                           'successfully registered.'))
+                statsd.incr('voting.vote_voting')
+                return redirect('voting_list_votings')
 
     data['range_poll_choice_forms'] = range_poll_choice_forms
     data['radio_poll_choice_forms'] = radio_poll_choice_forms
-    data['poll_comment_form'] = poll_comment_form
 
     return render(request, 'vote_voting.html', data)
 
@@ -213,3 +221,15 @@ def delete_voting(request, slug):
         messages.success(request, 'Voting successfully deleted.')
         statsd.incr('voting.delete_voting')
     return redirect('voting_list_votings')
+
+
+@permission_check(permissions=['voting.delete_pollcomment'],
+                  filter_field='display_name', owner_field='user',
+                  model=UserProfile)
+def delete_poll_comment(request, slug, comment_id):
+    poll = get_object_or_404(Poll, slug=slug)
+    if comment_id and request.method == 'POST':
+        poll_comment = get_object_or_404(PollComment, pk=comment_id)
+        poll_comment.delete()
+        messages.success(request, 'Comment successfully deleted.')
+    return redirect(poll.get_absolute_url())

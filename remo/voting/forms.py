@@ -112,7 +112,7 @@ class PollEditForm(happyforms.ModelForm):
 
     class Meta:
         model = Poll
-        fields = ['name', 'end', 'description']
+        fields = ['name', 'end', 'description', 'comments_allowed']
         widgets = {'end': SplitSelectDateTimeWidget()}
 
 
@@ -185,7 +185,8 @@ class PollAddForm(PollEditForm):
 
     class Meta:
         model = Poll
-        fields = ['name', 'start', 'end', 'valid_groups', 'description']
+        fields = ['name', 'start', 'end', 'valid_groups', 'description',
+                  'comments_allowed']
         widgets = {'start': SplitSelectDateTimeWidget(),
                    'end': SplitSelectDateTimeWidget()}
 
