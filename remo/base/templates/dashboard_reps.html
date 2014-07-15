@@ -90,14 +90,14 @@
                     {{ date_to_weeks(user.userprofile.longest_streak_start,
                                       user.userprofile.longest_streak_end) }} weeks<br>
                     {% if is_same_day(user.userprofile.longest_streak_start) %}
-                        Today
+                      Today
                     {% elif is_same_day(user.userprofile.longest_streak_start,
                                         user.userprofile.longest_streak_end) %}
-                        {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
+                      {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
                     {% else %}
-                        {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
-                        &nbsp;-&nbsp;
-                        {{ user.userprofile.longest_streak_end|strftime('%d %b %Y')}}
+                      {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
+                      &nbsp;-&nbsp;
+                      {{ user.userprofile.longest_streak_end|strftime('%d %b %Y')}}
                     {% endif %}
                   </span>
                 {% endif %}
