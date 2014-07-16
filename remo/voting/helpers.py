@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 
 from jingo import register
 
+from remo.voting.models import Vote
+
 
 @register.filter
 def get_users_voted(poll):
@@ -36,5 +38,12 @@ def user_has_poll_permissions(user, poll):
 
     if user.groups.filter(Q(id=poll.valid_groups.id) |
                           Q(name='Admin')).exists():
+        return True
+    return False
+
+
+@register.function
+def user_has_voted(user, poll):
+    if Vote.objects.filter(poll=poll, user=user).exists():
         return True
     return False
