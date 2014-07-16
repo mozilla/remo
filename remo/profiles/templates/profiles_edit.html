@@ -569,9 +569,9 @@
       <ul class="large-block-grid-3 small-block-grid-1">
         {% for choice in profileform.functional_areas.field.choices %}
           <li>
-            <label for="{{ choice.1 }}-bit">
+            <label for="{{ choice.1|replace(" ","-") }}-bit">
               <input type="checkbox" name="functional_areas" value="{{ choice.0 }}"
-                     id="id_functional_areas"
+                     id="{{ choice.1|replace(" ","-") }}-bit"
                      {% if choice.0 in functional_areas %}
                        checked="checked"
                      {% endif %}/>
