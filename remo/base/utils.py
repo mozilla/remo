@@ -1,11 +1,33 @@
 import calendar
 import datetime
 
+from django.conf import settings
 from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ValidationError
+from django.core.mail.backends.smtp import EmailBackend as SMTPBackend
 from django.db.models import get_app, get_models
 from django.utils import timezone
+
+from database_email_backend.backend import DatabaseEmailBackend
+
+
+class DevEmailBackend(DatabaseEmailBackend):
+    def send_messages(self, email_messages):
+        """
+        Intercept emails originating from SERVER_EMAIL and send them
+        through SMTPBackend to notify ADMINS.
+        """
+        server_email = getattr(settings, 'SERVER_EMAIL', None)
+
+        admin_messages = filter(lambda x: x.from_email == server_email,
+                                email_messages)
+
+        if admin_messages:
+            smtp_backend = SMTPBackend()
+            smtp_backend.send_messages(admin_messages)
+
+        return super(DevEmailBackend, self).send_messages(email_messages)
 
 
 def get_object_or_none(model_class, **kwargs):
