@@ -501,8 +501,8 @@
       <ul class="large-block-grid-3 small-block-grid-1">
         {% for category_choice in event_form.categories.field.choices %}
           <li>
-            <label for="{{ category_choice.1 }}-bit">
-              <input type="checkbox" id="{{ category_choice.1 }}-bit"
+            <label for="{{ category_choice.1|replace(" ","-") }}-bit">
+              <input type="checkbox" id="{{ category_choice.1|replace(" ","-") }}-bit"
                      name="categories" value="{{ category_choice.0 }}"
                      {% if category_choice.0 in selected_categories %}
                        checked="checked"
@@ -529,8 +529,8 @@
       <ul class="large-block-grid-3 small-block-grid-1">
         {% for goal_choice in event_form.goals.field.choices %}
           <li>
-            <label for="{{ goal_choice.1 }}-bit">
-              <input type="checkbox" id="{{ goal_choice.1 }}-bit"
+            <label for="{{ goal_choice.1|replace(" ","-") }}-bit">
+              <input type="checkbox" id="{{ goal_choice.1|replace(" ", "-") }}-bit"
                      name="goals" value="{{ goal_choice.0 }}"
                      {% if goal_choice.0 in selected_goals %}
                        checked="checked"
