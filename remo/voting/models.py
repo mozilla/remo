@@ -148,7 +148,9 @@ class PollComment(models.Model):
 
     def get_absolute_delete_url(self):
         return reverse('remo.voting.views.delete_poll_comment',
-                       args=[self.poll.slug, self.id])
+                       args=[self.poll.slug,
+                             self.user.userprofile.display_name,
+                             self.id])
 
     class Meta:
         ordering = ['created_on']
@@ -217,7 +219,7 @@ def voting_set_groups(app, sender, signal, **kwargs):
     permissions = {'add_poll': ['Admin', 'Council', 'Mentor'],
                    'delete_poll': ['Admin', 'Council', 'Mentor'],
                    'change_poll': ['Admin', 'Council', 'Mentor'],
-                   'delete_pollcomment': ['Admin', 'Council', 'Mentor']}
+                   'delete_pollcomment': ['Admin']}
 
     add_permissions_to_groups('voting', permissions)
 

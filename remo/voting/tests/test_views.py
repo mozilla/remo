@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.test.client import Client, RequestFactory
 from django.utils.timezone import make_aware, now
 
@@ -10,12 +11,12 @@ import mock
 from nose.tools import eq_, ok_
 from test_utils import TestCase
 
-from remo.base.tests import RemoTestCase
+from remo.base.tests import RemoTestCase, requires_login, requires_permission
 from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
 from remo.voting.models import (Poll, PollComment, RadioPoll, RadioPollChoice,
                                 RangePoll, RangePollChoice)
-from remo.voting.tests import PollFactory
+from remo.voting.tests import PollCommentFactory, PollFactory
 from remo.voting.views import view_voting
 
 
@@ -441,3 +442,40 @@ class VotingCommentingSystem(RemoTestCase):
         ok_(form_mock().save.called)
         eq_(response.context['poll'], poll)
         self.assertTemplateUsed('vote_voting.html')
+
+    @mock.patch('remo.voting.views.redirect', wraps=redirect)
+    def test_delete_as_owner(self, redirect_mock):
+        user = UserFactory.create(groups=['Rep'])
+        group = Group.objects.get(name='Rep')
+        poll = PollFactory.create(created_by=user, valid_groups=group)
+        comment = PollCommentFactory.create(poll=poll, user=user,
+                                            comment='This is a comment')
+        self.post(user=comment.user,
+                  url=comment.get_absolute_delete_url())
+        ok_(not PollComment.objects.filter(pk=comment.id).exists())
+        redirect_mock.assert_called_with(poll.get_absolute_url())
+
+    @requires_login()
+    def test_delete_as_anonymous(self):
+        comment = PollCommentFactory.create()
+        client = Client()
+        client.post(comment.get_absolute_delete_url(), data={})
+        ok_(PollComment.objects.filter(pk=comment.id).exists())
+
+    @requires_permission()
+    def test_delete_as_other_rep(self):
+        user = UserFactory.create(groups=['Rep'])
+        group = Group.objects.get(name='Rep')
+        poll = PollFactory.create(created_by=user, valid_groups=group)
+        comment = PollCommentFactory.create(poll=poll, user=user,
+                                            comment='This is a comment')
+        other_rep = UserFactory.create(groups=['Rep'])
+        self.post(user=other_rep, url=comment.get_absolute_delete_url())
+        ok_(PollComment.objects.filter(pk=comment.id).exists())
+
+    @mock.patch('remo.reports.views.redirect', wraps=redirect)
+    def test_delete_as_admin(self, redirect_mock):
+        user = UserFactory.create(groups=['Admin'])
+        comment = PollCommentFactory.create()
+        self.post(user=user, url=comment.get_absolute_delete_url())
+        ok_(not PollComment.objects.filter(pk=comment.id).exists())
