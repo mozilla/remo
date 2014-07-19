@@ -13,10 +13,10 @@ https://wiki.mozilla.org/Websites/ReMo_Mozilla_Reps
 
 Documentation
 -------------
-See http://remo.readthedocs.org/ or build the /docs folder.
+See http://remo.readthedocs.org/ or build the `/docs` folder.
 
 How to file bugs
 -------------
-If you want to file a bug, go to bugzilla.mozilla.org and file it under
-Mozilla Reps > reps.mozilla.org. If you then want to give a Pull Request, mention
+If you want to file a bug, go to [bugzilla.mozilla.org](bugzilla.mozilla.org) and file it under
+`Mozilla Reps > reps.mozilla.org`. If you then want to give a Pull Request, mention
 the bug number in the pull request to help with tracking.
