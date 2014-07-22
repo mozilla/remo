@@ -64,7 +64,8 @@ def send_first_report_notification():
     users = User.objects.filter(
         groups__name='Rep',
         userprofile__registration_complete=True,
-        userprofile__first_report_notification__isnull=True)
+        userprofile__first_report_notification__isnull=True,
+        userprofile__is_unavailable=False)
     # Exclude users with a report filed between start and end period
     # and users who joined the program less than one month
     inactive_users = (users
@@ -88,7 +89,8 @@ def send_second_report_notification():
         groups__name='Rep',
         userprofile__registration_complete=True,
         userprofile__first_report_notification__lte=today - timedelta(weeks=4),
-        userprofile__second_report_notification__isnull=True)
+        userprofile__second_report_notification__isnull=True,
+        userprofile__is_unavailable=False)
     # Exclude users with a report filed between start and end period
     # and users who joined the program less than one month
     inactive_users = (users
