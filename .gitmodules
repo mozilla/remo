@@ -1,5 +1,6 @@
 [submodule "vendor"]
 	path = vendor
+	ignore = dirty
 	url = git://github.com/mozilla/playdoh-lib.git
 [submodule "vendor-local/src/happyforms"]
 	path = vendor-local/src/happyforms
@@ -33,6 +34,7 @@
 	url = https://github.com/toastdriven/django-tastypie.git
 [submodule "vendor-local/src/django-database-email-backend"]
 	path = vendor-local/src/django-database-email-backend
+	ignore = dirty
 	url = https://github.com/stefanfoulis/django-database-email-backend.git
 [submodule "vendor-local/src/django-browserid"]
 	path = vendor-local/src/django-browserid
