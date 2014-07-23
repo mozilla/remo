@@ -66,8 +66,13 @@
               <td>
                 {% set activities=count_ng_reports(user, current_streak=True) %}
                 {{ activities }}
+                {% if activities != 1 %}
+                  activities
+                {% else %}
+                  activity
+                {% endif %}
                 {% if activities > 0 %}
-                  &nbsp;activities<br>
+                  <br>
                   <span class="date-range">
                     {{ date_to_weeks(user.userprofile.current_streak_start,
                                       today.date()) }} weeks<br>
@@ -84,8 +89,13 @@
               <td>
                 {% set activities=count_ng_reports(user, longest_streak=True) %}
                 {{ activities }}
+                {% if activities != 1 %}
+                  activities
+                {% else %}
+                  activity
+                {% endif %}
                 {% if activities > 0 %}
-                  &nbsp;activities<br>
+                  <br>
                   <span class="date-range">
                     {{ date_to_weeks(user.userprofile.longest_streak_start,
                                       user.userprofile.longest_streak_end) }} weeks<br>
@@ -105,8 +115,13 @@
               <td>
                 {% set activities=count_ng_reports(user, period=4) %}
                 {{ activities }}
+                {% if activities != 1 %}
+                  activities
+                {% else %}
+                  activity
+                {% endif %}
                 {% if activities > 0 %}
-                  &nbsp;activities<br>
+                  <br>
                   <span class="date-range">
                     {{ get_date_n_weeks_before(today, 4)|strftime('%d %b %Y')}}
                     &nbsp;-&nbsp;
@@ -117,8 +132,13 @@
               <td>
                 {% set activities=count_ng_reports(user, period=8) %}
                 {{ activities }}
+                {% if activities != 1 %}
+                  activities
+                {% else %}
+                  activity
+                {% endif %}
+                <br>
                 {% if activities > 0 %}
-                  &nbsp;activities<br>
                   <span class="date-range">
                     {{ get_date_n_weeks_before(today, 8)|strftime('%d %b %Y')}}
                     &nbsp;-&nbsp;
@@ -127,7 +147,13 @@
                 {% endif %}
               </td>
               <td>
-                {{ count_ng_reports(user) }} activities
+                {% set activities=count_ng_reports(user) %}
+                {{ activities }}
+                {% if activities != 1 %}
+                  activities
+                {% else %}
+                  activity
+                {% endif %}
               </td>
             </tr>
           </tbody>
