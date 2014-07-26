@@ -1,7 +1,7 @@
 ReMo Portal
 ===========
 
-> The Mozilla Reps portal provides the tools for Reps to be successful
+> The [Mozilla Reps portal](https://reps.mozilla.org/) provides the tools for Reps to be successful
 in their day to day activities and also receive mentorship for 
 continued development. It also provides metrics for understanding 
 and evaluating Mozilla's grass-roots community engagement efforts. 
