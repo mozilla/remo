@@ -190,11 +190,10 @@ class UserStatusForm(happyforms.ModelForm):
 
     def clean(self):
         """Clean Form."""
-        super(UserStatusForm, self).clean()
-        cdata = self.cleaned_data
+        cdata = super(UserStatusForm, self).clean()
 
         tomorrow = get_date(days=1)
-        if cdata['expected_date'] < tomorrow:
+        if 'expected_date' in cdata and cdata['expected_date'] < tomorrow:
             msg = ('Return day cannot be earlier than {return_day}'
                    .format(return_day=tomorrow.strftime('%d %B %Y')))
             self._errors['expected_date'] = self.error_class([msg])
