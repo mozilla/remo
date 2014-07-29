@@ -140,6 +140,21 @@ class SendInactivityNotifications(RemoTestCase):
                  headers={'Reply-To': rep.email})]
         eq_(mail_mock.call_args_list, expected_call_list)
 
+    def test_with_user_unavailable(self):
+        mentor = UserFactory.create(groups=['Mentor'])
+        today = now().date()
+        rep = UserFactory.create(
+            groups=['Rep'], userprofile__mentor=mentor,
+            userprofile__date_joined_program=get_date(days=-100),
+            userprofile__is_unavailable=True)
+        NGReportFactory.create(user=rep,
+                               report_date=today - timedelta(weeks=5))
+
+        with patch('remo.reports.utils.send_remo_mail') as mail_mock:
+            send_first_report_notification()
+
+        ok_(not mail_mock.called)
+
 
 class UpdateCurrentStreakCountersTest(RemoTestCase):
     def test_base(self):
