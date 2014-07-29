@@ -21,12 +21,9 @@ Mozilla Reps - {{ poll.name }} - Vote
       <div class="large-4 columns align-right hide-for-small">
         {% if user_has_poll_permissions(user, poll) %}
           <a href="{{ url('voting_edit_voting', slug=poll.slug) }}"
-             class="button small alert">
+             class="small button">
             Edit voting
           </a>
-        {% endif %}
-        {% if poll.is_current_voting and not user_voted %}
-          <button class="button small confirm">Vote</button>
         {% endif %}
       </div>
     </div>
@@ -136,26 +133,26 @@ Mozilla Reps - {{ poll.name }} - Vote
         </div>
 
         {% if range_poll_choice_forms %}
-        <div class="row">
-          <div class="large-1 columns">
-            <!-- Editable Content wiki like -->
-            <div class="pict-icon large news"></div>
+          <div class="row">
+            <div class="large-1 columns">
+              <!-- Editable Content wiki like -->
+              <div class="pict-icon large news"></div>
+            </div>
+            <div class="large-11 columns">
+              <p>
+                Range voting is a voting method for elections under which voters score each
+                candidate, the scores are added up, and the candidate(s) with the highest score win.
+              </p>
+              <p>
+                For each candiate select from the drop down menu a score from 0 to the highest number.
+                There is no quota, and you can freely assign different or same scores to different candidates.
+              </p>
+              <p>
+                More info can be found in the Wikipedia article on
+                 <a href="http://en.wikipedia.org/wiki/Range_voting" target="_blank">Range Voting</a>.
+              </p>
+            </div>
           </div>
-          <div class="large-11 columns">
-            <p>
-              Range voting is a voting method for elections under which voters score each
-              candidate, the scores are added up, and the candidate(s) with the highest score win.
-            </p>
-            <p>
-              For each candiate select from the drop down menu a score from 0 to the highest number.
-              There is no quota, and you can freely assign different or same scores to different candidates.
-            </p>
-            <p>
-              More info can be found in the Wikipedia article on
-               <a href="http://en.wikipedia.org/wiki/Range_voting" target="_blank">Range Voting</a>.
-            </p>
-          </div>
-        </div>
         {% endif %}
 
       </div>
@@ -228,9 +225,9 @@ Mozilla Reps - {{ poll.name }} - Vote
 
         <div class="row show-for-small controls-footer">
           <div class="small-12 columns">
-            {% if user_is_admin(user) %}
+            {% if user_has_poll_permissions(user, poll) %}
               <a href="{{ url('voting_edit_voting', slug=poll.slug) }}"
-                 class="button small alert">
+                 class="small button">
                 Edit voting
               </a>
             {% endif %}
@@ -239,6 +236,12 @@ Mozilla Reps - {{ poll.name }} - Vote
             {% endif %}
           </div>
         </div>
+      </div>
+      <!-- Vote button -->
+      <div class="large-4 columns align-right hide-for-small">
+        {% if poll.is_current_voting and not user_voted %}
+          <button class="button small confirm">Vote</button>
+        {% endif %}
       </div>
     </div>
   </form>
