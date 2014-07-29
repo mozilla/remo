@@ -16,7 +16,7 @@ Mozilla Reps - {{ poll.name }} - Vote
         </div>
       {% endif %}
       <div class="large-8 columns">
-        <h1>{{ poll.name }}</h1>
+        <h1>{{ poll.name|urlize(50) }}</h1>
       </div>
       <div class="large-4 columns align-right hide-for-small">
         {% if user_has_poll_permissions(user, poll) %}
@@ -127,7 +127,7 @@ Mozilla Reps - {{ poll.name }} - Vote
               <span class="label inline">
                 Description
               </span>
-              {{ poll.description|nl2br }}
+              {{ poll.description|urlize(150)|nl2br }}
             </p>
           </div>
         </div>

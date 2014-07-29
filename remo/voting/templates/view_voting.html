@@ -8,7 +8,7 @@ Mozilla Reps - {{ poll.name }} - Results
 <main role="main" class="voting-main">
   <div class="row">
     <div class="large-8 columns">
-      <h1>{{ poll.name }} - Results</h1>
+      <h1>{{ poll.name|urlize(50) }} - Results</h1>
     </div>
   </div>
 
@@ -109,7 +109,7 @@ Mozilla Reps - {{ poll.name }} - Results
             <span class="label inline">
               Description
             </span>
-            {{ poll.description|nl2br }}
+            {{ poll.description|urlize(150)|nl2br }}
           </p>
         </div>
       </div>
