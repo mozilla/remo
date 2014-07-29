@@ -196,7 +196,7 @@ function initDatePicker (prepopulate_date) {
         $input.datepicker('setDate', Date.now());
     }
     else {
-        var date = $.datepicker.parseDate("yy-mm-dd", $input.val());
+        var date = Date.parse($input.val());
         $input.datepicker('setDate', date);
     }
 }
