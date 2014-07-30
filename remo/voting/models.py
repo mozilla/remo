@@ -43,10 +43,10 @@ class Poll(models.Model):
                                      null=True, editable=False, default='')
     task_end_id = models.CharField(max_length=256, blank=True, null=True,
                                    editable=False, default='')
-    last_notification = models.DateTimeField(null=True)
     bug = models.ForeignKey(Bug, null=True, blank=True)
     automated_poll = models.BooleanField(default=False)
     comments_allowed = models.BooleanField(default=True)
+    is_extended = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         return reverse('remo.voting.views.view_voting',
@@ -79,12 +79,19 @@ class Poll(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.slug = uuslug(self.name, instance=self)
-        elif not settings.CELERY_ALWAYS_EAGER:
-            if self.is_current_voting:
-                celery_control.revoke(self.task_end_id)
-            elif self.is_future_voting:
-                celery_control.revoke(self.task_start_id)
-                celery_control.revoke(self.task_end_id)
+        else:
+            if not settings.CELERY_ALWAYS_EAGER:
+                if self.is_current_voting:
+                    celery_control.revoke(self.task_end_id)
+                elif self.is_future_voting:
+                    celery_control.revoke(self.task_start_id)
+                    celery_control.revoke(self.task_end_id)
+
+            if not self.is_future_voting:
+                obj = Poll.objects.get(pk=self.id)
+                if self.end > obj.end:
+                    self.is_extended = True
+
         super(Poll, self).save()
 
 

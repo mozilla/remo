@@ -50,8 +50,7 @@ class PollAdmin(ExportMixin, admin.ModelAdmin):
     search_fields = ['name']
     list_display = ['name', 'start', 'end', 'valid_groups']
     date_hierarchy = 'start'
-    readonly_fields = ['task_start_id', 'task_end_id', 'last_notification',
-                       'bug']
+    readonly_fields = ['task_start_id', 'task_end_id', 'bug']
     list_filter = ['automated_poll']
 
 
