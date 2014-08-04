@@ -14,7 +14,6 @@ class FeaturedRep(models.Model):
     some text explaining why they are so cool.
 
     """
-    user = models.ForeignKey(User)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name='reps_featured')
