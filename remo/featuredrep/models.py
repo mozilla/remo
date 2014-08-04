@@ -19,6 +19,7 @@ class FeaturedRep(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name='reps_featured')
     text = models.TextField(blank=False, null=False)
+    users = models.ManyToManyField(User, related_name='featuredrep_users')
 
     class Meta:
         ordering = ['-updated_on']
