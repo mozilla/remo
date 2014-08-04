@@ -57,9 +57,11 @@
           {% for feature in featured %}
           <tr>
             <td>
-              <a href="{{ url('profiles_view_profile', feature.user.userprofile.display_name) }}">
-                {{ feature.user.get_full_name() }}
-              </a>
+              {% for user in feature.users.all() %}
+                <a href="{{ url('profiles_view_profile', user.userprofile.display_name) }}">
+                  {{ user.get_full_name() }}
+                </a>
+              {% endfor %}
             </td>
             <td>
               <div class="markdown">

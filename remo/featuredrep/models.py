@@ -22,7 +22,7 @@ class FeaturedRep(models.Model):
 
     class Meta:
         ordering = ['-updated_on']
-        get_latest_by = 'updated_on'
+        get_latest_by = 'created_on'
         permissions = (('can_edit_featured', 'Can edit featured reps'),
                        ('can_delete_featured', 'Can delete featured reps'))
 

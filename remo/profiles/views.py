@@ -20,7 +20,6 @@ import forms
 
 from remo.base.decorators import permission_check
 from remo.events.utils import get_events_for_user
-from remo.featuredrep.models import FeaturedRep
 from remo.profiles.models import UserProfile, UserStatus
 from remo.profiles.models import FunctionalArea
 
@@ -179,7 +178,7 @@ def view_profile(request, display_name):
 
     data['future_events'] = get_events_for_user(user, from_date=today)
     data['past_events'] = past_user_events.reverse()[:10]
-    data['featured_rep'] = FeaturedRep.objects.filter(user=user)
+    data['featured_rep'] = user.featuredrep_users.all()
 
     return render(request, 'profiles_view.html', data)
 
