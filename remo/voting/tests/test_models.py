@@ -156,7 +156,7 @@ class VotingCommentSignalTests(TestCase):
         commenter = UserFactory.create()
         creator = UserFactory.create(
             userprofile__receive_email_on_add_voting_comment=True)
-        poll = PollFactory.create(created_by=creator)
+        poll = PollFactoryNoSignals.create(created_by=creator)
         users_with_comments = UserFactory.create_batch(
             2, userprofile__receive_email_on_add_voting_comment=True)
         # disconnect the signals in order to add two users in PollComment
