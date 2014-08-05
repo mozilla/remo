@@ -3,8 +3,10 @@ from functools import wraps
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
-
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from remo.base.utils import get_object_or_none
+from funfactory.helpers import urlparams
 
 
 def permission_check(permissions=[], group=None,
@@ -82,8 +84,8 @@ def permission_check(permissions=[], group=None,
                     return redirect('main')
             else:
                 messages.warning(request, 'Please login.')
-                request.session['next_url'] = request.get_full_path()
-                return redirect('main')
+                next_url = urlparams(reverse('main'), next=request.path)
+                return HttpResponseRedirect(next_url)
 
         return wrapper
     return decorator

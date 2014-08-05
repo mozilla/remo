@@ -86,8 +86,11 @@
             <div class="large-10 small-10 columns" id="login-box">
               <div class="account anonymous nomenu logout">
                 {% if not user.is_authenticated() %}
+                  {% if request.get_full_path() != '/' %}
+                    {% set next=request.get_full_path() %}
+                  {% endif %}
                   <span id="login-menu-locator">
-                    {{ browserid_login(text='Sign in') }}
+                    {{ browserid_login(text='Sign in', next=request.GET.next|default(next|default(''))) }}
                   </span>
                   or
                   <a href="#" data-reveal-id="join-modal">Join</a>
