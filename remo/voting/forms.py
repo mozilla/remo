@@ -74,7 +74,7 @@ class RadioPollChoiceVoteForm(happyforms.Form):
             poll = radio_poll_choice.radio_poll.poll
             if poll.automated_poll and self.user:
                 commenter = User.objects.get(username='remobot')
-                comment = 'User **{0}**  voted: **{1}**'.format(
+                comment = '**{0}**  voted: **{1}**'.format(
                     self.user, radio_poll_choice.answer)
                 PollComment.objects.create(poll=poll, user=commenter,
                                            comment=comment)
