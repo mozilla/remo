@@ -1,7 +1,7 @@
 import happyforms
 
 from django import forms
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
 from django.db.models import F
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
@@ -49,12 +49,14 @@ class RangePollChoiceVoteForm(happyforms.Form):
 class RadioPollChoiceVoteForm(happyforms.Form):
     """Radio voting vote form."""
 
-    def __init__(self, radio_poll, *args, **kwargs):
+    def __init__(self, radio_poll, user=None, *args, **kwargs):
         """Initialize form
 
         Dynamically set field for the answers in a radio voting.
         """
         super(RadioPollChoiceVoteForm, self).__init__(*args, **kwargs)
+        self.user = user
+
         choices = ((('', '----'),) +
                    tuple(radio_poll.answers.values_list('id', 'answer')))
         self.fields['radio_poll__%s' % str(radio_poll.id)] = (
@@ -63,10 +65,19 @@ class RadioPollChoiceVoteForm(happyforms.Form):
                               label=radio_poll.question))
 
     def save(self, *args, **kwargs):
-        answer_id = self.cleaned_data.values()[0]
-        if answer_id != 'None':
+        radio_poll_choice_id = self.cleaned_data.values()[0]
+        if radio_poll_choice_id != 'None':
             (RadioPollChoice.objects
-             .filter(pk=answer_id).update(votes=F('votes')+1))
+             .filter(pk=radio_poll_choice_id).update(votes=F('votes')+1))
+            radio_poll_choice = RadioPollChoice.objects.get(
+                pk=radio_poll_choice_id)
+            poll = radio_poll_choice.radio_poll.poll
+            if poll.automated_poll and self.user:
+                commenter = User.objects.get(username='remobot')
+                comment = 'User **{0}**  voted: **{1}**'.format(
+                    self.user, radio_poll_choice.answer)
+                PollComment.objects.create(poll=poll, user=commenter,
+                                           comment=comment)
 
 
 class PollEditForm(happyforms.ModelForm):

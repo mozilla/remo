@@ -193,7 +193,7 @@ def view_voting(request, slug):
 
             for item in poll.radio_polls.all():
                 radio_poll_choice_forms[item] = forms.RadioPollChoiceVoteForm(
-                    data=request.POST, radio_poll=item)
+                    data=request.POST, radio_poll=item, user=request.user)
             # Process poll form
             forms_valid = True
             # validate all forms
