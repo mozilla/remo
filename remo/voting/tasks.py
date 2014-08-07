@@ -1,8 +1,17 @@
-from celery.task import task
+from datetime import timedelta
+from operator import or_
+
+from celery.task import periodic_task, task
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+
+from remo.base.tasks import send_remo_mail
+from remo.base.utils import get_date
+
+EXTEND_VOTING_PERIOD = 24 * 3600  # 24 hours
+NOTIFICATION_INTERVAL = 24 * 3600  # 24 hours
 
 
 @task
@@ -32,3 +41,41 @@ def send_voting_mail(voting_id, subject, email_template):
             ctx_data.update(data)
             message = render_to_string(email_template, ctx_data)
             send_mail(subject, message, settings.FROM_EMAIL, [user.email])
+
+
+@periodic_task(run_every=timedelta(hours=8))
+def extend_voting_period():
+    """Extend voting period by EXTEND_VOTING_PERIOD if there is no
+    majority decision.
+
+    """
+
+    # avoid circular dependencies
+    from remo.voting.models import Poll
+
+    tomorrow = get_date(days=1)
+    council_count = User.objects.filter(groups__name='Council').count()
+
+    polls = Poll.objects.filter(end__year=tomorrow.year,
+                                end__month=tomorrow.month,
+                                end__day=tomorrow.day,
+                                automated_poll=True)
+
+    for poll in polls:
+        if not poll.is_extended:
+            budget_poll = poll.radio_polls.get(question='Budget Approval')
+            majority = reduce(or_, map(lambda x: x.votes > council_count/2,
+                                       budget_poll.answers.all()))
+            if not majority:
+                poll.end += timedelta(seconds=EXTEND_VOTING_PERIOD)
+                poll.save()
+                subject = '[Urgent] Voting extended for {0}'.format(poll.name)
+                recipients = (User.objects.filter(groups=poll.valid_groups)
+                              .exclude(pk__in=poll.users_voted.all())
+                              .values_list('id', flat=True))
+                ctx_data = {'poll': poll}
+                template = 'emails/voting_vote_reminder.txt'
+                send_remo_mail.delay(subject=subject,
+                                     recipients_list=recipients,
+                                     email_template=template,
+                                     data=ctx_data)
