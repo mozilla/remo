@@ -498,9 +498,13 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
       <p class="lead">
         Featured for {{ featured.created_on|strftime('%B %Y') }}
       </p>
-      <h2>
-        {{ featured.user.get_full_name() }}
-      </h2>
+      {% for featured_user in featured.users.all() %}
+        {% if featured_user == pageuser %}
+          <h2>
+            {{ featured_user.get_full_name() }}
+          </h2>
+        {% endif %}
+      {% endfor %}
       <!-- Make following p Markdown to match featured rep content -->
       <p>
         {{ featured.text|markdown }}

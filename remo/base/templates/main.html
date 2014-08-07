@@ -65,22 +65,24 @@
       </h3>
       <div class="row">
         {% if featuredrep %}
-        <div class="large-4 columns">
-          <img src="{{ featuredrep.user|get_avatar_url(80) }}" id="main-featured-avatar"
-               alt="Profile picture of {{ featuredrep.user.first_name }} {{ featuredrep.user.last_name }}">
-        </div>
-        <div class="large-8 columns">
-          <h5>
-            <a href="{{ url('profiles_view_profile', featuredrep.user.userprofile.display_name) }}">
-              {{ featuredrep.user.first_name }}<br>{{ featuredrep.user.last_name }}
-            </a>
-          </h5>
-          {{ featuredrep.user.userprofile.city }}, {{ featuredrep.user.userprofile.country }}
-        </div>
+          {% for user in featuredrep.users.all() %}
+            <div class="large-4 columns">
+              <img src="{{ user|get_avatar_url(80) }}" id="main-featured-avatar"
+                  alt="Profile picture of {{ user.first_name }} {{ user.last_name }}">
+            </div>
+            <div class="large-8 columns">
+              <h5>
+                <a href="{{ url('profiles_view_profile', user.userprofile.display_name) }}">
+                  {{ user.first_name }}<br>{{ user.last_name }}
+                </a>
+              </h5>
+              {{ user.userprofile.city }}, {{ user.userprofile.country }}
+            </div>
+          {% endfor %}
         {% else %}
-        <div class="large-12 columns">
-          None for this month!
-        </div>
+          <div class="large-12 columns">
+            None for this month!
+          </div>
         {% endif %}
       </div>
       <div class="row">

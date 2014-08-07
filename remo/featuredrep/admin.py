@@ -12,16 +12,18 @@ class FeaturedRepResource(resources.ModelResource):
     class Meta:
         model = FeaturedRep
 
-    def dehydrate_user(self, featuredrep):
-        return featuredrep.user.get_full_name()
+    def dehydrate_users(self, featuredrep):
+        return featuredrep.users.all()
 
 
 class FeaturedRepAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = FeaturedRepResource
     model = FeaturedRep
-    list_display = ('user', 'created_on')
-    search_fields = ['user__first_name', 'user__last_name',
-                     'user__userprofile__display_name']
+    list_display = ('featured_rep_users', 'created_on')
+    search_fields = ['users__first_name', 'users__last_name']
+
+    def featured_rep_users(self, obj):
+        return ', '.join([user.get_full_name() for user in obj.users.all()])
 
 
 admin.site.register(FeaturedRep, FeaturedRepAdmin)
