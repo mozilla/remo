@@ -1,5 +1,6 @@
 from contextlib import nested
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.test.client import Client
 from django.test.utils import override_settings
@@ -32,13 +33,13 @@ class RemoTestCase(BaseTestCase):
 def requires_login():
     def decorate(func):
         def newfunc(*args, **kwargs):
-            with nested(
-                    patch('remo.base.decorators.messages.warning'),
-                    patch('remo.base.decorators.redirect',
-                          wraps=redirect)) as (messages_mock, redirect_mock):
-                func(*args, **kwargs)
+            with patch(
+                    'remo.base.decorators.messages.warning') as messages_mock:
+                with patch('remo.base.decorators.HttpResponseRedirect',
+                           wraps=HttpResponseRedirect) as redirect_mock:
+                    func(*args, **kwargs)
             ok_(messages_mock.called, 'messages.warning() was not called.')
-            redirect_mock.assert_called_with('main')
+            ok_(redirect_mock.called)
         newfunc = make_decorator(func)(newfunc)
         return newfunc
     return decorate
