@@ -71,11 +71,11 @@ class EventResource(ModelResource):
 
     def dehydrate_local_start(self, bundle):
         """Return local start datetime."""
-        return bundle.obj.local_start
+        return bundle.obj.local_start.replace(tzinfo=None)
 
     def dehydrate_local_end(self, bundle):
         """Return local end datetime."""
-        return bundle.obj.local_end
+        return bundle.obj.local_end.replace(tzinfo=None)
 
     def dehydrate_multiday(self, bundle):
         """Return True if event is multiday, False otherwise."""
