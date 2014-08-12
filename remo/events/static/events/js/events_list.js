@@ -36,7 +36,6 @@ function initialize_map() {
     // Initialize map.
     var center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
     EventsLib.map = L.mapbox.map('map', MAPBOX_TOKEN, {minZoom: 1});
-    addAttributionOSM(EventsLib.map);
     EventsLib.map.setView(center, 2);
 
     L.control.locate({

@@ -174,11 +174,6 @@ function paginatorSelector(selector) {
     });
 }
 
-function addAttributionOSM(map) {
-    var attribution = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-    map.attributionControl.addAttribution(attribution);
-}
-
 /*
  * Initialize date picker widget and set ISO date format
  * If the field is empty, pre-populate with current date
