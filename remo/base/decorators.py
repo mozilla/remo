@@ -1,8 +1,12 @@
+import traceback
+import StringIO
+
 from functools import wraps
 
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
+from django.core.mail import mail_admins
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from remo.base.utils import get_object_or_none
@@ -89,6 +93,20 @@ def permission_check(permissions=[], group=None,
 
         return wrapper
     return decorator
+
+
+def mail_on_error(func, *args, **kwargs):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception:
+            tb = StringIO.StringIO()
+            traceback.print_exc(file=tb)
+            tb.seek(0)
+            mail_admins('%s error' % func.__name__, tb.read())
+            raise
+    return inner
 
 
 class PermissionMixin(object):
