@@ -6,6 +6,7 @@ from mock import call, patch
 from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
+from remo.base.utils import get_date
 from remo.events.tasks import notify_event_owners_to_input_metrics
 from remo.events.tests import EventFactory
 from remo.profiles.tests import UserFactory
@@ -14,7 +15,7 @@ from remo.profiles.tests import UserFactory
 class SendEventNotificationsTests(RemoTestCase):
     def test_base(self):
         owner = UserFactory.create()
-        event = EventFactory.create(end=now(), owner=owner)
+        event = EventFactory.create(end=get_date(days=-1), owner=owner)
 
         subject = ('[Reminder] Please add the actual metrics for event {0}'
                    .format(event.name))
@@ -41,7 +42,7 @@ class SendEventNotificationsTests(RemoTestCase):
 
     def test_end_date_in_the_past(self):
         owner = UserFactory.create()
-        EventFactory.create(end=now() - timedelta(days=1),
+        EventFactory.create(end=now() - timedelta(days=3),
                             owner=owner)
 
         with patch('remo.events.tasks.send_remo_mail') as mail_mock:
