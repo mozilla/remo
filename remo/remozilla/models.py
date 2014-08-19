@@ -30,6 +30,9 @@ class Bug(caching.base.CachingMixin, models.Model):
     resolution = models.CharField(max_length=30, default='')
     first_comment = models.TextField(default='', blank=True)
     council_vote_requested = models.BooleanField(default=False, blank=True)
+    council_member_assigned = models.BooleanField(default=False, blank=True)
+    pending_mentor_validation = models.BooleanField(default=False, blank=True)
+    budget_needinfo = models.ManyToManyField(User, related_name='info_needed')
 
     objects = caching.base.CachingManager()
 
