@@ -59,11 +59,12 @@ class FetchBugsTest(TestCase):
 
         first_request = requests.Request()
         first_request.status_code = 200
+        user = UserFactory.create(groups=['Rep'], email='foo@example.com')
         bug_data = {'bugs': [{'id': 7788,
                               'summary': 'This is summary',
                               'creator': {'name': 'rep@example.com'},
                               'creation_time': '2010-10-5T13:45:23Z',
-                              'component': 'Swag Requests',
+                              'component': 'Budget Requests',
                               'whiteboard': 'This is whiteboard',
                               'cc': [{'name': 'mentor@example.com'},
                                      {'name': 'not_a_rep@example.com'}],
@@ -75,16 +76,25 @@ class FetchBugsTest(TestCase):
                                   {'status': '?',
                                    'name': 'needinfo',
                                    'requestee': {
-                                       'name': settings.REPS_COUNCIL_ALIAS}}
+                                       'name': settings.REPS_COUNCIL_ALIAS}},
+                                  {'status': '?',
+                                   'name': 'needinfo',
+                                   'requestee': {
+                                       'name': 'foo@example.com'}}
                               ],
                               'resolution': 'invalid'},
                              {'id': 1199,
                               'summary': 'New summary',
                               'creator': {'name': 'not_a_rep@example.com'},
                               'creation_time': '2012-12-5T11:30:23Z',
-                              'component': 'Swag requests',
+                              'component': 'Budget Requests',
+                              'whiteboard': 'Council Reviewer Assigned',
                               'cc': [{'name': 'mentor@example.com'},
                                      {'name': 'not_a_rep@example.com'}],
+                              'flags': [{'status': '?',
+                                         'name': 'remo-approval'},
+                                        {'status': '?',
+                                         'name': 'remo-review'}],
                               'assigned_to': {'name': 'mentor@example.com'},
                               'status': 'resolved',
                               'resolution': 'invalid'}]}
@@ -106,11 +116,11 @@ class FetchBugsTest(TestCase):
         values = [first_request, empty_request, second_request, empty_request]
         fake_get.side_effect = values
 
-        fetch_bugs(components=['Planning', 'Swag Requests'])
+        fetch_bugs(components=['Planning', 'Budget Requests'])
 
         eq_(Bug.objects.all().count(), 4)
         eq_(Bug.objects.filter(component='Planning').count(), 2)
-        eq_(Bug.objects.filter(component='Swag Requests').count(), 2)
+        eq_(Bug.objects.filter(component='Budget Requests').count(), 2)
 
         # refresh status_obj
         self.assertGreater(get_last_updated_date(), previous_last_updated_time)
@@ -120,8 +130,11 @@ class FetchBugsTest(TestCase):
         eq_(bug.assigned_to.email, 'mentor@example.com')
         eq_(bug.resolution, 'INVALID')
         ok_(bug.council_vote_requested)
+        ok_(user in bug.budget_needinfo.all())
 
         bug = Bug.objects.get(bug_id=1199)
         eq_(bug.creator, None)
         eq_(bug.cc.all().count(), 1)
         ok_(not bug.council_vote_requested)
+        ok_(bug.pending_mentor_validation)
+        ok_(bug.council_member_assigned)
