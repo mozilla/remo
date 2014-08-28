@@ -58,7 +58,6 @@
   {% endcompress %}
   {% include "includes/google_analytics.html" %}
 
-  {{ browserid_css() }}
 </head>
 
 <body data-mapbox-token="{{ settings.MAPBOX_TOKEN }}">
@@ -90,7 +89,7 @@
                     {% set next=request.get_full_path() %}
                   {% endif %}
                   <span id="login-menu-locator">
-                    {{ browserid_login(text='Sign in', next=request.GET.next|default(next|default(''))) }}
+                    {{ browserid_login(next=request.GET.next|default(next|default(''))) }}
                   </span>
                   or
                   <a href="#" data-reveal-id="join-modal">Join</a>

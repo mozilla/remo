@@ -28,7 +28,7 @@ from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
 from remo.base.tests import requires_login, requires_permission, RemoTestCase
 from remo.base.tests.browserid_mock import mock_browserid
-from remo.base.views import robots_txt
+from remo.base.views import BrowserIDVerify, robots_txt
 from remo.events.models import EventGoal
 from remo.events.tests import EventFactory, EventGoalFactory
 from remo.profiles.models import FunctionalArea
@@ -102,7 +102,7 @@ class MozillianResponse(object):
         self.status_code = status_code
 
 
-class MozilliansTest(TestCase):
+class MozilliansTest(RemoTestCase):
     """Test Moziilians."""
 
     @mock.patch('requests.get')
@@ -133,18 +133,26 @@ class MozilliansTest(TestCase):
             ok_(settings.MOZILLIANS_API_KEY not in str(msg))
 
     @override_settings(SITE_URL='http://testserver')
-    @mock.patch('remo.base.views.verify')
+    @override_settings(BROWSERID_AUDIENCES=['http://testserver'])
+    @mock.patch('remo.base.views.get_audience')
+    @mock.patch('remo.base.views.RemoteVerifier.verify')
     @mock.patch('remo.base.views.is_vouched')
     @mock.patch('remo.base.views.auth.authenticate')
     def test_mozillian_user_with_private_data(self, mocked_authenticate,
-                                              mocked_is_vouched,
-                                              mocked_verify):
+                                              mocked_is_vouched, mocked_verify,
+                                              mocked_get_audience):
         """ Test user creation for user with private data in Mozillians."""
-        c = Client()
-        email = u'vouched@example.com'
-        mocked_verify.return_value = {'email': email}
+        email = 'vouched@example.com'
+        verify = BrowserIDVerify()
+        # Mocked request for verification
+        mocked_request = mock.Mock()
+        mocked_request.POST = {'assertion': 'assertion'}
+        verify.request = mocked_request
+        mocked_get_audience.return_value = 'audience'
+        mocked_verify.email.return_value = email
         mocked_is_vouched.return_value = {'is_vouched': True,
                                           'email': email}
+        verify.post()
 
         def authenticate(*args, **kwargs):
             user = User.objects.get(email=email)
@@ -153,7 +161,6 @@ class MozilliansTest(TestCase):
 
         mocked_authenticate.side_effect = authenticate
         eq_(User.objects.filter(email=email).count(), 0)
-        c.post('/browserid/login/', data={'assertion': 'xxx'})
         user = User.objects.get(email=email)
         eq_(user.get_full_name(), u'Anonymous Mozillian')
 

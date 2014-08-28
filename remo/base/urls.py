@@ -1,10 +1,9 @@
-from django.conf.urls import include, patterns, url
+from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 
 
 urlpatterns = patterns(
     '',
-    url(r'^browserid/', include('django_browserid.urls')),
     url(r'dashboard/$', 'remo.base.views.dashboard', name='dashboard'),
     url(r'dashboard/emailmentees/$', 'remo.base.views.email_mentees',
         name='email_mentees'),
