@@ -17,7 +17,7 @@ from remo.base.tests import requires_login, requires_permission
 from remo.events.models import Event, EventComment, EventMetricOutcome
 from remo.events.tests import (AttendanceFactory, EventCommentFactory,
                                EventFactory, EventGoalFactory,
-                               EventMetricFactory)
+                               EventMetricFactory, EventMetricOutcomeFactory)
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
@@ -616,20 +616,59 @@ class ViewsTest(TestCase):
         ok_(not response.context['can_delete_event'])
 
     @mock.patch('django.contrib.messages.success')
-    def test_clone_event_rep(self, mock_success):
-        """Test clone event with rep permissions."""
+    def test_clone_event_legacy_metrics(self, mock_success):
         user = UserFactory.create(groups=['Rep'])
+        event = EventFactory.create(has_new_metrics=False)
         self.client.login(username=user.username, password='passwd')
         event_clone_url = reverse('events_clone_event',
-                                  kwargs={'slug': 'test-event'})
+                                  kwargs={'slug': event.slug})
         response = self.client.post(event_clone_url, self.data, follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully created.')
-        eq_(mock_success.call_count, 1)
-        event = Event.objects.get(name='Test edit event', owner=user)
+        event = Event.objects.get(name='Test edit event', owner=event.owner)
         cloned_event_url = reverse('events_view_event',
                                    kwargs={'slug': event.slug})
-        eq_(event.times_edited, 1)
+        ok_(event.has_new_metrics)
         eq_(response.request['PATH_INFO'], cloned_event_url)
+
+    @mock.patch('django.contrib.messages.success')
+    def test_clone_event_with_actual_outcome(self, mock_success):
+        user = UserFactory.create(groups=['Rep'])
+        event = EventFactory.create()
+        metrics = EventMetricOutcomeFactory.create_batch(3, event=event)
+        self.client.login(username=user.username, password='passwd')
+        event_clone_url = reverse('events_clone_event',
+                                  kwargs={'slug': event.slug})
+        response = self.client.post(event_clone_url, self.data, follow=True)
+        mock_success.assert_called_with(ANY, 'Event successfully created.')
+        event = Event.objects.get(name='Test edit event', owner=event.owner)
+        cloned_event_url = reverse('events_view_event',
+                                   kwargs={'slug': event.slug})
+        eq_(response.request['PATH_INFO'], cloned_event_url)
+        ok_(event.eventmetricoutcome_set.all().exists())
+        metrics_ids = map(lambda x: x.id, metrics)
+        for m in event.eventmetricoutcome_set.all():
+            eq_(m.outcome, None)
+            ok_(m.id not in metrics_ids)
+
+    @mock.patch('django.contrib.messages.success')
+    def test_clone_event_without_actual_outcome(self, mock_success):
+        user = UserFactory.create(groups=['Rep'])
+        event = EventFactory.create()
+        metrics = EventMetricOutcomeFactory.create_batch(3, event=event,
+                                                         outcome=None)
+        self.client.login(username=user.username, password='passwd')
+        event_clone_url = reverse('events_clone_event',
+                                  kwargs={'slug': event.slug})
+        response = self.client.post(event_clone_url, self.data, follow=True)
+        mock_success.assert_called_with(ANY, 'Event successfully created.')
+        event = Event.objects.get(name='Test edit event', owner=event.owner)
+        cloned_event_url = reverse('events_view_event',
+                                   kwargs={'slug': event.slug})
+        eq_(response.request['PATH_INFO'], cloned_event_url)
+        ok_(event.eventmetricoutcome_set.all().exists())
+        metrics_ids = map(lambda x: x.id, metrics)
+        for m in event.eventmetricoutcome_set.all():
+            ok_(m.id not in metrics_ids)
 
     @mock.patch('django.contrib.messages.success')
     def test_email_event_attendees(self, mock_success):

@@ -55,6 +55,10 @@ class MinBaseInlineFormSet(forms.models.BaseInlineFormSet):
 class BaseEventMetricsFormset(MinBaseInlineFormSet):
     """Inline form-set support for event metrics."""
 
+    def __init__(self, *args, **kwargs):
+        self.clone = kwargs.pop('clone', None)
+        super(BaseEventMetricsFormset, self).__init__(*args, **kwargs)
+
     def clean(self):
         """Check for unique metrics inside formset."""
         super(BaseEventMetricsFormset, self).clean()
@@ -94,7 +98,6 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
 
     def save(self, *args, **kwargs):
         """Override save on cloned events."""
-        self.clone = kwargs.pop('clone', None)
         if self.clone:
             for form in self.initial_forms:
                 form.changed_data.append('id')
@@ -115,6 +118,7 @@ class EventMetricsForm(happyforms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         """Dynamically initialize form."""
+        self.clone = kwargs.pop('clone', None)
         super(EventMetricsForm, self).__init__(*args, **kwargs)
 
         if self.instance.id:
@@ -123,6 +127,13 @@ class EventMetricsForm(happyforms.ModelForm):
             metrics_query = Q(active=True) | Q(pk__in=current_metrics)
             qs = EventMetric.objects.filter(metrics_query)
             self.fields['metric'].queryset = qs
+
+    def save(self, *args, **kwargs):
+        """Override save method to handle metrics cloning."""
+        if self.clone:
+            self.instance.pk = None
+            self.instance.outcome = None
+        return super(EventMetricsForm, self).save(*args, **kwargs)
 
 
 class PostEventMetricsForm(EventMetricsForm):
@@ -168,6 +179,7 @@ class EventForm(happyforms.ModelForm):
             self.editable_owner = kwargs['editable_owner']
             del(kwargs['editable_owner'])
 
+        self.clone = kwargs.pop('clone', None)
         super(EventForm, self).__init__(*args, **kwargs)
 
         # Dynamic categories/goals field.
@@ -288,10 +300,11 @@ class EventForm(happyforms.ModelForm):
 
     def save(self, *args, **kwargs):
         """Override save method for custom functionality."""
-        clone = kwargs.pop('clone', None)
-        if clone:
+        if self.clone:
             self.instance.pk = None
             self.instance.slug = None
+            self.instance.has_new_metrics = True
+            self.instance.actual_attendance = None
         return super(EventForm, self).save()
 
     class Meta:

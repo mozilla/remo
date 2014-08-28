@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
+from django.utils.functional import curry
 from django.utils.encoding import iri_to_uri
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
@@ -188,10 +189,10 @@ def edit_event(request, slug=None, clone=None):
     metrics_form = forms.EventMetricsForm
     event_form = forms.EventForm(request.POST or None,
                                  editable_owner=editable, instance=event,
-                                 initial=initial)
-    if event.has_new_metrics:
+                                 initial=initial, clone=clone)
+    if event.has_new_metrics or clone:
         min_forms = 2
-        if event.is_past_event:
+        if event.is_past_event and not clone:
             metrics_form = forms.PostEventMetricsForm
             event_form = forms.PostEventForm(request.POST or None,
                                              editable_owner=editable,
@@ -205,22 +206,27 @@ def edit_event(request, slug=None, clone=None):
         extra=extra_formsets
     )
 
+    EventMetricsFormset.form = staticmethod(curry(metrics_form, clone=clone))
+
     metrics_formset = EventMetricsFormset(request.POST or None,
                                           instance=event,
-                                          min_forms=min_forms)
+                                          min_forms=min_forms,
+                                          clone=clone)
 
     if event_form.is_valid() and metrics_formset.is_valid():
-        event_form.save(clone=clone)
-        metrics_formset.save(clone=clone)
+        event_form.save()
+        metrics_formset.save()
+
         if created:
             messages.success(request, 'Event successfully created.')
+            statsd.incr('events.create_event')
+        else:
             if clone:
+                messages.success(request, 'Event successfully created.')
                 statsd.incr('events.clone_event')
             else:
-                statsd.incr('events.create_event')
-        else:
-            messages.success(request, 'Event successfully updated.')
-            statsd.incr('events.edit_event')
+                messages.success(request, 'Event successfully updated.')
+                statsd.incr('events.edit_event')
 
         return redirect('events_view_event', slug=event_form.instance.slug)
 
