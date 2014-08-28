@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib import quote
 
 from django.conf import settings
@@ -9,9 +9,10 @@ from django.utils import timezone
 
 import requests
 import waffle
-from celery.task import task
+from celery.task import periodic_task
 from funfactory.helpers import urlparams
 
+from remo.base.decorators import mail_on_error
 from remo.base.utils import get_object_or_none
 from remo.remozilla.models import Bug
 from remo.remozilla.utils import get_last_updated_date, set_last_updated_date
@@ -41,7 +42,8 @@ def parse_bugzilla_time(time):
     return datetimeobj
 
 
-@task
+@mail_on_error
+@periodic_task(run_every=timedelta(minutes=10))
 @transaction.commit_on_success
 def fetch_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
@@ -97,16 +99,31 @@ def fetch_bugs(components=COMPONENTS, days=None):
                     bdata.get('last_change_time'))
 
                 automated_voting_trigger = 0
+                bug.budget_needinfo.clear()
+                bug.council_member_assigned = False
+                bug.pending_mentor_validation = False
                 for flag in bdata.get('flags', []):
                     if ((flag['status'] == '?'
                          and flag['name'] == 'remo-approval')):
                         automated_voting_trigger += 1
+                        if 'Council Reviewer Assigned' in bug.whiteboard:
+                            bug.council_member_assigned = True
                     if ((flag['status'] == '?'
                          and flag['name'] == 'needinfo'
                          and 'requestee' in flag
                          and flag['requestee']['name'] == (
                              settings.REPS_COUNCIL_ALIAS))):
                         automated_voting_trigger += 1
+                    if ((flag['status'] == '?'
+                         and flag['name'] == 'remo-review')):
+                        bug.pending_mentor_validation = True
+                    if ((flag['status'] == '?'
+                         and flag['name'] == 'needinfo'
+                         and 'requestee' in flag
+                         and bug.component == 'Budget Requests')):
+                        email = flag['requestee']['name']
+                        user = get_object_or_none(User, email=email)
+                        bug.budget_needinfo.add(user)
 
                 if ((automated_voting_trigger == 2
                      and waffle.switch_is_active('automated_polls'))):

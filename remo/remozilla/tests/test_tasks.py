@@ -19,7 +19,7 @@ class FetchBugsTest(TestCase):
                 'demo_bugs.json']
 
     @raises(requests.ConnectionError)
-    @patch('requests.get')
+    @patch('remo.remozilla.tasks.requests.get')
     def test_connection_error(self, fake_get):
         """Test fetch_bugs connection error exception."""
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
@@ -31,7 +31,7 @@ class FetchBugsTest(TestCase):
         fake_get.assert_called_with(ANY)
 
     @raises(ValueError)
-    @patch('requests.get')
+    @patch('remo.remozilla.tasks.requests.get')
     def test_invalid_return_code(self, fake_get):
         """Test fetch_bugs invalid status code exception."""
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
@@ -46,7 +46,7 @@ class FetchBugsTest(TestCase):
         fake_get.assert_called_with(ANY)
 
     @patch('remo.remozilla.tasks.waffle.switch_is_active')
-    @patch('requests.get')
+    @patch('remo.remozilla.tasks.requests.get')
     def test_with_valid_data(self, fake_get, switch_is_active_mock):
         """Test fetch_bugs valid bug data processing."""
         UserFactory.create(username='remobot')
@@ -105,7 +105,6 @@ class FetchBugsTest(TestCase):
 
         values = [first_request, empty_request, second_request, empty_request]
         fake_get.side_effect = values
-
         fetch_bugs(components=['Planning', 'Swag Requests'])
 
         eq_(Bug.objects.all().count(), 4)
