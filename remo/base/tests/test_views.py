@@ -4,20 +4,16 @@
 
 import base64
 import json
-import mock
-
-from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core import mail
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django.test import RequestFactory
 from django.test.client import Client
 from django.test.utils import override_settings
-from django.utils.timezone import now
 
+import mock
 from funfactory.helpers import urlparams
 from jinja2 import Markup
 from nose.exc import SkipTest
@@ -26,18 +22,17 @@ from test_utils import TestCase
 
 from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
-from remo.base.tests import requires_login, requires_permission, RemoTestCase
+from remo.base.tests import RemoTestCase, requires_login, requires_permission
 from remo.base.tests.browserid_mock import mock_browserid
 from remo.base.views import robots_txt
 from remo.events.models import EventGoal
-from remo.events.tests import EventFactory, EventGoalFactory
+from remo.events.tests import EventGoalFactory
 from remo.profiles.models import FunctionalArea
 from remo.profiles.tasks import check_mozillian_username
 from remo.profiles.tests import (FunctionalAreaFactory, UserFactory,
                                  UserStatusFactory)
 from remo.reports.models import Activity, Campaign
-from remo.reports.tests import (ActivityFactory, CampaignFactory,
-                                NGReportFactory)
+from remo.reports.tests import ActivityFactory, CampaignFactory
 
 
 VOUCHED_MOZILLIAN = """
@@ -235,101 +230,6 @@ class ViewsTest(TestCase):
         eq_(response.status_code, 200)
         self.assertTemplateUsed(response, 'main.html')
 
-    def test_view_dashboard_page(self):
-        """Get dashboard page."""
-        c = Client()
-
-        # Get as anonymous user.
-        response = c.get(reverse('dashboard'), follow=True)
-        eq_(response.status_code, 200)
-        self.assertTemplateUsed(response, 'main.html')
-
-        # Get as logged in rep.
-        c.login(username='rep', password='passwd')
-        response = c.get(reverse('dashboard'))
-        eq_(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard_reps.html')
-
-        # Get as logged in mentor.
-        c.login(username='mentor', password='passwd')
-        response = c.get(reverse('dashboard'))
-        eq_(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard_reps.html')
-
-        # Get as logged in counselor.
-        c.login(username='counselor', password='passwd')
-        response = c.get(reverse('dashboard'))
-        eq_(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard_reps.html')
-
-    def test_email_my_mentees_mentor_with_send_True(self):
-        """Email mentees when mentor and checkbox is checked."""
-        c = Client()
-        c.login(username='mentor', password='passwd')
-        rep1 = User.objects.get(first_name='Nick')
-        data = {'%s' % (rep1.id): 'True',
-                'subject': 'This is subject',
-                'body': ('This is my body\n',
-                         'Multiline of course')}
-        response = c.post(reverse('email_mentees'), data, follow=True)
-        self.assertTemplateUsed(response, 'dashboard_reps.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'success')
-        eq_(len(mail.outbox), 1)
-        eq_(len(mail.outbox[0].to), 1)
-        eq_(len(mail.outbox[0].cc), 1)
-
-    def test_email_my_mentees_mentor_with_send_False(self):
-        """Email mentees when mentor and checkbox is not checked."""
-        c = Client()
-        c.login(username='mentor', password='passwd')
-        rep1 = User.objects.get(first_name='Nick')
-        data = {'%s' % (rep1.id): 'False',
-                'subject': 'This is subject',
-                'body': ('This is my body\n',
-                         'Multiline of course')}
-        response = c.post(reverse('email_mentees'), data, follow=True)
-        self.assertTemplateUsed(response, 'dashboard_reps.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'error')
-        eq_(len(mail.outbox), 0)
-
-    def test_email_my_mentees_rep(self):
-        """Email mentees when rep.
-
-        Must fail since Rep doesn't have mentees.
-        """
-        c = Client()
-        c.login(username='rep', password='passwd')
-        data = {'subject': 'This is subject',
-                'body': ('This is my body',
-                         'Multiline ofcourse')}
-        response = c.post(reverse('email_mentees'), data, follow=True)
-        self.assertTemplateUsed(response, 'main.html')
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'error')
-        eq_(len(mail.outbox), 0)
-
-    def test_email_reps_as_mozillian(self):
-        """Email all the reps associated with a functional area."""
-        c = Client()
-        area = FunctionalAreaFactory.create()
-        UserFactory.create(groups=['Rep'],
-                           userprofile__functional_areas=[area])
-        c.login(username='mozillian1', password='passwd')
-        data = {'subject': 'This is subject',
-                'body': 'This is my body\n Multiline of course',
-                'functional_area': area.id}
-        response = c.post(reverse('dashboard'), data, follow=True)
-        for m in response.context['messages']:
-            pass
-        eq_(m.tags, u'success')
-        eq_(len(mail.outbox), 1)
-        self.assertTemplateUsed(response, 'dashboard_mozillians.html')
-
     def test_view_about_page(self):
         """Get about page."""
         c = Client()
@@ -399,26 +299,6 @@ class ViewsTest(TestCase):
         for string, markup in test_strings:
             eq_(mailhide(string), markup)
 
-    def test_view_edit_settings_page(self):
-        """Get edit settings page."""
-        c = Client()
-        c.login(username='mentor', password='passwd')
-        response = c.get(self.user_edit_settings_url)
-        self.assertTemplateUsed(response, 'settings.html')
-
-    def test_edit_settings_rep(self):
-        """Test correct edit settings mail preferences as rep."""
-        c = Client()
-        c.login(username='rep', password='passwd')
-        response = c.post(self.user_edit_settings_url,
-                          self.settings_data, follow=True)
-        eq_(response.request['PATH_INFO'], reverse('dashboard'))
-
-        # Ensure that settings data were saved
-        user = User.objects.get(username='rep')
-        eq_(user.userprofile.receive_email_on_add_comment,
-            self.settings_data['receive_email_on_add_comment'])
-
     @override_settings(ENGAGE_ROBOTS=True)
     def test_robots_allowed(self):
         """Test robots.txt generation when crawling allowed."""
@@ -440,6 +320,79 @@ class ViewsTest(TestCase):
         request = factory.get('/robots.txt')
         response = robots_txt(request)
         eq_(response.content, 'User-agent: *\nDisallow: /\n')
+
+    def test_view_edit_settings_page(self):
+        """Get edit settings page."""
+        c = Client()
+        c.login(username='mentor', password='passwd')
+        response = c.get(self.user_edit_settings_url)
+        self.assertTemplateUsed(response, 'settings.html')
+
+    def test_edit_settings_rep(self):
+        """Test correct edit settings mail preferences as rep."""
+        c = Client()
+        c.login(username='rep', password='passwd')
+        response = c.post(self.user_edit_settings_url,
+                          self.settings_data, follow=True)
+        eq_(response.request['PATH_INFO'], reverse('dashboard'))
+
+        # Ensure that settings data were saved
+        user = User.objects.get(username='rep')
+        eq_(user.userprofile.receive_email_on_add_comment,
+            self.settings_data['receive_email_on_add_comment'])
+
+
+class EditUserStatusTests(RemoTestCase):
+    """Tests related to the User status edit View."""
+
+    @requires_login()
+    def test_get_as_anonymous(self):
+        mentor = UserFactory.create()
+        user = UserFactory.create(userprofile__mentor=mentor)
+        display_name = user.userprofile.display_name
+        UserStatusFactory.create(user=user)
+        client = Client()
+        client.get(reverse('edit_availability',
+                           kwargs={'display_name': display_name}))
+
+    def test_get_as_owner(self):
+        mentor = UserFactory.create()
+        user = UserFactory.create(userprofile__mentor=mentor)
+        display_name = user.userprofile.display_name
+        UserStatusFactory.create(user=user)
+        url = reverse('edit_availability',
+                      kwargs={'display_name': display_name})
+        self.get(url=url, user=user)
+        self.assertTemplateUsed('edit_availability.html')
+
+    @requires_permission()
+    def test_get_as_other_rep(self):
+        mentor = UserFactory.create()
+        user = UserFactory.create(userprofile__mentor=mentor)
+        rep = UserFactory.create()
+        display_name = user.userprofile.display_name
+        UserStatusFactory.create(user=user)
+        url = reverse('edit_availability',
+                      kwargs={'display_name': display_name})
+        self.get(url=url, user=rep)
+
+    @mock.patch('remo.base.views.messages.success')
+    @mock.patch('remo.base.views.redirect', wraps=redirect)
+    @mock.patch('remo.base.views.UserStatusForm')
+    def test_add_unavailability_status(self, form_mock, redirect_mock,
+                                       messages_mock):
+        form_mock.is_valid.return_value = True
+        user = UserFactory.create()
+        display_name = user.userprofile.display_name
+        response = self.post(url=reverse('edit_availability',
+                                         kwargs={
+                                             'display_name': display_name}),
+                             user=user)
+        eq_(response.status_code, 200)
+        messages_mock.assert_called_with(
+            mock.ANY, 'Request submitted successfully.')
+        redirect_mock.assert_called_with('dashboard')
+        ok_(form_mock().save.called)
 
 
 class BaseListViewTest(RemoTestCase):
@@ -704,141 +657,3 @@ class BaseDeleteViewTest(RemoTestCase):
         area = FunctionalAreaFactory.create(name='test functional area')
         self.post(reverse('delete_functional_area', kwargs={'pk': area.id}),
                   user=user, follow=True)
-
-
-class EditUserStatusTests(RemoTestCase):
-    """Tests related to the User status edit View."""
-
-    @requires_login()
-    def test_get_as_anonymous(self):
-        mentor = UserFactory.create()
-        user = UserFactory.create(userprofile__mentor=mentor)
-        display_name = user.userprofile.display_name
-        UserStatusFactory.create(user=user)
-        client = Client()
-        client.get(reverse('edit_availability',
-                           kwargs={'display_name': display_name}))
-
-    def test_get_as_owner(self):
-        mentor = UserFactory.create()
-        user = UserFactory.create(userprofile__mentor=mentor)
-        display_name = user.userprofile.display_name
-        UserStatusFactory.create(user=user)
-        url = reverse('edit_availability',
-                      kwargs={'display_name': display_name})
-        self.get(url=url, user=user)
-        self.assertTemplateUsed('edit_availability.html')
-
-    @requires_permission()
-    def test_get_as_other_rep(self):
-        mentor = UserFactory.create()
-        user = UserFactory.create(userprofile__mentor=mentor)
-        rep = UserFactory.create()
-        display_name = user.userprofile.display_name
-        UserStatusFactory.create(user=user)
-        url = reverse('edit_availability',
-                      kwargs={'display_name': display_name})
-        self.get(url=url, user=rep)
-
-    @mock.patch('remo.base.views.messages.success')
-    @mock.patch('remo.base.views.redirect', wraps=redirect)
-    @mock.patch('remo.base.views.UserStatusForm')
-    def test_add_unavailability_status(self, form_mock, redirect_mock,
-                                       messages_mock):
-        form_mock.is_valid.return_value = True
-        user = UserFactory.create()
-        display_name = user.userprofile.display_name
-        response = self.post(url=reverse('edit_availability',
-                                         kwargs={
-                                             'display_name': display_name}),
-                             user=user)
-        eq_(response.status_code, 200)
-        messages_mock.assert_called_with(
-            mock.ANY, 'Request submitted successfully.')
-        redirect_mock.assert_called_with('dashboard')
-        ok_(form_mock().save.called)
-
-
-class StatsDashboardTest(RemoTestCase):
-    """Test stats dashboard."""
-
-    def test_base(self):
-        response = self.get(reverse('stats_dashboard'))
-        eq_(response.status_code, 200)
-        self.assertTemplateUsed(response, 'stats_dashboard.html')
-
-    def test_overview(self):
-        UserFactory.create_batch(10, groups=['Rep'])
-        NGReportFactory.create_batch(12)
-
-        # Past events
-        EventFactory.create_batch(5)
-        # Current and future events
-        EventFactory.create_batch(10, start=now() + timedelta(days=3),
-                                  end=now() + timedelta(days=4))
-
-        response = self.get(reverse('stats_dashboard'))
-
-        eq_(response.status_code, 200)
-        self.assertTemplateUsed(response, 'stats_dashboard.html')
-        eq_(response.context['reps'], 10)
-        eq_(response.context['past_events'], 5)
-        eq_(response.context['future_events'], 10)
-        eq_(response.context['activities'], 27)
-
-    def test_inactive(self):
-        reps = UserFactory.create_batch(12, groups=['Rep'])
-        active = timedelta(days=5)
-        inactive_low = timedelta(weeks=5)
-        inactive_high = timedelta(weeks=9)
-
-        active_reps = reps[:5]
-        inactive_low_reps = reps[5:9]
-        inactive_high_reps = reps[9:]
-
-        for user in active_reps:
-            # Activities in future and past 4 weeks
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() - active)
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() + active)
-
-            # Activities in future and past 4+ weeks
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() - inactive_low)
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() + inactive_low)
-
-            # Activities in future and past 8+ weeks
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() - inactive_high)
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() + inactive_high)
-
-        for user in inactive_low_reps:
-            # Activities in future and past 4+ weeks
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() - inactive_low)
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() + inactive_low)
-
-            # Activities in future and past 8+ weeks
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() - inactive_high)
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() + inactive_high)
-
-        for user in inactive_high_reps:
-            # Activities in future and past 8+ weeks
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() - inactive_high)
-            NGReportFactory.create(user=user,
-                                   report_date=now().date() + inactive_high)
-
-        response = self.get(reverse('stats_dashboard'))
-
-        eq_(response.status_code, 200)
-        self.assertTemplateUsed(response, 'stats_dashboard.html')
-        eq_(response.context['active_users'], 5)
-        eq_(response.context['inactive_low_users'], 4)
-        eq_(response.context['inactive_high_users'], 3)

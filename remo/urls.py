@@ -59,6 +59,9 @@ urlpatterns = patterns(
 
     url(r'^', include('remo.base.urls')),
 
+    # Dashboard
+    url(r'^dashboard/', include('remo.dashboard.urls')),
+
     # Admin
     url(r'^admin/', include(admin.site.urls)),
 

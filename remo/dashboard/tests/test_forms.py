@@ -6,7 +6,7 @@ from mock import ANY, patch
 from nose.tools import eq_, ok_
 from test_utils import TestCase
 
-from remo.base.forms import EmailRepsForm
+from remo.dashboard.forms import EmailRepsForm
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
@@ -24,7 +24,7 @@ class EmailRepsFormsTest(TestCase):
         ok_(not form.is_valid())
         eq_(len(form.errors['functional_area']), 1)
 
-    @patch('remo.base.forms.messages.success')
+    @patch('remo.dashboard.forms.messages.success')
     def test_send_mail(self, fake_messages):
         """Test EmailRepsForm email sending functionality."""
 
