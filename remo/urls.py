@@ -37,22 +37,22 @@ urlpatterns = patterns(
     url(r'^me/$', 'remo.profiles.views.view_my_profile',
         name='profiles_view_my_profile'),
 
-    # profiles
+    # Profiles
     url(r'^u/', include('remo.profiles.user_urls')),
     url(r'^people/', include('remo.profiles.people_urls')),
 
-    # events
+    # Events
     url(r'^e/', include('remo.events.e_urls')),
     url(r'^events/', include('remo.events.event_urls')),
 
-    # reports
+    # Reports
     url(r'^reports/', include('remo.reports.report_urls')),
 
-    # featuredrep
+    # Featuredrep
     url(r'^featured/', include('remo.featuredrep.urls')),
 
-    # custom browserid
-    url(r'', include('remo.base.urls')),
+    # Browserid
+    url(r'', include('django_browserid.urls')),
 
     # API
     url(r'^api/', include('remo.api.urls')),
