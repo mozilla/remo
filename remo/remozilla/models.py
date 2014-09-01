@@ -29,12 +29,31 @@ class Bug(caching.base.CachingMixin, models.Model):
     status = models.CharField(max_length=30, default='')
     resolution = models.CharField(max_length=30, default='')
     first_comment = models.TextField(default='', blank=True)
-    council_vote_requested = models.BooleanField(default=False, blank=True)
+    council_vote_requested = models.BooleanField(default=False)
+    council_member_assigned = models.BooleanField(default=False)
+    pending_mentor_validation = models.BooleanField(default=False)
+    budget_needinfo = models.ManyToManyField(User)
 
     objects = caching.base.CachingManager()
 
     def __unicode__(self):
         return u'%d' % self.bug_id
+
+    @property
+    def waiting_receipts(self):
+        return '[waiting receipts]' in self.whiteboard
+
+    @property
+    def waiting_report_photos(self):
+        return '[waiting report and photos]' in self.whiteboard
+
+    @property
+    def waiting_report(self):
+        return '[waiting report]' in self.whiteboard
+
+    @property
+    def waiting_photos(self):
+        return '[waiting photos]' in self.whiteboard
 
     class Meta:
         ordering = ['-bug_last_change_time']
