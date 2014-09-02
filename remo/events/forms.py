@@ -68,7 +68,8 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
             return
 
         # Disable adding new forms in post event form.
-        if self.instance.is_past_event and self.instance.has_new_metrics:
+        if (self.instance.is_past_event and self.instance.has_new_metrics
+                and not self.clone):
             if self.extra_forms and len(self.extra_forms) > 2:
                 error_msg = 'You cannot add new metrics in a past event.'
                 raise ValidationError(error_msg)
@@ -92,9 +93,8 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
         if self.clone:
             form.instance.id = None
             return self.save_new(form)
-        else:
-            return (super(BaseEventMetricsFormset, self).
-                    save_existing(form, instance, commit))
+        return (super(BaseEventMetricsFormset, self).
+                save_existing(form, instance, commit))
 
     def save(self, *args, **kwargs):
         """Override save on cloned events."""
@@ -182,6 +182,7 @@ class EventForm(happyforms.ModelForm):
             del(kwargs['editable_owner'])
 
         self.clone = kwargs.pop('clone', None)
+        self.user = kwargs.pop('user', None)
         super(EventForm, self).__init__(*args, **kwargs)
 
         # Dynamic categories/goals field.
@@ -202,15 +203,18 @@ class EventForm(happyforms.ModelForm):
         self.fields['country'].choices = country_choices
 
         # Dynamic owner field.
+        initial_user = self.instance.owner
+        if self.clone:
+            initial_user = self.user
         if self.editable_owner:
             self.fields['owner_form'] = forms.ModelChoiceField(
                 queryset=User.objects.filter(
                     userprofile__registration_complete=True,
                     groups__name='Rep').order_by('first_name'),
-                empty_label='Owner', initial=self.instance.owner.pk)
+                empty_label='Owner', initial=initial_user.id)
         else:
             self.fields['owner_form'] = forms.CharField(
-                required=False, initial=get_full_name(self.instance.owner),
+                required=False, initial=get_full_name(initial_user),
                 widget=forms.TextInput(attrs={'readonly': 'readonly',
                                               'class': 'input-text big'}))
 
@@ -271,6 +275,11 @@ class EventForm(happyforms.ModelForm):
                          timezone(settings.TIME_ZONE))
         cdata['end'] = t.localize(end)
 
+        # Do not allow cloning with a past date
+        if cdata['start'] < now() and self.clone:
+            msg = 'Start date in a cloned event cannot be in the past.'
+            self._errors['start_form'] = self.error_class([msg])
+
         if cdata['start'] >= cdata['end']:
             msg = 'Start date should come before end date.'
             self._errors['start_form'] = self.error_class([msg])
@@ -300,14 +309,21 @@ class EventForm(happyforms.ModelForm):
         data = self.cleaned_data['budget_bug_form']
         return self._clean_bug(data)
 
-    def save(self, *args, **kwargs):
+    def save(self, commit=True):
         """Override save method for custom functionality."""
+        event = super(EventForm, self).save(commit=False)
         if self.clone:
-            self.instance.pk = None
-            self.instance.slug = None
-            self.instance.has_new_metrics = True
-            self.instance.actual_attendance = None
-        return super(EventForm, self).save()
+            event.pk = None
+            event.has_new_metrics = True
+            event.actual_attendance = None
+            event.times_edited = 0
+        elif self.instance.pk:
+            # It's not either a clone event nor a new one,
+            # please increment number of event edits
+            event.times_edited += 1
+        event.save()
+        self.save_m2m()
+        return event
 
     class Meta:
         model = Event
@@ -330,9 +346,8 @@ class PostEventForm(EventForm):
 
     def save(self, *args, **kwargs):
         """Create post event data report."""
-        super(PostEventForm, self).save()
+        event = super(PostEventForm, self).save()
 
-        event = self.instance
         activity = Activity.objects.get(name=ACTIVITY_POST_EVENT_METRICS)
         reports = NGReport.objects.filter(event=event, activity=activity)
 
@@ -353,6 +368,8 @@ class PostEventForm(EventForm):
             report = NGReport.objects.create(**attrs)
             report.functional_areas.add(*event.categories.all())
             statsd.incr('reports.create_passive_post_event_metrics')
+
+        return event
 
     class Meta(EventForm.Meta):
         fields = EventForm.Meta.fields + ['actual_attendance']

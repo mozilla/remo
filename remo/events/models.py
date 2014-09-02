@@ -155,12 +155,8 @@ class Event(caching.base.CachingMixin, models.Model):
 
     def save(self, *args, **kwargs):
         """Override save method for custom functionality."""
-
-        # Increment number of event edits
-        self.times_edited += 1
-
         # Create unique slug
-        if not self.slug:
+        if not self.pk:
             self.slug = slugify(self.name, instance=self)
 
         # Calculate planning pad url

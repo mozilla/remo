@@ -44,7 +44,7 @@ class ViewsTest(TestCase):
             'country': u'Greece',
             'start_form_0_month': 01,
             'start_form_0_day': 25,
-            'start_form_0_year': 2014,
+            'start_form_0_year': 2016,
             'start_form_1_hour': 04,
             'start_form_1_minute': 01,
             'end_form_0_month': 01,
@@ -70,11 +70,6 @@ class ViewsTest(TestCase):
             'eventmetricoutcome_set-TOTAL_FORMS': 2,
             'eventmetricoutcome_set-INITIAL_FORMS': 0}
 
-        self.event_edit_url = reverse('events_edit_event',
-                                      kwargs={'slug': 'test-event'})
-        self.event_url = reverse('events_view_event',
-                                 kwargs={'slug': 'test-event'})
-
     def test_view_events_list(self):
         """Get list events page."""
         response = self.client.get(reverse('events_list_events'))
@@ -82,16 +77,17 @@ class ViewsTest(TestCase):
 
     def test_view_event_page(self):
         """Get view event page."""
-        EventFactory.create(slug='test-event')
-        response = self.client.get(self.event_url)
+        event = EventFactory.create()
+        response = self.client.get(event.get_absolute_url())
         self.assertTemplateUsed(response, 'view_event.html')
 
     @mock.patch('django.contrib.messages.error')
     def test_post_comment_on_event_unauthed(self, mock_error):
         """Test post comment on event unauthorized."""
         comment = 'This is a new comment'
-        EventFactory.create(slug='test-event')
-        response = self.client.post(self.event_url, {'comment': comment},
+        event = EventFactory.create()
+        response = self.client.post(event.get_absolute_url(),
+                                    {'comment': comment},
                                     follow=True)
         self.assertTemplateUsed(response, 'main.html')
         mock_error.assert_called_with(ANY, 'Permission Denied')
@@ -100,14 +96,15 @@ class ViewsTest(TestCase):
     def test_post_comment_on_event_rep(self, mock_success):
         """Test post comment on event as rep."""
         # Test authenticated user
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         kwargs = {'groups': ['Rep'],
                   'userprofile__receive_email_on_add_event_comment': True}
         user = UserFactory.create(**kwargs)
         comment = 'This is a new comment'
 
         self.client.login(username=user.username, password='passwd')
-        response = self.client.post(self.event_url, {'comment': comment},
+        response = self.client.post(event.get_absolute_url(),
+                                    {'comment': comment},
                                     follow=True)
         comment = event.eventcomment_set.get(user=user)
 
@@ -124,7 +121,7 @@ class ViewsTest(TestCase):
         user = UserFactory.create(groups=['Rep'])
         comment = EventCommentFactory.create(event=event, user=user)
         comment_delete = reverse('events_delete_event_comment',
-                                 kwargs={'slug': 'test-event',
+                                 kwargs={'slug': event.slug,
                                          'pk': comment.id})
         self.client.post(comment_delete, {'comment': comment}, follow=True)
         ok_(EventComment.objects.filter(pk=comment.id).exists())
@@ -132,11 +129,11 @@ class ViewsTest(TestCase):
     @requires_permission()
     def test_post_delete_event_comment_user_no_perms(self):
         """Test delete event comment as rep without delete permissions."""
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         user = UserFactory.create(groups=['Rep'])
         comment = EventCommentFactory.create(event=event)
         comment_delete = reverse('events_delete_event_comment',
-                                 kwargs={'slug': 'test-event',
+                                 kwargs={'slug': event.slug,
                                          'pk': comment.id})
         self.client.login(username=user.username, password='passwd')
         self.client.post(comment_delete, follow=True)
@@ -145,11 +142,11 @@ class ViewsTest(TestCase):
     @mock.patch('django.contrib.messages.success')
     def test_post_delete_event_comment_owner(self, mock_success):
         """ Test delete event comment as event comment owner."""
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         user = UserFactory.create(groups=['Rep'])
         comment = EventCommentFactory.create(event=event, user=user)
         comment_delete = reverse('events_delete_event_comment',
-                                 kwargs={'slug': 'test-event',
+                                 kwargs={'slug': event.slug,
                                          'pk': comment.id})
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(comment_delete, follow=True)
@@ -161,11 +158,11 @@ class ViewsTest(TestCase):
     @mock.patch('django.contrib.messages.success')
     def test_post_delete_event_comment_admin(self, mock_success):
         """Test delete event comment as admin."""
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         user = UserFactory.create(groups=['Admin'])
         comment = EventCommentFactory.create(event=event)
         comment_delete = reverse('events_delete_event_comment',
-                                 kwargs={'slug': 'test-event',
+                                 kwargs={'slug': event.slug,
                                          'pk': comment.id})
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(comment_delete, follow=True)
@@ -174,8 +171,9 @@ class ViewsTest(TestCase):
 
     def test_subscription_management_no_perms(self):
         """Subscribe to event without permissions."""
+        event = EventFactory()
         response = self.client.post(reverse('events_subscribe_to_event',
-                                            kwargs={'slug': 'test-event'}),
+                                            kwargs={'slug': event.slug}),
                                     follow=True)
         self.assertTemplateUsed(response, 'main.html',
                                 ('Anonymous user is not returned to '
@@ -185,10 +183,10 @@ class ViewsTest(TestCase):
     def test_subscription_management_rep(self, mock_info):
         """ Subscribe rep to event."""
         user = UserFactory.create(groups=['Rep'])
-        EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(reverse('events_subscribe_to_event',
-                                            kwargs={'slug': 'test-event'}),
+                                            kwargs={'slug': event.slug}),
                                     follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
@@ -199,11 +197,11 @@ class ViewsTest(TestCase):
     def test_subscription_management_subscribed(self, mock_warning):
         """ Test subscribe already subscribed user."""
         user = UserFactory.create(groups=['Rep'])
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         AttendanceFactory.create(user=user, event=event)
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(reverse('events_subscribe_to_event',
-                                            kwargs={'slug': 'test-event'}),
+                                            kwargs={'slug': event.slug}),
                                     follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
@@ -215,19 +213,19 @@ class ViewsTest(TestCase):
     def test_unsubscribe_from_event_unauth(self):
         """Unsubscribe from event anonymous user."""
 
-        EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         self.client.post(reverse('events_unsubscribe_from_event',
-                                 kwargs={'slug': 'test-event'}), follow=True)
+                                 kwargs={'slug': event.slug}), follow=True)
 
     @mock.patch('django.contrib.messages.success')
     def test_unsubscribe_from_event_subscribed(self, mock_success):
         """Test unsubscribe from event subscribed user."""
         user = UserFactory.create(groups=['Rep'])
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         AttendanceFactory.create(user=user, event=event)
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(reverse('events_unsubscribe_from_event',
-                                            kwargs={'slug': 'test-event'}),
+                                            kwargs={'slug': event.slug}),
                                     follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
@@ -239,11 +237,11 @@ class ViewsTest(TestCase):
     def test_unsubscribe_from_event_unsubscribed(self, mock_warning):
         """Test unsubscribe from event without subscription."""
         user = UserFactory.create(groups=['Rep'])
-        EventFactory.create(slug='test-event')
+        event = EventFactory.create()
 
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(reverse('events_unsubscribe_from_event',
-                                            kwargs={'slug': 'test-event'}),
+                                            kwargs={'slug': event.slug}),
                                     follow=True)
         self.assertTemplateUsed(response, 'view_event.html',
                                 ('Rep user is not returned to '
@@ -254,18 +252,18 @@ class ViewsTest(TestCase):
     @requires_login()
     def test_delete_event_unauthorized(self):
         """Test delete event unauthorized."""
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         self.client.get(reverse('events_delete_event',
-                                kwargs={'slug': 'test-event'}), follow=True)
+                                kwargs={'slug': event.slug}), follow=True)
         ok_(Event.objects.filter(pk=event.id).exists())
 
     def test_delete_event_no_permissions(self):
         """Test delete event no permissions."""
         user = UserFactory.create(groups=['Rep'])
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         self.client.login(username=user.username, password='passwd')
         response = self.client.get(reverse('events_delete_event',
-                                           kwargs={'slug': 'test-event'}),
+                                           kwargs={'slug': event.slug}),
                                    follow=True)
         self.assertTemplateUsed(response, 'main.html',
                                 ('Rep is not returned to main.html.'))
@@ -275,11 +273,11 @@ class ViewsTest(TestCase):
     def test_delete_event_owner(self, mock_success):
         """Test delete event with owner permissions."""
         user = UserFactory.create(groups=['Rep'])
-        event = EventFactory.create(slug='test-event', owner=user)
+        event = EventFactory.create(owner=user)
         self.client.login(username=user.username, password='passwd')
 
         response = self.client.post(reverse('events_delete_event',
-                                            kwargs={'slug': 'test-event'}),
+                                            kwargs={'slug': event.slug}),
                                     follow=True)
         self.assertTemplateUsed(response, 'list_events.html',
                                 ('User %s not returned to '
@@ -291,10 +289,10 @@ class ViewsTest(TestCase):
     def test_delete_event_mentor(self, mock_success):
         """Test delete event with mentor permissions."""
         user = UserFactory.create(groups=['Mentor'])
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(reverse('events_delete_event',
-                                            kwargs={'slug': 'test-event'}),
+                                            kwargs={'slug': event.slug}),
                                     follow=True)
         self.assertTemplateUsed(response, 'list_events.html',
                                 ('User %s not returned to '
@@ -306,10 +304,10 @@ class ViewsTest(TestCase):
     def test_delete_event_councelor(self, mock_success):
         """Test delete event with councelor permissions."""
         user = UserFactory.create(groups=['Council'])
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(reverse('events_delete_event',
-                                            kwargs={'slug': 'test-event'}),
+                                            kwargs={'slug': event.slug}),
                                     follow=True)
         self.assertTemplateUsed(response, 'list_events.html',
                                 ('User %s not returned to '
@@ -321,10 +319,10 @@ class ViewsTest(TestCase):
     def test_delete_event_admin(self, mock_success):
         """Test delete event with admin permissions."""
         user = UserFactory.create(groups=['Admin'])
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         self.client.login(username=user.username, password='passwd')
         response = self.client.post(reverse('events_delete_event',
-                                            kwargs={'slug': 'test-event'}),
+                                            kwargs={'slug': event.slug}),
                                     follow=True)
         self.assertTemplateUsed(response, 'list_events.html',
                                 ('User %s not returned to '
@@ -334,19 +332,19 @@ class ViewsTest(TestCase):
 
     def test_converted_visitors(self):
         """Test converted visitors counter."""
-        event = EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         converted_visitors = event.converted_visitors + 1
         self.client.post(reverse('events_count_converted_visitors',
-                                 kwargs={'slug': 'test-event'}),
+                                 kwargs={'slug': event.slug}),
                          follow=True)
-        event = Event.objects.get(slug='test-event')
+        event = Event.objects.get(slug=event.slug)
         eq_(event.converted_visitors, converted_visitors)
 
     def test_export_event_to_ical(self):
         """Test ical export."""
-        EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         response = self.client.get(reverse('events_icalendar_event',
-                                           kwargs={'slug': 'test-event'}))
+                                           kwargs={'slug': event.slug}))
         self.assertTemplateUsed(response, 'multi_event_ical_template.ics')
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
 
@@ -439,14 +437,11 @@ class ViewsTest(TestCase):
         """Test create new event with rep permissions."""
         user = UserFactory.create(groups=['Rep'])
         self.client.login(username=user.username, password='passwd')
-        response = self.client.post(self.event_edit_url, self.data,
+        response = self.client.post(reverse('events_new_event'), self.data,
                                     follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully created.')
         eq_(mock_success.call_count, 1)
-        eq_(response.request['PATH_INFO'], self.event_url)
-        event = Event.objects.get(name='Test edit event')
-        eq_(event.times_edited, 1)
-        eq_(event.owner, user)
+        eq_(response.status_code, 200)
 
     def test_get_create_event_rep(self):
         """Test get create event page with rep permissions."""
@@ -462,26 +457,26 @@ class ViewsTest(TestCase):
     def test_get_edit_event_rep(self):
         """Test get event edit page with rep permissions."""
         user = UserFactory.create(groups=['Rep'])
-        EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         self.client.login(username=user.username, password='passwd')
-        response = self.client.get(self.event_edit_url, follow=True)
-        eq_(response.request['PATH_INFO'], self.event_edit_url)
+        response = self.client.get(event.get_absolute_edit_url(), follow=True)
+        eq_(response.request['PATH_INFO'], event.get_absolute_edit_url())
         ok_(not response.context['creating'])
         ok_(not response.context['event_form'].editable_owner)
-        eq_(response.context['event'].slug, 'test-event')
+        eq_(response.context['event'].slug, event.slug)
         self.assertTemplateUsed('edit_event.html')
 
     @mock.patch('django.contrib.messages.success')
     def test_get_edit_event_admin(self, mock_success):
         """Test get event edit page with admin permissions"""
         user = UserFactory.create(groups=['Admin'])
-        EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         self.client.login(username=user.username, password='passwd')
-        response = self.client.get(self.event_edit_url, follow=True)
-        eq_(response.request['PATH_INFO'], self.event_edit_url)
+        response = self.client.get(event.get_absolute_edit_url(), follow=True)
+        eq_(response.request['PATH_INFO'], event.get_absolute_edit_url())
         ok_(not response.context['creating'])
         ok_(response.context['event_form'].editable_owner)
-        eq_(response.context['event'].slug, 'test-event')
+        eq_(response.context['event'].slug, event.slug)
         self.assertTemplateUsed('edit_event.html')
 
     @mock.patch('django.contrib.messages.success')
@@ -492,17 +487,16 @@ class ViewsTest(TestCase):
         user = UserFactory.create(groups=['Rep'])
         start = now() + datetime.timedelta(days=10)
         end = now() + datetime.timedelta(days=20)
-        event = EventFactory.create(slug='test-event', owner=user,
-                                    start=start, end=end,
+        event = EventFactory.create(owner=user, start=start, end=end,
                                     actual_attendance=None)
         times_edited = event.times_edited
         self.client.login(username=user.username, password='passwd')
-        response = self.client.post(self.event_edit_url, self.data,
+        response = self.client.post(event.get_absolute_edit_url(), self.data,
                                     follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully updated.')
         eq_(mock_success.call_count, 1)
-        eq_(response.request['PATH_INFO'], self.event_url)
-        event = Event.objects.get(name='Test edit event')
+        eq_(response.request['PATH_INFO'], event.get_absolute_url())
+        event = Event.objects.get(slug=event.slug)
         eq_(event.times_edited, times_edited + 1)
         eq_(event.owner, user)
 
@@ -566,15 +560,18 @@ class ViewsTest(TestCase):
         # TODO: replace the following test with form tests
         # Login as test-event owner
         user = UserFactory.create(groups=['Rep'])
+        event = EventFactory()
         self.client.login(username=user.username, password='passwd')
 
         # Test invalid event date
         invalid_data = self.data.copy()
         invalid_data['end_form_0_year'] = invalid_data['start_form_0_year'] - 1
 
-        response = self.client.post(self.event_edit_url, invalid_data,
+        response = self.client.post(event.get_absolute_edit_url(),
+                                    invalid_data,
                                     follow=True)
-        self.assertNotEqual(response.request['PATH_INFO'], self.event_url)
+        self.assertNotEqual(response.request['PATH_INFO'],
+                            event.get_absolute_url())
 
         # Test invalid number of metrics
         invalid_data = self.data.copy()
@@ -587,9 +584,11 @@ class ViewsTest(TestCase):
         invalid_data.pop('eventmetricoutcome_set-1-metric')
         invalid_data.pop('eventmetricoutcome_set-1-expected_outcome')
 
-        response = self.client.post(self.event_edit_url, invalid_data,
+        response = self.client.post(event.get_absolute_edit_url(),
+                                    invalid_data,
                                     follow=True)
-        self.assertNotEqual(response.request['PATH_INFO'], self.event_url)
+        self.assertNotEqual(response.request['PATH_INFO'],
+                            event.get_absolute_url())
 
         # Test invalid event name, description, venue, city
         fields = ['name', 'description', 'venue', 'city']
@@ -597,22 +596,24 @@ class ViewsTest(TestCase):
         for field in fields:
             invalid_data = self.data.copy()
             invalid_data[field] = ''
-            response = self.client.post(self.event_edit_url, invalid_data,
+            response = self.client.post(event.get_absolute_edit_url(),
+                                        invalid_data,
                                         follow=True)
-            self.assertNotEqual(response.request['PATH_INFO'], self.event_url)
+            self.assertNotEqual(response.request['PATH_INFO'],
+                                event.get_absolute_url())
 
     @mock.patch('django.contrib.auth.models.User.has_perm')
     def test_edit_event_page_no_delete_perms(self, mock_perm):
         """Test view edit event page without delete permissions."""
         user = UserFactory.create(groups=['Admin'])
-        EventFactory.create(slug='test-event')
+        event = EventFactory.create()
         mock_perm.side_effect = [True, False]
         self.client.login(username=user.username, password='passwd')
-        response = self.client.get(self.event_edit_url, follow=True)
-        eq_(response.request['PATH_INFO'], self.event_edit_url)
+        response = self.client.get(event.get_absolute_edit_url(), follow=True)
+        eq_(response.request['PATH_INFO'], event.get_absolute_edit_url())
         ok_(not response.context['creating'])
         ok_(response.context['event_form'].editable_owner)
-        eq_(response.context['event'].slug, 'test-event')
+        eq_(response.context['event'].slug, event.slug)
         ok_(not response.context['can_delete_event'])
 
     @mock.patch('django.contrib.messages.success')
@@ -621,12 +622,12 @@ class ViewsTest(TestCase):
         event = EventFactory.create(has_new_metrics=False)
         self.client.login(username=user.username, password='passwd')
         event_clone_url = reverse('events_clone_event',
-                                  kwargs={'slug': event.slug})
+                                  kwargs={'slug': 'test-edit-event'})
         response = self.client.post(event_clone_url, self.data, follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully created.')
-        event = Event.objects.get(name='Test edit event', owner=event.owner)
+        event = Event.objects.get(slug='test-edit-event')
         cloned_event_url = reverse('events_view_event',
-                                   kwargs={'slug': event.slug})
+                                   kwargs={'slug': 'test-edit-event'})
         ok_(event.has_new_metrics)
         eq_(response.request['PATH_INFO'], cloned_event_url)
 
@@ -637,12 +638,12 @@ class ViewsTest(TestCase):
         metrics = EventMetricOutcomeFactory.create_batch(3, event=event)
         self.client.login(username=user.username, password='passwd')
         event_clone_url = reverse('events_clone_event',
-                                  kwargs={'slug': event.slug})
+                                  kwargs={'slug': 'test-edit-event'})
         response = self.client.post(event_clone_url, self.data, follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully created.')
-        event = Event.objects.get(name='Test edit event', owner=event.owner)
+        event = Event.objects.get(slug='test-edit-event')
         cloned_event_url = reverse('events_view_event',
-                                   kwargs={'slug': event.slug})
+                                   kwargs={'slug': 'test-edit-event'})
         eq_(response.request['PATH_INFO'], cloned_event_url)
         ok_(event.eventmetricoutcome_set.all().exists())
         metrics_ids = map(lambda x: x.id, metrics)
@@ -658,12 +659,12 @@ class ViewsTest(TestCase):
                                                          outcome=None)
         self.client.login(username=user.username, password='passwd')
         event_clone_url = reverse('events_clone_event',
-                                  kwargs={'slug': event.slug})
+                                  kwargs={'slug': 'test-edit-event'})
         response = self.client.post(event_clone_url, self.data, follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully created.')
-        event = Event.objects.get(name='Test edit event', owner=event.owner)
+        event = Event.objects.get(slug='test-edit-event')
         cloned_event_url = reverse('events_view_event',
-                                   kwargs={'slug': event.slug})
+                                   kwargs={'slug': 'test-edit-event'})
         eq_(response.request['PATH_INFO'], cloned_event_url)
         ok_(event.eventmetricoutcome_set.all().exists())
         metrics_ids = map(lambda x: x.id, metrics)
@@ -687,7 +688,7 @@ class ViewsTest(TestCase):
         valid_data['body'] = 'This is the mail subject'
         valid_data['slug'] = 'test-event'
 
-        url = reverse('email_attendees', kwargs={'slug': 'test-event'})
+        url = reverse('email_attendees', kwargs={'slug': event.slug})
         response = self.client.post(url, valid_data, follow=True)
         self.assertTemplateUsed(response, 'view_event.html')
 

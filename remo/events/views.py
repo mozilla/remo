@@ -189,7 +189,8 @@ def edit_event(request, slug=None, clone=None):
     metrics_form = forms.EventMetricsForm
     event_form = forms.EventForm(request.POST or None,
                                  editable_owner=editable, instance=event,
-                                 initial=initial, clone=clone)
+                                 initial=initial, clone=clone,
+                                 user=request.user)
     if event.has_new_metrics or clone:
         min_forms = 2
         if event.is_past_event and not clone:
@@ -215,18 +216,18 @@ def edit_event(request, slug=None, clone=None):
 
     if event_form.is_valid() and metrics_formset.is_valid():
         event_form.save()
-        metrics_formset.save()
 
         if created:
             messages.success(request, 'Event successfully created.')
             statsd.incr('events.create_event')
+        elif clone:
+            messages.success(request, 'Event successfully created.')
+            statsd.incr('events.clone_event')
         else:
-            if clone:
-                messages.success(request, 'Event successfully created.')
-                statsd.incr('events.clone_event')
-            else:
-                messages.success(request, 'Event successfully updated.')
-                statsd.incr('events.edit_event')
+            messages.success(request, 'Event successfully updated.')
+            statsd.incr('events.edit_event')
+
+        metrics_formset.save()
 
         return redirect('events_view_event', slug=event_form.instance.slug)
 
