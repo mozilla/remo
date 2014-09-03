@@ -20,6 +20,7 @@ INSTALLED_APPS = (['south'] +
                       'remo.api',
                       'remo.events',
                       'remo.voting',
+                      'remo.dashboard',
 
                       'django_browserid',
                       'jingo_offline_compressor',
