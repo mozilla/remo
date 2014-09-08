@@ -59,7 +59,9 @@ class FetchBugsTest(TestCase):
 
         first_request = requests.Request()
         first_request.status_code = 200
-        user = UserFactory.create(groups=['Rep'], email='foo@example.com')
+        mentor = UserFactory.create()
+        user = UserFactory.create(groups=['Rep'], email='foo@example.com',
+                                  userprofile__mentor=mentor)
         bug_data = {'bugs': [{'id': 7788,
                               'summary': 'This is summary',
                               'creator': {'name': 'rep@example.com'},
