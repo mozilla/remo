@@ -9,10 +9,10 @@ class ActionItemAdmin(ExportMixin, admin.ModelAdmin):
     model = ActionItem
 
     list_display = ('__unicode__', 'user', 'due_date', 'created_on',
-                    'updated_on')
+                    'priority', 'updated_on')
     search_fields = ['user__first_name', 'user__last_name',
                      'user__userprofile__display_name']
-    list_filter = ['name']
+    list_filter = ['action_type']
 
 
 admin.site.register(ActionItem, ActionItemAdmin)
