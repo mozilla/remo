@@ -1,7 +1,15 @@
 $(document).ready(function () {
     'use strict';
 
-    // Continuouis reports containers
+    // Action Items containers
+    var $action_items_mine_block = $('#dashboard-action-items-mine-block');
+    var $action_items_mentees_block = $('#dashboard-action-items-mentees-block');
+
+    // Action Items buttons
+    var $action_items_mine_button = $('#dashboard-action-items-mine-button');
+    var $action_items_mentees_button = $('#dashboard-action-items-mentees-button');
+
+    // Continuous reports containers
     var $cont_reports_mine_block = $('#dashboard-continuous-reports-mine-block');
     var $cont_reports_mentees_block = $('#dashboard-continuous-reports-mentees-block');
     var $cont_reports_all_block = $('#dashboard-continuous-reports-all-block');
@@ -30,6 +38,24 @@ $(document).ready(function () {
     var $sr_mentees_block = $('#dashboard-sr-mentees-block');
     var $sr_all_block = $('#dashboard-sr-all-block');
     var $sr_my_block = $('#dashboard-sr-my-block');
+
+    $action_items_mine_button.on('click', function (e) {
+        e.preventDefault();
+        $action_items_mine_block.show('fast');
+        $action_items_mentees_block.hide('fast');
+
+        $(this).parent().addClass('active');
+        $action_items_mentees_button.parent().removeClass('active');
+    });
+
+    $action_items_mentees_button.on('click', function (e) {
+        e.preventDefault();
+        $action_items_mentees_block.show('fast');
+        $action_items_mine_block.hide('fast');
+
+        $(this).parent().addClass('active');
+        $action_items_mine_button.parent().removeClass('active');
+    });
 
     $cont_reports_mine_button.on('click', function (e) {
         e.preventDefault();

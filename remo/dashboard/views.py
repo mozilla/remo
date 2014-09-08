@@ -11,6 +11,7 @@ import forms
 from remo.base.decorators import permission_check
 from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_date
+from remo.dashboard.models import ActionItem
 from remo.events.models import Event
 from remo.remozilla.models import Bug
 from remo.reports.models import NGReport
@@ -104,12 +105,9 @@ def dashboard(request):
 
     today = now().date()
 
-    # Post event metrics notifications
-    owned_events = Event.objects.filter(
-        owner=user, end__lt=now(),
-        eventmetricoutcome__outcome__isnull=True,
-        has_new_metrics=True).distinct()
-    args['owned_events'] = owned_events
+    # Action Items
+    args['action_items'] = ActionItem.objects.filter(user=user,
+                                                     completed=False)[:10]
 
     # NG Reports
     if user.groups.filter(name='Rep').exists():
@@ -128,6 +126,8 @@ def dashboard(request):
     args['my_swag_requests'] = swag_requests.filter(my_q).distinct()
 
     if user.groups.filter(name='Mentor').exists():
+        args['mentees_action_items'] = ActionItem.objects.filter(
+            user__in=my_mentees, completed=False)[:10]
         args['mentees_ng_reportees'] = User.objects.filter(
             ng_reports__isnull=False, ng_reports__mentor=user,
             groups__name='Rep').distinct()
