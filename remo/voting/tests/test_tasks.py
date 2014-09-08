@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import Group, User
 from django.core import mail
 from django.utils.timezone import now
@@ -22,8 +24,8 @@ class VotingTestTasks(TestCase):
     def test_extend_voting_period_no_majority(self):
         bug = BugFactory.create()
         start = now().replace(microsecond=0)
-        end = get_date(days=1)
-        new_end = get_date(days=2)
+        end = datetime.combine(get_date(days=1), datetime.min.time())
+        new_end = datetime.combine(get_date(days=2), datetime.min.time())
 
         user = UserFactory.create(groups=['Admin'])
         group = Group.objects.get(name='Council')
@@ -66,7 +68,7 @@ class VotingTestTasks(TestCase):
     def test_extend_voting_period_majority(self):
         bug = BugFactory.create()
         start = now().replace(microsecond=0)
-        end = get_date(days=1)
+        end = datetime.combine(get_date(days=1), datetime.min.time())
 
         user = UserFactory.create(groups=['Admin'])
         group = Group.objects.get(name='Council')

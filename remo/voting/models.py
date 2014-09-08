@@ -5,6 +5,8 @@ from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
@@ -16,6 +18,7 @@ from uuslug import uuslug
 
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import add_permissions_to_groups
+from remo.dashboard.models import ActionItem, Item
 from remo.remozilla.models import Bug
 from remo.voting.tasks import send_voting_mail
 
@@ -24,6 +27,8 @@ from remo.voting.tasks import send_voting_mail
 BUDGET_REQUEST_PERIOD_START = 3
 BUDGET_REQUEST_PERIOD_END = 6
 BUGZILLA_URL = 'https://bugzilla.mozilla.org/show_bug.cgi?id='
+VOTE_ACTION = 'Cast your vote'
+BUDGET_VOTE_ACTION = 'Cast your vote for budget request'
 
 
 class Poll(models.Model):
@@ -47,6 +52,7 @@ class Poll(models.Model):
     automated_poll = models.BooleanField(default=False)
     comments_allowed = models.BooleanField(default=True)
     is_extended = models.BooleanField(default=False)
+    action_items = generic.GenericRelation(ActionItem)
 
     def get_absolute_url(self):
         return reverse('remo.voting.views.view_voting',
@@ -80,6 +86,18 @@ class Poll(models.Model):
         if not self.pk:
             self.slug = uuslug(self.name, instance=self)
         else:
+            # Update action items
+            current_poll = Poll.objects.get(id=self.pk)
+            action_model = ContentType.objects.get_for_model(self)
+            action_items = ActionItem.objects.filter(content_type=action_model,
+                                                     object_id=self.pk)
+
+            if current_poll.end != self.end:
+                action_items.update(due_date=self.end.date())
+
+            if current_poll.valid_groups != self.valid_groups:
+                action_items.delete()
+
             if not settings.CELERY_ALWAYS_EAGER:
                 if self.is_current_voting:
                     celery_control.revoke(self.task_end_id)
@@ -94,6 +112,23 @@ class Poll(models.Model):
 
         super(Poll, self).save()
 
+    def get_action_items(self):
+        action_items = []
+        due_date = self.end.date()
+
+        if self.automated_poll:
+            name = BUDGET_VOTE_ACTION
+            priority = ActionItem.MAJOR
+        else:
+            name = VOTE_ACTION
+            priority = ActionItem.NORMAL
+
+        for user in User.objects.filter(groups=self.valid_groups):
+            action_item = Item(name, user, priority, due_date)
+            action_items.append(action_item)
+
+        return action_items
+
 
 class Vote(models.Model):
     """Vote model."""
@@ -103,6 +138,12 @@ class Vote(models.Model):
 
     def __unicode__(self):
         return '%s %s' % (self.user, self.poll)
+
+    def save(self, *args, **kwargs):
+        ActionItem.resolve(instance=self.poll, user=self.user,
+                           name='Cast your vote')
+
+        super(Vote, self).save(*args, **kwargs)
 
 
 class RangePoll(models.Model):

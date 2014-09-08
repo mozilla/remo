@@ -3,6 +3,8 @@ from urlparse import urljoin
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -18,11 +20,13 @@ from uuslug import uuslug as slugify
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import add_permissions_to_groups
+from remo.dashboard.models import ActionItem, Item
 from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
 
 
 SIMILAR_EVENTS = 3
+SUBMIT_POST_EVENT_METRICS_ACTION = 'Submit post event metrics'
 
 
 class Attendance(models.Model):
@@ -126,6 +130,7 @@ class Event(caching.base.CachingMixin, models.Model):
     goals = models.ManyToManyField(EventGoal, related_name='events_goals')
     metrics = models.ManyToManyField(EventMetric, through='EventMetricOutcome')
     has_new_metrics = models.BooleanField(default=True)
+    action_items = generic.GenericRelation(ActionItem)
 
     objects = caching.base.CachingManager()
 
@@ -158,6 +163,15 @@ class Event(caching.base.CachingMixin, models.Model):
             url = urljoin(settings.ETHERPAD_URL,
                           getattr(settings, 'ETHERPAD_PREFIX', '') + self.slug)
             self.planning_pad_url = url
+
+        # Update action items
+        if self.pk:
+            current_event = Event.objects.get(id=self.pk)
+            if current_event.owner != self.owner:
+                model = ContentType.objects.get_for_model(self)
+                action_items = ActionItem.objects.filter(content_type=model,
+                                                         object_id=self.pk)
+                action_items.update(user=self.owner)
 
         super(Event, self).save(*args, **kwargs)
 
@@ -205,6 +219,17 @@ class Event(caching.base.CachingMixin, models.Model):
             return events.filter(country)
         return events.filter(country, category).distinct()
 
+    def get_action_items(self):
+        action_items = []
+
+        # Get action items for post event metrics
+        outcome = self.eventmetricoutcome_set.filter(outcome__isnull=False)
+        if self.is_past_event and not outcome and self.has_new_metrics:
+            action_item = Item(SUBMIT_POST_EVENT_METRICS_ACTION, self.owner,
+                               ActionItem.NORMAL, None)
+            action_items.append(action_item)
+        return action_items
+
     class Meta:
         ordering = ['start']
         permissions = (('can_subscribe_to_events', 'Can subscribe to events'),
@@ -224,6 +249,14 @@ class EventMetricOutcome(models.Model):
     class Meta:
         verbose_name = 'event outcome'
         verbose_name_plural = 'events outcome'
+
+    def save(self, *args, **kwargs):
+        super(EventMetricOutcome, self).save(*args, **kwargs)
+
+        # Resolve action items for post event metrics
+        ActionItem.resolve(instance=self.event,
+                           user=self.event.owner,
+                           name='Submit post event metrics')
 
 
 class EventComment(models.Model):
