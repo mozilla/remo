@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.contrib.contenttypes import generic
 from django.db import models, transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
@@ -16,6 +17,8 @@ from uuslug import uuslug
 
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import add_permissions_to_groups
+from remo.dashboard.models import ActionItem, Item
+from remo.dashboard.signals import action_item_resolved
 from remo.remozilla.models import Bug
 from remo.voting.tasks import send_voting_mail
 
@@ -47,6 +50,7 @@ class Poll(models.Model):
     automated_poll = models.BooleanField(default=False)
     comments_allowed = models.BooleanField(default=True)
     is_extended = models.BooleanField(default=False)
+    action_items = generic.GenericRelation(ActionItem)
 
     def get_absolute_url(self):
         return reverse('remo.voting.views.view_voting',
@@ -94,6 +98,15 @@ class Poll(models.Model):
 
         super(Poll, self).save()
 
+    # TODO add due dates
+    def get_action_items(self):
+        action_items = []
+        for user in self.valid_groups.user_set.all():
+            action_item = Item('Cast your vote', user, ActionItem.NORMAL, None)
+            action_items.append(action_item)
+
+        return action_items
+
 
 class Vote(models.Model):
     """Vote model."""
@@ -103,6 +116,14 @@ class Vote(models.Model):
 
     def __unicode__(self):
         return '%s %s' % (self.user, self.poll)
+
+    def save(self, *args, **kwargs):
+        action_item_resolved.send(sender=Poll,
+                                  instance=self.poll,
+                                  user=self.user,
+                                  action_type='Cast your vote')
+
+        super(Vote, self).save(*args, **kwargs)
 
 
 class RangePoll(models.Model):
