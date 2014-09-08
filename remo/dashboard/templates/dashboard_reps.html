@@ -1,30 +1,145 @@
 {% extends "dashboard.html" %}
 
 {% block body_content %}
-<!-- Post event metrics notifications -->
-{% if owned_events %}
+<!-- Action Items Section -->
+<div class="dashboard-box">
   <div class="row">
-    <div class="large-12 columns">
-      <h2>Notifications</h2>
+    <div class="large-7 columns">
+      <h2>Action Items</h2>
+    </div>
+    <div class="large-5 columns">
+      <dl class="sub-nav dashboard-filter">
+        <dt>Filter:</dt>
+        <dd class="active">
+          <a role="button" id="dashboard-action-items-mine-button" href="#">
+            Mine
+          </a>
+        </dd>
+        <dd>
+          <a role="button" id="dashboard-action-items-mentees-button" href="#">
+            My mentees
+          </a>
+        </dd>
+      </dl>
     </div>
   </div>
+
   <div class="row">
-    <div class="large-12 columns post-event-notifications">
-      <p>
-        Looks like you need to add the actual metrics for your recent event(s)
-      <p>
-      <ul>
-        {% for event in owned_events %}
-          <li>
-            <a href="{{ url('events_edit_event', slug=event.slug) }}">
-              {{ event.name }}
-            </a>
+    <!-- my block -->
+    {% if user %}
+      <div id="dashboard-action-items-mine-block" class="large-12 columns">
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th>Summary</th>
+              <th>Expires</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="#">Action Item #1</a>
+              </td>
+              <td>
+                <span class="date-range">
+                  15 September 2014
+                </span>
+              </td>
+              <td class="priority-normal">
+                Normal
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="dashboard-priority-reference">
+          <ul>
+            <li class="dashboard-priority-minor">
+              Minor
+            </li>
+            <li class="dashboard-priority-normal">
+              Normal
+            </li>
+            <li class="dashboard-priority-major">
+              Major
+            </li>
+            <li class="dashboard-priority-critical">
+              Critical
+            </li>
+            <li class="dashboard-priority-blocker">
+              Blocker
+            </li>
+          </ul>
+        </div>
+        <div class="align-right">
+          <a href="#" role="button" class="small button">
+              View my action items
+          </a>
+        </div>
+      </div>
+    {% endif %}
+    <!-- end my block -->
+
+    <!-- mentees block -->
+    {# TODO: check if there are action items for mentees #}
+    <div id="dashboard-action-items-mentees-block" class="large-12 columns hidden">
+      <table class="dashboard-table responsive">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Summary</th>
+            <th>Expires</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          {# TODO: needs caching #}
+          <tr>
+            <td>
+              <a href="#">John Doe XII</a>
+            </td>
+            <td>
+              <a href="#">Action Item #1</a>
+            </td>
+            <td>
+              <span class="date-range">
+                15 September 2014
+              </span>
+            </td>
+            <td class="priority-blocker">
+              Blocker
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="dashboard-priority-reference">
+        <ul>
+          <li class="dashboard-priority-minor">
+            Minor
           </li>
-        {% endfor %}
-      </ul>
+          <li class="dashboard-priority-normal">
+            Normal
+          </li>
+          <li class="dashboard-priority-major">
+            Major
+          </li>
+          <li class="dashboard-priority-critical">
+            Critical
+          </li>
+          <li class="dashboard-priority-blocker">
+            Blocker
+          </li>
+        </ul>
+      </div>
+      <div class="align-right">
+        <a href="#" role="button" class="small button">
+            Mentees action items
+        </a>
+      </div>
     </div>
+    <!-- end mentees block -->
   </div>
-{% endif %}
+</div>
 
 <!-- continuous reports block -->
 <div class="dashboard-box">
