@@ -43,7 +43,7 @@ class EventAdmin(ExportMixin, admin.ModelAdmin):
     inlines = [AttendanceInline]
     model = Event
     list_display = ('name', 'start', 'end')
-    search_fields = ('name', 'country', 'region', 'venue')
+    search_fields = ('name', 'country', 'region', 'venue', 'slug')
 
     def owner_display_name(self, obj):
         return obj.owner.userprofile.display_name
