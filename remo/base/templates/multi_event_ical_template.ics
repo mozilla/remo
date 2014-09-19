@@ -14,6 +14,8 @@ DTEND;TZID={{ event.timezone }}:{{ event.end|format_datetime_utc }}
 {{ "DESCRIPTION:%s"|format(event.description)|ical_escape_char|ical_format_lines }}
 {{ "URL:%s%s"|format(host, url('events_view_event', slug=event.slug))|ical_escape_char|ical_format_lines }}
 SEQUENCE:{{ event.times_edited }}
+X-COORDINATES-LAT:{{ event.lat }}
+X-COORDINATES-LON:{{ event.lon }}
 END:VEVENT
 {% endfor %}
 END:VCALENDAR
