@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from nose.tools import eq_, ok_
 
@@ -6,6 +7,8 @@ from remo.dashboard.models import ActionItem
 from remo.profiles.tests import UserFactory
 from remo.remozilla.models import Bug
 from remo.remozilla.tests import BugFactory
+from remo.voting.models import Poll
+from remo.voting.tests import PollFactory, VoteFactory
 
 
 class CreateActionItemWhiteboard(RemoTestCase):
@@ -113,7 +116,6 @@ class SyncActionItemNeedinfo(RemoTestCase):
 
         ok_(not items.exists())
 
-
         needinfo = UserFactory.create_batch(5, groups=['Rep'])
         user = UserFactory.create(groups=['Rep'])
         bug = BugFactory.create(assigned_to=user)
@@ -172,5 +174,42 @@ class SyncActionItemCouncilReviewer(RemoTestCase):
         bug.save()
 
         items = ActionItem.objects.filter(content_type__pk=model.id)
+        for item in items:
+            ok_(item.completed)
+
+
+class SyncActionItemVote(RemoTestCase):
+    def test_vote_action_item(self):
+        model = ContentType.objects.get_for_model(Poll)
+        items = ActionItem.objects.filter(content_type__pk=model.id)
+        ok_(not items.exists())
+
+        council = Group.objects.get(name='Council')
+        users = UserFactory.create_batch(5, groups=['Council'])
+        PollFactory.create(valid_groups=council)
+
+        items = ActionItem.objects.filter(content_type__pk=model.id)
+        eq_(items.count(), 5)
+
+        for item in items:
+            eq_(item.action_type, 'Cast your vote')
+            ok_(item.user in users)
+            ok_(item.priority, 2)
+            ok_(not item.completed)
+
+    def test_resolve_vote_action_item(self):
+        model = ContentType.objects.get_for_model(Poll)
+        items = ActionItem.objects.filter(content_type__pk=model.id)
+        ok_(not items.exists())
+
+        council = Group.objects.get(name='Council')
+        users = UserFactory.create_batch(5, groups=['Council'])
+        poll = PollFactory.create(valid_groups=council)
+        for user in users:
+            VoteFactory.create(poll=poll, user=user)
+
+        items = ActionItem.objects.filter(content_type__pk=model.id)
+        eq_(items.count(), 5)
+
         for item in items:
             ok_(item.completed)

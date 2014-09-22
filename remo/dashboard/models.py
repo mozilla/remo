@@ -77,8 +77,13 @@ def resolve_action_items(sender, instance, **kwargs):
 
 
 from remo.remozilla.models import Bug
+from remo.voting.models import Poll
 
 post_save.connect(create_action_items, sender=Bug,
                   dispatch_uid='create_action_items_bugzilla_sig')
 action_item_resolved.connect(resolve_action_items, sender=Bug,
                              dispatch_uid='resolve_action_items_bugzilla_sig')
+post_save.connect(create_action_items, sender=Poll,
+                  dispatch_uid='create_action_items_voting_sig')
+action_item_resolved.connect(resolve_action_items, sender=Poll,
+                             dispatch_uid='resolve_action_items_voting_sig')
