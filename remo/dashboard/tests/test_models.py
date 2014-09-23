@@ -1,9 +1,15 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
+from django.utils.timezone import now
 from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
 from remo.dashboard.models import ActionItem
+from remo.events.models import Event
+from remo.events.tasks import notify_event_owners_to_input_metrics
+from remo.events.tests import EventFactory, EventMetricOutcomeFactory
 from remo.profiles.tests import UserFactory
 from remo.remozilla.models import Bug
 from remo.remozilla.tests import BugFactory
@@ -210,6 +216,42 @@ class SyncActionItemVote(RemoTestCase):
 
         items = ActionItem.objects.filter(content_type__pk=model.id)
         eq_(items.count(), 5)
+
+        for item in items:
+            ok_(item.completed)
+
+
+class SyncActionItemEvent(RemoTestCase):
+    def test_post_event_metrics(self):
+        model = ContentType.objects.get_for_model(Event)
+        items = ActionItem.objects.filter(content_type__pk=model.id)
+        ok_(not items.exists())
+
+        start = now() - timedelta(days=4)
+        end = now() - timedelta(days=1)
+        user = UserFactory.create(groups=['Rep'])
+        EventFactory.create_batch(5, owner=user, start=start, end=end)
+        notify_event_owners_to_input_metrics()
+
+        items = ActionItem.objects.filter(content_type__pk=model.id)
+        eq_(items.count(), 5)
+
+    def test_resolve_post_event_metrics(self):
+        model = ContentType.objects.get_for_model(Event)
+        items = ActionItem.objects.filter(content_type__pk=model.id)
+        ok_(not items.exists())
+
+        start = now() - timedelta(days=4)
+        end = now() - timedelta(days=1)
+        user = UserFactory.create(groups=['Rep'])
+        events = EventFactory.create_batch(5, owner=user, start=start, end=end)
+        notify_event_owners_to_input_metrics()
+        items = ActionItem.objects.filter(content_type__pk=model.id)
+
+        eq_(items.count(), 5)
+
+        for event in events:
+            EventMetricOutcomeFactory.create(event=event)
 
         for item in items:
             ok_(item.completed)

@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import post_save
 
-from remo.dashboard.signals import action_item_resolved
+from remo.dashboard.signals import action_item_created, action_item_resolved
 
 
 Item = namedtuple('Item', 'name user priority due_date')
@@ -47,7 +47,7 @@ class ActionItem(models.Model):
         return self.action_type
 
 
-def create_action_items(sender, instance, **kwargs):
+def create_action_items(sender, instance, *args, **kwargs):
     action_model = ContentType.objects.get_for_model(instance)
     action_items = ActionItem.objects.filter(content_type__pk=action_model.id,
                                              object_id=instance.id)
@@ -76,6 +76,7 @@ def resolve_action_items(sender, instance, **kwargs):
     action_items.update(completed=True)
 
 
+from remo.events.models import Event
 from remo.remozilla.models import Bug
 from remo.voting.models import Poll
 
@@ -87,3 +88,7 @@ post_save.connect(create_action_items, sender=Poll,
                   dispatch_uid='create_action_items_voting_sig')
 action_item_resolved.connect(resolve_action_items, sender=Poll,
                              dispatch_uid='resolve_action_items_voting_sig')
+action_item_created.connect(create_action_items, sender=Event,
+                            dispatch_uid='create_update_actions_events_sig')
+action_item_resolved.connect(resolve_action_items, sender=Event,
+                             dispatch_uid='resolve_action_items_events_sig')

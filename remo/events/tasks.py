@@ -4,6 +4,7 @@ from celery.task import periodic_task
 
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date
+from remo.dashboard.signals import action_item_created
 from remo.events.models import Event
 
 
@@ -28,3 +29,5 @@ def notify_event_owners_to_input_metrics():
         data = {'event': event}
         send_remo_mail(subject=subject, email_template=template,
                        recipients_list=[event.owner.id], data=data)
+
+        action_item_created.send(sender=Event, instance=event)
