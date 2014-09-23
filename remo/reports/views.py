@@ -205,7 +205,7 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
             month = month2number(request.GET['month'])
             # Make sure that year is an integer too
             int(request.GET['year'])
-        except ValueError:
+        except (TypeError, ValueError):
             raise Http404()
         year = request.GET['year']
         report_list = report_list.filter(report_date__year=year,
