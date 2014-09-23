@@ -15,18 +15,20 @@
             Mine
           </a>
         </dd>
-        <dd>
-          <a role="button" id="dashboard-action-items-mentees-button" href="#">
-            My mentees
-          </a>
-        </dd>
+        {% if mentees_action_items %}
+          <dd>
+            <a role="button" id="dashboard-action-items-mentees-button" href="#">
+              My mentees
+            </a>
+          </dd>
+        {% endif %}
       </dl>
     </div>
   </div>
 
   <div class="row">
     <!-- my block -->
-    {% if user %}
+    {% if action_items %}
       <div id="dashboard-action-items-mine-block" class="large-12 columns">
         <table class="dashboard-table responsive">
           <thead>
@@ -37,19 +39,25 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <a href="#">Action Item #1</a>
-              </td>
-              <td>
-                <span class="date-range">
-                  15 September 2014
-                </span>
-              </td>
-              <td class="priority-normal">
-                Normal
-              </td>
-            </tr>
+            {% cache action_items %}
+              {% for action_item in action_items %}
+                <tr>
+                  <td>
+                    <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
+                  </td>
+                  <td>
+                    {% if action_item.due_date %}
+                      <span class="date-range">
+                        {{ action_item.due_date|strftime('%d %b %Y') }}
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td class="priority-{{ action_item.get_priority_display()|lower }}">
+                    {{ action_item.get_priority_display() }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
           </tbody>
         </table>
         <div class="dashboard-priority-reference">
@@ -77,66 +85,78 @@
           </a>
         </div>
       </div>
+    {% else %}
+      <div class="large-12 columns reports-found">
+        <p>Congratulations! No Action Items found!</p>
+      </div>
     {% endif %}
     <!-- end my block -->
 
     <!-- mentees block -->
-    {# TODO: check if there are action items for mentees #}
-    <div id="dashboard-action-items-mentees-block" class="large-12 columns hidden">
-      <table class="dashboard-table responsive">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Summary</th>
-            <th>Expires</th>
-            <th>Priority</th>
-          </tr>
-        </thead>
-        <tbody>
-          {# TODO: needs caching #}
-          <tr>
-            <td>
-              <a href="#">John Doe XII</a>
-            </td>
-            <td>
-              <a href="#">Action Item #1</a>
-            </td>
-            <td>
-              <span class="date-range">
-                15 September 2014
-              </span>
-            </td>
-            <td class="priority-blocker">
+    {% if mentees_action_items %}
+      <div id="dashboard-action-items-mentees-block" class="large-12 columns hidden">
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Summary</th>
+              <th>Expires</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache mentees_action_items %}
+              {% for action_item in mentees_action_items %}
+                <tr>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    action_item.user|get_display_name) }}">
+                      {{ action_item.user.get_full_name() }}
+                  </td>
+                  <td>
+                    <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
+                  </td>
+                  <td>
+                    {% if action_item.due_date %}
+                      <span class="date-range">
+                        {{ action_item.due_date|strftime('%d %b %Y') }}
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td class="priority-{{ action_item.get_priority_display()|lower }}">
+                    {{ action_item.get_priority_display() }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+        <div class="dashboard-priority-reference">
+          <ul>
+            <li class="dashboard-priority-minor">
+              Minor
+            </li>
+            <li class="dashboard-priority-normal">
+              Normal
+            </li>
+            <li class="dashboard-priority-major">
+              Major
+            </li>
+            <li class="dashboard-priority-critical">
+              Critical
+            </li>
+            <li class="dashboard-priority-blocker">
               Blocker
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="dashboard-priority-reference">
-        <ul>
-          <li class="dashboard-priority-minor">
-            Minor
-          </li>
-          <li class="dashboard-priority-normal">
-            Normal
-          </li>
-          <li class="dashboard-priority-major">
-            Major
-          </li>
-          <li class="dashboard-priority-critical">
-            Critical
-          </li>
-          <li class="dashboard-priority-blocker">
-            Blocker
-          </li>
-        </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="align-right">
+          <a href="#" role="button" class="small button">
+              Mentees action items
+          </a>
+        </div>
       </div>
-      <div class="align-right">
-        <a href="#" role="button" class="small button">
-            Mentees action items
-        </a>
-      </div>
-    </div>
+    {% endif %}
     <!-- end mentees block -->
   </div>
 </div>

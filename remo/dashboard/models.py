@@ -10,6 +10,7 @@ from remo.dashboard.signals import action_item_created, action_item_resolved
 
 
 Item = namedtuple('Item', 'name user priority due_date')
+BUGZILLA_URL = 'https://bugzilla.mozilla.org/show_bug.cgi?id='
 
 
 class ActionItem(models.Model):
@@ -40,8 +41,29 @@ class ActionItem(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
+    def get_absolute_url(self):
+        from remo.events.models import Event
+        from remo.remozilla.models import Bug
+        from remo.reports.models import NGReport
+        from remo.voting.models import Poll
+        ctype = self.content_type
+
+        if ctype.app_label == 'remozilla' and ctype.model == 'bug':
+            bug = Bug.objects.get(pk=self.object_id)
+            url = BUGZILLA_URL + '{0}'.format(bug.bug_id)
+            return url
+        elif ctype.app_label == 'voting' and ctype.model == 'poll':
+            poll = Poll.objects.get(pk=self.object_id)
+            return poll.get_absolute_url()
+        elif ctype.app_label == 'events' and ctype.model == 'event':
+            event = Event.objects.get(pk=self.object_id)
+            return event.get_absolute_url()
+        elif ctype.app_label == 'reports' and ctype.model == 'ngreport':
+            report = NGReport.objects.get(pk=self.object_id)
+            return report.get_absolute_url()
+
     class Meta:
-        ordering = ['-due_date', '-updated_on', '-created_on']
+        ordering = ['-priority', '-due_date']
 
     def __unicode__(self):
         return self.action_type
