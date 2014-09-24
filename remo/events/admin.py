@@ -19,10 +19,11 @@ class EventGoalAdmin(ExportMixin, admin.ModelAdmin):
 class EventResource(resources.ModelResource):
     event_goals = fields.Field()
     event_categories = fields.Field()
+    event_metrics = fields.Field()
 
     class Meta:
         model = Event
-        exclude = ('id', 'categories', 'goals',)
+        exclude = ('id', 'categories', 'goals', 'metrics',)
 
     def dehydrate_event_goals(self, event):
         if event.goals.all().exists():
@@ -34,6 +35,19 @@ class EventResource(resources.ModelResource):
         if event.categories.all().exists():
             categories = ', '.join([x.name for x in event.categories.all()])
             return categories
+        return ''
+
+    def dehydrate_event_metrics(self, event):
+        event_metrics = event.metrics.all()
+        if event_metrics.exists():
+            event_outcome = EventMetricOutcome.objects.filter(event=event)
+            if event_outcome.exists():
+                outcome = [(x.metric.name, x.expected_outcome, x.outcome)
+                           for x in event_outcome]
+                return str(outcome).strip('[]')
+            else:
+                metrics = ', '.join(x.name for x in event_metrics)
+            return metrics
         return ''
 
 
