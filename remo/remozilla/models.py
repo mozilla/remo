@@ -1,12 +1,15 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.timezone import utc
 
 import caching.base
+
+from remo.dashboard.models import ActionItem
 
 
 class Bug(caching.base.CachingMixin, models.Model):
@@ -33,6 +36,7 @@ class Bug(caching.base.CachingMixin, models.Model):
     council_member_assigned = models.BooleanField(default=False)
     pending_mentor_validation = models.BooleanField(default=False)
     budget_needinfo = models.ManyToManyField(User)
+    action_items = generic.GenericRelation(ActionItem)
 
     objects = caching.base.CachingManager()
 
@@ -54,6 +58,39 @@ class Bug(caching.base.CachingMixin, models.Model):
     @property
     def waiting_photos(self):
         return '[waiting photos]' in self.whiteboard
+
+    def get_action_items(self):
+        action_items = []
+
+        action_types = [
+            ('Add receipts to bug', 'waiting_receipts', ActionItem.NORMAL),
+            ('Add report to bug', 'waiting_report', ActionItem.NORMAL),
+            ('Add photos to bug', 'waiting_photos', ActionItem.NORMAL),
+            ('Add receipts/photos to bug',
+             'waiting_report_photos', ActionItem.NORMAL),
+            ('Review budget request bug',
+             'council_member_assigned', ActionItem.BLOCKER)
+        ]
+
+        # TODO add due dates
+        for action_name, attr, priority in action_types:
+            if getattr(self, attr, None):
+                action_item = (action_name, self.assigned_to,
+                               priority, None)
+                action_items.append(action_item)
+
+        if self.pending_mentor_validation:
+            action_name = 'Waiting mentor validation'
+            mentor = self.assigned_to.userprofile.mentor
+            action_item = (action_name, mentor, ActionItem.BLOCKER, None)
+            action_items.append(action_item)
+
+        action_name = 'Pending open questions'
+        for user in self.budget_needinfo.all():
+            action_item = (action_name, user, ActionItem.CRITICAL, None)
+            action_items.append(action_item)
+
+        return action_items
 
     class Meta:
         ordering = ['-bug_last_change_time']
