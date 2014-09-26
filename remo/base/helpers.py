@@ -14,12 +14,18 @@ from Crypto.Cipher import AES
 from funfactory import utils
 from jingo import register
 from jinja2 import Markup
+from product_details import product_details
 
 
 AES_PADDING = 16
 AES_IV_LENGTH = 16
 LINE_LIMIT = 75
 FOLD_SEP = u'\r\n '
+
+COUNTRIES_NAME_TO_CODE = {}
+for code, name in product_details.get_regions('en').items():
+    name = name.lower()
+    COUNTRIES_NAME_TO_CODE[name] = code
 
 
 @register.filter
@@ -264,3 +270,9 @@ def formset_errors_exist(formset):
         if form.errors:
             return True
     return False
+
+
+@register.filter
+def get_country_code(country_name):
+    """Return country code from country name."""
+    return COUNTRIES_NAME_TO_CODE.get(country_name.lower(), '')
