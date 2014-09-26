@@ -16,6 +16,7 @@ DTEND;TZID={{ event.timezone }}:{{ event.end|format_datetime_utc }}
 SEQUENCE:{{ event.times_edited }}
 X-COORDINATES-LAT:{{ event.lat }}
 X-COORDINATES-LON:{{ event.lon }}
+X-COUNTRY-CODE:{{ event.country|get_country_code }}
 END:VEVENT
 {% endfor %}
 END:VCALENDAR
