@@ -458,6 +458,7 @@ function send_query(newquery) {
             past_events = false;
         }
         else if (period === 'past') {
+            extra_q += '&order_by=-end';
             extra_q += '&limit=' + EventsLib.results_batch;
             extra_q += '&start__lt=' + today_utc_string;
         }
