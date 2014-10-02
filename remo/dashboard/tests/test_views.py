@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test.client import Client
@@ -12,8 +13,11 @@ from nose.tools import eq_
 from test_utils import TestCase
 
 from remo.base.tests import RemoTestCase
+from remo.dashboard.models import ActionItem
 from remo.events.tests import EventFactory
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
+from remo.remozilla.models import Bug
+from remo.remozilla.tests import BugFactory
 from remo.reports.tests import NGReportFactory
 
 
@@ -206,3 +210,22 @@ class StatsDashboardTest(RemoTestCase):
         eq_(response.context['active_users'], 5)
         eq_(response.context['inactive_low_users'], 4)
         eq_(response.context['inactive_high_users'], 3)
+
+
+class ListActionItemsTests(RemoTestCase):
+    """Tests related to action items listing."""
+
+    def test_list(self):
+        model = ContentType.objects.get_for_model(Bug)
+        items = ActionItem.objects.filter(content_type=model)
+
+        whiteboard = '[waiting receipts]'
+        user = UserFactory.create(groups=['Rep'])
+        BugFactory.create(whiteboard=whiteboard, assigned_to=user)
+        items = ActionItem.objects.filter(content_type=model)
+        response = self.get(user=user, url=reverse('list_action_items'))
+        self.assertTemplateUsed(response, 'list_action_items.html')
+        eq_(response.context['pageheader'], 'My Action Items')
+        eq_(response.status_code, 200)
+        eq_(set(response.context['actions'].object_list),
+            set([items[0]]))

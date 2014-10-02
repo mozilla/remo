@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
@@ -15,6 +16,18 @@ from remo.dashboard.models import ActionItem
 from remo.events.models import Event
 from remo.remozilla.models import Bug
 from remo.reports.models import NGReport
+
+
+# Action Items
+LIST_ACTION_ITEMS_DEFAULT_SORT = 'action_item_date_desc'
+LIST_ACTION_ITEMS_VALID_SORTS = {
+    'action_desc': '-name',
+    'action_asc': 'name',
+    'action_item_priority_desc': '-priority',
+    'action_item_priority_asc': 'priority',
+    'action_item_date_desc': '-due_date',
+    'action_item_date_asc': 'due_date'}
+LIST_ACTION_ITEMS_PER_PAGE = 25
 
 
 def dashboard_mozillians(request, user):
@@ -107,7 +120,7 @@ def dashboard(request):
 
     # Action Items
     args['action_items'] = ActionItem.objects.filter(user=user,
-                                                     completed=False)[:10]
+                                                     resolved=False)[:10]
 
     # NG Reports
     if user.groups.filter(name='Rep').exists():
@@ -127,7 +140,7 @@ def dashboard(request):
 
     if user.groups.filter(name='Mentor').exists():
         args['mentees_action_items'] = ActionItem.objects.filter(
-            user__in=my_mentees, completed=False)[:10]
+            user__in=my_mentees, resolved=False)[:10]
         args['mentees_ng_reportees'] = User.objects.filter(
             ng_reports__isnull=False, ng_reports__mentor=user,
             groups__name='Rep').distinct()
@@ -205,3 +218,54 @@ def stats_dashboard(request):
     args['activities'] = NGReport.objects.all().count()
 
     return render(request, 'stats_dashboard.html', args)
+
+
+@never_cache
+@permission_check()
+def list_action_items(request):
+    user = request.user
+    action_items = ActionItem.objects.filter(user=user,
+                                             resolved=False)
+    pageheader = 'My Action Items'
+
+    if 'query' in request.GET:
+        query = request.GET['query'].strip()
+        reversed_priority = dict((v.lower(), k)
+                                 for k, v in ActionItem.PRIORITY_CHOICES)
+        priority = reversed_priority.get(query.lower(), '')
+        if priority:
+            action_items = action_items.filter(Q(priority=priority))
+        else:
+            action_items = action_items.filter(Q(name__icontains=query))
+
+    action_items = action_items.distinct()
+    number_of_action_items = action_items.count()
+
+    sort_key = request.GET.get('sort_key', LIST_ACTION_ITEMS_DEFAULT_SORT)
+    if sort_key not in LIST_ACTION_ITEMS_VALID_SORTS:
+        sort_key = LIST_ACTION_ITEMS_DEFAULT_SORT
+
+    sort_by = LIST_ACTION_ITEMS_VALID_SORTS[sort_key]
+    action_items = action_items.order_by(*sort_by.split(','))
+
+    paginator = Paginator(action_items, LIST_ACTION_ITEMS_PER_PAGE)
+
+    # Make sure page request is an int. If not, deliver first page.
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # If page request (9999) is out of range, deliver last page of results.
+    try:
+        actions = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        actions = paginator.page(paginator.num_pages)
+
+    return render(request, 'list_action_items.html',
+                  {'actions': actions,
+                   'number_of_action_items': number_of_action_items,
+                   'sort_key': sort_key,
+                   'pageheader': pageheader,
+                   'pageuser': user,
+                   'query': request.GET.get('query', '')})
