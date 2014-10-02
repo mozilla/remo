@@ -66,8 +66,9 @@ def get_sorted_attendance_list(event):
     query = event.attendees.exclude(groups__name='Mozillians',
                                     userprofile__mozillian_username='')
     attendees = list(query.order_by('last_name', 'first_name'))
-    attendees.remove(event.owner)
-    attendees.insert(0, event.owner)
+    if event.owner in attendees:
+        attendees.remove(event.owner)
+        attendees.insert(0, event.owner)
     return attendees
 
 
