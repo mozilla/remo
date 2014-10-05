@@ -15,7 +15,7 @@ Preparing Your System
 
    - For debian based systems::
 
-     $ sudo apt-get install python-dev python-pip python-virtualenv git mysql-server libmysqlclient-dev libxslt1.1 libxml2 libxml2-dev
+     $ sudo apt-get install python-dev python-pip python-virtualenv git mysql-server libmysqlclient-dev libxslt1.1 libxml2 libxml2-dev libxslt1-dev
 
    For other Linux distributions, you can consult the documentation of your distribution.
 
