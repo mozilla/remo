@@ -40,7 +40,7 @@ class EventResource(ModelResource):
         authorization = ReadOnlyAuthorization()
         serializer = iCalSerializer(formats=['json', 'jsonp', 'ical'])
         allowed_methods = ['get']
-        ordering = ['start']
+        ordering = ['start', 'end']
         fields = ['name', 'start', 'end', 'timezone',
                   'venue', 'city', 'region', 'country', 'lat', 'lon',
                   'external_link', 'description', 'mozilla_event', 'owner',
