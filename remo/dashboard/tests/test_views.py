@@ -1,4 +1,3 @@
-
 from datetime import timedelta
 
 from django.conf import settings
@@ -13,6 +12,7 @@ from nose.tools import eq_
 from test_utils import TestCase
 
 from remo.base.tests import RemoTestCase
+from remo.dashboard.tests import ActionItemFactory
 from remo.events.tests import EventFactory
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 from remo.reports.tests import NGReportFactory
@@ -207,3 +207,17 @@ class StatsDashboardTest(RemoTestCase):
         eq_(response.context['active_users'], 5)
         eq_(response.context['inactive_low_users'], 4)
         eq_(response.context['inactive_high_users'], 3)
+
+
+class ListActionItemsTests(RemoTestCase):
+    """Tests related to action items listing."""
+
+    def test_list(self):
+        user = UserFactory.create()
+        action_item = ActionItemFactory.create(user=user)
+        response = self.get(user=user, url=reverse('list_action_items'))
+        self.assertTemplateUsed(response, 'list_action_items.html')
+        eq_(response.context['pageheader'], 'My Action Items')
+        eq_(response.status_code, 200)
+        eq_(set(response.context['actions'].object_list),
+            set([action_item]))
