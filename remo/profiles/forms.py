@@ -109,11 +109,11 @@ class ChangeProfileForm(happyforms.ModelForm):
         Dynamically set choices for mentor and country fields.
         """
         super(ChangeProfileForm, self).__init__(*args, **kwargs)
+        query = (User.objects.filter(userprofile__registration_complete=True,
+                                     groups__name='Mentor')
+                             .order_by('last_name'))
         mentor_choices = ([(None, "Choose Mentor")] +
-                          [(u.id, u.get_full_name()) for u in
-                           User.objects.filter(
-                               userprofile__registration_complete=True,
-                               groups__name='Mentor')])
+                          [(u.id, u.get_full_name()) for u in query])
         self.fields['mentor'].choices = mentor_choices
 
         countries = product_details.get_regions('en').values()

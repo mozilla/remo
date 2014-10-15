@@ -75,8 +75,9 @@ def edit_voting(request, slug=None):
             messages.error(request, 'Permission denied.')
             return redirect('voting_list_votings')
 
-    nominee_list = User.objects.filter(
-        groups__name='Rep', userprofile__registration_complete=True)
+    nominee_list = (User.objects.filter(groups__name='Rep',
+                                        userprofile__registration_complete=True)
+                                .order_by('last_name'))
     if current_voting_edit:
         poll_form = forms.PollEditForm(request.POST or None, instance=poll)
     else:
