@@ -204,7 +204,7 @@ class EventForm(happyforms.ModelForm):
             self.fields['owner_form'] = forms.ModelChoiceField(
                 queryset=User.objects.filter(
                     userprofile__registration_complete=True,
-                    groups__name='Rep').order_by('last_name'),
+                    groups__name='Rep').order_by('first_name'),
                 empty_label='Owner', initial=self.instance.owner.pk)
         else:
             self.fields['owner_form'] = forms.CharField(
