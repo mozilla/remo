@@ -129,7 +129,8 @@ def dashboard(request):
 
     if user.groups.filter(name='Mentor').exists():
         args['mentees_ng_reportees'] = User.objects.filter(
-            ng_reports__isnull=False, ng_reports__mentor=user).distinct()
+            ng_reports__isnull=False, ng_reports__mentor=user,
+            groups__name='Rep').distinct()
         args['mentees_budget_requests'] = (budget_requests.
                                            filter(creator__in=my_mentees).
                                            distinct())
