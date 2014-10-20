@@ -111,7 +111,7 @@ class ChangeProfileForm(happyforms.ModelForm):
         super(ChangeProfileForm, self).__init__(*args, **kwargs)
         query = (User.objects.filter(userprofile__registration_complete=True,
                                      groups__name='Mentor')
-                             .order_by('last_name'))
+                             .order_by('first_name'))
         mentor_choices = ([(None, "Choose Mentor")] +
                           [(u.id, u.get_full_name()) for u in query])
         self.fields['mentor'].choices = mentor_choices
