@@ -17,6 +17,7 @@ from remo.api import HttpCache
 from remo.base.serializers import CSVSerializer
 from remo.profiles.helpers import get_avatar_url
 from remo.profiles.models import UserProfile, FunctionalArea
+from remo.reports.models import NGReport
 
 
 class FunctionalAreasResource(ModelResource):
@@ -45,6 +46,7 @@ class ProfileResource(ModelResource):
                                           full=True, null=True)
     mentor = fields.ToOneField('remo.profiles.api.RepResource',
                                attribute='mentor')
+    last_report_date = fields.DateField()
 
     class Meta:
         queryset = UserProfile.objects.filter(registration_complete=True)
@@ -94,6 +96,13 @@ class ProfileResource(ModelResource):
     def dehydrate_is_council(self, bundle):
         """Calculate and return if user is counselor."""
         return bundle.obj.user.groups.filter(name='Council').count() == 1
+
+    def dehydrate_last_report_date(self, bundle):
+        try:
+            report = bundle.obj.user.ng_reports.latest('report_date')
+            return report.report_date
+        except NGReport.DoesNotExist:
+            return None
 
 
 class RepResource(ModelResource):
