@@ -1,12 +1,16 @@
-from django.db import models
-from django.contrib.auth.models import User
+from collections import namedtuple
 
-from uuslug import uuslug
+from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
+from django.db import models
+from django.db.models.signals import post_save
+
+Item = namedtuple('Item', ['name', 'user', 'priority', 'due_date'])
 
 
 class ActionItem(models.Model):
     """ActionItem Model."""
-
     # List of priorities - borrowed from bugzilla
     MINOR = 1
     NORMAL = 2
@@ -22,22 +26,56 @@ class ActionItem(models.Model):
     )
 
     name = models.CharField(max_length=255)
-    slug = models.SlugField(blank=True, max_length=255)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-    due_date = models.DateField()
+    due_date = models.DateField(null=True, blank=True)
     priority = models.IntegerField(choices=PRIORITY_CHOICES)
     user = models.ForeignKey(User, related_name='action_items_assigned')
+    resolved = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False)
+
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     class Meta:
         ordering = ['-due_date', '-updated_on', '-created_on']
+        unique_together = ('name', 'user', 'object_id')
 
     def __unicode__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        """Override save method for custom functionality."""
-        if not self.pk:
-            self.slug = uuslug(self.name, instance=self)
+    @staticmethod
+    def create(instance, **kwargs):
+        for item in instance.get_action_items():
+            action_model = ContentType.objects.get_for_model(instance)
+            action_items = ActionItem.objects.filter(content_type=action_model,
+                                                     object_id=instance.id,
+                                                     name=item.name,
+                                                     user=item.user)
+            if not action_items.exists():
+                data = {
+                    'content_object': instance,
+                    'name': item.name,
+                    'user': item.user,
+                    'priority': item.priority,
+                    'due_date': item.due_date
+                }
+                item = ActionItem.objects.create(**data)
 
-        super(ActionItem, self).save(*args, **kwargs)
+    @staticmethod
+    def resolve(instance, user, name):
+        action_model = ContentType.objects.get_for_model(instance)
+        action_items = ActionItem.objects.filter(content_type=action_model,
+                                                 object_id=instance.id,
+                                                 user=user, name=name)
+        action_items.update(completed=True, resolved=True)
+
+
+from remo.remozilla.models import Bug
+from remo.voting.models import Poll
+
+post_save.connect(ActionItem.create, sender=Bug,
+                  dispatch_uid='create_action_items_bugzilla_sig')
+post_save.connect(ActionItem.create, sender=Poll,
+                  dispatch_uid='create_action_items_voting_sig')

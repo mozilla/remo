@@ -186,7 +186,8 @@ def user_is_mozillian(user):
 @register.function
 def user_is_rep(user):
     """Check if a user belongs to Rep's group."""
-    return user.groups.filter(name='Rep').exists()
+    return (user.groups.filter(name='Rep').exists() and
+            user.userprofile.registration_complete)
 
 
 @register.function

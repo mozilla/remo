@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -17,9 +18,12 @@ from django_statsd.clients import statsd
 from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
+from remo.base.utils import get_object_or_none
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import add_permissions_to_groups
+from remo.dashboard.models import ActionItem
+from remo.remozilla.models import Bug
 
 DISPLAY_NAME_MAX_LENGTH = 50
 
@@ -361,6 +365,21 @@ def email_mentor_notification(sender, instance, raw, **kwargs):
             send_remo_mail.delay(recipients_list=recipients, subject=subject,
                                  email_template=email_template, data=ctx_data)
             statsd.incr('profiles.change_mentor')
+
+
+@receiver(pre_save, sender=UserProfile,
+          dispatch_uid='change_mentor_action_items_signal')
+def update_mentor_action_items(sender, instance, raw, **kwargs):
+    """Update action items when a mentor change occurs."""
+    user_profile = get_object_or_none(UserProfile, user=instance.user)
+    if user_profile and not raw:
+        if user_profile.mentor and user_profile.mentor != instance.mentor:
+            action_name = 'Waiting mentor validation'
+            action_model = ContentType.objects.get_for_model(Bug)
+            action_items = ActionItem.objects.filter(content_type=action_model,
+                                                     name=action_name,
+                                                     user=user_profile.mentor)
+            action_items.update(user=instance.mentor)
 
 
 @receiver(post_save, sender=User, dispatch_uid='create_profile_signal')
