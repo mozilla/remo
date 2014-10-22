@@ -10,7 +10,6 @@ from django.utils.timezone import utc
 
 import caching.base
 
-from remo.base.helpers import user_is_rep
 from remo.dashboard.models import ActionItem, Item
 
 
@@ -71,6 +70,9 @@ class Bug(caching.base.CachingMixin, models.Model):
         return '[waiting photos]' in self.whiteboard
 
     def get_action_items(self):
+        # Avoid circular dependency
+        from remo.base.helpers import user_is_rep
+
         if not self.assigned_to or not user_is_rep(self.assigned_to):
             return []
 
