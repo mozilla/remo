@@ -9,7 +9,7 @@ You will receive a notification in 72 hours so that you can vote on this request
 
 {{ bug.summary }}
 
-[0] {{ BUGZILLA_URL }}{{ bug.bug_id }}
+[0] {{ BUGZILLA_URL }}
 [1] {{ poll.get_absolute_url()|absolutify }}
 
 Cheers!

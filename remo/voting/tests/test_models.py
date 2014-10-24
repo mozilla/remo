@@ -11,8 +11,8 @@ from test_utils import TestCase
 
 from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
-from remo.voting.models import (BUGZILLA_URL, Poll,
-                                automated_poll_discussion_email)
+from remo.remozilla.utils import get_bugzilla_url
+from remo.voting.models import Poll, automated_poll_discussion_email
 from remo.voting.tests import (PollCommentFactory, PollCommentFactoryNoSignals,
                                PollFactory, PollFactoryNoSignals)
 
@@ -97,7 +97,7 @@ class AutomatedRadioPollTest(TestCase):
             automated_poll_discussion_email(None, automated_poll, True, {})
 
         subject = 'Discuss [Bug 989812] - Bug summary'
-        data = {'bug': bug, 'BUGZILLA_URL': BUGZILLA_URL,
+        data = {'bug': bug, 'BUGZILLA_URL': get_bugzilla_url(bug),
                 'poll': automated_poll}
         mocked_send_mail.delay.assert_called_once_with(
             subject=subject,
