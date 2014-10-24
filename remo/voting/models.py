@@ -20,13 +20,13 @@ from remo.base.tasks import send_remo_mail
 from remo.base.utils import add_permissions_to_groups
 from remo.dashboard.models import ActionItem, Item
 from remo.remozilla.models import Bug
+from remo.remozilla.utils import get_bugzilla_url
 from remo.voting.tasks import send_voting_mail
 
 
 # Voting period in days
 BUDGET_REQUEST_PERIOD_START = 3
 BUDGET_REQUEST_PERIOD_END = 6
-BUGZILLA_URL = 'https://bugzilla.mozilla.org/show_bug.cgi?id='
 VOTE_ACTION = 'Cast your vote'
 BUDGET_VOTE_ACTION = 'Cast your vote for budget request'
 
@@ -239,7 +239,7 @@ def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
                    .format(id=instance.bug.bug_id,
                            summary=instance.bug.summary))
         data = {'bug': instance.bug,
-                'BUGZILLA_URL': BUGZILLA_URL,
+                'BUGZILLA_URL': get_bugzilla_url(instance.bug),
                 'poll': instance}
         send_remo_mail.delay(
             subject=subject, email_template=template,

@@ -1,30 +1,160 @@
 {% extends "dashboard.html" %}
 
 {% block body_content %}
-<!-- Post event metrics notifications -->
-{% if owned_events %}
+<!-- Action Items Section -->
+<div class="dashboard-box">
   <div class="row">
-    <div class="large-12 columns">
-      <h2>Notifications</h2>
+    <div class="large-7 columns">
+      <h2>Action Items</h2>
     </div>
-  </div>
-  <div class="row">
-    <div class="large-12 columns post-event-notifications">
-      <p>
-        Looks like you need to add the actual metrics for your recent event(s)
-      <p>
-      <ul>
-        {% for event in owned_events %}
-          <li>
-            <a href="{{ url('events_edit_event', slug=event.slug) }}">
-              {{ event.name }}
+    <div class="large-5 columns">
+      <dl class="sub-nav dashboard-filter">
+        <dt>Filter:</dt>
+        <dd class="active">
+          <a role="button" id="dashboard-action-items-mine-button" href="#">
+            Mine
+          </a>
+        </dd>
+        {% if mentees_action_items %}
+          <dd>
+            <a role="button" id="dashboard-action-items-mentees-button" href="#">
+              My mentees
             </a>
-          </li>
-        {% endfor %}
-      </ul>
+          </dd>
+        {% endif %}
+      </dl>
     </div>
   </div>
-{% endif %}
+
+  <div class="row">
+    <!-- my block -->
+    {% if action_items %}
+      <div id="dashboard-action-items-mine-block" class="large-12 columns">
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th>Summary</th>
+              <th>Expires</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache action_items %}
+              {% for action_item in action_items %}
+                <tr>
+                  <td>
+                    <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
+                  </td>
+                  <td>
+                    {% if action_item.due_date %}
+                      <span class="date-range">
+                        {{ action_item.due_date|strftime('%d %b %Y') }}
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td class="priority-{{ action_item.get_priority_display()|lower }}">
+                    {{ action_item.get_priority_display() }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+        <div class="dashboard-priority-reference">
+          <ul>
+            <li class="dashboard-priority-minor">
+              Minor
+            </li>
+            <li class="dashboard-priority-normal">
+              Normal
+            </li>
+            <li class="dashboard-priority-major">
+              Major
+            </li>
+            <li class="dashboard-priority-critical">
+              Critical
+            </li>
+            <li class="dashboard-priority-blocker">
+              Blocker
+            </li>
+          </ul>
+        </div>
+        <div class="align-right">
+          <a role="button" class="small button" href="{{ url('list_action_items') }}">
+            View my action items
+          </a>
+        </div>
+      </div>
+    {% else %}
+      <div class="large-12 columns reports-found">
+        <p>Congratulations! No Action Items found!</p>
+      </div>
+    {% endif %}
+    <!-- end my block -->
+
+    <!-- mentees block -->
+    {% if mentees_action_items %}
+      <div id="dashboard-action-items-mentees-block" class="large-12 columns hidden">
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Summary</th>
+              <th>Expires</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache mentees_action_items %}
+              {% for action_item in mentees_action_items %}
+                <tr>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    action_item.user|get_display_name) }}">
+                      {{ action_item.user.get_full_name() }}
+                  </td>
+                  <td>
+                    <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
+                  </td>
+                  <td>
+                    {% if action_item.due_date %}
+                      <span class="date-range">
+                        {{ action_item.due_date|strftime('%d %b %Y') }}
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td class="priority-{{ action_item.get_priority_display()|lower }}">
+                    {{ action_item.get_priority_display() }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+        <div class="dashboard-priority-reference">
+          <ul>
+            <li class="dashboard-priority-minor">
+              Minor
+            </li>
+            <li class="dashboard-priority-normal">
+              Normal
+            </li>
+            <li class="dashboard-priority-major">
+              Major
+            </li>
+            <li class="dashboard-priority-critical">
+              Critical
+            </li>
+            <li class="dashboard-priority-blocker">
+              Blocker
+            </li>
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+    <!-- end mentees block -->
+  </div>
+</div>
 
 <!-- continuous reports block -->
 <div class="dashboard-box">

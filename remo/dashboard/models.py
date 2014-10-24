@@ -38,6 +38,16 @@ class ActionItem(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
+    def get_absolute_url(self):
+        from remo.remozilla.models import Bug
+        from remo.remozilla.utils import get_bugzilla_url
+
+        obj = self.content_type.model_class().objects.get(pk=self.object_id)
+        if isinstance(obj, Bug):
+            return get_bugzilla_url(obj)
+        else:
+            return obj.get_absolute_url()
+
     class Meta:
         ordering = ['-due_date', '-updated_on', '-created_on']
         unique_together = ('name', 'user', 'object_id')
