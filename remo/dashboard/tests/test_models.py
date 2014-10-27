@@ -84,10 +84,9 @@ class RemozillaActionItems(RemoTestCase):
         ok_(not items.exists())
 
         mentor = UserFactory.create(groups=['Rep', 'Mentor'])
-        user = UserFactory.create(groups=['Rep'],
-                                  userprofile__mentor=mentor)
+        UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
 
-        BugFactory.create(pending_mentor_validation=True, assigned_to=user)
+        BugFactory.create(pending_mentor_validation=True, assigned_to=mentor)
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 1)
@@ -105,7 +104,7 @@ class RemozillaActionItems(RemoTestCase):
         user = UserFactory.create(groups=['Rep'],
                                   userprofile__mentor=mentor)
 
-        BugFactory.create(pending_mentor_validation=True, assigned_to=user)
+        BugFactory.create(pending_mentor_validation=True, assigned_to=mentor)
 
         new_mentor = UserFactory.create(groups=['Rep', 'Mentor'])
         user.userprofile.mentor = new_mentor
@@ -121,11 +120,10 @@ class RemozillaActionItems(RemoTestCase):
         ok_(not items.exists())
 
         mentor = UserFactory.create(groups=['Rep', 'Mentor'])
-        user = UserFactory.create(groups=['Rep'],
-                                  userprofile__mentor=mentor)
+        UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
 
         bug = BugFactory.create(pending_mentor_validation=True,
-                                assigned_to=user)
+                                assigned_to=mentor)
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 1)
