@@ -98,7 +98,7 @@ class Bug(caching.base.CachingMixin, models.Model):
 
         action_name = WAITING_MENTOR_VALIDATION_ACTION
         if self.assigned_to and user_is_rep(self.assigned_to):
-            mentor = self.assigned_to.userprofile.mentor
+            mentor = self.assigned_to
             if self.pending_mentor_validation:
                 action_item = Item(action_name, mentor,
                                    ActionItem.BLOCKER, None)
@@ -131,8 +131,8 @@ class Bug(caching.base.CachingMixin, models.Model):
                 items.update(user=self.assigned_to)
 
             try:
-                current_mentor = current_bug.assigned_to.userprofile.mentor
-                new_mentor = self.assigned_to.userprofile.mentor
+                current_mentor = current_bug.assigned_to
+                new_mentor = self.assigned_to
             except AttributeError:
                 current_mentor = None
                 new_mentor = None
