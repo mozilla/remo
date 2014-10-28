@@ -226,6 +226,25 @@ class VotingActionItems(RemoTestCase):
             ok_(item.priority, ActionItem.NORMAL)
             ok_(not item.completed)
 
+    def test_budget_vote_action_item(self):
+        model = ContentType.objects.get_for_model(Poll)
+        items = ActionItem.objects.filter(content_type=model)
+        ok_(not items.exists())
+
+        council = Group.objects.get(name='Council')
+        user = UserFactory.create(groups=['Council'])
+        bug = BugFactory.create()
+        PollFactory.create(valid_groups=council, automated_poll=True, bug=bug)
+
+        items = ActionItem.objects.filter(content_type=model)
+        eq_(items.count(), 1)
+
+        for item in items:
+            eq_(item.name, 'Cast your vote for budget request')
+            eq_(item.user, user)
+            ok_(item.priority, ActionItem.NORMAL)
+            ok_(not item.completed)
+
     def test_resolve_vote_action_item(self):
         model = ContentType.objects.get_for_model(Poll)
         items = ActionItem.objects.filter(content_type=model)
