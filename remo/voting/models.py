@@ -140,8 +140,12 @@ class Vote(models.Model):
         return '%s %s' % (self.user, self.poll)
 
     def save(self, *args, **kwargs):
-        ActionItem.resolve(instance=self.poll, user=self.user,
-                           name='Cast your vote')
+        if self.poll.automated_poll:
+            ActionItem.resolve(instance=self.poll, user=self.user,
+                               name=BUDGET_VOTE_ACTION)
+        else:
+            ActionItem.resolve(instance=self.poll, user=self.user,
+                               name=VOTE_ACTION)
 
         super(Vote, self).save(*args, **kwargs)
 

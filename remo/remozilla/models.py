@@ -184,15 +184,15 @@ def set_uppercase_pre_save(sender, instance, **kwargs):
 def update_budget_needinfo_action_items(sender, instance, action, pk_set,
                                         **kwargs):
     """Update ActionItem objects on needinfo change."""
-    name = 'Pending open questions'
     if action == 'post_remove':
         for pk in pk_set:
             ActionItem.resolve(instance=instance, user=User.objects.get(pk=pk),
-                               name=name)
+                               name=NEEDINFO_ACTION)
 
     if action == 'post_clear':
         for user in instance.budget_needinfo.all():
-            ActionItem.resolve(instance=instance, user=user, name=name)
+            ActionItem.resolve(instance=instance, user=user,
+                               name=NEEDINFO_ACTION)
 
     if action == 'post_add':
         ActionItem.create(instance=instance)
