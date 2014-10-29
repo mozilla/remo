@@ -433,6 +433,12 @@
                    title="Feed for Reps planet"
                    data-tooltip
                    data-options="disable-for-touch:true">
+            <small>
+              Your feed posts will only be validated if they are in
+              the remo, reps, mozillareps or mozilla-reps
+              category/tag. Check <a href="https://wiki.mozilla.org/ReMo/SOPs/Planet">Reps
+              Planet policy</a> before publishing.
+            </small>
             {% if profileform.personal_blog_feed.errors %}
               <small class="error">
                 {{ profileform.personal_blog_feed.errors }}
