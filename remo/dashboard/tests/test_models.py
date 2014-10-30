@@ -206,6 +206,32 @@ class RemozillaActionItems(RemoTestCase):
             ok_(item.completed)
             ok_(item.resolved)
 
+    def test_remove_assignee(self):
+        model = ContentType.objects.get_for_model(Bug)
+        items = ActionItem.objects.filter(content_type=model)
+
+        ok_(not items.exists())
+
+        mentor = UserFactory.create(groups=['Rep', 'Mentor'])
+        UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
+
+        bug = BugFactory.create(pending_mentor_validation=True,
+                                assigned_to=mentor)
+
+        items = ActionItem.objects.filter(content_type=model)
+        eq_(items.count(), 1)
+        eq_(items[0].name, 'Waiting mentor validation')
+        eq_(items[0].user, mentor)
+        eq_(items[0].priority, ActionItem.BLOCKER)
+
+        bug.assigned_to = None
+        bug.save()
+
+        items = ActionItem.objects.filter(content_type=model)
+        for item in items:
+            ok_(item.resolved)
+            ok_(not item.completed)
+
 
 class VotingActionItems(RemoTestCase):
     def test_vote_action_item(self):
