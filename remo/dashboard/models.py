@@ -50,7 +50,6 @@ class ActionItem(models.Model):
 
     class Meta:
         ordering = ['-due_date', '-updated_on', '-created_on']
-        unique_together = ('name', 'user', 'object_id')
 
     def __unicode__(self):
         return self.name
@@ -62,7 +61,8 @@ class ActionItem(models.Model):
             action_items = ActionItem.objects.filter(content_type=action_model,
                                                      object_id=instance.id,
                                                      name=item.name,
-                                                     user=item.user)
+                                                     user=item.user,
+                                                     resolved=False)
             if not action_items.exists():
                 data = {
                     'content_object': instance,

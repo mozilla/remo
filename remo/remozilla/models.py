@@ -77,7 +77,7 @@ class Bug(caching.base.CachingMixin, models.Model):
             return []
 
         action_items = []
-        names = [
+        actions = [
             (ADD_RECEIPTS_ACTION, 'waiting_receipts', ActionItem.NORMAL),
             (ADD_REPORT_ACTION, 'waiting_report', ActionItem.NORMAL),
             (ADD_PHOTOS_ACTION, 'waiting_photos', ActionItem.NORMAL),
@@ -87,7 +87,7 @@ class Bug(caching.base.CachingMixin, models.Model):
              'council_member_assigned', ActionItem.BLOCKER)
         ]
 
-        for action_name, attr, priority in names:
+        for action_name, attr, priority in actions:
             if getattr(self, attr, None):
                 action_item = Item(action_name, self.assigned_to,
                                    priority, None)
@@ -115,39 +115,31 @@ class Bug(caching.base.CachingMixin, models.Model):
         return action_items
 
     def save(self, *args, **kwargs):
+        # Avoid circular dependency
+        from remo.base.helpers import user_is_rep
+
         # Update action items
         action_model = ContentType.objects.get_for_model(self)
         if self.pk:
-            names = [ADD_RECEIPTS_ACTION, ADD_REPORT_ACTION,
-                     ADD_PHOTOS_ACTION, ADD_REPORTS_PHOTOS_ACTION,
-                     REVIEW_BUDGET_REQUEST_ACTION]
+            if (not self.assigned_to or not user_is_rep(self.assigned_to) or
+                    self.status == 'RESOLVED'):
+                items = ActionItem.objects.filter(content_type=action_model,
+                                                  object_id=self.pk)
+                items.update(resolved=True)
+            else:
+                actions = [ADD_RECEIPTS_ACTION, ADD_REPORT_ACTION,
+                           ADD_PHOTOS_ACTION, ADD_REPORTS_PHOTOS_ACTION,
+                           REVIEW_BUDGET_REQUEST_ACTION]
 
-            current_bug = Bug.objects.get(id=self.pk)
-            action_items = ActionItem.objects.filter(content_type=action_model,
-                                                     object_id=self.pk)
+                current_bug = Bug.objects.get(id=self.pk)
+                action_items = ActionItem.objects.filter(
+                    content_type=action_model, object_id=self.pk)
 
-            if current_bug.assigned_to != self.assigned_to:
-                items = action_items.filter(name__in=names)
-                items.update(user=self.assigned_to)
-
-            try:
-                current_mentor = current_bug.assigned_to
-                new_mentor = self.assigned_to
-            except AttributeError:
-                current_mentor = None
-                new_mentor = None
-
-            if current_mentor != new_mentor:
-                action_name = WAITING_MENTOR_VALIDATION_ACTION
-                items = action_items.filter(name=action_name)
-                items.update(user=new_mentor)
+                if current_bug.assigned_to != self.assigned_to:
+                    items = action_items.filter(name__in=actions)
+                    items.update(user=self.assigned_to)
 
         super(Bug, self).save(*args, **kwargs)
-
-        if self.status == 'RESOLVED':
-            items = ActionItem.objects.filter(content_type=action_model,
-                                              object_id=self.pk)
-            items.update(resolved=True)
 
     class Meta:
         ordering = ['-bug_last_change_time']
