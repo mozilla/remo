@@ -13,13 +13,13 @@ import caching.base
 from remo.dashboard.models import ActionItem, Item
 
 
-ADD_RECEIPTS_ACTION = 'Add receipts to bug'
-ADD_REPORT_ACTION = 'Add report to bug'
-ADD_PHOTOS_ACTION = 'Add photos to bug'
-ADD_REPORTS_PHOTOS_ACTION = 'Add reports/photos to bug'
-REVIEW_BUDGET_REQUEST_ACTION = 'Review budget request bug'
-WAITING_MENTOR_VALIDATION_ACTION = 'Waiting mentor validation'
-NEEDINFO_ACTION = 'Pending open questions'
+ADD_RECEIPTS_ACTION = 'Add receipts for'
+ADD_REPORT_ACTION = 'Add report for'
+ADD_PHOTOS_ACTION = 'Add photos for'
+ADD_REPORTS_PHOTOS_ACTION = 'Add reports/photos for'
+REVIEW_BUDGET_REQUEST_ACTION = 'Review budget request'
+WAITING_MENTOR_VALIDATION_ACTION = 'Waiting mentor validation for'
+NEEDINFO_ACTION = 'Need info for'
 
 
 class Bug(caching.base.CachingMixin, models.Model):
@@ -76,14 +76,20 @@ class Bug(caching.base.CachingMixin, models.Model):
         if not self.assigned_to or not user_is_rep(self.assigned_to):
             return []
 
+        def _get_action_name(action_name):
+            return '{0} {1}'.format(action_name, self.summary)
+
         action_items = []
         actions = [
-            (ADD_RECEIPTS_ACTION, 'waiting_receipts', ActionItem.NORMAL),
-            (ADD_REPORT_ACTION, 'waiting_report', ActionItem.NORMAL),
-            (ADD_PHOTOS_ACTION, 'waiting_photos', ActionItem.NORMAL),
-            (ADD_REPORTS_PHOTOS_ACTION,
+            (_get_action_name(ADD_RECEIPTS_ACTION),
+             'waiting_receipts', ActionItem.NORMAL),
+            (_get_action_name(ADD_REPORT_ACTION),
+             'waiting_report', ActionItem.NORMAL),
+            (_get_action_name(ADD_PHOTOS_ACTION),
+             'waiting_photos', ActionItem.NORMAL),
+            (_get_action_name(ADD_REPORTS_PHOTOS_ACTION),
              'waiting_report_photos', ActionItem.NORMAL),
-            (REVIEW_BUDGET_REQUEST_ACTION,
+            (_get_action_name(REVIEW_BUDGET_REQUEST_ACTION),
              'council_member_assigned', ActionItem.BLOCKER)
         ]
 
@@ -96,18 +102,18 @@ class Bug(caching.base.CachingMixin, models.Model):
                 ActionItem.resolve(instance=self, user=self.assigned_to,
                                    name=action_name)
 
-        action_name = WAITING_MENTOR_VALIDATION_ACTION
+        mentor_action = _get_action_name(WAITING_MENTOR_VALIDATION_ACTION)
         if self.assigned_to and user_is_rep(self.assigned_to):
             mentor = self.assigned_to
             if self.pending_mentor_validation:
-                action_item = Item(action_name, mentor,
+                action_item = Item(mentor_action, mentor,
                                    ActionItem.BLOCKER, None)
                 action_items.append(action_item)
             else:
                 ActionItem.resolve(instance=self, user=mentor,
-                                   name=action_name)
+                                   name=mentor_action)
 
-        action_name = NEEDINFO_ACTION
+        action_name = _get_action_name(NEEDINFO_ACTION)
         for user in self.budget_needinfo.all():
             action_item = Item(action_name, user, ActionItem.CRITICAL, None)
             action_items.append(action_item)
@@ -129,17 +135,20 @@ class Bug(caching.base.CachingMixin, models.Model):
             else:
                 actions = [ADD_RECEIPTS_ACTION, ADD_REPORT_ACTION,
                            ADD_PHOTOS_ACTION, ADD_REPORTS_PHOTOS_ACTION,
-                           REVIEW_BUDGET_REQUEST_ACTION]
+                           REVIEW_BUDGET_REQUEST_ACTION,
+                           WAITING_MENTOR_VALIDATION_ACTION]
+                action_names = (['{0} {1}'.format(action, self.summary)
+                                 for action in actions])
 
                 current_bug = Bug.objects.get(id=self.pk)
                 action_items = ActionItem.objects.filter(
                     content_type=action_model, object_id=self.pk)
 
                 if current_bug.assigned_to != self.assigned_to:
-                    items = action_items.filter(name__in=actions)
+                    items = action_items.filter(name__in=action_names)
                     items.update(user=self.assigned_to)
 
-        super(Bug, self).save(*args, **kwargs)
+        super(Bug, self).save()
 
     class Meta:
         ordering = ['-bug_last_change_time']
@@ -176,15 +185,15 @@ def set_uppercase_pre_save(sender, instance, **kwargs):
 def update_budget_needinfo_action_items(sender, instance, action, pk_set,
                                         **kwargs):
     """Update ActionItem objects on needinfo change."""
+    name = '{0} {1}'.format(NEEDINFO_ACTION, instance.summary)
     if action == 'post_remove':
         for pk in pk_set:
             ActionItem.resolve(instance=instance, user=User.objects.get(pk=pk),
-                               name=NEEDINFO_ACTION)
+                               name=name)
 
     if action == 'post_clear':
         for user in instance.budget_needinfo.all():
-            ActionItem.resolve(instance=instance, user=user,
-                               name=NEEDINFO_ACTION)
+            ActionItem.resolve(instance=instance, user=user, name=name)
 
     if action == 'post_add':
         ActionItem.create(instance=instance)

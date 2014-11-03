@@ -26,7 +26,7 @@ from remo.remozilla.models import Bug
 
 
 SIMILAR_EVENTS = 3
-SUBMIT_POST_EVENT_METRICS_ACTION = 'Submit post event metrics'
+POST_EVENT_METRICS_ACTION = 'Submit post event metrics for'
 
 
 class Attendance(models.Model):
@@ -228,8 +228,8 @@ class Event(caching.base.CachingMixin, models.Model):
         # Get action items for post event metrics
         outcome = self.eventmetricoutcome_set.filter(outcome__isnull=False)
         if self.is_past_event and not outcome and self.has_new_metrics:
-            action_item = Item(SUBMIT_POST_EVENT_METRICS_ACTION, self.owner,
-                               ActionItem.NORMAL, None)
+            name = '{0} {1}'.format(POST_EVENT_METRICS_ACTION, self.name)
+            action_item = Item(name, self.owner, ActionItem.NORMAL, None)
             action_items.append(action_item)
         return action_items
 
@@ -259,7 +259,8 @@ class EventMetricOutcome(models.Model):
         # Resolve action items for post event metrics
         ActionItem.resolve(instance=self.event,
                            user=self.event.owner,
-                           name=SUBMIT_POST_EVENT_METRICS_ACTION)
+                           name='{0} {1}'.format(POST_EVENT_METRICS_ACTION,
+                                                 self.event.name))
 
 
 class EventComment(models.Model):

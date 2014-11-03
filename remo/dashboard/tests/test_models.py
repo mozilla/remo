@@ -29,11 +29,12 @@ class RemozillaActionItems(RemoTestCase):
 
         whiteboard = '[waiting receipts]'
         user = UserFactory.create(groups=['Rep'])
-        BugFactory.create(whiteboard=whiteboard, assigned_to=user)
+        bug = BugFactory.build(whiteboard=whiteboard, assigned_to=user)
+        bug.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         eq_(items.count(), 1)
-        eq_(items[0].name, 'Add receipts to bug')
+        eq_(items[0].name, 'Add receipts for ' + bug.summary)
         eq_(items[0].user, user)
         eq_(items[0].priority, ActionItem.NORMAL)
 
@@ -44,13 +45,15 @@ class RemozillaActionItems(RemoTestCase):
 
         whiteboard = '[waiting receipts][waiting report][waiting photos]'
         user = UserFactory.create(groups=['Rep'])
-        BugFactory.create(whiteboard=whiteboard, assigned_to=user)
+        bug = BugFactory.build(whiteboard=whiteboard, assigned_to=user)
+        bug.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         eq_(items.count(), 3)
 
-        namelist = ['Add receipts to bug', 'Add report to bug',
-                    'Add photos to bug']
+        namelist = ['Add receipts for ' + bug.summary,
+                    'Add report for ' + bug.summary,
+                    'Add photos for ' + bug.summary]
 
         for item in items:
             ok_(item.name in namelist)
@@ -64,15 +67,16 @@ class RemozillaActionItems(RemoTestCase):
 
         whiteboard = '[waiting receipts][waiting report][waiting photos]'
         user = UserFactory.create(groups=['Rep'])
-        bug = BugFactory.create(whiteboard=whiteboard, assigned_to=user)
+        bug = BugFactory.build(whiteboard=whiteboard, assigned_to=user)
+        bug.save()
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 3)
 
-        bug.whiteboard = ""
+        bug.whiteboard = ''
         bug.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         for item in items:
             ok_(item.completed)
             ok_(item.resolved)
@@ -86,55 +90,57 @@ class RemozillaActionItems(RemoTestCase):
         mentor = UserFactory.create(groups=['Rep', 'Mentor'])
         UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
 
-        BugFactory.create(pending_mentor_validation=True, assigned_to=mentor)
+        bug = BugFactory.build(pending_mentor_validation=True,
+                               assigned_to=mentor)
+        bug.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         eq_(items.count(), 1)
-        eq_(items[0].name, 'Waiting mentor validation')
+        eq_(items[0].name, 'Waiting mentor validation for ' + bug.summary)
         eq_(items[0].user, mentor)
         eq_(items[0].priority, ActionItem.BLOCKER)
 
-    def test_mentor_change_update_action_items(self):
+    def test_change_assigned_user(self):
         model = ContentType.objects.get_for_model(Bug)
         items = ActionItem.objects.filter(content_type=model)
-
         ok_(not items.exists())
 
-        mentor = UserFactory.create(groups=['Rep', 'Mentor'])
-        user = UserFactory.create(groups=['Rep'],
-                                  userprofile__mentor=mentor)
+        user_1 = UserFactory.create(groups=['Rep'])
+        user_2 = UserFactory.create(groups=['Rep'])
+        bug = BugFactory.build(assigned_to=user_1,
+                               pending_mentor_validation=True)
+        bug.save()
+        item = ActionItem.objects.get(content_type=model, object_id=bug.id)
+        eq_(item.user, user_1)
 
-        BugFactory.create(pending_mentor_validation=True, assigned_to=mentor)
+        bug.assigned_to = user_2
+        bug.save()
 
-        new_mentor = UserFactory.create(groups=['Rep', 'Mentor'])
-        user.userprofile.mentor = new_mentor
-        user.userprofile.save()
-
-        items = ActionItem.objects.filter(content_type=model)
-        eq_(items[0].user, new_mentor)
+        item = ActionItem.objects.get(content_type=model, object_id=bug.id)
+        eq_(item.user, user_2)
 
     def test_resolve_mentor_validation(self):
         model = ContentType.objects.get_for_model(Bug)
         items = ActionItem.objects.filter(content_type=model)
-
         ok_(not items.exists())
 
         mentor = UserFactory.create(groups=['Rep', 'Mentor'])
         UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
 
-        bug = BugFactory.create(pending_mentor_validation=True,
-                                assigned_to=mentor)
+        bug = BugFactory.build(pending_mentor_validation=True,
+                               assigned_to=mentor)
+        bug.save()
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 1)
-        eq_(items[0].name, 'Waiting mentor validation')
+        eq_(items[0].name, 'Waiting mentor validation for ' + bug.summary)
         eq_(items[0].user, mentor)
         eq_(items[0].priority, ActionItem.BLOCKER)
 
         bug.pending_mentor_validation = False
         bug.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         for item in items:
             ok_(item.completed)
             ok_(item.resolved)
@@ -147,15 +153,16 @@ class RemozillaActionItems(RemoTestCase):
 
         needinfo = UserFactory.create(groups=['Rep'])
         user = UserFactory.create(groups=['Rep'])
-        bug = BugFactory.create(assigned_to=user)
+        bug = BugFactory.build(assigned_to=user)
+        bug.save()
         bug.budget_needinfo.add(needinfo)
         bug.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         ok_(items.count(), 1)
 
         for item in items:
-            eq_(item.name, 'Pending open questions')
+            eq_(item.name, 'Need info for ' + bug.summary)
             eq_(item.user, needinfo)
             ok_(item.priority, ActionItem.MINOR)
 
@@ -171,7 +178,7 @@ class RemozillaActionItems(RemoTestCase):
         bug.budget_needinfo.clear()
         bug.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         for item in items:
             ok_(item.completed)
             ok_(item.resolved)
@@ -182,11 +189,12 @@ class RemozillaActionItems(RemoTestCase):
         ok_(not items.exists())
 
         user = UserFactory.create(groups=['Rep', 'Council'])
-        BugFactory.create(assigned_to=user, council_member_assigned=True)
+        bug = BugFactory.build(assigned_to=user, council_member_assigned=True)
+        bug.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         eq_(items.count(), 1)
-        eq_(items[0].name, 'Review budget request bug')
+        eq_(items[0].name, 'Review budget request ' + bug.summary)
         eq_(items[0].user, user)
         eq_(items[0].priority, ActionItem.BLOCKER)
 
@@ -196,12 +204,14 @@ class RemozillaActionItems(RemoTestCase):
         ok_(not items.exists())
 
         user = UserFactory.create(groups=['Council'])
-        bug = BugFactory.create(assigned_to=user, council_member_assigned=True)
+        bug = BugFactory.build(assigned_to=user,
+                               council_member_assigned=True)
+        bug.save()
 
         bug.council_member_assigned = False
         bug.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         for item in items:
             ok_(item.completed)
             ok_(item.resolved)
@@ -209,25 +219,23 @@ class RemozillaActionItems(RemoTestCase):
     def test_remove_assignee(self):
         model = ContentType.objects.get_for_model(Bug)
         items = ActionItem.objects.filter(content_type=model)
-
         ok_(not items.exists())
 
-        mentor = UserFactory.create(groups=['Rep', 'Mentor'])
-        UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
-
-        bug = BugFactory.create(pending_mentor_validation=True,
-                                assigned_to=mentor)
+        user = UserFactory.create(groups=['Rep'])
+        bug = BugFactory.build(pending_mentor_validation=True,
+                               assigned_to=user)
+        bug.save()
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 1)
-        eq_(items[0].name, 'Waiting mentor validation')
-        eq_(items[0].user, mentor)
+        eq_(items[0].name, 'Waiting mentor validation for ' + bug.summary)
+        eq_(items[0].user, user)
         eq_(items[0].priority, ActionItem.BLOCKER)
 
         bug.assigned_to = None
         bug.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         for item in items:
             ok_(item.resolved)
             ok_(not item.completed)
@@ -241,13 +249,14 @@ class VotingActionItems(RemoTestCase):
 
         council = Group.objects.get(name='Council')
         user = UserFactory.create(groups=['Council'])
-        PollFactory.create(valid_groups=council)
+        poll = PollFactory.create(valid_groups=council)
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=poll.id)
         eq_(items.count(), 1)
 
         for item in items:
-            eq_(item.name, 'Cast your vote')
+            eq_(item.name, 'Cast your vote for ' + poll.name)
             eq_(item.user, user)
             ok_(item.priority, ActionItem.NORMAL)
             ok_(not item.completed)
@@ -260,13 +269,16 @@ class VotingActionItems(RemoTestCase):
         council = Group.objects.get(name='Council')
         user = UserFactory.create(groups=['Council'])
         bug = BugFactory.create()
-        PollFactory.create(valid_groups=council, automated_poll=True, bug=bug)
+        poll = PollFactory.create(valid_groups=council, automated_poll=True,
+                                  bug=bug)
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=poll.id)
         eq_(items.count(), 1)
 
         for item in items:
-            eq_(item.name, 'Cast your vote for budget request')
+            eq_(item.name,
+                'Cast your vote for budget request ' + poll.bug.summary)
             eq_(item.user, user)
             ok_(item.priority, ActionItem.NORMAL)
             ok_(not item.completed)
@@ -282,7 +294,8 @@ class VotingActionItems(RemoTestCase):
 
         VoteFactory.create(poll=poll, user=user)
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=poll.id)
         eq_(items.count(), 1)
 
         for item in items:
@@ -301,7 +314,8 @@ class VotingActionItems(RemoTestCase):
         poll.end = poll.end + timedelta(days=4)
         poll.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=poll.id)
         eq_(items.count(), 1)
 
         for item in items:
@@ -314,14 +328,15 @@ class VotingActionItems(RemoTestCase):
 
         council = Group.objects.get(name='Council')
         UserFactory.create(groups=['Council'])
-        PollFactory.create(valid_groups=council,
-                           end=now() - timedelta(days=1))
+        poll = PollFactory.create(valid_groups=council,
+                                  end=now() - timedelta(days=1))
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 1)
 
         resolve_action_items()
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=poll.id)
         for item in items:
             ok_(item.resolved)
             ok_(not item.completed)
@@ -339,7 +354,8 @@ class VotingActionItems(RemoTestCase):
         poll.valid_groups = reps
         poll.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=poll.id)
         eq_(items.count(), 4)
 
         for user in reps.user_set.all():
@@ -358,10 +374,11 @@ class EventActionItems(RemoTestCase):
         start = now() - timedelta(days=4)
         end = now() - timedelta(days=1)
         user = UserFactory.create(groups=['Rep'])
-        EventFactory.create(owner=user, start=start, end=end)
+        event = EventFactory.create(owner=user, start=start, end=end)
         notify_event_owners_to_input_metrics()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=event.id)
         eq_(items.count(), 1)
 
     def test_resolve_post_event_metrics(self):
@@ -374,7 +391,8 @@ class EventActionItems(RemoTestCase):
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create(owner=user, start=start, end=end)
         notify_event_owners_to_input_metrics()
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=event.id)
 
         eq_(items.count(), 1)
 
@@ -402,6 +420,7 @@ class EventActionItems(RemoTestCase):
         event.owner = new_owner
         event.save()
 
-        items = ActionItem.objects.filter(content_type=model)
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=event.id)
         eq_(items.count(), 1)
         eq_(items[0].user, new_owner)
