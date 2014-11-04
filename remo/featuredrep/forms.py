@@ -10,7 +10,7 @@ class FeaturedRepForm(happyforms.ModelForm):
     """Form to create a new FeaturedRep object."""
     users = forms.ModelMultipleChoiceField(
         queryset=User.objects.filter(userprofile__registration_complete=True,
-                                     groups__name='Rep'))
+                                     groups__name='Rep').order_by('first_name'))
 
     class Meta:
         model = FeaturedRep
