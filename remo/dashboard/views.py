@@ -31,6 +31,7 @@ LIST_ACTION_ITEMS_PER_PAGE = 25
 
 
 def dashboard_mozillians(request, user):
+    print 'foo'
     args = {}
     user_profile = user.userprofile
     interestform = forms.TrackFunctionalAreasForm(request.POST or None,
