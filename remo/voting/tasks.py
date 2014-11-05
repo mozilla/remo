@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.utils.timezone import now
 
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date
@@ -96,3 +97,15 @@ def resolve_action_items():
     items = ActionItem.objects.filter(content_type=action_model,
                                       object_id__in=polls)
     items.update(resolved=True)
+
+
+@periodic_task(run_every=timedelta(hours=4))
+def create_poll_action_items():
+    """Create action items for current polls."""
+    # avoid circular dependencies
+    from remo.voting.models import Poll
+
+    start = now() - timedelta(hours=4)
+    polls = Poll.objects.filter(start__range=[start, now()])
+    for poll in polls:
+        ActionItem.create(poll)

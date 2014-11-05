@@ -83,9 +83,6 @@ class ActionItem(models.Model):
 
 
 from remo.remozilla.models import Bug
-from remo.voting.models import Poll
 
 post_save.connect(ActionItem.create, sender=Bug,
                   dispatch_uid='create_action_items_bugzilla_sig')
-post_save.connect(ActionItem.create, sender=Poll,
-                  dispatch_uid='create_action_items_voting_sig')
