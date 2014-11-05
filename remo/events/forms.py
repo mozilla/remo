@@ -69,10 +69,10 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
 
         # Disable adding new forms in post event form.
         if self.instance.is_past_event and self.instance.has_new_metrics:
-            if self.extra_forms:
+            if self.extra_forms and len(self.extra_forms) > 2:
                 error_msg = 'You cannot add new metrics in a past event.'
                 raise ValidationError(error_msg)
-            elif [key for key in self.cleaned_data if key.get('DELETE')]:
+            if [key for key in self.cleaned_data if key.get('DELETE')]:
                 error_msg = 'You cannot delete metrics in a past event.'
                 raise ValidationError(error_msg)
 
@@ -133,6 +133,7 @@ class EventMetricsForm(happyforms.ModelForm):
         if self.clone:
             self.instance.pk = None
             self.instance.outcome = None
+            self.instance.details = ''
         return super(EventMetricsForm, self).save(*args, **kwargs)
 
 
@@ -142,12 +143,13 @@ class PostEventMetricsForm(EventMetricsForm):
         error_messages={'invalid': 'Please enter a number.'})
 
     class Meta(EventMetricsForm.Meta):
-        fields = ('metric', 'expected_outcome', 'outcome')
+        fields = ('metric', 'expected_outcome', 'outcome', 'details')
 
     def __init__(self, *args, **kwargs):
         """Make expected outcome readonly."""
         super(PostEventMetricsForm, self).__init__(*args, **kwargs)
-        self.fields['expected_outcome'].widget.attrs['readonly'] = True
+        if self.instance.expected_outcome:
+            self.fields['expected_outcome'].widget.attrs['readonly'] = True
 
 
 class EventForm(happyforms.ModelForm):

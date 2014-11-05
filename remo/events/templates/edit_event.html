@@ -440,13 +440,19 @@
                                           placeholder='Expected outcome (numeric)') }}
                     </div>
                     {{ field_errors(form.expected_outcome) }}
-
                     {% if form.outcome %}
                       <div class='has-tip tip-right' title='Actual outcome' data-tooltip>
                         {{ field_with_attrs(form.outcome,
                                             placeholder='Actual outcome (numeric)') }}
                       </div>
                       {{ field_errors(form.outcome) }}
+                      <div title="Event outcome Details">
+                        {{ field_with_attrs(form.details,
+                                            class='postevent-details',
+                                            placeholder="Event metric details, urls etc") }}
+                        <p class="more-info">Please add any additional information for this metric.</p>
+                      </div>
+                      {{ field_errors(form.details) }}
                     {% endif %}
                     <div class="events-delete-metric">
                       {{ form.DELETE }} {{ form.DELETE.label_tag() }}
