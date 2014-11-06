@@ -75,7 +75,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
             for bdata in bugs['bugs']:
                 bug, created = Bug.objects.get_or_create(bug_id=bdata['id'])
 
-                bug.summary = bdata.get('summary', '')
+                bug.summary = bdata.get('summary', '').encode('utf-8')
                 creator_name = bdata['creator']['name']
                 bug.creator = get_object_or_none(User, email=creator_name)
                 bug.bug_creation_time = (
@@ -130,7 +130,8 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
                 comments = bdata.get('comments', [])
                 if comments and comments[0].get('text', ''):
-                    bug.first_comment = comments[0]['text']
+                    # Enforce unicode encoding.
+                    bug.first_comment = comments[0]['text'].encode('utf-8')
 
                 bug.save()
 
