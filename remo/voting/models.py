@@ -27,7 +27,7 @@ from remo.voting.tasks import send_voting_mail
 # Voting period in days
 BUDGET_REQUEST_PERIOD_START = 3
 BUDGET_REQUEST_PERIOD_END = 6
-VOTE_ACTION = 'Cast your vote'
+VOTE_ACTION = 'Cast your vote for'
 BUDGET_VOTE_ACTION = 'Cast your vote for budget request'
 
 
@@ -117,10 +117,10 @@ class Poll(models.Model):
         due_date = self.end.date()
 
         if self.automated_poll:
-            name = BUDGET_VOTE_ACTION
+            name = '{0} {1}'.format(BUDGET_VOTE_ACTION, self.bug.summary)
             priority = ActionItem.MAJOR
         else:
-            name = VOTE_ACTION
+            name = '{0} {1}'.format(VOTE_ACTION, self.name)
             priority = ActionItem.NORMAL
 
         for user in User.objects.filter(groups=self.valid_groups):
@@ -141,11 +141,13 @@ class Vote(models.Model):
 
     def save(self, *args, **kwargs):
         if self.poll.automated_poll:
+            name = '{0} {1}'.format(BUDGET_VOTE_ACTION, self.poll.bug.summary)
             ActionItem.resolve(instance=self.poll, user=self.user,
-                               name=BUDGET_VOTE_ACTION)
+                               name=name)
         else:
+            name = '{0} {1}'.format(VOTE_ACTION, self.poll.name)
             ActionItem.resolve(instance=self.poll, user=self.user,
-                               name=VOTE_ACTION)
+                               name=name)
 
         super(Vote, self).save(*args, **kwargs)
 

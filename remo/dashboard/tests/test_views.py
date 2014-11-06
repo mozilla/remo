@@ -9,7 +9,7 @@ from django.test.client import Client
 from django.utils.timezone import now
 
 from funfactory.helpers import urlparams
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 from test_utils import TestCase
 
 from remo.base.tests import RemoTestCase
@@ -218,14 +218,15 @@ class ListActionItemsTests(RemoTestCase):
     def test_list(self):
         model = ContentType.objects.get_for_model(Bug)
         items = ActionItem.objects.filter(content_type=model)
+        ok_(not items)
 
         whiteboard = '[waiting receipts]'
         user = UserFactory.create(groups=['Rep'])
-        BugFactory.create(whiteboard=whiteboard, assigned_to=user)
-        items = ActionItem.objects.filter(content_type=model)
+        bug = BugFactory.create(whiteboard=whiteboard, assigned_to=user)
+        item = ActionItem.objects.get(content_type=model, object_id=bug.id)
         response = self.get(user=user, url=reverse('list_action_items'))
         self.assertTemplateUsed(response, 'list_action_items.html')
         eq_(response.context['pageheader'], 'My Action Items')
         eq_(response.status_code, 200)
         eq_(set(response.context['actions'].object_list),
-            set([items[0]]))
+            set([item]))

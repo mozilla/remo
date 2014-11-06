@@ -71,7 +71,7 @@ class ActionItem(models.Model):
                     'priority': item.priority,
                     'due_date': item.due_date
                 }
-                item = ActionItem.objects.create(**data)
+                ActionItem.objects.create(**data)
 
     @staticmethod
     def resolve(instance, user, name):
