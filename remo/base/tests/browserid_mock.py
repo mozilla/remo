@@ -22,13 +22,13 @@ class mock_browserid(object):
             self.return_value = {'status': 'failure'}
 
     def __enter__(self):
-        for patch in self.settings_patches:
-            patch.start()
+        for p in self.settings_patches:
+            p.start()
         self.patcher.start().return_value = self.return_value
 
     def __exit__(self, exc_type, exc_value, traceback):
-        for patch in self.settings_patches:
-            patch.stop()
+        for p in self.settings_patches:
+            p.stop()
         self.patcher.stop()
 
     def __call__(self, func):
