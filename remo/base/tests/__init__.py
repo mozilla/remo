@@ -12,10 +12,16 @@ from test_utils import TestCase as BaseTestCase
 
 AUTHENTICATION_BACKENDS = (
     'remo.base.tests.authentication.DummyAuthenticationBackend',
-    )
+)
+
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.SHA1PasswordHasher',
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+)
 
 
-@override_settings(AUTHENTICATION_BACKENDS=AUTHENTICATION_BACKENDS)
+@override_settings(AUTHENTICATION_BACKENDS=AUTHENTICATION_BACKENDS,
+                   PASSWORD_HASHERS=PASSWORD_HASHERS)
 class RemoTestCase(BaseTestCase):
     def get(self, url, data={}, user=None, follow=True):
         client = Client()
