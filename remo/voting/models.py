@@ -97,6 +97,7 @@ class Poll(models.Model):
 
             if current_poll.valid_groups != self.valid_groups:
                 action_items.delete()
+                ActionItem.create(self)
 
             if not settings.CELERY_ALWAYS_EAGER:
                 if self.is_current_voting:

@@ -15,7 +15,7 @@ from remo.profiles.tests import UserFactory
 from remo.remozilla.models import Bug
 from remo.remozilla.tests import BugFactory
 from remo.voting.models import Poll
-from remo.voting.tasks import resolve_action_items
+from remo.voting.tasks import resolve_action_items, create_poll_action_items
 from remo.voting.tests import PollFactory, VoteFactory
 
 
@@ -249,7 +249,10 @@ class VotingActionItems(RemoTestCase):
 
         council = Group.objects.get(name='Council')
         user = UserFactory.create(groups=['Council'])
-        poll = PollFactory.create(valid_groups=council)
+        start = now() - timedelta(hours=3)
+        poll = PollFactory.create(valid_groups=council, start=start)
+
+        create_poll_action_items()
 
         items = ActionItem.objects.filter(content_type=model,
                                           object_id=poll.id)
@@ -269,8 +272,12 @@ class VotingActionItems(RemoTestCase):
         council = Group.objects.get(name='Council')
         user = UserFactory.create(groups=['Council'])
         bug = BugFactory.create()
+
+        start = now() - timedelta(hours=3)
         poll = PollFactory.create(valid_groups=council, automated_poll=True,
-                                  bug=bug)
+                                  bug=bug, start=start)
+
+        create_poll_action_items()
 
         items = ActionItem.objects.filter(content_type=model,
                                           object_id=poll.id)
@@ -283,6 +290,20 @@ class VotingActionItems(RemoTestCase):
             ok_(item.priority, ActionItem.NORMAL)
             ok_(not item.completed)
 
+    def test_future_vote_action_item(self):
+        model = ContentType.objects.get_for_model(Poll)
+        items = ActionItem.objects.filter(content_type=model)
+        ok_(not items.exists())
+
+        council = Group.objects.get(name='Council')
+        start = now() + timedelta(hours=3)
+        PollFactory.create(valid_groups=council, start=start)
+
+        create_poll_action_items()
+
+        items = ActionItem.objects.filter(content_type=model)
+        eq_(items.count(), 0)
+
     def test_resolve_vote_action_item(self):
         model = ContentType.objects.get_for_model(Poll)
         items = ActionItem.objects.filter(content_type=model)
@@ -290,7 +311,10 @@ class VotingActionItems(RemoTestCase):
 
         council = Group.objects.get(name='Council')
         user = UserFactory.create(groups=['Council'])
-        poll = PollFactory.create(valid_groups=council)
+        start = now() - timedelta(hours=3)
+        poll = PollFactory.create(valid_groups=council, start=start)
+
+        create_poll_action_items()
 
         VoteFactory.create(poll=poll, user=user)
 
@@ -309,7 +333,10 @@ class VotingActionItems(RemoTestCase):
 
         council = Group.objects.get(name='Council')
         UserFactory.create(groups=['Council'])
-        poll = PollFactory.create(valid_groups=council)
+        start = now() - timedelta(hours=3)
+        poll = PollFactory.create(valid_groups=council, start=start)
+
+        create_poll_action_items()
 
         poll.end = poll.end + timedelta(days=4)
         poll.save()
@@ -328,8 +355,13 @@ class VotingActionItems(RemoTestCase):
 
         council = Group.objects.get(name='Council')
         UserFactory.create(groups=['Council'])
+
+        start = now() - timedelta(hours=3)
         poll = PollFactory.create(valid_groups=council,
-                                  end=now() - timedelta(days=1))
+                                  end=now() - timedelta(days=1),
+                                  start=start)
+
+        create_poll_action_items()
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 1)
@@ -350,7 +382,11 @@ class VotingActionItems(RemoTestCase):
         reps = Group.objects.get(name='Rep')
         UserFactory.create_batch(3, groups=['Council'])
         UserFactory.create_batch(4, groups=['Rep'])
-        poll = PollFactory.create(valid_groups=council)
+        start = now() - timedelta(hours=3)
+        poll = PollFactory.create(valid_groups=council, start=start)
+
+        create_poll_action_items()
+
         poll.valid_groups = reps
         poll.save()
 
