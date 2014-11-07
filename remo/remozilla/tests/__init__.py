@@ -12,10 +12,6 @@ from remo.remozilla.tasks import COMPONENTS
 CHANGE_DT = datetime.datetime(2012, 1, 1, tzinfo=utc)
 CREATION_DT = datetime.datetime(2011, 1, 1, tzinfo=utc)
 DUE_DT = datetime.datetime(2013, 1, 1, tzinfo=utc)
-RESOLUTION = ['FIXED', 'INVALID', 'WONTFIX', 'DUPLICATE', 'WORKSFORME',
-              'INCOMPLETE']
-STATUS = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED', 'READY', 'RESOLVED',
-          'VERIFIED']
 
 
 class BugFactory(factory.django.DjangoModelFactory):
@@ -29,8 +25,6 @@ class BugFactory(factory.django.DjangoModelFactory):
     component = fuzzy.FuzzyChoice(COMPONENTS)
     summary = 'Bug summary'
     whiteboard = 'Bug whiteboard'
-    resolution = fuzzy.FuzzyChoice(RESOLUTION)
-    status = fuzzy.FuzzyChoice(STATUS)
 
     @factory.post_generation
     def add_cc_users(self, create, extracted, **kwargs):
