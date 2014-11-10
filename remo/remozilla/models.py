@@ -77,7 +77,7 @@ class Bug(caching.base.CachingMixin, models.Model):
             return []
 
         def _get_action_name(action_name):
-            return '{0} {1}'.format(action_name, self.summary)
+            return '{0} "{1}"'.format(action_name, self.summary)
 
         action_items = []
         actions = [
@@ -137,7 +137,7 @@ class Bug(caching.base.CachingMixin, models.Model):
                            ADD_PHOTOS_ACTION, ADD_REPORTS_PHOTOS_ACTION,
                            REVIEW_BUDGET_REQUEST_ACTION,
                            WAITING_MENTOR_VALIDATION_ACTION]
-                action_names = (['{0} {1}'.format(action, self.summary)
+                action_names = (['{0} "{1}"'.format(action, self.summary)
                                  for action in actions])
 
                 current_bug = Bug.objects.get(id=self.pk)
@@ -185,7 +185,7 @@ def set_uppercase_pre_save(sender, instance, **kwargs):
 def update_budget_needinfo_action_items(sender, instance, action, pk_set,
                                         **kwargs):
     """Update ActionItem objects on needinfo change."""
-    name = '{0} {1}'.format(NEEDINFO_ACTION, instance.summary)
+    name = '{0} "{1}"'.format(NEEDINFO_ACTION, instance.summary)
     if action == 'post_remove':
         for pk in pk_set:
             ActionItem.resolve(instance=instance, user=User.objects.get(pk=pk),

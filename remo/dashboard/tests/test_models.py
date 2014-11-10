@@ -34,7 +34,7 @@ class RemozillaActionItems(RemoTestCase):
 
         items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         eq_(items.count(), 1)
-        eq_(items[0].name, 'Add receipts for ' + bug.summary)
+        eq_(items[0].name, 'Add receipts for "%s"' % bug.summary)
         eq_(items[0].user, user)
         eq_(items[0].priority, ActionItem.NORMAL)
 
@@ -51,9 +51,9 @@ class RemozillaActionItems(RemoTestCase):
         items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         eq_(items.count(), 3)
 
-        namelist = ['Add receipts for ' + bug.summary,
-                    'Add report for ' + bug.summary,
-                    'Add photos for ' + bug.summary]
+        namelist = ['Add receipts for "%s"' % bug.summary,
+                    'Add report for "%s"' % bug.summary,
+                    'Add photos for "%s"' % bug.summary]
 
         for item in items:
             ok_(item.name in namelist)
@@ -96,7 +96,7 @@ class RemozillaActionItems(RemoTestCase):
 
         items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         eq_(items.count(), 1)
-        eq_(items[0].name, 'Waiting mentor validation for ' + bug.summary)
+        eq_(items[0].name, 'Waiting mentor validation for "%s"' % bug.summary)
         eq_(items[0].user, mentor)
         eq_(items[0].priority, ActionItem.BLOCKER)
 
@@ -133,7 +133,7 @@ class RemozillaActionItems(RemoTestCase):
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 1)
-        eq_(items[0].name, 'Waiting mentor validation for ' + bug.summary)
+        eq_(items[0].name, 'Waiting mentor validation for "%s"' % bug.summary)
         eq_(items[0].user, mentor)
         eq_(items[0].priority, ActionItem.BLOCKER)
 
@@ -162,7 +162,7 @@ class RemozillaActionItems(RemoTestCase):
         ok_(items.count(), 1)
 
         for item in items:
-            eq_(item.name, 'Need info for ' + bug.summary)
+            eq_(item.name, 'Need info for "%s"' % bug.summary)
             eq_(item.user, needinfo)
             ok_(item.priority, ActionItem.MINOR)
 
@@ -194,7 +194,7 @@ class RemozillaActionItems(RemoTestCase):
 
         items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         eq_(items.count(), 1)
-        eq_(items[0].name, 'Review budget request ' + bug.summary)
+        eq_(items[0].name, 'Review budget request "%s"' % bug.summary)
         eq_(items[0].user, user)
         eq_(items[0].priority, ActionItem.BLOCKER)
 
@@ -228,7 +228,7 @@ class RemozillaActionItems(RemoTestCase):
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 1)
-        eq_(items[0].name, 'Waiting mentor validation for ' + bug.summary)
+        eq_(items[0].name, 'Waiting mentor validation for "%s"' % bug.summary)
         eq_(items[0].user, user)
         eq_(items[0].priority, ActionItem.BLOCKER)
 
@@ -259,7 +259,7 @@ class VotingActionItems(RemoTestCase):
         eq_(items.count(), 1)
 
         for item in items:
-            eq_(item.name, 'Cast your vote for ' + poll.name)
+            eq_(item.name, 'Cast your vote for "%s"' % poll.name)
             eq_(item.user, user)
             ok_(item.priority, ActionItem.NORMAL)
             ok_(not item.completed)
@@ -285,7 +285,7 @@ class VotingActionItems(RemoTestCase):
 
         for item in items:
             eq_(item.name,
-                'Cast your vote for budget request ' + poll.bug.summary)
+                'Cast your vote for budget request "%s"' % poll.bug.summary)
             eq_(item.user, user)
             ok_(item.priority, ActionItem.NORMAL)
             ok_(not item.completed)
