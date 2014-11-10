@@ -12,7 +12,6 @@ class ActionItemAdmin(ExportMixin, admin.ModelAdmin):
                     'priority', 'updated_on')
     search_fields = ['user__first_name', 'user__last_name',
                      'user__userprofile__display_name', 'name']
-    list_filter = ['name']
 
 
 admin.site.register(ActionItem, ActionItemAdmin)
