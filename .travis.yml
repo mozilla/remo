@@ -6,6 +6,7 @@ before_script:
 before_install:
   - mysql -e 'create database remo character set utf8;'
   - git submodule update --init --recursive
+  - python manage.py syncdb --migrate --noinput
 install:
   - pip install -r requirements/compiled.txt
   - pip install -r requirements/dev.txt
