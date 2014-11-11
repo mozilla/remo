@@ -191,7 +191,7 @@ def update_budget_needinfo_action_items(sender, instance, action, pk_set,
             ActionItem.resolve(instance=instance, user=User.objects.get(pk=pk),
                                name=name)
 
-    if action == 'post_clear':
+    if action == 'pre_clear':
         for user in instance.budget_needinfo.all():
             ActionItem.resolve(instance=instance, user=user, name=name)
 
