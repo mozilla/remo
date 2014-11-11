@@ -78,7 +78,8 @@ class ActionItem(models.Model):
         action_model = ContentType.objects.get_for_model(instance)
         action_items = ActionItem.objects.filter(content_type=action_model,
                                                  object_id=instance.id,
-                                                 user=user, name=name)
+                                                 name__icontains=name,
+                                                 user=user)
         action_items.update(completed=True, resolved=True)
 
 

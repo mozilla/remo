@@ -261,8 +261,7 @@ class EventMetricOutcome(models.Model):
         # Resolve action items for post event metrics
         ActionItem.resolve(instance=self.event,
                            user=self.event.owner,
-                           name='{0} {1}'.format(POST_EVENT_METRICS_ACTION,
-                                                 self.event.name))
+                           name=self.event.name)
 
 
 class EventComment(models.Model):
