@@ -1,39 +1,38 @@
 # -*- coding: utf-8 -*-
 import datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
 
 
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        # Adding field 'Event.actual_attendance'
-        db.add_column(u'events_event', 'actual_attendance',
-                      self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True),
-                      keep_default=False)
+        from remo.base.utils import get_date
+        from remo.dashboard.models import ActionItem
 
-        # Adding field 'Event.has_new_metrics'
-        db.add_column(u'events_event', 'has_new_metrics',
-                      self.gf('django.db.models.fields.BooleanField')(default=True),
-                      keep_default=False)
+        event_type = orm['contenttypes.ContentType'].objects.get(
+            app_label='events', model='Event')
 
-        # Adding field 'EventMetricOutcome.outcome'
-        db.add_column(u'events_eventmetricoutcome', 'outcome',
-                      self.gf('django.db.models.fields.IntegerField')(null=True, blank=True),
-                      keep_default=False)
+        start = datetime.datetime.combine(datetime.date(2014, 1, 1),
+                                          datetime.datetime.min.time())
+        end = datetime.datetime.combine(datetime.date(2014, 11, 11),
+                                        datetime.datetime.max.time())
+        events = orm['events.Event'].objects.filter(
+            end__range=[start, end], has_new_metrics=True)
 
+        events = events.distinct()
+        name = 'Add or Update post event metrics for event {0}'
+        for event in events:
+            orm['dashboard.ActionItem'].objects.create(
+                content_type=event_type, object_id=event.id,
+                name=name.format(event.name),
+                user=event.owner,
+                priority=ActionItem.NORMAL,
+                due_date=None)
 
     def backwards(self, orm):
-        # Deleting field 'Event.actual_attendance'
-        db.delete_column(u'events_event', 'actual_attendance')
-
-        # Deleting field 'Event.has_new_metrics'
-        db.delete_column(u'events_event', 'has_new_metrics')
-
-        # Deleting field 'EventMetricOutcome.outcome'
-        db.delete_column(u'events_eventmetricoutcome', 'outcome')
-
+        pass
 
     models = {
         u'auth.group': {
@@ -71,6 +70,20 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        u'dashboard.actionitem': {
+            'Meta': {'ordering': "['-due_date', '-updated_on', '-created_on']", 'object_name': 'ActionItem'},
+            'completed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'due_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'priority': ('django.db.models.fields.IntegerField', [], {}),
+            'resolved': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'updated_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'action_items_assigned'", 'to': u"orm['auth.User']"})
         },
         u'events.attendance': {
             'Meta': {'object_name': 'Attendance'},
@@ -136,6 +149,7 @@ class Migration(SchemaMigration):
         },
         u'events.eventmetricoutcome': {
             'Meta': {'object_name': 'EventMetricOutcome'},
+            'details': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'event': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['events.Event']"}),
             'expected_outcome': ('django.db.models.fields.IntegerField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -159,16 +173,19 @@ class Migration(SchemaMigration):
         u'remozilla.bug': {
             'Meta': {'ordering': "['-bug_last_change_time']", 'object_name': 'Bug'},
             'assigned_to': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'bugs_assigned'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': u"orm['auth.User']"}),
+            'budget_needinfo': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.User']", 'symmetrical': 'False'}),
             'bug_creation_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'bug_id': ('django.db.models.fields.PositiveIntegerField', [], {'unique': 'True'}),
             'bug_last_change_time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'cc': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'bugs_cced'", 'symmetrical': 'False', 'to': u"orm['auth.User']"}),
             'component': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'council_member_assigned': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'council_vote_requested': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'bugs_created'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': u"orm['auth.User']"}),
             'first_comment': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'pending_mentor_validation': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'resolution': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '30'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '30'}),
             'summary': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '500'}),
@@ -178,3 +195,4 @@ class Migration(SchemaMigration):
     }
 
     complete_apps = ['events']
+    symmetrical = True

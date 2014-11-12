@@ -248,6 +248,8 @@ class EventMetricOutcome(models.Model):
     metric = models.ForeignKey(EventMetric)
     expected_outcome = models.IntegerField()
     outcome = models.IntegerField(null=True, blank=True)
+    details = models.TextField(validators=[MaxLengthValidator(1500)],
+                               blank=True, default='')
 
     class Meta:
         verbose_name = 'event outcome'
@@ -259,8 +261,7 @@ class EventMetricOutcome(models.Model):
         # Resolve action items for post event metrics
         ActionItem.resolve(instance=self.event,
                            user=self.event.owner,
-                           name='{0} {1}'.format(POST_EVENT_METRICS_ACTION,
-                                                 self.event.name))
+                           name=self.event.name)
 
 
 class EventComment(models.Model):

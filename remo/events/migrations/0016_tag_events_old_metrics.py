@@ -3,8 +3,6 @@ import datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
-from django.utils.timezone import now
-
 
 class Migration(DataMigration):
 
@@ -67,6 +65,7 @@ class Migration(DataMigration):
         },
         u'events.event': {
             'Meta': {'ordering': "['start']", 'object_name': 'Event'},
+            'actual_attendance': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
             'attendees': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'events_attended'", 'symmetrical': 'False', 'through': u"orm['events.Attendance']", 'to': u"orm['auth.User']"}),
             'budget_bug': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'event_budget_requests'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': u"orm['remozilla.Bug']"}),
             'categories': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'events_categories'", 'symmetrical': 'False', 'to': u"orm['profiles.FunctionalArea']"}),
