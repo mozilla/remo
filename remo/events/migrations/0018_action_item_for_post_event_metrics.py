@@ -8,7 +8,6 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        from remo.base.utils import get_date
         from remo.dashboard.models import ActionItem
 
         event_type = orm['contenttypes.ContentType'].objects.get(
@@ -22,7 +21,7 @@ class Migration(DataMigration):
             end__range=[start, end], has_new_metrics=True)
 
         events = events.distinct()
-        name = 'Add or Update post event metrics for event {0}'
+        name = u'Add or Update post event metrics for event {0}'
         for event in events:
             orm['dashboard.ActionItem'].objects.create(
                 content_type=event_type, object_id=event.id,
