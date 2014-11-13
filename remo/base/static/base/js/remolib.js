@@ -193,10 +193,10 @@ function initDatePicker (prepopulate_date) {
     });
 
     if ($input.val() === '' && prepopulate_flag) {
-        $input.datepicker('setDate', Date.now());
+        $input.datepicker('setDate', new Date());
     }
     else {
-        var date = Date.parse($input.val());
-        $input.datepicker('setDate', date);
+        var savedDate = new Date($input.val());
+        $input.datepicker('setDate', savedDate);
     }
 }
