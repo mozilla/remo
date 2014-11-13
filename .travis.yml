@@ -9,5 +9,9 @@ before_install:
 install:
   - pip install -r requirements/compiled.txt
   - pip install -r requirements/dev.txt
+  - pip install coverage
 script:
-  - python manage.py test
+  - python manage.py test --with-coverage --cover-erase --cover-package=remo
+after_success:
+  - pip install coveralls
+  - coveralls
