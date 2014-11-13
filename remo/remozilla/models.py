@@ -13,13 +13,13 @@ import caching.base
 from remo.dashboard.models import ActionItem, Item
 
 
-ADD_RECEIPTS_ACTION = 'Add receipts for'
-ADD_REPORT_ACTION = 'Add report for'
-ADD_PHOTOS_ACTION = 'Add photos for'
-ADD_REPORTS_PHOTOS_ACTION = 'Add reports/photos for'
-REVIEW_BUDGET_REQUEST_ACTION = 'Review budget request'
-WAITING_MENTOR_VALIDATION_ACTION = 'Waiting mentor validation for'
-NEEDINFO_ACTION = 'Need info for'
+ADD_RECEIPTS_ACTION = u'Add receipts for'
+ADD_REPORT_ACTION = u'Add report for'
+ADD_PHOTOS_ACTION = u'Add photos for'
+ADD_REPORTS_PHOTOS_ACTION = u'Add reports/photos for'
+REVIEW_BUDGET_REQUEST_ACTION = u'Review budget request'
+WAITING_MENTOR_VALIDATION_ACTION = u'Waiting mentor validation for'
+NEEDINFO_ACTION = u'Need info for'
 
 
 class Bug(caching.base.CachingMixin, models.Model):
