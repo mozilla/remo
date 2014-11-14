@@ -178,6 +178,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     unavailability_task_id = models.CharField(max_length=256, blank=True,
                                               null=True, editable=False,
                                               default='')
+    is_rotm_nominee = models.BooleanField(default=False)
 
     objects = caching.base.CachingManager()
 

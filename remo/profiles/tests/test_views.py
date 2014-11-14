@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.utils.encoding import iri_to_uri
+from django.utils.timezone import now
 
 import mock
 from nose.tools import eq_, ok_
 from pyquery import PyQuery as pq
 from test_utils import TestCase
 
-from remo.base.tests import requires_permission, requires_login
+from remo.base.tests import RemoTestCase, requires_permission, requires_login
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
@@ -266,3 +269,59 @@ class ViewsTest(TestCase):
         response = self.client.post(self.user_edit_url, self.data, follow=True)
 
         eq_(response.context['functional_areas'], [self.area.id])
+
+
+class RotmAutomationTests(RemoTestCase):
+    """Tests related to the Rep of the month automation view."""
+
+    @mock.patch('remo.profiles.views.timezone.now')
+    @mock.patch('remo.profiles.views.forms.RotmNomineeForm')
+    def test_base(self, mocked_form, mocked_date):
+        mocked_date.return_value = datetime(now().year, now().month, 4)
+        mentor = UserFactory.create(groups=['Mentor'])
+        user = UserFactory.create(groups=['Rep'])
+        display_name = user.userprofile.display_name
+        mocked_form.is_valid.return_value = True
+        response = self.post(
+            url=reverse('profiles_view_profile',
+                        kwargs={'display_name': display_name}),
+            user=mentor,
+            follow=True)
+        eq_(response.status_code, 302)
+        ok_(mocked_form().save.called)
+        self.assertTemplateUsed('profiles_view_profile.html')
+
+    @mock.patch('remo.profiles.views.messages.warning')
+    @mock.patch('remo.profiles.views.timezone.now')
+    @mock.patch('remo.profiles.views.forms.RotmNomineeForm')
+    def test_no_mentor(self, mocked_form, mocked_date, mocked_message):
+        mocked_date.return_value = datetime(now().year, now().month, 4)
+        unauthorized_user = UserFactory.create(groups=['Rep'])
+        user = UserFactory.create(groups=['Rep'])
+        display_name = user.userprofile.display_name
+        mocked_form.is_valid.return_value = True
+        self.post(url=reverse('profiles_view_profile',
+                              kwargs={'display_name': display_name}),
+                  user=unauthorized_user,
+                  follow=True)
+        ok_(not mocked_form().save.called)
+        self.assertTemplateUsed('profiles_view_profile.html')
+        mocked_message.assert_called_with(
+            mock.ANY, 'Only mentors can nominate a mentee.')
+
+    @mock.patch('remo.profiles.views.timezone.now')
+    @mock.patch('remo.profiles.views.forms.RotmNomineeForm')
+    def test_invalid_period(self, mocked_form, mocked_date):
+        mocked_date.return_value = datetime(now().year, now().month, 25)
+        mentor = UserFactory.create(groups=['Mentor'])
+        user = UserFactory.create(groups=['Rep'])
+        display_name = user.userprofile.display_name
+        mocked_form.is_valid.return_value = True
+        response = self.post(
+            url=reverse('profiles_view_profile',
+                        kwargs={'display_name': display_name}),
+            user=mentor,
+            follow=True)
+        eq_(response.status_code, 200)
+        ok_(not mocked_form().save.called)
+        self.assertTemplateUsed('profiles_view_profile.html')

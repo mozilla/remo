@@ -18,7 +18,7 @@ from remo.profiles.models import FunctionalArea, UserProfile, UserStatus
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
-REPLACEMENT_REP_CHOICES = ((True, 'Yes'), (False, 'No'))
+BOOLEAN_CHOICES = ((True, 'Yes'), (False, 'No'))
 
 
 class InviteUserForm(happyforms.Form):
@@ -175,7 +175,7 @@ class UserStatusForm(happyforms.ModelForm):
     """Form for displaying info regarding the availability status of a user."""
     expected_date = forms.DateField(input_formats=['%d %B %Y'])
     is_replaced = forms.BooleanField(widget=forms.RadioSelect(
-        choices=REPLACEMENT_REP_CHOICES, attrs={'id': 'id_is_replaced'}),
+        choices=BOOLEAN_CHOICES, attrs={'id': 'id_is_replaced'}),
         required=False)
 
     def __init__(self, *args, **kwargs):
@@ -209,3 +209,29 @@ class UserStatusForm(happyforms.ModelForm):
     class Meta:
         model = UserStatus
         fields = ['expected_date', 'replacement_rep']
+
+
+class RotmNomineeForm(happyforms.Form):
+    """Form for nominating the Rep of the month."""
+    is_rotm_nominee = forms.BooleanField(widget=forms.RadioSelect(
+        choices=BOOLEAN_CHOICES, attrs={'id': 'id_is_rotm_nominee'}),
+        required=False)
+
+    def __init__(self, *args, **kwargs):
+        """ Initialize the form
+
+        Dynamically set the default value to true if the user is not already
+        nominated.
+        """
+
+        self.instance = kwargs.pop('instance', None)
+        super(RotmNomineeForm, self).__init__(*args, **kwargs)
+        self.fields['is_rotm_nominee'].widget = forms.HiddenInput()
+        if self.instance and not self.instance.is_rotm_nominee:
+            self.fields['is_rotm_nominee'].initial = True
+
+    def save(self, *args, **kwargs):
+        if (self.instance and not self.instance.is_rotm_nominee and
+                self.cleaned_data['is_rotm_nominee']):
+            self.instance.is_rotm_nominee = True
+            self.instance.save()
