@@ -149,7 +149,10 @@ class iCalSerializer(Serializer):
         """Convert data to iCal."""
         options = options or {}
 
-        events = [event.obj for event in data['objects']]
+        if isinstance(data, dict) and 'objects' in data:
+            events = [event.obj for event in data['objects']]
+        else:
+            events = [data.obj]
 
         date_now = timezone.now()
         ical = get_template('multi_event_ical_template.ics')
