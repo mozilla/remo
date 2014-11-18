@@ -59,13 +59,13 @@
     </div>
 
     <!-- Featured Rep section -->
-    <div class="large-4 columns main-section">
+    <div class="large-4 columns main-section" id="featured-reps">
       <h3>
         Rep of the month
       </h3>
-      <div class="row">
-        {% if featuredrep %}
-          {% for user in featuredrep.users.all() %}
+      {% if featuredrep %}
+        {% for user in featuredrep.users.all() %}
+          <div class="row">
             <div class="large-4 columns">
               <img src="{{ user|get_avatar_url(80) }}" id="main-featured-avatar"
                   alt="Profile picture of {{ user.first_name }} {{ user.last_name }}">
@@ -78,20 +78,21 @@
               </h5>
               {{ user.userprofile.city }}, {{ user.userprofile.country }}
             </div>
-          {% endfor %}
-        {% else %}
-          <div class="large-12 columns">
-            None for this month!
           </div>
-        {% endif %}
-      </div>
-      <div class="row">
-        <div class="large-12 columns top-margined">
-          <div class="markdown">
-            {{ featuredrep.text|markdown }}
+        {% endfor %}
+        <div class="row">
+          <div class="large-12 columns">
+            <div class="markdown">
+              {{ featuredrep.text|markdown }}
+            </div>
           </div>
         </div>
-      </div>
+      {% else %}
+        <div class="large-12 columns">
+          None for this month!
+        </div>
+      {% endif %}
+
       <div class="row">
         <a class="large-12 columns more-posts" href="/featured/">See past featured Reps...</a>
       </div>
