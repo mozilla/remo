@@ -16,7 +16,53 @@ from remo.api import HttpCache
 from remo.base.serializers import iCalSerializer
 
 from helpers import is_multiday
-from models import Event
+from models import Event, EventGoal,  EventMetric, EventMetricOutcome
+
+
+class EventMetricResource(ModelResource):
+    """Event Metric Resource."""
+
+    class Meta:
+        queryset = EventMetric.active_objects.all()
+        authentication = Authentication()
+        authorization = ReadOnlyAuthorization()
+        include_resource_uri = False
+        include_absolute_url = False
+        resource_name = 'event_metrics'
+        allowed_methods = ['get']
+        fields = ['name']
+        filtering = {'name': ALL}
+
+
+class EventMetricOutcomeResource(ModelResource):
+    """Event Metric Outcome Resource."""
+    metric = fields.ToOneField('remo.events.api.EventMetricResource', 'metric',
+                               full=True, null=True)
+
+    class Meta:
+        queryset = EventMetricOutcome.objects.all()
+        resource_name = 'event_metrics_outcome'
+        authentication = Authentication()
+        authorization = ReadOnlyAuthorization()
+        include_resource_uri = False
+        include_absolute_url = False
+        allowed_methods = ['get']
+        fields = ['metric', 'expected_outcome', 'outcome']
+
+
+class EventGoalResource(ModelResource):
+    """Event Goal resource."""
+
+    class Meta:
+        queryset = EventGoal.active_objects.all()
+        resource_name = 'event_goals'
+        authentication = Authentication()
+        authorization = ReadOnlyAuthorization()
+        include_resource_uri = False
+        include_absolute_url = False
+        allowed_methods = ['get']
+        fields = ['name']
+        filtering = {'name': ALL}
 
 
 class EventResource(ModelResource):
@@ -30,6 +76,14 @@ class EventResource(ModelResource):
     categories = fields.ToManyField(
         'remo.profiles.api.FunctionalAreasResource',
         attribute='categories', full=True, null=True)
+    metrics = fields.ToManyField('remo.events.api.EventMetricOutcomeResource',
+                                 'eventmetricoutcome_set',
+                                 full=True, null=True)
+    goals = fields.ToManyField('remo.events.api.EventGoalResource', 'goals',
+                               full=True, null=True)
+    swag_bug_id = fields.IntegerField(null=True)
+    budget_bug_id = fields.IntegerField(null=True)
+    sign_ups = fields.IntegerField()
 
     class Meta:
         cache = HttpCache(control={'max_age': 1800, 's_maxage': 1800,
@@ -44,7 +98,7 @@ class EventResource(ModelResource):
         fields = ['name', 'start', 'end', 'timezone',
                   'venue', 'city', 'region', 'country', 'lat', 'lon',
                   'external_link', 'description', 'mozilla_event', 'owner',
-                  'estimated_attendance']
+                  'estimated_attendance', 'actual_attendance']
         filtering = {'name': ALL, 'city': ALL, 'region': ALL, 'country': ALL,
                      'start': ALL, 'end': ALL,
                      'categories': ALL_WITH_RELATIONS}
@@ -80,6 +134,22 @@ class EventResource(ModelResource):
     def dehydrate_multiday(self, bundle):
         """Return True if event is multiday, False otherwise."""
         return is_multiday(bundle.obj.local_start, bundle.obj.local_end)
+
+    def dehydrate_swag_bug_id(self, bundle):
+        """Return the bug number for a swag request, if exists."""
+        if bundle.obj.swag_bug:
+            return bundle.obj.swag_bug.bug_id
+        return None
+
+    def dehydrate_budget_bug_id(self, bundle):
+        """Return the bug number for a budget requests, if exists."""
+        if bundle.obj.budget_bug:
+            return bundle.obj.budget_bug.bug_id
+        return None
+
+    def dehydrate_sign_ups(self, bundle):
+        """Return the number of the people who signed up in an event."""
+        return bundle.obj.attendees.all().count()
 
     def apply_filters(self, request, applicable_filters):
         """Add special 'query' parameter to filter Events.
