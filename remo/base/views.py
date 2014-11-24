@@ -141,6 +141,12 @@ def robots_txt(request):
     return http.HttpResponse(robots, mimetype='text/plain')
 
 
+def contribute_json(request):
+    """Generate a contribute.json."""
+    template = render(request, 'contribute.json')
+    return http.HttpResponse(template, mimetype='application/json')
+
+
 @never_cache
 @permission_check()
 def edit_settings(request):

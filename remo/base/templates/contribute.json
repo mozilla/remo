@@ -1,0 +1,30 @@
+{
+    "name": "remo",
+    "description": "ReMo portal provides a set of tools to help Mozilla Representatives with their mission to promote web openness",
+    "repository": {
+        "url": "https://github.com/mozilla/remo",
+        "license": "MPL2",
+        "tests": "https://travis-ci.org/mozilla/remo"
+    },
+    "participate": {
+        "home": "https://wiki.mozilla.org/ReMo",
+        "docs": "http://remo.readthedocs.org/en/latest/",
+        "irc": "irc://irc.mozilla.org/#remo-dev",
+        "mailing-list": "https://www.mozilla.org/en-US/about/forums/#reps-webdev"
+    },
+    "bugs": {
+        "list": "https://bugzilla.mozilla.org/buglist.cgi?list_id=11627751&resolution=---&query_format=advanced&component=reps.mozilla.org&product=Mozilla%20Reps",
+        "report": "https://bugzilla.mozilla.org/enter_bug.cgi?product=Mozilla%20Reps"
+    },
+    "urls": {
+        "dev": "https://reps-dev.allizom.org",
+        "stage": "https://reps.allizom.org",
+        "prod": "https://reps.mozilla.org"
+    },
+    "keywords": [
+        "django",
+        "python",
+        "mysql",
+        "jquery"
+    ]
+}

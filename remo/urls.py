@@ -79,7 +79,10 @@ urlpatterns = patterns(
     url(r'^settings/', include('remo.base.settings_urls')),
 
     # Generate a robots.txt
-    (r'^robots\.txt$', robots_txt),
+    url(r'^robots\.txt$', robots_txt),
+
+    # contribute.json url
+    url(r'^contribute\.json$', 'remo.base.views.contribute_json'),
 )
 
 
