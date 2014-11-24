@@ -138,7 +138,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     personal_website_url = models.URLField(blank=True, null=False, default='')
     personal_blog_feed = models.URLField(blank=True, null=False, default='')
     wiki_profile_url = models.URLField(
-        blank=False, null=False, default='',
+        blank=True, null=False, default='',
         validators=[
             RegexValidator(regex=r'^http(s)?://wiki.mozilla.org/User:',
                            message='Please provide a valid wiki url.')])
