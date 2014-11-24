@@ -304,12 +304,14 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
             </span>
             &nbsp;{{ user_profile.mozillians_profile_url|urlize(50) }}
           </p>
-          <p class="profile-item">
-            <span class="label radius">
-              Wiki Profile
-            </span>
-            &nbsp;{{ user_profile.wiki_profile_url|urlize(50) }}
-          </p>
+          {% if user_profile.wiki_profile_url %}
+            <p class="profile-item">
+              <span class="label radius">
+                Wiki Profile
+              </span>
+              &nbsp;{{ user_profile.wiki_profile_url|urlize(50) }}
+            </p>
+          {% endif %}
           {% if mentor %}
             <p class="profile-item">
               <span class="label radius">
