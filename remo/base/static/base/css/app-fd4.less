@@ -3255,6 +3255,13 @@ table tr.assigned-request:nth-of-type(2n) {
                 font-size: 12px;
             }
         }
+        th:first-child,
+        td:first-child{
+            max-width:100px;
+            overflow:hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
         thead tr {
             height: 45px;
         }
