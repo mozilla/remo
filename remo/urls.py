@@ -33,6 +33,9 @@ admin.autodiscover()
 urlpatterns = patterns(
     '',
 
+    # contribute.json url
+    url(r'^(?P<path>contribute\.json)$', 'django.views.static.serve',
+        {'document_root': settings.ROOT}),
     # 'me' urls
     url(r'^me/$', 'remo.profiles.views.view_my_profile',
         name='profiles_view_my_profile'),

@@ -244,6 +244,15 @@ class ViewsTest(TestCase):
         eq_(response.status_code, 200)
         self.assertTemplateUsed(response, 'faq.html')
 
+    def test_view_contribute_json_page(self):
+        """Get contribute.json file."""
+        c = Client()
+        response = c.get('/contribute.json')
+        eq_(response.status_code, 200)
+        # should be valid JSON
+        ok_(json.loads(response.content))
+        eq_(response['Content-Type'], 'application/json')
+
     def test_mailhide_encryption(self):
         """Test email encryption function."""
         if (getattr(settings, 'MAILHIDE_PUB_KEY', None) !=
