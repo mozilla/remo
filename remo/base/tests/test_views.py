@@ -342,6 +342,17 @@ class ViewsTest(TestCase):
             self.settings_data['receive_email_on_add_comment'])
 
 
+class TestContribute(RemoTestCase):
+
+    def test_base(self):
+        response = self.client.get('/contribute.json')
+        eq_(response.status_code, 200)
+        self.assertTemplateUsed(response, 'contribute.json')
+        # should be valid JSON
+        ok_(json.loads(response.content))
+        eq_(response['Content-Type'], 'application/json')
+
+
 class EditUserStatusTests(RemoTestCase):
     """Tests related to the User status edit View."""
 
