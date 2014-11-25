@@ -1,3 +1,4 @@
+from datetime import timedelta
 from urllib import unquote
 
 from django.conf import settings
@@ -18,6 +19,7 @@ from remo.base.serializers import CSVSerializer
 from remo.profiles.helpers import get_avatar_url
 from remo.profiles.models import UserProfile, FunctionalArea
 from remo.reports.models import NGReport
+from remo.reports.utils import get_last_report
 
 
 class FunctionalAreasResource(ModelResource):
@@ -98,10 +100,16 @@ class ProfileResource(ModelResource):
         return bundle.obj.user.groups.filter(name='Council').count() == 1
 
     def dehydrate_last_report_date(self, bundle):
+        start_period = now().date() - timedelta(weeks=4)
+        end_period = now().date() + timedelta(weeks=4)
+        reports = bundle.obj.user.ng_reports.filter(
+            report_date__range=(start_period, end_period))
         try:
-            report = bundle.obj.user.ng_reports.latest('report_date')
-            return report.report_date
+            return reports.latest('report_date').report_date
         except NGReport.DoesNotExist:
+            report = get_last_report(bundle.obj.user)
+            if report:
+                return report.report_date
             return None
 
 
