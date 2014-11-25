@@ -3,6 +3,7 @@ import csv
 import cStringIO
 
 from django.conf import settings
+from django.http import Http404
 from django.template import Context
 from django.template.loader import get_template
 from django.utils import timezone
@@ -148,6 +149,9 @@ class iCalSerializer(Serializer):
     def to_ical(self, data, options=None):
         """Convert data to iCal."""
         options = options or {}
+
+        if 'error' in data:
+            raise Http404
 
         if isinstance(data, dict) and 'objects' in data:
             events = [event.obj for event in data['objects']]
