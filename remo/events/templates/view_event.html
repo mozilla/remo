@@ -552,12 +552,15 @@ Mozilla Reps - {{ event.name }}
                 </span>
                 {{ stat.expected_outcome }}
               </p>
-              {% if stat.outcome and event.is_past_event %}
+              {% if stat.outcome >= 0 and event.is_past_event %}
                 <p>
                   <span class="label inline">
                     Actual outcome #{{ loop.index }}
                   </span>
                   {{ stat.outcome }}
+                </p>
+                <p>
+                  {{ stat.details }}
                 </p>
               {% endif %}
             </div>
