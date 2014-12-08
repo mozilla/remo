@@ -136,6 +136,7 @@
                         {% if user_has_voted(user,poll) %}
                           <span class="user-voted"></span>
                         {% endif %}
+                      </td>
                       <td class="align-center">{{ poll|get_users_voted }}</td>
                       <td>
                         <span class="meter_text">{{ poll|get_meter_value }}%</span>
