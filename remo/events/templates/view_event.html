@@ -49,45 +49,44 @@ Mozilla Reps - {{ event.name }}
         <div class="large-11 columns">
           <div class="row">
             <div class="large-10 columns end">
-
-                <div class="event-single-date">
-                  <div class="row">
-                      {% if not is_multiday(event.local_start, event.local_end) %}
-                      {# Single day event #}
-                      <div class="large-3 small-3 columns">
-                        <div class="number">
-                          {{ event.local_start|strftime('%d') }}
-                        </div>
+              <div class="event-single-date">
+                <div class="row">
+                  {% if not is_multiday(event.local_start, event.local_end) %}
+                  {# Single day event #}
+                    <div class="large-3 small-3 columns">
+                      <div class="number">
+                        {{ event.local_start|strftime('%d') }}
                       </div>
-                      <div class="large-5 small-5 columns single-date-container">
-                        <div class="month">
-                          {{ event.local_start|strftime('%b %Y')|upper }}
-                        </div>
-                        <div class="single-day">
-                          {{ event.local_start|strftime('%A') }}
-                        </div>
+                    </div>
+                    <div class="large-5 small-5 columns single-date-container">
+                      <div class="month">
+                        {{ event.local_start|strftime('%b %Y')|upper }}
                       </div>
-                      <div class="large-4 small-4 columns end">
-                        <div class="date-times tip-bottom"
-                             data-tooltip
-                             data-width="140"
-                             data-date-start="{{ event.start|format_datetime_iso }}"
-                             data-date-end="{{ event.end|format_datetime_iso }}"
-                             data-date-local-start="{{ event.local_start|format_datetime_iso }}"
-                             data-date-local-end="{{ event.local_end|format_datetime_iso }}"
-                             data-is-multidate="false"
-                             id="datetime-tip">
-                          <div class="time-start">
-                            {{ event.local_start|strftime('%H:%M') }}
-                          </div>
-                          <div class="time-end">
-                            {{ event.local_end|strftime('%H:%M') }}
-                          </div>
-                            <div class="pict-icon small single time"></div>
-                        </div>
+                      <div class="single-day">
+                        {{ event.local_start|strftime('%A') }}
                       </div>
+                    </div>
+                    <div class="large-4 small-4 columns end">
+                      <div class="date-times tip-bottom"
+                           data-tooltip
+                           data-width="140"
+                           data-date-start="{{ event.start|format_datetime_iso }}"
+                           data-date-end="{{ event.end|format_datetime_iso }}"
+                           data-date-local-start="{{ event.local_start|format_datetime_iso }}"
+                           data-date-local-end="{{ event.local_end|format_datetime_iso }}"
+                           data-is-multidate="false"
+                           id="datetime-tip">
+                        <div class="time-start">
+                          {{ event.local_start|strftime('%H:%M') }}
+                        </div>
+                        <div class="time-end">
+                          {{ event.local_end|strftime('%H:%M') }}
+                        </div>
+                        <div class="pict-icon small single time"></div>
+                      </div>
+                    </div>
                     {% else %}
-                      {# Event is multiday #}
+                    {# Event is multiday #}
                       <div class="large-12 columns">
                         <div class="large-11 small-11 columns">
                           <div class="row">
