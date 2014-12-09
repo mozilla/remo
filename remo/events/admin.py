@@ -74,6 +74,7 @@ class EventMetricOutcomeAdmin(ExportMixin, admin.ModelAdmin):
     """EventMetricOutcome Admin."""
     model = EventMetricOutcome
     list_display = ('event', 'metric', 'expected_outcome', 'outcome')
+    search_fields = ('event__name', 'metric__name')
 
 admin.site.register(Event, EventAdmin)
 admin.site.register(EventGoal, EventGoalAdmin)
