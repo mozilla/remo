@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
-from django.utils import timezone
+from django.utils.timezone import now
 from django.utils.encoding import iri_to_uri
 from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_control, never_cache
@@ -30,6 +31,8 @@ USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
 
 
 @never_cache
+@user_passes_test(lambda u: u.groups.filter(Q(name='Rep') | Q(name='Admin')),
+                  login_url=settings.LOGIN_REDIRECT_URL)
 @permission_check(permissions=['profiles.can_edit_profiles'],
                   filter_field='display_name', owner_field='user',
                   model=UserProfile)
@@ -45,7 +48,7 @@ def edit(request, display_name):
 
     """
 
-    def date_joined_form_validation(form):
+    def profile_date_form_validation(form):
         """Convenience function to only validate datejoinedform when
         user has permissions.
 
@@ -62,29 +65,31 @@ def edit(request, display_name):
     userform = forms.ChangeUserForm(request.POST or None, instance=user)
     profileform = forms.ChangeProfileForm(request.POST or None,
                                           instance=user.userprofile)
-    datejoinedform = forms.ChangeDateJoinedForm(request.POST or None,
-                                                instance=user.userprofile)
+    profile_date_form = forms.ChangeDatesForm(request.POST or None,
+                                              instance=user.userprofile)
 
     if (userform.is_valid() and profileform.is_valid() and
-            date_joined_form_validation(datejoinedform)):
+            profile_date_form_validation(profile_date_form)):
         userform.save()
         profileform.save()
 
         if request.user.has_perm('profiles.can_edit_profiles'):
-            # Update date joined
-            datejoinedform.save()
-
             # Update groups.
             groups = {'Mentor': 'mentor_group',
                       'Admin': 'admin_group',
                       'Council': 'council_group',
-                      'Rep': 'rep_group'}
+                      'Rep': 'rep_group',
+                      'Alumni': 'alumni_group'}
 
             for group_db, group_html in groups.items():
-                if request.POST.get(group_html, None):
-                    user.groups.add(Group.objects.get(name=group_db))
-                else:
-                    user.groups.remove(Group.objects.get(name=group_db))
+                if Group.objects.filter(name=group_db).exists():
+                    if request.POST.get(group_html, None):
+                        user.groups.add(Group.objects.get(name=group_db))
+                    else:
+                        user.groups.remove(Group.objects.get(name=group_db))
+
+            # Update date fields
+            profile_date_form.save()
 
         messages.success(request, 'Profile successfully edited.')
         statsd.incr('profiles.edit_profile')
@@ -98,20 +103,20 @@ def edit(request, display_name):
             return redirect(redirect_url)
 
     group_bits = map(lambda x: user.groups.filter(name=x).exists(),
-                     ['Admin', 'Council', 'Mentor', 'Rep'])
-
-    pageuser = get_object_or_404(User, userprofile__display_name=display_name)
+                     ['Admin', 'Council', 'Mentor', 'Rep', 'Alumni'])
 
     functional_areas = map(int, profileform['functional_areas'].value())
+    user_is_alumni = user.groups.filter(name='Alumni').exists()
 
     return render(request, 'profiles_edit.html',
                   {'userform': userform,
                    'profileform': profileform,
-                   'datejoinedform': datejoinedform,
-                   'pageuser': pageuser,
+                   'profile_date_form': profile_date_form,
+                   'pageuser': user,
                    'group_bits': group_bits,
-                   'range_years': range(1950, timezone.now().date().year - 11),
-                   'functional_areas': functional_areas})
+                   'range_years': range(1950, now().date().year - 11),
+                   'functional_areas': functional_areas,
+                   'user_is_alumni': user_is_alumni})
 
 
 def redirect_list_profiles(request):
@@ -142,7 +147,7 @@ def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
-    if not user.groups.filter(name='Rep').exists():
+    if not user.groups.filter(Q(name='Rep') | Q(name='Alumni')).exists():
         raise Http404
 
     if (not user.userprofile.registration_complete and
@@ -153,7 +158,7 @@ def view_profile(request, display_name):
                                          instance=user.userprofile)
 
     usergroups = user.groups.filter(Q(name='Mentor') | Q(name='Council'))
-    is_nomination_period = timezone.now().date() < rotm_nomination_end_date()
+    is_nomination_period = now().date() < rotm_nomination_end_date()
     data = {'pageuser': user,
             'user_profile': user.userprofile,
             'added_by': user.userprofile.added_by,
@@ -166,7 +171,7 @@ def view_profile(request, display_name):
         status = UserStatus.objects.filter(user=user).latest('created_on')
         data['user_status'] = status
         if user == request.user:
-            today = timezone.now().date()
+            today = now().date()
             date = (status.expected_date.strftime('%d %B %Y')
                     if status.expected_date > today else None)
             msg = render_to_string(
@@ -183,7 +188,7 @@ def view_profile(request, display_name):
             return redirect('profiles_view_profile', display_name=display_name)
         messages.warning(request, ('Only mentors can nominate a mentee.'))
 
-    today = timezone.now().date()
+    today = now().date()
 
     # NGReports
     data['ng_reports'] = (user.ng_reports

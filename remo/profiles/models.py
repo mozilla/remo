@@ -96,6 +96,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     user = models.OneToOneField(User)
     registration_complete = models.BooleanField(default=False)
     date_joined_program = models.DateField(blank=True)
+    date_left_program = models.DateField(blank=True, null=True)
     local_name = models.CharField(max_length=100, blank=True, default='')
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   blank=True, null=True)

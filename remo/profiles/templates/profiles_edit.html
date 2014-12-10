@@ -6,7 +6,7 @@
   <form style="custom" method="post" action="{{ url('profiles_edit', pageuser.userprofile.display_name) }}">
     {{ csrf() }}
     <div class="row">
-      {% if profileform.errors or userform.errors or datejoinedform.errors %}
+      {% if profileform.errors or userform.errors or profile_date_form.errors %}
         <div class="large-12 columns">
           <small class="error">Please correct the errors below.</small>
         </div>
@@ -502,11 +502,20 @@
             </div>
             <div class="large-11 columns edit-profile-item" id="join-date">
               <h6>Date Rep joined program</h6>
-              {{ datejoinedform.date_joined_program }}
-              {% if datejoinedform.date_joined_program.errors %}
+              {{ profile_date_form.date_joined_program }}
+              {% if profile_date_form.date_joined_program.errors %}
                 <small class="error">
-                  {{ datejoinedform.date_joined_program.errors }}
+                  {{ profile_date_form.date_joined_program.errors }}
                 </small>
+              {% endif %}
+              {% if user_is_alumni %}
+                <h6>Date Rep left program</h6>
+                {{ profile_date_form.date_left_program }}
+                {% if profile_date_form.date_left_program.errors %}
+                  <small class="error">
+                    {{ profile_date_form.date_left_program.errors }}
+                  </small>
+                {% endif %}
               {% endif %}
             </div>
           </div>
@@ -541,6 +550,13 @@
                   <input type="checkbox" {% if group_bits.3 %}checked="checked"{% endif %}
                          id="rep-bit" name="rep_group">
                   Rep
+                </label>
+              </li>
+              <li>
+                <label for="alumni-bit">
+                  <input type="checkbox" {% if group_bits.4 %}checked="checked"{% endif %}
+                         id="alumni-bit" name="alumni_group">
+                  Alumni
                 </label>
               </li>
             </ul>
@@ -631,5 +647,6 @@
     <script src="{{ static('base/js/mapbox.js') }}"></script>
     <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
     <script src="{{ static('base/js/map_modal.js') }}"></script>
+    <script src="{{ static('profiles/js/edit_profile.js') }}"></script>
   {% endcompress %}
 {% endblock %}

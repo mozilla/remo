@@ -274,7 +274,7 @@ class ViewsTest(TestCase):
 class RotmAutomationTests(RemoTestCase):
     """Tests related to the Rep of the month automation view."""
 
-    @mock.patch('remo.profiles.views.timezone.now')
+    @mock.patch('remo.profiles.views.now')
     @mock.patch('remo.profiles.views.forms.RotmNomineeForm')
     def test_base(self, mocked_form, mocked_date):
         mocked_date.return_value = datetime(now().year, now().month, 4)
@@ -292,7 +292,7 @@ class RotmAutomationTests(RemoTestCase):
         self.assertTemplateUsed('profiles_view_profile.html')
 
     @mock.patch('remo.profiles.views.messages.warning')
-    @mock.patch('remo.profiles.views.timezone.now')
+    @mock.patch('remo.profiles.views.now')
     @mock.patch('remo.profiles.views.forms.RotmNomineeForm')
     def test_no_mentor(self, mocked_form, mocked_date, mocked_message):
         mocked_date.return_value = datetime(now().year, now().month, 4)
@@ -309,7 +309,7 @@ class RotmAutomationTests(RemoTestCase):
         mocked_message.assert_called_with(
             mock.ANY, 'Only mentors can nominate a mentee.')
 
-    @mock.patch('remo.profiles.views.timezone.now')
+    @mock.patch('remo.profiles.views.now')
     @mock.patch('remo.profiles.views.forms.RotmNomineeForm')
     def test_invalid_period(self, mocked_form, mocked_date):
         mocked_date.return_value = datetime(now().year, now().month, 25)
