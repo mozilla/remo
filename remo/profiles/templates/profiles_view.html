@@ -6,7 +6,8 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 
 {% block content %}
 <main role="main" class="user-profile-container">
-  {% if user == pageuser or perms.profiles.can_edit_profiles %}
+  {% if (user == pageuser and not user.groups.filter(name='Alumni').exists())
+         or perms.profiles.can_edit_profiles %}
     <div class="row">
       <div class="large-12 columns align-right hide-for-small">
         <a href="{{ url('profiles_edit', user_profile.display_name) }}"

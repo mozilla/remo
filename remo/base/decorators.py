@@ -69,6 +69,9 @@ def permission_check(permissions=[], group=None,
 
                     obj = get_object_or_none(model, **{filter_field:
                                                        kwargs[filter_field]})
+                    # Do not give permissions to Alumni group users.
+                    if request.user.groups.filter(name='Alumni').exists():
+                        return False
                     if obj and getattr(obj, owner_field) == request.user:
                         return True
                 return False

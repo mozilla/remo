@@ -76,7 +76,8 @@ def edit(request, display_name):
             groups = {'Mentor': 'mentor_group',
                       'Admin': 'admin_group',
                       'Council': 'council_group',
-                      'Rep': 'rep_group'}
+                      'Rep': 'rep_group',
+                      'Alumni': 'alumni_group'}
 
             for group_db, group_html in groups.items():
                 if request.POST.get(group_html, None):
@@ -96,7 +97,7 @@ def edit(request, display_name):
             return redirect(redirect_url)
 
     group_bits = map(lambda x: user.groups.filter(name=x).exists(),
-                     ['Admin', 'Council', 'Mentor', 'Rep'])
+                     ['Admin', 'Council', 'Mentor', 'Rep', 'Alumni'])
 
     pageuser = get_object_or_404(User, userprofile__display_name=display_name)
 
@@ -140,7 +141,7 @@ def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
-    if not user.groups.filter(name='Rep').exists():
+    if not user.groups.filter(Q(name='Rep') | Q(name='Alumni')).exists():
         raise Http404
 
     if (not user.userprofile.registration_complete and
