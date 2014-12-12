@@ -143,14 +143,12 @@ class Vote(models.Model):
     def save(self, *args, **kwargs):
         if self.poll.automated_poll:
             name = '{0} {1}'.format(BUDGET_VOTE_ACTION, self.poll.bug.summary)
-            ActionItem.resolve(instance=self.poll, user=self.user,
-                               name=name)
         else:
             name = '{0} {1}'.format(VOTE_ACTION, self.poll.name)
-            ActionItem.resolve(instance=self.poll, user=self.user,
-                               name=name)
 
         super(Vote, self).save(*args, **kwargs)
+        ActionItem.resolve(instance=self.poll, user=self.user,
+                           name=name)
 
 
 class RangePoll(models.Model):
