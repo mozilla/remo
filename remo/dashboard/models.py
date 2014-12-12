@@ -61,8 +61,11 @@ class ActionItem(models.Model):
             action_items = ActionItem.objects.filter(content_type=action_model,
                                                      object_id=instance.id,
                                                      name=item.name,
-                                                     user=item.user,
-                                                     resolved=False)
+                                                     user=item.user)
+
+            if isinstance(instance, Bug):
+                action_items = action_items.filter(resolved=False)
+
             if not action_items.exists():
                 data = {
                     'content_object': instance,
