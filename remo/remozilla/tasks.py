@@ -112,13 +112,10 @@ def fetch_bugs(components=COMPONENTS, days=None):
                          and flag['requestee']['name'] == (
                              settings.REPS_COUNCIL_ALIAS))):
                         automated_voting_trigger += 1
-                    if ((flag['status'] == '?'
-                         and flag['name'] == 'remo-review')):
+                    if flag['status'] == '?' and flag['name'] == 'remo-review':
                         bug.pending_mentor_validation = True
-                    if ((flag['status'] == '?'
-                         and flag['name'] == 'needinfo'
-                         and 'requestee' in flag
-                         and bug.component == 'Budget Requests')):
+                    if (flag['status'] == '?' and flag['name'] == 'needinfo'
+                            and 'requestee' in flag):
                         email = flag['requestee']['name']
                         user = get_object_or_none(User, email=email)
                         if user:
