@@ -79,10 +79,12 @@ class ActionItem(models.Model):
     @staticmethod
     def resolve(instance, user, name):
         action_model = ContentType.objects.get_for_model(instance)
-        action_items = ActionItem.objects.filter(content_type=action_model,
+        items = sorted(ActionItem.objects.filter(content_type=action_model,
                                                  object_id=instance.id,
                                                  name__icontains=name,
                                                  user=user)
+                       .values_list('id', flat=True))
+        action_items = ActionItem.objects.filter(pk__in=items)
         action_items.update(completed=True, resolved=True)
 
 
