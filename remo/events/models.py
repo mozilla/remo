@@ -259,9 +259,11 @@ class EventMetricOutcome(models.Model):
         super(EventMetricOutcome, self).save(*args, **kwargs)
 
         # Resolve action items for post event metrics
-        ActionItem.resolve(instance=self.event,
-                           user=self.event.owner,
-                           name=self.event.name)
+        # if only is past event
+        if self.event.is_past_event:
+            ActionItem.resolve(instance=self.event,
+                               user=self.event.owner,
+                               name=self.event.name)
 
 
 class EventComment(models.Model):

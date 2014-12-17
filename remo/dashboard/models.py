@@ -76,10 +76,14 @@ class ActionItem(models.Model):
     @staticmethod
     def resolve(instance, user, name):
         action_model = ContentType.objects.get_for_model(instance)
-        action_items = ActionItem.objects.filter(content_type=action_model,
+        # Force evaluation of the QuerySet
+        items = sorted(ActionItem.objects.filter(content_type=action_model,
                                                  object_id=instance.id,
-                                                 name__icontains=name,
-                                                 user=user)
+                                                 user=user,
+                                                 resolved=False)
+                       .values_list('id', flat=True))
+        action_items = (ActionItem.objects.filter(pk__in=items)
+                                          .filter(name__icontains=name))
         action_items.update(completed=True, resolved=True)
 
 
