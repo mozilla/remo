@@ -58,7 +58,8 @@ class EventAdmin(ExportMixin, admin.ModelAdmin):
     model = Event
     list_display = ('name', 'start', 'end',)
     search_fields = ('name', 'country', 'region', 'venue', 'slug',)
-    list_filter = ('has_new_metrics',)
+    list_filter = ('has_new_metrics', ('start', admin.DateFieldListFilter),
+                   ('end', admin.DateFieldListFilter))
 
     def owner_display_name(self, obj):
         return obj.owner.userprofile.display_name
