@@ -94,8 +94,7 @@ class PollEditForm(happyforms.ModelForm):
 
         instance = self.instance
         # Set the year portion of the widget
-        end_year = min(getattr(self.instance.end, 'year', now().year),
-                       now().year - 1)
+        end_year = getattr(self.instance.end, 'year', now().year)
         self.fields['end_form'] = forms.DateTimeField(
             widget=SplitSelectDateTimeWidget(
                 years=range(end_year, now().year + 10), minute_step=5),
@@ -145,8 +144,7 @@ class PollAddForm(PollEditForm):
 
         instance = self.instance
         # Set the year portion of the widget
-        start_year = min(getattr(self.instance.start, 'year', now().year),
-                         now().year - 1)
+        start_year = getattr(self.instance.start, 'year', now().year)
         self.fields['start_form'] = forms.DateTimeField(
             widget=SplitSelectDateTimeWidget(
                 years=range(start_year, now().year + 10), minute_step=5),
