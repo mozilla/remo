@@ -73,7 +73,8 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 break
 
             for bdata in bugs['bugs']:
-                bug, created = Bug.objects.get_or_create(bug_id=bdata['id'])
+                bug, created = Bug.objects.get_or_create(
+                    bug_id=int(bdata['id']))
 
                 bug.summary = bdata.get('summary', '').encode('utf-8')
                 creator_name = bdata['creator']['name']
