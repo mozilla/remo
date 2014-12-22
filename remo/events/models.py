@@ -131,6 +131,8 @@ class Event(caching.base.CachingMixin, models.Model):
     metrics = models.ManyToManyField(EventMetric, through='EventMetricOutcome')
     has_new_metrics = models.BooleanField(default=True)
     action_items = generic.GenericRelation(ActionItem)
+    created_on = models.DateTimeField(auto_now_add=True, null=True)
+    updated_on = models.DateTimeField(auto_now=True, null=True)
 
     objects = caching.base.CachingManager()
 
