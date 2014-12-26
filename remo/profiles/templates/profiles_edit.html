@@ -543,6 +543,13 @@
                   Rep
                 </label>
               </li>
+              <li>
+                <label for="alumni-bit">
+                  <input type="checkbox" {% if group_bits.4 %}checked="checked"{% endif %}
+                         id="alumni-bit" name="alumni_group">
+                  Alumni
+                </label>
+              </li>
             </ul>
           </div>
         </div>
@@ -631,5 +638,6 @@
     <script src="{{ static('base/js/mapbox.js') }}"></script>
     <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
     <script src="{{ static('base/js/map_modal.js') }}"></script>
+    <script src="{{ static('profiles/js/edit_profile.js') }}"></script>
   {% endcompress %}
 {% endblock %}
