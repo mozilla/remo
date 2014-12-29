@@ -356,7 +356,7 @@ def email_mentor_notification(sender, instance, raw, **kwargs):
     if UserProfile.objects.filter(user=instance.user).exists() and not raw:
         user_profile = UserProfile.objects.get(user=instance.user)
         if user_profile.mentor and user_profile.mentor != instance.mentor:
-            subject = '[Reps] Change of mentor.'
+            subject = '[Reps] Mentor reassignment.'
             email_template = 'emails/mentor_change_notification.txt'
             recipients = [user_profile.mentor.id, user_profile.user.id,
                           instance.mentor.id]

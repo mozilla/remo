@@ -1,14 +1,13 @@
-Hello!
+Hi {{ rep_user.get_full_name() }},
 
-This email was generated automatically to inform you
-that {{ rep_user.get_full_name() }} [1] is now mentored
-by {{ new_mentor.get_full_name() }} [2].
+I would like to indroduce you to {{ new_mentor.get_full_name() }} [1],
+your new mentor.
 
-Cheers!
+{{ new_mentor.get_full_name() }} will schedule a meeting with you soon
+to catch up and know more about you and your goals in the Reps program.
 
+Regards,
 Your lovely ReMo bot.
 
 [1] {{ SITE_URL }}{{ url('profiles_view_profile',
-                          rep_user.userprofile.display_name) }}
-[2] {{ SITE_URL }}{{ url('profiles_view_profile',
                           new_mentor.userprofile.display_name) }}
