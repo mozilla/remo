@@ -29,6 +29,8 @@ class UserProfileInline(admin.StackedInline):
 class UserAdmin(ExportMixin, UserAdmin):
     """User Admin."""
     inlines = [UserProfileInline]
+    list_filter = (UserAdmin.list_filter +
+                   ('userprofile__registration_complete',))
 
     def get_urls(self):
         """Return custom and UserAdmin urls."""
