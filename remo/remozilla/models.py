@@ -20,6 +20,14 @@ ADD_REPORTS_PHOTOS_ACTION = u'Add reports/photos for'
 REVIEW_BUDGET_REQUEST_ACTION = u'Review budget request'
 WAITING_MENTOR_VALIDATION_ACTION = u'Waiting mentor validation for'
 NEEDINFO_ACTION = u'Need info for'
+BUG_ATTRS = ['waiting_receipts', 'waiting_report',
+             'waiting_photos', 'waiting_report_photos',
+             'council_member_assigned',
+             'pending_mentor_validation']
+
+
+def _get_action_name(action_name, instance):
+    return '{0} {1}'.format(action_name, instance.summary)
 
 
 class Bug(caching.base.CachingMixin, models.Model):
@@ -76,20 +84,17 @@ class Bug(caching.base.CachingMixin, models.Model):
         if not self.assigned_to or not user_is_rep(self.assigned_to):
             return []
 
-        def _get_action_name(action_name):
-            return '{0} {1}'.format(action_name, self.summary)
-
         action_items = []
         actions = [
-            (_get_action_name(ADD_RECEIPTS_ACTION),
+            (_get_action_name(ADD_RECEIPTS_ACTION, self),
              'waiting_receipts', ActionItem.NORMAL),
-            (_get_action_name(ADD_REPORT_ACTION),
+            (_get_action_name(ADD_REPORT_ACTION, self),
              'waiting_report', ActionItem.NORMAL),
-            (_get_action_name(ADD_PHOTOS_ACTION),
+            (_get_action_name(ADD_PHOTOS_ACTION, self),
              'waiting_photos', ActionItem.NORMAL),
-            (_get_action_name(ADD_REPORTS_PHOTOS_ACTION),
+            (_get_action_name(ADD_REPORTS_PHOTOS_ACTION, self),
              'waiting_report_photos', ActionItem.NORMAL),
-            (_get_action_name(REVIEW_BUDGET_REQUEST_ACTION),
+            (_get_action_name(REVIEW_BUDGET_REQUEST_ACTION, self),
              'council_member_assigned', ActionItem.BLOCKER)
         ]
 
@@ -98,22 +103,17 @@ class Bug(caching.base.CachingMixin, models.Model):
                 action_item = Item(action_name, self.assigned_to,
                                    priority, None)
                 action_items.append(action_item)
-            else:
-                ActionItem.resolve(instance=self, user=self.assigned_to,
-                                   name=action_name)
 
-        mentor_action = _get_action_name(WAITING_MENTOR_VALIDATION_ACTION)
+        mentor_action = _get_action_name(WAITING_MENTOR_VALIDATION_ACTION,
+                                         self)
         if self.assigned_to and user_is_rep(self.assigned_to):
             mentor = self.assigned_to
             if self.pending_mentor_validation:
                 action_item = Item(mentor_action, mentor,
                                    ActionItem.BLOCKER, None)
                 action_items.append(action_item)
-            else:
-                ActionItem.resolve(instance=self, user=mentor,
-                                   name=mentor_action)
 
-        action_name = _get_action_name(NEEDINFO_ACTION)
+        action_name = _get_action_name(NEEDINFO_ACTION, self)
         for user in self.budget_needinfo.all():
             action_item = Item(action_name, user, ActionItem.CRITICAL, None)
             action_items.append(action_item)
@@ -127,26 +127,38 @@ class Bug(caching.base.CachingMixin, models.Model):
         # Update action items
         action_model = ContentType.objects.get_for_model(self)
         if self.pk:
+            # Get saved action item
+            action_items = ActionItem.objects.filter(
+                content_type=action_model, object_id=self.pk, resolved=False)
+            # If there is no user or user is not rep or the bug is resolved,
+            # resolve the action item too!
             if (not self.assigned_to or not user_is_rep(self.assigned_to) or
                     self.status == 'RESOLVED'):
-                items = ActionItem.objects.filter(content_type=action_model,
-                                                  object_id=self.pk)
-                items.update(resolved=True)
+                action_items.update(resolved=True)
             else:
-                actions = [ADD_RECEIPTS_ACTION, ADD_REPORT_ACTION,
-                           ADD_PHOTOS_ACTION, ADD_REPORTS_PHOTOS_ACTION,
-                           REVIEW_BUDGET_REQUEST_ACTION,
-                           WAITING_MENTOR_VALIDATION_ACTION]
+                possible_actions = [ADD_RECEIPTS_ACTION, ADD_REPORT_ACTION,
+                                    ADD_PHOTOS_ACTION,
+                                    ADD_REPORTS_PHOTOS_ACTION,
+                                    REVIEW_BUDGET_REQUEST_ACTION,
+                                    WAITING_MENTOR_VALIDATION_ACTION]
                 action_names = (['{0} {1}'.format(action, self.summary)
-                                 for action in actions])
+                                 for action in possible_actions])
+                # Resolve any non-valid action items.
+                invalid_actions = []
+                for action_name, attr in zip(action_names, BUG_ATTRS):
+                    if not getattr(self, attr):
+                        invalid_actions.append(action_name)
+                invalid_action_items = action_items.filter(
+                    name__in=invalid_actions)
+                for invalid_item in invalid_action_items:
+                    ActionItem.resolve(self, invalid_item.user,
+                                       invalid_item.name)
 
+                # If the bug changed owner, re-assign it
                 current_bug = Bug.objects.get(id=self.pk)
-                action_items = ActionItem.objects.filter(
-                    content_type=action_model, object_id=self.pk)
-
                 if current_bug.assigned_to != self.assigned_to:
-                    items = action_items.filter(name__in=action_names)
-                    items.update(user=self.assigned_to)
+                    (action_items.filter(name__in=action_names)
+                     .update(user=self.assigned_to))
 
         super(Bug, self).save()
 
