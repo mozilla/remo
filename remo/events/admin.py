@@ -56,7 +56,7 @@ class EventAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = EventResource
     inlines = [AttendanceInline]
     model = Event
-    list_display = ('name', 'start', 'end',)
+    list_display = ('name', 'start', 'end', 'created_on', 'updated_on',)
     search_fields = ('name', 'country', 'region', 'venue', 'slug',)
     list_filter = ('has_new_metrics', ('start', admin.DateFieldListFilter),
                    ('end', admin.DateFieldListFilter))
