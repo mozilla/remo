@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.db.models.loading import get_model
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
@@ -9,8 +10,6 @@ from django.dispatch import receiver
 from django.utils.timezone import utc
 
 import caching.base
-
-from remo.dashboard.models import ActionItem, Item
 
 
 ADD_RECEIPTS_ACTION = u'Add receipts for'
@@ -54,7 +53,7 @@ class Bug(caching.base.CachingMixin, models.Model):
     council_member_assigned = models.BooleanField(default=False)
     pending_mentor_validation = models.BooleanField(default=False)
     budget_needinfo = models.ManyToManyField(User)
-    action_items = generic.GenericRelation(ActionItem)
+    action_items = generic.GenericRelation('dashboard.ActionItem')
 
     objects = caching.base.CachingManager()
 
@@ -80,6 +79,8 @@ class Bug(caching.base.CachingMixin, models.Model):
     def get_action_items(self):
         # Avoid circular dependency
         from remo.base.helpers import user_is_rep
+        from remo.dashboard.models import Item
+        ActionItem = get_model('dashboard', 'ActionItem')
 
         if not self.assigned_to or not user_is_rep(self.assigned_to):
             return []
@@ -123,6 +124,7 @@ class Bug(caching.base.CachingMixin, models.Model):
     def save(self, *args, **kwargs):
         # Avoid circular dependency
         from remo.base.helpers import user_is_rep
+        ActionItem = get_model('dashboard', 'ActionItem')
 
         # Update action items
         action_model = ContentType.objects.get_for_model(self)
@@ -197,6 +199,8 @@ def set_uppercase_pre_save(sender, instance, **kwargs):
 def update_budget_needinfo_action_items(sender, instance, action, pk_set,
                                         **kwargs):
     """Update ActionItem objects on needinfo change."""
+
+    ActionItem = get_model('dashboard', 'ActionItem')
     name = '{0} {1}'.format(NEEDINFO_ACTION, instance.summary)
     if action == 'post_remove':
         for pk in pk_set:

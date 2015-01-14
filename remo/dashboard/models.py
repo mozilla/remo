@@ -6,6 +6,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import post_save
 
+from remo.remozilla.models import Bug
+
 Item = namedtuple('Item', ['name', 'user', 'priority', 'due_date'])
 
 
@@ -89,8 +91,6 @@ class ActionItem(models.Model):
                                           .filter(name__icontains=name))
         action_items.update(completed=True, resolved=True)
 
-
-from remo.remozilla.models import Bug
 
 post_save.connect(ActionItem.create, sender=Bug,
                   dispatch_uid='create_action_items_bugzilla_sig')
