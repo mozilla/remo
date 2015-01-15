@@ -10,3 +10,4 @@ src/django-statsd
 src/django-tastypie
 src/django-database-email-backend
 src/django-browserid
+src/django
