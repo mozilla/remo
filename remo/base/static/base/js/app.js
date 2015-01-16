@@ -90,6 +90,11 @@ jQuery(document).ready(function ($) {
 
 });
 
+  /* Hamburger button on click should show all the links. */
+    $('#hamburger-button').click(function(){
+        $('#hamburger-button-content').toggle();
+    });
+
 if (typeof(L) != 'undefined') {
     L.Icon.Default.imagePath = '/static/base/js/images';
 }

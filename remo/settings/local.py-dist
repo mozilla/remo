@@ -97,7 +97,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Uncomment the following line for local development, or BrowserID
 # will fail to log you in.
-# SITE_URL = 'http://127.0.0.1:8000'
+#SITE_URL = 'http://127.0.0.1:8000'
 
 # remozilla configuration
 # REMOZILLA_USERNAME = ''
@@ -105,8 +105,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Mailhide configuration
 # Demo keys, replace with valid ones.
-# MAILHIDE_PUB_KEY = '02Ni54q--g1yltekhaSmPYHQ=='
-# MAILHIDE_PRIV_KEY = 'fe55a9921917184732077e3fed19d0be'
+#MAILHIDE_PUB_KEY = '02Ni54q--g1yltekhaSmPYHQ=='
+#MAILHIDE_PRIV_KEY = 'fe55a9921917184732077e3fed19d0be'
 
 # LESS COMPILER
 # LESS_BIN = '/path/to/lessc'
