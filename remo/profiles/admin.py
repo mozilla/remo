@@ -19,6 +19,20 @@ from remo.profiles.tasks import check_celery
 admin.site.unregister(User)
 
 
+class UserResource(resources.ModelResource):
+    personal_emails = fields.Field()
+
+    class Meta:
+        model = User
+        export_order = ['id', 'username', 'first_name', 'last_name', 'email',
+                        'personal_emails', 'password', 'is_staff', 'is_active',
+                        'is_superuser', 'last_login', 'date_joined', 'groups',
+                        'user_permissions']
+
+    def dehydrate_personal_emails(self, user):
+        return user.userprofile.private_email
+
+
 class UserProfileInline(admin.StackedInline):
     """ReportLink Inline."""
     model = UserProfile
@@ -28,6 +42,7 @@ class UserProfileInline(admin.StackedInline):
 
 class UserAdmin(ExportMixin, UserAdmin):
     """User Admin."""
+    resource_class = UserResource
     inlines = [UserProfileInline]
     list_filter = (UserAdmin.list_filter +
                    ('userprofile__registration_complete',))
