@@ -2,6 +2,7 @@ from socket import error as socket_error
 
 from django.conf.urls import patterns, url
 from django.contrib import admin, messages
+from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -17,6 +18,66 @@ from remo.profiles.tasks import check_celery
 
 # Unregister User from Administration to attach UserProfileInline
 admin.site.unregister(User)
+
+
+class RepProfileFilter(SimpleListFilter):
+    title = 'Rep profiles'
+    parameter_name = 'rep_profile'
+
+    def lookups(self, request, model_admin):
+        return (('False', 'No'), ('True', 'Yes'))
+
+    def queryset(self, request, queryset):
+        if self.value() == 'True':
+            return queryset.filter(groups__name='Rep')
+        elif self.value() == 'False':
+            return queryset.exclude(groups__name='Rep')
+        return queryset
+
+
+class MozillianProfileFilter(SimpleListFilter):
+    title = 'Mozillian profiles'
+    parameter_name = 'mozillian_profile'
+
+    def lookups(self, request, model_admin):
+        return (('False', 'No'), ('True', 'Yes'))
+
+    def queryset(self, request, queryset):
+        if self.value() == 'True':
+            return queryset.filter(groups__name='Mozillians')
+        elif self.value() == 'False':
+            return queryset.exclude(groups__name='Mozillians')
+        return queryset
+
+
+class MentorProfileFilter(SimpleListFilter):
+    title = 'Mentor profiles'
+    parameter_name = 'mentor_profile'
+
+    def lookups(self, request, model_admin):
+        return (('False', 'No'), ('True', 'Yes'))
+
+    def queryset(self, request, queryset):
+        if self.value() == 'True':
+            return queryset.filter(groups__name='Mentor')
+        elif self.value() == 'False':
+            return queryset.exclude(groups__name='Mentor')
+        return queryset
+
+
+class CouncilProfileFilter(SimpleListFilter):
+    title = 'Council profiles'
+    parameter_name = 'council_profile'
+
+    def lookups(self, request, model_admin):
+        return (('False', 'No'), ('True', 'Yes'))
+
+    def queryset(self, request, queryset):
+        if self.value() == 'True':
+            return queryset.filter(groups__name='Council')
+        elif self.value() == 'False':
+            return queryset.exclude(groups__name='Council')
+        return queryset
 
 
 class UserResource(resources.ModelResource):
@@ -45,7 +106,9 @@ class UserAdmin(ExportMixin, UserAdmin):
     resource_class = UserResource
     inlines = [UserProfileInline]
     list_filter = (UserAdmin.list_filter +
-                   ('userprofile__registration_complete',))
+                   ('userprofile__registration_complete', RepProfileFilter,
+                    MozillianProfileFilter, MentorProfileFilter,
+                    CouncilProfileFilter,))
 
     def get_urls(self):
         """Return custom and UserAdmin urls."""
