@@ -2,9 +2,10 @@
 # needed to run the site, it belongs in requirements/prod.txt. If it's a
 # package for developers (testing, docs, etc.), it goes in this file.
 
--r ../vendor/src/funfactory/funfactory/requirements/dev.txt
 -r compiled.txt
--r prod.txt
+
+# sha256: 0a6hxKphuDZtakLdNlBiL7-cY07STq9_N5yLlw5e1E4
+coverage==3.7.1
 
 pyquery
 flake8

@@ -14,7 +14,6 @@ from django.test.client import Client
 from django.test.utils import override_settings
 
 import mock
-from funfactory.helpers import urlparams
 from jinja2 import Markup
 from nose.exc import SkipTest
 from nose.tools import eq_, ok_
@@ -22,7 +21,9 @@ from test_utils import TestCase
 
 from remo.base import mozillians
 from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
-from remo.base.tests import RemoTestCase, requires_login, requires_permission
+from remo.base.tests import (MozillianResponse, RemoTestCase,
+                             VOUCHED_MOZILLIAN, NOT_VOUCHED_MOZILLIAN,
+                             requires_login, requires_permission)
 from remo.base.tests.browserid_mock import mock_browserid
 from remo.base.views import robots_txt
 from remo.events.models import EventGoal
@@ -35,66 +36,8 @@ from remo.reports.models import Activity, Campaign
 from remo.reports.tests import ActivityFactory, CampaignFactory
 
 
-VOUCHED_MOZILLIAN = """
-{
-    "meta": {
-        "previous": null,
-        "total_count": 1,
-        "offset": 0,
-        "limit": 20,
-        "next": null
-    },
-    "objects":
-    [
-        {
-            "website": "",
-            "bio": "",
-            "groups": [
-                "foo bar"
-            ],
-            "skills": [],
-            "email": "vouched@mail.com",
-            "is_vouched": true
-        }
-    ]
-}
-"""
-
-NOT_VOUCHED_MOZILLIAN = """
-{
-  "meta": {
-    "previous": null,
-    "total_count": 1,
-    "offset": 0,
-    "limit": 20,
-    "next": null
-  },
-  "objects": [
-    {
-      "website": "",
-      "bio": "",
-      "groups": [
-        "no login"
-      ],
-      "skills": [],
-      "is_vouched": false,
-      "email": "not_vouched@mail.com"
-    }
-  ]
-}
-"""
-
-
 assert json.loads(VOUCHED_MOZILLIAN)
 assert json.loads(NOT_VOUCHED_MOZILLIAN)
-
-
-class MozillianResponse(object):
-    """Mozillians Response."""
-
-    def __init__(self, content=None, status_code=200):
-        self.content = content
-        self.status_code = status_code
 
 
 class MozilliansTest(TestCase):
@@ -111,6 +54,7 @@ class MozilliansTest(TestCase):
                 return MozillianResponse(NOT_VOUCHED_MOZILLIAN)
             if 'trouble' in url:
                 return MozillianResponse('Failed', status_code=500)
+
         rget.side_effect = mocked_get
 
         ok_(mozillians.is_vouched('vouched@mail.com'))
@@ -126,31 +70,6 @@ class MozilliansTest(TestCase):
             raise
         except mozillians.BadStatusCodeError, msg:
             ok_(settings.MOZILLIANS_API_KEY not in str(msg))
-
-    @override_settings(SITE_URL='http://testserver')
-    @mock.patch('remo.base.views.verify')
-    @mock.patch('remo.base.views.is_vouched')
-    @mock.patch('remo.base.views.auth.authenticate')
-    def test_mozillian_user_with_private_data(self, mocked_authenticate,
-                                              mocked_is_vouched,
-                                              mocked_verify):
-        """ Test user creation for user with private data in Mozillians."""
-        c = Client()
-        email = u'vouched@example.com'
-        mocked_verify.return_value = {'email': email}
-        mocked_is_vouched.return_value = {'is_vouched': True,
-                                          'email': email}
-
-        def authenticate(*args, **kwargs):
-            user = User.objects.get(email=email)
-            user.backend = 'Fake'
-            return user
-
-        mocked_authenticate.side_effect = authenticate
-        eq_(User.objects.filter(email=email).count(), 0)
-        c.post('/browserid/login/', data={'assertion': 'xxx'})
-        user = User.objects.get(email=email)
-        eq_(user.get_full_name(), u'Anonymous Mozillian')
 
     @mock.patch('remo.profiles.tasks.is_vouched')
     def test_mozillian_username_exists(self, mocked_is_vouched):
@@ -195,32 +114,33 @@ class ViewsTest(TestCase):
     def setUp(self):
         self.settings_data = {'receive_email_on_add_comment': True}
         self.user_edit_settings_url = reverse('edit_settings')
-        self.failed_url = urlparams(settings.LOGIN_REDIRECT_URL_FAILURE,
-                                    bid_login_failed=1)
 
-    def _login_attempt(self, email, assertion='assertion123'):
+    def _login_attempt(self, email, assertion='assertion123', next=None):
+        if not next:
+            next = '/'
         with mock_browserid(email):
-            r = self.client.post(
-                reverse('browserid_login'),
-                {'assertion': assertion})
-        return r
+            post_data = {'assertion': assertion,
+                         'next': next}
+            return self.client.post('/browserid/login/', post_data)
 
     def test_bad_verification(self):
         """Bad verification -> failure."""
         response = self._login_attempt(None)
-        self.assertRedirects(response, self.failed_url,
-                             target_status_code=200)
+        eq_(response['content-type'], 'application/json')
+        redirect = json.loads(response.content)['redirect']
+        eq_(redirect, settings.LOGIN_REDIRECT_URL_FAILURE)
 
     def test_invalid_login(self):
         """Bad BrowserID form - no assertion -> failure."""
         response = self._login_attempt(None, None)
-        self.assertRedirects(response, self.failed_url,
-                             target_status_code=200)
+        eq_(response['content-type'], 'application/json')
+        redirect = json.loads(response.content)['redirect']
+        eq_(redirect, settings.LOGIN_REDIRECT_URL_FAILURE)
 
     def test_is_vouched(self):
         """Login with vouched email."""
         response = self._login_attempt('vouched@mail.com')
-        eq_(response.status_code, 302)
+        eq_(response.status_code, 200)
         ok_(reverse('dashboard'))
 
     def test_view_main_page(self):

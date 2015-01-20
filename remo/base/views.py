@@ -1,10 +1,10 @@
 from django import http
-from django_browserid import BrowserIDException, get_audience, verify
 from django_browserid.auth import default_username_algo
+from django_browserid.http import JSONResponse
 from django_browserid.views import Verify
 from django.conf import settings
-from django.contrib import auth, messages
-from django.contrib.auth.models import Group, User
+from django.contrib import messages
+from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.views import generic
@@ -16,7 +16,6 @@ import forms
 import utils
 from remo.base.decorators import PermissionMixin, permission_check
 from remo.base.forms import EmailMentorForm
-from remo.base.mozillians import BadStatusCodeError, is_vouched
 from remo.featuredrep.models import FeaturedRep
 from remo.profiles.forms import UserStatusForm
 from remo.profiles.models import UserProfile, UserStatus
@@ -28,78 +27,13 @@ USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
 
 class BrowserIDVerify(Verify):
 
-    def login_failure(self, error=None, message=None):
-        """Custom login failed method.
-
-        This method acts like a segway between a failed login attempt and
-        'main' view. Adds messages in the messages framework queue, that
-        informs user login failed.
-
-        """
-        if not message:
-            message = ('Login failed. Please make sure that you are '
-                       'an accepted Rep or a vouched Mozillian '
-                       'and you use your Bugzilla email to login.')
-        messages.warning(self.request, message)
-
-        return super(BrowserIDVerify, self).login_failure(error=error)
-
-    def form_valid(self, form):
-        """
-        Custom BrowserID verifier for ReMo users
-        and vouched mozillians.
-        """
-        self.assertion = form.cleaned_data['assertion']
-        self.audience = get_audience(self.request)
-        result = verify(self.assertion, self.audience)
-        _is_valid_login = False
-
-        if result:
-            if User.objects.filter(email=result['email']).exists():
-                _is_valid_login = True
-            else:
-                try:
-                    data = is_vouched(result['email'])
-                except BadStatusCodeError:
-                    msg = ('Email (%s) authenticated but unable to '
-                           'connect to Mozillians to see if you are vouched' %
-                           result['email'])
-                    return self.login_failure(message=msg)
-
-                if data and data['is_vouched']:
-                    _is_valid_login = True
-                    user = User.objects.create_user(
-                        username=USERNAME_ALGO(data['email']),
-                        email=data['email'])
-                    # Due to privacy settings, this might be missing
-                    if 'full_name' not in data:
-                        data['full_name'] = 'Anonymous Mozillian'
-                    else:
-                        user.userprofile.mozillian_username = data['username']
-                        user.userprofile.save()
-
-                    first_name, last_name = (
-                        data['full_name'].split(' ', 1)
-                        if ' ' in data['full_name']
-                        else ('', data['full_name']))
-                    user.first_name = first_name
-                    user.last_name = last_name
-                    user.save()
-                    user.groups.add(
-                        Group.objects.get(name='Mozillians'))
-
-            if _is_valid_login:
-                try:
-                    self.user = auth.authenticate(assertion=self.assertion,
-                                                  audience=self.audience)
-                    auth.login(self.request, self.user)
-                except BrowserIDException as e:
-                    return self.login_failure(error=e)
-
-                if self.request.user and self.request.user.is_active:
-                    return self.login_success()
-
-        return self.login_failure()
+    def login_failure(self, msg=''):
+        if not msg:
+            msg = ('Login failed. Please make sure that you are '
+                   'an accepted Rep or a vouched Mozillian '
+                   'and you use your Bugzilla email to login.')
+        messages.warning(self.request, msg)
+        return JSONResponse({'redirect': self.failure_url})
 
 
 @cache_control(private=True, no_cache=True)
