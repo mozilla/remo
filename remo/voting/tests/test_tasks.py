@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import Group, User
 from django.core import mail
@@ -8,12 +8,13 @@ from mock import patch
 from nose.tools import eq_, ok_
 from test_utils import TestCase
 
-from remo.base.utils import get_date
+from remo.base.utils import get_date, number2month
+from remo.base.tests import RemoTestCase
 from remo.remozilla.tests import BugFactory
 from remo.profiles.tests import UserFactory
-from remo.voting.models import Poll
-from remo.voting.tasks import extend_voting_period
-from remo.voting.tests import (VoteFactory, PollFactoryNoSignals,
+from remo.voting.models import Poll, RangePoll, RangePollChoice
+from remo.voting.tasks import create_rotm_poll, extend_voting_period
+from remo.voting.tests import (VoteFactory, PollFactory, PollFactoryNoSignals,
                                RadioPollChoiceFactory, RadioPollFactory)
 
 
@@ -99,3 +100,62 @@ class VotingTestTasks(TestCase):
         eq_(poll.end.minute, 0)
         eq_(poll.end.second, 0)
         ok_(not poll.is_extended)
+
+
+class VotingRotmTestTasks(RemoTestCase):
+
+    @patch('remo.voting.tasks.now')
+    def test_base(self, mocked_now_date):
+        nominee_1 = UserFactory.create(userprofile__is_rotm_nominee=True)
+        nominee_2 = UserFactory.create(userprofile__is_rotm_nominee=True)
+        UserFactory.create(username='remobot')
+        mocked_now_date.return_value = datetime(now().year, now().month, 11)
+        poll_name = ('Rep of the month for {0}'.format(
+                     number2month(now().month)))
+
+        create_rotm_poll()
+
+        poll = Poll.objects.filter(name=poll_name)
+        range_poll = RangePoll.objects.get(poll=poll)
+        range_poll_choices = RangePollChoice.objects.filter(
+            range_poll=range_poll)
+
+        ok_(poll.exists())
+        eq_(poll.count(), 1)
+        eq_(set([choice.nominee for choice in range_poll_choices]),
+            set([nominee_1, nominee_2]))
+
+    @patch('remo.voting.tasks.now')
+    def test_invalid_date(self, mocked_now_date):
+        UserFactory.create(userprofile__is_rotm_nominee=True)
+        UserFactory.create(userprofile__is_rotm_nominee=True)
+        mocked_now_date.return_value = datetime(now().year, now().month, 9)
+        poll_name = ('Rep of the month for {0}'.format(
+                     number2month(now().month)))
+
+        create_rotm_poll()
+
+        poll = Poll.objects.filter(name=poll_name)
+        ok_(not poll.exists())
+
+    @patch('remo.voting.tasks.now')
+    def test_poll_already_exists(self, mocked_now_date):
+        UserFactory.create(userprofile__is_rotm_nominee=True)
+        UserFactory.create(userprofile__is_rotm_nominee=True)
+        mocked_now_date.return_value = datetime(now().year, now().month, 11)
+        poll_start, poll_end = now(), now() + timedelta(hours=1)
+        poll_name = ('Rep of the month for {0}'.format(
+                     number2month(now().month)))
+
+        mentor_group = Group.objects.get(name='Mentor')
+        poll = PollFactory.create(start=poll_start,
+                                  end=poll_end,
+                                  valid_groups=mentor_group,
+                                  name=poll_name)
+
+        create_rotm_poll()
+
+        rotm_polls = Poll.objects.filter(name=poll_name)
+        ok_(rotm_polls.exists())
+        eq_(rotm_polls.count(), 1)
+        eq_(rotm_polls[0].pk, poll.pk)

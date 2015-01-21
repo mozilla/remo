@@ -1,13 +1,19 @@
-from datetime import timedelta
+from calendar import monthrange
+from datetime import date, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.utils.timezone import now
 
 from celery.task import periodic_task, task
 
 from remo.base.mozillians import is_vouched
+from remo.profiles.models import UserProfile
+
+
+DAYS_OFFSET = 4
 
 
 @task
@@ -48,3 +54,22 @@ def check_mozillian_username():
 def check_celery():
     """Dummy celery task to check that everything runs smoothly."""
     pass
+
+
+@task(run_every=timedelta(hours=24))
+def reset_rotm_nominees():
+    """Reset the Rep of the month nomination in user profiles.
+
+    This task will reset the nomination bit for the Rep of the month in the
+    user profiles, for all the users nominated in each month. This will take
+    place 4 days before the end of each month.
+    """
+
+    now_date = now().date()
+    days_of_month = monthrange(now_date.year, now_date.month)[1]
+    reset_poll_day = days_of_month - DAYS_OFFSET
+    if now_date == date(now_date.year, now_date.month, reset_poll_day):
+        nominees = UserProfile.objects.filter(is_rotm_nominee=True)
+        for nominee in nominees:
+            nominee.is_rotm_nominee = False
+            nominee.save()

@@ -22,6 +22,7 @@ from remo.base.decorators import permission_check
 from remo.events.utils import get_events_for_user
 from remo.profiles.models import UserProfile, UserStatus
 from remo.profiles.models import FunctionalArea
+from remo.voting.tasks import ROTM_NOMINATION_END_DATE
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
@@ -147,12 +148,18 @@ def view_profile(request, display_name):
             not request.user.has_perm('profiles.can_edit_profiles')):
             raise Http404
 
+    nominee_form = forms.RotmNomineeForm(request.POST or None,
+                                         instance=user.userprofile)
+
     usergroups = user.groups.filter(Q(name='Mentor') | Q(name='Council'))
+    is_nomination_period = timezone.now().date() < ROTM_NOMINATION_END_DATE
     data = {'pageuser': user,
             'user_profile': user.userprofile,
             'added_by': user.userprofile.added_by,
             'mentor': user.userprofile.mentor,
-            'usergroups': usergroups}
+            'usergroups': usergroups,
+            'user_nominated': user.userprofile.is_rotm_nominee,
+            'is_nomination_period': is_nomination_period}
 
     if user.userprofile.is_unavailable:
         status = UserStatus.objects.filter(user=user).latest('created_on')
@@ -167,6 +174,12 @@ def view_profile(request, display_name):
                  'display_name': user.userprofile.display_name})
             messages.info(request, mark_safe(msg))
 
+    if nominee_form.is_valid() and is_nomination_period:
+        if request.user.groups.filter(name='Mentor').exists():
+            nominee_form.save()
+            return redirect('profiles_view_profile', display_name=display_name)
+        messages.warning(request, ('Only mentors can nominate a mentee.'))
+
     today = timezone.now().date()
 
     # NGReports
@@ -179,6 +192,8 @@ def view_profile(request, display_name):
     data['future_events'] = get_events_for_user(user, from_date=today)
     data['past_events'] = past_user_events.reverse()[:10]
     data['featured_rep'] = user.featuredrep_users.all()
+    data['request_user'] = request.user
+    data['nominee_form'] = nominee_form
 
     return render(request, 'profiles_view.html', data)
 
