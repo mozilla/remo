@@ -25,5 +25,13 @@ class FeaturedRepAdmin(ExportMixin, admin.ModelAdmin):
     def featured_rep_users(self, obj):
         return ', '.join([user.get_full_name() for user in obj.users.all()])
 
+    def save_model(self, request, obj, form, change):
+        super(FeaturedRepAdmin, self).save_model(request, obj, form, change)
+        featured = FeaturedRep.objects.get(pk=obj.pk)
+
+        if (form.is_valid() and 'updated_on' in form.changed_data and
+                form.cleaned_data['updated_on'] != featured.updated_on):
+            obj.save(**{'updated_on': form.cleaned_data['updated_on']})
+
 
 admin.site.register(FeaturedRep, FeaturedRepAdmin)

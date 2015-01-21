@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.dispatch import receiver
+from django.utils.timezone import now
 
 from south.signals import post_migrate
 
@@ -14,8 +15,8 @@ class FeaturedRep(models.Model):
     some text explaining why they are so cool.
 
     """
-    created_on = models.DateTimeField(auto_now_add=True)
-    updated_on = models.DateTimeField(auto_now=True)
+    created_on = models.DateTimeField(null=True, blank=True)
+    updated_on = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(User, related_name='reps_featured')
     text = models.TextField(blank=False, null=False)
     users = models.ManyToManyField(User, related_name='featuredrep_users')
@@ -25,6 +26,18 @@ class FeaturedRep(models.Model):
         get_latest_by = 'updated_on'
         permissions = (('can_edit_featured', 'Can edit featured reps'),
                        ('can_delete_featured', 'Can delete featured reps'))
+
+    def save(self, *args, **kwargs):
+        """Override save method for custom functionality"""
+
+        # This allows to override the updated_on through the admin interface
+        self.updated_on = kwargs.pop('updated_on', None)
+
+        if not self.updated_on:
+            self.updated_on = now()
+        if not self.pk:
+            self.created_on = now()
+        super(FeaturedRep, self).save(*args, **kwargs)
 
 
 @receiver(post_migrate, dispatch_uid='featuredrep_set_groups_signal')
