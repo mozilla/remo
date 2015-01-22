@@ -18,7 +18,8 @@ from remo.dashboard.models import ActionItem
 
 EXTEND_VOTING_PERIOD = 24 * 3600  # 24 hours
 NOTIFICATION_INTERVAL = 24 * 3600  # 24 hours
-ROTM_NOMINATION_END_DATE = date(now().year, now().month, 10)
+ROTM_NOMINATION_END_DATE = date(now().year, now().month, 7)
+ROTM_VOTING_END_DATE_OFFSET = 14
 
 
 @task
@@ -131,7 +132,7 @@ def create_rotm_poll():
                              datetime.min.time())
     end = datetime.combine(date(now().year, now().month, days_of_month),
                            datetime.max.time())
-    end -= timedelta(days=5)
+    end -= timedelta(days=ROTM_VOTING_END_DATE_OFFSET)
     rotm_poll = Poll.objects.filter(name=poll_name,
                                     start__range=[start, end],
                                     end__range=[start, end])
