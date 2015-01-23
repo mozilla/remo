@@ -54,7 +54,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for feature in featured %}
+          {% for feature in objects %}
           <tr>
             <td>
               {% for user in feature.users.all() %}
@@ -103,6 +103,9 @@
       </table>
     </div>
   </div>
+
+  <!-- Paginator -->
+  {% include "includes/pagination.html" %}
 </main>
 {% endblock %}
 

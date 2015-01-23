@@ -16,7 +16,7 @@
     {% endif %}
   </div>
 
-  {% macro display_polls(polls, show_pagination) -%}
+  {% macro display_polls(objects, show_pagination) -%}
     <div class="large-12 columns">
       <table class="dashboard-table responsive">
         <thead>
@@ -30,7 +30,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for poll in polls %}
+          {% for poll in objects %}
             <tr>
               <td>
                 <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
@@ -60,31 +60,8 @@
         </tbody>
       </table>
       {% if show_pagination %}
-        <div class="row">
-          <div class="large-12 columns" id="voting-pagination">
-            {% if polls.has_previous() %}
-              <a class="prev" title="Previous Page" data-tooltip
-                 href="{{ '#'|urlparams(page=polls.previous_page_number()) }}">
-                &laquo;
-              </a>
-            {% endif %}
-            <label for="page-select">Page: </label>
-            <select id="page-select" autocomplete="off">
-              {% for i in range(1, polls.paginator.num_pages + 1) %}
-                <option {% if i == polls.number %} selected {% endif %}
-                        value="{{ '#'|urlparams(page=i) }}">
-                  {{ i }}
-                </option>
-              {% endfor %}
-            </select>
-            {% if polls.has_next() %}
-              <a class="next" title="Next Page" data-tooltip
-                 href="{{ '#'|urlparams(page=polls.next_page_number()) }}">
-                &raquo;
-              </a>
-            {% endif %}
-          </div>
-        </div>
+        <!-- Paginator -->
+        {% include "includes/pagination.html" %}
       {% endif %}
     </div>
   {%- endmacro%}

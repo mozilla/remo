@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
@@ -31,7 +32,6 @@ LIST_NG_REPORTS_VALID_SORTS = {
     'activity_asc': 'activity__name',
     'report_date_desc': '-report_date',
     'report_date_asc': 'report_date'}
-LIST_REPORTS_NUMBER_OF_REPORTS_PER_PAGE = 25
 
 
 @never_cache
@@ -241,7 +241,7 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
     sort_by = LIST_NG_REPORTS_VALID_SORTS[sort_key]
     report_list = report_list.order_by(*sort_by.split(','))
 
-    paginator = Paginator(report_list, LIST_REPORTS_NUMBER_OF_REPORTS_PER_PAGE)
+    paginator = Paginator(report_list, settings.ITEMS_PER_PAGE)
 
     # Make sure page request is an int. If not, deliver first page.
     try:
@@ -256,7 +256,7 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
         reports = paginator.page(paginator.num_pages)
 
     return render(request, 'list_ng_reports.html',
-                  {'reports': reports,
+                  {'objects': reports,
                    'number_of_reports': number_of_reports,
                    'sort_key': sort_key,
                    'pageheader': pageheader,

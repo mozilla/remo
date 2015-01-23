@@ -22,7 +22,7 @@ class FeaturedRep(models.Model):
     users = models.ManyToManyField(User, related_name='featuredrep_users')
 
     class Meta:
-        ordering = ['-updated_on']
+        ordering = ['-created_on']
         get_latest_by = 'updated_on'
         permissions = (('can_edit_featured', 'Can edit featured reps'),
                        ('can_delete_featured', 'Can delete featured reps'))

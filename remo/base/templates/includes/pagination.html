@@ -1,0 +1,27 @@
+<div class="row">
+    <div class="large-12 columns pagination">
+      {% if objects.has_previous() %}
+        <a class="prev" title="Previous page" data-tooltip
+           href="{{ '#'|urlparams(page=objects.previous_page_number(),
+                                  sort_key=sort_key, query=query) }}">
+          &laquo;
+        </a>
+      {% endif %}
+      <label for="page-select">Page: </label>
+      <select id="page-select" autocomplete="off">
+        {% for i in range(1, objects.paginator.num_pages + 1) %}
+          <option {% if i == objects.number %} selected {% endif %}
+                  value="{{ '#'|urlparams(page=i, sort_key=sort_key, query=query) }}">
+            {{ i }}
+          </option>
+        {% endfor %}
+      </select>
+      {% if objects.has_next() %}
+        <a class="next" title="Next page" data-tooltip
+           href="{{ '#'|urlparams(page=objects.next_page_number(),
+                                  sort_key=sort_key, query=query) }}">
+          &raquo;
+        </a>
+      {% endif %}
+    </div>
+</div>
