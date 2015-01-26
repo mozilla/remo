@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 
+import waffle
 from celery.task import periodic_task, task
 
 from remo.base.mozillians import is_vouched
@@ -71,7 +72,8 @@ def reset_rotm_nominees():
     now_date = now().date()
     days_of_month = monthrange(now_date.year, now_date.month)[1]
     reset_poll_day = days_of_month - ROTM_RESET_DAYS_OFFSET
-    if now_date == date(now_date.year, now_date.month, reset_poll_day):
+    if (now_date == date(now_date.year, now_date.month, reset_poll_day) or
+            waffle.switch_is_active('enable_rotm_tasks')):
         nominees = UserProfile.objects.filter(is_rotm_nominee=True)
         for nominee in nominees:
             nominee.is_rotm_nominee = False

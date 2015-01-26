@@ -235,7 +235,8 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
                 {% endfor %}
               </h6>
             {% endif %}
-            {% if is_nomination_period and user_is_mentor(request_user) %}
+            {% if (is_nomination_period and user_is_mentor(request_user)) or
+                  waffle.switch('enable_rotm_tasks') %}
               <p class="profile-item">
                 <form id="nominate-rotm-form" method="post"
                       actions="{{ url('profiles_view_profile', user_profile.display_name) }}">

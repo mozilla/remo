@@ -11,6 +11,8 @@ from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 
+import waffle
+
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date, number2month
 from remo.dashboard.models import ActionItem
@@ -125,6 +127,7 @@ def create_rotm_poll():
     """
     # Avoid circular dependencies
     from remo.voting.models import Poll, RangePoll, RangePollChoice
+    create_poll_flag = True
 
     poll_name = 'Rep of the month for {0}'.format(number2month(now().month))
     days_of_month = monthrange(now().year, now().month)[1]
@@ -138,7 +141,7 @@ def create_rotm_poll():
                                     end__range=[start, end])
 
     if not now().date() > ROTM_NOMINATION_END_DATE or rotm_poll.exists():
-        return
+        create_poll_flag = False
 
     remobot = User.objects.get(username='remobot')
     description = 'Automated vote for the Rep of this month.'
@@ -146,15 +149,17 @@ def create_rotm_poll():
     nominees = User.objects.filter(userprofile__registration_complete=True,
                                    userprofile__is_rotm_nominee=True)
 
-    with transaction.commit_on_success():
-        poll = Poll.objects.create(name=poll_name,
-                                   description=description,
-                                   valid_groups=mentor_group,
-                                   start=now() + timedelta(hours=8),
-                                   end=end,
-                                   created_by=remobot)
-        range_poll = RangePoll.objects.create(poll=poll,
-                                              name='Rep of the month nominees')
-        for nominee in nominees:
-            RangePollChoice.objects.create(range_poll=range_poll,
-                                           nominee=nominee)
+    if create_poll_flag or waffle.switch_is_active('enable_rotm_tasks'):
+        with transaction.commit_on_success():
+            poll = Poll.objects.create(name=poll_name,
+                                       description=description,
+                                       valid_groups=mentor_group,
+                                       start=now() + timedelta(hours=8),
+                                       end=end,
+                                       created_by=remobot)
+            range_poll = RangePoll.objects.create(
+                poll=poll, name='Rep of the month nominees')
+
+            for nominee in nominees:
+                RangePollChoice.objects.create(range_poll=range_poll,
+                                               nominee=nominee)
