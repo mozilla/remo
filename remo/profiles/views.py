@@ -11,6 +11,7 @@ from django.utils.encoding import iri_to_uri
 from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_control, never_cache
 
+import waffle
 from django_statsd.clients import statsd
 from django_browserid.auth import default_username_algo
 from funfactory.helpers import urlparams
@@ -174,8 +175,10 @@ def view_profile(request, display_name):
                  'display_name': user.userprofile.display_name})
             messages.info(request, mark_safe(msg))
 
-    if nominee_form.is_valid() and is_nomination_period:
-        if request.user.groups.filter(name='Mentor').exists():
+    if nominee_form.is_valid():
+        if ((is_nomination_period or
+             waffle.switch_is_active('enable_rotm_tasks')) and
+                request.user.groups.filter(name='Mentor').exists()):
             nominee_form.save()
             return redirect('profiles_view_profile', display_name=display_name)
         messages.warning(request, ('Only mentors can nominate a mentee.'))
