@@ -16,7 +16,6 @@ from remo.base.utils import number2month
 from remo.profiles.models import UserProfile
 
 
-ROTM_RESET_DAYS_OFFSET = 12
 ROTM_REMINDER_DAY = 1
 
 
@@ -66,13 +65,12 @@ def reset_rotm_nominees():
 
     This task will reset the nomination bit for the Rep of the month in the
     user profiles, for all the users nominated in each month. This will take
-    place 4 days before the end of each month.
+    place at the last day of each month.
     """
 
     now_date = now().date()
     days_of_month = monthrange(now_date.year, now_date.month)[1]
-    reset_poll_day = days_of_month - ROTM_RESET_DAYS_OFFSET
-    if (now_date == date(now_date.year, now_date.month, reset_poll_day) or
+    if (now_date == date(now_date.year, now_date.month, days_of_month) or
             waffle.switch_is_active('enable_rotm_tasks')):
         nominees = UserProfile.objects.filter(is_rotm_nominee=True)
         for nominee in nominees:
