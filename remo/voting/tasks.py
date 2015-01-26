@@ -155,7 +155,7 @@ def create_rotm_poll():
                                        description=description,
                                        valid_groups=mentor_group,
                                        start=now() + timedelta(hours=8),
-                                       end=end,
+                                       end=now() + timedelta(days=7),
                                        created_by=remobot)
             range_poll = RangePoll.objects.create(
                 poll=poll, name='Rep of the month nominees')
