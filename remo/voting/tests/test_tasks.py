@@ -125,8 +125,11 @@ class VotingRotmTestTasks(RemoTestCase):
         eq_(set([choice.nominee for choice in range_poll_choices]),
             set([nominee_1, nominee_2]))
 
+    @patch('remo.voting.tasks.waffle.switch_is_active')
     @patch('remo.voting.tasks.now')
-    def test_invalid_date(self, mocked_now_date):
+    def test_invalid_date(self, mocked_now_date, mocked_waffle_switch):
+        mocked_waffle_switch.return_value = False
+        UserFactory.create(username='remobot')
         UserFactory.create(userprofile__is_rotm_nominee=True)
         UserFactory.create(userprofile__is_rotm_nominee=True)
         mocked_now_date.return_value = datetime(now().year, now().month, 5)
@@ -138,8 +141,11 @@ class VotingRotmTestTasks(RemoTestCase):
         poll = Poll.objects.filter(name=poll_name)
         ok_(not poll.exists())
 
+    @patch('remo.voting.tasks.waffle.switch_is_active')
     @patch('remo.voting.tasks.now')
-    def test_poll_already_exists(self, mocked_now_date):
+    def test_poll_already_exists(self, mocked_now_date, mocked_waffle_switch):
+        mocked_waffle_switch.return_value = False
+        UserFactory.create(username='remobot')
         UserFactory.create(userprofile__is_rotm_nominee=True)
         UserFactory.create(userprofile__is_rotm_nominee=True)
         # Nomination ends on the 7th of each month
