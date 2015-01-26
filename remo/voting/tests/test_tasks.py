@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.contrib.auth.models import Group, User
 from django.core import mail
@@ -129,7 +129,7 @@ class VotingRotmTestTasks(RemoTestCase):
     def test_invalid_date(self, mocked_now_date):
         UserFactory.create(userprofile__is_rotm_nominee=True)
         UserFactory.create(userprofile__is_rotm_nominee=True)
-        mocked_now_date.return_value = datetime(now().year, now().month, 9)
+        mocked_now_date.return_value = datetime(now().year, now().month, 5)
         poll_name = ('Rep of the month for {0}'.format(
                      number2month(now().month)))
 
@@ -142,8 +142,10 @@ class VotingRotmTestTasks(RemoTestCase):
     def test_poll_already_exists(self, mocked_now_date):
         UserFactory.create(userprofile__is_rotm_nominee=True)
         UserFactory.create(userprofile__is_rotm_nominee=True)
-        mocked_now_date.return_value = datetime(now().year, now().month, 11)
-        poll_start, poll_end = now(), now() + timedelta(hours=1)
+        # Nomination ends on the 7th of each month
+        mocked_now_date.return_value = datetime(now().year, now().month, 10)
+        poll_start = datetime(now().year, now().month, 1)
+        poll_end = datetime(now().year, now().month, 15)
         poll_name = ('Rep of the month for {0}'.format(
                      number2month(now().month)))
 

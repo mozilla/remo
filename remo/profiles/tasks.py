@@ -10,10 +10,13 @@ from django.utils.timezone import now
 from celery.task import periodic_task, task
 
 from remo.base.mozillians import is_vouched
+from remo.base.tasks import send_remo_mail
+from remo.base.utils import number2month
 from remo.profiles.models import UserProfile
 
 
-DAYS_OFFSET = 4
+ROTM_RESET_DAYS_OFFSET = 12
+ROTM_REMINDER_DAY = 1
 
 
 @task
@@ -67,9 +70,28 @@ def reset_rotm_nominees():
 
     now_date = now().date()
     days_of_month = monthrange(now_date.year, now_date.month)[1]
-    reset_poll_day = days_of_month - DAYS_OFFSET
+    reset_poll_day = days_of_month - ROTM_RESET_DAYS_OFFSET
     if now_date == date(now_date.year, now_date.month, reset_poll_day):
         nominees = UserProfile.objects.filter(is_rotm_nominee=True)
         for nominee in nominees:
             nominee.is_rotm_nominee = False
             nominee.save()
+
+
+@task(run_every=timedelta(hours=24))
+def send_rotm_nomination_reminder():
+    """ Send an email reminder to all mentors.
+
+    The first day of each month, the mentor group receives an email reminder
+    in order to nominate Reps for the Rep of the month voting.
+    """
+
+    now_date = now().date()
+    if now_date.day == ROTM_REMINDER_DAY:
+        data = {'month': number2month(now_date.month)}
+        subject = 'Nominate Rep of the month'
+        template = 'emails/mentors_rotm_reminder.txt'
+        send_remo_mail(subject=subject,
+                       email_template=template,
+                       recipients_list=[settings.REPS_MENTORS_LIST],
+                       data=data)

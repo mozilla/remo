@@ -1,0 +1,12 @@
+Hi Mentors,
+
+It is that time of the month again!
+Please take some time to add the nominations for the Rep of the month.
+This is a great way to highlight and recognize some of the great work
+accomplished by Reps the month of {{ month }}.
+
+Please note that as a Mentor you can nominate any Rep and not
+just your mentees. This can be done easily in the profile of each user.
+
+Regards,
+Your lovely ReMo bot
