@@ -59,7 +59,7 @@ def check_celery():
     pass
 
 
-@task(run_every=timedelta(hours=24))
+@periodic_task(run_every=timedelta(hours=24))
 def reset_rotm_nominees():
     """Reset the Rep of the month nomination in user profiles.
 

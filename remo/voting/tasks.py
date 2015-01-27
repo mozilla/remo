@@ -129,27 +129,28 @@ def create_rotm_poll():
     create_poll_flag = True
 
     poll_name = 'Rep of the month for {0}'.format(number2month(now().month))
-    start = datetime.combine(date(now().year, now().month, 1),
-                             datetime.min.time())
+    start = (datetime.combine(ROTM_NOMINATION_END_DATE, datetime.min.time()) +
+             timedelta(days=1))
     end = start + timedelta(days=ROTM_VOTING_DAYS)
     rotm_poll = Poll.objects.filter(name=poll_name, start=start, end=end)
 
     if not now().date() > ROTM_NOMINATION_END_DATE or rotm_poll.exists():
         create_poll_flag = False
 
-    if create_poll_flag or waffle.switch_is_active('enable_rotm_tasks'):
+    nominees = User.objects.filter(userprofile__registration_complete=True,
+                                   userprofile__is_rotm_nominee=True)
+    if ((nominees and create_poll_flag) or
+            waffle.switch_is_active('enable_rotm_tasks')):
         remobot = User.objects.get(username='remobot')
         description = 'Automated vote for the Rep of this month.'
         mentor_group = Group.objects.get(name='Mentor')
-        nominees = User.objects.filter(userprofile__registration_complete=True,
-                                       userprofile__is_rotm_nominee=True)
 
         with transaction.commit_on_success():
             poll = Poll.objects.create(name=poll_name,
                                        description=description,
                                        valid_groups=mentor_group,
-                                       start=now() + timedelta(hours=8),
-                                       end=now() + timedelta(days=7),
+                                       start=start,
+                                       end=end,
                                        created_by=remobot)
             range_poll = RangePoll.objects.create(
                 poll=poll, name='Rep of the month nominees')
