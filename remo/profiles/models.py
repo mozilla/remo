@@ -354,18 +354,29 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
           dispatch_uid='userprofile_email_mentor_notification')
 def email_mentor_notification(sender, instance, raw, **kwargs):
     """Notify mentor when his/her mentee changes mentor on his/her profile."""
-    if UserProfile.objects.filter(user=instance.user).exists() and not raw:
-        user_profile = UserProfile.objects.get(user=instance.user)
-        if user_profile.mentor and user_profile.mentor != instance.mentor:
-            subject = '[Reps] Mentor reassignment.'
-            email_template = 'emails/mentor_change_notification.txt'
-            recipients = [user_profile.mentor.id, user_profile.user.id,
-                          instance.mentor.id]
-            ctx_data = {'rep_user': instance.user,
-                        'new_mentor': instance.mentor}
-            send_remo_mail.delay(recipients_list=recipients, subject=subject,
-                                 email_template=email_template, data=ctx_data)
-            statsd.incr('profiles.change_mentor')
+    user_profile = get_object_or_none(UserProfile, user=instance.user)
+
+    if not user_profile or not user_profile.mentor or raw:
+        return
+
+    if user_profile.mentor != instance.mentor:
+        subject = '[Reps] Mentor reassignment.'
+        email_template = 'emails/mentor_change_notification.txt'
+        mentors_recipients = [user_profile.mentor.id, instance.mentor.id]
+        rep_recipient = [instance.user.id]
+        ctx_data = {'rep_user': instance.user,
+                    'new_mentor': instance.mentor}
+        send_remo_mail.delay(recipients_list=mentors_recipients,
+                             subject=subject,
+                             email_template=email_template,
+                             data=ctx_data,
+                             headers={'Reply-To': instance.user.email})
+        send_remo_mail.delay(recipients_list=rep_recipient,
+                             subject=subject,
+                             email_template=email_template,
+                             data=ctx_data,
+                             headers={'Reply-To': instance.mentor.email})
+        statsd.incr('profiles.change_mentor')
 
 
 @receiver(pre_save, sender=UserProfile,
