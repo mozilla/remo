@@ -313,22 +313,30 @@ class PermissionTest(TestCase):
             ok_(not user.has_perm(permission))
 
 
-class EmailMentorNotification(TestCase):
-    """Test that a mentor receives an email when a Mentee
-    changes  mentor  on his/her profile.
-    """
+class EmailMentorNotification(RemoTestCase):
+    """Test that a mentor receives an email when a Mente changes  mentor."""
 
     def test_send_email_on_mentor_change(self):
         """Test that old mentor gets an email."""
-        new_mentor = UserFactory.create(groups=['Rep', 'Mentor'],
-                                        userprofile__initial_council=True)
-        old_mentor = UserFactory.create(groups=['Rep', 'Mentor'],
-                                        userprofile__initial_council=True)
+        new_mentor = UserFactory.create(groups=['Rep', 'Mentor'])
+        old_mentor = UserFactory.create(groups=['Rep', 'Mentor'])
         user = UserFactory.create(groups=['Rep'],
                                   userprofile__mentor=old_mentor)
         user.userprofile.mentor = new_mentor
         user.userprofile.save()
         eq_(len(mail.outbox), 3)
+        recipients = set([mail.outbox[0].to[0],
+                          mail.outbox[1].to[0],
+                          mail.outbox[2].to[0]])
+        receivers = set(['{0} <{1}>'.format(new_mentor.get_full_name(),
+                                            new_mentor.email),
+                         '{0} <{1}>'.format(old_mentor.get_full_name(),
+                                            old_mentor.email),
+                         '{0} <{1}>'.format(user.get_full_name(),
+                                            user.email)])
+        eq_(recipients, receivers)
+        eq_(set([msg.extra_headers['Reply-To'] for msg in mail.outbox]),
+            set([new_mentor.email, user.email]))
 
 
 class UserStatusNotification(RemoTestCase):
