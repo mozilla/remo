@@ -64,7 +64,8 @@ def edit(request, display_name):
 
     userform = forms.ChangeUserForm(request.POST or None, instance=user)
     profileform = forms.ChangeProfileForm(request.POST or None,
-                                          instance=user.userprofile)
+                                          instance=user.userprofile,
+                                          request=request)
     profile_date_form = forms.ChangeDatesForm(request.POST or None,
                                               instance=user.userprofile)
 

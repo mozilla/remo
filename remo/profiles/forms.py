@@ -108,6 +108,7 @@ class ChangeProfileForm(happyforms.ModelForm):
 
         Dynamically set choices for mentor and country fields.
         """
+        self.request = kwargs.pop('request', None)
         super(ChangeProfileForm, self).__init__(*args, **kwargs)
         query = (User.objects.filter(userprofile__registration_complete=True,
                                      groups__name='Mentor')
@@ -133,6 +134,12 @@ class ChangeProfileForm(happyforms.ModelForm):
     def clean_mentor(self):
         """Convert mentor field from number to User."""
         value = self.cleaned_data['mentor']
+
+        # Do not raise a validation error if the user belongs to the Alumni
+        # group
+        if self.request.POST.get('alumni_group', None):
+            return None
+
         if value == u'None':
             raise ValidationError('Please select a mentor.')
 
