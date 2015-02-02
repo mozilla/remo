@@ -78,7 +78,7 @@ def reset_rotm_nominees():
             nominee.save()
 
 
-@task(run_every=timedelta(hours=24))
+@periodic_task(run_every=timedelta(hours=24))
 def send_rotm_nomination_reminder():
     """ Send an email reminder to all mentors.
 
