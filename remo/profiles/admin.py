@@ -108,7 +108,7 @@ class UserAdmin(ExportMixin, UserAdmin):
     list_filter = (UserAdmin.list_filter +
                    ('userprofile__registration_complete', RepProfileFilter,
                     MozillianProfileFilter, MentorProfileFilter,
-                    CouncilProfileFilter,))
+                    CouncilProfileFilter, 'userprofile__is_rotm_nominee'))
 
     def get_urls(self):
         """Return custom and UserAdmin urls."""
