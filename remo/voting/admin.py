@@ -57,6 +57,8 @@ class PollAdmin(ExportMixin, admin.ModelAdmin):
 class VoteAdmin(ExportMixin, admin.ModelAdmin):
     """Vote Admin"""
     model = Vote
+    search_fields = ['user__first_name', 'user__last_name', 'poll__name']
+    list_display = ['user', 'poll', 'date_voted']
 
 
 admin.site.register(Vote, VoteAdmin)
