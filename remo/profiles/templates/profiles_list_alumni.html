@@ -1,0 +1,80 @@
+{% extends "base_fd4.html" %}
+{% block pagetitle %}Mozilla Reps - Alumni{% endblock %}
+
+{% block logo %}
+  <h1><span class="metabold">mozilla</span> reps</h1>
+{% endblock %}
+
+{% block content %}
+<main role="main" class="voting-main">
+
+  <div class="row">
+    <div class="large-12 columns">
+      <h1>Alumni Reps<h1>
+    </div>
+  </div>
+
+
+  <div class="row">
+    {% if objects %}
+      <!-- Alumni are here -->
+      <div class="large-12 columns">
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th class="dashboard-clickable type-string">Full Name</th>
+              <th class="dashboard-clickable type-string">Username</th>
+              <th class="dashboard-clickable type-string">Start Date</th>
+              <th class="dashboard-clickable type-string">End Date</th>
+              <th class="dashboard-clickable type-string">Region</th>
+              <th class="dashboard-clickable type-string">Country</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in objects %}
+              <tr>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                                  display_name=user.userprofile.display_name) }}">
+                    {{ user.get_full_name() }}
+                  </a>
+                </td>
+                <td>{{ user.userprofile.display_name }}</td>
+                <td title="{{ user.userprofile.date_joined_program|strftime('%d %B %Y') }}"
+                    data-time="{{ user.userprofile.date_joined_program|format_datetime_iso }}">
+                  {{ user.userprofile.date_joined_program|strftime('%d %B %Y') }}
+                </td>
+                {% if user.userprofile.date_left_program %}
+                  <td title="{{ user.userprofile.date_left_program|strftime('%d %B %Y') }}"
+                      data-time="{{ user.userprofile.date_left_program|format_datetime_iso }}">
+                    {{ user.userprofile.date_left_program|strftime('%d %B %Y') }}
+                  </td>
+                {% else %}
+                  <td>Not available</td>
+                {% endif %}
+                <td>{{ user.userprofile.region }}</td>
+                <td>{{ user.userprofile.country }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% if show_pagination %}
+          <!-- Paginator -->
+          {% include "includes/pagination.html" %}
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="large-12 columns profiles-no-results">
+        Sorry, no Alumni found.
+      </div>
+    {% endif %}
+  </div>
+</main>
+
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('profiles/js/alumni_list.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

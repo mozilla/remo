@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group, User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import Http404
@@ -148,6 +149,7 @@ def view_profile(request, display_name):
     """View user profile."""
     user = get_object_or_404(User,
                              userprofile__display_name__iexact=display_name)
+    user_is_alumni = user.groups.filter(name='Alumni').exists()
     if not user.groups.filter(Q(name='Rep') | Q(name='Alumni')).exists():
         raise Http404
 
@@ -166,7 +168,8 @@ def view_profile(request, display_name):
             'mentor': user.userprofile.mentor,
             'usergroups': usergroups,
             'user_nominated': user.userprofile.is_rotm_nominee,
-            'is_nomination_period': is_nomination_period}
+            'is_nomination_period': is_nomination_period,
+            'user_is_alumni': user_is_alumni}
 
     if user.userprofile.is_unavailable:
         status = UserStatus.objects.filter(user=user).latest('created_on')
@@ -188,6 +191,10 @@ def view_profile(request, display_name):
             nominee_form.save()
             return redirect('profiles_view_profile', display_name=display_name)
         messages.warning(request, ('Only mentors can nominate a mentee.'))
+
+    if user_is_alumni:
+        msg = 'Note: You are viewing a profile of an inactive Rep'
+        messages.info(request, msg)
 
     today = now().date()
 
@@ -250,3 +257,21 @@ def delete_user(request, display_name):
         statsd.incr('profiles.delete_profile')
 
     return redirect('main')
+
+
+@cache_control(private=True)
+def list_alumni(request):
+    """List users in Alumni Group."""
+    query = User.objects.filter(groups__name='Alumni')
+
+    alumni_paginator = Paginator(query, settings.ITEMS_PER_PAGE)
+    alumni_page = request.GET.get('page', 1)
+
+    try:
+        objects = alumni_paginator.page(alumni_page)
+    except PageNotAnInteger:
+        objects = alumni_paginator.page(1)
+    except EmptyPage:
+        objects = alumni_paginator.page(alumni_paginator.num_pages)
+
+    return render(request, 'profiles_list_alumni.html', {'objects': objects})

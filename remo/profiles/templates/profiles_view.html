@@ -100,6 +100,24 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           </div>
         </div>
       {% endif %}
+      {% if user_is_alumni %}
+        <div class="row">
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large triangle"></div>
+          </div>
+          <div class="large-11 columns">
+            <p class="profile-item">
+              <span class="label radius inline">
+                Inactive Rep
+              </span>
+              <p>
+                This Rep has been active from {{ user_profile.date_joined_program.strftime('%d %B %Y') }}
+                until {{ user_profile.date_left_program.strftime('%d %B %Y') }}
+              </p>
+            </p>
+          </div>
+        </div>
+      {% endif %}
       {% if user_profile.bio %}
         <div class="row">
           <div class="large-1 columns pictogram">
