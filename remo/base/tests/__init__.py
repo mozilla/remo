@@ -19,6 +19,63 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
 )
 
+VOUCHED_MOZILLIAN = """
+{
+    "meta": {
+        "previous": null,
+        "total_count": 1,
+        "offset": 0,
+        "limit": 20,
+        "next": null
+    },
+    "objects":
+    [
+        {
+            "website": "",
+            "bio": "",
+            "groups": [
+                "foo bar"
+            ],
+            "skills": [],
+            "email": "vouched@mail.com",
+            "is_vouched": true
+        }
+    ]
+}
+"""
+
+NOT_VOUCHED_MOZILLIAN = """
+{
+  "meta": {
+    "previous": null,
+    "total_count": 1,
+    "offset": 0,
+    "limit": 20,
+    "next": null
+  },
+  "objects": [
+    {
+      "website": "",
+      "bio": "",
+      "groups": [
+        "no login"
+      ],
+      "skills": [],
+      "is_vouched": false,
+      "email": "not_vouched@mail.com"
+    }
+  ]
+}
+"""
+
+
+class MozillianResponse(object):
+    """Mozillians Response."""
+
+    def __init__(self, content=None, status_code=200):
+        self.content = content
+        self.status_code = status_code
+
 
 @override_settings(AUTHENTICATION_BACKENDS=AUTHENTICATION_BACKENDS,
                    PASSWORD_HASHERS=PASSWORD_HASHERS)

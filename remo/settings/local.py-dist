@@ -5,7 +5,7 @@ from . import base
 
 # To extend any settings from settings/base.py here's an example:
 #from . import base
-#INSTALLED_APPS = base.INSTALLED_APPS + ['debug_toolbar']
+# INSTALLED_APPS = list(base.INSTALLED_APPS) + ['debug_toolbar']
 
 DATABASES = {
     'default': {
@@ -75,8 +75,14 @@ SESSION_COOKIE_SECURE=False
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Uncomment the following lines to use the database email backend for debugging.
-# INSTALLED_APPS = base.INSTALLED_APPS + ['database_email_backend']
+# INSTALLED_APPS = list(base.INSTALLED_APPS) + ['database_email_backend']
 # EMAIL_BACKEND = 'database_email_backend.backend.DatabaseEmailBackend'
+
+# Uncomment the following lines to use django_browserid for offline developemnt
+# AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
+# 'django_browserid.auth.AutoLoginBackend',
+# 'django_browserid.auth.BrowserIDBackend')
+#
 
 # Uncomment these to activate and customize Celery:
 # CELERY_ALWAYS_EAGER = False  # required to activate celeryd
@@ -95,9 +101,13 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #CEF_PRODUCT = 'Playdoh'
 #CEF_VENDOR = 'Mozilla'
 
-# Uncomment the following line for local development, or BrowserID
+# Uncomment the following two lines for local development, or BrowserID
 # will fail to log you in.
 # SITE_URL = 'http://127.0.0.1:8000'
+# BROWSERID_AUDIENCES = [SITE_URL]
+# Auto-login for offline development
+# BROWSERID_AUTOLOGIN_EMAIL = 'your_email@example.com'
+# BROWSERID_AUTOLOGIN_ENABLED = True
 
 # remozilla configuration
 # REMOZILLA_USERNAME = ''

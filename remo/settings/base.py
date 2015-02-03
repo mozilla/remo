@@ -5,28 +5,30 @@ from funfactory.settings_base import *  # noqa
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'remo.urls'
 
-INSTALLED_APPS = (['south'] +
-                  list(INSTALLED_APPS) + [
-                      # Application base, containing global templates.
-                      'django.contrib.admin',
-                      'django.contrib.messages',
-                      'django.contrib.markup',
+INSTALLED_APPS = get_apps(append=[
+    # Application base, containing global templates.
+    'django.contrib.admin',
+    'django.contrib.messages',
+    'django.contrib.markup',
 
-                      'remo.base',
-                      'remo.profiles',
-                      'remo.featuredrep',
-                      'remo.dashboard',
-                      'remo.remozilla',
-                      'remo.reports',
-                      'remo.api',
-                      'remo.events',
-                      'remo.voting',
+    'remo.base',
+    'remo.profiles',
+    'remo.featuredrep',
+    'remo.dashboard',
+    'remo.remozilla',
+    'remo.reports',
+    'remo.api',
+    'remo.events',
+    'remo.voting',
 
-                      'django_browserid',
-                      'jingo_offline_compressor',
-                      'tastypie',
-                      'waffle',
-                      'import_export'])
+    'django_browserid',
+    'jingo_offline_compressor',
+    'tastypie',
+    'waffle',
+    'import_export',
+    'south',
+    'django_nose'
+])
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
 # apps here:
@@ -55,17 +57,17 @@ JINGO_EXCLUDE_APPS = [
 LOGGING = dict(loggers=dict(playdoh={'level': logging.DEBUG}))
 
 # Add BrowserID as authentication backend
-AUTHENTICATION_BACKENDS = ('django_browserid.auth.BrowserIDBackend',
-                           'django.contrib.auth.backends.ModelBackend')
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
+                           'remo.base.backend.RemoBrowserIDBackend')
+
 
 # Required for BrowserID. Very important security feature
 SITE_URL = 'https://reps.mozilla.org'
 
 # Override BrowserID verification
 BROWSERID_VERIFY_CLASS = 'remo.base.views.BrowserIDVerify'
-
-# Do not create user on login
-BROWSERID_CREATE_USER = False
+# Browserid Audiences
+BROWSERID_AUDIENCES = [SITE_URL]
 
 # Optional BrowserID settings
 LOGIN_REDIRECT_URL = '/dashboard/'
@@ -84,7 +86,6 @@ MIDDLEWARE_CLASSES += (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS += (
-    'django_browserid.context_processors.browserid',
     'django.core.context_processors.static',
     'django.contrib.messages.context_processors.messages'
 )

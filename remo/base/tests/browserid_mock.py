@@ -12,10 +12,17 @@ class mock_browserid(object):
 
     def __init__(self, email=None):
         self.settings_patches = (
-            patch.object(settings, 'AUTHENTICATION_BACKENDS',
-                         ['django_browserid.auth.BrowserIDBackend']),
-            patch.object(settings, 'SITE_URL', 'http://testserver'))
-        self.patcher = patch('django_browserid.base._verify_http_request')
+            patch.object(
+                settings, 'AUTHENTICATION_BACKENDS',
+                ('django_browserid.auth.BrowserIDBackend',)
+            ),
+            patch.object(
+                settings, 'BROWSERID_AUDIENCES',
+                ['http://testserver'],
+            )
+        )
+
+        self.patcher = patch('django_browserid.base.requests.post')
         if email is not None:
             self.return_value = {'status': 'okay', 'email': email}
         else:

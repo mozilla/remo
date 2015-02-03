@@ -58,7 +58,6 @@
   {% endcompress %}
   {% include "includes/google_analytics.html" %}
 
-  {{ browserid_css() }}
 </head>
 
 <body data-mapbox-token="{{ settings.MAPBOX_TOKEN }}">
@@ -90,7 +89,7 @@
                     {% set next=request.get_full_path() %}
                   {% endif %}
                   <span id="login-menu-locator">
-                    {{ browserid_login(text='Sign in', next=request.GET.next|default(next|default(''))) }}
+                    {{ browserid_login(next=request.GET.next|default(next|default(''))) }}
                   </span>
                   or
                   <a href="#" data-reveal-id="join-modal">Join</a>
@@ -327,7 +326,7 @@
 
   <!-- Included JS Files -->
   {% compress js %}
-    <script src="{{ static('base/js/jquery-1.7.1.js') }}"></script>
+    <script src="{{ static('base/js/jquery-1.11.2.min.js') }}"></script>
     <script src="{{ static('base/js/modernizr.foundation-4.js') }}"></script>
     <script src="{{ static('base/js/foundation-4.min.js') }}"></script>
     <script src="{{ static('base/js/responsive-tables.js') }}"></script>

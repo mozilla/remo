@@ -1,3 +1,6 @@
 south==0.8.1
 BeautifulSoup<4.0
 django-import-export==0.2.2
+
+# sha256: 5F9_ELpYjxzEZRmmHqiV92fi2Zpjfn3lr4cJsSFIXss
+django-browserid==0.11
