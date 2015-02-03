@@ -23,7 +23,7 @@ from remo.base.decorators import permission_check
 from remo.events.utils import get_events_for_user
 from remo.profiles.models import UserProfile, UserStatus
 from remo.profiles.models import FunctionalArea
-from remo.voting.tasks import ROTM_NOMINATION_END_DATE
+from remo.voting.tasks import rotm_nomination_end_date
 
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
@@ -153,7 +153,7 @@ def view_profile(request, display_name):
                                          instance=user.userprofile)
 
     usergroups = user.groups.filter(Q(name='Mentor') | Q(name='Council'))
-    is_nomination_period = timezone.now().date() < ROTM_NOMINATION_END_DATE
+    is_nomination_period = timezone.now().date() < rotm_nomination_end_date()
     data = {'pageuser': user,
             'user_profile': user.userprofile,
             'added_by': user.userprofile.added_by,
