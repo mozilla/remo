@@ -89,7 +89,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for action_item in actions.object_list %}
+            {% for action_item in objects %}
               <tr>
                 <td>
                   <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
@@ -112,33 +112,8 @@
     </div>
 
     <!-- Paginator -->
-    <div class="row">
-      <div class="large-12 columns" id="action-items-pagination">
-        {% if actions.has_previous() %}
-          <a class="prev" title="Previous page" data-tooltip
-             href="{{ '#'|urlparams(page=actions.previous_page_number(),
-                                    sort_key=sort_key, query=query) }}">
-            &laquo;
-          </a>
-        {% endif %}
-        <label for="page-select">Page: </label>
-        <select id="page-select" autocomplete="off">
-          {% for i in range(1, actions.paginator.num_pages + 1) %}
-            <option {% if i == actions.number %} selected {% endif %}
-                    value="{{ '#'|urlparams(page=i, sort_key=sort_key, query=query) }}">
-              {{ i }}
-            </option>
-          {% endfor %}
-        </select>
-        {% if actions.has_next() %}
-          <a class="next" title="Next page" data-tooltip
-             href="{{ '#'|urlparams(page=actions.next_page_number(),
-                                    sort_key=sort_key, query=query) }}">
-            &raquo;
-          </a>
-        {% endif %}
-      </div>
-    </div>
+    {% include "includes/pagination.html" %}
+
   {% endif %}
 
   <div class="row">

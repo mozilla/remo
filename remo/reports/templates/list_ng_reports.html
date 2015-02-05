@@ -107,7 +107,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for report in reports.object_list %}
+            {% for report in objects %}
               <tr>
                 <td>
                   <a href="{{ url('list_ng_reports_rep',
@@ -173,33 +173,9 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="large-12 columns" id="reports-pagination">
-        {% if reports.has_previous() %}
-          <a class="prev" title="Previous page" data-tooltip
-             href="{{ '#'|urlparams(page=reports.previous_page_number(),
-                                    sort_key=sort_key, query=query) }}">
-            &laquo;
-          </a>
-        {% endif %}
-        <label for="page-select">Page: </label>
-        <select id="page-select" autocomplete="off">
-          {% for i in range(1, reports.paginator.num_pages + 1) %}
-            <option {% if i == reports.number %} selected {% endif %}
-                    value="{{ '#'|urlparams(page=i, sort_key=sort_key, query=query) }}">
-              {{ i }}
-            </option>
-          {% endfor %}
-        </select>
-        {% if reports.has_next() %}
-          <a class="next" title="Next page" data-tooltip
-             href="{{ '#'|urlparams(page=reports.next_page_number(),
-                                    sort_key=sort_key, query=query) }}">
-            &raquo;
-          </a>
-        {% endif %}
-      </div>
-    </div>
+    <!-- Paginator -->
+    {% include "includes/pagination.html" %}
+
   {% endif %}
 
   <div class="row">

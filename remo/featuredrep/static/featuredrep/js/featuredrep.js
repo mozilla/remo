@@ -3,5 +3,6 @@ $(document).ready(function () {
         e.preventDefault();
         $(this).closest('form').submit();
     });
+    paginatorSelector();
 });
 

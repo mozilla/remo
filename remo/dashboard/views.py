@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
@@ -27,7 +28,6 @@ LIST_ACTION_ITEMS_VALID_SORTS = {
     'action_item_priority_asc': 'priority',
     'action_item_date_desc': '-due_date',
     'action_item_date_asc': 'due_date'}
-LIST_ACTION_ITEMS_PER_PAGE = 25
 
 
 def dashboard_mozillians(request, user):
@@ -249,7 +249,7 @@ def list_action_items(request):
     sort_by = LIST_ACTION_ITEMS_VALID_SORTS[sort_key]
     action_items = action_items.order_by(*sort_by.split(','))
 
-    paginator = Paginator(action_items, LIST_ACTION_ITEMS_PER_PAGE)
+    paginator = Paginator(action_items, settings.ITEMS_PER_PAGE)
 
     # Make sure page request is an int. If not, deliver first page.
     try:
@@ -264,7 +264,7 @@ def list_action_items(request):
         actions = paginator.page(paginator.num_pages)
 
     return render(request, 'list_action_items.html',
-                  {'actions': actions,
+                  {'objects': actions,
                    'number_of_action_items': number_of_action_items,
                    'sort_key': sort_key,
                    'pageheader': pageheader,

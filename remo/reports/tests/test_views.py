@@ -311,7 +311,7 @@ class ListNGReportTests(RemoTestCase):
         self.assertTemplateUsed(response, 'list_ng_reports.html')
         eq_(response.context['pageheader'], 'Activities for Reps')
         eq_(response.status_code, 200)
-        eq_(set(response.context['reports'].object_list),
+        eq_(set(response.context['objects'].object_list),
             set([report]))
 
     def test_list_rep(self):
@@ -324,7 +324,7 @@ class ListNGReportTests(RemoTestCase):
         response = self.get(url=reverse('list_ng_reports_rep',
                                         kwargs={'rep': name}), user=user)
         eq_(response.context['pageheader'], 'Activities for Foo Bar')
-        eq_(set(response.context['reports'].object_list),
+        eq_(set(response.context['objects'].object_list),
             set([report]), 'Other Rep reports are listed')
 
     def test_list_mentor(self):
@@ -340,7 +340,7 @@ class ListNGReportTests(RemoTestCase):
                                         kwargs={'mentor': name}), user=mentor)
         msg = 'Activities for Reps mentored by Foo Bar'
         eq_(response.context['pageheader'], msg)
-        eq_(set(response.context['reports'].object_list),
+        eq_(set(response.context['objects'].object_list),
             set([report_1, report_2]), 'Other Mentor reports are listed')
 
     def test_get_invalid_order(self):
@@ -353,7 +353,7 @@ class ListNGReportTests(RemoTestCase):
         report = NGReportFactory.create()
         NGReportFactory.create(report_date=datetime.date(2999, 1, 1))
         response = self.get(reverse('list_ng_reports'))
-        eq_(set(response.context['reports'].object_list),
+        eq_(set(response.context['objects'].object_list),
             set([report]))
 
     def test_functional_area_list(self):
@@ -364,7 +364,7 @@ class ListNGReportTests(RemoTestCase):
         url = reverse('list_ng_reports_functional_area',
                       kwargs={'functional_area_slug': functional_area_1.slug})
         response = self.get(url=url)
-        eq_(set(response.context['reports'].object_list), set([report]))
+        eq_(set(response.context['objects'].object_list), set([report]))
 
     def test_rep_functional_area_list(self):
         user = UserFactory.create(groups=['Rep'])
@@ -376,7 +376,7 @@ class ListNGReportTests(RemoTestCase):
                       kwargs={'functional_area_slug': functional_area.slug,
                               'rep': user.userprofile.display_name})
         response = self.get(url=url)
-        eq_(set(response.context['reports'].object_list), set([report]))
+        eq_(set(response.context['objects'].object_list), set([report]))
 
     def test_mentor_functional_area_list(self):
         mentor = UserFactory.create(groups=['Mentor'])
@@ -388,7 +388,7 @@ class ListNGReportTests(RemoTestCase):
                       kwargs={'functional_area_slug': functional_area.slug,
                               'mentor': mentor.userprofile.display_name})
         response = self.get(url=url)
-        eq_(set(response.context['reports'].object_list), set([report]))
+        eq_(set(response.context['objects'].object_list), set([report]))
 
 
 class LegacyReportingTests(RemoTestCase):

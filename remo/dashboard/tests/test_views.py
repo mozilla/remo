@@ -228,5 +228,5 @@ class ListActionItemsTests(RemoTestCase):
         self.assertTemplateUsed(response, 'list_action_items.html')
         eq_(response.context['pageheader'], 'My Action Items')
         eq_(response.status_code, 200)
-        eq_(set(response.context['actions'].object_list),
+        eq_(set(response.context['objects'].object_list),
             set([item]))

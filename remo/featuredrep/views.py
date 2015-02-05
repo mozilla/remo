@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_control, never_cache
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
 
 from remo.base.decorators import permission_check
 
@@ -10,11 +12,25 @@ import forms
 from models import FeaturedRep
 
 
-@cache_control(private=True, max_age=60*10)
+@cache_control(private=True, max_age=60 * 10)
 def list_featured(request):
     """List all Featured Reps."""
-    return render(request, 'featuredrep_list.html',
-                  {'featured': FeaturedRep.objects.all()})
+    featured_list = FeaturedRep.objects.all()
+
+    paginator = Paginator(featured_list,
+                          settings.ITEMS_PER_PAGE)
+    page = request.GET.get('page')
+
+    try:
+        featured = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        featured = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        featured = paginator.page(paginator.num_pages)
+
+    return render(request, 'featuredrep_list.html', {'objects': featured})
 
 
 @never_cache
