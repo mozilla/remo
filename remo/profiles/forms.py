@@ -108,6 +108,7 @@ class ChangeProfileForm(happyforms.ModelForm):
 
         Dynamically set choices for mentor and country fields.
         """
+        self.request = kwargs.pop('request', None)
         super(ChangeProfileForm, self).__init__(*args, **kwargs)
         query = (User.objects.filter(userprofile__registration_complete=True,
                                      groups__name='Mentor')
@@ -133,6 +134,12 @@ class ChangeProfileForm(happyforms.ModelForm):
     def clean_mentor(self):
         """Convert mentor field from number to User."""
         value = self.cleaned_data['mentor']
+
+        # Do not raise a validation error if the user belongs to the Alumni
+        # group
+        if self.request.POST.get('alumni_group', None):
+            return None
+
         if value == u'None':
             raise ValidationError('Please select a mentor.')
 
@@ -152,16 +159,33 @@ class ChangeProfileForm(happyforms.ModelForm):
                   'functional_areas', 'timezone')
 
 
-class ChangeDateJoinedForm(happyforms.ModelForm):
-    """Form to change userprofile date_joined_program field."""
-    date_joined_program = forms.DateField(
-        required=False,
-        widget=SelectDateWidget(years=range(2011, now().date().year + 1),
-                                required=False))
+class ChangeDatesForm(happyforms.ModelForm):
+    """Form to change the dates that user joined and left the program."""
 
     class Meta:
         model = UserProfile
-        fields = ['date_joined_program']
+        fields = ['date_joined_program', 'date_left_program']
+        widgets = {'date_joined_program':
+                   SelectDateWidget(years=range(2011, now().date().year + 1),
+                                    required=False),
+                   'date_left_program':
+                   SelectDateWidget(years=range(now().date().year - 1,
+                                                now().date().year + 1),
+                                    required=False)}
+
+    def save(self, commit=True):
+        """Override save method for custom functinality."""
+
+        # If a user belongs to the Alumni group and no date is suplied for
+        # leaving the program, the date is auto-populated.
+        # If a user is not member of the Alumni group the date_left_program
+        # must be None
+        if self.instance.user.groups.filter(name='Alumni').exists():
+            if 'date_left_program' not in self.changed_data:
+                self.instance.date_left_program = now().date()
+        else:
+            self.instance.date_left_program = None
+        super(ChangeDatesForm, self).save()
 
 
 class FunctionalAreaForm(happyforms.ModelForm):

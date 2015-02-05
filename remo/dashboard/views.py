@@ -99,8 +99,9 @@ def dashboard(request):
     user = request.user
     args = {}
 
-    # Mozillians block
-    if user.groups.filter(name='Mozillians').exists():
+    # Mozillians/Alumni block
+    if (user.groups.filter(name='Mozillians').exists() or
+            user.groups.filter(name='Alumni').exists()):
         return dashboard_mozillians(request, user)
 
     # Reps block

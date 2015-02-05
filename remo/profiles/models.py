@@ -96,6 +96,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     user = models.OneToOneField(User)
     registration_complete = models.BooleanField(default=False)
     date_joined_program = models.DateField(blank=True)
+    date_left_program = models.DateField(blank=True, null=True)
     local_name = models.CharField(max_length=100, blank=True, default='')
     birth_date = models.DateField(validators=[_validate_birth_date],
                                   blank=True, null=True)
@@ -149,7 +150,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
                                               (True, 'Female'),
                                               (False, 'Male')),
                                      default=None)
-    mentor = models.ForeignKey(User, null=True, blank=False,
+    mentor = models.ForeignKey(User, null=True, blank=True,
                                related_name='mentees',
                                validators=[_validate_mentor],
                                on_delete=models.SET_NULL)
@@ -354,6 +355,9 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
           dispatch_uid='userprofile_email_mentor_notification')
 def email_mentor_notification(sender, instance, raw, **kwargs):
     """Notify mentor when his/her mentee changes mentor on his/her profile."""
+    if not instance.mentor:
+        return
+
     user_profile = get_object_or_none(UserProfile, user=instance.user)
 
     if not user_profile or not user_profile.mentor or raw:
