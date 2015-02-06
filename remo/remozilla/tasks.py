@@ -24,7 +24,7 @@ BUGZILLA_FIELDS = [u'is_confirmed', u'summary', u'creator', u'creation_time',
                    u'status', u'assigned_to', u'resolution',
                    u'last_change_time', u'flags', u'comments']
 
-URL = ('https://api-dev.bugzilla.mozilla.org/latest/bug/'
+URL = ('https://api-dev.bugzilla.mozilla.org/latest/bug'
        '?username={username}&password={password}&'
        'product=Mozilla%20Reps&component={component}&'
        'include_fields={fields}&changed_after={timedelta}d&'
