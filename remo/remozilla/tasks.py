@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 from urllib import quote
 
@@ -24,12 +23,12 @@ BUGZILLA_FIELDS = [u'is_confirmed', u'summary', u'creator', u'creation_time',
                    u'status', u'assigned_to', u'resolution',
                    u'last_change_time', u'flags', u'comments']
 
-URL = ('https://api-dev.bugzilla.mozilla.org/latest/bug'
-       '?username={username}&password={password}&'
-       'product=Mozilla%20Reps&component={component}&'
+LOGIN_URL = ('https://bugzilla.mozilla.org/rest/login?login={username}'
+             '&password={password}')
+URL = ('https://bugzilla.mozilla.org/rest/bug?token={token}'
+       '&product=Mozilla%20Reps&component={component}&'
        'include_fields={fields}&changed_after={timedelta}d&'
        'offset={offset}&limit={limit}')
-
 LIMIT = 100
 
 
@@ -50,48 +49,59 @@ def fetch_bugs(components=COMPONENTS, days=None):
     Bugzilla users with users on this website, when possible.
 
     """
+    login_url = LOGIN_URL.format(username=settings.REMOZILLA_USERNAME,
+                                 password=settings.REMOZILLA_PASSWORD)
+    response = requests.get(login_url).json()
+    error = response.get('error')
+
+    # Check the server response and get the token
+    if error:
+        raise ValueError('Invalid response from server, {0}.'
+                         .format(response['error']))
+    token = response['token']
+
     now = timezone.now()
     if not days:
         days = (now - get_last_updated_date()).days + 1
 
     for component in components:
         offset = 0
-        url = URL.format(username=settings.REMOZILLA_USERNAME,
-                         password=settings.REMOZILLA_PASSWORD,
-                         component=quote(component),
+        url = URL.format(token=token, component=quote(component),
                          fields=','.join(BUGZILLA_FIELDS),
                          timedelta=days, offset=offset, limit=LIMIT)
 
         while True:
-            response = requests.get(url)
-            if response.status_code != 200:
-                raise ValueError('Invalid response from server.')
+            bugs = requests.get(url).json()
+            error = bugs.get('error')
 
-            bugs = json.loads(response.text)
+            # Check the server response and get the token
+            if error:
+                raise ValueError('Invalid response from server, {0}.'
+                                 .format(error))
 
-            if not bugs['bugs']:
+            remo_bugs = bugs.get('bugs', [])
+            if not remo_bugs:
                 break
 
-            for bdata in bugs['bugs']:
-                bug, created = Bug.objects.get_or_create(
-                    bug_id=int(bdata['id']))
+            for bdata in remo_bugs:
+                bug, created = Bug.objects.get_or_create(bug_id=bdata['id'])
 
-                bug.summary = bdata.get('summary', '').encode('utf-8')
-                creator_name = bdata['creator']['name']
-                bug.creator = get_object_or_none(User, email=creator_name)
+                bug.summary = unicode(bdata.get('summary', ''))
+                creator_email = bdata['creator']
+                bug.creator = get_object_or_none(User, email=creator_email)
                 bug.bug_creation_time = (
                     parse_bugzilla_time(bdata['creation_time']))
                 bug.component = bdata['component']
                 bug.whiteboard = bdata.get('whiteboard', '')
 
                 bug.cc.clear()
-                for person in bdata.get('cc', []):
-                    cc_user = get_object_or_none(User, email=person['name'])
+                for email in bdata.get('cc', []):
+                    cc_user = get_object_or_none(User, email=email)
                     if cc_user:
                         bug.cc.add(cc_user)
 
                 bug.assigned_to = get_object_or_none(
-                    User, email=bdata['assigned_to']['name'])
+                    User, email=bdata['assigned_to'])
                 bug.status = bdata['status']
                 bug.resolution = bdata.get('resolution', '')
                 bug.bug_last_change_time = parse_bugzilla_time(
@@ -108,17 +118,14 @@ def fetch_bugs(components=COMPONENTS, days=None):
                         if 'Council Reviewer Assigned' in bug.whiteboard:
                             bug.council_member_assigned = True
                     if ((flag['status'] == '?' and
-                         flag['name'] == 'needinfo' and
-                         'requestee' in flag and
-                         flag['requestee']['name'] == (
-                             settings.REPS_COUNCIL_ALIAS))):
+                         flag['name'] == 'needinfo' and 'requestee' in flag and
+                         flag['requestee'] == (settings.REPS_COUNCIL_ALIAS))):
                         automated_voting_trigger += 1
                     if flag['status'] == '?' and flag['name'] == 'remo-review':
                         bug.pending_mentor_validation = True
-                    if ((flag['status'] == '?' and
-                         flag['name'] == 'needinfo' and
-                         'requestee' in flag)):
-                        email = flag['requestee']['name']
+                    if (flag['status'] == '?' and flag['name'] == 'needinfo'
+                            and 'requestee' in flag):
+                        email = flag['requestee']
                         user = get_object_or_none(User, email=email)
                         if user:
                             bug.budget_needinfo.add(user)
@@ -130,7 +137,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 comments = bdata.get('comments', [])
                 if comments and comments[0].get('text', ''):
                     # Enforce unicode encoding.
-                    bug.first_comment = comments[0]['text'].encode('utf-8')
+                    bug.first_comment = unicode(comments[0]['text'])
 
                 bug.save()
 

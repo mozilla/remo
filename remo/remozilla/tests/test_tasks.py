@@ -1,12 +1,13 @@
-import json
-
 from django.conf import settings
+from django.contrib.auth.models import User
+
 from nose.exc import SkipTest
 from nose.tools import eq_, ok_, raises
 from test_utils import TestCase
+from urlparse import urlparse, parse_qs
 
 import requests
-from mock import ANY, patch
+from mock import ANY, Mock, patch
 
 from remo.profiles.tests import UserFactory
 from remo.remozilla.models import Bug
@@ -31,23 +32,22 @@ class FetchBugsTest(TestCase):
         fake_get.assert_called_with(ANY)
 
     @raises(ValueError)
-    @patch('requests.get')
-    def test_invalid_return_code(self, fake_get):
+    @patch('remo.remozilla.tasks.requests')
+    def test_invalid_return_code(self, mocked_request):
         """Test fetch_bugs invalid status code exception."""
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
              not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME '
                            'or REMOZILLA_PASSWORD.')
-        request = requests.Request()
-        request.status_code = 500
-        request.text = 'Foobar'
-        fake_get.return_value = request
+        mocked_obj = Mock()
+        mocked_request.get.return_value = mocked_obj
+        mocked_response = mocked_obj
+        mocked_response.json.return_value = {'error': 'Invalid login'}
         fetch_bugs()
-        fake_get.assert_called_with(ANY)
 
     @patch('remo.remozilla.tasks.waffle.switch_is_active')
-    @patch('requests.get')
-    def test_with_valid_data(self, fake_get, switch_is_active_mock):
+    @patch('remo.remozilla.tasks.requests.get')
+    def test_with_valid_data(self, mocked_request, switch_is_active_mock):
         """Test fetch_bugs valid bug data processing."""
         UserFactory.create(username='remobot')
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
@@ -57,71 +57,62 @@ class FetchBugsTest(TestCase):
         switch_is_active_mock.return_value = True
         previous_last_updated_time = get_last_updated_date()
 
-        first_request = requests.Request()
-        first_request.status_code = 200
         mentor = UserFactory.create()
         user = UserFactory.create(groups=['Rep'], email='foo@example.com',
                                   userprofile__mentor=mentor)
-        bug_data = {'bugs': [{'id': 7788,
-                              'summary': 'This is summary',
-                              'creator': {'name': 'rep@example.com'},
-                              'creation_time': '2010-10-5T13:45:23Z',
-                              'component': 'Budget Requests',
-                              'whiteboard': 'This is whiteboard',
-                              'cc': [{'name': 'mentor@example.com'},
-                                     {'name': 'not_a_rep@example.com'}],
-                              'assigned_to': {'name': 'mentor@example.com'},
-                              'status': 'resolved',
-                              'flags': [
-                                  {'status': '?',
-                                   'name': 'remo-approval'},
-                                  {'status': '?',
-                                   'name': 'needinfo',
-                                   'requestee': {
-                                       'name': settings.REPS_COUNCIL_ALIAS}},
-                                  {'status': '?',
-                                   'name': 'needinfo',
-                                   'requestee': {
-                                       'name': 'foo@example.com'}}
-                              ],
-                              'resolution': 'invalid'},
-                             {'id': 1199,
-                              'summary': 'New summary',
-                              'creator': {'name': 'not_a_rep@example.com'},
-                              'creation_time': '2012-12-5T11:30:23Z',
-                              'component': 'Budget Requests',
-                              'whiteboard': 'Council Reviewer Assigned',
-                              'cc': [{'name': 'mentor@example.com'},
-                                     {'name': 'not_a_rep@example.com'}],
-                              'flags': [{'status': '?',
-                                         'name': 'remo-approval'},
-                                        {'status': '?',
-                                         'name': 'remo-review'}],
-                              'assigned_to': {'name': 'mentor@example.com'},
-                              'status': 'resolved',
-                              'resolution': 'invalid'}]}
+        login_data = {u'token': u'bugzilla_token',
+                      u'id': 12345}
+        bug_data = [{'id': 7788,
+                     'summary': 'This is summary',
+                     'creator': 'rep@example.com',
+                     'creation_time': '2010-10-5T13:45:23Z',
+                     'component': 'Budget Requests',
+                     'whiteboard': 'This is whiteboard',
+                     'cc': ['mentor@example.com', 'not_a_rep@example.com'],
+                     'assigned_to': 'mentor@example.com',
+                     'status': 'resolved',
+                     'flags': [{'status': '?',
+                                'name': 'remo-approval'},
+                               {'status': '?',
+                                'name': 'needinfo',
+                                'requestee': settings.REPS_COUNCIL_ALIAS},
+                               {'status': '?',
+                                'name': 'needinfo',
+                                'requestee': 'foo@example.com'}],
+                     'resolution': 'invalid'},
+                    {'id': 1199,
+                     'summary': 'New summary',
+                     'creator': 'not_a_rep@example.com',
+                     'creation_time': '2012-12-5T11:30:23Z',
+                     'component': 'Budget Requests',
+                     'whiteboard': 'Council Reviewer Assigned',
+                     'cc': ['mentor@example.com', 'not_a_rep@example.com'],
+                     'flags': [{'status': '?',
+                                'name': 'remo-approval'},
+                               {'status': '?',
+                                'name': 'remo-review'}],
+                     'assigned_to': 'mentor@example.com',
+                     'status': 'resolved',
+                     'resolution': 'invalid'}]
 
-        first_request.text = json.dumps(bug_data)
+        def mocked_get(url, *args, **kwargs):
+            mocked_response = Mock()
 
-        second_request = requests.Request()
-        second_request.status_code = 200
-        bug_data['bugs'][0]['component'] = 'Planning'
-        bug_data['bugs'][0]['id'] = 7789
-        bug_data['bugs'][1]['component'] = 'Planning'
-        bug_data['bugs'][1]['id'] = 1200
-        second_request.text = json.dumps(bug_data)
+            if 'login' in url:
+                mocked_response.json.return_value = login_data
+                return mocked_response
+            else:
+                mocked_response.json.return_value = {'bugs': bug_data}
+                url_params = parse_qs(urlparse(url).query)
+                offset = url_params.get('offset')
+                if offset and int(offset[0]) > 0:
+                    mocked_response.json.return_value = {'bugs': []}
+                return mocked_response
 
-        empty_request = requests.Request()
-        empty_request.status_code = 200
-        empty_request.text = json.dumps({'bugs': []})
+        mocked_request.side_effect = mocked_get
+        fetch_bugs()
 
-        values = [first_request, empty_request, second_request, empty_request]
-        fake_get.side_effect = values
-
-        fetch_bugs(components=['Planning', 'Budget Requests'])
-
-        eq_(Bug.objects.all().count(), 4)
-        eq_(Bug.objects.filter(component='Planning').count(), 2)
+        eq_(Bug.objects.all().count(), 2)
         eq_(Bug.objects.filter(component='Budget Requests').count(), 2)
 
         # refresh status_obj
@@ -131,6 +122,7 @@ class FetchBugsTest(TestCase):
         eq_(bug.cc.all().count(), 1)
         eq_(bug.assigned_to.email, 'mentor@example.com')
         eq_(bug.resolution, 'INVALID')
+        eq_(bug.creator, User.objects.get(email='rep@example.com'))
         ok_(bug.council_vote_requested)
         ok_(user in bug.budget_needinfo.all())
 
