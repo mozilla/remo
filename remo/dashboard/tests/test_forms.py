@@ -48,8 +48,9 @@ class EmailRepsFormsTest(TestCase):
 
         eq_(len(mail.outbox), 20)
 
-        address = lambda u: '%s %s <%s>' % (u.first_name, u.last_name, u.email)
-        recipients = map(address, reps)
+        def format_name(user):
+            return '%s %s <%s>' % (user.first_name, user.last_name, user.email)
+        recipients = map(format_name, reps)
 
         receivers = []
         for i in range(0, len(mail.outbox)):
