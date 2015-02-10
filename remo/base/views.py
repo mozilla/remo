@@ -21,10 +21,6 @@ from remo.profiles.forms import UserStatusForm
 from remo.profiles.models import UserProfile, UserStatus
 
 
-USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
-                        default_username_algo)
-
-
 class BrowserIDVerify(Verify):
 
     def login_failure(self, msg=''):
