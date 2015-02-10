@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -325,3 +325,26 @@ class RotmAutomationTests(RemoTestCase):
         eq_(response.status_code, 200)
         ok_(not mocked_form().save.called)
         self.assertTemplateUsed('profiles_view_profile.html')
+
+
+class ListAlumniTests(RemoTestCase):
+
+    def test_list(self):
+        """Test view alumni list page."""
+        date_joined = now() - timedelta(days=10)
+        date_left = now() + timedelta(days=10)
+        user = UserFactory.create(groups=['Alumni'],
+                                  userprofile__date_joined_program=date_joined,
+                                  userprofile__date_left_program=date_left)
+        response = self.get(reverse('profiles_alumni'))
+        self.assertTemplateUsed(response, 'profiles_list_alumni.html')
+        eq_(response.status_code, 200)
+        eq_(set(response.context['objects'].object_list), set([user]))
+
+    def test_list_no_alumni(self):
+        """Test page header context for rep."""
+        UserFactory.create(groups=['Rep'])
+        response = self.get(reverse('profiles_alumni'))
+        self.assertTemplateUsed(response, 'profiles_list_alumni.html')
+        eq_(response.status_code, 200)
+        ok_(not response.context['objects'].object_list)

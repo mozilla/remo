@@ -48,6 +48,7 @@ class InactiveCategoriesTest(RemoTestCase):
 
 
 class EventMetricsFormsetTest(RemoTestCase):
+
     def test_inactive_metrics_new(self):
         """Test active/inactive queryset in new event."""
         active_metrics = EventMetricFactory.create_batch(3)

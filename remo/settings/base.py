@@ -158,7 +158,7 @@ STATSD_CLIENT = 'django_statsd.clients.normal'
 ITEMS_PER_PAGE = 25
 
 # django-celery setup
-import djcelery
+import djcelery  # noqa
 djcelery.setup_loader()
 
 MAPBOX_TOKEN = 'examples.map-i86nkdio'
