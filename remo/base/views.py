@@ -1,5 +1,4 @@
 from django import http
-from django_browserid.auth import default_username_algo
 from django_browserid.http import JSONResponse
 from django_browserid.views import Verify
 from django.conf import settings
@@ -19,10 +18,6 @@ from remo.base.forms import EmailMentorForm
 from remo.featuredrep.models import FeaturedRep
 from remo.profiles.forms import UserStatusForm
 from remo.profiles.models import UserProfile, UserStatus
-
-
-USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
-                        default_username_algo)
 
 
 class BrowserIDVerify(Verify):
