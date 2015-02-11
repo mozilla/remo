@@ -111,9 +111,10 @@ def edit_availability(request, display_name):
     if user.groups.filter(name='Mozillians').exists():
         raise Http404()
 
-    if user.userprofile.is_unavailable:
-        status = UserStatus.objects.filter(user=user).latest('created_on')
-    else:
+    try:
+        status = (UserStatus.objects.filter(user=user)
+                  .filter(is_unavailable=True).latest('created_on'))
+    except UserStatus.DoesNotExist:
         status = UserStatus(user=user)
         created = True
 

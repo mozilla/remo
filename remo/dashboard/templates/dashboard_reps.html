@@ -327,12 +327,12 @@
               {% for reportee in mentees_ng_reportees %}
                 <tr>
                   <td class="{{ reportee|get_activity_level }}
-                      {% if reportee.userprofile.is_unavailable %}
+                      {% if reportee|user_is_unavailable %}
                         unavailable
                       {% endif %}">
                     <a href="{{ url('profiles_view_profile',
                                     reportee|get_display_name) }}"
-                       {% if reportee.userprofile.is_unavailable %}
+                       {% if reportee|user_is_unavailable %}
                          title="Rep Unavailable"
                        {% endif %}>
                       {{ reportee.get_full_name() }}

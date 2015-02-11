@@ -172,7 +172,6 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     current_streak_start = models.DateField(null=True, blank=True)
     longest_streak_start = models.DateField(null=True, blank=True)
     longest_streak_end = models.DateField(null=True, blank=True)
-    is_unavailable = models.BooleanField(default=False)
     first_report_notification = models.DateField(null=True, blank=True)
     second_report_notification = models.DateField(null=True, blank=True)
     timezone = models.CharField(max_length=100, blank=True, default='')
@@ -235,6 +234,7 @@ class UserStatus(caching.base.CachingMixin, models.Model):
     replacement_rep = models.ForeignKey(User, null=True, blank=True,
                                         related_name='replaced_rep')
     created_on = models.DateTimeField(auto_now_add=True)
+    is_unavailable = models.BooleanField(default=False)
 
     objects = caching.base.CachingManager()
 
@@ -250,11 +250,10 @@ class UserStatus(caching.base.CachingMixin, models.Model):
     def save(self, *args, **kwargs):
         # Save the timestamp when a Rep becomes available
         if not self.id:
-            self.user.userprofile.is_unavailable = True
+            self.is_unavailable = True
         else:
-            self.user.userprofile.is_unavailable = False
+            self.is_unavailable = False
             self.return_date = timezone.now().date()
-        self.user.userprofile.save()
         super(UserStatus, self).save()
 
     class Meta:

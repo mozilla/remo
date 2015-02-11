@@ -4,21 +4,25 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
-
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        """Migrate users with no group to alumni group."""
-        users = orm['auth.User'].objects.filter(groups__isnull=True)
-        alumni_group = orm['auth.Group'].objects.get(name='Alumni')
+        "Write your forwards methods here."
+        """Migrate unavailable users.
+
+        Migrate the status of an unavailable user from the UserProfile to the
+        UserStatus table.
+        """
+        users = orm['auth.User'].objects.filter(userprofile__is_unavailable=True)
+        UserStatus = orm['profiles.UserStatus']
         for user in users:
-            user.groups.add(alumni_group)
+            if UserStatus.objects.filter(user=user).exists():
+                status = UserStatus.objects.filter(user=user).latest('created_on')
+                status.is_unavailable = True
+                status.save()
 
     def backwards(self, orm):
-        """Remove all users from the Alumni Group."""
-        users = orm['auth.User'].objects.filter(groups__name='Alumni')
-        for user in users:
-            user.groups.clear()
+        pass
 
     models = {
         'auth.group': {
@@ -68,7 +72,7 @@ class Migration(DataMigration):
             'Meta': {'object_name': 'UserAvatar'},
             'avatar_url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '400'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_update': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 1, 27, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
+            'last_update': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2015, 2, 10, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['auth.User']", 'unique': 'True'})
         },
         'profiles.userprofile': {
@@ -99,7 +103,7 @@ class Migration(DataMigration):
             'lon': ('django.db.models.fields.FloatField', [], {'null': 'True'}),
             'longest_streak_end': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'longest_streak_start': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'mentor': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'mentees'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['auth.User']"}),
+            'mentor': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'mentees'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['auth.User']"}),
             'mozillian_username': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '40', 'blank': 'True'}),
             'mozillians_profile_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
             'personal_blog_feed': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'blank': 'True'}),
@@ -123,6 +127,7 @@ class Migration(DataMigration):
             'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'expected_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_unavailable': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'replacement_rep': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'replaced_rep'", 'null': 'True', 'to': "orm['auth.User']"}),
             'return_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'status'", 'to': "orm['auth.User']"})

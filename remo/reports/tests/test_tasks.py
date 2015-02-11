@@ -10,7 +10,7 @@ from nose.tools import eq_, ok_
 from remo.base.tests import RemoTestCase
 from remo.base.utils import get_date
 from remo.events.tests import EventFactory
-from remo.profiles.tests import UserFactory
+from remo.profiles.tests import UserFactory, UserStatusFactory
 from remo.reports import ACTIVITY_EVENT_ATTEND
 from remo.reports.models import Activity, NGReport
 from remo.reports.tasks import (calculate_longest_streaks,
@@ -145,8 +145,8 @@ class SendInactivityNotifications(RemoTestCase):
         today = now().date()
         rep = UserFactory.create(
             groups=['Rep'], userprofile__mentor=mentor,
-            userprofile__date_joined_program=get_date(days=-100),
-            userprofile__is_unavailable=True)
+            userprofile__date_joined_program=get_date(days=-100))
+        UserStatusFactory.create(user=rep)
         NGReportFactory.create(user=rep,
                                report_date=today - timedelta(weeks=5))
 
