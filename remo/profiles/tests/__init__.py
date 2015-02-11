@@ -162,3 +162,4 @@ class UserStatusFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     expected_date = fuzzy.FuzzyDate(now().date() - datetime.timedelta(weeks=1),
                                     now().date() + datetime.timedelta(weeks=1))
+    is_unavailable = True

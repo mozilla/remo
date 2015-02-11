@@ -76,7 +76,7 @@
                                      class="profiles-people-avatar"
                                      alt="avatar">
                                 <h6>{{ rep.get_full_name() }}</h6>
-                                {% if rep.userprofile.is_unavailable %}
+                                {% if rep|user_is_unavailable %}
                                   <div class="pict-icon large triangle" title="Rep Unavailable">
                                   </div>
                                 {% endif %}
@@ -129,11 +129,11 @@
                             {% cache reps_ng_reports[key] %}
                               {% for report in reps_ng_reports[key] %}
                                 <tr>
-                                  <td {% if report.user.userprofile.is_unavailable %}
+                                  <td {% if report.user|user_is_unavailable %}
                                       class="unavailable" {% endif %}>
                                     <a href="{{ url('profiles_view_profile',
                                        report.user|get_display_name) }}"
-                                       {% if report.user.userprofile.is_unavailable %}
+                                       {% if report.user|user_is_unavailable %}
                                          title="Rep Unavailable"
                                        {% endif %}>
                                     {{ report.user.get_full_name() }}

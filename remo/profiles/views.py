@@ -171,7 +171,7 @@ def view_profile(request, display_name):
             'is_nomination_period': is_nomination_period,
             'user_is_alumni': user_is_alumni}
 
-    if user.userprofile.is_unavailable:
+    if UserStatus.objects.filter(user=user, is_unavailable=True).exists():
         status = UserStatus.objects.filter(user=user).latest('created_on')
         data['user_status'] = status
         if user == request.user:

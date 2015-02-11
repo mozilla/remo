@@ -64,13 +64,14 @@ def send_first_report_notification():
     users = User.objects.filter(
         groups__name='Rep',
         userprofile__registration_complete=True,
-        userprofile__first_report_notification__isnull=True,
-        userprofile__is_unavailable=False)
+        userprofile__first_report_notification__isnull=True)
+
     # Exclude users with a report filed between start and end period
     # and users who joined the program less than one month
     inactive_users = (users
                       .exclude(ng_reports__report_date__range=[start, end])
-                      .exclude(userprofile__date_joined_program__gt=start))
+                      .exclude(userprofile__date_joined_program__gt=start)
+                      .exclude(status__is_unavailable=True))
 
     send_report_notification(inactive_users, weeks=4)
     for user in inactive_users:
@@ -89,13 +90,13 @@ def send_second_report_notification():
         groups__name='Rep',
         userprofile__registration_complete=True,
         userprofile__first_report_notification__lte=today - timedelta(weeks=4),
-        userprofile__second_report_notification__isnull=True,
-        userprofile__is_unavailable=False)
+        userprofile__second_report_notification__isnull=True)
     # Exclude users with a report filed between start and end period
     # and users who joined the program less than one month
     inactive_users = (users
                       .exclude(ng_reports__report_date__range=[start, end])
-                      .exclude(userprofile__date_joined_program__gt=start))
+                      .exclude(userprofile__date_joined_program__gt=start)
+                      .exclude(status__is_unavailable=True))
 
     send_report_notification(inactive_users, weeks=8)
     for user in inactive_users:

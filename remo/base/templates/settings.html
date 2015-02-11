@@ -51,7 +51,7 @@ Mozilla Reps - Settings
                 <h2>Availability</h2>
                 <p>
                   <a href="{{ url('edit_availability', user.userprofile.display_name) }}">
-                    {% if not user.userprofile.is_unavailable %}
+                    {% if not user|user_is_unavailable %}
                       Submit a break notification
                     {% else %}
                       Resume your activities

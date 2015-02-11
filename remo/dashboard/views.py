@@ -15,6 +15,7 @@ from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_date
 from remo.dashboard.models import ActionItem
 from remo.events.models import Event
+from remo.profiles.models import UserStatus
 from remo.remozilla.models import Bug
 from remo.reports.models import NGReport
 
@@ -77,8 +78,8 @@ def dashboard_mozillians(request, user):
         reps_current_events[interest.name] = events.filter(start__gte=now())
 
         # Check if there is an unavailable Rep for the specific interest
-        unavailable_val = reps.filter(
-            userprofile__is_unavailable=True).exists()
+        unavailable_val = (UserStatus.objects.filter(is_unavailable=True)
+                                             .filter(user__in=reps).exists())
         unavailable_rep_exists[interest.name] = unavailable_val
 
     args['unavailable_rep_exists'] = unavailable_rep_exists
