@@ -72,7 +72,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
   </div>
   <div class="row">
     <div class="large-6 columns">
-      {% if user_profile.is_unavailable %}
+      {% if pageuser|user_is_unavailable %}
         <div class="row">
           <div class="large-1 columns pictogram">
             <div class="pict-icon large triangle"></div>
