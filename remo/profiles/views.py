@@ -193,7 +193,8 @@ def view_profile(request, display_name):
         messages.warning(request, ('Only mentors can nominate a mentee.'))
 
     if user_is_alumni:
-        msg = 'Note: You are viewing a profile of an inactive Rep'
+        msg = ('Note: You are viewing a profile of a former Rep '
+               'who is no longer part of the program')
         messages.info(request, msg)
 
     today = now().date()

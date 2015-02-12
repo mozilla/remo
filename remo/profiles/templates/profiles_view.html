@@ -108,11 +108,12 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           <div class="large-11 columns">
             <p class="profile-item">
               <span class="label radius inline">
-                Inactive Rep
+                Former Rep
               </span>
               <p>
-                This Rep has been active from {{ user_profile.date_joined_program.strftime('%d %B %Y') }}
-                until {{ user_profile.date_left_program.strftime('%d %B %Y') }}
+                This Rep has been part of the program from
+                {{ user_profile.date_joined_program.strftime('%d %B %Y') }}
+                to {{ user_profile.date_left_program.strftime('%d %B %Y') }}
               </p>
             </p>
           </div>
