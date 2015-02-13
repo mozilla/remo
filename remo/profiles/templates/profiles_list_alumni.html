@@ -58,10 +58,9 @@
             {% endfor %}
           </tbody>
         </table>
-        {% if show_pagination %}
-          <!-- Paginator -->
-          {% include "includes/pagination.html" %}
-        {% endif %}
+
+        <!-- Paginator -->
+        {% include "includes/pagination.html" %}
       </div>
     {% else %}
       <div class="large-12 columns profiles-no-results">
