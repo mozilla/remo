@@ -113,7 +113,9 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
               <p>
                 This Rep has been part of the program from
                 {{ user_profile.date_joined_program.strftime('%d %B %Y') }}
-                to {{ user_profile.date_left_program.strftime('%d %B %Y') }}
+                {% if user_profile.date_left_program %}
+                  to {{ user_profile.date_left_program.strftime('%d %B %Y') }}
+                {% endif %}
               </p>
             </p>
           </div>
