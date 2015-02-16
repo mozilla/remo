@@ -44,8 +44,8 @@ class NGReportForm(happyforms.ModelForm):
         cdata = self.cleaned_data
 
         activity = cdata.get('activity')
-        if (activity and activity.name == ACTIVITY_CAMPAIGN
-                and not cdata.get('campaign')):
+        if ((activity and activity.name == ACTIVITY_CAMPAIGN and
+             not cdata.get('campaign'))):
             msg = 'Please select an option from the list.'
             self._errors['campaign'] = self.error_class([msg])
 

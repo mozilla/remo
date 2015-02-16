@@ -102,28 +102,29 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 bug.council_member_assigned = False
                 bug.pending_mentor_validation = False
                 for flag in bdata.get('flags', []):
-                    if ((flag['status'] == '?'
-                         and flag['name'] == 'remo-approval')):
+                    if ((flag['status'] == '?' and
+                         flag['name'] == 'remo-approval')):
                         automated_voting_trigger += 1
                         if 'Council Reviewer Assigned' in bug.whiteboard:
                             bug.council_member_assigned = True
-                    if ((flag['status'] == '?'
-                         and flag['name'] == 'needinfo'
-                         and 'requestee' in flag
-                         and flag['requestee']['name'] == (
+                    if ((flag['status'] == '?' and
+                         flag['name'] == 'needinfo' and
+                         'requestee' in flag and
+                         flag['requestee']['name'] == (
                              settings.REPS_COUNCIL_ALIAS))):
                         automated_voting_trigger += 1
                     if flag['status'] == '?' and flag['name'] == 'remo-review':
                         bug.pending_mentor_validation = True
-                    if (flag['status'] == '?' and flag['name'] == 'needinfo'
-                            and 'requestee' in flag):
+                    if ((flag['status'] == '?' and
+                         flag['name'] == 'needinfo' and
+                         'requestee' in flag)):
                         email = flag['requestee']['name']
                         user = get_object_or_none(User, email=email)
                         if user:
                             bug.budget_needinfo.add(user)
 
-                if ((automated_voting_trigger == 2
-                     and waffle.switch_is_active('automated_polls'))):
+                if ((automated_voting_trigger == 2 and
+                     waffle.switch_is_active('automated_polls'))):
                     bug.council_vote_requested = True
 
                 comments = bdata.get('comments', [])

@@ -68,8 +68,8 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
             return
 
         # Disable adding new forms in post event form.
-        if (self.instance.is_past_event and self.instance.has_new_metrics
-                and not self.clone):
+        if ((self.instance.is_past_event and self.instance.has_new_metrics and
+             not self.clone)):
             if self.extra_forms and len(self.extra_forms) > 2:
                 error_msg = 'You cannot add new metrics in a past event.'
                 raise ValidationError(error_msg)

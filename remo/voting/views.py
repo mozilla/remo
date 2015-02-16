@@ -199,8 +199,8 @@ def view_voting(request, slug):
             # Process poll form
             forms_valid = True
             # validate all forms
-            for item in (range_poll_choice_forms.values()
-                         + radio_poll_choice_forms.values()):
+            for item in (range_poll_choice_forms.values() +
+                         radio_poll_choice_forms.values()):
                 if not item.is_valid():
                     forms_valid = False
                     break
