@@ -93,8 +93,8 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
     verification_form = forms.NGVerifyReportForm(instance=report)
 
     editable = False
-    if ((request.user == user or request.user.has_perm('change_ngreport'))
-            and report.activity.name not in UNLISTED_ACTIVITIES):
+    if (((request.user == user or request.user.has_perm('change_ngreport')) and
+         (report.activity.name not in UNLISTED_ACTIVITIES))):
         editable = True
 
     ctx_data = {'pageuser': user,

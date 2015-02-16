@@ -286,8 +286,8 @@ def automated_poll(sender, instance, **kwargs):
     a new Poll and let Council members vote.
 
     """
-    if ((not instance.council_vote_requested
-         or Poll.objects.filter(bug=instance).exists())):
+    if ((not instance.council_vote_requested or
+         Poll.objects.filter(bug=instance).exists())):
         return
 
     remobot = User.objects.get(username='remobot')
