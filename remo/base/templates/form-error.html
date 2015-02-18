@@ -1,8 +1,8 @@
 {% if field.errors %}
   {% if field.errors is string %}
-      <small class="error">
-        {{ field.errors }}
-      </small>
+    <small class="error">
+      {{ field.errors }}
+    </small>
   {% else %}
     {% for error in field.errors %}
       <small class="error">
