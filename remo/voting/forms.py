@@ -31,13 +31,23 @@ class RangePollChoiceVoteForm(happyforms.Form):
         Dynamically set fields for the participants in a range voting.
         """
         super(RangePollChoiceVoteForm, self).__init__(*args, **kwargs)
-        nominees = ((('', '----'),) +
-                    tuple((i, '%d' % i) for i in range(0, choices.count()+1)))
+        nominees = tuple((i, '%d' % i) for i in range(0, choices.count()+1))
         for choice in choices:
             self.fields['range_poll__%s' % str(choice.id)] = (
                 forms.ChoiceField(widget=forms.Select(),
                                   choices=nominees,
                                   label=choice.nominee.get_full_name()))
+
+    def clean(self, *args, **kwargs):
+        """Custom clean method."""
+
+        # Make sure that at least one nominee has a value other than zero
+        if all(int(vote) == 0 for vote in self.cleaned_data.values()):
+            msg = 'You must vote at least one nominee'
+            if self.fields:
+                last_form_entry = self.fields.keys()[-1]
+                self.errors[last_form_entry] = self.error_class([msg])
+        return self.cleaned_data
 
     def save(self, *args, **kwargs):
         for nominee_id, votes in self.cleaned_data.items():
