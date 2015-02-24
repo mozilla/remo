@@ -109,6 +109,7 @@ class UserAdmin(ExportMixin, UserAdmin):
                    ('userprofile__registration_complete', RepProfileFilter,
                     MozillianProfileFilter, MentorProfileFilter,
                     CouncilProfileFilter, 'userprofile__is_rotm_nominee'))
+    search_fields = (UserAdmin.search_fields + ('userprofile__country',))
 
     def get_urls(self):
         """Return custom and UserAdmin urls."""
