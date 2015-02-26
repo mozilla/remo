@@ -179,6 +179,21 @@ class FunctionalAreaAdmin(ExportMixin, admin.ModelAdmin):
         return self.model.objects.get_query_set()
 
 
+class UserStatusFilter(SimpleListFilter):
+    title = 'User Statuses'
+    parameter_name = 'user_status'
+
+    def lookups(self, request, model_admin):
+        return (('False', 'No'), ('True', 'Yes'))
+
+    def queryset(self, request, queryset):
+        if self.value() == 'True':
+            return queryset.filter(is_unavailable=True)
+        elif self.value() == 'False':
+            return queryset.filter(is_unavailable=False)
+        return queryset
+
+
 class UserStatusResource(resources.ModelResource):
     user = fields.Field()
     replacement_rep = fields.Field()
@@ -203,6 +218,7 @@ class UserStatusAdmin(ExportMixin, admin.ModelAdmin):
                     'replacement_rep')
     search_fields = ['user__first_name', 'user__last_name',
                      'user__userprofile__display_name']
+    list_filter = (UserStatusFilter,)
 
 
 admin.site.register(User, UserAdmin)
