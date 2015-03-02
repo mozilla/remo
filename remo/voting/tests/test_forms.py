@@ -4,6 +4,7 @@ from django.forms.models import inlineformset_factory
 from nose.tools import ok_
 from test_utils import TestCase
 
+from remo.base.tests import RemoTestCase
 from remo.profiles.tests import UserFactory
 from remo.voting import forms
 from remo.voting.models import Poll, RadioPoll, RangePoll
@@ -144,3 +145,29 @@ class PollAddFormTest(TestCase):
             radio_poll_formset=self.radio_poll_formset_empty,
             range_poll_formset=self.range_poll_formset_empty)
         ok_(not form.is_valid())
+
+
+class TestVoteForm(RemoTestCase):
+
+    def test_base(self):
+        poll = PollFactory.create()
+        range_poll = RangePollFactory.create(poll=poll)
+        RangePollChoiceFactory.create(range_poll=range_poll)
+        data = {'range_poll__{0}'.format(range_poll.choices.all()[0].id): u'1'}
+        vote_form = forms.RangePollChoiceVoteForm(
+            data=data,
+            choices=range_poll.choices.all())
+        ok_(vote_form.is_valid())
+
+    def test_invalid(self):
+        poll = PollFactory.create()
+        range_poll = RangePollFactory.create(poll=poll)
+        RangePollChoiceFactory.create(range_poll=range_poll)
+        field_name = 'range_poll__{0}'.format(range_poll.choices.all()[0].id)
+        data = {field_name: u'0'}
+        vote_form = forms.RangePollChoiceVoteForm(
+            data=data,
+            choices=range_poll.choices.all())
+        ok_(not vote_form.is_valid())
+        ok_(field_name in vote_form.errors)
+        ok_(vote_form[field_name], 'You must vote at least one nominee')
