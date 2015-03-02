@@ -138,13 +138,13 @@ class Vote(models.Model):
     date_voted = models.DateField(auto_now_add=True)
 
     def __unicode__(self):
-        return '%s %s' % (self.user, self.poll)
+        return u'{0} {1}'.format(self.user, self.poll)
 
     def save(self, *args, **kwargs):
         if self.poll.automated_poll:
-            name = '{0} {1}'.format(BUDGET_VOTE_ACTION, self.poll.bug.summary)
+            name = u'{0} {1}'.format(BUDGET_VOTE_ACTION, self.poll.bug.summary)
         else:
-            name = '{0} {1}'.format(VOTE_ACTION, self.poll.name)
+            name = u'{0} {1}'.format(VOTE_ACTION, self.poll.name)
 
         super(Vote, self).save(*args, **kwargs)
         ActionItem.resolve(instance=self.poll, user=self.user,
