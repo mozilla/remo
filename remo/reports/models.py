@@ -237,6 +237,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
 
     class Meta:
         ordering = ['-report_date', '-created_on']
+        get_latest_by = 'report_date'
 
     def __unicode__(self):
         if self.activity.name == ACTIVITY_EVENT_ATTEND and self.event:
