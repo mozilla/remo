@@ -1,4 +1,5 @@
 import datetime
+import pytz
 import re
 
 from django.conf import settings
@@ -277,6 +278,16 @@ def user_status_email_reminder(sender, instance, created, raw, **kwargs):
             instance.expected_date - datetime.timedelta(days=1),
             datetime.datetime.min.time())
         data = {'user_status': instance}
+
+        time_diff = (timezone.make_aware(notification_datetime, pytz.UTC) -
+                     timezone.now())
+        # If the notification date is in the past, then send the notification
+        # x/2 hours from now, where x is the diff between the return date and
+        # now
+        if time_diff.days < 0:
+            hours_added = (time_diff.seconds / 3600) / 2
+            notification_datetime = (timezone.now() +
+                                     datetime.timedelta(hours=hours_added))
 
         rep_reminder = send_remo_mail.apply_async(
             eta=notification_datetime,
