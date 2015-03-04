@@ -14,7 +14,7 @@ from pytz import common_timezones, timezone
 from datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.helpers import get_full_name
 from remo.base.utils import get_date, validate_datetime
-from remo.events.models import EventGoal, EventMetric
+from remo.events.models import EventMetric
 from remo.events.helpers import get_event_link
 from remo.profiles.models import FunctionalArea
 from remo.reports import ACTIVITY_POST_EVENT_METRICS
@@ -156,8 +156,6 @@ class EventForm(happyforms.ModelForm):
     """Form of an event."""
     categories = forms.ModelMultipleChoiceField(
         queryset=FunctionalArea.active_objects.all())
-    goals = forms.ModelMultipleChoiceField(
-        queryset=EventGoal.active_objects.all())
     country = forms.ChoiceField(
         choices=[],
         error_messages={'required': 'Please select one option from the list.'})
@@ -185,15 +183,12 @@ class EventForm(happyforms.ModelForm):
         self.user = kwargs.pop('user', None)
         super(EventForm, self).__init__(*args, **kwargs)
 
-        # Dynamic categories/goals field.
+        # Dynamic categories field.
         if self.instance.id:
             categories_query = (Q(active=True) |
                                 Q(id__in=self.instance.categories.all()))
-            goals_query = Q(active=True) | Q(id__in=self.instance.goals.all())
             categories = FunctionalArea.objects.filter(categories_query)
-            goals = EventGoal.objects.filter(goals_query)
             self.fields['categories'].queryset = categories
-            self.fields['goals'].queryset = goals
 
         # Dynamic countries field.
         countries = product_details.get_regions('en').values()
@@ -331,7 +326,7 @@ class EventForm(happyforms.ModelForm):
                   'country', 'city', 'lat', 'lon', 'external_link',
                   'planning_pad_url', 'timezone', 'estimated_attendance',
                   'description', 'extra_content', 'hashtag', 'mozilla_event',
-                  'swag_bug', 'budget_bug', 'categories', 'goals']
+                  'swag_bug', 'budget_bug', 'categories']
         widgets = {'lat': forms.HiddenInput(attrs={'id': 'lat'}),
                    'lon': forms.HiddenInput(attrs={'id': 'lon'}),
                    'start': SplitSelectDateTimeWidget(),
@@ -386,13 +381,6 @@ class EventCommentForm(happyforms.ModelForm):
     class Meta:
         model = EventComment
         fields = ['comment']
-
-
-class EventGoalForm(happyforms.ModelForm):
-    """Form for EventGoal Model."""
-
-    class Meta:
-        model = EventGoal
 
 
 class EventMetricForm(happyforms.ModelForm):

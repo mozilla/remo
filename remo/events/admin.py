@@ -2,8 +2,7 @@ from django.contrib import admin
 
 from import_export import fields, resources
 from import_export.admin import ExportMixin
-from models import (Attendance, Event, EventGoal, EventMetric,
-                    EventMetricOutcome)
+from models import Attendance, Event, EventMetric, EventMetricOutcome
 
 
 class AttendanceInline(admin.StackedInline):
@@ -11,25 +10,13 @@ class AttendanceInline(admin.StackedInline):
     model = Attendance
 
 
-class EventGoalAdmin(ExportMixin, admin.ModelAdmin):
-    """EventGoal Inline."""
-    model = EventGoal
-
-
 class EventResource(resources.ModelResource):
-    event_goals = fields.Field()
     event_categories = fields.Field()
     event_metrics = fields.Field()
 
     class Meta:
         model = Event
-        exclude = ('id', 'categories', 'goals', 'metrics',)
-
-    def dehydrate_event_goals(self, event):
-        if event.goals.all().exists():
-            goals = ', '.join(x.name for x in event.goals.all())
-            return goals
-        return ''
+        exclude = ('id', 'categories', 'metrics',)
 
     def dehydrate_event_categories(self, event):
         if event.categories.all().exists():
@@ -80,6 +67,5 @@ class EventMetricOutcomeAdmin(ExportMixin, admin.ModelAdmin):
     search_fields = ('event__name', 'metric__name')
 
 admin.site.register(Event, EventAdmin)
-admin.site.register(EventGoal, EventGoalAdmin)
 admin.site.register(EventMetric, EventMetricAdmin)
 admin.site.register(EventMetricOutcome, EventMetricOutcomeAdmin)

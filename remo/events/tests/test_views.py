@@ -16,8 +16,8 @@ from test_utils import TestCase
 from remo.base.tests import requires_login, requires_permission
 from remo.events.models import Event, EventComment, EventMetricOutcome
 from remo.events.tests import (AttendanceFactory, EventCommentFactory,
-                               EventFactory, EventGoalFactory,
-                               EventMetricFactory, EventMetricOutcomeFactory)
+                               EventFactory, EventMetricFactory,
+                               EventMetricOutcomeFactory)
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
@@ -27,7 +27,6 @@ class ViewsTest(TestCase):
     def setUp(self):
 
         categories = FunctionalAreaFactory.create_batch(3)
-        goals = EventGoalFactory.create_batch(3)
         metrics = EventMetricFactory.create_batch(3)
 
         self.data = {
@@ -35,7 +34,6 @@ class ViewsTest(TestCase):
             'description': u'This is a description',
             'external_link': '',
             'categories': [x.id for x in categories],
-            'goals': [x.id for x in goals],
             'venue': u'Hackerspace.GR',
             'lat': 38.01697,
             'lon': 23.7314,
@@ -504,7 +502,7 @@ class ViewsTest(TestCase):
 
         # Test fields with the same name in POST data and models
         excluded = ['planning_pad_url', 'lat', 'lon', 'mozilla_event',
-                    'categories', 'goals']
+                    'categories']
         for field in set(self.data).difference(set(excluded)):
             if getattr(event, field, None):
                 eq_(str(getattr(event, field)), self.data[field])
@@ -515,8 +513,6 @@ class ViewsTest(TestCase):
 
         eq_(set(self.data['categories']),
             set(event.categories.values_list('id', flat=True)))
-        eq_(set(self.data['goals']),
-            set(event.goals.values_list('id', flat=True)))
 
         eq_(event.planning_pad_url, pad_url)
         eq_(event.lat, self.data['lat'])

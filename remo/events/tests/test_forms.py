@@ -6,8 +6,7 @@ from remo.base.tests import RemoTestCase
 from remo.events.forms import (BaseEventMetricsFormset, EventForm,
                                EventMetricsForm, PostEventForm)
 from remo.events.models import Event
-from remo.events.tests import (EventFactory, EventGoalFactory,
-                               EventMetricFactory,
+from remo.events.tests import (EventFactory, EventMetricFactory,
                                EventMetricOutcomeFactory)
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 from remo.reports import ACTIVITY_POST_EVENT_METRICS
@@ -96,7 +95,6 @@ class EventMetricsFormsetTest(RemoTestCase):
     def test_invalid_formset(self):
         """Test unique metrics validation."""
         metrics = EventMetricFactory.create_batch(2)
-        EventGoalFactory.create_batch(3)
         FunctionalAreaFactory.create_batch(3)
 
         data = {

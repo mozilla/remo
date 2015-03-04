@@ -26,8 +26,6 @@ from remo.base.tests import (MozillianResponse, RemoTestCase,
                              requires_login, requires_permission)
 from remo.base.tests.browserid_mock import mock_browserid
 from remo.base.views import robots_txt
-from remo.events.models import EventGoal
-from remo.events.tests import EventGoalFactory
 from remo.profiles.models import FunctionalArea
 from remo.profiles.tasks import check_mozillian_username
 from remo.profiles.tests import (FunctionalAreaFactory, UserFactory,
@@ -363,18 +361,6 @@ class BaseListViewTest(RemoTestCase):
             reverse('create_functional_area'))
         self.assertTemplateUsed(response, 'base_content_list.html')
 
-    def test_base_content_event_goals_list(self):
-        """Test list event goals."""
-        admin = UserFactory.create(groups=['Admin'])
-        response = self.get(reverse('list_event_goals'), user=admin,
-                            follow=True)
-        eq_(response.status_code, 200)
-        eq_(response.context['verbose_name'], 'event goal')
-        eq_(response.context['verbose_name_plural'], 'event goals')
-        eq_(response.context['create_object_url'],
-            reverse('create_event_goal'))
-        self.assertTemplateUsed(response, 'base_content_list.html')
-
     @requires_permission()
     def test_base_content_list_unauthed(self):
         """Test list base content unauthorized."""
@@ -415,16 +401,6 @@ class BaseCreateViewTest(RemoTestCase):
         eq_(response.context['creating'], True)
         self.assertTemplateUsed(response, 'base_content_edit.html')
 
-    def test_base_content_event_goals_create_get(self):
-        """Test get create event goals."""
-        admin = UserFactory.create(groups=['Admin'])
-        response = self.get(reverse('create_event_goal'), user=admin,
-                            follow=True)
-        eq_(response.status_code, 200)
-        eq_(response.context['verbose_name'], 'event goal')
-        eq_(response.context['creating'], True)
-        self.assertTemplateUsed(response, 'base_content_edit.html')
-
     def test_base_content_activity_create_post(self):
         """Test post create activity."""
         admin = UserFactory.create(groups=['Admin'])
@@ -452,16 +428,6 @@ class BaseCreateViewTest(RemoTestCase):
                              user=admin, follow=True)
         eq_(response.status_code, 200)
         query = FunctionalArea.objects.filter(name='test functional area')
-        eq_(query.exists(), True)
-
-    def test_base_content_event_goal_create_post(self):
-        """Test post create event goal."""
-        admin = UserFactory.create(groups=['Admin'])
-        response = self.post(reverse('create_event_goal'),
-                             data={'name': 'test event goal'},
-                             user=admin, follow=True)
-        eq_(response.status_code, 200)
-        query = EventGoal.objects.filter(name='test event goal')
         eq_(query.exists(), True)
 
     @requires_permission()
@@ -512,18 +478,6 @@ class BaseUpdateViewTest(RemoTestCase):
         query = FunctionalArea.objects.filter(name='edit functional area')
         eq_(query.exists(), True)
 
-    def test_base_content_event_goal_edit_post(self):
-        """Test post edit event goal."""
-        admin = UserFactory.create(groups=['Admin'])
-        goal = EventGoalFactory.create(name='test event goal')
-        response = self.post(reverse('edit_event_goal',
-                                     kwargs={'pk': goal.id}),
-                             data={'name': 'edit event goal'},
-                             user=admin, follow=True)
-        eq_(response.status_code, 200)
-        query = EventGoal.objects.filter(name='edit event goal')
-        eq_(query.exists(), True)
-
     @requires_permission()
     def test_base_content_update_unauthed(self):
         """Test update base content unauthorized."""
@@ -568,17 +522,6 @@ class BaseDeleteViewTest(RemoTestCase):
                              follow=True)
         eq_(response.status_code, 200)
         query = FunctionalArea.objects.filter(name='test functional area')
-        eq_(query.exists(), False)
-
-    def test_base_content_event_goal_delete_post(self):
-        """Test delete event goal."""
-        admin = UserFactory.create(groups=['Admin'])
-        goal = EventGoalFactory.create(name='test event goal')
-        response = self.post(reverse('delete_event_goal',
-                                     kwargs={'pk': goal.id}), user=admin,
-                             follow=True)
-        eq_(response.status_code, 200)
-        query = EventGoal.objects.filter(name='test event goal')
         eq_(query.exists(), False)
 
     @requires_permission()
