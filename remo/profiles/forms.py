@@ -216,6 +216,9 @@ class UserStatusForm(happyforms.ModelForm):
         """Clean Form."""
         cdata = super(UserStatusForm, self).clean()
 
+        if self.instance.id:
+            return cdata
+
         tomorrow = get_date(days=1)
         if 'expected_date' in cdata and cdata['expected_date'] < tomorrow:
             msg = ('Return day cannot be earlier than {return_day}'
