@@ -13,7 +13,7 @@ from pytz import common_timezones, timezone
 
 from datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.helpers import get_full_name
-from remo.base.utils import get_date, validate_datetime
+from remo.base.utils import get_date, get_object_or_none, validate_datetime
 from remo.events.models import EventMetric
 from remo.events.helpers import get_event_link
 from remo.profiles.models import FunctionalArea
@@ -154,8 +154,7 @@ class PostEventMetricsForm(EventMetricsForm):
 
 class EventForm(happyforms.ModelForm):
     """Form of an event."""
-    categories = forms.ModelMultipleChoiceField(
-        queryset=FunctionalArea.active_objects.all())
+    categories = forms.ChoiceField(choices=[])
     country = forms.ChoiceField(
         choices=[],
         error_messages={'required': 'Please select one option from the list.'})
@@ -184,16 +183,22 @@ class EventForm(happyforms.ModelForm):
         super(EventForm, self).__init__(*args, **kwargs)
 
         # Dynamic categories field.
-        if self.instance.id:
-            categories_query = (Q(active=True) |
-                                Q(id__in=self.instance.categories.all()))
-            categories = FunctionalArea.objects.filter(categories_query)
-            self.fields['categories'].queryset = categories
+        categories_query = FunctionalArea.objects.filter(Q(active=True))
+
+        if self.instance.id and self.instance.categories.all():
+            categories_query |= categories_query.filter(Q(
+                id__in=self.instance.categories.all()))
+            initial_category = self.instance.categories.all()[0]
+            self.fields['categories'].initial = initial_category.id
+
+        categories = ([('', 'Please select a functional area')] +
+                      list(categories_query.values_list('id', 'name')))
+        self.fields['categories'].choices = categories
 
         # Dynamic countries field.
         countries = product_details.get_regions('en').values()
         countries.sort()
-        country_choices = ([('', "Country")] +
+        country_choices = ([('', 'Country')] +
                            [(country, country) for country in countries])
         self.fields['country'].choices = country_choices
 
@@ -248,7 +253,6 @@ class EventForm(happyforms.ModelForm):
     def clean(self):
         """Clean form."""
         super(EventForm, self).clean()
-
         cdata = self.cleaned_data
 
         cdata['budget_bug'] = cdata.get('budget_bug_form', None)
@@ -279,6 +283,11 @@ class EventForm(happyforms.ModelForm):
             msg = 'Start date should come before end date.'
             self._errors['start_form'] = self.error_class([msg])
 
+        # Check that there is a cateogry selected
+        if not cdata['categories']:
+            msg = 'You need to select one functional area for this event.'
+            self._errors['categories'] = self.error_class([msg])
+
         return cdata
 
     def _clean_bug(self, bug_id):
@@ -293,6 +302,10 @@ class EventForm(happyforms.ModelForm):
 
         bug, created = Bug.objects.get_or_create(bug_id=bug_id)
         return bug
+
+    def clean_categories(self):
+        category_id = self.cleaned_data['categories']
+        return get_object_or_none(FunctionalArea, id=category_id)
 
     def clean_swag_bug_form(self):
         """Clean swag_bug_form field."""
@@ -317,7 +330,9 @@ class EventForm(happyforms.ModelForm):
             # please increment number of event edits
             event.times_edited += 1
         event.save()
-        self.save_m2m()
+        # Clear all relations in order to force only one field
+        event.categories.clear()
+        event.categories.add(self.cleaned_data['categories'])
         return event
 
     class Meta:
@@ -326,7 +341,7 @@ class EventForm(happyforms.ModelForm):
                   'country', 'city', 'lat', 'lon', 'external_link',
                   'planning_pad_url', 'timezone', 'estimated_attendance',
                   'description', 'extra_content', 'hashtag', 'mozilla_event',
-                  'swag_bug', 'budget_bug', 'categories']
+                  'swag_bug', 'budget_bug']
         widgets = {'lat': forms.HiddenInput(attrs={'id': 'lat'}),
                    'lon': forms.HiddenInput(attrs={'id': 'lon'}),
                    'start': SplitSelectDateTimeWidget(),

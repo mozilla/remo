@@ -30,20 +30,18 @@ class InactiveCategoriesTest(RemoTestCase):
             'end_form_1_minute': 1}
 
         owner = UserFactory.create(groups=['Mentor'])
-        active_areas = FunctionalAreaFactory.create_batch(2)
-        inactive_areas = FunctionalAreaFactory.create_batch(2, active=False)
-        event = EventFactory.create(owner=owner, categories=inactive_areas)
+        functional_area = [FunctionalAreaFactory.create()]
+        event = EventFactory.create(owner=owner, categories=functional_area)
 
         data = model_to_dict(event)
-        data['categories'] = [x.id for x in active_areas + inactive_areas]
+        data['categories'] = functional_area[0].id
         data.update(start_form)
         data.update(end_form)
 
         form = EventForm(data=data, editable_owner=False, instance=event)
         ok_(form.is_valid())
         result = form.save()
-        for area in active_areas + inactive_areas:
-            ok_(area in result.categories.all())
+        ok_(functional_area[0] in result.categories.all())
 
 
 class EventMetricsFormsetTest(RemoTestCase):
@@ -139,11 +137,11 @@ class PostEventFormTest(RemoTestCase):
             'end_form_1_minute': 1}
 
         owner = UserFactory.create(groups=['Rep', 'Mentor'])
-        areas = FunctionalAreaFactory.create_batch(2)
+        areas = [FunctionalAreaFactory.create()]
         event = EventFactory.create(owner=owner, categories=areas)
 
         data = model_to_dict(event)
-        data['categories'] = [x.id for x in areas]
+        data['categories'] = areas[0].id
         data.update(start_form)
         data.update(end_form)
 

@@ -342,16 +342,12 @@
             <div class="pict-icon large medal"></div>
           </div>
           <div class="large-11 columns category-select">
-            <button class="small button"
-               data-reveal-id="category-modal">
-               Select functional area
-            </button>
+            {{ event_form.categories }}
             {% if event_form.categories.errors %}
-            <small class="error">
-              Please mark event category
-            </small>
+              <small class="error">
+                This field is required
+              </small>
             {% endif %}
-            <div class="required-field"></div>
           </div>
         </div>
 
@@ -473,36 +469,6 @@
       <button id="save-event" type="submit"
               class="small button confirm">
         Save event
-      </button>
-    </div>
-
-    <!-- Modals section -->
-
-    <!-- Category modal -->
-    <div id="category-modal" class="reveal-modal event-categories">
-      <a class="close-reveal-modal">&#215;</a>
-      <p class="lead">
-        Select the event category
-      </p>
-      <h3>
-        Event categories
-      </h3>
-      <ul class="large-block-grid-3 small-block-grid-1">
-        {% for category_choice in event_form.categories.field.choices %}
-          <li>
-            <label for="{{ category_choice.1|replace(" ","-") }}-bit">
-              <input type="checkbox" id="{{ category_choice.1|replace(" ","-") }}-bit"
-                     name="categories" value="{{ category_choice.0 }}"
-                     {% if category_choice.0 in selected_categories %}
-                       checked="checked"
-                     {% endif %}/>
-              {{ category_choice.1 }}
-            </label>
-          </li>
-        {% endfor %}
-      </ul>
-      <button class="small button update close-reveal-modal">
-        Choose these categories &raquo;
       </button>
     </div>
   </form>

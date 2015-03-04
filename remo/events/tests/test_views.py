@@ -26,14 +26,14 @@ class ViewsTest(TestCase):
 
     def setUp(self):
 
-        categories = FunctionalAreaFactory.create_batch(3)
+        functional_area = FunctionalAreaFactory.create()
         metrics = EventMetricFactory.create_batch(3)
 
         self.data = {
             'name': u'Test edit event',
             'description': u'This is a description',
             'external_link': '',
-            'categories': [x.id for x in categories],
+            'categories': [functional_area.id],
             'venue': u'Hackerspace.GR',
             'lat': 38.01697,
             'lon': 23.7314,

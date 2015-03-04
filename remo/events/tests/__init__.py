@@ -1,5 +1,4 @@
 import datetime
-from random import randint
 
 from django.utils.timezone import utc
 
@@ -57,10 +56,8 @@ class EventFactory(factory.django.DjangoModelFactory):
             for category in extracted:
                 self.categories.add(category)
         else:
-            # add random number of categories
-            for i in range(randint(1, 6)):
-                area = FunctionalAreaFactory.create()
-                self.categories.add(area)
+            area = FunctionalAreaFactory.create()
+            self.categories.add(area)
 
 
 class AttendanceFactory(factory.django.DjangoModelFactory):

@@ -126,7 +126,8 @@ class Event(caching.base.CachingMixin, models.Model):
                                    related_name='event_budget_requests')
     times_edited = models.PositiveIntegerField(default=0, editable=False)
     categories = models.ManyToManyField(FunctionalArea,
-                                        related_name='events_categories')
+                                        related_name='events_categories',
+                                        blank=True, null=True)
     goals = models.ManyToManyField(EventGoal, related_name='events_goals')
     metrics = models.ManyToManyField(EventMetric, through='EventMetricOutcome')
     has_new_metrics = models.BooleanField(default=True)
