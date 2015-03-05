@@ -6,7 +6,7 @@
 
 {% block content %}
 <main role="main" class="reports-main">
-  <form id="active-report-form" method="post" data-campaign-trigger="{{ campaign_trigger }}">
+  <form id="active-report-form" method="post">
     {{ csrf() }}
 
     <div class="row">
@@ -90,14 +90,13 @@
           </div>
           <div class="large-11 columns">
             <label class="required" for="id_functional_areas">
-              Which contribution area(s) does your activity support?
+              Which contribution area does your activity support?
             </label>
             <span class="has-tip tip-left" title="Contribution area"
                   data-tooltip
                   data-options="disable-for-touch:true">
               {{ field_with_attrs(report_form.functional_areas,
-                                  class='contribution-area',
-                                  size=18) }}
+                                  class='contribution-area') }}
             </span>
           </div>
         </div>
