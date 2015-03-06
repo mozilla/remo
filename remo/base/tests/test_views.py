@@ -346,8 +346,8 @@ class BaseListViewTest(RemoTestCase):
         response = self.get(reverse('list_campaigns'), user=admin,
                             follow=True)
         eq_(response.status_code, 200)
-        eq_(response.context['verbose_name'], 'campaign')
-        eq_(response.context['verbose_name_plural'], 'campaigns')
+        eq_(response.context['verbose_name'], 'initiative')
+        eq_(response.context['verbose_name_plural'], 'initiatives')
         eq_(response.context['create_object_url'], reverse('create_campaign'))
         self.assertTemplateUsed(response, 'base_content_list.html')
 
@@ -401,7 +401,7 @@ class BaseCreateViewTest(RemoTestCase):
         response = self.get(reverse('create_campaign'), user=admin,
                             follow=True)
         eq_(response.status_code, 200)
-        eq_(response.context['verbose_name'], 'campaign')
+        eq_(response.context['verbose_name'], 'initiative')
         eq_(response.context['creating'], True)
         self.assertTemplateUsed(response, 'base_content_edit.html')
 

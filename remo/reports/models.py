@@ -82,8 +82,8 @@ class Campaign(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'campaign'
-        verbose_name_plural = 'campaigns'
+        verbose_name = 'initiative'
+        verbose_name_plural = 'initiatives'
 
     def __unicode__(self):
         return self.name

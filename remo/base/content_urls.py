@@ -35,23 +35,23 @@ urlpatterns = patterns(
             model=Activity, form_class=ActivityForm,
             success_url=reverse_lazy('list_activities')),
         name='edit_activity'),
-    url('^campaigns/$',
+    url('^initiatives/$',
         BaseListView.as_view(
             groups=['Admin', 'Council'],
             model=Campaign, create_object_url=reverse_lazy('create_campaign')),
         name='list_campaigns'),
-    url('^campaigns/(?P<pk>\d+)/delete/$',
+    url('^initiatives/(?P<pk>\d+)/delete/$',
         BaseDeleteView.as_view(
             groups=['Admin', 'Council'],
             model=Campaign, success_url=reverse_lazy('list_campaigns')),
         name='delete_campaign'),
-    url('^campaigns/new/$',
+    url('^initiatives/new/$',
         BaseCreateView.as_view(
             groups=['Admin', 'Council'],
             model=Campaign, form_class=CampaignForm,
             success_url=reverse_lazy('list_campaigns')),
         name='create_campaign'),
-    url('^campaigns/(?P<pk>\d+)/edit/$',
+    url('^initiatives/(?P<pk>\d+)/edit/$',
         BaseUpdateView.as_view(
             groups=['Admin', 'Council'],
             model=Campaign, form_class=CampaignForm,
