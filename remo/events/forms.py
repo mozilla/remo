@@ -18,7 +18,7 @@ from remo.events.models import EventMetric
 from remo.events.helpers import get_event_link
 from remo.profiles.models import FunctionalArea
 from remo.reports import ACTIVITY_POST_EVENT_METRICS
-from remo.reports.models import Activity, NGReport
+from remo.reports.models import Activity, Campaign, NGReport
 from remo.remozilla.models import Bug
 
 from models import Event, EventComment, EventMetricOutcome
@@ -168,6 +168,7 @@ class EventForm(happyforms.ModelForm):
                                              common_timezones))
     start = forms.DateTimeField(required=False)
     end = forms.DateTimeField(required=False)
+    campaign = forms.ModelChoiceField(queryset=Campaign.active_objects.all())
 
     def __init__(self, *args, **kwargs):
         """Initialize form.
@@ -194,6 +195,9 @@ class EventForm(happyforms.ModelForm):
         categories = ([('', 'Please select a functional area')] +
                       list(categories_query.values_list('id', 'name')))
         self.fields['categories'].choices = categories
+
+        # Intiatives/Campaign field
+        self.fields['campaign'].empty_label = 'Please select an initiative.'
 
         # Dynamic countries field.
         countries = product_details.get_regions('en').values()
@@ -341,7 +345,7 @@ class EventForm(happyforms.ModelForm):
                   'country', 'city', 'lat', 'lon', 'external_link',
                   'planning_pad_url', 'timezone', 'estimated_attendance',
                   'description', 'extra_content', 'hashtag', 'mozilla_event',
-                  'swag_bug', 'budget_bug']
+                  'swag_bug', 'budget_bug', 'campaign']
         widgets = {'lat': forms.HiddenInput(attrs={'id': 'lat'}),
                    'lon': forms.HiddenInput(attrs={'id': 'lon'}),
                    'start': SplitSelectDateTimeWidget(),

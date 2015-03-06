@@ -137,6 +137,13 @@ Mozilla Reps - {{ event.name }}
           <div class="pict-icon large tag"></div>
         </div>
         <div class="large-11 columns">
+          <!-- Event Campaing/Intiatives -->
+          <p>
+            <span class="label inline">
+              Initiative
+            </span>
+            {{ event.campaign }}
+          </p>
           <!-- Event categories -->
           {% if event.categories.count() %}
             <p>

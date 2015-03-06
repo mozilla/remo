@@ -10,6 +10,7 @@ from remo.events.tests import (EventFactory, EventMetricFactory,
                                EventMetricOutcomeFactory)
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 from remo.reports import ACTIVITY_POST_EVENT_METRICS
+from remo.reports.tests import CampaignFactory
 from remo.reports.models import Activity, NGReport
 
 
@@ -31,10 +32,12 @@ class InactiveCategoriesTest(RemoTestCase):
 
         owner = UserFactory.create(groups=['Mentor'])
         functional_area = [FunctionalAreaFactory.create()]
+        campaign = [CampaignFactory.create()]
         event = EventFactory.create(owner=owner, categories=functional_area)
 
         data = model_to_dict(event)
         data['categories'] = functional_area[0].id
+        data['campaign'] = campaign[0].id
         data.update(start_form)
         data.update(end_form)
 
@@ -138,10 +141,12 @@ class PostEventFormTest(RemoTestCase):
 
         owner = UserFactory.create(groups=['Rep', 'Mentor'])
         areas = [FunctionalAreaFactory.create()]
+        campaign = [CampaignFactory.create()]
         event = EventFactory.create(owner=owner, categories=areas)
 
         data = model_to_dict(event)
         data['categories'] = areas[0].id
+        data['campaign'] = campaign[0].id
         data.update(start_form)
         data.update(end_form)
 
