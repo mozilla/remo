@@ -6,6 +6,9 @@ from django.db import models
 
 
 class Migration(DataMigration):
+    depends_on = (
+        ('reports', '0014_add_activity_post_event_data'),
+    )
 
     def forwards(self, orm):
         """Set the date left program date.
