@@ -47,6 +47,15 @@ class UserStatusFormTests(RemoTestCase):
         eq_(db_obj.expected_date, get_date(days=1))
         eq_(db_obj.user.get_full_name(), user.get_full_name())
 
+    def test_invalid_timespan(self):
+        mentor = UserFactory.create()
+        user = UserFactory.create(userprofile__mentor=mentor)
+        date = get_date(weeks=15)
+        data = {'expected_date': date}
+        form = UserStatusForm(data, instance=UserStatus(user=user))
+        ok_(not form.is_valid())
+        ok_('expected_date' in form.errors)
+
     def remove_unavailability_status(self):
         mentor = UserFactory.create()
         user = UserFactory.create(userprofile__mentor=mentor)
