@@ -4,3 +4,6 @@ django-import-export==0.2.2
 
 # sha256: EXGi39Bz0MuXOkgtic_AweW52n1VHcCgAkEoZ-z1KT4
 django-browserid==0.11.1
+
+# sha256: 2wDaXP_THYTiurzlFcVb2lOS7o0m8dmfXalFssMzqr4
+djangorestframework==3.1.0

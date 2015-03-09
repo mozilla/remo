@@ -27,7 +27,8 @@ INSTALLED_APPS = get_apps(append=[
     'waffle',
     'import_export',
     'south',
-    'django_nose'
+    'django_nose',
+    'rest_framework'
 ])
 
 # Because Jinja2 is the default template loader, add any non-Jinja templated
