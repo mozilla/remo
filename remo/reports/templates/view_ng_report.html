@@ -150,9 +150,10 @@
             <div class="pict-icon large heart"></div>
           </div>
           <section class="large-11 columns report-item">
-            <h4>Contribution areas</h4>
+            {% set functional_areas = report.functional_areas.all() %}
+            <h4>Contribution area{{ functional_areas.count()|pluralize }}</h4>
             <p>
-              {% for functional_area in report.functional_areas.all() %}
+              {% for functional_area in functional_areas %}
                 <a href="{{ url('list_ng_reports_rep_functional_area',
                                 report.user.userprofile.display_name,
                                 functional_area.slug) }}">

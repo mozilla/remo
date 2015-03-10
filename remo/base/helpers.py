@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.markup.templatetags import markup
 from django.core.urlresolvers import reverse
+from django.template.defaultfilters import pluralize
 from django.template.loader import render_to_string
 
 from Crypto.Cipher import AES
@@ -277,3 +278,6 @@ def formset_errors_exist(formset):
 def get_country_code(country_name):
     """Return country code from country name."""
     return COUNTRIES_NAME_TO_CODE.get(country_name.lower(), '')
+
+
+register.filter(pluralize)

@@ -31,28 +31,6 @@
     }
 
     /*
-     * Toggles the campaign input field if activity type is
-     * "Participated in a campaign". Makes input a required field
-     * when it is visible, removes input value when hidden.
-     */
-    function setCampaignPanel () {
-        var text = $('select#id_activity').find(":selected").text();
-        var $panel = $('#campaign-panel');
-        var input = $panel.find('input');
-        var triggerInput = $('#active-report-form').data('campaign-trigger');
-
-        if (text === triggerInput) {
-            $panel.slideDown();
-            input.attr('required', 'required');
-        } else {
-            $panel.slideUp();
-            input.val('');
-            input.removeAttr('required');
-        }
-    }
-
-
-    /*
      * Override map_modal.js click handler as reports template
      * uses different ID's for lat/lng form values.
      */
@@ -70,10 +48,6 @@
         $('#id_location').removeAttr('readonly');
     });
 
-    // Set campaign input visibility on select field change
-    $('#id_activity').on('change', setCampaignPanel);
-    // Set campaign panel visibility on page load
-    setCampaignPanel();
     // set date picker defaults
     initDatePicker();
 

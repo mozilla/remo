@@ -8,24 +8,27 @@ from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 from remo.reports import ACTIVITY_CAMPAIGN
 from remo.reports.forms import NGReportForm
 from remo.reports.models import NGReport
-from remo.reports.tests import ActivityFactory, NGReportFactory
+from remo.reports.tests import (ActivityFactory, CampaignFactory,
+                                NGReportFactory)
 
 
 class NGReportFormTests(RemoTestCase):
     def test_base(self):
         user = UserFactory.create()
         activity = ActivityFactory.create()
+        campaign = CampaignFactory.create()
         functional_area = FunctionalAreaFactory.create()
         data = {
             'report_date': '25 March 2012',
             'activity': activity.id,
+            'campaign': campaign.id,
             'longitude': 44.33,
             'latitude': 55.66,
             'location': 'world',
             'link': 'https://example.com',
             'link_description': 'Test link.',
             'activity_description': 'Test activity',
-            'functional_areas': [functional_area.id],
+            'functional_areas': functional_area.id,
         }
         form = NGReportForm(data, instance=NGReport(user=user))
         ok_(form.is_valid())
@@ -69,15 +72,16 @@ class InactiveCategoriesTest(RemoTestCase):
     def test_edit_event(self):
         """Edit NGReport with inactive categories."""
         activity = ActivityFactory.create()
+        campaign = CampaignFactory.create()
         active_area = FunctionalAreaFactory.create()
         inactive_areas = FunctionalAreaFactory.create_batch(2, active=False)
-        report = NGReportFactory.create(activity=activity,
+        report = NGReportFactory.create(activity=activity, campaign=campaign,
                                         functional_areas=inactive_areas)
+
         data = model_to_dict(report)
-        areas = [active_area.id] + [x.id for x in inactive_areas]
-        data['functional_areas'] = areas
+        data['functional_areas'] = active_area.id
         form = NGReportForm(data, instance=report)
         ok_(form.is_valid())
         result = form.save()
-        for area in inactive_areas + [active_area]:
-            ok_(area in result.functional_areas.all())
+        ok_(active_area in result.functional_areas.all())
+        eq_(result.functional_areas.all().count(), 1)
