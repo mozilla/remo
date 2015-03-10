@@ -14,12 +14,12 @@ from tastypie.resources import ModelResource
 
 from remo.api import HttpCache
 from remo.base.serializers import iCalSerializer
-
-from helpers import is_multiday
-from models import Event, EventMetric, EventMetricOutcome
+from remo.events.helpers import is_multiday
+from remo.events.models import Event, EventMetric, EventMetricOutcome
 from remo.reports.models import Campaign
 
 
+# Legacy non-public api
 class EventMetricResource(ModelResource):
     """Event Metric Resource."""
 
@@ -37,8 +37,8 @@ class EventMetricResource(ModelResource):
 
 class EventMetricOutcomeResource(ModelResource):
     """Event Metric Outcome Resource."""
-    metric = fields.ToOneField('remo.events.api.EventMetricResource', 'metric',
-                               full=True, null=True)
+    metric = fields.ToOneField('remo.events.api.api_v1.EventMetricResource',
+                               'metric', full=True, null=True)
 
     class Meta:
         queryset = EventMetricOutcome.objects.all()
@@ -75,11 +75,11 @@ class EventResource(ModelResource):
     event_url = fields.CharField()
     multiday = fields.BooleanField()
     categories = fields.ToManyField(
-        'remo.profiles.api.FunctionalAreasResource',
+        'remo.profiles.api.api_v1.FunctionalAreasResource',
         attribute='categories', full=True, null=True)
-    metrics = fields.ToManyField('remo.events.api.EventMetricOutcomeResource',
-                                 'eventmetricoutcome_set',
-                                 full=True, null=True)
+    metrics = fields.ToManyField(
+        'remo.events.api.api_v1.EventMetricOutcomeResource',
+        'eventmetricoutcome_set', full=True, null=True)
     swag_bug_id = fields.IntegerField(null=True)
     budget_bug_id = fields.IntegerField(null=True)
     sign_ups = fields.IntegerField()
