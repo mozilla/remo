@@ -237,15 +237,10 @@ def edit_event(request, slug=None, clone=None):
          request.user.has_perm('events.can_delete_events'))):
         can_delete_event = True
 
-    selected_categories = map(int, event_form['categories'].value())
-    selected_goals = map(int, event_form['goals'].value())
-
     return render(request, 'edit_event.html',
                   {'creating': created,
                    'event': event,
                    'event_form': event_form,
-                   'selected_categories': selected_categories,
-                   'selected_goals': selected_goals,
                    'metrics_formset': metrics_formset,
                    'can_delete_event': can_delete_event})
 

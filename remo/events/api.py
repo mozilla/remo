@@ -16,7 +16,7 @@ from remo.api import HttpCache
 from remo.base.serializers import iCalSerializer
 
 from helpers import is_multiday
-from models import Event, EventGoal,  EventMetric, EventMetricOutcome
+from models import Event, EventMetric, EventMetricOutcome
 
 
 class EventMetricResource(ModelResource):
@@ -50,21 +50,6 @@ class EventMetricOutcomeResource(ModelResource):
         fields = ['metric', 'expected_outcome', 'outcome']
 
 
-class EventGoalResource(ModelResource):
-    """Event Goal resource."""
-
-    class Meta:
-        queryset = EventGoal.active_objects.all()
-        resource_name = 'event_goals'
-        authentication = Authentication()
-        authorization = ReadOnlyAuthorization()
-        include_resource_uri = False
-        include_absolute_url = False
-        allowed_methods = ['get']
-        fields = ['name']
-        filtering = {'name': ALL}
-
-
 class EventResource(ModelResource):
     """Event Resource."""
     local_start = fields.DateTimeField()
@@ -79,8 +64,6 @@ class EventResource(ModelResource):
     metrics = fields.ToManyField('remo.events.api.EventMetricOutcomeResource',
                                  'eventmetricoutcome_set',
                                  full=True, null=True)
-    goals = fields.ToManyField('remo.events.api.EventGoalResource', 'goals',
-                               full=True, null=True)
     swag_bug_id = fields.IntegerField(null=True)
     budget_bug_id = fields.IntegerField(null=True)
     sign_ups = fields.IntegerField()

@@ -1,5 +1,4 @@
 import datetime
-from random import randint
 
 from django.utils.timezone import utc
 
@@ -8,7 +7,7 @@ from factory import fuzzy
 from product_details import product_details
 from pytz import common_timezones
 
-from remo.events.models import (Attendance, Event, EventComment, EventGoal,
+from remo.events.models import (Attendance, Event, EventComment,
                                 EventMetric, EventMetricOutcome)
 
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
@@ -19,13 +18,6 @@ COUNTRIES = product_details.get_regions('en').values()
 START_DT = datetime.datetime(2011, 1, 1, tzinfo=utc)
 END_DT = datetime.datetime(2011, 2, 1, tzinfo=utc)
 ATTENDANCE_CHOICES = [10, 50, 100, 500, 1000, 2000]
-
-
-class EventGoalFactory(factory.django.DjangoModelFactory):
-    """Factory for FunctionalArea model."""
-    FACTORY_FOR = EventGoal
-
-    name = factory.Sequence(lambda n: 'Event goal #%s' % n)
 
 
 class EventFactory(factory.django.DjangoModelFactory):
@@ -64,24 +56,8 @@ class EventFactory(factory.django.DjangoModelFactory):
             for category in extracted:
                 self.categories.add(category)
         else:
-            # add random number of categories
-            for i in range(randint(1, 6)):
-                area = FunctionalAreaFactory.create()
-                self.categories.add(area)
-
-    @factory.post_generation
-    def goals(self, create, extracted, **kwargs):
-        """Add event goals after event creation."""
-        if not create:
-            return
-        if extracted:
-            for goal in extracted:
-                self.goals.add(goal)
-        else:
-            # add random number of goals
-            for i in range(randint(1, 6)):
-                goal = EventGoalFactory.create()
-                self.goals.add(goal)
+            area = FunctionalAreaFactory.create()
+            self.categories.add(area)
 
 
 class AttendanceFactory(factory.django.DjangoModelFactory):
