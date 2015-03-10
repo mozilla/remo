@@ -284,7 +284,7 @@ class EventForm(happyforms.ModelForm):
             self._errors['start_form'] = self.error_class([msg])
 
         # Check that there is a cateogry selected
-        if not cdata['categories']:
+        if not cdata.get('categories'):
             msg = 'You need to select one functional area for this event.'
             self._errors['categories'] = self.error_class([msg])
 
