@@ -19,6 +19,7 @@ from remo.events.tests import (AttendanceFactory, EventCommentFactory,
                                EventFactory, EventMetricFactory,
                                EventMetricOutcomeFactory)
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
+from remo.reports.tests import CampaignFactory
 
 
 class ViewsTest(TestCase):
@@ -28,12 +29,14 @@ class ViewsTest(TestCase):
 
         functional_area = FunctionalAreaFactory.create()
         metrics = EventMetricFactory.create_batch(3)
+        campaign = CampaignFactory.create()
 
         self.data = {
             'name': u'Test edit event',
             'description': u'This is a description',
             'external_link': '',
             'categories': [functional_area.id],
+            'campaign': [campaign.id],
             'venue': u'Hackerspace.GR',
             'lat': 38.01697,
             'lon': 23.7314,
@@ -502,7 +505,7 @@ class ViewsTest(TestCase):
 
         # Test fields with the same name in POST data and models
         excluded = ['planning_pad_url', 'lat', 'lon', 'mozilla_event',
-                    'categories']
+                    'categories', 'campaign']
         for field in set(self.data).difference(set(excluded)):
             if getattr(event, field, None):
                 eq_(str(getattr(event, field)), self.data[field])
@@ -513,6 +516,7 @@ class ViewsTest(TestCase):
 
         eq_(set(self.data['categories']),
             set(event.categories.values_list('id', flat=True)))
+        eq_(self.data['campaign'], [event.campaign_id])
 
         eq_(event.planning_pad_url, pad_url)
         eq_(event.lat, self.data['lat'])

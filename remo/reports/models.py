@@ -74,6 +74,11 @@ class Activity(models.Model):
 
 
 class Campaign(models.Model):
+    """Campaign/Initiatives model.
+
+    As of March 2015 this serves as the Initiative model used both
+    in events and reports app.
+    """
     name = models.CharField(max_length=100)
     active = models.BooleanField(default=True)
 

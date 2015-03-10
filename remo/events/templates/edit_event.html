@@ -338,8 +338,21 @@
 
         <!-- Functional Areas Section -->
         <div class="row">
+          <!-- Campaign/Intiatives -->
           <div class="large-1 columns">
             <div class="pict-icon large medal"></div>
+          </div>
+          <div class="large-11 columns category-goal-select">
+            {{ event_form.campaign }}
+            {% if event_form.campaign.errors %}
+              <small class="error">
+               This field is required
+              </small>
+            {% endif %}
+            <div class="required-field"></div>
+          </div>
+          <div class="large-1 columns">
+            <div class="pict-icon large heart"></div>
           </div>
           <div class="large-11 columns category-select">
             {{ event_form.categories }}
