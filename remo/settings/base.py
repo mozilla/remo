@@ -37,6 +37,7 @@ JINGO_EXCLUDE_APPS = [
     'admin',
     'registration',
     'browserid',
+    'rest_framework'
 ]
 
 # Tells the extract script what files to look for L10n in and what function
@@ -165,3 +166,12 @@ djcelery.setup_loader()
 MAPBOX_TOKEN = 'examples.map-i86nkdio'
 
 SERVER_EMAIL = 'reps-dev@mozilla.com'
+
+# Django Rest Framework
+REST_FRAMEWORK = {
+    'URL_FIELD_NAME': '_url',
+    'PAGINATE_BY': 20,
+    'MAX_PAGINATE_BY': 100,
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+        'rest_framework.serializers.HyperlinkedModelSerializer'
+}
