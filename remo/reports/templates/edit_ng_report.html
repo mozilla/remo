@@ -45,21 +45,27 @@
               {{ report_form.activity }}
             </div>
             {{ field_errors(report_form.activity) }}
+          </div>
+        </div>
 
-            <div id="campaign-panel">
-              <label class="required" for="campaign">
-                Which initiative did you participate in?
-              </label>
-              <div id="campaign"
-                   class="has-tip tip-left"
-                   title="Select an initiative"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
-                   required>
-                {{ report_form.campaign  }}
-              </div>
-              {{ field_errors(report_form.campaign) }}
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large medal"></div>
+          </div>
+
+          <div class="large-11 columns">
+            <label class="required" for="campaign">
+              Which initiative did you participate in?
+            </label>
+            <div id="campaign"
+                 class="has-tip tip-left"
+                 title="Select an initiative"
+                 data-tooltip
+                 data-options="disable-for-touch:true"
+                 required>
+              {{ report_form.campaign  }}
             </div>
+            {{ field_errors(report_form.campaign) }}
           </div>
         </div>
 
@@ -178,11 +184,12 @@
             <label for="description">
               Activity description
             </label>
-            <div id="description " data-tooltip class="has-tip tip-right"
+            <div id="description" data-tooltip class="has-tip tip-right"
                  title="Activity description">
               {{ field_with_attrs(report_form.activity_description,
                                   class="flat",
-                                  placeholder="Describe the activity briefly") }}
+                                  placeholder="Describe the activity briefly",
+                                  rows=3) }}
             </div>
             {{ field_errors(report_form.activity_description) }}
           </div>
