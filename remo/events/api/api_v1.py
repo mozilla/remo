@@ -14,11 +14,12 @@ from tastypie.resources import ModelResource
 
 from remo.api import HttpCache
 from remo.base.serializers import iCalSerializer
+from remo.events.helpers import is_multiday
+from remo.events.models import (Event, EventGoal,  EventMetric,
+                                EventMetricOutcome)
 
-from helpers import is_multiday
-from models import Event, EventMetric, EventMetricOutcome
 
-
+# Legacy non-public api
 class EventMetricResource(ModelResource):
     """Event Metric Resource."""
 
