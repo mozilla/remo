@@ -138,12 +138,14 @@ Mozilla Reps - {{ event.name }}
         </div>
         <div class="large-11 columns">
           <!-- Event Campaing/Intiatives -->
-          <p>
-            <span class="label inline">
-              Initiative
-            </span>
-            {{ event.campaign }}
-          </p>
+          {% if event.campaign %}
+            <p>
+              <span class="label inline">
+                Initiative
+              </span>
+              {{ event.campaign }}
+            </p>
+          {% endif %}
           <!-- Event categories -->
           {% if event.categories.count() %}
             <p>
