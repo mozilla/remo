@@ -206,7 +206,7 @@ class UserStatusForm(happyforms.ModelForm):
         super(UserStatusForm, self).__init__(*args, **kwargs)
         query = (User.objects.filter(
             groups__name='Rep', userprofile__registration_complete=True)
-            .exclude(id=self.instance.user.id))
+            .exclude(id=self.instance.user.id).order_by('first_name'))
         self.fields['replacement_rep'].queryset = query
 
         if self.instance.id:
