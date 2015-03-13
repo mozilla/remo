@@ -128,7 +128,8 @@ class Event(caching.base.CachingMixin, models.Model):
     categories = models.ManyToManyField(FunctionalArea,
                                         related_name='events_categories',
                                         blank=True, null=True)
-    goals = models.ManyToManyField(EventGoal, related_name='events_goals')
+    goals = models.ManyToManyField(EventGoal, related_name='events_goals',
+                                   blank=True)
     metrics = models.ManyToManyField(EventMetric, through='EventMetricOutcome')
     has_new_metrics = models.BooleanField(default=True)
     action_items = generic.GenericRelation(ActionItem)
