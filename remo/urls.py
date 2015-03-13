@@ -83,7 +83,8 @@ urlpatterns = patterns(
     url(r'^robots\.txt$', robots_txt),
 
     # contribute.json url
-    url(r'^contribute\.json$', 'remo.base.views.contribute_json'),
+    url(r'^(?P<path>contribute\.json)$', 'django.views.static.serve',
+        {'document_root': settings.ROOT}),
 )
 
 
