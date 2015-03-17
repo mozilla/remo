@@ -1,4 +1,6 @@
+# sha256: tpVHf8cXHYhEoEd6jKpojWmI2JXsFPqoF_RN74pdeEU
 south==0.8.1
+
 BeautifulSoup<4.0
 django-import-export==0.2.2
 
@@ -7,3 +9,6 @@ django-browserid==0.11.1
 
 # sha256: 2wDaXP_THYTiurzlFcVb2lOS7o0m8dmfXalFssMzqr4
 djangorestframework==3.1.0
+
+# sha256: 0yV2uq13_dnmhZvpfCtqPBem9IQ2Q4nbcx8Gl7ehlmE
+django-csp
