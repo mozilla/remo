@@ -201,7 +201,7 @@ def update_budget_needinfo_action_items(sender, instance, action, pk_set,
     """Update ActionItem objects on needinfo change."""
 
     ActionItem = get_model('dashboard', 'ActionItem')
-    name = '{0} {1}'.format(NEEDINFO_ACTION, instance.summary)
+    name = u'{0} {1}'.format(NEEDINFO_ACTION, instance.summary)
     if action == 'post_remove':
         for pk in pk_set:
             ActionItem.resolve(instance=instance, user=User.objects.get(pk=pk),
