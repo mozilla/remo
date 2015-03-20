@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib import quote
 
 from django.conf import settings
@@ -27,7 +27,7 @@ LOGIN_URL = ('https://bugzilla.mozilla.org/rest/login?login={username}'
              '&password={password}')
 URL = ('https://bugzilla.mozilla.org/rest/bug?token={token}'
        '&product=Mozilla%20Reps&component={component}&'
-       'include_fields={fields}&changed_after={timedelta}d&'
+       'include_fields={fields}&last_change_time={timestamp}&'
        'offset={offset}&limit={limit}')
 LIMIT = 100
 
@@ -62,13 +62,15 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
     now = timezone.now()
     if not days:
-        days = (now - get_last_updated_date()).days + 1
+        changed_date = get_last_updated_date()
+    else:
+        changed_date = now - timedelta(int(days))
 
     for component in components:
         offset = 0
         url = URL.format(token=token, component=quote(component),
                          fields=','.join(BUGZILLA_FIELDS),
-                         timedelta=days, offset=offset, limit=LIMIT)
+                         timestamp=changed_date, offset=offset, limit=LIMIT)
 
         while True:
             bugs = requests.get(url).json()
@@ -77,7 +79,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
             # Check the server response and get the token
             if error:
                 raise ValueError('Invalid response from server, {0}.'
-                                 .format(error))
+                                 .format(bugs['message']))
 
             remo_bugs = bugs.get('bugs', [])
             if not remo_bugs:
