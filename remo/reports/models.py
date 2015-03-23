@@ -3,8 +3,7 @@ import datetime
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models.signals import (m2m_changed, post_save, pre_delete,
-                                      pre_save)
+from django.db.models.signals import m2m_changed, post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.timezone import now
 
@@ -13,8 +12,7 @@ from django_statsd.clients import statsd
 from south.signals import post_migrate
 
 import remo.base.utils as utils
-from remo.base.utils import (add_permissions_to_groups,
-                             get_object_or_none)
+from remo.base.utils import add_permissions_to_groups
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import daterange, get_date
@@ -320,23 +318,27 @@ def create_update_passive_event_report(sender, instance, created, **kwargs):
                                     instance.region,
                                     instance.country),
         'link': get_event_link(instance),
-        'activity_description': instance.description}
+        'activity_description': instance.description,
+        'is_passive': True,
+        'event': instance,
+        'campaign': instance.campaign
+    }
 
     if created:
         activity = Activity.objects.get(name=ACTIVITY_EVENT_CREATE)
-        attrs.update({
-            'user': instance.owner,
-            'event': instance,
-            'activity': activity,
-            'is_passive': True})
+        attrs.update({'user': instance.owner,
+                      'activity': activity})
 
-        report = NGReport.objects.create(**attrs)
-        report.functional_areas.add(*instance.categories.all())
+        NGReport.objects.create(**attrs)
         statsd.incr('reports.create_passive_event')
     else:
         reports = (NGReport.objects.filter(event=instance)
                    .exclude(activity__name=ACTIVITY_POST_EVENT_METRICS))
         reports.update(**attrs)
+        # Change user and mentor to the appropriate reports
+        attrs.update({'user': instance.owner,
+                      'mentor': instance.owner.userprofile.mentor})
+        reports.exclude(activity__name=ACTIVITY_EVENT_ATTEND).update(**attrs)
         statsd.incr('reports.update_passive_event')
 
 
@@ -359,22 +361,6 @@ def delete_passive_event_report(sender, instance, **kwargs):
     """Automatically delete a passive report after an event is deleted."""
     NGReport.objects.filter(event=instance).delete()
     statsd.incr('reports.delete_passive_event')
-
-
-@receiver(pre_save, sender=Event,
-          dispatch_uid='pre_update_passive_report_event_signal')
-def update_passive_report_event_owner(sender, instance, **kwargs):
-    """Automatically update passive reports event owner."""
-    if instance.id:
-        event = get_object_or_none(Event, pk=instance.id)
-        if event and event.owner != instance.owner:
-            attrs = {
-                'user': event.owner,
-                'event': instance,
-                'activity': Activity.objects.get(name=ACTIVITY_EVENT_CREATE)}
-            mentor = instance.owner.userprofile.mentor
-            NGReport.objects.filter(**attrs).update(user=instance.owner,
-                                                    mentor=mentor)
 
 
 @receiver(m2m_changed, sender=Event.categories.through,
