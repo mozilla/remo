@@ -197,8 +197,7 @@ class NGReportEventCreationSignalTests(TestCase):
     def test_update(self):
         """Test update report after event edit."""
         event = EventFactory.create()
-        report = NGReportFactory.create(user=event.owner, event=event,
-                                        report_date=event.start.date())
+        report = NGReport.objects.get(user=event.owner, event=event)
         eq_(report.report_date, event.start.date())
 
         event.start += datetime.timedelta(days=5)
