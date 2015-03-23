@@ -283,7 +283,7 @@ Mozilla Reps - {{ poll.name }} - Vote
                 {% if comment.user.userprofile.display_name == 'ReMoBot' %}
                   {{ comment.comment|markdown }}
                 {% else %}
-                  {{ comment.comment }}
+                  {{ comment.comment|urlize(50) }}
                 {% endif %}
               </div>
             {% endfor %}
