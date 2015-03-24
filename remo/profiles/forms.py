@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms.extras.widgets import SelectDateWidget
+from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 
 from django_browserid.auth import default_username_algo
@@ -19,6 +20,11 @@ from remo.profiles.models import FunctionalArea, UserProfile, UserStatus
 USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
                         default_username_algo)
 BOOLEAN_CHOICES = ((True, 'Yes'), (False, 'No'))
+# Max period that a user can be unavailable in weeks
+MAX_UNAVAILABILITY_PERIOD = 12
+# SOP url for leaving the program
+LEAVING_SOP_URL = ('<a href="https://wiki.mozilla.org/ReMo/SOPs/Leaving" '
+                   'target="_blank"</a>')
 
 
 class InviteUserForm(happyforms.Form):
@@ -220,11 +226,18 @@ class UserStatusForm(happyforms.ModelForm):
             return cdata
 
         tomorrow = get_date(days=1)
-        if 'expected_date' in cdata and cdata['expected_date'] < tomorrow:
-            msg = ('Return day cannot be earlier than {return_day}'
-                   .format(return_day=tomorrow.strftime('%d %B %Y')))
-            self._errors['expected_date'] = self.error_class([msg])
-            del cdata['expected_date']
+        max_period = get_date(weeks=MAX_UNAVAILABILITY_PERIOD)
+        if 'expected_date' in cdata:
+            if cdata['expected_date'] < tomorrow:
+                msg = ('Return day cannot be earlier than {0}'
+                       .format(tomorrow.strftime('%d %B %Y')))
+                self._errors['expected_date'] = self.error_class([msg])
+            if cdata['expected_date'] > max_period:
+                msg = (u'The maximum period for unavailability is until {0}.'
+                       .format(max_period.strftime('%d %B %Y')))
+                sop = mark_safe(msg + (' For more information please check '
+                                       'the %s Leaving SOP') % LEAVING_SOP_URL)
+                self._errors['expected_date'] = self.error_class([sop])
 
         if ('is_replaced' in cdata and
                 cdata['is_replaced'] and not cdata['replacement_rep']):
