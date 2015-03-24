@@ -1,6 +1,7 @@
 import happyforms
 
 from django import forms
+from django.db.models import Q
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
 from django.db.models import F
@@ -140,7 +141,8 @@ class PollAddForm(PollEditForm):
     """Poll Add Form."""
     start = forms.DateTimeField(required=False)
     valid_groups = forms.ModelChoiceField(
-        queryset=Group.objects.all().exclude(name='Mozillians'),
+        queryset=Group.objects.all().exclude(Q(name='Mozillians') |
+                                             Q(name='Alumni')),
         error_messages={'required': 'Please select an option from the list.'})
 
     def __init__(self, *args, **kwargs):
