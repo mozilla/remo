@@ -103,6 +103,14 @@ def edit(request, display_name):
                                    kwargs={'display_name':
                                            user.userprofile.display_name})
             return redirect(redirect_url)
+    else:
+        # If forms are not valid and the fields are dirty, get a fresh copy
+        # of the object.
+        # This is needed when an invalid display_name is used.
+        # Django tries to resolve the url based on this display_name, which
+        # results in a NoReverseMatch error. See also bug:
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=1147541
+        user = User.objects.get(pk=user.id)
 
     group_bits = map(lambda x: user.groups.filter(name=x).exists(),
                      ['Admin', 'Council', 'Mentor', 'Rep', 'Alumni'])
