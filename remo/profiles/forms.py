@@ -175,8 +175,7 @@ class ChangeDatesForm(happyforms.ModelForm):
                    SelectDateWidget(years=range(2011, now().date().year + 1),
                                     required=False),
                    'date_left_program':
-                   SelectDateWidget(years=range(now().date().year - 1,
-                                                now().date().year + 1),
+                   SelectDateWidget(years=range(2011, now().date().year + 1),
                                     required=False)}
 
     def save(self, commit=True):
