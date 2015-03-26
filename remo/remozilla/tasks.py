@@ -8,7 +8,7 @@ from django.utils import timezone
 
 import requests
 import waffle
-from celery.task import task
+from celery.task import periodic_task, task
 from funfactory.helpers import urlparams
 
 from remo.base.utils import get_object_or_none
@@ -41,8 +41,18 @@ def parse_bugzilla_time(time):
 
 
 @task
-@transaction.commit_on_success
 def fetch_bugs(components=COMPONENTS, days=None):
+    """ This task is deprecated.
+
+    This used to run through cron on the server and it will be
+    removed completely when the cron entry is removed.
+    """
+    return
+
+
+@periodic_task(run_every=timedelta(minutes=15))
+@transaction.commit_on_success
+def fetch_remo_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
 
     Loop over components and fetch bugs updated the last days. Link

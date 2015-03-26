@@ -11,7 +11,7 @@ from mock import ANY, Mock, patch
 
 from remo.profiles.tests import UserFactory
 from remo.remozilla.models import Bug
-from remo.remozilla.tasks import fetch_bugs
+from remo.remozilla.tasks import fetch_remo_bugs
 from remo.remozilla.utils import get_last_updated_date
 
 
@@ -22,19 +22,19 @@ class FetchBugsTest(TestCase):
     @raises(requests.ConnectionError)
     @patch('requests.get')
     def test_connection_error(self, fake_get):
-        """Test fetch_bugs connection error exception."""
+        """Test fetch_remo_bugs connection error exception."""
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
              not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME '
                            'or REMOZILLA_PASSWORD.')
         fake_get.side_effect = requests.ConnectionError()
-        fetch_bugs()
+        fetch_remo_bugs()
         fake_get.assert_called_with(ANY)
 
     @raises(ValueError)
     @patch('remo.remozilla.tasks.requests')
     def test_invalid_return_code(self, mocked_request):
-        """Test fetch_bugs invalid status code exception."""
+        """Test fetch_remo_bugs invalid status code exception."""
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
              not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME '
@@ -43,12 +43,12 @@ class FetchBugsTest(TestCase):
         mocked_request.get.return_value = mocked_obj
         mocked_response = mocked_obj
         mocked_response.json.return_value = {'error': 'Invalid login'}
-        fetch_bugs()
+        fetch_remo_bugs()
 
     @patch('remo.remozilla.tasks.waffle.switch_is_active')
     @patch('remo.remozilla.tasks.requests.get')
     def test_with_valid_data(self, mocked_request, switch_is_active_mock):
-        """Test fetch_bugs valid bug data processing."""
+        """Test fetch_remo_bugs valid bug data processing."""
         UserFactory.create(username='remobot')
         if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
              not getattr(settings, 'REMOZILLA_PASSWORD', None))):
@@ -110,7 +110,7 @@ class FetchBugsTest(TestCase):
                 return mocked_response
 
         mocked_request.side_effect = mocked_get
-        fetch_bugs()
+        fetch_remo_bugs()
 
         eq_(Bug.objects.all().count(), 2)
         eq_(Bug.objects.filter(component='Budget Requests').count(), 2)
