@@ -28,6 +28,7 @@ INSTALLED_APPS = get_apps(append=[
     'import_export',
     'south',
     'django_nose',
+    'django_filters',
     'rest_framework'
 ])
 
