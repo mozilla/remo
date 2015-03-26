@@ -34,3 +34,13 @@ class EventDetailedSerializer(serializers.HyperlinkedModelSerializer):
         in ReMo portal.
         """
         return absolutify(obj.get_absolute_url())
+
+
+class EventsKPISerializer(serializers.Serializer):
+    """Serializer for the Events KPI data"""
+    total = serializers.IntegerField()
+    total_quarter = serializers.IntegerField()
+    percentage_quarter = serializers.FloatField()
+    total_week = serializers.IntegerField()
+    percentage_week = serializers.FloatField()
+    total_per_week = serializers.ListField()
