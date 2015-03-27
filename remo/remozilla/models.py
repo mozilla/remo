@@ -26,7 +26,7 @@ BUG_ATTRS = ['waiting_receipts', 'waiting_report',
 
 
 def _get_action_name(action_name, instance):
-    return '{0} {1}'.format(action_name, instance.summary)
+    return u'{0} {1}'.format(action_name, instance.summary)
 
 
 class Bug(caching.base.CachingMixin, models.Model):
