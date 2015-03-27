@@ -118,10 +118,10 @@ class Poll(models.Model):
         due_date = self.end.date()
 
         if self.automated_poll:
-            name = '{0} {1}'.format(BUDGET_VOTE_ACTION, self.bug.summary)
+            name = u'{0} {1}'.format(BUDGET_VOTE_ACTION, self.bug.summary)
             priority = ActionItem.MAJOR
         else:
-            name = '{0} {1}'.format(VOTE_ACTION, self.name)
+            name = u'{0} {1}'.format(VOTE_ACTION, self.name)
             priority = ActionItem.NORMAL
 
         for user in User.objects.filter(groups=self.valid_groups):
