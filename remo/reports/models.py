@@ -9,18 +9,21 @@ from django.utils.timezone import now
 
 import caching.base
 from django_statsd.clients import statsd
+from product_details import product_details
 from south.signals import post_migrate
 
 import remo.base.utils as utils
-from remo.base.utils import add_permissions_to_groups
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import daterange, get_date
+from remo.base.utils import add_permissions_to_groups, daterange, get_date
 from remo.events.models import Attendance as EventAttendance, Event
 from remo.profiles.models import FunctionalArea
 from remo.reports import (ACTIVITY_CAMPAIGN, ACTIVITY_EVENT_ATTEND,
                           ACTIVITY_EVENT_CREATE, ACTIVITY_POST_EVENT_METRICS,
                           READONLY_ACTIVITIES, VERIFIABLE_ACTIVITIES)
+
+
+COUNTRIES_LIST = product_details.get_regions('en').values()
 
 
 @receiver(post_migrate, dispatch_uid='report_set_groups_signal')
@@ -129,6 +132,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
     activity_description = models.TextField(blank=True, default='')
     verified_activity = models.BooleanField('I have verified this activity',
                                             blank=True, default=False)
+    country = models.CharField(max_length=50, blank=True, null=True)
 
     objects = caching.base.CachingManager()
 
@@ -184,6 +188,14 @@ class NGReport(caching.base.CachingMixin, models.Model):
         # Save the mentor of the user if no mentor is defined.
         if not self.mentor:
             self.mentor = self.user.userprofile.mentor
+        # Save the country if possible
+        if not self.country:
+            try:
+                country = self.location.split()[-1].replace(' ', '')
+            except IndexError:
+                country = ''
+            if country in COUNTRIES_LIST:
+                self.country = country
         super(NGReport, self).save()
 
         if self.is_future_report:
