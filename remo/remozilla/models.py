@@ -143,7 +143,7 @@ class Bug(caching.base.CachingMixin, models.Model):
                                     ADD_REPORTS_PHOTOS_ACTION,
                                     REVIEW_BUDGET_REQUEST_ACTION,
                                     WAITING_MENTOR_VALIDATION_ACTION]
-                action_names = (['{0} {1}'.format(action, self.summary)
+                action_names = ([u'{0} {1}'.format(action, self.summary)
                                  for action in possible_actions])
                 # Resolve any non-valid action items.
                 invalid_actions = []
