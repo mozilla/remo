@@ -178,6 +178,16 @@ class ChangeDatesForm(happyforms.ModelForm):
                    SelectDateWidget(years=range(2011, now().date().year + 1),
                                     required=False)}
 
+    def __init__(self, *args, **kwargs):
+        super(ChangeDatesForm, self).__init__(*args, **kwargs)
+
+        # Set the year portion of the date_left_program field same as the
+        # date_joined_program field
+        if self.instance and 'date_left_program' in self.fields:
+            form_widget = SelectDateWidget(years=range(
+                self.instance.date_joined_program.year, now().date().year + 1))
+            self.fields['date_left_program'].widget = form_widget
+
     def save(self, commit=True):
         """Override save method for custom functinality."""
 
