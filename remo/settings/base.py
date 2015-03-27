@@ -174,5 +174,9 @@ REST_FRAMEWORK = {
     'PAGINATE_BY': 20,
     'MAX_PAGINATE_BY': 100,
     'DEFAULT_MODEL_SERIALIZER_CLASS':
-        'rest_framework.serializers.HyperlinkedModelSerializer'
+        'rest_framework.serializers.HyperlinkedModelSerializer',
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter',
+    ),
 }
