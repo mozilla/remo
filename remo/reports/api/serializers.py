@@ -19,10 +19,10 @@ class ActivitiesSerializer(serializers.ModelSerializer):
 class ActivitiesDetailedSerializer(serializers.HyperlinkedModelSerializer):
     """Detailed serializer for the NGReport model."""
 
-    user = UserSerializer()
+    user = UserSerializer(source='user.userprofile')
     activity = serializers.ReadOnlyField(source='activity.name')
     initiative = serializers.ReadOnlyField(source='campaign.name')
-    mentor = UserSerializer()
+    mentor = UserSerializer(source='mentor.userprofile')
     passive_report = serializers.ReadOnlyField(source='is_passive')
     event = EventSerializer()
     functional_areas = FunctionalAreaSerializer(many=True)
