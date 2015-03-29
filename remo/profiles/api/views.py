@@ -11,10 +11,10 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.response import Response
 
+from remo.base.utils import get_quarter
 from remo.profiles.api.serializers import (PeopleKPISerializer,
                                            UserProfileDetailedSerializer,
                                            UserSerializer)
-from remo.base.utils import get_quarter
 from remo.profiles.models import UserProfile
 
 
@@ -32,18 +32,18 @@ INACTIVE = 0
 class UserProfileViewSet(ReadOnlyModelViewSet):
     """Returns a list of Reps profiles."""
     serializer_class = UserSerializer
-    model = User
-    queryset = User.objects.all()
+    model = UserProfile
+    queryset = UserProfile.objects.all()
 
     def get_queryset(self):
         queryset = self.queryset.filter(
-            groups__name='Rep', userprofile__registration_complete=True)
+            user__groups__name='Rep', registration_complete=True)
         return queryset
 
     def retrieve(self, request, pk):
-        user = get_object_or_404(self.get_queryset(), pk=pk)
+        userprofile = get_object_or_404(self.get_queryset(), pk=pk)
         serializer = UserProfileDetailedSerializer(
-            user.userprofile, context={'request': request})
+            userprofile, context={'request': request})
         return Response(serializer.data)
 
 

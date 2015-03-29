@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 
 from rest_framework import serializers
 
@@ -18,10 +18,11 @@ class FunctionalAreaSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for the django User model."""
-    display_name = serializers.ReadOnlyField(source='userprofile.display_name')
+    first_name = serializers.ReadOnlyField(source='user.first_name')
+    last_name = serializers.ReadOnlyField(source='user.last_name')
 
     class Meta:
-        model = User
+        model = UserProfile
         fields = ['first_name', 'last_name', 'display_name', '_url']
 
 
@@ -37,7 +38,7 @@ class UserProfileDetailedSerializer(serializers.HyperlinkedModelSerializer):
     """Detailed serializer for the UserProfile model."""
     first_name = serializers.ReadOnlyField(source='user.first_name')
     last_name = serializers.ReadOnlyField(source='user.last_name')
-    mentor = UserSerializer()
+    mentor = UserSerializer(source='mentor.userprofile')
     groups = GroupSerializer(source='user.groups', many=True)
     functional_areas = FunctionalAreaSerializer(many=True)
     remo_url = serializers.SerializerMethodField()

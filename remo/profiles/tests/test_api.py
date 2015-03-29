@@ -38,7 +38,8 @@ class TestUserSerializer(RemoTestCase):
         user = UserFactory.create()
         url = '/api/beta/users/%s' % user.id
         request = RequestFactory().get(url)
-        serializer = UserSerializer(user, context={'request': request})
+        serializer = UserSerializer(user.userprofile,
+                                    context={'request': request})
         eq_(serializer.data['first_name'], user.first_name)
         eq_(serializer.data['last_name'], user.last_name)
         eq_(serializer.data['display_name'], user.userprofile.display_name)

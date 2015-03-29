@@ -17,7 +17,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
 class EventDetailedSerializer(serializers.HyperlinkedModelSerializer):
     """Detailed serializer for the Event model."""
     categories = FunctionalAreaSerializer(many=True)
-    owner = UserSerializer()
+    owner = UserSerializer(source='owner.userprofile')
     remo_url = serializers.SerializerMethodField()
     initiative = serializers.ReadOnlyField(source='campaign.name')
 
