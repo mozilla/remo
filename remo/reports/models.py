@@ -131,7 +131,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
     activity_description = models.TextField(blank=True, default='')
     verified_activity = models.BooleanField('I have verified this activity',
                                             blank=True, default=False)
-    country = models.CharField(max_length=50, blank=True, null=True)
+    country = models.CharField(max_length=50, blank=True, default='')
 
     objects = caching.base.CachingManager()
 
