@@ -191,10 +191,11 @@ class NGReport(caching.base.CachingMixin, models.Model):
         saved_report = get_object_or_none(NGReport, id=self.id)
         if (saved_report and (saved_report.latitude != self.latitude or
                               saved_report.longitude != self.longitude)):
+            country = None
             try:
                 country = self.location.split(',')[-1].strip()
             except IndexError:
-                country = ''
+                pass
             if country in COUNTRIES_LIST:
                 self.country = country
         super(NGReport, self).save()
