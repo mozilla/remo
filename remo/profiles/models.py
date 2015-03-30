@@ -212,6 +212,10 @@ class UserProfile(caching.base.CachingMixin, models.Model):
                    (self.birth_date.month, self.birth_date.day)))
         return age
 
+    def get_absolute_url(self):
+        return reverse('remo.profiles.views.view_profile',
+                       kwargs={'display_name': self.display_name})
+
 
 class UserAvatar(caching.base.CachingMixin, models.Model):
     """User Avatar Model."""
