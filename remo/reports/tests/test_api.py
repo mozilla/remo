@@ -1,9 +1,13 @@
+from datetime import date, datetime
+from mock import patch
+
 from django.test import RequestFactory
 
 from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
 from remo.events.tests import EventFactory
+from remo.reports.api.views import ActivitiesKPIView
 from remo.reports.api.serializers import (ActivitiesDetailedSerializer,
                                           ActivitiesSerializer)
 from remo.reports.tests import (ActivityFactory, CampaignFactory,
@@ -69,3 +73,104 @@ class TestActivityDetailedSerializer(RemoTestCase):
         data = ActivitiesDetailedSerializer(
             report, context={'request': request}).data
         ok_(report.get_absolute_url() in data['remo_url'])
+
+
+class TestActivitiesKPIView(RemoTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.url = '/api/kpi/activities'
+
+    def test_total(self):
+        NGReportFactory.create()
+        request = self.factory.get(self.url)
+        request.query_params = dict()
+        response = ActivitiesKPIView().get(request)
+        eq_(response.data['total'], 1)
+
+    @patch('remo.reports.api.views.now')
+    def test_quarter(self, mock_now):
+        mock_now.return_value = datetime(2015, 3, 1)
+
+        # Previous quarter
+        report_date = date(2014, 12, 5)
+        NGReportFactory.create_batch(2, report_date=report_date)
+
+        # This quarter
+        report_date = date(2015, 1, 5)
+        NGReportFactory.create(report_date=report_date)
+
+        # Next quarter
+        report_date = date(2015, 5, 3)
+        NGReportFactory.create(report_date=report_date)
+
+        request = self.factory.get(self.url)
+        request.query_params = dict()
+
+        response = ActivitiesKPIView().get(request)
+        eq_(response.data['quarter_total'], 1)
+        eq_(response.data['quarter_growth_percentage'], (3-2)*100/2.0)
+
+    @patch('remo.reports.api.views.now')
+    def test_current_week(self, mock_now):
+        mock_now.return_value = datetime(2015, 3, 1)
+
+        # Current week
+        report_date = date(2015, 2, 25)
+        NGReportFactory.create(report_date=report_date)
+
+        # Previous week
+        report_date = date(2015, 2, 18)
+        NGReportFactory.create_batch(2, report_date=report_date)
+
+        # Next week
+        report_date = date(2015, 3, 4)
+        NGReportFactory.create(report_date=report_date)
+
+        request = self.factory.get(self.url)
+        request.query_params = dict()
+
+        response = ActivitiesKPIView().get(request)
+        eq_(response.data['week_total'], 1)
+        eq_(response.data['week_growth_percentage'], (1-2)*100/2.0)
+
+    @patch('remo.reports.api.views.now')
+    def test_weeks(self, mock_now):
+        mock_now.return_value = datetime(2015, 3, 1)
+
+        # Current week
+        report_date = date(2015, 2, 26)
+        NGReportFactory.create_batch(3, report_date=report_date)
+
+        # Week-1
+        report_date = date(2015, 2, 18)
+        NGReportFactory.create_batch(2, report_date=report_date)
+
+        # Week-2
+        report_date = date(2015, 2, 11)
+        NGReportFactory.create_batch(4, report_date=report_date)
+
+        # Week-3
+        report_date = date(2015, 2, 4)
+        NGReportFactory.create(report_date=report_date)
+
+        # Next week
+        report_date = date(2015, 3, 4)
+        NGReportFactory.create(report_date=report_date)
+
+        request = self.factory.get(self.url)
+        request.query_params = {'weeks': 4}
+
+        response = ActivitiesKPIView().get(request)
+        eq_(response.data['week_total'], 3)
+        eq_(response.data['week_growth_percentage'], (3-2)*100/2.0)
+        total_per_week = [
+            {'week': 1, 'activities': 1},
+            {'week': 2, 'activities': 4},
+            {'week': 3, 'activities': 2},
+            {'week': 4, 'activities': 3}
+        ]
+
+        for entry in response.data['total_per_week']:
+            ok_(entry in total_per_week)
+
+        eq_(len(response.data['total_per_week']), 4)

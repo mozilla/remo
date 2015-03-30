@@ -7,7 +7,7 @@ from remo.events.api.api_v1 import EventResource
 from remo.events.api.views import EventsKPIView, EventsViewSet
 from remo.profiles.api.api_v1 import RepResource
 from remo.profiles.api.views import UserProfileViewSet
-from remo.reports.api.views import ActivitiesViewSet
+from remo.reports.api.views import ActivitiesKPIView, ActivitiesViewSet
 
 
 # Legacy non-public API
@@ -25,5 +25,7 @@ urlpatterns = patterns(
     '',
     url(r'', include(v1_api.urls)),
     url(r'^beta/', include(router.urls), name='v1root'),
-    url(r'^kpi/events/', EventsKPIView.as_view(), name='kpi-events')
+    url(r'^kpi/events/', EventsKPIView.as_view(), name='kpi-events'),
+    url(r'^kpi/activities/', ActivitiesKPIView.as_view(),
+        name='kpi-activities'),
 )

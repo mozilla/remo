@@ -80,7 +80,7 @@ class TestEventsKPIView(RemoTestCase):
     def test_total(self):
         EventFactory.create()
         request = self.factory.get(self.url)
-        request.QUERY_PARAMS = dict()
+        request.query_params = dict()
         response = EventsKPIView().get(request)
         eq_(response.data['total'], 1)
 
@@ -104,11 +104,11 @@ class TestEventsKPIView(RemoTestCase):
         EventFactory.create(start=start, end=end)
 
         request = self.factory.get(self.url)
-        request.QUERY_PARAMS = dict()
+        request.query_params = dict()
 
         response = EventsKPIView().get(request)
-        eq_(response.data['total_quarter'], 1)
-        eq_(response.data['percentage_quarter'], (3-2)*100/2.0)
+        eq_(response.data['quarter_total'], 1)
+        eq_(response.data['quarter_growth_percentage'], (3-2)*100/2.0)
 
     @patch('remo.events.api.views.now')
     def test_current_week(self, mock_now):
@@ -130,11 +130,11 @@ class TestEventsKPIView(RemoTestCase):
         EventFactory.create(start=start, end=end)
 
         request = self.factory.get(self.url)
-        request.QUERY_PARAMS = dict()
+        request.query_params = dict()
 
         response = EventsKPIView().get(request)
-        eq_(response.data['total_week'], 1)
-        eq_(response.data['percentage_week'], (1-2)*100/2.0)
+        eq_(response.data['week_total'], 1)
+        eq_(response.data['week_growth_percentage'], (1-2)*100/2.0)
 
     @patch('remo.events.api.views.now')
     def test_weeks(self, mock_now):
@@ -166,11 +166,11 @@ class TestEventsKPIView(RemoTestCase):
         EventFactory.create(start=start, end=end)
 
         request = self.factory.get(self.url)
-        request.QUERY_PARAMS = {'weeks': 4}
+        request.query_params = {'weeks': 4}
 
         response = EventsKPIView().get(request)
-        eq_(response.data['total_week'], 3)
-        eq_(response.data['percentage_week'], (3-2)*100/2.0)
+        eq_(response.data['week_total'], 3)
+        eq_(response.data['week_growth_percentage'], (3-2)*100/2.0)
         total_per_week = [
             {'week': 1, 'events': 1},
             {'week': 2, 'events': 4},
