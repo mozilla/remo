@@ -25,9 +25,25 @@ def list_votings(request):
     if not user.groups.filter(name='Admin').exists():
         polls = Poll.objects.filter(valid_groups__in=user.groups.all())
 
-    past_polls_query = polls.filter(end__lt=now())
+    past_polls = polls.filter(end__lt=now())
     current_polls = polls.filter(start__lt=now(), end__gt=now())
     future_polls = polls.filter(start__gt=now())
+
+    return render(request, 'list_votings.html',
+                  {'user': user,
+                   'past_polls':past_polls,
+                   'current_polls': current_polls,
+                   'future_polls': future_polls})
+
+@permission_check()
+def list_votings_past(request):
+    """List votings view."""
+    user = request.user
+    polls = Poll.objects.all()
+    if not user.groups.filter(name='Admin').exists():
+        polls = Poll.objects.filter(valid_groups__in=user.groups.all())
+
+    past_polls_query = polls.filter(end__lt=now())
 
     past_polls_paginator = Paginator(past_polls_query, settings.ITEMS_PER_PAGE)
     past_polls_page = request.GET.get('page', 1)
@@ -39,11 +55,9 @@ def list_votings(request):
     except EmptyPage:
         past_polls = past_polls_paginator.page(past_polls_paginator.num_pages)
 
-    return render(request, 'list_votings.html',
+    return render(request, 'list_past_votings.html',
                   {'user': user,
-                   'past_polls': past_polls,
-                   'current_polls': current_polls,
-                   'future_polls': future_polls})
+                   'past_polls': past_polls})
 
 
 @permission_check(permissions=['voting.add_poll', 'voting.change_poll'])

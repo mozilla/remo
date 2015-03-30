@@ -161,18 +161,14 @@
       <div class="dashboard-box">
         <div class="row">
           <div class="large-12 columns">
-            <h2>Past Votes</h2>
+            <h2>{{ past_polls|count }} Past Votes</h2>
           </div>
         </div>
 
         <div class="row">
-          {% if past_polls %}
-            {{ display_polls(past_polls, show_pagination=True) }}
-          {% else %}
-            <div class="large-12 columns no-bugs">
-              <p>No past votes found!</p>
-            </div>
-          {% endif %}
+	  <div class="large-12 columns align-center">
+            <a href="past_votings">Show past votes</a>
+	  </div>  
         </div>
       </div>
       <!-- end Past votes block -->
