@@ -97,16 +97,20 @@ class AlumniProfileFilter(SimpleListFilter):
 
 class UserResource(resources.ModelResource):
     personal_emails = fields.Field()
+    country = fields.Field()
 
     class Meta:
         model = User
         export_order = ['id', 'username', 'first_name', 'last_name', 'email',
                         'personal_emails', 'password', 'is_staff', 'is_active',
                         'is_superuser', 'last_login', 'date_joined', 'groups',
-                        'user_permissions']
+                        'user_permissions', 'country']
 
     def dehydrate_personal_emails(self, user):
         return user.userprofile.private_email
+
+    def dehydrate_country(self, user):
+        return user.userprofile.country
 
 
 class UserProfileInline(admin.StackedInline):
