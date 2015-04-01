@@ -19,6 +19,33 @@ from remo.reports.models import NGReport
 KPI_WEEKS = 6
 
 
+class ActivitiesFilter(django_filters.FilterSet):
+    user = django_filters.CharFilter(name='user__userprofile')
+    activity = django_filters.CharFilter(name='activity__name')
+    initiative = django_filters.CharFilter(name='campaign__name')
+    mentor = django_filters.CharFilter(name='mentor__userprofile')
+    functional_areas = django_filters.CharFilter(name='functional_areas__name')
+
+    class Meta:
+        model = NGReport
+        fields = {
+            'user__userprofile': ['exact'],
+            'activity__name': ['exact', 'icontains'],
+            'campaign__name': ['exact', 'icontains'],
+            'mentor__userprofile': ['exact'],
+            'is_passive': ['exact'],
+            'event': ['exact'],
+            'functional_areas__name': ['exact', 'icontains'],
+            'activity_description': ['exact', 'icontains'],
+            'report_date': ['exact', 'lt', 'lte', 'gt', 'gte'],
+            'location': ['exact', 'icontains'],
+            'longitude': ['exact', 'lt', 'lte', 'gt', 'gte'],
+            'latitude': ['exact', 'lt', 'lte', 'gt', 'gte'],
+            'link': ['exact', 'icontains'],
+            'link_description': ['exact', 'icontains'],
+        }
+
+
 class ActivitiesViewSet(ReadOnlyModelViewSet):
     """Return a list of activities."""
     serializer_class = ActivitiesSerializer
