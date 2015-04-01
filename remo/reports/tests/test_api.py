@@ -88,8 +88,11 @@ class TestActivitiesKPIView(RemoTestCase):
         eq_(response.data['total'], 1)
 
     @patch('remo.reports.api.views.now')
-    def test_quarter(self, mock_now):
-        mock_now.return_value = datetime(2015, 3, 1)
+    @patch('remo.base.utils.timezone.now')
+    def test_quarter(self, mock_api_now, mock_utils_now):
+        now_return_value = datetime(2015, 3, 1)
+        mock_api_now.return_value = now_return_value
+        mock_utils_now.return_value = now_return_value
 
         # Previous quarter
         report_date = date(2014, 12, 5)
@@ -111,8 +114,11 @@ class TestActivitiesKPIView(RemoTestCase):
         eq_(response.data['quarter_growth_percentage'], (3-2)*100/2.0)
 
     @patch('remo.reports.api.views.now')
-    def test_current_week(self, mock_now):
-        mock_now.return_value = datetime(2015, 3, 1)
+    @patch('remo.base.utils.timezone.now')
+    def test_current_week(self, mock_api_now, mock_utils_now):
+        now_return_value = datetime(2015, 3, 1)
+        mock_api_now.return_value = now_return_value
+        mock_utils_now.return_value = now_return_value
 
         # Current week
         report_date = date(2015, 2, 25)
@@ -134,8 +140,11 @@ class TestActivitiesKPIView(RemoTestCase):
         eq_(response.data['week_growth_percentage'], (1-2)*100/2.0)
 
     @patch('remo.reports.api.views.now')
-    def test_weeks(self, mock_now):
-        mock_now.return_value = datetime(2015, 3, 1)
+    @patch('remo.base.utils.timezone.now')
+    def test_weeks(self, mock_api_now, mock_utils_now):
+        now_return_value = datetime(2015, 3, 1)
+        mock_api_now.return_value = now_return_value
+        mock_utils_now.return_value = now_return_value
 
         # Current week
         report_date = date(2015, 2, 26)
