@@ -61,14 +61,17 @@ class ActivitiesKPIView(APIView):
         quarter_total = activities.qs.filter(
             report_date__gte=current_quarter_start).count()
 
-        # Total number of activities until start of quarter
-        activities_bfr_quarter = activities.qs.filter(
-            report_date__lte=current_quarter_start).count()
+        # Total number of activities for the previous quarter
+        previous_quarter_end = current_quarter_start - timedelta(days=1)
+        previous_quarter_start = get_quarter(previous_quarter_end)[1]
+        previous_quarter_total = activities.qs.filter(
+            report_date__range=[previous_quarter_start,
+                                previous_quarter_end]).count()
 
         try:
             # Percentage change of activities since start of quarter
-            diff = total - activities_bfr_quarter
-            percent_quarter = diff/float(activities_bfr_quarter)
+            diff = quarter_total - previous_quarter_total
+            percent_quarter = diff/float(previous_quarter_total)
         except ZeroDivisionError:
             percent_quarter = 0
 

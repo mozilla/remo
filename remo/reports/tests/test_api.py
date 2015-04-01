@@ -111,7 +111,7 @@ class TestActivitiesKPIView(RemoTestCase):
 
         response = ActivitiesKPIView().get(request)
         eq_(response.data['quarter_total'], 1)
-        eq_(response.data['quarter_growth_percentage'], (3-2)*100/2.0)
+        eq_(response.data['quarter_growth_percentage'], -(3-2)*100/2.0)
 
     @patch('remo.reports.api.views.now')
     @patch('remo.base.utils.timezone.now')
