@@ -21,7 +21,7 @@ COMPONENTS = ['Budget Requests', 'Community IT Requests', 'Mentorship',
 BUGZILLA_FIELDS = [u'is_confirmed', u'summary', u'creator', u'creation_time',
                    u'component', u'whiteboard', u'op_sys', u'cc', u'id',
                    u'status', u'assigned_to', u'resolution',
-                   u'last_change_time', u'flags', u'comments']
+                   u'last_change_time', u'flags']
 
 LOGIN_URL = ('https://bugzilla.mozilla.org/rest/login?login={username}'
              '&password={password}')
@@ -29,6 +29,8 @@ URL = ('https://bugzilla.mozilla.org/rest/bug?token={token}'
        '&product=Mozilla%20Reps&component={component}&'
        'include_fields={fields}&last_change_time={timestamp}&'
        'offset={offset}&limit={limit}')
+COMMENT_URL = ('https://bugzilla.mozilla.org/rest/bug/{id}/comment?'
+               'token={token}')
 LIMIT = 100
 
 
@@ -86,6 +88,15 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 break
 
             for bdata in remo_bugs:
+                # Get comments for current bug
+                comment_url = COMMENT_URL.format(id=bdata['id'], token=token)
+                comments = requests.get(comment_url).json()
+                error = comments.get('error')
+
+                if error:
+                    raise ValueError('Invalid response from server, {0}.'
+                                     .format(comments['message']))
+
                 bug, created = Bug.objects.get_or_create(bug_id=bdata['id'])
 
                 bug.summary = unicode(bdata.get('summary', ''))
@@ -136,10 +147,11 @@ def fetch_bugs(components=COMPONENTS, days=None):
                      waffle.switch_is_active('automated_polls'))):
                     bug.council_vote_requested = True
 
-                comments = bdata.get('comments', [])
-                if comments and comments[0].get('text', ''):
+                unicode_id = unicode(bdata['id'])
+                bug_comments = comments['bugs'][unicode_id]['comments']
+                if bug_comments and bug_comments[0].get('text', ''):
                     # Enforce unicode encoding.
-                    bug.first_comment = unicode(comments[0]['text'])
+                    bug.first_comment = unicode(bug_comments[0]['text'])
 
                 bug.save()
 

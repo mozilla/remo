@@ -101,6 +101,19 @@ class FetchBugsTest(TestCase):
             if 'login' in url:
                 mocked_response.json.return_value = login_data
                 return mocked_response
+            elif 'comment' in url:
+                comments = {
+                    'bugs': {
+                        '7788': {
+                            'comments': [{'text': 'foo'}, {'text': 'bar'}]
+                        },
+                        '1199': {
+                            'comments': [{'text': 'bar'}, {'text': 'foo'}]
+                        }
+                    }
+                }
+                mocked_response.json.return_value = comments
+                return mocked_response
             else:
                 mocked_response.json.return_value = {'bugs': bug_data}
                 url_params = parse_qs(urlparse(url).query)
@@ -125,6 +138,7 @@ class FetchBugsTest(TestCase):
         eq_(bug.creator, User.objects.get(email='rep@example.com'))
         ok_(bug.council_vote_requested)
         ok_(user in bug.budget_needinfo.all())
+        eq_(bug.first_comment, 'foo')
 
         bug = Bug.objects.get(bug_id=1199)
         eq_(bug.creator, None)
@@ -132,3 +146,4 @@ class FetchBugsTest(TestCase):
         ok_(not bug.council_vote_requested)
         ok_(bug.pending_mentor_validation)
         ok_(bug.council_member_assigned)
+        eq_(bug.first_comment, 'bar')
