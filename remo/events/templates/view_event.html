@@ -143,7 +143,9 @@ Mozilla Reps - {{ event.name }}
               <span class="label inline">
                 Initiative
               </span>
-              {{ event.campaign }}
+              <a href="{{ get_event_filtered_url(initiative=event.campaign.name) }}">
+                 {{ event.campaign.name }}
+              </a>
             </p>
           {% endif %}
           <!-- Event categories -->
@@ -153,7 +155,7 @@ Mozilla Reps - {{ event.name }}
                 Category
               </span>
               {% for category in event.categories.all() %}
-                <a href="{{ get_event_category_link(category.name) }}">
+                <a href="{{ get_event_filtered_url(category=category.name) }}">
                   {{ category.name }}</a>{% if not loop.last %}, {% endif %}
               {% endfor %}
             </p>

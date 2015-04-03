@@ -88,6 +88,14 @@ Mozilla Reps - Events
             </select>
           </div>
           <div class="large-3 columns">
+            <select id="adv-search-initiatives" class="expand">
+              <option value="">All Initiatives</option>
+              {% for initiative in initiatives %}
+                <option value="{{ initiative.name|lower }}">{{ initiative.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="large-3 columns">
             <input type="text" class="datepicker input-text big"
                    id="date-start" placeholder="Start Range Date"/>
           </div>
