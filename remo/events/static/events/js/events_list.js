@@ -8,6 +8,7 @@ EventsLib.events_table_body_elm = $('#events-table-body');
 EventsLib.eventsitem_tmpl_elm = $('#eventItem-tmpl');
 EventsLib.period_selector_elm = $('#events-period-selector');
 EventsLib.category_selector_elm = $('#adv-search-categories');
+EventsLib.initiative_selector_elm = $('#adv-search-initiatives');
 EventsLib.events_number_elm = $('#events-number');
 EventsLib.events_table_elm = $('#events-table');
 EventsLib.search_loading_icon_elm = $('#search-loading-icon');
@@ -222,6 +223,10 @@ function bind_events() {
 
     EventsLib.category_selector_elm.change(function() {
         hash_set_value('category', EventsLib.category_selector_elm.val());
+    });
+
+    EventsLib.initiative_selector_elm.change(function() {
+        hash_set_value('initiative', EventsLib.initiative_selector_elm.val());
     });
 
     EventsLib.window_elm.bind('hashchange', function(e) {
@@ -505,12 +510,20 @@ function send_query(newquery) {
     EventsLib.multi_e_ical_elm.attr('href', ical_url(period, start, end, search));
 
     var category = hash_get_value('category');
+    var initiative = hash_get_value('initiative');
+
     set_dropdown_value(EventsLib.category_selector_elm, category);
+    set_dropdown_value(EventsLib.initiative_selector_elm, initiative);
+
     if (category) {
         extra_q += '&categories__name__iexact=' + category;
     }
 
-    if (period === 'custom' || category) {
+    if (initiative) {
+        extra_q += '&campaign__name__iexact=' + initiative;
+    }
+
+    if (period === 'custom' || category || initiative) {
         EventsLib.adv_search_elm.show();
     }
 
@@ -640,6 +653,7 @@ $(document).ready(function () {
     // Set values to fields.
     set_dropdown_value(EventsLib.period_selector_elm, period);
     set_dropdown_value(EventsLib.category_selector_elm, hash_get_value('category'));
+    set_dropdown_value(EventsLib.initiative_selector_elm, hash_get_value('initiative'));
 
     // Bind events.
     bind_events();

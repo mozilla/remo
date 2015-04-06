@@ -17,6 +17,7 @@ from remo.base.serializers import iCalSerializer
 
 from helpers import is_multiday
 from models import Event, EventMetric, EventMetricOutcome
+from remo.reports.models import Campaign
 
 
 class EventMetricResource(ModelResource):
@@ -50,6 +51,21 @@ class EventMetricOutcomeResource(ModelResource):
         fields = ['metric', 'expected_outcome', 'outcome']
 
 
+class CampaignResource(ModelResource):
+    """Campaign Resource."""
+
+    class Meta:
+        queryset = Campaign.active_objects.all()
+        resource_name = 'campaign'
+        authentication = Authentication()
+        authorization = ReadOnlyAuthorization()
+        include_resource_uri = False
+        include_absolute_url = False
+        allowed_methods = ['get']
+        fields = ['name']
+        filtering = {'name': ALL}
+
+
 class EventResource(ModelResource):
     """Event Resource."""
     local_start = fields.DateTimeField()
@@ -67,6 +83,8 @@ class EventResource(ModelResource):
     swag_bug_id = fields.IntegerField(null=True)
     budget_bug_id = fields.IntegerField(null=True)
     sign_ups = fields.IntegerField()
+    campaign = fields.ToOneField('remo.events.api.CampaignResource',
+                                 attribute='campaign', null=True)
 
     class Meta:
         cache = HttpCache(control={'max_age': 1800, 's_maxage': 1800,
@@ -84,7 +102,8 @@ class EventResource(ModelResource):
                   'estimated_attendance', 'actual_attendance']
         filtering = {'name': ALL, 'city': ALL, 'region': ALL, 'country': ALL,
                      'start': ALL, 'end': ALL,
-                     'categories': ALL_WITH_RELATIONS}
+                     'categories': ALL_WITH_RELATIONS,
+                     'campaign': ALL_WITH_RELATIONS}
 
     def dehydrate_name(self, bundle):
         """Sanitize event name."""

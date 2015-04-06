@@ -98,11 +98,16 @@ def get_event_comment_delete_url(obj):
 
 
 @register.function
-def get_event_category_link(category):
-    """Returns events list page of given category."""
+def get_event_filtered_url(category=None, initiative=None):
+    """Returns events list page of given category or initiative."""
 
     url = reverse('events_list_events')
-    return urlparams(url, '/category/%s/' % category.lower())
+    if category:
+        return urlparams(url, '/category/%s/' % category.lower())
+    elif initiative:
+        return urlparams(url, '/initiative/%s/' % initiative.lower())
+    else:
+        return url
 
 
 @register.function

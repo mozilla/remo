@@ -25,6 +25,7 @@ from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_or_create_instance
 from remo.events.models import Attendance, Event, EventComment
 from remo.profiles.models import FunctionalArea
+from remo.reports.models import Campaign
 
 
 @never_cache
@@ -37,10 +38,11 @@ def redirect_list_events(request):
 @cache_control(private=True)
 def list_events(request):
     """List events view."""
-    events = Event.objects.all()
-    categories = FunctionalArea.objects.all()
-    return render(request, 'list_events.html',
-                  {'events': events, 'categories': categories})
+    data = {'events': Event.objects.all(),
+            'categories': FunctionalArea.active_objects.all(),
+            'initiatives': Campaign.active_objects.all()}
+
+    return render(request, 'list_events.html', data)
 
 
 @never_cache
