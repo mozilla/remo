@@ -180,7 +180,18 @@ Mozilla Reps - {{ poll.name }} - Vote
                   {% for choice in choice_form %}
                     <div class="row poll-choice">
                       <div class="large-10 columns">
-                        {{ choice.label_tag() }}
+                        <label for="{{ choice.id_for_label }}">
+                          {% set nominee=get_nominee(choice.label) %}
+                          {% if nominee %}
+                            <a href="{{ url('profiles_view_profile',
+                               display_name=nominee|get_display_name) }}"
+                               target="_blank">
+                              {{ choice.label }}
+                            </a>
+                          {% else %}
+                            {{ choice.label }}
+                          {% endif %}
+                        </label>
                       </div>
                       <div class="large-2 columns">
                         {{ choice }}
