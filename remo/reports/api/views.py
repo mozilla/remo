@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.response import Response
 
-from remo.api.serializers import BaseKPIserializer
+from remo.api.serializers import BaseKPISerializer
 from remo.base.utils import get_quarter
 from remo.reports.api.serializers import (ActivitiesDetailedSerializer,
                                           ActivitiesSerializer)
@@ -68,12 +68,15 @@ class ActivitiesKPIView(APIView):
             report_date__range=[previous_quarter_start,
                                 previous_quarter_end]).count()
 
+        diff = quarter_total - previous_quarter_total
         try:
             # Percentage change of activities since start of quarter
-            diff = quarter_total - previous_quarter_total
             percent_quarter = diff/float(previous_quarter_total)
         except ZeroDivisionError:
-            percent_quarter = 0
+            if diff > 0:
+                percent_quarter = 100
+            else:
+                percent_quarter = 0
 
         # Week calculations
         today = datetime.combine(now().date(), datetime.min.time())
@@ -89,12 +92,15 @@ class ActivitiesKPIView(APIView):
         prev_week_total = activities.qs.filter(
             report_date__range=query_range).count()
 
+        diff = week_total-prev_week_total
         try:
             # Percentage change of activities compared with previous week
-            diff = week_total-prev_week_total
             percent_week = diff/float(prev_week_total)
         except ZeroDivisionError:
-            percent_week = 0
+            if diff > 0:
+                percent_week = 100
+            else:
+                percent_week = 0
 
         weekly_count = []
         for i in range(weeks):
@@ -116,6 +122,6 @@ class ActivitiesKPIView(APIView):
         }
 
         kpi = namedtuple('ActivitiesKPI', kwargs.keys())(*kwargs.values())
-        serializer = BaseKPIserializer(kpi)
+        serializer = BaseKPISerializer(kpi)
 
         return Response(serializer.data)

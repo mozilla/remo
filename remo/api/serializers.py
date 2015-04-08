@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 
-class BaseKPIserializer(serializers.Serializer):
+class BaseKPISerializer(serializers.Serializer):
     """Serializer for the KPI data."""
     total = serializers.IntegerField()
     quarter_total = serializers.IntegerField()
