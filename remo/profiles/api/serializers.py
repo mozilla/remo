@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group, User
 
 from rest_framework import serializers
 
+from remo.api.serializers import BaseKPISerializer
 from remo.base.helpers import absolutify
 from remo.profiles.models import FunctionalArea, UserProfile
 
@@ -58,3 +59,11 @@ class UserProfileDetailedSerializer(serializers.HyperlinkedModelSerializer):
         in ReMo portal.
         """
         return absolutify(obj.get_absolute_url())
+
+
+class PeopleKPISerializer(BaseKPISerializer):
+    """Serializer for people (Reps) data."""
+    inactive_week = serializers.IntegerField()
+    casual_week = serializers.IntegerField()
+    active_week = serializers.IntegerField()
+    core_week = serializers.IntegerField()

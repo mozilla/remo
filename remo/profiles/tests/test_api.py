@@ -1,6 +1,9 @@
+from datetime import date, datetime
+
 from django.contrib.auth.models import Group
 from django.test import RequestFactory
 
+from mock import patch
 from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
@@ -8,6 +11,7 @@ from remo.profiles.api.serializers import (FunctionalAreaSerializer,
                                            GroupSerializer,
                                            UserProfileDetailedSerializer,
                                            UserSerializer)
+from remo.profiles.api.views import PeopleKPIView
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
@@ -93,3 +97,71 @@ class TestUserProfileDetailedSerializer(RemoTestCase):
         data = UserProfileDetailedSerializer(user.userprofile,
                                              context={'request': request}).data
         ok_(user.userprofile.get_absolute_url() in data['remo_url'])
+
+
+class TestPeopleKPIView(RemoTestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.url = '/api/kpi/people'
+
+    def test_total(self):
+        UserFactory.create(groups=['Rep'])
+        request = self.factory.get(self.url)
+        request.query_params = dict()
+        response = PeopleKPIView().get(request)
+        eq_(response.data['total'], 1)
+
+    @patch('remo.profiles.api.views.get_quarter')
+    def test_quarter(self, mocked_quarter):
+        mocked_quarter.return_value = (1, date(2015, 3, 1))
+
+        # Previous quarter
+        start = datetime(2014, 12, 5)
+        UserFactory.create(groups=['Rep'],
+                           userprofile__date_joined_program=start)
+
+        # This quarter
+        start = datetime(2015, 1, 5)
+        UserFactory.create(groups=['Rep'],
+                           userprofile__date_joined_program=start)
+
+        # Next quarter
+        start = datetime(2015, 5, 3)
+        UserFactory.create(groups=['Rep'],
+                           userprofile__date_joined_program=start)
+
+        request = self.factory.get(self.url)
+        request.query_params = dict()
+
+        response = PeopleKPIView().get(request)
+        eq_(response.data['quarter_total'], 1)
+        eq_(response.data['quarter_growth_percentage'], 100)
+
+    @patch('remo.profiles.api.views.now')
+    @patch('remo.base.utils.timezone.now')
+    def test_current_week(self, mock_api_now, mock_utils_now):
+        now_return_value = datetime(2015, 3, 1)
+        mock_api_now.return_value = now_return_value
+        mock_utils_now.return_value = now_return_value
+
+        # Current week
+        start = datetime(2015, 2, 22)
+        UserFactory.create(groups=['Rep'],
+                           userprofile__date_joined_program=start)
+
+        # Previous week
+        start = datetime(2015, 2, 18)
+        UserFactory.create(groups=['Rep'],
+                           userprofile__date_joined_program=start)
+
+        # Next week
+        start = datetime(2015, 3, 4)
+        UserFactory.create(groups=['Rep'],
+                           userprofile__date_joined_program=start)
+
+        request = self.factory.get(self.url)
+        request.query_params = dict()
+
+        response = PeopleKPIView().get(request)
+        eq_(response.data['week_total'], 1)
+        eq_(response.data['week_growth_percentage'], (1-2)*100/2.0)

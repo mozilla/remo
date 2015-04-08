@@ -6,8 +6,8 @@ from tastypie.api import Api
 from remo.events.api.api_v1 import EventResource
 from remo.events.api.views import EventsKPIView, EventsViewSet
 from remo.profiles.api.api_v1 import RepResource
-from remo.profiles.api.views import UserProfileViewSet
 from remo.reports.api.views import ActivitiesKPIView, ActivitiesViewSet
+from remo.profiles.api.views import PeopleKPIView, UserProfileViewSet
 
 
 # Legacy non-public API
@@ -28,4 +28,5 @@ urlpatterns = patterns(
     url(r'^kpi/events/', EventsKPIView.as_view(), name='kpi-events'),
     url(r'^kpi/activities/', ActivitiesKPIView.as_view(),
         name='kpi-activities'),
+    url(r'^kpi/people/', PeopleKPIView.as_view(), name='kpi-people')
 )
