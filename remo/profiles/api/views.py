@@ -49,8 +49,11 @@ class UserProfileViewSet(ReadOnlyModelViewSet):
 
 class PeopleKPIFilter(django_filters.FilterSet):
     """Filter for People KPI end-point."""
-    category = django_filters.CharFilter(name='functional_areas__name')
-    initiative = django_filters.CharFilter(name='ng_reports__campaign_name')
+    category = django_filters.CharFilter(
+        name='userprofile__functional_areas__name')
+    initiative = django_filters.CharFilter(
+        name='ng_reports__campaign__name')
+    country = django_filters.CharFilter(name='userprofile__country')
 
     class Meta:
         model = UserProfile
