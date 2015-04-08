@@ -1,0 +1,177 @@
+{% extends "base_fd4.html" %}
+{% block pagetitle %}Mozilla Reps - KPI Dashboard{% endblock %}
+
+{% block topextra %}
+  {% compress css %}
+    <link href="{{ static('dashboard/css/kpi.css') }}" rel="stylesheet"
+          media="screen,projection,tv" />
+  {% endcompress %}
+{% endblock %}
+
+{% block content %}
+<main role="main" class="dashboard-main">
+  <div class="row">
+    <div class="large-12 columns">
+      <h1>KPI Dashboard</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="large-12 columns">
+      Filter by:
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="large-4 columns">
+      <select name="country" id="filter-country" data-query="country">
+        <option value selected="selected">Country</option>
+        {% for country in countries %}
+          <option value="{{ country }}">{{ country }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="large-4 columns">
+      <select name="category" id="filter-category" data-query="category">
+        <option value selected="selected">Category</option>
+        {% for category in categories %}
+          <option value="{{ category.name }}">{{ category }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="large-4 columns">
+      <select name="initiative" id="filter-initiative" data-query="initiative">
+        <option value selected="selected">Initiative</option>
+        {% for initiative in initiatives %}
+          <option value="{{ initiative.name }}">{{ initiative }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="row panel graph">
+    <div class="large-12 columns">
+      <h2>Reps</h2>
+      <div id="dashboard-continuous-reports-mine-block">
+        <table class="dashboard-table responsive">
+          <tbody>
+            <tr>
+              <td>
+                <span id="people-total_week"></span>
+                Reps
+                <br>
+                <div class="date-range">
+                  <span id="people-percentage_week"></span> %
+                </div>
+              </td>
+              <td>
+                <span id="people-total_quarter"></span>
+                Reps
+                <br>
+                <div class="date-range">
+                  <span id="people-percentage_quarter"></span> %
+                </div>
+              </td>
+              <td><span id="people-total"></span> Reps</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Latest Week</th>
+              <th>Current Quarter</th>
+              <th>Total</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div id="graph-people">&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="row panel graph">
+    <div class="large-12 columns">
+      <h2>Events</h2>
+      <div id="dashboard-continuous-reports-mine-block">
+        <table class="dashboard-table responsive">
+          <tbody>
+            <tr>
+              <td>
+                <span id="events-total_week"></span>
+                events
+                <br>
+                <div class="date-range">
+                  <span id="events-percentage_week"></span> %
+                </div>
+              </td>
+              <td>
+                <span id="events-total_quarter"></span>
+                events
+                <br>
+                <div class="date-range">
+                  <span id="events-percentage_quarter"></span> %
+                </div>
+              </td>
+              <td><span id="events-total"></span> events</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Latest Week</th>
+              <th>Current Quarter</th>
+              <th>Total</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div id="graph-events">&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="row panel graph">
+    <div class="large-12 columns">
+      <h2>Activities</h2>
+      <div id="dashboard-continuous-reports-mine-block">
+        <table class="dashboard-table responsive">
+          <tbody>
+            <tr>
+              <td>
+                <span id="activities-total_week"></span>
+                activities
+                <br>
+                <div class="date-range">
+                  <span id="activities-percentage_week"></span> %
+                </div>
+              </td>
+              <td>
+                <span id="activities-total_quarter"></span>
+                activities
+                <br>
+                <div class="date-range">
+                  <span id="activities-percentage_quarter"></span> %
+                </div>
+              </td>
+              <td><span id="activities-total"></span> activities</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Latest Week</th>
+              <th>Current Quarter</th>
+              <th>Total</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div id="graph-activities">&nbsp;</div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('dashboard/js/d3.min.js') }}"></script>
+    <script src="{{ static('dashboard/js/d3-tip.js') }}"></script>
+    <script src="{{ static('dashboard/js/kpi.js') }}"></script>
+  {% endcompress %}
+{% endblock %}
