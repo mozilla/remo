@@ -1,5 +1,6 @@
 import calendar
 import datetime
+import math
 
 from django.conf import settings
 from django.contrib.auth.management import create_permissions
@@ -150,3 +151,15 @@ def daterange(start_date, end_date):
     """Generator with a range of dates given a starting and ending point."""
     for i in range((end_date - start_date).days + 1):
         yield start_date + datetime.timedelta(i)
+
+
+def get_quarter(date=None):
+    """Return the quarter for this date and datetime of Q's start."""
+    if not date:
+        date = timezone.now()
+
+    quarter = int(math.ceil(date.month/3.0))
+    first_month_of_quarter = 1 + 3*(quarter-1)
+    quarter_start = datetime.datetime(date.year, first_month_of_quarter, 1)
+
+    return (quarter, quarter_start)

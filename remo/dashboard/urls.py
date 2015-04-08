@@ -8,4 +8,5 @@ urlpatterns = patterns(
         name='email_mentees'),
     url(r'^stats/$', 'remo.dashboard.views.stats_dashboard',
         name='stats_dashboard'),
+    url(r'^kpi/$', 'remo.dashboard.views.kpi', name='kpi'),
 )
