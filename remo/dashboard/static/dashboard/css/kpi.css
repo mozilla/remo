@@ -1,0 +1,54 @@
+.graph {
+    margin-bottom: 40px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #444;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    fill: #444;
+}
+
+.area-people {
+    fill: #ff4f32;
+}
+
+.area-people-core {
+    fill: #ff725a;
+}
+
+.area-people-active {
+    fill: #ff9584;
+}
+
+.area-people-casual {
+    fill: #ffb8ad;
+}
+
+.area-events {
+    fill: #8ebbeb;
+    stroke: #7195bc;
+}
+
+.area-activities {
+    fill: #84e0a3;
+    stroke: #5bd684;
+}
+
+.d3-tip {
+    font-size: 0.8em;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #CCC;
+    border-radius: 2px;
+}
+
+rect.info-area {
+    opacity: 0;
+    fill: #333;
+    position: relative;
+}
