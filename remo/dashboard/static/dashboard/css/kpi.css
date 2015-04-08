@@ -11,13 +11,19 @@
 
 .axis text {
     fill: #444;
+    font-size: 12px;
 }
 
-.area-people {
-    fill: #ff4f32;
+.axis-label {
+    fill: #444;
+    font-size: 12px;
 }
 
 .area-people-core {
+    fill: #ff4f32;
+}
+
+.area-people-casual {
     fill: #ff725a;
 }
 
@@ -25,7 +31,7 @@
     fill: #ff9584;
 }
 
-.area-people-casual {
+.area-people-inactive {
     fill: #ffb8ad;
 }
 

@@ -32,28 +32,28 @@ $(document).ready(function() {
 
         var yAxis = d3.svg.axis()
                       .scale(y)
-                      .tickFormat(d3.format(',.0f'))
+                      .tickFormat(d3.format('d'))
                       .orient('left');
 
-        var area = d3.svg.area()
-                     .x(function(d) { return x(d.week); })
-                     .y0(height)
-                     .y1(function(d) { return y(d.active_total); });
+        var area_inactive = d3.svg.area()
+                              .x(function(d) { return x(d.week); })
+                              .y0(height)
+                              .y1(function(d) { return y(d.inactive); });
+
+        var area_active = d3.svg.area()
+                                .x(function(d) { return x(d.week); })
+                                .y0(height)
+                                .y1(function(d) { return y(d.active_stack); });
+
+        var area_casual = d3.svg.area()
+                                .x(function(d) { return x(d.week); })
+                                .y0(height)
+                                .y1(function(d) { return y(d.casual_stack); });
 
         var area_core = d3.svg.area()
                           .x(function(d) { return x(d.week); })
                           .y0(height)
-                          .y1(function(d) { return y(d.core); });
-
-        var area_casual = d3.svg.area()
-                            .x(function(d) { return x(d.week); })
-                            .y0(height)
-                            .y1(function(d) { return y(d.casual); });
-
-        var area_active = d3.svg.area()
-                            .x(function(d) { return x(d.week); })
-                            .y0(height)
-                            .y1(function(d) { return y(d.active); });
+                          .y1(function(d) { return y(d.core_stack); });
 
         $('#graph-people').text('');
         var svg = d3.select('#graph-people').append('svg')
@@ -66,16 +66,16 @@ $(document).ready(function() {
                     .attr('class', 'd3-tip')
                     .offset([35, 0])
                     .html(function(d) {
-                        return '<strong>Core:</strong> <span style="color:red">'
-                                + d.core + '</span><br>' +
-                                '<strong>Active:</strong> <span style="color:red">'
-                                + d.active + '</span><br>' +
-                                '<strong>Casual:</strong> <span style="color:red">'
-                                + d.casual + '</span><br>' +
-                                '<strong>Inactive:</strong> <span style="color:red">'
-                                + d.inactive + '</span><br>' +
-                                '<strong>Total:</strong> <span style="color:red">'
-                                + d.active_total + '</span><br>';
+                        return '<strong>Inactive:</strong> <span style="color:red">'
+                               + d.inactive + '</span><br>' +
+                               '<strong>Active:</strong> <span style="color:red">'
+                               + d.active + '</span><br>' +
+                               '<strong>Casual:</strong> <span style="color:red">'
+                               + d.casual + '</span><br>' +
+                               '<strong>Core:</strong> <span style="color:red">'
+                               + d.core + '</span><br>' +
+                               '<strong>Total:</strong> <span style="color:red">'
+                               + d.active_total + '</span>';
                     });
 
         svg.call(tip);
@@ -99,6 +99,9 @@ $(document).ready(function() {
                 d.active = +d.active;
                 d.casual = +d.casual;
                 d.inactive = +d.inactive;
+                d.active_stack = d.active + d.inactive;
+                d.casual_stack = d.casual + d.active_stack;
+                d.core_stack = d.core + d.casual_stack;
                 d.active_total = d.core + d.active + d.casual + d.inactive;
             });
 
@@ -109,13 +112,13 @@ $(document).ready(function() {
 
             svg.append('path')
                .datum(weeks)
-               .attr('class', 'area-people')
-               .attr('d', area);
+               .attr('class', 'area-people-core')
+               .attr('d', area_core);
 
             svg.append('path')
                .datum(weeks)
-               .attr('class', 'area-people-core')
-               .attr('d', area_core);
+               .attr('class', 'area-people-casual')
+               .attr('d', area_casual);
 
             svg.append('path')
                .datum(weeks)
@@ -123,9 +126,9 @@ $(document).ready(function() {
                .attr('d', area_active);
 
             svg.append('path')
-                .datum(weeks)
-                .attr('class', 'area-people-casual')
-                .attr('d', area_casual);
+               .datum(weeks)
+               .attr('class', 'area-people-inactive')
+               .attr('d', area_inactive);
 
             svg.append('g')
                .attr('class', 'x axis')
@@ -142,12 +145,14 @@ $(document).ready(function() {
                .attr('y', -50)
                .attr('x', -40 - (height / 2))
                .attr('dy','1em')
+               .attr('class', 'axis-label')
                .text('Number of Reps');
 
             svg.append('text')
                .attr('x', (width / 2) - 40)
                .attr('y', height + 40)
                .attr('text-anchor', 'middle')
+               .attr('class', 'axis-label')
                .text('Weeks');
 
             var width_block = width / (weeks.length - 1);
@@ -186,6 +191,7 @@ $(document).ready(function() {
 
         var yAxis = d3.svg.axis()
                       .scale(y)
+                      .tickFormat(d3.format('d'))
                       .orient('left');
 
         var area = d3.svg.area()
@@ -252,12 +258,14 @@ $(document).ready(function() {
                .attr('y', -50)
                .attr('x', -40 - (height / 2))
                .attr('dy','1em')
+               .attr('class', 'axis-label')
                .text('Number of Events');
 
             svg.append('text')
                .attr('x', (width / 2) - 40)
                .attr('y', height + 40)
                .attr('text-anchor', 'middle')
+               .attr('class', 'axis-label')
                .text('Weeks');
 
             var width_block = width / (weeks.length - 1);
@@ -297,6 +305,7 @@ $(document).ready(function() {
 
         var yAxis = d3.svg.axis()
                       .scale(y)
+                      .tickFormat(d3.format('d'))
                       .orient('left');
 
         var area = d3.svg.area()
@@ -362,12 +371,14 @@ $(document).ready(function() {
                .attr('y', -50)
                .attr('x', -40 - (height / 2))
                .attr('dy','1em')
+               .attr('class', 'axis-label')
                .text('Number of Activities');
 
             svg.append('text')
                .attr('x', (width / 2) - 40)
                .attr('y', height + 40)
                .attr('text-anchor', 'middle')
+               .attr('class', 'axis-label')
                .text('Weeks');
 
             var width_block = width / (weeks.length - 1);
