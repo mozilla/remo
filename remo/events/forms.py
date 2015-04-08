@@ -329,6 +329,7 @@ class EventForm(happyforms.ModelForm):
             event.has_new_metrics = True
             event.actual_attendance = None
             event.times_edited = 0
+            event.owner = self.user
         elif self.instance.pk:
             # It's not either a clone event nor a new one,
             # please increment number of event edits
