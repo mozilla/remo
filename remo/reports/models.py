@@ -109,7 +109,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
     'NG' prefix (NG - New Generation).
     """
     user = models.ForeignKey(User, related_name='ng_reports')
-    report_date = models.DateField()
+    report_date = models.DateField(db_index=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     mentor = models.ForeignKey(User, null=True,
