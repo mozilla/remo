@@ -16,7 +16,7 @@ from remo.reports.api.serializers import (ActivitiesDetailedSerializer,
 from remo.reports.models import NGReport
 
 
-KPI_WEEKS = 6
+KPI_WEEKS = 12
 
 
 class ActivitiesViewSet(ReadOnlyModelViewSet):

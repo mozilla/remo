@@ -16,7 +16,7 @@ from remo.events.api.serializers import (EventDetailedSerializer,
 from remo.events.models import Event
 
 
-KPI_WEEKS = 6
+KPI_WEEKS = 12
 
 
 class EventsViewSet(ReadOnlyModelViewSet):
