@@ -8,6 +8,7 @@ from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 
 from django_statsd.clients import statsd
+from product_details import product_details
 
 import forms
 from remo.base.decorators import permission_check
@@ -15,9 +16,9 @@ from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_date
 from remo.dashboard.models import ActionItem
 from remo.events.models import Event
-from remo.profiles.models import UserStatus
+from remo.profiles.models import UserStatus, FunctionalArea
 from remo.remozilla.models import Bug
-from remo.reports.models import NGReport
+from remo.reports.models import NGReport, Campaign
 
 
 # Action Items
@@ -272,3 +273,21 @@ def list_action_items(request):
                    'pageheader': pageheader,
                    'pageuser': user,
                    'query': request.GET.get('query', '')})
+
+
+def kpi(request):
+    countries = product_details.get_regions('en').values()
+    countries.sort()
+
+    categories = FunctionalArea.active_objects.all()
+
+    initiatives = Campaign.active_objects.all()
+
+    reps = (User.objects
+            .filter(userprofile__registration_complete=True,
+                    groups__name='Rep')
+            .order_by('userprofile__country', 'last_name', 'first_name'))
+
+    return render(request, 'kpi.html',
+                  {'reps': reps, 'countries': countries,
+                   'categories': categories, 'initiatives': initiatives})
