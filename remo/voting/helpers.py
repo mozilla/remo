@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from jingo import register
 
+from remo.base.utils import get_object_or_none
 from remo.voting.models import Vote
 
 
@@ -47,3 +48,11 @@ def user_has_voted(user, poll):
     if Vote.objects.filter(poll=poll, user=user).exists():
         return True
     return False
+
+
+@register.function
+def get_nominee(full_name):
+    first_name, last_name = full_name.rsplit(' ', 1)
+    q_params = {'first_name': first_name,
+                'last_name': last_name}
+    return get_object_or_none(User, **q_params)
