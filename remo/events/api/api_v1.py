@@ -83,7 +83,7 @@ class EventResource(ModelResource):
     swag_bug_id = fields.IntegerField(null=True)
     budget_bug_id = fields.IntegerField(null=True)
     sign_ups = fields.IntegerField()
-    campaign = fields.ToOneField('remo.events.api.CampaignResource',
+    campaign = fields.ToOneField('remo.events.api.api_v1.CampaignResource',
                                  attribute='campaign', null=True)
 
     class Meta:
