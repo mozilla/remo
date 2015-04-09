@@ -5,8 +5,8 @@ $(document).ready(function() {
     var margin = {top: 20, right: 50, bottom: 50, left: 50};
     margin.vertical = margin.top + margin.bottom;
     margin.horizontal = margin.left + margin.right;
-    var width = 960 - margin.horizontal,
-    height = 350 - margin.vertical;
+    var width = 960 - margin.horizontal;
+    var height = 350 - margin.vertical;
 
     function weekify(week) {
         var offset = 12 - week;
@@ -18,7 +18,17 @@ $(document).ready(function() {
         return y + 'w' + w;
     }
 
-    function people_graph(key, value) {
+    function urlparams(url, params) {
+        $.each(params, function(index, elem) {
+            if (elem.value) {
+                url += elem.key + '=' + elem.value + '&';
+            }
+        });
+
+        return url;
+    }
+
+    function people_graph(filters) {
         var x = d3.scale.linear()
                   .range([0, width]);
 
@@ -66,24 +76,21 @@ $(document).ready(function() {
                     .attr('class', 'd3-tip')
                     .offset([35, 0])
                     .html(function(d) {
-                        return '<strong>Inactive:</strong> <span style="color:red">'
-                               + d.inactive + '</span><br>' +
-                               '<strong>Active:</strong> <span style="color:red">'
-                               + d.active + '</span><br>' +
-                               '<strong>Casual:</strong> <span style="color:red">'
-                               + d.casual + '</span><br>' +
-                               '<strong>Core:</strong> <span style="color:red">'
-                               + d.core + '</span><br>' +
-                               '<strong>Total:</strong> <span style="color:red">'
-                               + d.active_total + '</span>';
+                        return '<strong>Inactive:</strong> <span style="color:red">' +
+                               d.inactive + '</span><br>' +
+                               '<strong>Active:</strong> <span style="color:red">' +
+                               d.active + '</span><br>' +
+                               '<strong>Casual:</strong> <span style="color:red">' +
+                               d.casual + '</span><br>' +
+                               '<strong>Core:</strong> <span style="color:red">' +
+                               d.core + '</span><br>' +
+                               '<strong>Total:</strong> <span style="color:red">' +
+                               d.active_total + '</span>';
                     });
 
         svg.call(tip);
 
-        var apiurl = '/api/kpi/people/?format=json&'
-        if ((typeof(key)!='undefined') && (typeof(value)!='undefined')) {
-            apiurl += key + '=' + value;
-        }
+        var apiurl = urlparams('/api/kpi/people/?format=json&', filters);
         d3.json(apiurl, function(error, data) {
             $('#people-total').text(data.total);
             $('#people-total_quarter').text(data.quarter_total);
@@ -162,7 +169,7 @@ $(document).ready(function() {
                .enter()
                .append('rect')
                .attr('class', 'info-area')
-               .attr('x', function (d) { return ((d.week - 1) * width_block - 20) })
+               .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
                .attr('y', function (d) { return 0; })
                .attr('height', function (d) { return height; })
                .attr('width', '40px')
@@ -177,7 +184,7 @@ $(document).ready(function() {
         });
     }
 
-    function events_graph(key, value) {
+    function events_graph(filters) {
         var x = d3.scale.linear()
                   .range([0, width]);
 
@@ -215,10 +222,7 @@ $(document).ready(function() {
 
         svg.call(tip);
 
-        var apiurl = '/api/kpi/events/?format=json&'
-        if ((typeof(key)!='undefined') && (typeof(value)!='undefined')) {
-            apiurl += key + '=' + value;
-        }
+        var apiurl = urlparams('/api/kpi/events/?format=json&', filters);
         d3.json(apiurl, function(error, data) {
             $('#events-total').text(data.total);
             $('#events-total_quarter').text(data.quarter_total);
@@ -276,7 +280,7 @@ $(document).ready(function() {
                .append('rect')
                .attr('class', 'info-area')
                .attr('id', function (d) { return 'w' + d.week; })
-               .attr('x', function (d) { return ((d.week - 1) * width_block - 20) })
+               .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
                .attr('y', function (d) { return 0; })
                .attr('height', function (d) { return height; })
                .attr('width', '40px')
@@ -291,7 +295,7 @@ $(document).ready(function() {
         });
     }
 
-    function activities_graph(key, value) {
+    function activities_graph(filters) {
         var x = d3.scale.linear()
                   .range([0, width]);
 
@@ -329,10 +333,7 @@ $(document).ready(function() {
 
         svg.call(tip);
 
-        var apiurl = '/api/kpi/activities/?format=json&'
-        if ((typeof(key)!='undefined') && (typeof(value)!='undefined')) {
-            apiurl += key + '=' + value;
-        }
+        var apiurl = urlparams('/api/kpi/activities/?format=json&', filters);
         d3.json(apiurl, function(error, data) {
             $('#activities-total').text(data.total);
             $('#activities-total_quarter').text(data.quarter_total);
@@ -388,7 +389,7 @@ $(document).ready(function() {
                .enter()
                .append('rect')
                .attr('class', 'info-area')
-               .attr('x', function (d) { return ((d.week - 1) * width_block - 20) })
+               .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
                .attr('y', function (d) { return 0; })
                .attr('height', function (d) { return height; })
                .attr('width', '40px')
@@ -404,17 +405,25 @@ $(document).ready(function() {
     }
 
     /* Draw all graphs */
-    people_graph();
-    events_graph();
-    activities_graph();
+    var filters = [];
+    people_graph(filters);
+    events_graph(filters);
+    activities_graph(filters);
 
     /* Filtering */
     $('select').change(function() {
-        var currentId = $(this).attr('id');
-        var value = $('#' + currentId + ' option:selected').val();
-        var key = $(this).data('query');
-        people_graph(key, value);
-        events_graph(key, value);
-        activities_graph(key, value);
+        $('.d3-graph').html('<div class="three-quarters">loading...</div>');
+
+        var filters = [];
+        $('select').each(function() {
+            var currentId = $(this).attr('id');
+            var key = $(this).data('query');
+            var value = $('#' + currentId + ' option:selected').val();
+            filters.push({'key': key, 'value': value});
+        });
+
+        people_graph(filters);
+        events_graph(filters);
+        activities_graph(filters);
     });
 });
