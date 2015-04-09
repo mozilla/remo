@@ -5,8 +5,8 @@ $(document).ready(function() {
     var margin = {top: 20, right: 50, bottom: 50, left: 50};
     margin.vertical = margin.top + margin.bottom;
     margin.horizontal = margin.left + margin.right;
-    var width = 960 - margin.horizontal,
-    height = 350 - margin.vertical;
+    var width = 960 - margin.horizontal;
+    var height = 350 - margin.vertical;
 
     function weekify(week) {
         var offset = 12 - week;
@@ -76,16 +76,16 @@ $(document).ready(function() {
                     .attr('class', 'd3-tip')
                     .offset([35, 0])
                     .html(function(d) {
-                        return '<strong>Inactive:</strong> <span style="color:red">'
-                               + d.inactive + '</span><br>' +
-                               '<strong>Active:</strong> <span style="color:red">'
-                               + d.active + '</span><br>' +
-                               '<strong>Casual:</strong> <span style="color:red">'
-                               + d.casual + '</span><br>' +
-                               '<strong>Core:</strong> <span style="color:red">'
-                               + d.core + '</span><br>' +
-                               '<strong>Total:</strong> <span style="color:red">'
-                               + d.active_total + '</span>';
+                        return '<strong>Inactive:</strong> <span style="color:red">' +
+                               d.inactive + '</span><br>' +
+                               '<strong>Active:</strong> <span style="color:red">' +
+                               d.active + '</span><br>' +
+                               '<strong>Casual:</strong> <span style="color:red">' +
+                               d.casual + '</span><br>' +
+                               '<strong>Core:</strong> <span style="color:red">' +
+                               d.core + '</span><br>' +
+                               '<strong>Total:</strong> <span style="color:red">' +
+                               d.active_total + '</span>';
                     });
 
         svg.call(tip);
@@ -169,7 +169,7 @@ $(document).ready(function() {
                .enter()
                .append('rect')
                .attr('class', 'info-area')
-               .attr('x', function (d) { return ((d.week - 1) * width_block - 20) })
+               .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
                .attr('y', function (d) { return 0; })
                .attr('height', function (d) { return height; })
                .attr('width', '40px')
@@ -280,7 +280,7 @@ $(document).ready(function() {
                .append('rect')
                .attr('class', 'info-area')
                .attr('id', function (d) { return 'w' + d.week; })
-               .attr('x', function (d) { return ((d.week - 1) * width_block - 20) })
+               .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
                .attr('y', function (d) { return 0; })
                .attr('height', function (d) { return height; })
                .attr('width', '40px')
@@ -389,7 +389,7 @@ $(document).ready(function() {
                .enter()
                .append('rect')
                .attr('class', 'info-area')
-               .attr('x', function (d) { return ((d.week - 1) * width_block - 20) })
+               .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
                .attr('y', function (d) { return 0; })
                .attr('height', function (d) { return height; })
                .attr('width', '40px')
