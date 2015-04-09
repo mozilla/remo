@@ -183,8 +183,8 @@
 {% endblock %}
 
 {% block bottomextra %}
+  <script src="{{ static('dashboard/js/d3.min.js') }}"></script>
   {% compress js %}
-    <script src="{{ static('dashboard/js/d3.min.js') }}"></script>
     <script src="{{ static('dashboard/js/d3-tip.js') }}"></script>
     <script src="{{ static('dashboard/js/kpi.js') }}"></script>
   {% endcompress %}
