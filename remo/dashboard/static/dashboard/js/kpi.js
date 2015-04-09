@@ -18,7 +18,17 @@ $(document).ready(function() {
         return y + 'w' + w;
     }
 
-    function people_graph(key, value) {
+    function urlparams(url, params) {
+        $.each(params, function(index, elem) {
+            if (elem.value) {
+                url += elem.key + '=' + elem.value + '&';
+            }
+        });
+
+        return url;
+    }
+
+    function people_graph(filters) {
         var x = d3.scale.linear()
                   .range([0, width]);
 
@@ -80,10 +90,7 @@ $(document).ready(function() {
 
         svg.call(tip);
 
-        var apiurl = '/api/kpi/people/?format=json&'
-        if ((typeof(key)!='undefined') && (typeof(value)!='undefined')) {
-            apiurl += key + '=' + value;
-        }
+        var apiurl = urlparams('/api/kpi/people/?format=json&', filters);
         d3.json(apiurl, function(error, data) {
             $('#people-total').text(data.total);
             $('#people-total_quarter').text(data.quarter_total);
@@ -177,7 +184,7 @@ $(document).ready(function() {
         });
     }
 
-    function events_graph(key, value) {
+    function events_graph(filters) {
         var x = d3.scale.linear()
                   .range([0, width]);
 
@@ -215,10 +222,7 @@ $(document).ready(function() {
 
         svg.call(tip);
 
-        var apiurl = '/api/kpi/events/?format=json&'
-        if ((typeof(key)!='undefined') && (typeof(value)!='undefined')) {
-            apiurl += key + '=' + value;
-        }
+        var apiurl = urlparams('/api/kpi/events/?format=json&', filters);
         d3.json(apiurl, function(error, data) {
             $('#events-total').text(data.total);
             $('#events-total_quarter').text(data.quarter_total);
@@ -291,7 +295,7 @@ $(document).ready(function() {
         });
     }
 
-    function activities_graph(key, value) {
+    function activities_graph(filters) {
         var x = d3.scale.linear()
                   .range([0, width]);
 
@@ -329,10 +333,7 @@ $(document).ready(function() {
 
         svg.call(tip);
 
-        var apiurl = '/api/kpi/activities/?format=json&'
-        if ((typeof(key)!='undefined') && (typeof(value)!='undefined')) {
-            apiurl += key + '=' + value;
-        }
+        var apiurl = urlparams('/api/kpi/activities/?format=json&', filters);
         d3.json(apiurl, function(error, data) {
             $('#activities-total').text(data.total);
             $('#activities-total_quarter').text(data.quarter_total);
@@ -404,18 +405,25 @@ $(document).ready(function() {
     }
 
     /* Draw all graphs */
-    people_graph();
-    events_graph();
-    activities_graph();
+    var filters = [];
+    people_graph(filters);
+    events_graph(filters);
+    activities_graph(filters);
 
     /* Filtering */
     $('select').change(function() {
         $('.d3-graph').html('<div class="three-quarters">loading...</div>');
-        var currentId = $(this).attr('id');
-        var value = $('#' + currentId + ' option:selected').val();
-        var key = $(this).data('query');
-        people_graph(key, value);
-        events_graph(key, value);
-        activities_graph(key, value);
+
+        var filters = [];
+        $('select').each(function() {
+            var currentId = $(this).attr('id');
+            var key = $(this).data('query');
+            var value = $('#' + currentId + ' option:selected').val();
+            filters.push({'key': key, 'value': value});
+        });
+
+        people_graph(filters);
+        events_graph(filters);
+        activities_graph(filters);
     });
 });
