@@ -2,6 +2,10 @@
     margin-bottom: 40px;
 }
 
+.d3-graph {
+    text-align: center;
+}
+
 .axis path,
 .axis line {
     fill: none;

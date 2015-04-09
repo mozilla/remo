@@ -410,6 +410,7 @@ $(document).ready(function() {
 
     /* Filtering */
     $('select').change(function() {
+        $('.d3-graph').html('<div class="three-quarters">loading...</div>');
         var currentId = $(this).attr('id');
         var value = $('#' + currentId + ' option:selected').val();
         var key = $(this).data('query');
