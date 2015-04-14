@@ -230,3 +230,12 @@ class ListActionItemsTests(RemoTestCase):
         eq_(response.status_code, 200)
         eq_(set(response.context['objects'].object_list),
             set([item]))
+
+
+class KPIDashboardTest(RemoTestCase):
+    """Test dashboard KPIs."""
+
+    def test_base(self):
+        response = self.get(reverse('kpi'))
+        eq_(response.status_code, 200)
+        self.assertTemplateUsed(response, 'kpi.html')
