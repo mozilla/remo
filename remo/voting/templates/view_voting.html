@@ -134,7 +134,11 @@ Mozilla Reps - {{ poll.name }} - Results
               {% for choice in range_poll.choices.all() %}
               <div class="row">
                 <div class="large-11 columns poll-answer">
-                  {{ choice.nominee.get_full_name() }}
+                  <a href="{{ url('profiles_view_profile',
+                     display_name=choice.nominee|get_display_name) }}"
+                     target="_blank">
+                    {{ choice.nominee.get_full_name() }}
+                  </a>
                 </div>
                 <div class="large-1 columns poll-answer">
                   {{ choice.votes }}
