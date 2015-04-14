@@ -95,8 +95,8 @@ $(document).ready(function() {
             $('#people-total').text(data.total);
             $('#people-total_quarter').text(data.quarter_total);
             $('#people-total_week').text(data.week_total);
-            $('#people-percentage_week').text(data.week_growth_percentage);
-            $('#people-percentage_quarter').text(data.quarter_growth_percentage);
+            $('#people-percentage_week').text(data.week_growth_percentage.toFixed(2));
+            $('#people-percentage_quarter').text(data.quarter_growth_percentage.toFixed(2));
 
             var weeks = data.total_per_week;
 
@@ -227,8 +227,8 @@ $(document).ready(function() {
             $('#events-total').text(data.total);
             $('#events-total_quarter').text(data.quarter_total);
             $('#events-total_week').text(data.week_total);
-            $('#events-percentage_week').text(data.week_growth_percentage);
-            $('#events-percentage_quarter').text(data.quarter_growth_percentage);
+            $('#events-percentage_week').text(data.week_growth_percentage.toFixed(2));
+            $('#events-percentage_quarter').text(data.quarter_growth_percentage.toFixed(2));
 
             var weeks = data.total_per_week;
 
@@ -338,8 +338,8 @@ $(document).ready(function() {
             $('#activities-total').text(data.total);
             $('#activities-total_quarter').text(data.quarter_total);
             $('#activities-total_week').text(data.week_total);
-            $('#activities-percentage_week').text(data.week_growth_percentage);
-            $('#activities-percentage_quarter').text(data.quarter_growth_percentage);
+            $('#activities-percentage_week').text(data.week_growth_percentage.toFixed(2));
+            $('#activities-percentage_quarter').text(data.quarter_growth_percentage.toFixed(2));
 
             var weeks = data.total_per_week;
 
