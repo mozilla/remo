@@ -54,5 +54,6 @@ def user_has_voted(user, poll):
 def get_nominee(full_name):
     first_name, last_name = full_name.rsplit(' ', 1)
     q_params = {'first_name': first_name,
-                'last_name': last_name}
+                'last_name': last_name,
+                'groups__name': 'Rep'}
     return get_object_or_none(User, **q_params)
