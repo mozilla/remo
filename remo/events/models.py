@@ -196,7 +196,7 @@ class Event(caching.base.CachingMixin, models.Model):
     @property
     def is_past_event(self):
         """Property to check is event is in the past."""
-        if self.id:
+        if self.id and self.end:
             return now() > self.end
         return None
 
