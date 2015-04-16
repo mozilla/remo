@@ -128,7 +128,8 @@ class UserAdmin(ExportMixin, UserAdmin):
                    ('userprofile__registration_complete', RepProfileFilter,
                     MozillianProfileFilter, MentorProfileFilter,
                     CouncilProfileFilter, AlumniProfileFilter,
-                    'userprofile__is_rotm_nominee'))
+                    'userprofile__is_rotm_nominee',
+                    'userprofile__date_joined_program'))
     search_fields = (UserAdmin.search_fields + ('userprofile__country',))
 
     def get_urls(self):
