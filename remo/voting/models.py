@@ -242,7 +242,7 @@ def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
         template = 'emails/review_budget_notify_council.txt'
         subject = ('Discuss [Bug {id}] - {summary}'
                    .format(id=instance.bug.bug_id,
-                           summary=instance.bug.summary))
+                           summary=unicode(instance.bug.summary)))
         data = {'bug': instance.bug,
                 'BUGZILLA_URL': get_bugzilla_url(instance.bug),
                 'poll': instance}
