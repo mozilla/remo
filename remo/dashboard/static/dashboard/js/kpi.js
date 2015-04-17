@@ -66,6 +66,7 @@ $(document).ready(function() {
                           .y1(function(d) { return y(d.core_stack); });
 
         $('#graph-people').text('');
+
         var svg = d3.select('#graph-people').append('svg')
                     .attr('width', width + margin.left + margin.right)
                     .attr('height', height + margin.top + margin.bottom)
@@ -91,97 +92,102 @@ $(document).ready(function() {
         svg.call(tip);
 
         var apiurl = urlparams('/api/kpi/people/?format=json&', filters);
-        d3.json(apiurl, function(error, data) {
-            $('#people-total').text(data.total);
-            $('#people-total_quarter').text(data.quarter_total);
-            $('#people-total_week').text(data.week_total);
-            $('#people-percentage_week').text(data.week_growth_percentage);
-            $('#people-percentage_quarter').text(data.quarter_growth_percentage);
+        d3.json(apiurl)
+          .on('beforesend', function() {
+              $('#spinner-people').show();
+          })
+          .get(function(error, data) {
+              $('#spinner-people').hide();
+              $('#people-total').text(data.total);
+              $('#people-total_quarter').text(data.quarter_total);
+              $('#people-total_week').text(data.week_total);
+              $('#people-percentage_week').text(data.week_growth_percentage.toFixed(2));
+              $('#people-percentage_quarter').text(data.quarter_growth_percentage.toFixed(2));
 
-            var weeks = data.total_per_week;
+              var weeks = data.total_per_week;
 
-            weeks.forEach(function(d) {
-                d.week = +d.week;
-                d.core = +d.core;
-                d.active = +d.active;
-                d.casual = +d.casual;
-                d.inactive = +d.inactive;
-                d.active_stack = d.active + d.inactive;
-                d.casual_stack = d.casual + d.active_stack;
-                d.core_stack = d.core + d.casual_stack;
-                d.active_total = d.core + d.active + d.casual + d.inactive;
-            });
+              weeks.forEach(function(d) {
+                  d.week = +d.week;
+                  d.core = +d.core;
+                  d.active = +d.active;
+                  d.casual = +d.casual;
+                  d.inactive = +d.inactive;
+                  d.active_stack = d.active + d.inactive;
+                  d.casual_stack = d.casual + d.active_stack;
+                  d.core_stack = d.core + d.casual_stack;
+                  d.active_total = d.core + d.active + d.casual + d.inactive;
+              });
 
-            var formatPercent = d3.format('%U');
+              var formatPercent = d3.format('%U');
 
-            x.domain([1, d3.max(weeks, function(d) { return d.week; })]);
-            y.domain([0, d3.max(weeks, function(d) { return d.active_total; })]);
+              x.domain([1, d3.max(weeks, function(d) { return d.week; })]);
+              y.domain([0, d3.max(weeks, function(d) { return d.active_total; })]);
 
-            svg.append('path')
-               .datum(weeks)
-               .attr('class', 'area-people-core')
-               .attr('d', area_core);
+              svg.append('path')
+                 .datum(weeks)
+                 .attr('class', 'area-people-core')
+                 .attr('d', area_core);
 
-            svg.append('path')
-               .datum(weeks)
-               .attr('class', 'area-people-casual')
-               .attr('d', area_casual);
+              svg.append('path')
+                 .datum(weeks)
+                 .attr('class', 'area-people-casual')
+                 .attr('d', area_casual);
 
-            svg.append('path')
-               .datum(weeks)
-               .attr('class', 'area-people-active')
-               .attr('d', area_active);
+              svg.append('path')
+                 .datum(weeks)
+                 .attr('class', 'area-people-active')
+                 .attr('d', area_active);
 
-            svg.append('path')
-               .datum(weeks)
-               .attr('class', 'area-people-inactive')
-               .attr('d', area_inactive);
+              svg.append('path')
+                 .datum(weeks)
+                 .attr('class', 'area-people-inactive')
+                 .attr('d', area_inactive);
 
-            svg.append('g')
-               .attr('class', 'x axis')
-               .attr('transform', 'translate(0,' + height + ')')
-               .call(xAxis);
+              svg.append('g')
+                 .attr('class', 'x axis')
+                 .attr('transform', 'translate(0,' + height + ')')
+                 .call(xAxis);
 
-            svg.append('g')
-               .attr('class', 'y axis')
-               .call(yAxis)
-               .append('text');
+              svg.append('g')
+                 .attr('class', 'y axis')
+                 .call(yAxis)
+                 .append('text');
 
-            svg.append('text')
-               .attr('transform', 'rotate(-90)')
-               .attr('y', -50)
-               .attr('x', -40 - (height / 2))
-               .attr('dy','1em')
-               .attr('class', 'axis-label')
-               .text('Number of Reps');
+              svg.append('text')
+                 .attr('transform', 'rotate(-90)')
+                 .attr('y', -50)
+                 .attr('x', -40 - (height / 2))
+                 .attr('dy','1em')
+                 .attr('class', 'axis-label')
+                 .text('Number of Reps');
 
-            svg.append('text')
-               .attr('x', (width / 2) - 40)
-               .attr('y', height + 40)
-               .attr('text-anchor', 'middle')
-               .attr('class', 'axis-label')
-               .text('Weeks');
+              svg.append('text')
+                 .attr('x', (width / 2) - 40)
+                 .attr('y', height + 40)
+                 .attr('text-anchor', 'middle')
+                 .attr('class', 'axis-label')
+                 .text('Weeks');
 
-            var width_block = width / (weeks.length - 1);
+              var width_block = width / (weeks.length - 1);
 
-            svg.selectAll('.area-people')
-               .data(weeks)
-               .enter()
-               .append('rect')
-               .attr('class', 'info-area')
-               .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
-               .attr('y', function (d) { return 0; })
-               .attr('height', function (d) { return height; })
-               .attr('width', '40px')
-               .on('mouseover', function (d, i) {
-                   tip.show(d);
-                   d3.select(this).style('opacity', 0.2);
-               })
-               .on('mouseout', function (d, i) {
-                   tip.hide(d);
-                   d3.select(this).style('opacity', 0);
-               });
-        });
+              svg.selectAll('.area-people')
+                 .data(weeks)
+                 .enter()
+                 .append('rect')
+                 .attr('class', 'info-area')
+                 .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
+                 .attr('y', function (d) { return 0; })
+                 .attr('height', function (d) { return height; })
+                 .attr('width', '40px')
+                 .on('mouseover', function (d, i) {
+                     tip.show(d);
+                     d3.select(this).style('opacity', 0.2);
+                 })
+                 .on('mouseout', function (d, i) {
+                     tip.hide(d);
+                     d3.select(this).style('opacity', 0);
+                 });
+          });
     }
 
     function events_graph(filters) {
@@ -207,6 +213,7 @@ $(document).ready(function() {
                      .y1(function(d) { return y(d.events); });
 
         $('#graph-events').text('');
+
         var svg = d3.select('#graph-events').append('svg')
                     .attr('width', width + margin.left + margin.right)
                     .attr('height', height + margin.top + margin.bottom)
@@ -223,76 +230,81 @@ $(document).ready(function() {
         svg.call(tip);
 
         var apiurl = urlparams('/api/kpi/events/?format=json&', filters);
-        d3.json(apiurl, function(error, data) {
-            $('#events-total').text(data.total);
-            $('#events-total_quarter').text(data.quarter_total);
-            $('#events-total_week').text(data.week_total);
-            $('#events-percentage_week').text(data.week_growth_percentage);
-            $('#events-percentage_quarter').text(data.quarter_growth_percentage);
+        d3.json(apiurl)
+          .on('beforesend', function() {
+              $('#spinner-events').show();
+          })
+          .get(function(error, data) {
+              $('#spinner-events').hide();
+              $('#events-total').text(data.total);
+              $('#events-total_quarter').text(data.quarter_total);
+              $('#events-total_week').text(data.week_total);
+              $('#events-percentage_week').text(data.week_growth_percentage.toFixed(2));
+              $('#events-percentage_quarter').text(data.quarter_growth_percentage.toFixed(2));
 
-            var weeks = data.total_per_week;
+              var weeks = data.total_per_week;
 
-            weeks.forEach(function(d) {
-                d.week = +d.week;
-                d.events = +d.events;
-            });
+              weeks.forEach(function(d) {
+                  d.week = +d.week;
+                  d.events = +d.events;
+              });
 
-            var formatPercent = d3.format('%U');
+              var formatPercent = d3.format('%U');
 
-            x.domain([1, d3.max(weeks, function(d) { return d.week; })]);
-            y.domain([0, d3.max(weeks, function(d) { return d.events; })]);
+              x.domain([1, d3.max(weeks, function(d) { return d.week; })]);
+              y.domain([0, d3.max(weeks, function(d) { return d.events; })]);
 
-            svg.append('path')
-               .datum(weeks)
-               .attr('class', 'area-events')
-               .attr('d', area);
+              svg.append('path')
+                 .datum(weeks)
+                 .attr('class', 'area-events')
+                 .attr('d', area);
 
-            svg.append('g')
-               .attr('class', 'x axis')
-               .attr('transform', 'translate(0,' + height + ')')
-               .call(xAxis);
+              svg.append('g')
+                 .attr('class', 'x axis')
+                 .attr('transform', 'translate(0,' + height + ')')
+                 .call(xAxis);
 
-            svg.append('g')
-               .attr('class', 'y axis')
-               .call(yAxis)
-               .append('text');
+              svg.append('g')
+                 .attr('class', 'y axis')
+                 .call(yAxis)
+                 .append('text');
 
-            svg.append('text')
-               .attr('transform', 'rotate(-90)')
-               .attr('y', -50)
-               .attr('x', -40 - (height / 2))
-               .attr('dy','1em')
-               .attr('class', 'axis-label')
-               .text('Number of Events');
+              svg.append('text')
+                 .attr('transform', 'rotate(-90)')
+                 .attr('y', -50)
+                 .attr('x', -40 - (height / 2))
+                 .attr('dy','1em')
+                 .attr('class', 'axis-label')
+                 .text('Number of Events');
 
-            svg.append('text')
-               .attr('x', (width / 2) - 40)
-               .attr('y', height + 40)
-               .attr('text-anchor', 'middle')
-               .attr('class', 'axis-label')
-               .text('Weeks');
+              svg.append('text')
+                 .attr('x', (width / 2) - 40)
+                 .attr('y', height + 40)
+                 .attr('text-anchor', 'middle')
+                 .attr('class', 'axis-label')
+                 .text('Weeks');
 
-            var width_block = width / (weeks.length - 1);
+              var width_block = width / (weeks.length - 1);
 
-            svg.selectAll('.line-events')
-               .data(weeks)
-               .enter()
-               .append('rect')
-               .attr('class', 'info-area')
-               .attr('id', function (d) { return 'w' + d.week; })
-               .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
-               .attr('y', function (d) { return 0; })
-               .attr('height', function (d) { return height; })
-               .attr('width', '40px')
-               .on('mouseover', function (d, i) {
-                   tip.show(d);
-                   d3.select(this).style('opacity', 0.2);
-               })
-               .on('mouseout', function (d, i) {
-                   tip.hide(d);
-                   d3.select(this).style('opacity', 0);
-               });
-        });
+              svg.selectAll('.line-events')
+                 .data(weeks)
+                 .enter()
+                 .append('rect')
+                 .attr('class', 'info-area')
+                 .attr('id', function (d) { return 'w' + d.week; })
+                 .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
+                 .attr('y', function (d) { return 0; })
+                 .attr('height', function (d) { return height; })
+                 .attr('width', '40px')
+                 .on('mouseover', function (d, i) {
+                     tip.show(d);
+                     d3.select(this).style('opacity', 0.2);
+                 })
+                 .on('mouseout', function (d, i) {
+                     tip.hide(d);
+                     d3.select(this).style('opacity', 0);
+                 });
+          });
     }
 
     function activities_graph(filters) {
@@ -318,6 +330,7 @@ $(document).ready(function() {
                      .y1(function(d) { return y(d.activities); });
 
         $('#graph-activities').text('');
+
         var svg = d3.select('#graph-activities').append('svg')
                     .attr('width', width + margin.left + margin.right)
                     .attr('height', height + margin.top + margin.bottom)
@@ -334,74 +347,79 @@ $(document).ready(function() {
         svg.call(tip);
 
         var apiurl = urlparams('/api/kpi/activities/?format=json&', filters);
-        d3.json(apiurl, function(error, data) {
-            $('#activities-total').text(data.total);
-            $('#activities-total_quarter').text(data.quarter_total);
-            $('#activities-total_week').text(data.week_total);
-            $('#activities-percentage_week').text(data.week_growth_percentage);
-            $('#activities-percentage_quarter').text(data.quarter_growth_percentage);
+        d3.json(apiurl)
+          .on('beforesend', function() {
+              $('#spinner-activities').show();
+          })
+          .get(function(error, data) {
+              $('#spinner-activities').hide();
+              $('#activities-total').text(data.total);
+              $('#activities-total_quarter').text(data.quarter_total);
+              $('#activities-total_week').text(data.week_total);
+              $('#activities-percentage_week').text(data.week_growth_percentage.toFixed(2));
+              $('#activities-percentage_quarter').text(data.quarter_growth_percentage.toFixed(2));
 
-            var weeks = data.total_per_week;
+              var weeks = data.total_per_week;
 
-            weeks.forEach(function(d) {
-                d.week = +d.week;
-                d.activities = +d.activities;
-            });
+              weeks.forEach(function(d) {
+                  d.week = +d.week;
+                  d.activities = +d.activities;
+              });
 
-            var formatPercent = d3.format('%U');
+              var formatPercent = d3.format('%U');
 
-            x.domain([1, d3.max(weeks, function(d) { return d.week; })]);
-            y.domain([0, d3.max(weeks, function(d) { return d.activities; })]);
+              x.domain([1, d3.max(weeks, function(d) { return d.week; })]);
+              y.domain([0, d3.max(weeks, function(d) { return d.activities; })]);
 
-            svg.append('path')
-               .datum(weeks)
-               .attr('class', 'area-activities')
-               .attr('d', area);
+              svg.append('path')
+                 .datum(weeks)
+                 .attr('class', 'area-activities')
+                 .attr('d', area);
 
-            svg.append('g')
-               .attr('class', 'x axis')
-               .attr('transform', 'translate(0,' + height + ')')
-               .call(xAxis);
+              svg.append('g')
+                 .attr('class', 'x axis')
+                 .attr('transform', 'translate(0,' + height + ')')
+                 .call(xAxis);
 
-            svg.append('g')
-               .attr('class', 'y axis')
-               .call(yAxis);
+              svg.append('g')
+                 .attr('class', 'y axis')
+                 .call(yAxis);
 
-            svg.append('text')
-               .attr('transform', 'rotate(-90)')
-               .attr('y', -50)
-               .attr('x', -40 - (height / 2))
-               .attr('dy','1em')
-               .attr('class', 'axis-label')
-               .text('Number of Activities');
+              svg.append('text')
+                 .attr('transform', 'rotate(-90)')
+                 .attr('y', -50)
+                 .attr('x', -40 - (height / 2))
+                 .attr('dy','1em')
+                 .attr('class', 'axis-label')
+                 .text('Number of Activities');
 
-            svg.append('text')
-               .attr('x', (width / 2) - 40)
-               .attr('y', height + 40)
-               .attr('text-anchor', 'middle')
-               .attr('class', 'axis-label')
-               .text('Weeks');
+              svg.append('text')
+                 .attr('x', (width / 2) - 40)
+                 .attr('y', height + 40)
+                 .attr('text-anchor', 'middle')
+                 .attr('class', 'axis-label')
+                 .text('Weeks');
 
-            var width_block = width / (weeks.length - 1);
+              var width_block = width / (weeks.length - 1);
 
-            svg.selectAll('.line-activities')
-               .data(weeks)
-               .enter()
-               .append('rect')
-               .attr('class', 'info-area')
-               .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
-               .attr('y', function (d) { return 0; })
-               .attr('height', function (d) { return height; })
-               .attr('width', '40px')
-               .on('mouseover', function (d, i) {
-                   tip.show(d);
-                   d3.select(this).style('opacity', 0.2);
-               })
-               .on('mouseout', function (d, i) {
-                   tip.hide(d);
-                   d3.select(this).style('opacity', 0);
-               });
-        });
+              svg.selectAll('.line-activities')
+                 .data(weeks)
+                 .enter()
+                 .append('rect')
+                 .attr('class', 'info-area')
+                 .attr('x', function (d) { return ((d.week - 1) * width_block - 20);})
+                 .attr('y', function (d) { return 0; })
+                 .attr('height', function (d) { return height; })
+                 .attr('width', '40px')
+                 .on('mouseover', function (d, i) {
+                     tip.show(d);
+                     d3.select(this).style('opacity', 0.2);
+                 })
+                 .on('mouseout', function (d, i) {
+                     tip.hide(d);
+                     d3.select(this).style('opacity', 0);
+                 });
+          });
     }
 
     /* Draw all graphs */
@@ -412,8 +430,6 @@ $(document).ready(function() {
 
     /* Filtering */
     $('select').change(function() {
-        $('.d3-graph').html('<div class="three-quarters">loading...</div>');
-
         var filters = [];
         $('select').each(function() {
             var currentId = $(this).attr('id');
