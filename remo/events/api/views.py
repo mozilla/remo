@@ -19,11 +19,23 @@ from remo.events.models import Event
 KPI_WEEKS = 12
 
 
+class EventsFilter(django_filters.FilterSet):
+    owner = django_filters.CharFilter(name='owner__userprofile')
+    categories = django_filters.CharFilter(name='categories__name')
+    initiative = django_filters.CharFilter(name='campaign__name')
+
+    class Meta:
+        model = Event
+        fields = ('name', 'description', 'start', 'end', 'city', 'region',
+                  'country', 'lat', 'lon')
+
+
 class EventsViewSet(ReadOnlyModelViewSet):
     """Return a list of events."""
     serializer_class = EventSerializer
     model = Event
     queryset = Event.objects.all()
+    filter_class = EventsFilter
 
     def retrieve(self, request, pk):
         event = get_object_or_404(self.queryset, pk=pk)

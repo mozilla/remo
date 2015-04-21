@@ -29,11 +29,35 @@ CASUAL = 1
 INACTIVE = 0
 
 
+class UserProfileFilter(django_filters.FilterSet):
+    groups = django_filters.CharFilter(name='groups__name')
+    functional_areas = django_filters.CharFilter(
+        name='userprofile__functional_areas__name')
+    mentor = django_filters.CharFilter(name='userprofile__mentor')
+    city = django_filters.CharFilter(name='userprofile__city')
+    region = django_filters.CharFilter(name='userprofile__region')
+    country = django_filters.CharFilter(name='userprofile__country')
+    twitter = django_filters.CharFilter(name='userprofile__twitter_account')
+    jabber = django_filters.CharFilter(name='userprofile__jabber_id')
+    irc_name = django_filters.CharFilter(name='userprofile__irc_name')
+    wiki_profile = django_filters.CharFilter(
+        name='userprofile__wiki_profile_url')
+    irc_channels = django_filters.CharFilter(name='userprofile__irc_channels')
+    linkedin = django_filters.CharFilter(name='userprofile__linkedin_url')
+    facebook = django_filters.CharFilter(name='userprofile__facebook_url')
+    diaspora = django_filters.CharFilter(name='userprofile__diaspora_url')
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name')
+
+
 class UserProfileViewSet(ReadOnlyModelViewSet):
     """Returns a list of Reps profiles."""
     serializer_class = UserSerializer
     model = User
     queryset = User.objects.all()
+    filter_class = UserProfileFilter
 
     def get_queryset(self):
         queryset = self.queryset.filter(

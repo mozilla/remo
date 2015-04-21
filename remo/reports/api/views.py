@@ -19,11 +19,26 @@ from remo.reports.models import NGReport
 KPI_WEEKS = 12
 
 
+class ActivitiesFilter(django_filters.FilterSet):
+    user = django_filters.CharFilter(name='user__userprofile')
+    activity = django_filters.CharFilter(name='activity__name')
+    initiative = django_filters.CharFilter(name='campaign__name')
+    mentor = django_filters.CharFilter(name='mentor__userprofile')
+    category = django_filters.CharFilter(name='functional_areas__name')
+
+    class Meta:
+        model = NGReport
+        fields = ('is_passive', 'event', 'activity_description', 'report_date',
+                  'location', 'longitude', 'latitude', 'link',
+                  'link_description')
+
+
 class ActivitiesViewSet(ReadOnlyModelViewSet):
     """Return a list of activities."""
     serializer_class = ActivitiesSerializer
     model = NGReport
     queryset = NGReport.objects.all()
+    filter_class = ActivitiesFilter
 
     def retrieve(self, request, pk):
         report = get_object_or_404(self.get_queryset(), pk=pk)
