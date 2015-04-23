@@ -19,14 +19,16 @@ from remo.profiles.models import UserProfile
 
 
 KPI_WEEKS = 12
-# The max period in which we are looking to find reports for a user
-# both in past and future, measured in weeks
-MAX_ACTIVITY_PERIOD = 8
-# Activities Thresholds
+# Number of activities
 CORE = 4
 ACTIVE = 1
 CASUAL = 1
 INACTIVE = 0
+# Activities Thresholds:
+# The max period in which we are looking to find reports for a user
+# both in past and future, measured in weeks
+CASUAL_INACTIVE = 4
+ACTIVE_CORE = 2
 
 
 class UserProfileFilter(django_filters.FilterSet):
@@ -158,10 +160,10 @@ class PeopleKPIView(APIView):
         # Get the number of reports for each user.
 
         # Activity metrics:
-        # Inactive: No activity within 16 weeks (8 past, 8 future)
-        # Casual: 1 activity within 16 weeks (8 past, 8 future)
-        # Active: 1 activity within 8 weeks (4 past, 4 future)
-        # Core: 4 activities within 8 weeks (4 past, 4 future)
+        # Inactive: No activity within 8 weeks (4 past, 4 future)
+        # Casual: 1 activity within 8 weeks (4 past, 4 future)
+        # Active: 1 activity within 4 weeks (2 past, 2 future)
+        # Core: 4 activities within 4 weeks (2 past, 2 future)
         def get_activity_query(query, start_date=None, offset=0, invert=False):
             if not start_date:
                 start_date = today
@@ -173,7 +175,7 @@ class PeopleKPIView(APIView):
             return (query.filter(q_args).distinct()
                     .annotate(num_reports=Count('ng_reports')))
 
-        core_active_query = get_activity_query(people.qs, offset=4)
+        core_active_query = get_activity_query(people.qs, offset=ACTIVE_CORE)
         # Active contributors - 8 weeks
         active_contributors = core_active_query.filter(num_reports__gte=ACTIVE,
                                                        num_reports__lt=CORE)
@@ -183,12 +185,12 @@ class PeopleKPIView(APIView):
 
         # Inactive contributors - 16 weeks
         num_inactive = get_activity_query(people.qs,
-                                          offset=MAX_ACTIVITY_PERIOD,
+                                          offset=CASUAL_INACTIVE,
                                           invert=True).count()
         # Casual contributors
         active_ids = core_active_query.values_list('id', flat=True)
         num_casual = (get_activity_query(people.qs,
-                                         offset=MAX_ACTIVITY_PERIOD)
+                                         offset=CASUAL_INACTIVE)
                       .exclude(id__in=active_ids).count())
 
         weekly_contribution = []
@@ -198,7 +200,7 @@ class PeopleKPIView(APIView):
             # Conversion points per week
             core_active_query = get_activity_query(people.qs,
                                                    start_date=start,
-                                                   offset=4)
+                                                   offset=ACTIVE_CORE)
             # Active contributors
             active_contributors = core_active_query.filter(
                 num_reports__gte=ACTIVE, num_reports__lt=CORE)
@@ -210,13 +212,13 @@ class PeopleKPIView(APIView):
             # Inactive contributors
             inactive_weekly = get_activity_query(people.qs,
                                                  start_date=start,
-                                                 offset=MAX_ACTIVITY_PERIOD,
+                                                 offset=CASUAL_INACTIVE,
                                                  invert=True).count()
             # Casual contributors
             active_ids = core_active_query.values_list('id', flat=True)
             casual_weekly = (get_activity_query(people.qs,
                                                 start_date=start,
-                                                offset=MAX_ACTIVITY_PERIOD)
+                                                offset=CASUAL_INACTIVE)
                              .exclude(id__in=active_ids).count())
 
             weekly_contribution.append({'week': weeks-i,
