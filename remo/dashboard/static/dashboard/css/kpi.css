@@ -23,15 +23,31 @@
     font-size: 12px;
 }
 
+.people-core {
+    color: #ff4f32;
+}
+
+.people-active {
+    color: #ff725a;
+}
+
+.people-casual {
+    color: #ff9584;
+}
+
+.people-inactive {
+    color: #ffb8ad;
+}
+
 .area-people-core {
     fill: #ff4f32;
 }
 
-.area-people-casual {
+.area-people-active {
     fill: #ff725a;
 }
 
-.area-people-active {
+.area-people-casual {
     fill: #ff9584;
 }
 
