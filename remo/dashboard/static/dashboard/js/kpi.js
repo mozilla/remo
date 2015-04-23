@@ -77,16 +77,15 @@ $(document).ready(function() {
                     .attr('class', 'd3-tip')
                     .offset([35, 0])
                     .html(function(d) {
-                        return '<strong>Inactive:</strong> <span style="color:red">' +
-                               d.inactive + '</span><br>' +
-                               '<strong>Active:</strong> <span style="color:red">' +
-                               d.active + '</span><br>' +
-                               '<strong>Casual:</strong> <span style="color:red">' +
-                               d.casual + '</span><br>' +
-                               '<strong>Core:</strong> <span style="color:red">' +
+                        return '<strong>Core:</strong> <span class="people-core">' +
                                d.core + '</span><br>' +
-                               '<strong>Total:</strong> <span style="color:red">' +
-                               d.active_total + '</span>';
+                               '<strong>Active:</strong> <span class="people-active">' +
+                               d.active + '</span><br>' +
+                               '<strong>Casual:</strong> <span class="people-active">' +
+                               d.casual + '</span><br>' +
+                               '<strong>Inactive:</strong> <span class="people-casual">' +
+                               d.inactive + '</span><br>' +
+                               '<strong>Total: ' + d.active_total + '</strong>';
                     });
 
         svg.call(tip);
@@ -112,9 +111,9 @@ $(document).ready(function() {
                   d.active = +d.active;
                   d.casual = +d.casual;
                   d.inactive = +d.inactive;
-                  d.active_stack = d.active + d.inactive;
-                  d.casual_stack = d.casual + d.active_stack;
-                  d.core_stack = d.core + d.casual_stack;
+                  d.casual_stack = d.casual + d.inactive;
+                  d.active_stack = d.active + d.casual_stack;
+                  d.core_stack = d.core + d.active_stack;
                   d.active_total = d.core + d.active + d.casual + d.inactive;
               });
 
