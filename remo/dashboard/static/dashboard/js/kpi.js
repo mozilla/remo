@@ -50,15 +50,15 @@ $(document).ready(function() {
                               .y0(height)
                               .y1(function(d) { return y(d.inactive); });
 
+        var area_casual = d3.svg.area()
+                            .x(function(d) { return x(d.week); })
+                            .y0(height)
+                            .y1(function(d) { return y(d.casual_stack); });
+
         var area_active = d3.svg.area()
                                 .x(function(d) { return x(d.week); })
                                 .y0(height)
                                 .y1(function(d) { return y(d.active_stack); });
-
-        var area_casual = d3.svg.area()
-                                .x(function(d) { return x(d.week); })
-                                .y0(height)
-                                .y1(function(d) { return y(d.casual_stack); });
 
         var area_core = d3.svg.area()
                           .x(function(d) { return x(d.week); })
@@ -129,13 +129,13 @@ $(document).ready(function() {
 
               svg.append('path')
                  .datum(weeks)
-                 .attr('class', 'area-people-casual')
-                 .attr('d', area_casual);
+                 .attr('class', 'area-people-active')
+                 .attr('d', area_active);
 
               svg.append('path')
                  .datum(weeks)
-                 .attr('class', 'area-people-active')
-                 .attr('d', area_active);
+                 .attr('class', 'area-people-casual')
+                 .attr('d', area_casual);
 
               svg.append('path')
                  .datum(weeks)
