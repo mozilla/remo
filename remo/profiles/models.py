@@ -77,9 +77,6 @@ class FunctionalArea(models.Model):
             self.slug = slugify(self.name, instance=self)
         super(FunctionalArea, self).save(*args, **kwargs)
 
-    def get_absolute_delete_url(self):
-        return reverse('delete_functional_area', kwargs={'pk': self.id})
-
     def get_absolute_edit_url(self):
         return reverse('edit_functional_area', kwargs={'pk': self.id})
 

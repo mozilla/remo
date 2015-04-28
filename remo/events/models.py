@@ -84,9 +84,6 @@ class EventMetric(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_absolute_delete_url(self):
-        return reverse('delete_metric', kwargs={'pk': self.id})
-
     def get_absolute_edit_url(self):
         return reverse('edit_metric', kwargs={'pk': self.id})
 

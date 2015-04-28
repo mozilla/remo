@@ -1,8 +1,7 @@
 from django.conf.urls import patterns, url
 from django.core.urlresolvers import reverse_lazy
 
-from remo.base.views import (BaseCreateView, BaseDeleteView, BaseListView,
-                             BaseUpdateView)
+from remo.base.views import BaseCreateView, BaseListView, BaseUpdateView
 from remo.events.models import EventMetric
 from remo.events.forms import EventMetricForm
 from remo.profiles.forms import FunctionalAreaForm
@@ -18,11 +17,6 @@ urlpatterns = patterns(
             groups=['Admin', 'Council'],
             model=Activity, create_object_url=reverse_lazy('create_activity')),
         name='list_activities'),
-    url('^activities/(?P<pk>\d+)/delete/$',
-        BaseDeleteView.as_view(
-            groups=['Admin', 'Council'],
-            model=Activity, success_url=reverse_lazy('list_activities')),
-        name='delete_activity'),
     url('^activities/new/$',
         BaseCreateView.as_view(
             groups=['Admin', 'Council'],
@@ -40,11 +34,6 @@ urlpatterns = patterns(
             groups=['Admin', 'Council'],
             model=Campaign, create_object_url=reverse_lazy('create_campaign')),
         name='list_campaigns'),
-    url('^initiatives/(?P<pk>\d+)/delete/$',
-        BaseDeleteView.as_view(
-            groups=['Admin', 'Council'],
-            model=Campaign, success_url=reverse_lazy('list_campaigns')),
-        name='delete_campaign'),
     url('^initiatives/new/$',
         BaseCreateView.as_view(
             groups=['Admin', 'Council'],
@@ -62,11 +51,6 @@ urlpatterns = patterns(
             model=FunctionalArea,
             create_object_url=reverse_lazy('create_functional_area')),
         name='list_functional_areas'),
-    url('^functional_areas/(?P<pk>\d+)/delete/$',
-        BaseDeleteView.as_view(
-            model=FunctionalArea,
-            success_url=reverse_lazy('list_functional_areas')),
-        name='delete_functional_area'),
     url('^functional_areas/new/$',
         BaseCreateView.as_view(
             model=FunctionalArea, form_class=FunctionalAreaForm,
@@ -83,11 +67,6 @@ urlpatterns = patterns(
             create_object_url=reverse_lazy('create_metric'),
             groups=['Admin', 'Council']),
         name='list_metrics'),
-    url('^metrics/(?P<pk>\d+)/delete/$',
-        BaseDeleteView.as_view(
-            groups=['Admin', 'Council'],
-            model=EventMetric, success_url=reverse_lazy('list_metrics')),
-        name='delete_metric'),
     url('^metrics/new/$',
         BaseCreateView.as_view(
             groups=['Admin', 'Council'],
