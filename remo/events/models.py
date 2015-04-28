@@ -136,6 +136,7 @@ class Event(caching.base.CachingMixin, models.Model):
     created_on = models.DateTimeField(auto_now_add=True, null=True)
     updated_on = models.DateTimeField(auto_now=True, null=True)
     campaign = models.ForeignKey('reports.Campaign', related_name='events',
+                                 on_delete=models.SET_NULL,
                                  null=True, blank=False)
 
     objects = caching.base.CachingManager()
