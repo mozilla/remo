@@ -51,7 +51,7 @@ class PollAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ['name', 'start', 'end', 'valid_groups']
     date_hierarchy = 'start'
     readonly_fields = ['task_start_id', 'task_end_id', 'bug']
-    list_filter = ['automated_poll']
+    list_filter = ['automated_poll', 'is_extended', 'comments_allowed']
 
 
 class VoteAdmin(ExportMixin, admin.ModelAdmin):
