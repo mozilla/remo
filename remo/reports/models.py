@@ -54,9 +54,6 @@ class Activity(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_absolute_delete_url(self):
-        return reverse('delete_activity', kwargs={'pk': self.id})
-
     def get_absolute_edit_url(self):
         return reverse('edit_activity', kwargs={'pk': self.id})
 
@@ -92,9 +89,6 @@ class Campaign(models.Model):
 
     def __unicode__(self):
         return self.name
-
-    def get_absolute_delete_url(self):
-        return reverse('delete_campaign', kwargs={'pk': self.id})
 
     def get_absolute_edit_url(self):
         return reverse('edit_campaign', kwargs={'pk': self.id})
