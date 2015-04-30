@@ -167,7 +167,7 @@
               URL description
             </label>
             <div id="link-description " data-tooltip class="has-tip tip-right"
-                 title="What is this URL for">
+                 data-options="disable-for-touch:true" title="What is this URL for">
               {{ field_with_attrs(report_form.link_description,
                                   class="flat",
                                   placeholder="What is this URL for") }}
@@ -185,7 +185,7 @@
               Activity description
             </label>
             <div id="description" data-tooltip class="has-tip tip-right"
-                 title="Activity description">
+                 data-options="disable-for-touch:true" title="Activity description">
               {{ field_with_attrs(report_form.activity_description,
                                   class="flat",
                                   placeholder="Describe the activity briefly",
