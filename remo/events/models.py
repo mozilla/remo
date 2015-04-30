@@ -293,7 +293,7 @@ def event_set_groups(app, sender, signal, **kwargs):
              'can_delete_events': ['Admin', 'Council', 'Mentor'],
              'can_delete_event_comments': ['Admin'],
              'can_subscribe_to_events': ['Admin', 'Council', 'Mentor', 'Rep',
-                                         'Mozillians']}
+                                         'Alumni', 'Mozillians']}
 
     add_permissions_to_groups('events', perms)
 
