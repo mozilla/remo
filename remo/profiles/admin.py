@@ -95,6 +95,21 @@ class AlumniProfileFilter(SimpleListFilter):
         return queryset
 
 
+class AdminProfileFilter(SimpleListFilter):
+    title = 'Admin profiles'
+    parameter_name = 'admin_profile'
+
+    def lookups(self, request, model_admin):
+        return (('False', 'No'), ('True', 'Yes'))
+
+    def queryset(self, request, queryset):
+        if self.value() == 'True':
+            return queryset.filter(groups__name='Admin')
+        elif self.value() == 'False':
+            return queryset.exclude(groups__name='Admin')
+        return queryset
+
+
 class UserResource(resources.ModelResource):
     personal_emails = fields.Field()
     country = fields.Field()
@@ -135,7 +150,7 @@ class UserAdmin(ExportMixin, UserAdmin):
                    ('userprofile__registration_complete', RepProfileFilter,
                     MozillianProfileFilter, MentorProfileFilter,
                     CouncilProfileFilter, AlumniProfileFilter,
-                    'userprofile__is_rotm_nominee',
+                    AdminProfileFilter, 'userprofile__is_rotm_nominee',
                     'userprofile__date_joined_program'))
     search_fields = (UserAdmin.search_fields + ('userprofile__country',))
 
