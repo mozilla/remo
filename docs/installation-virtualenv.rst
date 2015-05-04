@@ -127,7 +127,7 @@ When you want to start contributing...
 
 #. **Sync DB.**::
 
-     (venv)$ ./manage.py syncdb && ./manage.py migrate
+     (venv)$ ./manage.py syncdb --noinput --migrate
 
 
 #. **Create an admin account.**
