@@ -132,7 +132,7 @@ When you want to start contributing...
 
 #. **Create an admin account.**
 
-   Within your vagrant machine, create your own admin account::
+   Create your own admin account::
 
     (venv)$ ./manage.py createsuperuser
 
