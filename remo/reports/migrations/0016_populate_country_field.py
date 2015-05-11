@@ -11,6 +11,10 @@ COUNTRIES_LIST = product_details.get_regions('en').values()
 
 class Migration(DataMigration):
 
+    depends_on = (
+        ('events', '0021_auto__add_field_event_campaign.py'),
+    )
+
     def forwards(self, orm):
         """ Populate the country field in the reports based on the location
         submitted by the user or the location of the event linked to the
