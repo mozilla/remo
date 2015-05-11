@@ -167,7 +167,7 @@ class RangePollChoice(models.Model):
     nominee = models.ForeignKey(User, limit_choices_to={'groups__name': 'Rep'})
 
     class Meta:
-        ordering = ['-votes', 'nominee__last_name', 'nominee__first_name']
+        ordering = ['nominee__first_name', 'nominee__last_name']
 
 
 class RadioPoll(models.Model):
@@ -189,7 +189,7 @@ class RadioPollChoice(models.Model):
         return self.answer
 
     class Meta:
-        ordering = ['-votes']
+        ordering = ['radio_poll__question']
 
 
 class PollComment(models.Model):
