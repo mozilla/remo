@@ -134,7 +134,7 @@ When you want to start contributing...
 
    Create your own admin account::
 
-    (venv)$ ./manage.py createsuperuser
+    (venv)$ ./manage.py create_superuser --email your_email --passowrd your_password
 
 
    .. note::
