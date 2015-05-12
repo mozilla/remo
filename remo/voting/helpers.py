@@ -56,4 +56,7 @@ def get_nominee(full_name):
     q_params = {'first_name': first_name,
                 'last_name': last_name,
                 'groups__name': 'Rep'}
+    user = get_object_or_none(User, **q_params)
+    if not user:
+        q_params['first_name'], q_params['last_name'] = full_name.split(' ', 1)
     return get_object_or_none(User, **q_params)
