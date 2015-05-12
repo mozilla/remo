@@ -9,3 +9,4 @@ coverage==3.7.1
 
 pyquery
 flake8
+beautifulsoup
