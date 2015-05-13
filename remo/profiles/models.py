@@ -22,7 +22,7 @@ from uuslug import uuslug as slugify
 from remo.base.utils import get_object_or_none
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import add_permissions_to_groups
+from remo.base.utils import add_permissions_to_groups, get_date
 from remo.dashboard.models import ActionItem
 from remo.remozilla.models import Bug, WAITING_MENTOR_VALIDATION_ACTION
 
@@ -231,6 +231,7 @@ class UserAvatar(caching.base.CachingMixin, models.Model):
 class UserStatus(caching.base.CachingMixin, models.Model):
     """Model for inactiviy/unavailability data."""
     user = models.ForeignKey(User, related_name='status')
+    start_date = models.DateField(blank=True, default=get_date)
     expected_date = models.DateField(null=True, blank=True)
     return_date = models.DateField(null=True, blank=True)
     replacement_rep = models.ForeignKey(User, null=True, blank=True,
@@ -251,9 +252,9 @@ class UserStatus(caching.base.CachingMixin, models.Model):
 
     def save(self, *args, **kwargs):
         # Save the timestamp when a Rep becomes available
-        if not self.id:
+        if not self.id and self.start_date <= get_date():
             self.is_unavailable = True
-        else:
+        if self.id and self.is_unavailable:
             self.is_unavailable = False
             self.return_date = timezone.now().date()
         super(UserStatus, self).save()
