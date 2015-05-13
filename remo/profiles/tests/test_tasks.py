@@ -8,10 +8,12 @@ from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
 from remo.base.utils import number2month
-from remo.profiles.models import UserProfile
+from remo.profiles.models import UserProfile, UserStatus
 from remo.profiles.tasks import (reset_rotm_nominees,
-                                 send_rotm_nomination_reminder)
-from remo.profiles.tests import UserFactory
+                                 send_rotm_nomination_reminder,
+                                 set_unavailability_flag)
+from remo.profiles.tests import UserFactory, UserStatusFactory
+from remo.base.utils import get_date
 
 
 class RotmTasksTests(RemoTestCase):
@@ -68,3 +70,15 @@ class RotmTasksTests(RemoTestCase):
         send_rotm_nomination_reminder()
 
         ok_(not mail_mock.called)
+
+
+class UserStatusTests(RemoTestCase):
+
+    def test_base(self):
+        mentor = UserFactory.create()
+        rep = UserFactory.create(userprofile__mentor=mentor)
+        UserStatusFactory.create(user=rep, start_date=get_date(days=-1),
+                                 is_unavailable=False)
+        set_unavailability_flag()
+        status = UserStatus.objects.get(user=rep)
+        ok_(status.is_unavailable)

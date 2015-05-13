@@ -257,8 +257,8 @@ class UserStatusAdmin(ExportMixin, admin.ModelAdmin):
     """User Status Admin."""
     resource_class = UserStatusResource
     model = UserStatus
-    list_display = ('user', 'expected_date', 'return_date', 'created_on',
-                    'replacement_rep')
+    list_display = ('user', 'start_date', 'expected_date', 'return_date',
+                    'created_on', 'replacement_rep')
     search_fields = ['user__first_name', 'user__last_name',
                      'user__userprofile__display_name']
     list_filter = (UserStatusFilter,)

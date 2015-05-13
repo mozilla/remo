@@ -212,6 +212,7 @@ class FunctionalAreaForm(happyforms.ModelForm):
 
 class UserStatusForm(happyforms.ModelForm):
     """Form for displaying info regarding the availability status of a user."""
+    start_date = forms.DateField(input_formats=['%d %B %Y'])
     expected_date = forms.DateField(input_formats=['%d %B %Y'])
     is_replaced = forms.BooleanField(widget=forms.RadioSelect(
         choices=BOOLEAN_CHOICES, attrs={'id': 'id_is_replaced'}),
@@ -226,20 +227,33 @@ class UserStatusForm(happyforms.ModelForm):
 
         if self.instance.id:
             self.fields['expected_date'].widget = forms.HiddenInput()
+            self.fields['start_date'].widget = forms.HiddenInput()
+            self.fields['start_date'].required = False
 
     def clean(self):
         """Clean Form."""
         cdata = super(UserStatusForm, self).clean()
 
         if self.instance.id:
+            cdata['start_date'] = self.instance.start_date
             return cdata
 
         tomorrow = get_date(days=1)
+        today = get_date()
         max_period = get_date(weeks=MAX_UNAVAILABILITY_PERIOD)
+
+        if 'start_date' in cdata:
+            if cdata['start_date'] < today:
+                msg = u'Start date cannot be in the past.'
+                self._errors['start_date'] = self.error_class([msg])
+
         if 'expected_date' in cdata:
             if cdata['expected_date'] < tomorrow:
-                msg = ('Return day cannot be earlier than {0}'
+                msg = (u'Return day cannot be earlier than {0}'
                        .format(tomorrow.strftime('%d %B %Y')))
+                self._errors['expected_date'] = self.error_class([msg])
+            if cdata['expected_date'] < cdata['start_date']:
+                msg = u'Return date cannot be before start date.'
                 self._errors['expected_date'] = self.error_class([msg])
             if cdata['expected_date'] > max_period:
                 msg = (u'The maximum period for unavailability is until {0}.'
@@ -257,7 +271,7 @@ class UserStatusForm(happyforms.ModelForm):
 
     class Meta:
         model = UserStatus
-        fields = ['expected_date', 'replacement_rep']
+        fields = ['start_date', 'expected_date', 'replacement_rep']
 
 
 class RotmNomineeForm(happyforms.Form):

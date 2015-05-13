@@ -12,8 +12,8 @@ from celery.task import periodic_task, task
 
 from remo.base.mozillians import is_vouched
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import number2month
-from remo.profiles.models import UserProfile
+from remo.base.utils import get_date, number2month
+from remo.profiles.models import UserProfile, UserStatus
 
 
 ROTM_REMINDER_DAY = 1
@@ -95,3 +95,16 @@ def send_rotm_nomination_reminder():
                        email_template=template,
                        recipients_list=[settings.REPS_MENTORS_LIST],
                        data=data)
+
+
+@periodic_task(run_every=timedelta(hours=12))
+def set_unavailability_flag():
+    """Set the unavailable flag in UserStatus.
+
+    This task runs every 12 hours and sets the unavailable flag to True
+    in the case that a user has submitted a 'break notification' with a start
+    date in the future."""
+
+    (UserStatus.objects.filter(start_date__range=[get_date(-1), get_date()],
+                               is_unavailable=False)
+                       .update(is_unavailable=True))

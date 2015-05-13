@@ -29,12 +29,40 @@
         </div>
       </div>
 
-      <!-- Date section -->
+      <!-- Start Date section -->
       <div class="row">
         <div class="large-6 columns">
           <div class="row">
             <div class="large-1 columns">
               <div class="pict-icon large time"></div>
+            </div>
+            <div class="large-11 columns">
+              <label for="id_start_date">
+                I plan to take a break starting on
+              </label>
+              <div id="availability-date"
+                   class="has-tip tip-left"
+                   title="Start date"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+                {{ field_with_attrs(status_form.start_date,
+                                    class="datepicker",
+                                    autocomplete="off",
+                                    placeholder="DD-MM-YYYY",
+                                    readonly="readonly") }}
+              </div>
+              {{ field_errors(status_form.start_date) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Return Date section -->
+      <div class="row">
+        <div class="large-6 columns">
+          <div class="row">
+            <div class="large-1 columns">
+              <!-- Empty column -->
             </div>
             <div class="large-11 columns">
               <label class="required" for="id_expected_date">
