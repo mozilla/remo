@@ -125,16 +125,18 @@ def edit_availability(request, display_name):
         status_form.save()
 
         if created and email_mentor_form.is_valid():
-            expected_date = status_form.cleaned_data['expected_date']
+            expected_date = (status_form.cleaned_data['expected_date']
+                             .strftime('%d %B %Y'))
+            start_date = (status_form.cleaned_data['start_date']
+                          .strftime('%d %B %Y'))
             msg = email_mentor_form.cleaned_data['body']
-            subject = ('[Rep unavailable] Mentee %s will be unavailable '
-                       'from %s' % (request.user.get_full_name(),
-                                    expected_date.strftime('%d %B %Y')))
+            mentee = request.user.get_full_name()
             template = 'emails/mentor_unavailability_notification.txt'
 
-            subject = ('[Mentee %s] Mentee will be unavailable '
-                       'until %s' % (request.user.get_full_name(),
-                                     expected_date.strftime('%d %B %Y')))
+            subject = ('[Mentee {0}] Mentee will be unavailable starting '
+                       'on {1} until {2}'.format(mentee,
+                                                 start_date,
+                                                 expected_date))
             email_mentor_form.send_email(request, subject, msg, template,
                                          {'user_status': status})
         messages.success(request, 'Request submitted successfully.')
