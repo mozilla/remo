@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -11,6 +12,7 @@ from celery.task import periodic_task, task
 from django_statsd.clients import statsd
 
 from remo.base.utils import get_date
+from remo.dashboard.models import ActionItem
 from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
 from remo.reports.utils import send_report_notification
 
@@ -163,3 +165,18 @@ def calculate_longest_streaks():
         rep.userprofile.longest_streak_start = longest_start
         rep.userprofile.longest_streak_end = longest_end
         rep.userprofile.save()
+
+
+@periodic_task(run_every=timedelta(days=1))
+def resolve_report_action_items():
+    """Resolve any action items.
+
+    Mark all unresolved action items with due_date the today date as resolved.
+    """
+    from remo.reports.models import NGReport
+
+    action_model = ContentType.objects.get_for_model(NGReport)
+    items = ActionItem.objects.filter(content_type=action_model,
+                                      resolved=False,
+                                      due_date=now().date())
+    items.update(resolved=True)

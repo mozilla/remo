@@ -14,6 +14,9 @@ from remo.events.tests import EventFactory, EventMetricOutcomeFactory
 from remo.profiles.tests import UserFactory
 from remo.remozilla.models import Bug
 from remo.remozilla.tests import BugFactory
+from remo.reports import RECRUIT_MOZILLIAN
+from remo.reports.models import NGReport
+from remo.reports.tests import ActivityFactory, NGReportFactory
 from remo.voting.models import Poll
 from remo.voting.tasks import resolve_action_items, create_poll_action_items
 from remo.voting.tests import PollFactory, VoteFactory
@@ -460,3 +463,43 @@ class EventActionItems(RemoTestCase):
                                           object_id=event.id)
         eq_(items.count(), 1)
         eq_(items[0].user, new_owner)
+
+
+class ReportActionItems(RemoTestCase):
+    def test_verify_activity(self):
+        model = ContentType.objects.get_for_model(NGReport)
+        items = ActionItem.objects.filter(content_type=model)
+        ok_(not items.exists())
+
+        activity = ActivityFactory.create(name=RECRUIT_MOZILLIAN)
+        mentor = UserFactory.create()
+        user = UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
+        report = NGReportFactory.create(activity=activity, user=user,
+                                        mentor=mentor)
+
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=report.id,
+                                          resolved=False)
+        eq_(items.count(), 1)
+
+    def test_resolve_verify_action_item(self):
+        model = ContentType.objects.get_for_model(NGReport)
+        items = ActionItem.objects.filter(content_type=model)
+        ok_(not items.exists())
+
+        activity = ActivityFactory.create(name=RECRUIT_MOZILLIAN)
+        mentor = UserFactory.create()
+        user = UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
+        report = NGReportFactory.create(activity=activity, user=user,
+                                        mentor=mentor)
+
+        items = ActionItem.objects.filter(content_type=model,
+                                          object_id=report.id,
+                                          resolved=False)
+        eq_(items.count(), 1)
+        report.verified_activity = True
+        report.save()
+
+        for item in items:
+            ok_(item.completed)
+            ok_(item.resolved)

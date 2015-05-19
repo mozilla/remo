@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import m2m_changed, post_save, pre_delete
@@ -17,12 +18,17 @@ from remo.base.utils import add_permissions_to_groups
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import daterange, get_date, get_object_or_none
+from remo.dashboard.models import ActionItem, Item
 from remo.events.models import Attendance as EventAttendance, Event
 from remo.profiles.models import FunctionalArea
 from remo.reports import (ACTIVITY_CAMPAIGN, ACTIVITY_EVENT_ATTEND,
                           ACTIVITY_EVENT_CREATE, ACTIVITY_POST_EVENT_METRICS,
                           READONLY_ACTIVITIES, VERIFIABLE_ACTIVITIES)
+
+
 COUNTRIES_LIST = product_details.get_regions('en').values()
+VERIFY_ACTIVITY_WEEKS = 2
+VERIFY_ACTION = 'Verify the activity of'
 
 
 @receiver(post_migrate, dispatch_uid='report_set_groups_signal')
@@ -126,6 +132,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
     verified_activity = models.BooleanField('I have verified this activity',
                                             blank=True, default=False)
     country = models.CharField(max_length=50, blank=True, default='')
+    action_items = generic.GenericRelation(ActionItem)
 
     objects = caching.base.CachingManager()
 
@@ -194,6 +201,17 @@ class NGReport(caching.base.CachingMixin, models.Model):
                 self.country = country
         super(NGReport, self).save()
 
+        # Resolve the verified action items.
+        action_item_name = u'{0} {1}'.format(VERIFY_ACTION,
+                                             self.user.get_full_name())
+        if self.verified_activity:
+            ActionItem.resolve(instance=self,
+                               user=self.mentor,
+                               name=action_item_name)
+        else:
+            # Create all the action items, if any
+            ActionItem.create(self)
+
         if self.is_future_report:
             return
 
@@ -245,6 +263,21 @@ class NGReport(caching.base.CachingMixin, models.Model):
         self.user.userprofile.longest_streak_start = longest_start
         self.user.userprofile.longest_streak_end = longest_end
         self.user.userprofile.save()
+
+    def get_action_items(self):
+        """Returns a list of action items.
+
+        An action item is returned in the case that an activity needs
+        verification from the mentor of a user.
+        """
+
+        action_items = []
+        if self.activity.is_verifiable and not self.verified_activity:
+            due_date = get_date(weeks=VERIFY_ACTIVITY_WEEKS)
+            name = u'{0} {1}'.format(VERIFY_ACTION, self.user.get_full_name())
+            priority = ActionItem.NORMAL
+            action_items.append(Item(name, self.mentor, priority, due_date))
+        return action_items
 
     class Meta:
         ordering = ['-report_date', '-created_on']
