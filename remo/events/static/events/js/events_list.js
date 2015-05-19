@@ -9,6 +9,7 @@ EventsLib.eventsitem_tmpl_elm = $('#eventItem-tmpl');
 EventsLib.period_selector_elm = $('#events-period-selector');
 EventsLib.category_selector_elm = $('#adv-search-categories');
 EventsLib.initiative_selector_elm = $('#adv-search-initiatives');
+EventsLib.attendance_selector_elm = $('#adv-search-attendance');
 EventsLib.events_number_elm = $('#events-number');
 EventsLib.events_table_elm = $('#events-table');
 EventsLib.search_loading_icon_elm = $('#search-loading-icon');
@@ -32,6 +33,14 @@ EventsLib.window_offset = 450;
 EventsLib.results_batch = 21;
 
 var MAPBOX_TOKEN = $('body').data('mapbox-token');
+var ATTENDANCE_LEVEL = {
+    '10': [null, 10],
+    '50': [11, 50],
+    '100': [51, 100],
+    '500': [101, 500],
+    '1000': [501, 1000],
+    '2000': [1000, null]
+};
 
 function initialize_map() {
     // Initialize map.
@@ -229,6 +238,10 @@ function bind_events() {
         hash_set_value('initiative', EventsLib.initiative_selector_elm.val());
     });
 
+    EventsLib.attendance_selector_elm.change(function() {
+        hash_set_value('attendance', EventsLib.attendance_selector_elm.val());
+    });
+
     EventsLib.window_elm.bind('hashchange', function(e) {
         // Set icon.
         EventsLib.search_ready_icon_elm.hide();
@@ -365,8 +378,8 @@ var update_results = function(data, query, newquery, past_events) {
             var s = new Date(this.data.local_start);
             var e = new Date(this.data.local_end);
             return s.getMonth() != e.getMonth();
-	},
-	getYear: function() {
+        },
+        getYear: function() {
             var s = new Date(this.data.local_start);
             return s.getFullYear();
         }
@@ -511,9 +524,11 @@ function send_query(newquery) {
 
     var category = hash_get_value('category');
     var initiative = hash_get_value('initiative');
+    var attendance = hash_get_value('attendance');
 
     set_dropdown_value(EventsLib.category_selector_elm, category);
     set_dropdown_value(EventsLib.initiative_selector_elm, initiative);
+    set_dropdown_value(EventsLib.attendance_selector_elm, attendance);
 
     if (category) {
         extra_q += '&categories__name__iexact=' + category;
@@ -521,6 +536,16 @@ function send_query(newquery) {
 
     if (initiative) {
         extra_q += '&campaign__name__iexact=' + initiative;
+    }
+
+    if (attendance) {
+        var attendance_range = ATTENDANCE_LEVEL[attendance];
+        if (attendance_range[0]) {
+            extra_q += '&estimated_attendance__gte=' + attendance_range[0];
+        }
+        if (attendance_range[1]) {
+            extra_q += '&estimated_attendance__lte=' + attendance_range[1];
+        }
     }
 
     if (period === 'custom' || category || initiative) {
