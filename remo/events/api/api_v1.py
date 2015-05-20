@@ -101,7 +101,7 @@ class EventResource(ModelResource):
                   'external_link', 'description', 'mozilla_event', 'owner',
                   'estimated_attendance', 'actual_attendance']
         filtering = {'name': ALL, 'city': ALL, 'region': ALL, 'country': ALL,
-                     'start': ALL, 'end': ALL,
+                     'start': ALL, 'end': ALL, 'estimated_attendance': ALL,
                      'categories': ALL_WITH_RELATIONS,
                      'campaign': ALL_WITH_RELATIONS}
 
