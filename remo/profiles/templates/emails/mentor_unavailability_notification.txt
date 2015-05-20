@@ -8,8 +8,11 @@ Here's what they submitted:
   {% set replacement = 'None' %}
 {% endif %}
 
-Unavailable until {{ user_status.expected_date.strftime('%d %B %Y') }}
-Rep who will replace them: {{ replacement }}
+I will be unavailable starting on {{ user_status.start_date.strftime('%d %B %Y') }}
+until {{ user_status.expected_date.strftime('%d %B %Y') }}
+{% if user_status.replacement_rep %}
+  Rep who will replace me: {{ replacement }}
+{% endif %}
 Reason for unavailability:
 
 {{ extra_content|indent(indentfirst=True) }}
