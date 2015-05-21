@@ -49,3 +49,17 @@ class SendEventNotificationsTests(RemoTestCase):
             notify_event_owners_to_input_metrics()
 
         ok_(not mail_mock.called)
+
+    def test_with_existing_action_item(self):
+        owner = UserFactory.create()
+        end = now() - timedelta(days=1)
+        EventFactory.create(end=end, owner=owner)
+
+        with patch('remo.events.tasks.send_remo_mail') as mail_mock:
+            notify_event_owners_to_input_metrics()
+
+        ok_(mail_mock.called)
+
+        with patch('remo.events.tasks.send_remo_mail') as mail_mock1:
+            notify_event_owners_to_input_metrics()
+        ok_(not mail_mock1.called)
