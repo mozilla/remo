@@ -267,15 +267,19 @@ class UserStatus(caching.base.CachingMixin, models.Model):
 @receiver(post_save, sender=UserStatus,
           dispatch_uid='profiles_user_status_email_reminder')
 def user_status_email_reminder(sender, instance, created, raw, **kwargs):
+    """Send email notifications when a user submits
+    an unavailability notice.
+    """
+
     rep_profile = instance.user.userprofile
-    mentor_profile = instance.user.userprofile.mentor.userprofile
+    # Make sure that the user has a mentor
+    mentor_profile = None
+    if instance.user.userprofile.mentor:
+        mentor_profile = instance.user.userprofile.mentor.userprofile
 
     if created:
         subject_rep = 'Confirm if you are available for Reps activities'
-        subject_mentor = ('Reach out to {0} - expected to be available again'
-                          .format(instance.user.get_full_name()))
         rep_template = 'emails/rep_availability_reminder.txt'
-        mentor_template = 'emails/mentor_availability_reminder.txt'
         notification_datetime = datetime.datetime.combine(
             instance.expected_date - datetime.timedelta(days=1),
             datetime.datetime.min.time())
@@ -297,18 +301,23 @@ def user_status_email_reminder(sender, instance, created, raw, **kwargs):
                     'email_template': rep_template,
                     'subject': subject_rep,
                     'data': data})
-        mentor_reminder = send_remo_mail.apply_async(
-            eta=notification_datetime,
-            kwargs={'recipients_list': [mentor_profile.user.id],
-                    'email_template': mentor_template,
-                    'subject': subject_mentor,
-                    'data': data})
+        if mentor_profile:
+            mentor_template = 'emails/mentor_availability_reminder.txt'
+            subject_mentor = ('Reach out to {0} - '
+                              'expected to be available again'
+                              .format(instance.user.get_full_name()))
+            mentor_reminder = send_remo_mail.apply_async(
+                eta=notification_datetime,
+                kwargs={'recipients_list': [mentor_profile.user.id],
+                        'email_template': mentor_template,
+                        'subject': subject_mentor,
+                        'data': data})
+            (UserProfile.objects.filter(pk=mentor_profile.id)
+             .update(unavailability_task_id=mentor_reminder.task_id))
 
         # Update user profiles with the task IDs
         (UserProfile.objects.filter(pk=rep_profile.id)
          .update(unavailability_task_id=rep_reminder.task_id))
-        (UserProfile.objects.filter(pk=mentor_profile.id)
-         .update(unavailability_task_id=mentor_reminder.task_id))
     elif not settings.CELERY_ALWAYS_EAGER:
         # revoke the tasks in case a user returns sooner
         if rep_profile.unavailability_task_id:
