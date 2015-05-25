@@ -356,3 +356,12 @@ class UserStatusNotification(RemoTestCase):
             '{0} <{1}>'.format(rep.get_full_name(), rep.email))
         eq_(mail.outbox[1].to[0],
             '{0} <{1}>'.format(mentor.get_full_name(), mentor.email))
+
+    def test_user_without_mentor(self):
+        rep = UserFactory.create(userprofile__mentor=None)
+        UserStatusFactory.create(user=rep)
+        eq_(len(mail.outbox), 1)
+        eq_(mail.outbox[0].subject,
+            'Confirm if you are available for Reps activities')
+        eq_(mail.outbox[0].to[0],
+            '{0} <{1}>'.format(rep.get_full_name(), rep.email))
