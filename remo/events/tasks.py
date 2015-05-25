@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from django.contrib.contenttypes.models import ContentType
+
 from celery.task import periodic_task
 
 from remo.base.tasks import send_remo_mail
@@ -22,11 +24,18 @@ def notify_event_owners_to_input_metrics():
                                   eventmetricoutcome__outcome__isnull=True)
     events = events.distinct()
 
+    event_model = ContentType.objects.get_for_model(Event)
     for event in events:
-        subject = ('[Reminder] Please add the actual metrics for event {0}'
-                   .format(event.name))
-        template = 'email/event_creator_notification_to_input_metrics.txt'
-        data = {'event': event}
-        send_remo_mail(subject=subject, email_template=template,
-                       recipients_list=[event.owner.id], data=data)
-        ActionItem.create(instance=event)
+        # Before sending an email check that an action item already exists.
+        # If it does, then we have already sent this email.
+
+        action_item = ActionItem.objects.filter(content_type=event_model,
+                                                object_id=event.id)
+        if not action_item.exists():
+            subject = ('[Reminder] Please add the actual metrics for event {0}'
+                       .format(event.name))
+            template = 'email/event_creator_notification_to_input_metrics.txt'
+            data = {'event': event}
+            send_remo_mail(subject=subject, email_template=template,
+                           recipients_list=[event.owner.id], data=data)
+            ActionItem.create(instance=event)
