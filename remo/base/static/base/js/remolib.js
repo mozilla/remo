@@ -36,6 +36,16 @@ function hash_set_value(key, value) {
     }
 
     $(location).attr('hash', hash);
+
+    (function() {
+        var url = $("link[rel='shortcut icon']").remove().attr("href");
+        var favicon = document.createElement('link');
+        favicon.type = 'image/x-icon';
+        favicon.rel = 'shortcut icon';
+        favicon.href = url;
+        document.getElementsByTagName('head')[0].appendChild(favicon);
+    }());
+
 }
 
 function hash_get_value(key) {
