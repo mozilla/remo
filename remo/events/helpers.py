@@ -39,7 +39,8 @@ def get_attendee_role_event(attendee, event):
             return 'Mozilla\'s presence organizer'
     elif attendee.groups.filter(name='Mozillians').exists():
         return 'Mozillian attendee'
-
+    elif attendee.groups.filter(name='Alumni').exists():
+        return 'Alumni attendee'
     return 'Rep attendee'
 
 
