@@ -392,7 +392,7 @@ Mozilla Reps - {{ event.name }}
           </p>
           <!-- Listing of organizer and attendees -->
           {% for attendee in get_sorted_attendance_list(event) %}
-            {% if user_is_rep(attendee) %}
+            {% if user_is_rep(attendee) or user_is_alumni(attendee) %}
               <a href="{{ url('profiles_view_profile', display_name=attendee|get_display_name) }}"
                  target="_blank">
                 {{ display_attendee(attendee) }}
