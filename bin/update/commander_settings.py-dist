@@ -10,6 +10,7 @@ REMOTE_UPDATE_SCRIPT = '/data/bin/update-www.sh reps-dev.allizom.org'
 WEB_HOSTGROUP = 'reps-dev'
 CELERY_HOSTGROUP = 'reps-celery-dev'
 CELERY_SERVICE = 'celeryd-reps-dev'
+CELERYBEAT_SERVICE = 'celeryd-reps-dev-beat'
 
 UPDATE_REF = ''
 SSH_KEY = '/root/.ssh/id_rsa'
