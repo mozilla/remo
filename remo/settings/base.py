@@ -158,7 +158,7 @@ BROWSERID_REQUEST_ARGS = lazy(_request_args, dict)()
 STATSD_CLIENT = 'django_statsd.clients.normal'
 
 # Paginator settings
-ITEMS_PER_PAGE = 25
+ITEMS_PER_PAGE = 20
 
 # django-celery setup
 import djcelery  # noqa
