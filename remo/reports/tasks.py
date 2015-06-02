@@ -39,6 +39,7 @@ def send_report_digest():
     # Since MySQL doesn't support distinct(field), we have to dedup
     # the list in python.
     mentors = set(reports.exclude(mentor__isnull=True)
+                  .exclude(mentor__groups__name='Alumni')
                   .values_list('mentor', flat=True))
     for mentor_id in mentors:
         mentor = User.objects.get(id=mentor_id)
