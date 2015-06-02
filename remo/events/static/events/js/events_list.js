@@ -346,45 +346,10 @@ var update_results = function(data, query, newquery, past_events) {
         EventsLib.offset = parseInt(data.meta.offset, 10) + EventsLib.results_batch;
     }
 
-    EventsLib.eventsitem_tmpl_elm.tmpl(data.objects, {
-        getDay: function() {
-            var s = new Date(this.data.local_start);
+    source = EventsLib.eventsitem_tmpl_elm.html();
+    template = Handlebars.compile(source);
 
-            if (this.data.multiday) {
-                var e = new Date(this.data.local_end);
-                return s.getDate() + '-' + e.getDate();
-            }
-
-            return s.getDate();
-        },
-        getMonth: function() {
-            var monthNames = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-                               "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];
-
-            if (this.data.multiday) {
-                var s = new Date(this.data.local_start);
-                var e = new Date(this.data.local_end);
-
-                // Also check if multimonth
-                if (this.is_multimonth()) {
-                    return monthNames[s.getMonth()] + '-' + monthNames[e.getMonth()];
-                }
-            }
-            d = new Date(this.data.local_start);
-            return monthNames[d.getMonth()];
-
-        },
-        is_multimonth: function() {
-            var s = new Date(this.data.local_start);
-            var e = new Date(this.data.local_end);
-            return s.getMonth() != e.getMonth();
-        },
-        getYear: function() {
-            var s = new Date(this.data.local_start);
-            return s.getFullYear();
-        }
-    }).appendTo('#events-table-body');
-
+    $('#events-table-body').append(template(data.objects));
     EventsLib.searchfield_elm.data('searching', undefined);
 
     // Check if query result has less than 100 events
@@ -445,8 +410,8 @@ function send_query(newquery) {
 
     // Period selector.
     var period = hash_get_value('period');
-    var start_date = undefined;
-    var end_date = undefined;
+    var start_date = null;
+    var end_date = null;
 
     var start = hash_get_value('start');
     var end = hash_get_value('end');

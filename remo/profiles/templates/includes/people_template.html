@@ -1,0 +1,70 @@
+<script id="gridItem-tmpl" type="text/x-handlebars-template">
+  {% raw %} {{~#each this~}} {% endraw %}
+    <li class="profiles-li-item" {% raw %}
+        data-lon="{{ profile.lon }}" data-lat="{{ profile.lat }}"
+        data-fullname="{{ fullname }}" {% endraw %}>
+      <a class="panel grid-profile" {% raw %} href="{{ profile.profile_url }}" {% endraw %}>
+        <div class="row">
+          <div class="large-3 small-3 columns grid-profile-image">
+            {% raw %}
+              <img src="{{ profile.avatar_url }}"
+                  class="profiles-people-avatar"
+                  alt="{{ fullname }} avatar">
+            {% endraw %}
+          </div>
+          <div class="large-9 small-9 columns grid-profile-text">
+            {% raw %}
+              <h6>{{ first_name }}<br>{{ last_name }}</h6>
+              {{ profile.city }}, {{ profile.country }}
+            {% endraw %}
+          </div>
+        </div>
+      </a>
+    </li>
+  {% raw %} {{~/each~}} {% endraw %}
+</script>
+
+<script id="listItem-tmpl" type="text/x-handlebars-template">
+  {% raw %} {{~#each this~}} {% endraw %}
+    <tr>
+      <td>
+        {% raw %}
+          <a href="{{ profile.profile_url }}">
+            {{ fullname }}
+          </a>
+        {% endraw %}
+      </td>
+      <td>
+        {% raw %}
+          {{ profile.local_name }}
+        {% endraw %}
+      </td>
+      <td>
+        {% raw %}
+          {{ profile.display_name }}
+        {% endraw %}
+      </td>
+      <td>
+        <a href="{{ url('profiles_list_profiles') }}search/{% raw %}{{ profile.city }}{% endraw %}">
+          {% raw %}
+            {{ profile.city }}
+          {% endraw %}
+        </a>
+      </td>
+      <td>
+        <a href="{{ url('profiles_list_profiles') }}search/{% raw %}{{ profile.region }}{% endraw %}">
+          {% raw %}
+            {{ profile.region }}
+          {% endraw %}
+        </a>
+      </td>
+      <td>
+        <a href="{{ url('profiles_list_profiles') }}country/{% raw %}{{ profile.country }}{% endraw %}">
+          {% raw %}
+            {{ profile.country }}
+          {% endraw %}
+        </a>
+      </td>
+    </tr>
+  {% raw %} {{~/each~}} {% endraw %}
+</script>

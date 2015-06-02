@@ -31,9 +31,11 @@ $(document).ready(function() {
             prefix: prefix,
             count: number_of_fields
         };
-
+        //Compile the template
+        var source = $tpl.html();
+        var template = Handlebars.compile(source);
         // insert the new given poll as last object in the formset
-        $tpl.tmpl(data).insertAfter($last_obj);
+        $(template(data)).insertAfter($last_obj);
 
         // update the total number of given fields
         $total_fields.val(number_of_fields + 1);
