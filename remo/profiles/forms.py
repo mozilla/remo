@@ -143,7 +143,8 @@ class ChangeProfileForm(happyforms.ModelForm):
 
         # Do not raise a validation error if the user belongs to the Alumni
         # group
-        if self.request.POST.get('alumni_group', None):
+        if (self.request.POST.get('alumni_group', None) or
+                self.request.user.groups.filter(name='Admin').exists()):
             return None
 
         if value == u'None':
