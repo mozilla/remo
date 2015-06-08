@@ -1,6 +1,7 @@
 from django import http
 from django_browserid.http import JSONResponse
 from django_browserid.views import Verify
+from django.db.models import Q
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -102,7 +103,7 @@ def edit_availability(request, display_name):
     args = {}
     created = False
 
-    if user.groups.filter(name='Mozillians').exists():
+    if user.groups.filter(Q(name='Mozillians') | Q(name='Alumni')).exists():
         raise Http404()
 
     try:
