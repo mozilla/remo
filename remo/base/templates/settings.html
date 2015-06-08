@@ -17,7 +17,7 @@ Mozilla Reps - Settings
     <div class="row">
       <div class="large-12 columns">
         <div class="section-container auto" data-section>
-          {% if not user_is_mozillian(user) %}
+          {% if not user_is_mozillian(user) or not user_is_alumni(user) %}
             <section>
               <p class="title" data-section-title>
                 <a href="#personalSettings">Personal Settings</a>
