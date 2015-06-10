@@ -124,7 +124,11 @@ class Poll(models.Model):
             name = u'{0} {1}'.format(VOTE_ACTION, self.name)
             priority = ActionItem.NORMAL
 
-        for user in User.objects.filter(groups=self.valid_groups):
+        # Exclude the users that already have voted
+        users = (User.objects.filter(groups=self.valid_groups)
+                 .exclude(pk__in=self.vote_set.values_list('user',
+                                                           flat=True)))
+        for user in users:
             action_item = Item(name, user, priority, due_date)
             action_items.append(action_item)
 
@@ -133,7 +137,7 @@ class Poll(models.Model):
 
 class Vote(models.Model):
     """Vote model."""
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name='votes')
     poll = models.ForeignKey(Poll)
     date_voted = models.DateField(auto_now_add=True)
 
