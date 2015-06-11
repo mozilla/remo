@@ -403,6 +403,24 @@ class VotingActionItems(RemoTestCase):
         for user in council.user_set.all():
             ok_(not items.filter(user=user).exists())
 
+    def test_user_has_already_voted(self):
+        model = ContentType.objects.get_for_model(Poll)
+        items = ActionItem.objects.filter(content_type=model)
+        ok_(not items.exists())
+
+        council = Group.objects.get(name='Admin')
+        user = UserFactory.create(groups=['Admin'])
+
+        start = now() - timedelta(hours=3)
+        poll = PollFactory.create(valid_groups=council,
+                                  end=now() - timedelta(days=1),
+                                  start=start)
+        VoteFactory.create(poll=poll, user=user)
+        create_poll_action_items()
+
+        items = ActionItem.objects.filter(content_type=model)
+        eq_(items.count(), 0)
+
 
 class EventActionItems(RemoTestCase):
     def test_post_event_metrics(self):
