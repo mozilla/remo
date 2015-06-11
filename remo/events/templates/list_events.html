@@ -147,75 +147,8 @@ Mozilla Reps - Events
   </div>
 </main>
 
-<script id="eventItem-tmpl" type="text/x-jquery-tmpl">
-  <tr class="event-item" data-lat="${ lat }"
-      data-lon="${ lon }" data-name="${ name }">
-    <td>
-      <div class="row">
-        <!-- Event Date -->
-        <div class="large-1 columns events-table-date-container">
-          <div class="events-table-date panel">
-            <div class="{{ '{{if multiday}} events-table-date-day-multiple {{else}} events-table-date-day {{/if}}' }}">
-              ${ $item.getDay() }
-            </div>
-            <div class="{{ '{{if $item.is_multimonth()}} events-table-date-month-multiple {{else}} events-table-date-month {{/if}}' }}">
-              ${ $item.getMonth() }
-            </div>
-            <div class="events-table-date-year">
-              ${ $item.getYear() }
-            </div>
-          </div>
-          <!-- Event name only in phones -->
-          <div class="events-table-name show-for-small">
-            <a href="${ event_url }">
-              ${ name }
-            </a>
-          </div>
-        </div>
-        <!-- Event Info -->
-        <div class="large-9 columns events-table-info">
-          <div class="events-table-name hide-for-small">
-            <a href="${ event_url }">
-              ${ name }
-            </a>
-          </div>
-          <div class="events-table-description-wrapper">
-            <div class="events-table-decription">
-              ${ description }
-            </div>
-          </div>
-          <div class="events-table-location">
-            <span class="events-table-venue">${ venue }</span> -
-            <a href="{{ url('events_list_events') }}search/${ city }">
-              ${ city }
-            </a> -
-            <a href="{{ url('events_list_events') }}search/${ region }">
-              ${ region }
-            </a> -
-            <a href="{{ url('events_list_events') }}search/${ country }">
-              ${ country }
-            </a>
-          </div>
-        </div>
-        <!-- Event Extra -->
-        <div class="large-2 columns events-table-extra hide-for-small">
-          <div class="events-table-owner">
-            <span class="events-table-owner-tag">
-              Owner
-            </span><br>
-            <a href="${ owner_profile_url }">
-              ${ owner_name }
-            </a>
-          </div>
-          <!-- Following div displayed only for authenticated users -->
-          <div class="events-table-expected">
-            ${ estimated_attendance } pax
-          </div>
-        </div>
-      </div>
-    </td>
-  </tr>
-</script>
+<!-- Event templates -->
+{% include 'includes/list_events_template.html' %}
 {% endblock %}
 
 {% block bottomextra %}
@@ -240,7 +173,8 @@ Mozilla Reps - Events
     <script src="{{ static('base/js/mapbox.js') }}"></script>
     <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
     <script src="{{ static('events/js/jquery-ui-1.10.0.custom.js') }}"></script>
-    <script src="{{ static('base/js/jquery.tmpl.js') }}"></script>
+    <script src="{{ static('base/js/handlebars-v3.0.3.js') }}"></script>
+    <script src="{{ static('events/js/template_helpers.js') }}"></script>
     <script src="{{ static('base/js/heartcode-canvasloader-min.js') }}"></script>
     <script src="{{ static('events/js/events_list.js') }}"></script>
   {% endcompress %}

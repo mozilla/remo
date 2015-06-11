@@ -1,0 +1,77 @@
+<script id="eventItem-tmpl" type="text/x-handlebars-template">
+  {% raw %} {{~#each this~}} {% endraw %}
+    <tr class="event-item" {% raw %} data-lat="{{ lat }}"
+        data-lon="{{ lon }}" data-name="{{ name }}"{% endraw %}>
+      <td>
+        <div class="row">
+          <!-- Event Date -->
+          <div class="large-1 columns events-table-date-container">
+            <div class="events-table-date panel">
+              <div class="{{ '\{{if multiday}} events-table-date-day-multiple \{{else}} events-table-date-day \{{endif}}' }}">
+               {% raw %} {{ getEventDate event }} {% endraw %}
+              </div>
+              <div class="{{ '\{{if {{ isEventMultiMonth event}} }} events-table-date-month-multiple \{{else}} events-table-date-month \{{endif}}' }}">
+                {% raw %} {{ getEventMonth event }} {% endraw %}
+              </div>
+              <div class="events-table-date-year">
+                {% raw %} {{ getEventYear event }} {% endraw %}
+              </div>
+            </div>
+            <!-- Event name only in phones -->
+            <div class="events-table-name show-for-small">
+              {% raw %}
+                <a href="{{ event_url }}">
+                  {{ name }}
+                </a>
+              {% endraw %}
+            </div>
+          </div>
+          <!-- Event Info -->
+          <div class="large-9 columns events-table-info">
+            <div class="events-table-name hide-for-small">
+              {% raw %}
+                <a href="{{ event_url }}">
+                  {{ name }}
+                </a>
+              {% endraw %}
+            </div>
+            <div class="events-table-description-wrapper">
+              <div class="events-table-decription">
+                {% raw %} {{ description }} {% endraw %}
+              </div>
+            </div>
+            <div class="events-table-location">
+              <span class="events-table-venue"> {% raw %} {{ venue }} {% endraw %}</span> -
+              <a href="{{ url('events_list_events') }}search/{% raw %}{{ city }}{% endraw %}">
+                {% raw %} {{ city }} {% endraw %}
+              </a> -
+              <a href="{{ url('events_list_events') }}search/{% raw %}{{ region }}{% endraw %}">
+                {% raw %} {{ region }} {% endraw %}
+              </a> -
+              <a href="{{ url('events_list_events') }}search/{% raw %}{{ country }}{% endraw %}">
+                {% raw %} {{ country }} {% endraw %}
+              </a>
+            </div>
+          </div>
+          <!-- Event Extra -->
+          <div class="large-2 columns events-table-extra hide-for-small">
+            <div class="events-table-owner">
+              <span class="events-table-owner-tag">
+                Owner
+              </span><br>
+              {% raw %}
+                <a href="{{ owner_profile_url }}">
+                  {{ owner_name }}
+                </a>
+              {% endraw %}
+            </div>
+            <!-- Following div displayed only for authenticated users -->
+            <div class="events-table-expected">
+              {% raw %} {{ estimated_attendance }} pax {% endraw %}
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  {% raw %} {{~/each~}} {% endraw %}
+</script>

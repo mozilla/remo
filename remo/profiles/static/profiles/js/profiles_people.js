@@ -140,10 +140,14 @@ var update_results = function(data, query, newquery, update_pointers) {
     switch_views(view);
 
     if (view === 'list') {
-        ProfilesLib.listitem_tmpl_elm.tmpl(data.objects).appendTo('#table-search-list');
+        list_item_source = ProfilesLib.listitem_tmpl_elm.html();
+        list_template = Handlebars.compile(list_item_source);
+        $(list_template(data.objects)).appendTo('#table-search-list');
     }
     else {
-        ProfilesLib.griditem_tmpl_elm.tmpl(data.objects).appendTo('#grid-search-list');
+        grid_item_source = ProfilesLib.griditem_tmpl_elm.html();
+        grid_template = Handlebars.compile(grid_item_source);
+        $(grid_template(data.objects)).appendTo('#grid-search-list');
     }
 
     ProfilesLib.searchfield_elm.data('searching', undefined);
