@@ -83,8 +83,13 @@ class Poll(models.Model):
         ordering = ['-created_on']
 
     def save(self, *args, **kwargs):
+        """Custom save method."""
+
+        create_action_items = False
+
         if not self.pk:
             self.slug = uuslug(self.name, instance=self)
+            create_action_items = True
         else:
             # Update action items
             current_poll = Poll.objects.get(id=self.pk)
@@ -97,7 +102,7 @@ class Poll(models.Model):
 
             if current_poll.valid_groups != self.valid_groups:
                 action_items.delete()
-                ActionItem.create(self)
+                create_action_items = True
 
             if not settings.CELERY_ALWAYS_EAGER:
                 if self.is_current_voting:
@@ -112,6 +117,9 @@ class Poll(models.Model):
                     self.is_extended = True
 
         super(Poll, self).save()
+
+        if create_action_items:
+            ActionItem.create(self)
 
     def get_action_items(self):
         action_items = []

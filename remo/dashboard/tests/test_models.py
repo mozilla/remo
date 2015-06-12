@@ -18,7 +18,7 @@ from remo.reports import RECRUIT_MOZILLIAN
 from remo.reports.models import NGReport
 from remo.reports.tests import ActivityFactory, NGReportFactory
 from remo.voting.models import Poll
-from remo.voting.tasks import resolve_action_items, create_poll_action_items
+from remo.voting.tasks import resolve_action_items
 from remo.voting.tests import PollFactory, VoteFactory
 
 
@@ -255,8 +255,6 @@ class VotingActionItems(RemoTestCase):
         start = now() - timedelta(hours=3)
         poll = PollFactory.create(valid_groups=council, start=start)
 
-        create_poll_action_items()
-
         items = ActionItem.objects.filter(content_type=model,
                                           object_id=poll.id)
         eq_(items.count(), 1)
@@ -280,8 +278,6 @@ class VotingActionItems(RemoTestCase):
         poll = PollFactory.create(valid_groups=council, automated_poll=True,
                                   bug=bug, start=start)
 
-        create_poll_action_items()
-
         items = ActionItem.objects.filter(content_type=model,
                                           object_id=poll.id)
         eq_(items.count(), 1)
@@ -302,8 +298,6 @@ class VotingActionItems(RemoTestCase):
         start = now() + timedelta(hours=3)
         PollFactory.create(valid_groups=council, start=start)
 
-        create_poll_action_items()
-
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 0)
 
@@ -316,9 +310,6 @@ class VotingActionItems(RemoTestCase):
         user = UserFactory.create(groups=['Council'])
         start = now() - timedelta(hours=3)
         poll = PollFactory.create(valid_groups=council, start=start)
-
-        create_poll_action_items()
-
         VoteFactory.create(poll=poll, user=user)
 
         items = ActionItem.objects.filter(content_type=model,
@@ -338,8 +329,6 @@ class VotingActionItems(RemoTestCase):
         UserFactory.create(groups=['Council'])
         start = now() - timedelta(hours=3)
         poll = PollFactory.create(valid_groups=council, start=start)
-
-        create_poll_action_items()
 
         poll.end = poll.end + timedelta(days=4)
         poll.save()
@@ -364,8 +353,6 @@ class VotingActionItems(RemoTestCase):
                                   end=now() - timedelta(days=1),
                                   start=start)
 
-        create_poll_action_items()
-
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 1)
 
@@ -387,9 +374,6 @@ class VotingActionItems(RemoTestCase):
         UserFactory.create_batch(4, groups=['Rep'])
         start = now() - timedelta(hours=3)
         poll = PollFactory.create(valid_groups=council, start=start)
-
-        create_poll_action_items()
-
         poll.valid_groups = reps
         poll.save()
 
@@ -416,10 +400,11 @@ class VotingActionItems(RemoTestCase):
                                   end=now() - timedelta(days=1),
                                   start=start)
         VoteFactory.create(poll=poll, user=user)
-        create_poll_action_items()
 
+        # Check that there is only one action item and it's resolved
         items = ActionItem.objects.filter(content_type=model)
-        eq_(items.count(), 0)
+        eq_(items.count(), 1)
+        eq_(items[0].resolved, True)
 
 
 class EventActionItems(RemoTestCase):
