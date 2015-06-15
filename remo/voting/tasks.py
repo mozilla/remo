@@ -45,7 +45,8 @@ def send_voting_mail(voting_id, subject, email_template):
         send_mail(subject, message, settings.FROM_EMAIL,
                   [settings.REPS_COUNCIL_ALIAS])
     else:
-        user_list = User.objects.filter(groups=poll.valid_groups)
+        user_list = (User.objects.filter(groups=poll.valid_groups)
+                     .exclude(username='remobot'))
 
         for user in user_list:
             ctx_data = {'user': user,
