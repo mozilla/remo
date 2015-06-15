@@ -47,7 +47,7 @@ class ProfileResource(ModelResource):
                                           attribute='functional_areas',
                                           full=True, null=True)
     mentor = fields.ToOneField('remo.profiles.api.api_v1.RepResource',
-                               attribute='mentor')
+                               attribute='mentor', null=True)
     last_report_date = fields.DateField()
 
     class Meta:
