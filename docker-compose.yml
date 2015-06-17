@@ -1,0 +1,16 @@
+db:
+  image: mysql:5.5
+  environment:
+    - MYSQL_DATABASE=remo
+    - MYSQL_USER=remo
+    - MYSQL_PASSWORD=remo
+    - MYSQL_ROOT_PASSWORD=root
+web:
+  build: .
+  command: python manage.py runserver 0.0.0.0:8000
+  ports:
+    - "8000:8000"
+  volumes:
+    - .:/code
+  links:
+    - db
