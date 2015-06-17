@@ -108,18 +108,6 @@ def resolve_action_items():
     items.update(resolved=True)
 
 
-@periodic_task(run_every=timedelta(hours=4))
-def create_poll_action_items():
-    """Create action items for current polls."""
-    # avoid circular dependencies
-    from remo.voting.models import Poll
-
-    start = now() - timedelta(hours=4)
-    polls = Poll.objects.filter(start__range=[start, now()])
-    for poll in polls:
-        ActionItem.create(poll)
-
-
 @periodic_task(run_every=timedelta(hours=24))
 def create_rotm_poll():
     """Create a poll for the Rep of the month nominee.
