@@ -99,7 +99,7 @@ def dashboard_mozillians(request, user):
 def dashboard(request):
     """Dashboard view."""
     user = request.user
-    args = {}
+    args = {'today': now()}
 
     # Mozillians/Alumni block
     if (user.groups.filter(name='Mozillians').exists() or
@@ -130,7 +130,6 @@ def dashboard(request):
         args['ng_reports'] = (user.ng_reports
                               .filter(report_date__lte=today)
                               .order_by('-report_date'))
-        args['today'] = now()
 
     # Dashboard data
     my_q = (Q(cc=user) | Q(creator=user))
