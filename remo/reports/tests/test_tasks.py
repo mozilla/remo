@@ -155,6 +155,24 @@ class SendInactivityNotifications(RemoTestCase):
 
         ok_(not mail_mock.called)
 
+    def test_with_alumnus_mentor(self):
+        mentor = UserFactory.create(groups=['Mentor', 'Alumni'])
+        today = now().date()
+        rep = UserFactory.create(
+            groups=['Rep'],
+            userprofile__date_joined_program=get_date(days=-100))
+        NGReportFactory.create(user=rep, mentor=mentor,
+                               report_date=today - timedelta(weeks=5))
+
+        rep_subject = '[Reminder] Please share your recent activities'
+
+        with patch('remo.reports.utils.send_remo_mail') as mail_mock:
+            send_first_report_notification()
+
+        eq_(mail_mock.call_count, 1)
+        expected_call_list = [call(rep_subject, [rep.email], message=mockany)]
+        eq_(mail_mock.call_args_list, expected_call_list)
+
 
 class UpdateCurrentStreakCountersTest(RemoTestCase):
     def test_base(self):

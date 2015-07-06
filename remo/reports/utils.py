@@ -62,7 +62,11 @@ def send_report_notification(reps, weeks):
 
         rep_message = render_to_string(rep_mail_body, ctx_data)
         mentor_message = render_to_string(mentor_mail_body, ctx_data)
-        send_remo_mail(rep_subject, [rep.email], message=rep_message,
-                       headers={'Reply-To': mentor.email})
-        send_remo_mail(mentor_subject, [mentor.email], message=mentor_message,
-                       headers={'Reply-To': rep.email})
+        if mentor:
+            send_remo_mail(rep_subject, [rep.email], message=rep_message,
+                           headers={'Reply-To': mentor.email})
+            send_remo_mail(mentor_subject, [mentor.email],
+                           message=mentor_message,
+                           headers={'Reply-To': rep.email})
+        else:
+            send_remo_mail(rep_subject, [rep.email], message=rep_message)
