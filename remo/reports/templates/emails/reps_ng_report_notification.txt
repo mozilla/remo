@@ -10,10 +10,12 @@ You can report your activities here:
 We understand you are busy, and if you have not had time to work on Mozilla Reps stuff,
 please take a moment to send a note to your mentor to let them know.
 
+{% if mentor %}
 {{ mentor.get_full_name() }}
 {{ SITE_URL }}
 {{- url('profiles_view_profile', display_name=mentor.userprofile.display_name) }}
 {{ mentor.email }}
+{% endif %}
 
 Cheers!
 
