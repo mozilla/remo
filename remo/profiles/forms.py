@@ -140,18 +140,15 @@ class ChangeProfileForm(happyforms.ModelForm):
     def clean_mentor(self):
         """Convert mentor field from number to User."""
         value = self.cleaned_data['mentor']
+        mentor = None if value == u'None' else User.objects.get(pk=value)
 
         # Do not raise a validation error if the user belongs to the Alumni
-        # group
-        if (self.request.POST.get('alumni_group', None) or
+        # group or has admin privileges
+        if (not mentor and not
                 self.request.user.groups.filter(name='Admin').exists()):
-            return None
-
-        if value == u'None':
             raise ValidationError('Please select a mentor.')
 
-        value = User.objects.get(pk=value)
-        return value
+        return mentor
 
     class Meta:
         model = UserProfile
