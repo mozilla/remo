@@ -25,8 +25,8 @@ class Migration(DataMigration):
                              'object_id': event.id,
                              'priority': ActionItem.NORMAL,
                              'user': event.owner}
-            action_items = orm['dashboard.ActionItem'].objects.filter(
-                **action_item_q).order_by('id').values_list('id', flat=True)
+            action_items = list(orm['dashboard.ActionItem'].objects.filter(
+                **action_item_q).order_by('id').values_list('id', flat=True))
 
             if action_items.count() > 1:
                 orm['dashboard.ActionItem'].objects.filter(pk__in=action_items[1:]).delete()
