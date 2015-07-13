@@ -28,7 +28,7 @@ class Migration(DataMigration):
             action_items = list(orm['dashboard.ActionItem'].objects.filter(
                 **action_item_q).order_by('id').values_list('id', flat=True))
 
-            if action_items.count() > 1:
+            if len(action_items) > 1:
                 orm['dashboard.ActionItem'].objects.filter(pk__in=action_items[1:]).delete()
 
 
