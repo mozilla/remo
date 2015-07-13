@@ -26,7 +26,7 @@ class Migration(DataMigration):
                      'end': end,
                      'valid_groups': valid_groups}
         if orm['voting.Poll'].objects.filter(**poll_args).exists():
-            poll = orm['voting.Poll'].objects.get(poll_args)
+            poll = orm['voting.Poll'].objects.get(**poll_args)
             users = orm['auth.User'].objects.filter(groups__name='Mentor')
             action_item_name = 'Cast your vote for {0}'.format(poll.name)
             for user in users:
@@ -35,7 +35,8 @@ class Migration(DataMigration):
                           'name': action_item_name,
                           'user': user,
                           'priority': ActionItem.NORMAL,
-                          'due_date': poll.end.date()}
+                          'due_date': poll.end.date(),
+                          'resolved': True}
                 if not orm['dashboard.ActionItem'].objects.filter(**q_args).exists():
                     orm['dashboard.ActionItem'].objects.create(**q_args)
 
