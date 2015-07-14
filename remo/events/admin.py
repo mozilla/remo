@@ -45,7 +45,7 @@ class EventAdmin(ExportMixin, admin.ModelAdmin):
     model = Event
     list_display = ('name', 'start', 'end', 'created_on', 'updated_on',)
     search_fields = ('name', 'country', 'region', 'venue', 'slug',
-                     'campaign__name')
+                     'campaign__name', 'owner__first_name', 'owner__last_name')
     list_filter = ('has_new_metrics', ('start', admin.DateFieldListFilter),
                    ('end', admin.DateFieldListFilter))
     readonly_fields = ['times_edited']
