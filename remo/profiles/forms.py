@@ -103,7 +103,12 @@ class ChangeProfileForm(happyforms.ModelForm):
     gender = forms.ChoiceField(required=False, choices=((None, "Gender"),
                                                         (True, "Female"),
                                                         (False, "Male")))
-    mentor = forms.ChoiceField(choices=[])
+    mentor = forms.ModelChoiceField(
+        queryset=(User.objects.filter(userprofile__registration_complete=True,
+                                      groups__name='Mentor')
+                  .order_by('first_name')),
+        required=False,
+        empty_label=u'Please select a mentor')
     country = forms.ChoiceField(
         choices=[],
         error_messages={'required': 'Please select one option from the list.'})
@@ -112,16 +117,10 @@ class ChangeProfileForm(happyforms.ModelForm):
     def __init__(self, *args, **kwargs):
         """Initialize form.
 
-        Dynamically set choices for mentor and country fields.
+        Dynamically set choices for country fields.
         """
         self.request = kwargs.pop('request', None)
         super(ChangeProfileForm, self).__init__(*args, **kwargs)
-        query = (User.objects.filter(userprofile__registration_complete=True,
-                                     groups__name='Mentor')
-                             .order_by('first_name'))
-        mentor_choices = ([(None, "Choose Mentor")] +
-                          [(u.id, u.get_full_name()) for u in query])
-        self.fields['mentor'].choices = mentor_choices
 
         countries = product_details.get_regions('en').values()
         countries.sort()
@@ -137,18 +136,18 @@ class ChangeProfileForm(happyforms.ModelForm):
         twitter_account = self.cleaned_data['twitter_account']
         return twitter_account.strip('@')
 
-    def clean_mentor(self):
-        """Convert mentor field from number to User."""
-        value = self.cleaned_data['mentor']
-        mentor = None if value == u'None' else User.objects.get(pk=value)
+    def clean(self):
+        """Override clean method for custom functionality."""
+        mentor = self.cleaned_data.get('mentor')
 
         # Do not raise a validation error if the user belongs to the Alumni
         # group or has admin privileges
         if (not mentor and not
                 self.request.user.groups.filter(name='Admin').exists()):
-            raise ValidationError('Please select a mentor.')
+            msg = u'This field is required'
+            self.errors['mentor'] = self.error_class([msg])
 
-        return mentor
+        return self.cleaned_data
 
     class Meta:
         model = UserProfile
