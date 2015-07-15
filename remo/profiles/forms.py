@@ -108,7 +108,7 @@ class ChangeProfileForm(happyforms.ModelForm):
                                       groups__name='Mentor')
                   .order_by('first_name')),
         required=False,
-        empty_label=u'Please select a mentor')
+        empty_label=u'Please choose a mentor')
     country = forms.ChoiceField(
         choices=[],
         error_messages={'required': 'Please select one option from the list.'})
