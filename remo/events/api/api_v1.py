@@ -33,6 +33,7 @@ class EventMetricResource(ModelResource):
         allowed_methods = ['get']
         fields = ['name']
         filtering = {'name': ALL}
+        max_limit = 40
 
 
 class EventMetricOutcomeResource(ModelResource):
@@ -49,6 +50,7 @@ class EventMetricOutcomeResource(ModelResource):
         include_absolute_url = False
         allowed_methods = ['get']
         fields = ['metric', 'expected_outcome', 'outcome']
+        max_limit = 40
 
 
 class CampaignResource(ModelResource):
@@ -64,6 +66,7 @@ class CampaignResource(ModelResource):
         allowed_methods = ['get']
         fields = ['name']
         filtering = {'name': ALL}
+        max_limit = 40
 
 
 class EventResource(ModelResource):
@@ -104,6 +107,7 @@ class EventResource(ModelResource):
                      'start': ALL, 'end': ALL, 'estimated_attendance': ALL,
                      'categories': ALL_WITH_RELATIONS,
                      'campaign': ALL_WITH_RELATIONS}
+        max_limit = 40
 
     def dehydrate_name(self, bundle):
         """Sanitize event name."""

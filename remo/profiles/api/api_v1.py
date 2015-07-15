@@ -70,6 +70,7 @@ class ProfileResource(ModelResource):
                      'region': ALL,
                      'city': ALL,
                      'functional_areas': ALL_WITH_RELATIONS}
+        max_limit = 40
 
     def dehydrate(self, bundle):
         """Prepare bundle.data for CSV export."""
