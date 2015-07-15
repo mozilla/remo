@@ -203,7 +203,9 @@ function initDatePicker (prepopulate_date) {
     });
 
     if ($input.val() === '' && prepopulate_flag) {
-        $input.datepicker('setDate', new Date());
+        var now = new Date();
+        var today = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+        $input.datepicker('setDate', today);
     }
     else {
         var savedDate = new Date($input.val());
