@@ -28,9 +28,9 @@ Vagrant::Config.run do |config|
 
     # nfs needs to be explicitly enabled to run.
     if CONF['nfs'] == false or RUBY_PLATFORM =~ /mswin(32|64)/
-        config.vm.share_folder("v-root", MOUNT_POINT, ".")
+        config.vm.share_folder("vagrant-root", MOUNT_POINT, ".")
     else
-        config.vm.share_folder("v-root", MOUNT_POINT, ".", :nfs => true)
+        config.vm.share_folder("vagrant-root", MOUNT_POINT, ".", :nfs => true)
     end
 
     # Add to /etc/hosts: 33.33.33.24 dev.playdoh.org
