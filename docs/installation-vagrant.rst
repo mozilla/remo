@@ -108,9 +108,10 @@ Build The Environment
 
 #. **Set SITE_URL.**
 
-   For development purposes you can uncomment the line::
+   For development purposes you can uncomment the lines::
 
      SITE_URL = 'http://127.0.0.1:8000'
+     BROWSERID_AUDIENCES = [SITE_URL]
 
    in your *local.py* or BrowserID will fail to log you in.
 
