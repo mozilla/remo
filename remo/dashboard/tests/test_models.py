@@ -1,9 +1,10 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.utils.timezone import now
 
+import mock
 from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
@@ -11,6 +12,9 @@ from remo.dashboard.models import ActionItem
 from remo.events.models import Event
 from remo.events.tasks import notify_event_owners_to_input_metrics
 from remo.events.tests import EventFactory, EventMetricOutcomeFactory
+from remo.profiles.models import UserProfile
+from remo.profiles.tasks import (resolve_nomination_action_items,
+                                 send_rotm_nomination_reminder)
 from remo.profiles.tests import UserFactory
 from remo.remozilla.models import Bug
 from remo.remozilla.tests import BugFactory
@@ -506,3 +510,65 @@ class ReportActionItems(RemoTestCase):
         for item in items:
             ok_(item.completed)
             ok_(item.resolved)
+
+
+class ROTMActionItems(RemoTestCase):
+
+    @mock.patch('remo.profiles.tasks.now')
+    def test_base(self, mocked_date):
+        model = ContentType.objects.get_for_model(UserProfile)
+        items = ActionItem.objects.filter(content_type=model)
+        ok_(not items.exists())
+
+        mentors = UserFactory.create_batch(2, groups=['Mentor'])
+        mocked_date.return_value = datetime(now().year, now().month, 1)
+        send_rotm_nomination_reminder()
+
+        items = ActionItem.objects.filter(content_type=model)
+
+        eq_(items.count(), 2)
+        eq_(set([mentor.id for mentor in mentors]),
+            set(items.values_list('object_id', flat=True)))
+
+    @mock.patch('remo.profiles.tasks.now')
+    def test_invalid_date(self, mocked_date):
+        model = ContentType.objects.get_for_model(UserProfile)
+        items = ActionItem.objects.filter(content_type=model)
+        ok_(not items.exists())
+
+        UserFactory.create_batch(2, groups=['Mentor'])
+        mocked_date.return_value = datetime(now().year, now().month, 2)
+        send_rotm_nomination_reminder()
+
+        items = ActionItem.objects.filter(content_type=model)
+        ok_(not items.exists())
+
+    @mock.patch('remo.profiles.tasks.now')
+    def test_resolve_action_item(self, mocked_date):
+        model = ContentType.objects.get_for_model(UserProfile)
+        user = UserFactory.create(groups=['Mentor'])
+        mocked_date.return_value = datetime(now().year, now().month, 1)
+        ActionItem.create(user.userprofile)
+        items = ActionItem.objects.filter(content_type=model)
+        eq_(items.count(), 1)
+        eq_(items[0].resolved, False)
+
+        mocked_date.return_value = datetime(now().year, now().month, 10)
+        resolve_nomination_action_items()
+        eq_(items.count(), 1)
+        eq_(items[0].resolved, True)
+
+    @mock.patch('remo.profiles.tasks.now')
+    def test_resolve_action_item_invalid_date(self, mocked_date):
+        model = ContentType.objects.get_for_model(UserProfile)
+        user = UserFactory.create(groups=['Mentor'])
+        mocked_date.return_value = datetime(now().year, now().month, 1)
+        ActionItem.create(user.userprofile)
+        items = ActionItem.objects.filter(content_type=model)
+        eq_(items.count(), 1)
+        eq_(items[0].resolved, False)
+
+        mocked_date.return_value = datetime(now().year, now().month, 11)
+        resolve_nomination_action_items()
+        eq_(items.count(), 1)
+        eq_(items[0].resolved, False)

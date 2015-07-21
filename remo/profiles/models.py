@@ -4,6 +4,7 @@ import re
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
@@ -23,10 +24,13 @@ from remo.base.utils import get_object_or_none
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import add_permissions_to_groups, get_date
-from remo.dashboard.models import ActionItem
+from remo.dashboard.models import ActionItem, Item
 from remo.remozilla.models import Bug, WAITING_MENTOR_VALIDATION_ACTION
 
+
 DISPLAY_NAME_MAX_LENGTH = 50
+NOMINATION_ACTION_ITEM = u'Nominate mentees for the month of'
+NOMINATION_END_DAY = 10
 
 
 def user_unicode(self):
@@ -177,6 +181,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
                                               null=True, editable=False,
                                               default='')
     is_rotm_nominee = models.BooleanField(default=False)
+    action_items = generic.GenericRelation('dashboard.ActionItem')
 
     objects = caching.base.CachingManager()
 
@@ -185,15 +190,9 @@ class UserProfile(caching.base.CachingMixin, models.Model):
                        ('can_edit_profiles', 'Can edit profiles'),
                        ('can_delete_profiles', 'Can delete profiles'))
 
-    def clean(self, *args, **kwargs):
-        """Ensure that added_by variable does not have the same value as
-        user variable.
-
-        """
-        if self.added_by == self.user:
-            raise ValidationError('Field added_by cannot be the same as user.')
-
-        return super(UserProfile, self).clean(*args, **kwargs)
+    def get_absolute_url(self):
+        return reverse('remo.profiles.views.view_profile',
+                       kwargs={'display_name': self.display_name})
 
     @property
     def get_age(self):
@@ -209,9 +208,26 @@ class UserProfile(caching.base.CachingMixin, models.Model):
                    (self.birth_date.month, self.birth_date.day)))
         return age
 
-    def get_absolute_url(self):
-        return reverse('remo.profiles.views.view_profile',
-                       kwargs={'display_name': self.display_name})
+    def clean(self, *args, **kwargs):
+        """Ensure that added_by variable does not have the same value as
+        user variable.
+
+        """
+        if self.added_by == self.user:
+            raise ValidationError('Field added_by cannot be the same as user.')
+
+        return super(UserProfile, self).clean(*args, **kwargs)
+
+    def get_action_items(self):
+        """Return a list of Action Items relevant to this model."""
+
+        today = timezone.now().date()
+        due_date = datetime.date(today.year, today.month, NOMINATION_END_DAY)
+        name = u'{0} {1}'.format(NOMINATION_ACTION_ITEM, today.strftime('%B'))
+        priority = ActionItem.NORMAL
+        action_item = Item(name, self.user, priority, due_date)
+
+        return [action_item]
 
 
 class UserAvatar(caching.base.CachingMixin, models.Model):

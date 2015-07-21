@@ -3,6 +3,7 @@ from datetime import date, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.timezone import now
@@ -13,10 +14,13 @@ from celery.task import periodic_task, task
 from remo.base.mozillians import is_vouched
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date, number2month
-from remo.profiles.models import UserProfile, UserStatus
+from remo.dashboard.models import ActionItem
+from remo.profiles.models import (UserProfile, UserStatus,
+                                  NOMINATION_ACTION_ITEM)
 
 
 ROTM_REMINDER_DAY = 1
+NOMINATION_END_DAY = 10
 
 
 @task
@@ -95,6 +99,9 @@ def send_rotm_nomination_reminder():
                        email_template=template,
                        recipients_list=[settings.REPS_MENTORS_LIST],
                        data=data)
+        mentors = User.objects.filter(groups__name='Mentor')
+        for mentor in mentors:
+            ActionItem.create(mentor.userprofile)
 
 
 @periodic_task(run_every=timedelta(hours=12))
@@ -108,3 +115,24 @@ def set_unavailability_flag():
     (UserStatus.objects.filter(start_date__range=[get_date(-1), get_date()],
                                is_unavailable=False)
                        .update(is_unavailable=True))
+
+
+@periodic_task(run_every=timedelta(hours=24))
+def resolve_nomination_action_items():
+    """Resolve action items.
+
+    Resolve all the action items relevant to nomination reminders after the
+    10th day of each month.
+    """
+
+    today = now().date()
+    if today.day == NOMINATION_END_DAY:
+        mentors = UserProfile.objects.filter(user__groups__name='Mentor')
+        action_model = ContentType.objects.get_for_model(UserProfile)
+        # All the completed action items are always resolved
+        name = u'{0} {1}'.format(NOMINATION_ACTION_ITEM, today.strftime('%B'))
+        items = (ActionItem.objects.filter(content_type=action_model,
+                                           object_id__in=mentors,
+                                           name=name)
+                                   .exclude(completed=True))
+        items.update(resolved=True)
