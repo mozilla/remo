@@ -1,6 +1,6 @@
 Hey {{ user.first_name }},
 
-A poll has been automatically extended for 24 hours.
+A poll has been automatically extended for 48 hours.
 
 According to our records you still haven't voted for "{{ poll.name }}".
 Voting is an important participatory procedure in Mozilla Reps.
