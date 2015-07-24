@@ -17,7 +17,7 @@ from remo.base.utils import get_date, number2month
 from remo.dashboard.models import ActionItem
 
 
-EXTEND_VOTING_PERIOD = 24 * 3600  # 24 hours
+EXTEND_VOTING_PERIOD = 48 * 3600  # 48 hours
 NOTIFICATION_INTERVAL = 24 * 3600  # 24 hours
 ROTM_VOTING_DAYS = 14
 
