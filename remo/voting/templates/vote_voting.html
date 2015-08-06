@@ -224,10 +224,12 @@ Mozilla Reps - {{ poll.name }} - Vote
                   <span class="label">
                     Vote for {{ radio_poll.question }}
                   </span>
-                  {% for choice in choice_form %}
-                    {{ choice }}
-                    {{ field_errors(choice) }}
-                  {% endfor %}
+                  {% if poll.is_current_voting and not user_voted %}
+                    {% for choice in choice_form %}
+                      {{ choice }}
+                      {{ field_errors(choice) }}
+                    {% endfor %}
+                  {% endif %}
                 {% endfor %}
               </p>
             </div>
