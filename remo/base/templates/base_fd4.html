@@ -26,8 +26,8 @@
   </title>
   <link rel="shortcut icon" href="{{ static('base/img/remo/shortcut.ico') }}" />
   <!-- Included CSS Files -->
-  <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet" />
   {% compress css %}
+    <link rel="stylesheet" href="{{ static('base/css/tabzilla.css')}}" media="screen" />
     <link href="{{ static('base/css/foundation-4.css') }}" rel="stylesheet"
           media="screen,projection,tv" />
     <link href="{{ static('base/css/responsive-tables.css') }}" rel="stylesheet"
@@ -75,11 +75,11 @@
       <header class="row">
         <div class="large-12 columns">
 
-          <!-- Sign In & Mozilla Tab -->
+          <!-- Sign In & Tabzilla Tab -->
 
-            <!-- Mozilla Tab -->
-            <div class="large-2 small-2 columns" id="global-header-tab">
-              <a href="http://www.mozilla.org/" class="logo" id="tabzilla">mozilla</a>
+            <!-- Tabzilla Tab -->
+            <div id="tabzilla">
+              <a href="https://www.mozilla.org/">Mozilla</a>
             </div>
 
             <!-- Sign In & Sign Out -->
@@ -336,7 +336,6 @@
     <script src="{{ static('base/js/placeholder.min.js') }}"></script>
     <script src="{{ static('base/js/remolib.js') }}"></script>
   {% endcompress %}
-  <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
   {% block bottomextra %} {% endblock %}
   {% compress js %}
     <script src="{{ static('base/js/app.js') }}"></script>
