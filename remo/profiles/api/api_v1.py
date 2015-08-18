@@ -14,7 +14,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
-from remo.api import HttpCache
+from remo.api import HttpCache, RemoAPIThrottle, RemoThrottleMixin
 from remo.base.serializers import CSVSerializer
 from remo.profiles.helpers import get_avatar_url
 from remo.profiles.models import UserProfile, FunctionalArea
@@ -22,7 +22,7 @@ from remo.reports.models import NGReport
 from remo.reports.utils import get_last_report
 
 
-class FunctionalAreasResource(ModelResource):
+class FunctionalAreasResource(RemoThrottleMixin, ModelResource):
     """Functional Areas Resource."""
 
     class Meta:
@@ -35,9 +35,10 @@ class FunctionalAreasResource(ModelResource):
         allowed_methods = ['get']
         fields = ['name']
         filtering = {'name': ALL}
+        throttle = RemoAPIThrottle()
 
 
-class ProfileResource(ModelResource):
+class ProfileResource(RemoThrottleMixin, ModelResource):
     """Profile Resource."""
     profile_url = fields.CharField()
     avatar_url = fields.CharField()
@@ -71,6 +72,7 @@ class ProfileResource(ModelResource):
                      'city': ALL,
                      'functional_areas': ALL_WITH_RELATIONS}
         max_limit = 40
+        throttle = RemoAPIThrottle()
 
     def dehydrate(self, bundle):
         """Prepare bundle.data for CSV export."""
@@ -114,7 +116,7 @@ class ProfileResource(ModelResource):
             return None
 
 
-class RepResource(ModelResource):
+class RepResource(RemoThrottleMixin, ModelResource):
     """Rep Resource."""
     fullname = fields.CharField(attribute='get_full_name')
     profile = fields.ToOneField(ProfileResource, attribute='userprofile',
@@ -135,6 +137,7 @@ class RepResource(ModelResource):
         filtering = {'first_name': ALL,
                      'last_name': ALL,
                      'profile': ALL_WITH_RELATIONS}
+        throttle = RemoAPIThrottle()
 
     def apply_filters(self, request, applicable_filters):
         """Add special 'query' parameter to filter Reps.

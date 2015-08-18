@@ -12,7 +12,7 @@ from tastypie.authorization import ReadOnlyAuthorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.resources import ModelResource
 
-from remo.api import HttpCache
+from remo.api import HttpCache, RemoAPIThrottle, RemoThrottleMixin
 from remo.base.serializers import iCalSerializer
 from remo.events.helpers import is_multiday
 from remo.events.models import Event, EventMetric, EventMetricOutcome
@@ -20,7 +20,7 @@ from remo.reports.models import Campaign
 
 
 # Legacy non-public api
-class EventMetricResource(ModelResource):
+class EventMetricResource(RemoThrottleMixin, ModelResource):
     """Event Metric Resource."""
 
     class Meta:
@@ -34,9 +34,10 @@ class EventMetricResource(ModelResource):
         fields = ['name']
         filtering = {'name': ALL}
         max_limit = 40
+        throttle = RemoAPIThrottle()
 
 
-class EventMetricOutcomeResource(ModelResource):
+class EventMetricOutcomeResource(RemoThrottleMixin, ModelResource):
     """Event Metric Outcome Resource."""
     metric = fields.ToOneField('remo.events.api.api_v1.EventMetricResource',
                                'metric', full=True, null=True)
@@ -51,9 +52,10 @@ class EventMetricOutcomeResource(ModelResource):
         allowed_methods = ['get']
         fields = ['metric', 'expected_outcome', 'outcome']
         max_limit = 40
+        throttle = RemoAPIThrottle()
 
 
-class CampaignResource(ModelResource):
+class CampaignResource(RemoThrottleMixin, ModelResource):
     """Campaign Resource."""
 
     class Meta:
@@ -67,9 +69,10 @@ class CampaignResource(ModelResource):
         fields = ['name']
         filtering = {'name': ALL}
         max_limit = 40
+        throttle = RemoAPIThrottle()
 
 
-class EventResource(ModelResource):
+class EventResource(RemoThrottleMixin, ModelResource):
     """Event Resource."""
     local_start = fields.DateTimeField()
     local_end = fields.DateTimeField()
@@ -108,6 +111,7 @@ class EventResource(ModelResource):
                      'categories': ALL_WITH_RELATIONS,
                      'campaign': ALL_WITH_RELATIONS}
         max_limit = 40
+        throttle = RemoAPIThrottle()
 
     def dehydrate_name(self, bundle):
         """Sanitize event name."""
