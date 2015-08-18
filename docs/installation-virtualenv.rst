@@ -70,13 +70,13 @@ When you want to start contributing...
       python libraries will remain intact.
 
 #. **Create the database.**
-   
+
    The provided configuration assumes a database with the
    name `remo` for user `root` with password `root`
-   and the server listens to `127.0.0.1:8000`. 
-   So, it is important not to forget to create the database 
-   `remo` in your mysql server and add your root password 
-   to your local.py file. You can alter the configuration 
+   and the server listens to `127.0.0.1:8000`.
+   So, it is important not to forget to create the database
+   `remo` in your mysql server and add your root password
+   to your local.py file. You can alter the configuration
    to fit your own needs.
 
    For example for user `root` with password `root`::

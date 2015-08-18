@@ -6,8 +6,9 @@ Installation
 .. toctree::
    :maxdepth: 1
 
-   installation-vagrant
    installation-virtualenv
+   installation-docker
+   installation-vagrant
    static
    runserver
    demo-data

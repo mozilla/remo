@@ -70,7 +70,7 @@ that help in some complex definitions of our models.
 
 
 ``remo.reports`` factory classes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - ``NGReportFactory``
 - ``ActivityFactory``
@@ -83,7 +83,7 @@ that help in some complex definitions of our models.
    - ``add_cc_users``: List of users to add to bug cc field
 
 ``remo.voting`` factory classes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - ``PollFactory``
 - ``VoteFactory``

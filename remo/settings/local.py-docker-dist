@@ -63,4 +63,9 @@ CACHES = {
     }
 }
 
-BROWSERID_AUDIENCES = None
+# Mailhide configuration
+# Demo keys, replace with valid ones.
+MAILHIDE_PUB_KEY = '02Ni54q--g1yltekhaSmPYHQ=='
+MAILHIDE_PRIV_KEY = 'fe55a9921917184732077e3fed19d0be'
+SITE_URL = 'http://127.0.0.1:8000'
+BROWSERID_AUDIENCES = [SITE_URL]
