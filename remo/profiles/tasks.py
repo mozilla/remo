@@ -91,7 +91,8 @@ def send_rotm_nomination_reminder():
     """
 
     now_date = now().date()
-    if now_date.day == ROTM_REMINDER_DAY:
+    if (now_date.day == ROTM_REMINDER_DAY or
+            waffle.switch_is_active('enable_rotm_tasks')):
         data = {'month': number2month(now_date.month)}
         subject = 'Nominate Rep of the month'
         template = 'emails/mentors_rotm_reminder.txt'
@@ -126,7 +127,8 @@ def resolve_nomination_action_items():
     """
 
     today = now().date()
-    if today.day == NOMINATION_END_DAY:
+    if (today.day == NOMINATION_END_DAY or
+            waffle.switch_is_active('enable_rotm_tasks')):
         mentors = UserProfile.objects.filter(user__groups__name='Mentor')
         action_model = ContentType.objects.get_for_model(UserProfile)
         # All the completed action items are always resolved
