@@ -18,7 +18,7 @@
         }, opt);
 
         var id = $(this).attr("id"), i, s = "",dt;
-        $("#" + id).empty().append('<img src="loader.gif" />');
+        $("#" + id).empty().append('<img src="/static/base/img/feedek/loader.gif" />');
 
         $.ajax({
             url: "https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=" + def.MaxCount + "&output=json&q=" + encodeURIComponent(def.FeedUrl) + "&hl=en&callback=?",
