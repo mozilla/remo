@@ -42,7 +42,7 @@ class Attendance(models.Model):
 
 class EventGoal(models.Model):
     """Event Goals Model."""
-    name = models.CharField(max_length=127, unique=True)
+    name = models.CharField(db_index=True, max_length=127, unique=True)
     slug = models.SlugField(blank=True, max_length=127)
     active = models.BooleanField(default=True)
 
