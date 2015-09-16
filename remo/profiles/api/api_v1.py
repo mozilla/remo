@@ -170,6 +170,7 @@ class RepResource(RemoThrottleMixin, ModelResource):
                      Q(userprofile__country__istartswith=query) |
                      Q(userprofile__region__istartswith=query) |
                      Q(userprofile__city__istartswith=query) |
+                     Q(userprofile__mozillians_profile_url__icontains=query) |
                      Q(userprofile__functional_areas__name__istartswith=query))
 
             base_object_list = base_object_list.filter(qset).distinct()
