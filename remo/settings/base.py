@@ -110,7 +110,7 @@ ENGAGE_ROBOTS = True
 TIME_ZONE = 'UTC'
 USE_TZ = True
 
-ETHERPAD_URL = 'http://etherpad.mozilla.org/'
+ETHERPAD_URL = 'https://public.etherpad-mozilla.org/'
 ETHERPAD_PREFIX = 'remo-'
 
 CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
