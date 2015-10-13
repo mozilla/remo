@@ -7,7 +7,7 @@ accomplished by Reps the month of {{ month }}.
 
 Please note that as a Mentor you can nominate any Rep and not
 just your mentees. This can be done easily in the profile of each user.
-Nomination period ends on the 10th of {{ month }}.
+Nomination period ends on the 10th of {{ month }} UTC.
 
 Regards,
 Your lovely ReMo bot
