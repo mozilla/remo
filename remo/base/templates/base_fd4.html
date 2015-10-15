@@ -29,9 +29,9 @@
   {% compress css %}
     <link rel="stylesheet" href="{{ static('base/css/tabzilla.css')}}" media="screen" />
     <link href="{{ static('base/css/foundation-4.css') }}" rel="stylesheet"
-          media="screen,projection,tv" />
+          media="screen,projection,tv,print" />
     <link href="{{ static('base/css/responsive-tables.css') }}" rel="stylesheet"
-          media="screen,projection,tv" />
+          media="screen,projection,tv,print" />
   {% endcompress %}
   {% block topextra %} {% endblock %}
 
@@ -78,12 +78,12 @@
           <!-- Sign In & Tabzilla Tab -->
 
             <!-- Tabzilla Tab -->
-            <div id="tabzilla">
+            <div id="tabzilla" class="hide-on-print">
               <a href="https://www.mozilla.org/">Mozilla</a>
             </div>
 
             <!-- Sign In & Sign Out -->
-            <div class="large-10 small-10 columns" id="login-box">
+            <div class="large-10 small-10 columns hide-on-print" id="login-box">
               <div class="account anonymous nomenu logout">
                 {% if not user.is_authenticated() %}
                   {% if request.get_full_path() != '/' %}
@@ -198,7 +198,7 @@
             </nav>
 
             <!-- Mobile Navigation -->
-            <nav role="navigation" class="small-12 show-for-small" id="navigation-box-mobile">
+            <nav role="navigation" class="small-12 show-for-small hide-on-print" id="navigation-box-mobile">
               <ul class="button-group">
                 <li>
                   {% if user.is_authenticated() %}
@@ -223,13 +223,13 @@
       </header>
 
       <!-- Separator -->
-      <div class="row">
+      <div class="row hide-on-print">
         <hr>
       </div>
 
       <!-- Page Content -->
       {% if messages %}
-        <div class="row">
+        <div class="row hide-on-print">
           <div class="large-12 columns">
             {% for notification in messages %}
               <div class="alert-box {{ notification.tags }}">
@@ -242,7 +242,7 @@
       {% endif %}
 
       <!-- Client-side messages -->
-      <div class="row">
+      <div class="row hide-on-print">
         <div id="client-message-container" class="hidden large-12 columns">
           <div class="alert-box">
             <a href="#" class="close">&times;</a>
@@ -265,7 +265,7 @@
   {% endblock %}
 
   <!-- Join modal start -->
-  <div id="join-modal" class="reveal-modal">
+  <div id="join-modal" class="reveal-modal hide-on-print">
     <p class="lead">So, you wanna join us?</p>
     <h2>Cool!</h2>
     <p>
