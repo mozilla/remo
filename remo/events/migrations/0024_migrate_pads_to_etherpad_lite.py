@@ -20,14 +20,14 @@ class Migration(DataMigration):
             new_planning_pad = ''
             if match:
                 try:
-                    new_planning_pad = '{0}p/{1}'.format(settings.ETHERPAD_URL,
-                                                         match.groups()[2])
+                    new_planning_pad = '{0}{1}'.format(settings.ETHERPAD_URL,
+                                                       match.groups()[2])
                 except IndexError:
                     continue
                 if match.groups()[1]:
-                    new_planning_pad = '{0}p/{1}-{2}'.format(settings.ETHERPAD_URL,
-                                                             match.groups()[1].strip('.'),
-                                                             match.groups()[2])
+                    new_planning_pad = '{0}{1}-{2}'.format(settings.ETHERPAD_URL,
+                                                           match.groups()[1].strip('.'),
+                                                           match.groups()[2])
                 event.planning_pad_url = new_planning_pad
                 event.save()
 
