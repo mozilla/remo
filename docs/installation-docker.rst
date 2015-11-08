@@ -44,7 +44,7 @@ When you want to start contributing...
 
 #. **Configure your local ReMo installation.**::
 
-     (venv)$ cp settings/local.py-docker-dist settings/local.py
+     $ cp settings/local.py-docker-dist settings/local.py
 
 #. Update the product details::
 
