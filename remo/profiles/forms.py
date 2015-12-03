@@ -13,6 +13,7 @@ from django_browserid.auth import default_username_algo
 from product_details import product_details
 from pytz import common_timezones
 
+from remo.base.helpers import user_is_rep
 from remo.base.utils import get_date
 from remo.profiles.models import FunctionalArea, UserProfile, UserStatus
 
@@ -289,6 +290,15 @@ class RotmNomineeForm(happyforms.Form):
         self.fields['is_rotm_nominee'].widget = forms.HiddenInput()
         if self.instance and not self.instance.is_rotm_nominee:
             self.fields['is_rotm_nominee'].initial = True
+
+    def clean(self):
+        """Clean Form."""
+        cdata = super(RotmNomineeForm, self).clean()
+        user = self.instance.user
+
+        if not user_is_rep(user):
+            raise ValidationError('You cannot nominate a non Rep user.')
+        return cdata
 
     def save(self, *args, **kwargs):
         if (self.instance and not self.instance.is_rotm_nominee and
