@@ -110,6 +110,21 @@ class AdminProfileFilter(SimpleListFilter):
         return queryset
 
 
+class ActivityCampaign(SimpleListFilter):
+    title = 'Activity Campaign'
+    parameter_name = 'activity_campaign_2015'
+
+    def lookups(self, request, model_admin):
+        return (('False', 'No'), ('True', 'Yes'))
+
+    def queryset(self, request, queryset):
+        if self.value() == 'True':
+            return queryset.filter(ng_reports__report_date__gte='2015-10-01')
+        elif self.value() == 'False':
+            return queryset.exclude(ng_reports__report_date__gte='2015-10-01')
+        return queryset
+
+
 class UserResource(resources.ModelResource):
     personal_emails = fields.Field()
     country = fields.Field()
@@ -150,7 +165,8 @@ class UserAdmin(ExportMixin, UserAdmin):
                    ('userprofile__registration_complete', RepProfileFilter,
                     MozillianProfileFilter, MentorProfileFilter,
                     CouncilProfileFilter, AlumniProfileFilter,
-                    AdminProfileFilter, 'userprofile__is_rotm_nominee',
+                    AdminProfileFilter, ActivityCampaign,
+                    'userprofile__is_rotm_nominee',
                     'userprofile__date_joined_program',
                     'ng_reports__report_date'))
     search_fields = (UserAdmin.search_fields + ('userprofile__country',))
