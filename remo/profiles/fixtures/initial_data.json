@@ -38,5 +38,13 @@
             "name": "Mozillians",
             "permissions": []
         }
+    },
+    {
+        "pk": 6,
+        "model": "auth.group",
+        "fields": {
+            "name": "Alumni",
+            "permissions": []
+        }
     }
 ]
