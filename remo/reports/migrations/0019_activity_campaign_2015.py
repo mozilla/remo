@@ -21,7 +21,7 @@ class Migration(DataMigration):
         inactive_users = (User.objects.filter(groups__name='Rep')
                           .filter(userprofile__date_joined_program__lt=REGISTRATION_DATE,
                                   userprofile__registration_complete=True)
-                          .exclude(ng_reports__report_date__gt=INACTIVATION_DATE))
+                          .exclude(ng_reports__report_date__gte=INACTIVATION_DATE))
 
         for user in inactive_users:
             user.groups.clear()
