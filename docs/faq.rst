@@ -24,5 +24,6 @@ You need to enter in shell mode:
      ~$ user.registration_complete = True
      ~$ user.save()
 
-Change the email with the superadmin email, after the login go to http://localhost:8000/admin/auth/user/ and fill all the required fields.
+Change the email with the superadmin email, after the login go to http://localhost:8000/admin/auth/user/ and fill all the required fields.  
+Don't forget to set the groups of the user: Rep  (to get the profile page) and Admin for the admin roles.
 
