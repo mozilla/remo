@@ -129,13 +129,16 @@ class UserResource(resources.ModelResource):
     personal_emails = fields.Field()
     country = fields.Field()
     mentor = fields.Field()
+    date_joined_program = fields.Field()
+    date_left_program = fields.Field()
 
     class Meta:
         model = User
         export_order = ['id', 'username', 'first_name', 'last_name', 'email',
                         'personal_emails', 'password', 'is_staff', 'is_active',
-                        'is_superuser', 'last_login', 'date_joined', 'groups',
-                        'user_permissions', 'country', 'mentor']
+                        'is_superuser', 'last_login', 'groups',
+                        'user_permissions', 'country', 'mentor',
+                        'date_joined_program', 'date_left_program']
 
     def dehydrate_personal_emails(self, user):
         return user.userprofile.private_email
@@ -148,6 +151,18 @@ class UserResource(resources.ModelResource):
                 user.groups.filter(name='Rep').exists()):
             return user.userprofile.mentor.get_full_name()
         return ''
+
+    def dehydrate_date_joined_program(self, user):
+        date_joined = user.userprofile.date_joined_program
+        if date_joined:
+            return date_joined.strftime('%d %B %Y')
+        return None
+
+    def dehydrate_date_left_program(self, user):
+        date_left = user.userprofile.date_left_program
+        if date_left:
+            return date_left.strftime('%d %B %Y')
+        return None
 
 
 class UserProfileInline(admin.StackedInline):
