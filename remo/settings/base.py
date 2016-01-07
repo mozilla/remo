@@ -85,6 +85,7 @@ MIDDLEWARE_CLASSES = filter(
 MIDDLEWARE_CLASSES += (
     'django.contrib.messages.middleware.MessageMiddleware',
     'remo.base.middleware.RegisterMiddleware',
+    'csp.middleware.CSPMiddleware',
     'waffle.middleware.WaffleMiddleware'
 )
 
@@ -180,3 +181,57 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ),
 }
+
+# Django-CSP
+CSP_DEFAULT_SRC = ("'self'",
+                   'http://*.mapbox.com',
+                   'https://*.mapbox.com')
+
+CSP_SCRIPT_SRC = ("'self'",
+                  'https://login.persona.org',
+                  'http://www.mozilla.org',
+                  'https://www.mozilla.org',
+                  'http://*.mozilla.net',
+                  'https://*.mozilla.net',
+                  'http://*.mapbox.com',
+                  'https://*.mapbox.com',
+                  'https://*.google-analytics.com',
+                  # Mozilla Reps Planet
+                  'https://ajax.googleapis.com')
+
+CSP_FONT_SRC = ("'self'",
+                'http://*.mozilla.net',
+                'https://*.mozilla.net',
+                'http://*.mozilla.org',
+                'https://*.mozilla.org')
+
+CSP_FRAME_SRC = ("'self'",
+                 'https://login.persona.org',)
+
+CSP_IMG_SRC = ("'self'",
+               'data:',
+               'http://*.mozilla.net',
+               'https://*.mozilla.net',
+               'http://*.mozilla.org',
+               'https://*.mozilla.org',
+               '*.google-analytics.com',
+               '*.gravatar.com',
+               '*.libravatar.org',
+               '*.wp.com',
+               'http://*.mapbox.com',
+               'https://*.mapbox.com')
+
+CSP_STYLE_SRC = ("'self'",
+                 "'unsafe-inline'",
+                 'http://www.mozilla.org',
+                 'https://www.mozilla.org',
+                 'http://*.mozilla.net',
+                 'https://*.mozilla.net',
+                 'http://*.mapbox.com',
+                 'https://*.mapbox.com')
+
+CSP_CONNECT_SRC = ("'self'",
+                   'http://*.mozilla.org',
+                   'https://*.mozilla.org',
+                   'http://*.mapbox.com',
+                   'https://*.mapbox.com')
