@@ -131,6 +131,7 @@ class UserResource(resources.ModelResource):
     mentor = fields.Field()
     date_joined_program = fields.Field()
     date_left_program = fields.Field()
+    display_name = fields.Field()
 
     class Meta:
         model = User
@@ -138,7 +139,7 @@ class UserResource(resources.ModelResource):
                         'personal_emails', 'password', 'is_staff', 'is_active',
                         'is_superuser', 'last_login', 'groups',
                         'user_permissions', 'country', 'mentor',
-                        'date_joined_program', 'date_left_program']
+                        'date_joined_program', 'date_left_program', 'display_name']
 
     def dehydrate_personal_emails(self, user):
         return user.userprofile.private_email
@@ -163,6 +164,11 @@ class UserResource(resources.ModelResource):
         if date_left:
             return date_left.strftime('%d %B %Y')
         return None
+
+    def dehydrate_display_name(self, user):
+        if not user.userprofile.display_name:
+            return ''
+        return user.userprofile.display_name
 
 
 class UserProfileInline(admin.StackedInline):
