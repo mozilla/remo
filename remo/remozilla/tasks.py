@@ -136,8 +136,8 @@ def fetch_bugs(components=COMPONENTS, days=None):
                         automated_voting_trigger += 1
                     if flag['status'] == '?' and flag['name'] == 'remo-review':
                         bug.pending_mentor_validation = True
-                    if (flag['status'] == '?' and flag['name'] == 'needinfo'
-                            and 'requestee' in flag):
+                    if (flag['status'] == '?' and flag['name'] == 'needinfo' and
+                            'requestee' in flag):
                         email = flag['requestee']
                         user = get_object_or_none(User, email=email)
                         if user:
