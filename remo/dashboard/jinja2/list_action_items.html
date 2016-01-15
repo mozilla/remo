@@ -130,7 +130,5 @@
 {% endblock %}
 
 {% block bottomextra %}
-  {% compress js %}
-    <script src="{{ static('dashboard/js/action_items_list.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'dashboard_action_items' %}
 {% endblock %}

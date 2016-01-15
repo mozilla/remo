@@ -2,12 +2,7 @@
 {% block pagetitle %}Mozilla Reps - KPI Dashboard{% endblock %}
 
 {% block topextra %}
-  {% compress css %}
-    <link href="{{ static('dashboard/css/kpi.css') }}" rel="stylesheet"
-          media="screen,projection,tv" />
-    <link href="{{ static('base/css/spinner.css') }}" rel="stylesheet"
-          media="screen,projection,tv" />
-  {% endcompress %}
+  {% stylesheet 'dashboard' %}
 {% endblock %}
 
 {% block content %}
@@ -181,8 +176,5 @@
 
 {% block bottomextra %}
   <script src="{{ static('dashboard/js/d3.min.js') }}"></script>
-  {% compress js %}
-    <script src="{{ static('dashboard/js/d3-tip.js') }}"></script>
-    <script src="{{ static('dashboard/js/kpi.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'dashboard_kpi' %}
 {% endblock %}

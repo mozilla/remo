@@ -188,12 +188,7 @@
 {% endblock %}
 
 {% block bottomextra %}
-  {% compress css %}
-    <link rel="stylesheet" href="{{ static('events/css/jquery-ui-1.10.0.custom.css') }}"
-          media="screen,projection,tv" />
-  {% endcompress %}
-  {% compress js %}
-    <script src="{{ static('events/js/jquery-ui-1.10.0.custom.js') }}"></script>
-    <script src="{{ static('base/js/edit_availability.js') }}"></script>
-  {% endcompress %}
+  {% stylesheet 'jquery_ui_custom_stylesheet' %}
+  {% javascript 'jquery_ui_custom_js' %}
+  {% javascript 'rep_availability' %}
 {% endblock %}

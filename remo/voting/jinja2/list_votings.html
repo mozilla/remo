@@ -182,8 +182,5 @@
 {% endblock %}
 
 {% block bottomextra %}
-  {% compress js %}
-    <script src="{{ static('base/js/stupidtable.js') }}"></script>
-    <script src="{{ static('voting/js/voting_list.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'list_voting' %}
 {% endblock %}

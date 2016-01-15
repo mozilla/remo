@@ -560,7 +560,5 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 {% endblock %}
 
 {% block bottomextra %}
-  {% compress js %}
-    <script src="{{ static('profiles/js/profiles_view_profile.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'view_profiles' %}
 {% endblock %}

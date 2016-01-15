@@ -292,7 +292,5 @@
 {% endblock %}
 
 {% block bottomextra %}
-  {% compress js %}
-    <script src="{{ static('reports/js/profiles_view_report.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'view_reports' %}
 {% endblock %}

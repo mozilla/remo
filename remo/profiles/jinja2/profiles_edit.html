@@ -634,19 +634,10 @@
 {% endblock %}
 
 {% block bottomextra %}
-  {% compress css %}
-    <link rel="stylesheet" href="{{ static('base/css/mapbox.css') }}"
-          media="screen,projection,tv">
-    <link rel="stylesheet" href="{{ static('base/css/L.Control.Locate.css') }}"
-          media="screen,projection,tv">
-  {% endcompress %}
+  {% stylesheet 'mapbox_stylesheet' %}
   <!--[if lte IE 8]>
       <link rel="stylesheet" href="{{ static('base/css/mapbox.ie.css') }}" />
   <![endif]-->
-  {% compress js %}
-    <script src="{{ static('base/js/mapbox.js') }}"></script>
-    <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
-    <script src="{{ static('base/js/map_modal.js') }}"></script>
-    <script src="{{ static('profiles/js/edit_profile.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'mapbox_js' %}
+  {% javascript 'edit_profiles' %}
 {% endblock %}

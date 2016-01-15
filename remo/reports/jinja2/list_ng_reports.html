@@ -192,7 +192,5 @@
 {% endblock %}
 
 {% block bottomextra %}
-  {% compress js %}
-    <script src="{{ static('reports/js/reports_list.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'list_reports' %}
 {% endblock %}

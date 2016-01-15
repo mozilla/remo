@@ -53,8 +53,5 @@
 {% endblock %}
 
 {% block bottomextra %}
-  {% compress js %}
-    <script src="{{ static('base/js/base_content_edit.js') }}"></script>
-    <script src="{{ static('base/js/stupidtable.js') }}"></script>
-  {% endcompress %}
+  {% javascript 'base_content_list' %}
 {% endblock %}

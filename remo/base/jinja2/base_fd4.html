@@ -26,37 +26,23 @@
   </title>
   <link rel="shortcut icon" href="{{ static('base/img/remo/shortcut.ico') }}" />
   <!-- Included CSS Files -->
-  {% compress css %}
-    <link rel="stylesheet" href="{{ static('base/css/tabzilla.css')}}" media="screen" />
-    <link href="{{ static('base/css/foundation-4.css') }}" rel="stylesheet"
-          media="screen,projection,tv,print" />
-    <link href="{{ static('base/css/responsive-tables.css') }}" rel="stylesheet"
-          media="screen,projection,tv,print" />
-  {% endcompress %}
+  <link rel="stylesheet" href="{{ static('base/css/tabzilla.css')}}" media="screen" />
+  {% stylesheet 'base' %}
   {% block topextra %} {% endblock %}
 
   <!--[if lt IE 9]>
-      {% compress css %}
-        <link href="{{ static('base/css/ie-fd4.css') }}" rel="stylesheet"
-              media="screen,projection,tv" />
-      {% endcompress %}
+    <link href="{{ static('base/css/ie-fd4.css') }}" rel="stylesheet"
+          media="screen,projection,tv" />
   <![endif]-->
   <!-- IE Fix for HTML5 Tags -->
   <!--[if lt IE 9]>
-      {% compress js %}
-        <script src="{{ static('base/js/html5.js') }}"></script>
-      {% endcompress %}
+    <script src="{{ static('base/js/html5.js') }}"></script>
   <![endif]-->
 
   <!-- Bing ownership verification -->
   <meta name="msvalidate.01" content="B7B177115A634927D608514DA17B2574" />
 
   {% block headextra %} {% endblock %}
-  <!-- our css is always last to override stuff -->
-  {% compress css %}
-    <link href="{{ static('base/css/app-fd4.less') }}" rel="stylesheet" type="text/less"
-          media="screen,projection,tv" />
-  {% endcompress %}
   {% include "includes/google_analytics.html" %}
 
 </head>
@@ -326,22 +312,9 @@
   <!-- Join modal end -->
 
   <!-- Included JS Files -->
-  {% compress js %}
-    <script src="{{ static('base/js/jquery-1.11.2.min.js') }}"></script>
-    <script src="{{ static('base/js/modernizr.foundation-4.js') }}"></script>
-    <script src="{{ static('base/js/foundation-4.min.js') }}"></script>
-    <script src="{{ static('base/js/responsive-tables.js') }}"></script>
-    <script src="{{ static('base/js/jquery.prettydate.js') }}"></script>
-    <script src="{{ static('base/js/jquery.imageready.min.js') }}"></script>
-    <script src="{{ static('base/js/placeholder.min.js') }}"></script>
-    <script src="{{ static('base/js/remolib.js') }}"></script>
-  {% endcompress %}
+  <script type="text/javascript" src="https://login.persona.org/include.js"></script>
+  {% javascript 'base' %}
   {% block bottomextra %} {% endblock %}
-  {% compress js %}
-    <script src="{{ static('base/js/app.js') }}"></script>
-    <script src="{{ static('base/js/init.js') }}"></script>
-  {% endcompress %}
-  {{ browserid_js() }}
 </body>
 
 </html>
