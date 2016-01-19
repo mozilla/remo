@@ -8,7 +8,6 @@ Installation
 
    installation-virtualenv
    installation-docker
-   installation-vagrant
    static
    runserver
    demo-data
