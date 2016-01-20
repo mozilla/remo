@@ -16,6 +16,7 @@ from django.utils.encoding import smart_str
 from django.utils.html import strip_tags
 
 import jinja2
+from markdown import markdown as python_markdown
 from Crypto.Cipher import AES
 from django_jinja import library
 from product_details import product_details
@@ -45,7 +46,7 @@ library.filter(defaultfilters.pluralize)
 @library.global_function
 def thisyear():
     """The current year."""
-    return jinja2.Markup(datetime.date.today().year)
+    return jinja2.Markup(datetime.today().year)
 
 
 @library.global_function
@@ -100,7 +101,7 @@ def static(path):
 @library.filter
 def markdown(text):
     """Return text rendered as Markdown."""
-    return jinja2.Markup(markdown(text, 'safe'))
+    return jinja2.Markup(python_markdown(text))
 
 
 @library.filter
@@ -352,3 +353,9 @@ def formset_errors_exist(formset):
 def get_country_code(country_name):
     """Return country code from country name."""
     return COUNTRIES_NAME_TO_CODE.get(country_name.lower(), '')
+
+
+@library.filter
+def ifeq(a, b, text):
+    """Return ``text`` if ``a == b``."""
+    return jinja2.Markup(text if a == b else '')

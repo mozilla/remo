@@ -10,26 +10,13 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 import os
 
+from django.utils.functional import lazy
+
 import dj_database_url
 from decouple import Csv, config
 from django_jinja.builtins import DEFAULT_EXTENSIONS
 from django_sha2 import get_password_hashers
 
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-ROOT = BASE_DIR
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', cast=bool)
-
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
-HMAC_KEYS = {
-    '2015-12-15': config('DJANGO_HMAC_KEY'),
-}
 
 # Application definition
 INSTALLED_APPS = [
@@ -75,6 +62,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'csp.middleware.CSPMiddleware',
+    'remo.base.middleware.RegisterMiddleware',
+    'waffle.middleware.WaffleMiddleware',
 )
 
 ROOT_URLCONF = 'remo.urls'
@@ -91,8 +80,35 @@ DATABASES = {
     )
 }
 
-# Internationalization
-# https://docs.djangoproject.com/en/1.9/topics/i18n/
+
+def _request_args():
+    from django.conf import settings
+
+    args = {'siteName': u'Mozilla Reps'}
+
+    if settings.SITE_URL.startswith('https'):
+        args['siteLogo'] = '/static/base/img/remo/remo_logo_medium.png'
+
+    return args
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+ROOT = BASE_DIR
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = config('SECRET_KEY')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = config('DEBUG', cast=bool)
+
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+HMAC_KEYS = {
+    '2015-12-15': config('DJANGO_HMAC_KEY'),
+}
+
 LANGUAGE_CODE = config('LANGUAGE_CODE', default='en-us')
 TIME_ZONE = config('TIME_ZONE', default='UTC')
 USE_I18N = config('USE_I18N', default=False, cast=bool)
@@ -110,8 +126,69 @@ MEDIA_URL = config('MEDIA_URL', '/media/')
 SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=not DEBUG,
                                cast=bool)
 
+SITE_URL = config('SITE_URL', default='http://127.0.0.1:8000')
+# Paginator settings
+ITEMS_PER_PAGE = 20
+
+# Browserid settings
+BROWSERID_VERIFY_CLASS = 'remo.base.views.BrowserIDVerify'
+BROWSERID_AUDIENCES = config('BROWSERID_AUDIENCES',
+                             default='http://127.0.0.1:8000, http://localhost:8000',
+                             cast=Csv())
+BROWSERID_REQUEST_ARGS = lazy(_request_args, dict)()
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGIN_REDIRECT_URL_FAILURE = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# TODO: fix this
 LOGGING_CONFIG = None
 LOGGING = {}
+
+# Instruct session-csrf to always produce tokens for anonymous users
+ANON_ALWAYS = True
+
+FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
+
+ADMINS = (
+    ('Mozilla Reps Devs', 'reps-dev@mozilla.com'),
+)
+
+MANAGERS = ADMINS
+
+ETHERPAD_URL = 'https://public.etherpad-mozilla.org/p/'
+ETHERPAD_PREFIX = 'remo-'
+
+CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
+                  'event/?callbackurl=%(callbackurl)s')
+
+
+REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
+REPS_COUNCIL_ALIAS = 'reps-council@mozilla.com'
+
+# Mozillians API
+MOZILLIANS_API_BASE = 'https://mozillians.org'
+
+ALLOWED_HOSTS = ['reps.mozilla.org']
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+# Statsd Graphite
+STATSD_CLIENT = 'django_statsd.clients.normal'
+MAPBOX_TOKEN = 'examples.map-i86nkdio'
+
+SERVER_EMAIL = 'reps-dev@mozilla.com'
+
+# Django Rest Framework
+REST_FRAMEWORK = {
+    'URL_FIELD_NAME': '_url',
+    'PAGINATE_BY': 20,
+    'MAX_PAGINATE_BY': 100,
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+        'rest_framework.serializers.HyperlinkedModelSerializer',
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter',
+    ),
+}
 
 CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -139,6 +216,7 @@ TEMPLATES = [
             'undefined': 'jinja2.Undefined',
             'extensions': DEFAULT_EXTENSIONS + [
                 'pipeline.jinja2.PipelineExtension',
+                'caching.ext.cache'
             ],
             'globals': {
                 'browserid_info': 'django_browserid.helpers.browserid_info',
@@ -173,6 +251,10 @@ BASE_PASSWORD_HASHERS = (
 
 PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
 
+AUTHENTICATION_BACKENDS = [
+    'django_browserid.auth.BrowserIDBackend',
+    'django.contrib.auth.backends.ModelBackend'
+]
 # Django-CSP
 CSP_DEFAULT_SRC = (
     "'self'",
