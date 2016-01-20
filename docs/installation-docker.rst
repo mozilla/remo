@@ -60,6 +60,18 @@ When you want to start contributing...
 
     $ docker-compose run web ./manage.py createsuperuser
 
+#. Add demo users.
+
+    $ docker-compose run web ./manage.py loaddata demo_users
+
+#. Add demo functional areas.
+
+    $ docker-compose run web ./manage.py loaddata demo_functional_areas
+
+#. Add demo events.
+
+    $ docker-compose run web ./manage.py loaddata demo_events
+
 ************
 Running ReMo
 ************
