@@ -299,14 +299,24 @@ Mozilla Reps - {{ event.name }}
     </div>
   </div>
   <!-- END Mashup code -->
-
   {% macro display_attendee(attendee) -%}
+  {% if event|get_total_attendees >= 3 %}
+    <div class="row">
+      <div class="event-single-attendee">
+        <div class="large-3 small-3 columns grid-profile-image">
+          <img src="{{ attendee|get_avatar_url }}"
+            class="profiles-people-avatar"
+            alt="Avatar">
+          </div>
+        </div>
+    </div>
+  {% else %}
     <div class="event-single-attendee">
       <div class="row">
         <div class="large-3 small-3 columns grid-profile-image">
           <img src="{{ attendee|get_avatar_url }}"
-               class="profiles-people-avatar"
-               alt="Avatar">
+            class="profiles-people-avatar"
+            alt="Avatar">
         </div>
         <div class="large-9 small-9 columns grid-profile-text">
           <h6>{{ attendee.get_full_name() }}</h6>
@@ -316,6 +326,7 @@ Mozilla Reps - {{ event.name }}
         </div>
       </div>
     </div>
+  {% endif %}
   {%- endmacro %}
   <div class="row">
     <div class="large-7 columns">
