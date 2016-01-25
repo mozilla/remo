@@ -11,7 +11,7 @@ from product_details import product_details
 from django_statsd.clients import statsd
 from pytz import common_timezones, timezone
 
-from datetimewidgets import SplitSelectDateTimeWidget
+from remo.base.datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.helpers import get_full_name
 from remo.base.utils import get_date, get_object_or_none, validate_datetime
 from remo.events.models import EventMetric
@@ -408,3 +408,4 @@ class EventMetricForm(happyforms.ModelForm):
 
     class Meta:
         model = EventMetric
+        fields = ['name']

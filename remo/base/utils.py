@@ -6,29 +6,25 @@ from django.conf import settings
 from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ValidationError
-from django.core.mail.backends.smtp import EmailBackend as SMTPBackend
 from django.db.models import get_app, get_models
 from django.utils import timezone
 
-from database_email_backend.backend import DatabaseEmailBackend
 
+def absolutify(url):
+    """Takes a URL and prepends the SITE_URL"""
+    site_url = getattr(settings, 'SITE_URL', False)
 
-class DevEmailBackend(DatabaseEmailBackend):
-    def send_messages(self, email_messages):
-        """
-        Intercept emails originating from SERVER_EMAIL and send them
-        through SMTPBackend to notify ADMINS.
-        """
-        server_email = getattr(settings, 'SERVER_EMAIL', None)
+    # If we don't define it explicitly
+    if not site_url:
+        protocol = settings.PROTOCOL
+        hostname = settings.DOMAIN
+        port = settings.PORT
+        if (protocol, port) in (('https://', 443), ('http://', 80)):
+            site_url = ''.join(map(str, (protocol, hostname)))
+        else:
+            site_url = ''.join(map(str, (protocol, hostname, ':', port)))
 
-        admin_messages = filter(lambda x: x.from_email == server_email,
-                                email_messages)
-
-        if admin_messages:
-            smtp_backend = SMTPBackend()
-            smtp_backend.send_messages(admin_messages)
-
-        return super(DevEmailBackend, self).send_messages(email_messages)
+    return site_url + url
 
 
 def get_object_or_none(model_class, **kwargs):

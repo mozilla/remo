@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
-from funfactory.helpers import urlparams
 from jingo import register
+
+from remo.base.helpers import urlparams
 
 
 @register.filter

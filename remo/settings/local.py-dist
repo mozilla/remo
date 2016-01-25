@@ -5,7 +5,7 @@ from . import base
 
 # To extend any settings from settings/base.py here's an example:
 #from . import base
-# INSTALLED_APPS = list(base.INSTALLED_APPS) + ['debug_toolbar']
+# INSTALLED_APPS = base.INSTALLED_APPS + ['debug_toolbar']
 
 DATABASES = {
     'default': {
@@ -39,7 +39,7 @@ MANAGERS = ADMINS
 
 # Debugging displays nice error messages, but leaks memory. Set this to False
 # on all server instances and True only for development.
-DEBUG = TEMPLATE_DEBUG = True
+DEBUG = True
 
 # Disable CSS/JS compression for development
 COMPRESS_ENABLED = False
@@ -70,13 +70,6 @@ PASSWORD_HASHERS = get_password_hashers(base.BASE_PASSWORD_HASHERS, HMAC_KEYS)
 SECRET_KEY = 'some secret'
 
 SESSION_COOKIE_SECURE=False
-
-# Email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# Uncomment the following lines to use the database email backend for debugging.
-# INSTALLED_APPS = list(base.INSTALLED_APPS) + ['database_email_backend']
-# EMAIL_BACKEND = 'database_email_backend.backend.DatabaseEmailBackend'
 
 # Uncomment the following lines to use django_browserid for offline developemnt
 # AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',

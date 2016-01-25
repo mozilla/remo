@@ -8,7 +8,7 @@ from django.db.models import F
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from django.utils.timezone import now, utc
 
-from datetimewidgets import SplitSelectDateTimeWidget
+from remo.base.datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.utils import validate_datetime
 from models import (Poll, PollComment, RadioPoll,
                     RadioPollChoice, RangePoll, RangePollChoice)
@@ -252,7 +252,7 @@ class BaseRangePollChoiceInlineFormset(BaseInlineFormSet):
 RangePollChoiceFormset = (
     inlineformset_factory(RangePoll, RangePollChoice,
                           formset=BaseRangePollChoiceInlineFormset, extra=1,
-                          exclude='votes', can_delete=True))
+                          exclude=('votes',), can_delete=True))
 
 
 class BaseRangePollInlineFormSet(BaseInlineFormSet):
@@ -392,7 +392,7 @@ class BaseRadioPollChoiceInlineFormset(BaseInlineFormSet):
 RadioPollChoiceFormset = (
     inlineformset_factory(RadioPoll, RadioPollChoice,
                           formset=BaseRadioPollChoiceInlineFormset, extra=1,
-                          exclude='votes', can_delete=True))
+                          exclude=('votes',), can_delete=True))
 
 
 class BaseRadioPollInlineFormSet(BaseInlineFormSet):

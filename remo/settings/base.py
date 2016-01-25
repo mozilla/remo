@@ -1,16 +1,39 @@
 # This is your project's main settings file that can be committed to your
 # repo. If you need to override a setting locally, use settings_local.py
-from funfactory.settings_base import *  # noqa
+import logging
+import os
 
+from django.utils.functional import lazy
+from django_sha2 import get_password_hashers
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+ROOT = BASE_DIR
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'remo.urls'
+DEV = False
+DEBUG = False
 
-INSTALLED_APPS = get_apps(append=[
-    # Application base, containing global templates.
+# Application definition
+INSTALLED_APPS = [
+    # Django apps
     'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.markup',
-
+    'django.contrib.staticfiles',
+    # Third party apps
+    'django_jinja',
+    'django_browserid',
+    'tastypie',
+    'waffle',
+    'import_export',
+    'django_nose',
+    'django_filters',
+    'rest_framework',
+    'session_csrf',
+    # Project specific apps
     'remo.base',
     'remo.profiles',
     'remo.featuredrep',
@@ -20,44 +43,111 @@ INSTALLED_APPS = get_apps(append=[
     'remo.api',
     'remo.events',
     'remo.voting',
-
-    'django_browserid',
-    'jingo_offline_compressor',
-    'tastypie',
-    'waffle',
-    'import_export',
-    'south',
-    'django_nose',
-    'django_filters',
-    'rest_framework'
-])
-
-# Because Jinja2 is the default template loader, add any non-Jinja templated
-# apps here:
-JINGO_EXCLUDE_APPS = [
-    'admin',
-    'registration',
-    'browserid',
-    'rest_framework'
 ]
 
-# Tells the extract script what files to look for L10n in and what function
-# handles the extraction. The Tower library expects this.
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'session_csrf.CsrfMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
+    'remo.base.middleware.RegisterMiddleware',
+    'waffle.middleware.WaffleMiddleware'
+)
 
-# # Use this if you have localizable HTML files:
-# DOMAIN_METHODS['lhtml'] = [
-#    ('**/templates/**.lhtml',
-#        'tower.management.commands.extract.extract_tower_template'),
-# ]
+SESSION_COOKIE_SECURE = not DEBUG
 
-# # Use this if you have localizable HTML files:
-# DOMAIN_METHODS['javascript'] = [
-#    # Make sure that this won't pull in strings from external libraries you
-#    # may use.
-#    ('media/js/**.js', 'javascript'),
-# ]
+CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.template.context_processors.debug',
+    'django.template.context_processors.request',
+    'session_csrf.context_processor',
+    'django.template.context_processors.media',
+    'django.template.context_processors.static',
+    'django.template.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'remo.base.context_processors.globals',
+)
 
-LOGGING = dict(loggers=dict(playdoh={'level': logging.DEBUG}))
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': CONTEXT_PROCESSORS
+        }
+    },
+]
+
+WSGI_APPLICATION = 'remo.wsgi.application'
+
+# Auth
+# The first hasher in this list will be used for new passwords.
+# Any other hasher in the list can be used for existing passwords.
+# Playdoh ships with Bcrypt+HMAC by default because it's the most secure.
+# To use bcrypt, fill in a secret HMAC key in your local settings.
+BASE_PASSWORD_HASHERS = (
+    'django_sha2.hashers.BcryptHMACCombinedPasswordVerifier',
+    'django_sha2.hashers.SHA512PasswordHasher',
+    'django_sha2.hashers.SHA256PasswordHasher',
+    'django.contrib.auth.hashers.SHA1PasswordHasher',
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+    'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',
+)
+
+HMAC_KEYS = {
+    '2015-12-15': 'pancakes',
+}
+
+PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
+
+# Django-CSP
+CSP_DEFAULT_SRC = (
+    "'self'",
+)
+CSP_FONT_SRC = (
+    "'self'",
+    'http://*.mozilla.net',
+    'https://*.mozilla.net',
+    'http://*.mozilla.org',
+    'https://*.mozilla.org',
+)
+CSP_IMG_SRC = (
+    "'self'",
+    'http://*.mozilla.net',
+    'https://*.mozilla.net',
+    'http://*.mozilla.org',
+    'https://*.mozilla.org',
+)
+CSP_SCRIPT_SRC = (
+    "'self'",
+    'http://*.mozilla.org',
+    'https://*.mozilla.org',
+    'http://*.mozilla.net',
+    'https://*.mozilla.net',
+)
+CSP_STYLE_SRC = (
+    "'self'",
+    "'unsafe-inline'",
+    'http://*.mozilla.org',
+    'https://*.mozilla.org',
+    'http://*.mozilla.net',
+    'https://*.mozilla.net',
+)
+
+LOG_LEVEL = logging.INFO
+HAS_SYSLOG = True
+LOGGING_CONFIG = None
+
+SYSLOG_TAG = 'http_app_remo'
+LOGGING = {
+    'loggers': {
+        'remo': {'level': logging.INFO}
+    }
+}
 
 # Add BrowserID as authentication backend
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
@@ -77,23 +167,7 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Remove LocaleURLMiddleware since we are not localing our website
-MIDDLEWARE_CLASSES = filter(
-    lambda x: x != 'funfactory.middleware.LocaleURLMiddleware',
-    MIDDLEWARE_CLASSES)
-
-MIDDLEWARE_CLASSES += (
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'remo.base.middleware.RegisterMiddleware',
-    'waffle.middleware.WaffleMiddleware'
-)
-
-TEMPLATE_CONTEXT_PROCESSORS += (
-    'django.core.context_processors.static',
-    'django.contrib.messages.context_processors.messages'
-)
-
-# Instruct session-csrf to always produce tokens for anonymous users
+# This is needed to get a CRSF token in /admin
 ANON_ALWAYS = True
 
 FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
@@ -101,7 +175,6 @@ FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
 ADMINS = (
     ('Mozilla Reps Devs', 'reps-dev@mozilla.com'),
 )
-
 MANAGERS = ADMINS
 
 # Allow robots to crawl the site.
@@ -126,13 +199,6 @@ MOZILLIANS_API_BASE = 'https://mozillians.org'
 ALLOWED_HOSTS = ['reps.mozilla.org']
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-
-jinja_conf = JINJA_CONFIG()
-
-
-def JINJA_CONFIG():
-    jinja_conf['extensions'].append('caching.ext.cache')
-    return jinja_conf
 
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_ENABLE_UTC = True
@@ -179,4 +245,18 @@ REST_FRAMEWORK = {
         'rest_framework.filters.DjangoFilterBackend',
         'rest_framework.filters.OrderingFilter',
     ),
+}
+
+# URL constants
+GRAVATAR_URL = 'https://seccdn.libravatar.org/avatar/'
+
+# Django-Cache-Machine
+CACHE_INVALIDATE_ON_CREATE = 'whole-model'
+
+# Auth
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
 }
