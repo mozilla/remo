@@ -1,5 +1,3 @@
-import happyforms
-
 from django import forms
 from django.contrib import messages
 
@@ -7,7 +5,7 @@ from remo.base.tasks import send_remo_mail
 from remo.profiles.models import UserProfile
 
 
-class BaseEmailUsersForm(happyforms.Form):
+class BaseEmailUsersForm(forms.Form):
     """Base form to send email to multiple users."""
     subject = forms.CharField(label='', widget=(
         forms.TextInput(attrs={'placeholder': 'Subject',
@@ -78,7 +76,7 @@ class EmailMentorForm(BaseEmailUsersForm):
                              data=data)
 
 
-class EditSettingsForm(happyforms.ModelForm):
+class EditSettingsForm(forms.ModelForm):
     """Form to edit user settings regarding mail preferences."""
     receive_email_on_add_comment = forms.BooleanField(
         required=False, initial=True,

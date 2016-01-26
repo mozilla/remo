@@ -1,4 +1,3 @@
-import happyforms
 import re
 
 from django import forms
@@ -28,7 +27,7 @@ LEAVING_SOP_URL = ('<a href="https://wiki.mozilla.org/ReMo/SOPs/Leaving" '
                    'target="_blank"</a>')
 
 
-class InviteUserForm(happyforms.Form):
+class InviteUserForm(forms.Form):
     """Form to invite a new user."""
 
     def _validate_unique_email(data, **kwargs):
@@ -46,7 +45,7 @@ class InviteUserForm(happyforms.Form):
                              validators=[_validate_unique_email])
 
 
-class ChangeUserForm(happyforms.ModelForm):
+class ChangeUserForm(forms.ModelForm):
     """Form to change user details."""
     email = forms.EmailField()
 
@@ -99,7 +98,7 @@ class ChangeUserForm(happyforms.ModelForm):
         super(ChangeUserForm, self).save()
 
 
-class ChangeProfileForm(happyforms.ModelForm):
+class ChangeProfileForm(forms.ModelForm):
     """Form to change userprofile details."""
     gender = forms.ChoiceField(required=False, choices=((None, "Gender"),
                                                         (True, "Female"),
@@ -163,7 +162,7 @@ class ChangeProfileForm(happyforms.ModelForm):
                   'functional_areas', 'timezone')
 
 
-class ChangeDatesForm(happyforms.ModelForm):
+class ChangeDatesForm(forms.ModelForm):
     """Form to change the dates that user joined and left the program."""
 
     class Meta:
@@ -199,7 +198,7 @@ class ChangeDatesForm(happyforms.ModelForm):
         super(ChangeDatesForm, self).save()
 
 
-class FunctionalAreaForm(happyforms.ModelForm):
+class FunctionalAreaForm(forms.ModelForm):
     """Form of functional areas."""
 
     class Meta:
@@ -207,7 +206,7 @@ class FunctionalAreaForm(happyforms.ModelForm):
         fields = ['name']
 
 
-class UserStatusForm(happyforms.ModelForm):
+class UserStatusForm(forms.ModelForm):
     """Form for displaying info regarding the availability status of a user."""
     start_date = forms.DateField(input_formats=['%d %B %Y'])
     expected_date = forms.DateField(input_formats=['%d %B %Y'])
@@ -271,7 +270,7 @@ class UserStatusForm(happyforms.ModelForm):
         fields = ['start_date', 'expected_date', 'replacement_rep']
 
 
-class RotmNomineeForm(happyforms.Form):
+class RotmNomineeForm(forms.Form):
     """Form for nominating the Rep of the month."""
     is_rotm_nominee = forms.BooleanField(widget=forms.RadioSelect(
         choices=BOOLEAN_CHOICES, attrs={'id': 'id_is_rotm_nominee'}),
