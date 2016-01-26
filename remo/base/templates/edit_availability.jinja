@@ -7,7 +7,7 @@
 {% block content %}
 <main role="main" class="availability-main">
   <form id="edit-availability-form" method="post">
-    {{ csrf() }}
+    {% csrf_token %}
 
     {% if created %}
       {% if status_form.errors %}

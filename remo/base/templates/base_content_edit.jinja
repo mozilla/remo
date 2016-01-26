@@ -10,7 +10,7 @@
 
 <main role="main">
   <form method="post">
-    {{ csrf() }}
+    {% csrf_token %}
     <div class="row">
       <div class="large-6 columns">
         {% if creating %}

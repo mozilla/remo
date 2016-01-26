@@ -187,7 +187,7 @@
          report.activity.is_verifiable %}
     <form id="view-ngreport-form" method="post"
           actions="{{ report.get_absolute_url() }}" class="content">
-      {{ csrf() }}
+      {% csrf_token %}
       <div class="row">
         <div class="large-6 columns">
           <div class="row report-box">
@@ -239,7 +239,7 @@
               <div class="report-comment">
                 {% if perms.reports.delete_ngreportcomment %}
                   <form method="post" action="{{ comment.get_absolute_delete_url() }}">
-                    {{ csrf() }}
+                    {% csrf_token %}
                     <button type="submit" class="report-delete-comment">&#215;</button>
                   </form>
                 {% endif %}
@@ -266,7 +266,7 @@
               <div id="report-comment-post">
                 <form method="post" actions="{{ report.get_absolute_url() }}"
                       class="custom">
-                  {{ csrf() }}
+                  {% csrf_token %}
                   {{ field_with_attrs(comment_form.comment,
                                       class="flat",
                                       placeholder="Add comment to this report") }}

@@ -11,7 +11,7 @@
 {% block content %}
 <main role="main" class="events-main">
   <form method="post">
-    {{ csrf() }}
+    {% csrf_token %}
     <div class="row">
       {% if event_form.errors or metrics_formset.errors %}
         <div class="large-12 columns">
@@ -504,7 +504,7 @@
         irreversibly delete this event.
       </p>
       <form method="post" action="{{ url('events_delete_event', slug=event.slug) }}">
-        {{ csrf() }}
+        {% csrf_token %}
         <button class="large button alert">
           Delete event
         </button>

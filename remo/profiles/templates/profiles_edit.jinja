@@ -4,7 +4,7 @@
 {% block content %}
 <main role="main" class="profile-edit-main">
   <form style="custom" method="post" action="{{ url('profiles_edit', pageuser.userprofile.display_name) }}">
-    {{ csrf() }}
+    {% csrf_token %}
     <div class="row">
       {% if profileform.errors or userform.errors or profile_date_form.errors %}
         <div class="large-12 columns">
@@ -624,7 +624,7 @@
     profile of this Rep.
   </p>
     <form method="post" action="{{ url('profiles_delete', pageuser.userprofile.display_name) }}">
-      {{ csrf() }}
+      {% csrf_token %}
       <button class="button large alert" id="delete-profile-verification">
         Delete profile
       </button>
