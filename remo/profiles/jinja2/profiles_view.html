@@ -261,7 +261,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
               <p class="profile-item">
                 <form id="nominate-rotm-form" method="post"
                       actions="{{ url('profiles_view_profile', user_profile.display_name) }}">
-                  {{ csrf() }}
+                  {% csrf_token %}
                   {{ nominee_form.is_rotm_nominee }}
                   <button id="submit-rotm-form" type="submit"
                           class="small button

@@ -83,7 +83,7 @@
                 {% if perms.featuredrep.can_delete_featured %}
                   <form id="deleteform-{{ feature.id }}" method="post"
                         action="{{ url('featuredrep_delete_featured', feature.id) }}">
-                    {{ csrf() }}
+                    {% csrf_token %}
                     <a href="#" class="featured-delete pictogram-button">
                        <span class="pict-icon large close"</span>
                     </a>

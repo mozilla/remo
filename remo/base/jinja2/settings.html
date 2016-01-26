@@ -7,7 +7,7 @@ Mozilla Reps - Settings
 {% block content %}
 <main role="main" class="settings-main">
   <form method="post" action="{{ url('edit_settings') }}">
-    {{ csrf() }}
+    {% csrf_token %}
     <div class="row">
       <div class="large-10 columns">
         <h1>Settings</h1>

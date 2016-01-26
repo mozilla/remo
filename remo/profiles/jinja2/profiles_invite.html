@@ -15,7 +15,7 @@
   <div class="large-6 columns">
     <p>Please enter the Bugzilla email address of the newly accepted rep and click "Add Rep".</p>
     <form action="{{ url('profiles_invite') }}" method="post">
-      {{ csrf() }}
+      {% csrf_token %}
       <input type="text" name="email" placeholder="Bugzilla mail" required>
       {% if form.email.errors %}
         <small class="error">

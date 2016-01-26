@@ -1192,7 +1192,7 @@
     <p class="lead">Email your mentees</p>
     <form id="email-mentees-form" method="post"
           action="{{ url('email_mentees') }}">
-      {{ csrf() }}
+      {% csrf_token %}
       {% for field in email_mentees_form %}
         {{field}} {{ field.label }}
         <br>

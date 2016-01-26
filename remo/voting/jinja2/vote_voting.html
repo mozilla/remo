@@ -7,7 +7,7 @@ Mozilla Reps - {{ poll.name }} - Vote
 {% block content %}
 <main role="main" class="voting-main">
   <form method="post">
-    {{ csrf() }}
+    {% csrf_token %}
     <div class="row">
       {% if range_poll_choice_forms|formset_errors_exist or
             radio_poll_choice_forms|formset_errors_exist %}
@@ -273,7 +273,7 @@ Mozilla Reps - {{ poll.name }} - Vote
                 {% if perms.voting.delete_pollcomment or
                       comment.user == request.user %}
                   <form method="post" action="{{ comment.get_absolute_delete_url() }}">
-                    {{ csrf() }}
+                    {% csrf_token %}
                     <button type="submit" class="report-delete-comment">&#215;</button>
                   </form>
                 {% endif %}
@@ -303,7 +303,7 @@ Mozilla Reps - {{ poll.name }} - Vote
             <div id="report-comment-post">
               <form method="post" actions="{{ poll.get_absolute_url() }}"
                     class="custom">
-                {{ csrf() }}
+                {% csrf_token %}
                 {{ field_with_attrs(comment_form.comment,
                                     class="flat",
                                     placeholder="Add comment to this poll") }}

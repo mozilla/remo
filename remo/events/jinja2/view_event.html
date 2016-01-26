@@ -443,7 +443,7 @@ Mozilla Reps - {{ event.name }}
             {% if request.user not in event.attendees.all() %}
               <div id="event-attend-button" class="large-6 columns align-right">
                 <form method="post" action="{{ url('events_subscribe_to_event', slug=event.slug) }}">
-                  {{ csrf() }}
+                  {% csrf_token %}
                   <button class="small button">
                     {% if event.is_past_event %}
                       I attended this event
@@ -456,7 +456,7 @@ Mozilla Reps - {{ event.name }}
             {% elif request.user != event.owner %}
               <div id="event-attend-button" class="large-6 columns align-right">
                 <form method="post" action="{{ url('events_unsubscribe_from_event', slug=event.slug) }}">
-                  {{ csrf() }}
+                  {% csrf_token %}
                   <button class="small button alert">
                     {% if event.is_past_event %}
                       I missed this event
@@ -620,7 +620,7 @@ Mozilla Reps - {{ event.name }}
                   {% if perms.events.can_delete_event_comments or comment.user == request.user %}
                     <form method="post" action="{{ comment|get_event_comment_delete_url }}"
                           class="delete-comment">
-                      {{ csrf() }}
+                      {% csrf_token %}
                       <button type="submit" class="event-delete-comment">&#215;</button>
                     </form>
                   {% endif %}
@@ -648,7 +648,7 @@ Mozilla Reps - {{ event.name }}
             {% endif %}
             <div id="event-comment-post">
               <form method="post" actions="{{ event_comment_form_url }}">
-                {{ csrf() }}
+                {% csrf_token %}
                 <textarea name="comment" class="flat"
                           placeholder="Add comment to this event"
                           name="past-items"></textarea>
@@ -690,7 +690,7 @@ Mozilla Reps - {{ event.name }}
       <h2>Mail attendees:</h2>
       <form id="email-attendees-form" method="post"
             action="{{ url('email_attendees', slug=event.slug) }}">
-        {{ csrf() }}
+        {% csrf_token %}
         {% for field in email_attendees_form %}
           <p>{{ field }} {{ field.label }}</p>
         {% endfor %}

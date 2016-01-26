@@ -7,7 +7,7 @@
 {% block content %}
 <main role="main" class="reports-main">
   <form id="active-report-form" method="post">
-    {{ csrf() }}
+    {% csrf_token %}
 
     <div class="row">
       {% if report_form.errors %}
@@ -224,7 +224,7 @@
       </p>
         <form method="post"
               action="{{ report.get_absolute_delete_url() }}">
-          {{ csrf() }}
+          {% csrf_token %}
           <button class="large button alert">Delete report</button>
         </form>
     </div>

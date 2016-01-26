@@ -319,7 +319,7 @@
   <p class="lead">Email Reps</p>
   <form id="email-reps-form" method="post"
         action="{{ url('dashboard') }}" class="custom">
-    {{ csrf() }}
+    {% csrf_token %}
     {{ reps_email_form.functional_area }}
     {{ reps_email_form.subject }}
     <br/>
@@ -338,7 +338,7 @@
 <!-- interests modal -->
 <form method="post"
       action="{{ url('dashboard') }}">
-  {{ csrf() }}
+  {% csrf_token %}
   <div id="interests-modal" class="reveal-modal medium">
     <a class="close-reveal-modal">&#215;</a>
     <p class="lead">

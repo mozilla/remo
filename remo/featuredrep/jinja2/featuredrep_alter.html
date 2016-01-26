@@ -4,7 +4,7 @@
 {% block content %}
 <main role="main" class="featured-reps">
   <form method="post" action="{{ post_to }}">
-    {{ csrf() }}
+    {% csrf_token %}
 
     {% if form.errors %}
       <div class="row">

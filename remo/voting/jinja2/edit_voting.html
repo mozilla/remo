@@ -11,7 +11,7 @@
 {% block content %}
 <main role="main" class="voting-main">
   <form method="post">
-    {{ csrf() }}
+    {% csrf_token %}
     <div class="row">
       {% if poll_form.errors or range_poll_formset.errors or radio_poll_formset.errors %}
         <div class="large-12 columns">
@@ -373,7 +373,7 @@
         irreversibly delete this voting.
       </p>
       <form method="post" action="{{ url('voting_delete_voting', slug=poll.slug) }}">
-        {{ csrf() }}
+        {% csrf_token %}
         <button class="button large alert">
           Delete Voting
         </button>
