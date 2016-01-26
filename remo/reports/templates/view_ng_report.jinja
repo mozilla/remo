@@ -1,0 +1,298 @@
+{% extends "base_fd4.jinja" %}
+
+{% block pagetitle %}
+ {{ super() }} - Report by {{ pageuser.get_full_name() }} on
+ {{ report.report_date|strftime('%d %b %Y') }}
+{% endblock %}
+
+{% block content %}
+<main role="main" class="reports-main">
+  <div class="row">
+    <div class="large-8 columns">
+      <h1>Report by {{ pageuser.get_full_name() }} on
+          {{ report.report_date|strftime('%d %b %Y')}}</h1>
+    </div>
+    {% if editable %}
+    <!-- Edit report -->
+      <div class="large-4 columns align-right hide-for-small">
+        <a href="{{ report.get_absolute_edit_url() }}"
+           class="small button">Edit report</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="row">
+    <div class="large-6 columns">
+      <div class="row">
+        <div class="large-1 columns">
+          <div class="pict-icon large tag"></div>
+        </div>
+        <div class="large-11 columns">
+          <h3>
+            <a href="{{ url('profiles_view_profile', user_profile.display_name) }}">
+              {{ report.user.get_full_name() }}
+            </a>
+          </h3>
+          {% if user == pageuser %}
+            <span class="grayed">
+              (that's you!)
+            </span>
+          {% endif %}
+          {% if report.mentor %}
+            <section class="report-item">
+              <h4>Mentored by</h4>
+              <p>
+                <a href="{{ url('profiles_view_profile',
+                                report.mentor.userprofile.display_name) }}">
+                  {{ report.mentor }}
+                </a>
+              </p>
+            </section>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="large-6 columns">
+      <div class="row">
+        <div class="large-1 columns pictogram">
+          <div class="pict-icon large pic"></div>
+        </div>
+        <div class="large-11 columns">
+          <div class="row">
+            <div class="large-4 columns profile-image">
+              <img id="profiles-view-avatar"
+                   src="{{ pageuser|get_avatar_url(128) }}">
+            </div>
+            <div class="large-8 columns smallmap-profile-container">
+              <div id="map" class="smallmap-profile">
+                <img src="{{ get_static_map_url(256, 128, report.longitude, report.latitude, 1) }}"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Campaign participated in -->
+  <div class="row">
+    <div class="large-6 columns">
+      <div class="row report-box">
+        <div class="large-1 columns">
+        </div>
+        <section class="large-11 columns report-item">
+          <h4>Activity</h4>
+          <p>
+            {{ report.activity.name }}
+          </p>
+          {% if report.campaign %}
+            <h4>Initiative</h4>
+            <p>{{ report.campaign.name }}</p>
+          {% endif %}
+        </section>
+      </div>
+      <!-- Activity Date -->
+      <div class="row report-box">
+        <div class="large-1 columns">
+          <div class="pict-icon large time"></div>
+        </div>
+        <section class="large-11 columns report-item">
+          <h4>Date of activity</h4>
+          <time datetime="{{ report.report_date }}">
+            {{ report.report_date|strftime('%d %b %Y') }}
+          </time>
+        </section>
+      </div>
+    </div>
+
+    <!-- Contribution Location -->
+    <div class="large-6 columns">
+      <div class="row report-box">
+        <div class="large-1 columns">
+          <div class="pict-icon large pin"></div>
+        </div>
+        <section class="large-11 columns report-item">
+          <h4>Contribution location</h4>
+            {% if report.location %}
+              <p>
+                {{ report.location }}
+              </p>
+            {% else %}
+              <p>Longitude: {{ report.longitude }}</p>
+              <p>Latitude: {{ report.latitude }}</p>
+            {% endif %}
+        </section>
+      </div>
+      <!-- URL Link -->
+      {% if report.link %}
+        <div class="row report-box">
+          <div class="large-1 columns">
+            <div class="pict-icon large www"></div>
+          </div>
+          <section class="large-11 columns report-item">
+            <h4>URL for activity</h4>
+            <p>
+              <a href="{{ report.link }}" target="_blank">{{ report.link }}</a>
+            </p>
+            <p>{{ report.link_description }}</p>
+          </section>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Contribution Areas -->
+    <div class="large-6 columns">
+      <div class="row report-box">
+          <div class="large-1 columns">
+            <div class="pict-icon large heart"></div>
+          </div>
+          <section class="large-11 columns report-item">
+            {% set functional_areas = report.functional_areas.all() %}
+            <h4>Contribution area{{ functional_areas.count()|pluralize }}</h4>
+            <p>
+              {% for functional_area in functional_areas %}
+                <a href="{{ url('list_ng_reports_rep_functional_area',
+                                report.user.userprofile.display_name,
+                                functional_area.slug) }}">
+                {{ functional_area }}</a>{% if not loop.last %}, {% endif %}
+              {% endfor %}
+            </p>
+          </section>
+      </div>
+    </div>
+    <!-- Description -->
+    {% if report.activity_description %}
+      <div class="large-6 columns">
+        <div class="row report-box">
+          <div class="large-1 columns">
+            <div class="pict-icon large edit"></div>
+          </div>
+          <section class="large-11 columns report-item">
+            <h4>Description of activity</h4>
+            <p class="markdown">
+              {{ report.activity_description|markdown }}
+            </p>
+          </section>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Report verification box -->
+  {% if (user_is_mentor(request.user) or user_is_council(request.user)) and
+         report.activity.is_verifiable %}
+    <form id="view-ngreport-form" method="post"
+          actions="{{ report.get_absolute_url() }}" class="content">
+      {% csrf_token %}
+      <div class="row">
+        <div class="large-6 columns">
+          <div class="row report-box">
+            <div class="large-1 columns">
+              <div class="pict-icon large tick"></div>
+            </div>
+            <section class="large-11 columns report-item">
+              <h4>Report verification</h4>
+              <p>
+                {{ verification_form.verified_activity }}
+                <label for="id_verified_activity">
+                  {{ verification_form.verified_activity.label }}
+                </label>
+                {{ field_errors(verification_form.verified_activity) }}
+              </p>
+              <div class="align-left">
+                <button type="submit" class="small button confirm">
+                  Save
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </form>
+  {% endif %}
+  <!-- End of report verification box -->
+
+  {% if editable %}
+    <!-- Edit report -->
+    <div class="row">
+      <div class="large-12 columns align-right show-for-small">
+        <a href="{{ report.get_absolute_edit_url() }}"
+           class="small button">Edit report</a>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Comments -->
+  {% if report.ngreportcomment_set.exists() or user.is_authenticated() %}
+    <div class="row">
+      <div class="large-12 columns">
+        <div class="row report-box">
+          <div class="columns comment-icon">
+            <div class="pict-icon large talk"></div>
+          </div>
+          <div class="columns report-item comment-item">
+            {% for comment in report.ngreportcomment_set.all() %}
+              <div class="report-comment">
+                {% if perms.reports.delete_ngreportcomment %}
+                  <form method="post" action="{{ comment.get_absolute_delete_url() }}">
+                    {% csrf_token %}
+                    <button type="submit" class="report-delete-comment">&#215;</button>
+                  </form>
+                {% endif %}
+                <span class="label inline">
+                  Comment {{ loop.index }}
+                </span>
+                <span class="grayed">by </span>
+                {% if user_is_mozillian(comment.user) %}
+                  {{ comment.user.get_full_name() }}
+                {% else %}
+                  <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
+                    {{ comment.user.get_full_name() }}
+                  </a>
+                {% endif %}
+                <span class="grayed"
+                      data-time="{{ comment.created_on|format_datetime_iso }}"
+                      title="{{ comment.created_on }}">
+                  at {{ comment.created_on }}
+                </span><br>
+                {{ comment.comment }}
+              </div>
+            {% endfor %}
+            {% if user.is_authenticated() %}
+              <div id="report-comment-post">
+                <form method="post" actions="{{ report.get_absolute_url() }}"
+                      class="custom">
+                  {% csrf_token %}
+                  {{ field_with_attrs(comment_form.comment,
+                                      class="flat",
+                                      placeholder="Add comment to this report") }}
+                  {{ field_errors(comment_form.comment) }}
+                  <div id="post-comment" class="align-right">
+                    <button type="submit" class="small button">
+                      Post comment
+                    </button>
+                  </div>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</main>
+{% endblock %}
+
+{% block endrow %}
+  {% include 'includes/osm_attribution.jinja' %}
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('reports/js/profiles_view_report.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

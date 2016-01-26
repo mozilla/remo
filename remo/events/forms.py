@@ -12,10 +12,10 @@ from django_statsd.clients import statsd
 from pytz import common_timezones, timezone
 
 from remo.base.datetimewidgets import SplitSelectDateTimeWidget
-from remo.base.helpers import get_full_name
+from remo.base.templatetags.helpers import get_full_name
 from remo.base.utils import get_date, get_object_or_none, validate_datetime
 from remo.events.models import EventMetric
-from remo.events.helpers import get_event_link
+from remo.events.templatetags.helpers import get_event_link
 from remo.profiles.models import FunctionalArea
 from remo.reports import ACTIVITY_POST_EVENT_METRICS
 from remo.reports.models import Activity, Campaign, NGReport
@@ -68,8 +68,7 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
             return
 
         # Disable adding new forms in post event form.
-        if ((self.instance.is_past_event and self.instance.has_new_metrics and
-             not self.clone)):
+        if self.instance.is_past_event and self.instance.has_new_metrics and not self.clone:
             if self.extra_forms and len(self.extra_forms) > 2:
                 error_msg = 'You cannot add new metrics in a past event.'
                 raise ValidationError(error_msg)
@@ -79,13 +78,11 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
 
         metrics = []
         field_error_msg = 'This metric has already been selected.'
-        form_error_msg = 'Please correct the form errors.'
         for i, form in enumerate(self.forms):
             if 'metric' in form.cleaned_data:
                 metric = form.cleaned_data['metric']
                 if metric in metrics:
                     self.errors[i]['metric'] = field_error_msg
-                    raise ValidationError({'metric': [form_error_msg]})
                 metrics.append(metric)
 
     def save_existing(self, form, instance, commit=True):
@@ -106,11 +103,9 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
 
 class EventMetricsForm(happyforms.ModelForm):
     """EventMetrics form."""
-    metric = forms.ModelChoiceField(
-        queryset=EventMetric.active_objects.all(),
-        empty_label='Please select an event metric.')
-    expected_outcome = forms.IntegerField(
-        error_messages={'invalid': 'Please enter a number.'})
+    metric = forms.ModelChoiceField(queryset=EventMetric.active_objects.all(),
+                                    empty_label='Please select an event metric.')
+    expected_outcome = forms.IntegerField(error_messages={'invalid': 'Please enter a number.'})
 
     class Meta:
         model = EventMetricOutcome

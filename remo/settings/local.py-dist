@@ -40,6 +40,9 @@ MANAGERS = ADMINS
 # Debugging displays nice error messages, but leaks memory. Set this to False
 # on all server instances and True only for development.
 DEBUG = True
+from .base import TEMPLATES
+for backend in TEMPLATES:
+    backend['OPTIONS']['debug'] = DEBUG
 
 # Disable CSS/JS compression for development
 COMPRESS_ENABLED = False

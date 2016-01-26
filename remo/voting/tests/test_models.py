@@ -101,7 +101,7 @@ class AutomatedRadioPollTest(TestCase):
                 'poll': automated_poll}
         mocked_send_mail.delay.assert_called_once_with(
             subject=subject,
-            email_template='emails/review_budget_notify_council.txt',
+            email_template='emails/review_budget_notify_council.jinja',
             recipients_list=[settings.REPS_COUNCIL_ALIAS],
             data=data)
 

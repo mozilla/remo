@@ -34,7 +34,7 @@ def notify_event_owners_to_input_metrics():
         if not action_item.exists():
             subject = ('[Reminder] Please add the actual metrics for event {0}'
                        .format(event.name))
-            template = 'email/event_creator_notification_to_input_metrics.txt'
+            template = 'email/event_creator_notification_to_input_metrics.jinja'
             data = {'event': event}
             send_remo_mail(subject=subject, email_template=template,
                            recipients_list=[event.owner.id], data=data)

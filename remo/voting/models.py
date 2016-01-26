@@ -226,22 +226,24 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
     subject_start = '[Voting] Cast your vote for "%s" now!' % instance.name
     subject_end = '[Voting] Results for "%s"' % instance.name
 
-    start_template = 'emails/voting_starting_reminder.txt'
-    end_template = 'emails/voting_results_reminder.txt'
+    start_template = 'emails/voting_starting_reminder.jinja'
+    end_template = 'emails/voting_results_reminder.jinja'
+    task_start_id = ''
+    task_end_id = ''
 
     if not instance.task_start_id or instance.is_future_voting:
         start_reminder = send_voting_mail.apply_async(
             eta=instance.start, kwargs={'voting_id': instance.id,
                                         'subject': subject_start,
                                         'email_template': start_template})
-        (Poll.objects.filter(pk=instance.pk)
-                     .update(task_start_id=start_reminder.task_id))
+        task_start_id = start_reminder.task_id
     end_reminder = send_voting_mail.apply_async(
         eta=instance.end, kwargs={'voting_id': instance.id,
                                   'subject': subject_end,
                                   'email_template': end_template})
-    (Poll.objects.filter(pk=instance.pk)
-                 .update(task_end_id=end_reminder.task_id))
+    task_end_id = end_reminder.task_id
+    Poll.objects.filter(pk=instance.pk).update(task_start_id=task_start_id,
+                                               task_end_id=task_end_id)
 
 
 @receiver(post_save, sender=Poll,
@@ -249,7 +251,7 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
 def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
     """Send email reminders when a vote starts/ends."""
     if instance.automated_poll and created:
-        template = 'emails/review_budget_notify_council.txt'
+        template = 'emails/review_budget_notify_council.jinja'
         subject = (u'Discuss [Bug {id}] - {summary}'
                    .format(id=instance.bug.bug_id,
                            summary=unicode(instance.bug.summary)))
@@ -288,7 +290,7 @@ def automated_poll(sender, instance, **kwargs):
 
     remobot = User.objects.get(username='remobot')
 
-    with transaction.commit_on_success():
+    with transaction.atomic():
         poll = (Poll.objects
                 .create(name=instance.summary,
                         description=instance.first_comment,
@@ -318,7 +320,7 @@ def email_commenters_on_add_poll_comment(sender, instance, **kwargs):
     poll = instance.poll
     if poll.comments_allowed:
         subject = '[Voting] User {0} commented on {1}'
-        email_template = 'emails/user_notification_on_add_poll_comment.txt'
+        email_template = 'emails/user_notification_on_add_poll_comment.jinja'
 
         # Send an email to all users commented so far on the poll except from
         # the user who made the comment. Dedup the list with unique IDs.

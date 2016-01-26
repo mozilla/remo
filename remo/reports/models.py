@@ -306,7 +306,7 @@ class NGReportComment(models.Model):
           dispatch_uid='create_passive_attendance_report_signal')
 def create_passive_attendance_report(sender, instance, **kwargs):
     """Automatically create a passive report after event attendance save."""
-    from remo.events.helpers import get_event_link
+    from remo.events.templatetags.helpers import get_event_link
 
     if instance.user.groups.filter(name='Rep').exists():
         activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
@@ -334,7 +334,7 @@ def create_passive_attendance_report(sender, instance, **kwargs):
           dispatch_uid='create_update_passive_event_creation_report_signal')
 def create_update_passive_event_report(sender, instance, created, **kwargs):
     """Automatically create/update a passive report on event creation."""
-    from remo.events.helpers import get_event_link
+    from remo.events.templatetags.helpers import get_event_link
 
     attrs = {
         'report_date': instance.start.date(),
@@ -417,7 +417,7 @@ def update_passive_report_functional_areas(sender, instance, action, pk_set,
 def email_commenters_on_add_ng_report_comment(sender, instance, **kwargs):
     """Email a user when a comment is added to a continuous report instance."""
     subject = '[Report] User {0} commented on {1}'
-    email_template = 'emails/user_notification_on_add_ng_report_comment.txt'
+    email_template = 'emails/user_notification_on_add_ng_report_comment.jinja'
     report = instance.report
 
     # Send an email to all users commented so far on the report except fom

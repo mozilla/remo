@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 
 from remo.api.serializers import BaseKPISerializer
-from remo.base.helpers import absolutify
+from remo.base.templatetags.helpers import absolutify
 from remo.profiles.models import FunctionalArea, UserProfile
 
 
@@ -41,6 +41,8 @@ class UserProfileDetailedSerializer(serializers.HyperlinkedModelSerializer):
     groups = GroupSerializer(source='user.groups', many=True)
     functional_areas = FunctionalAreaSerializer(many=True)
     remo_url = serializers.SerializerMethodField()
+    date_joined_program = serializers.DateTimeField(format='%Y-%m-%d')
+    date_left_program = serializers.DateTimeField(format='%Y-%m-%d')
 
     class Meta:
         model = UserProfile

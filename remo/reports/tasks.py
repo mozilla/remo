@@ -51,7 +51,7 @@ def send_report_digest():
         ctx_data = {'mentor': mentor,
                     'reports': reports_for_mentor,
                     'datestring': datestring}
-        message = render_to_string('emails/report_digest.txt', ctx_data)
+        message = render_to_string('emails/report_digest.jinja', ctx_data)
         # Manually replace quotes and double-quotes as these get
         # escaped by the template and this makes the message look bad.
         message = message.replace('&#34;', '"').replace('&#39;', "'")

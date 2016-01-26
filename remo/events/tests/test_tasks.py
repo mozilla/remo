@@ -19,7 +19,7 @@ class SendEventNotificationsTests(RemoTestCase):
 
         subject = ('[Reminder] Please add the actual metrics for event {0}'
                    .format(event.name))
-        template = 'email/event_creator_notification_to_input_metrics.txt'
+        template = 'email/event_creator_notification_to_input_metrics.jinja'
 
         with patch('remo.events.tasks.send_remo_mail') as mail_mock:
             notify_event_owners_to_input_metrics()

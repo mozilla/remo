@@ -13,7 +13,7 @@ from django_browserid.auth import default_username_algo
 from product_details import product_details
 from pytz import common_timezones
 
-from remo.base.helpers import user_is_rep
+from remo.base.templatetags.helpers import user_is_rep
 from remo.base.utils import get_date
 from remo.profiles.models import FunctionalArea, UserProfile, UserStatus
 

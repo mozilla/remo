@@ -4,11 +4,12 @@ import logging
 import os
 
 from django.utils.functional import lazy
+from django_jinja.builtins import DEFAULT_EXTENSIONS
 from django_sha2 import get_password_hashers
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-ROOT = BASE_DIR
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+path = lambda *a: os.path.abspath(os.path.join(ROOT, *a))  # noqa
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'remo.urls'
 DEV = False
@@ -33,6 +34,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'session_csrf',
+    'compressor',
     # Project specific apps
     'remo.base',
     'remo.profiles',
@@ -58,7 +60,65 @@ MIDDLEWARE_CLASSES = (
     'waffle.middleware.WaffleMiddleware'
 )
 
+# Media and static files settings
+STATIC_ROOT = path('static')
+STATIC_URL = '/static/'
+
+# Storage of static files
+COMPRESS_ROOT = STATIC_ROOT
+COMPRESS_CSS_FILTERS = (
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter'
+)
+COMPRESS_PRECOMPILERS = (
+    ('text/less', 'lessc {infile} {outfile}'),
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+# Absolute path to the directory that holds media.
+MEDIA_ROOT = path('media')
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+MEDIA_URL = '/media/'
+
 SESSION_COOKIE_SECURE = not DEBUG
+
+# Instruct session-csrf to always produce tokens for anonymous users
+ANON_ALWAYS = True
+
+FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
+
+ADMINS = (
+    ('Mozilla Reps Devs', 'reps-dev@mozilla.com'),
+)
+
+MANAGERS = ADMINS
+
+ETHERPAD_URL = 'https://public.etherpad-mozilla.org/p/'
+ETHERPAD_PREFIX = 'remo-'
+
+CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
+                  'event/?callbackurl=%(callbackurl)s')
+
+
+REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
+REPS_COUNCIL_ALIAS = 'reps-council@mozilla.com'
+
+# Mozillians API
+MOZILLIANS_API_BASE = 'https://mozillians.org'
+
+ALLOWED_HOSTS = ['reps.mozilla.org']
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+# Statsd Graphite
+STATSD_CLIENT = 'django_statsd.clients.normal'
+MAPBOX_TOKEN = 'examples.map-i86nkdio'
+
+SERVER_EMAIL = 'reps-dev@mozilla.com'
 
 CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -74,6 +134,27 @@ CONTEXT_PROCESSORS = (
 
 TEMPLATES = [
     {
+        'BACKEND': 'django_jinja.backend.Jinja2',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'match_extension': '.jinja',
+            'newstyle_gettext': True,
+            'context_processors': CONTEXT_PROCESSORS,
+            'undefined': 'jinja2.Undefined',
+            'extensions': DEFAULT_EXTENSIONS + [
+                'compressor.contrib.jinja2ext.CompressorExtension',
+                'waffle.jinja.WaffleExtension',
+                'caching.ext.cache'
+            ],
+            'globals': {
+                'browserid_info': 'django_browserid.helpers.browserid_info',
+                'browserid_login': 'django_browserid.helpers.browserid_login',
+                'browserid_logout': 'django_browserid.helpers.browserid_logout',
+                'browserid_js': 'django_browserid.helpers.browserid_js'
+            }
+        }
+    },
+    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'APP_DIRS': True,
         'OPTIONS': {
@@ -81,6 +162,11 @@ TEMPLATES = [
         }
     },
 ]
+
+
+def COMPRESS_JINJA2_GET_ENVIRONMENT():
+    from django.template import engines
+    return engines['jinja2'].env
 
 WSGI_APPLICATION = 'remo.wsgi.application'
 
@@ -104,9 +190,17 @@ HMAC_KEYS = {
 
 PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
 
+AUTHENTICATION_BACKENDS = [
+    'django_browserid.auth.BrowserIDBackend',
+    'django.contrib.auth.backends.ModelBackend'
+]
 # Django-CSP
 CSP_DEFAULT_SRC = (
     "'self'",
+    'https://*.mozilla.org',
+    'http://*.mapbox.com',
+    'https://*.mapbox.com',
+    'https://*.persona.org',
 )
 CSP_FONT_SRC = (
     "'self'",
@@ -114,28 +208,50 @@ CSP_FONT_SRC = (
     'https://*.mozilla.net',
     'http://*.mozilla.org',
     'https://*.mozilla.org',
+    'https://mozorg.cdn.mozilla.net',
+    'http://mozorg.cdn.mozilla.net',
 )
 CSP_IMG_SRC = (
     "'self'",
+    'data:',
     'http://*.mozilla.net',
     'https://*.mozilla.net',
     'http://*.mozilla.org',
     'https://*.mozilla.org',
+    '*.google-analytics.com',
+    '*.gravatar.com',
+    '*.wp.com',
+    'https://*.libravatar.org',
+    'http://*.mapbox.com',
+    'https://*.mapbox.com',
 )
 CSP_SCRIPT_SRC = (
     "'self'",
-    'http://*.mozilla.org',
-    'https://*.mozilla.org',
+    "'unsafe-eval'",  # TODO: remove this by pre-compiling handlebars
+    'http://www.mozilla.org',
+    'https://www.mozilla.org',
     'http://*.mozilla.net',
     'https://*.mozilla.net',
+    'https://*.google-analytics.com',
+    'https://login.persona.org',
+    'http://*.mapbox.com',
+    'https://*.mapbox.com',
 )
+
 CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
-    'http://*.mozilla.org',
-    'https://*.mozilla.org',
+    'http://www.mozilla.org',
+    'https://www.mozilla.org',
     'http://*.mozilla.net',
     'https://*.mozilla.net',
+    'http://*.mapbox.com',
+    'https://*.mapbox.com',
+)
+
+CSP_CHILD_SRC = (
+    "'self'",
+    'https://login.persona.org',
 )
 
 LOG_LEVEL = logging.INFO
@@ -210,7 +326,7 @@ COMPRESS_OFFLINE = True
 
 def _request_args():
     from django.conf import settings
-    from tower import ugettext_lazy as _lazy
+    from django.utils.translation import ugettext_lazy as _lazy
 
     args = {'siteName': _lazy('Mozilla Reps'), }
 
@@ -245,10 +361,13 @@ REST_FRAMEWORK = {
         'rest_framework.filters.DjangoFilterBackend',
         'rest_framework.filters.OrderingFilter',
     ),
+    'DATE_FORMAT': None,
+    'TIME_FORMAT': None,
+    'DATETIME_FORMAT': None,
 }
 
 # URL constants
-GRAVATAR_URL = 'https://seccdn.libravatar.org/avatar/'
+LIBRAVATAR_URL = 'https://seccdn.libravatar.org/avatar/'
 
 # Django-Cache-Machine
 CACHE_INVALIDATE_ON_CREATE = 'whole-model'

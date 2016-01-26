@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
-from remo.base.helpers import urlparams
+from remo.base.templatetags.helpers import urlparams
 from remo.base.utils import get_object_or_none
 
 

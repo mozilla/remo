@@ -3,13 +3,7 @@ import os
 from .base import *  # noqa
 
 
-if os.environ.get('VCAP_APPLICATION'):
-    # This is a stackato env, load stackato settings.
-    try:
-        from .localstackato import *  # noqa
-    except ImportError as exc:
-        raise Exception('Error importing stackato local settings: %s' % exc)
-elif os.environ.get('TRAVIS'):
+if os.environ.get('TRAVIS'):
     try:
         from .localtravis import *  # noqa
     except ImportError as exc:

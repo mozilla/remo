@@ -292,7 +292,7 @@ def user_status_email_reminder(sender, instance, created, raw, **kwargs):
 
     if created:
         subject_rep = 'Confirm if you are available for Reps activities'
-        rep_template = 'emails/rep_availability_reminder.txt'
+        rep_template = 'emails/rep_availability_reminder.jinja'
         notification_datetime = datetime.datetime.combine(
             instance.expected_date - datetime.timedelta(days=1),
             datetime.datetime.min.time())
@@ -315,7 +315,7 @@ def user_status_email_reminder(sender, instance, created, raw, **kwargs):
                     'subject': subject_rep,
                     'data': data})
         if mentor_profile:
-            mentor_template = 'emails/mentor_availability_reminder.txt'
+            mentor_template = 'emails/mentor_availability_reminder.jinja'
             subject_mentor = ('Reach out to {0} - '
                               'expected to be available again'
                               .format(instance.user.get_full_name()))
@@ -399,7 +399,7 @@ def email_mentor_notification(sender, instance, raw, **kwargs):
 
     if user_profile.mentor != instance.mentor:
         subject = '[Reps] Mentor reassignment.'
-        email_template = 'emails/mentor_change_notification.txt'
+        email_template = 'emails/mentor_change_notification.jinja'
         mentors_recipients = [user_profile.mentor.id, instance.mentor.id]
         rep_recipient = [instance.user.id]
         ctx_data = {'rep_user': instance.user,
