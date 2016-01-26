@@ -16,7 +16,7 @@ from tastypie.resources import ModelResource
 
 from remo.api import HttpCache, RemoAPIThrottle, RemoThrottleMixin
 from remo.base.serializers import CSVSerializer
-from remo.profiles.helpers import get_avatar_url
+from remo.profiles.templatetags.helpers import get_avatar_url
 from remo.profiles.models import UserProfile, FunctionalArea
 from remo.reports.models import NGReport
 from remo.reports.utils import get_last_report

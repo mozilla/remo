@@ -17,10 +17,10 @@ from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from django_statsd.clients import statsd
-from funfactory.helpers import urlparams
 
 import forms
 from remo.base.decorators import permission_check
+from remo.base.templatetags.helpers import urlparams
 from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_or_create_instance
 from remo.events.models import Attendance, Event, EventComment

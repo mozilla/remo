@@ -10,11 +10,10 @@ from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 
 from django_statsd.clients import statsd
-from funfactory.helpers import urlparams
 
 import forms
-
 from remo.base.decorators import permission_check
+from remo.base.templatetags.helpers import urlparams
 from remo.base.utils import month2number
 from remo.profiles.models import FunctionalArea, UserProfile
 from remo.reports import ACTIVITY_CAMPAIGN, UNLISTED_ACTIVITIES

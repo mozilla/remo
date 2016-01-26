@@ -13,7 +13,7 @@ import forms
 from remo.base.decorators import permission_check
 from remo.base.utils import get_or_create_instance
 from remo.profiles.models import UserProfile
-from remo.voting.helpers import user_has_poll_permissions
+from remo.voting.templatetags.helpers import user_has_poll_permissions
 from remo.voting.models import Poll, PollComment, RadioPoll, RangePoll, Vote
 
 

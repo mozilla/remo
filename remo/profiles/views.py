@@ -16,12 +16,12 @@ from django.views.decorators.cache import cache_control, never_cache
 import waffle
 from django_statsd.clients import statsd
 from django_browserid.auth import default_username_algo
-from funfactory.helpers import urlparams
 from product_details import product_details
 
 import forms
 
 from remo.base.decorators import permission_check
+from remo.base.templatetags.helpers import urlparams
 from remo.events.utils import get_events_for_user
 from remo.profiles.models import UserProfile, UserStatus
 from remo.profiles.models import FunctionalArea

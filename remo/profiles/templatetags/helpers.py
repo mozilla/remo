@@ -6,9 +6,9 @@ from datetime import timedelta
 from django.utils import timezone
 
 from django.conf import settings
-from jingo import register
+from django_jinja import library
 
-from remo.base.helpers import urlparams
+from remo.base.templatetags.helpers import urlparams
 from remo.profiles.models import FunctionalArea, UserAvatar
 from remo.reports.utils import get_last_report
 
@@ -17,7 +17,7 @@ INACTIVE_HIGH = timedelta(weeks=8)
 INACTIVE_LOW = timedelta(weeks=4)
 
 
-@register.filter
+@library.filter
 def get_avatar_url(user, size=50):
     """Get a url pointing to user's avatar.
 
@@ -49,7 +49,7 @@ def get_avatar_url(user, size=50):
     return avatar_url
 
 
-@register.filter
+@library.filter
 def get_functional_area(name):
     """Return the Functional Area object given the name."""
     try:
@@ -58,7 +58,7 @@ def get_functional_area(name):
         return None
 
 
-@register.filter
+@library.filter
 def get_activity_level(user):
     """Return user's inactivity level."""
     last_report = get_last_report(user)

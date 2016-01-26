@@ -1,26 +1,26 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
-from jingo import register
+from django_jinja import library
 
-from remo.base.helpers import urlparams
+from remo.base.templatetags.helpers import urlparams
 
 
-@register.filter
+@library.filter
 def get_event_converted_visitor_callback_url(obj):
     """Return event converted visitor callback url."""
     return settings.SITE_URL + reverse('events_count_converted_visitors',
                                        kwargs={'slug': obj.slug})
 
 
-@register.function
+@library.global_function
 def get_link_to_osm(lat, lon, zoom=15):
     """Return link to OSM centered in lat, lon."""
     return ('http://openstreetmap.org/?mlat=%(lat)s&mlon=%(lon)s'
             '&zoom=%(zoom)s' % {'lat': lat, 'lon': lon, 'zoom': zoom})
 
 
-@register.function
+@library.global_function
 def get_link_to_gmaps(lat, lon, label='', zoom=15):
     """Return link to gmaps map centered in lat, lon."""
     return ('https://maps.google.com/maps?ll=%(lat)s,%(lon)s'
@@ -30,7 +30,7 @@ def get_link_to_gmaps(lat, lon, label='', zoom=15):
                                                             'zoom': zoom})
 
 
-@register.function
+@library.global_function
 def get_attendee_role_event(attendee, event):
     """Return attendee's role in event."""
     if attendee == event.owner:
@@ -45,7 +45,7 @@ def get_attendee_role_event(attendee, event):
     return 'Rep attendee'
 
 
-@register.function
+@library.global_function
 def is_multiday(start, end):
     """Return True if event is multiday.
 
@@ -58,7 +58,7 @@ def is_multiday(start, end):
                           ['year', 'month', 'day']))
 
 
-@register.function
+@library.global_function
 def get_sorted_attendance_list(event):
     """Sorts attendance list by last_name, first_name and always
     places owner on the top.
@@ -74,13 +74,13 @@ def get_sorted_attendance_list(event):
     return attendees
 
 
-@register.filter
+@library.filter
 def get_total_attendees(event):
     """Return the total number of people attending an event."""
     return event.attendees.all().count()
 
 
-@register.function
+@library.global_function
 def get_contribute_link(event):
     """Returns custom link to m.o/contribute."""
 
@@ -90,7 +90,7 @@ def get_contribute_link(event):
                                      kwargs={'slug': event.slug}))})
 
 
-@register.filter
+@library.filter
 def get_event_comment_delete_url(obj):
     """Return the delete url of an event comment."""
 
@@ -99,7 +99,7 @@ def get_event_comment_delete_url(obj):
                            'pk': obj.id})
 
 
-@register.function
+@library.global_function
 def get_event_filtered_url(category=None, initiative=None):
     """Returns events list page of given category or initiative."""
 
@@ -112,7 +112,7 @@ def get_event_filtered_url(category=None, initiative=None):
         return url
 
 
-@register.function
+@library.global_function
 def get_event_search_link(search):
     """Returns events list page with the given search term."""
 
@@ -120,7 +120,7 @@ def get_event_search_link(search):
     return urlparams(url, '/search/%s/' % search.lower())
 
 
-@register.function
+@library.global_function
 def get_event_link(event):
     """Returns events url."""
 

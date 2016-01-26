@@ -306,7 +306,7 @@ class NGReportComment(models.Model):
           dispatch_uid='create_passive_attendance_report_signal')
 def create_passive_attendance_report(sender, instance, **kwargs):
     """Automatically create a passive report after event attendance save."""
-    from remo.events.helpers import get_event_link
+    from remo.events.templatetags.helpers import get_event_link
 
     if instance.user.groups.filter(name='Rep').exists():
         activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
@@ -334,7 +334,7 @@ def create_passive_attendance_report(sender, instance, **kwargs):
           dispatch_uid='create_update_passive_event_creation_report_signal')
 def create_update_passive_event_report(sender, instance, created, **kwargs):
     """Automatically create/update a passive report on event creation."""
-    from remo.events.helpers import get_event_link
+    from remo.events.templatetags.helpers import get_event_link
 
     attrs = {
         'report_date': instance.start.date(),

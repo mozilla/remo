@@ -12,6 +12,7 @@ import os
 
 import dj_database_url
 from decouple import Csv, config
+from django_jinja.builtins import DEFAULT_EXTENSIONS
 from django_sha2 import get_password_hashers
 
 
@@ -123,7 +124,29 @@ CONTEXT_PROCESSORS = (
 
 TEMPLATES = [
     {
+        'BACKEND': 'django_jinja.backend.Jinja2',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'app_dirname': 'jinja2',
+            # Don't match loaders based on file extension
+            'match_extension': None,
+            'newstyle_gettext': True,
+            'context_processors': CONTEXT_PROCESSORS,
+            'undefined': 'jinja2.Undefined',
+            'extensions': DEFAULT_EXTENSIONS + [
+                'pipeline.jinja2.PipelineExtension',
+            ],
+            'globals': {
+                'browserid_info': 'django_browserid.helpers.browserid_info',
+                'browserid_login': 'django_browserid.helpers.browserid_login',
+                'browserid_logout': 'django_browserid.helpers.browserid_logout'
+            }
+        }
+    },
+    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': CONTEXT_PROCESSORS

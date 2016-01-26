@@ -1,13 +1,13 @@
 from django.db.models import Q
 from django.contrib.auth.models import User
 
-from jingo import register
+from django_jinja import library
 
 from remo.base.utils import get_object_or_none
 from remo.voting.models import Vote
 
 
-@register.filter
+@library.filter
 def get_users_voted(poll):
     """Return the number of users voted to the specific poll."""
 
@@ -20,7 +20,7 @@ def get_voters_per_group(poll):
     return User.objects.filter(groups=poll.valid_groups).count()
 
 
-@register.filter
+@library.filter
 def get_meter_value(poll):
     """Return the actual value for the meter element."""
 
@@ -33,7 +33,7 @@ def get_meter_value(poll):
         return 0
 
 
-@register.function
+@library.global_function
 def user_has_poll_permissions(user, poll):
     """Check if a user's group has permissions for a specific poll."""
 
@@ -43,14 +43,14 @@ def user_has_poll_permissions(user, poll):
     return False
 
 
-@register.function
+@library.global_function
 def user_has_voted(user, poll):
     if Vote.objects.filter(poll=poll, user=user).exists():
         return True
     return False
 
 
-@register.function
+@library.global_function
 def get_nominee(full_name):
     first_name, last_name = full_name.rsplit(' ', 1)
     q_params = {'first_name': first_name,
