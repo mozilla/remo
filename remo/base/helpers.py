@@ -9,10 +9,8 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.contrib.markup.templatetags import markup
 from django.core.urlresolvers import reverse
 from django.template import defaultfilters
-from django.template.defaultfilters import pluralize
 from django.template.loader import render_to_string
 from django.utils.encoding import smart_str
 from django.utils.html import strip_tags
@@ -20,8 +18,9 @@ from django.utils.html import strip_tags
 import jinja2
 from Crypto.Cipher import AES
 from jingo import register
-from jinja2 import Markup
 from product_details import product_details
+
+from remo.base import utils
 
 
 AES_PADDING = 16
@@ -99,7 +98,7 @@ def static(path):
 @register.filter
 def markdown(text):
     """Return text rendered as Markdown."""
-    return Markup(markup.markdown(text, 'safe'))
+    return jinja2.Markup(markdown(text, 'safe'))
 
 
 @register.filter
@@ -204,7 +203,7 @@ def mailhide(value):
               """height=300'); return false;" title="Reveal this e-mail"""
               """ address">%(email)s...@%(domain)s</a>""") % args
 
-    return Markup(result)
+    return jinja2.Markup(result)
 
 
 @register.filter
@@ -236,7 +235,7 @@ def field_with_attrs(bfield, **kwargs):
 @register.function
 def field_errors(field):
     """Return string with rendered template with field errors."""
-    return Markup(render_to_string('form-error.html', {'field': field}))
+    return jinja2.Markup(render_to_string('form-error.html', {'field': field}))
 
 
 @register.function
@@ -353,4 +352,4 @@ def get_country_code(country_name):
     return COUNTRIES_NAME_TO_CODE.get(country_name.lower(), '')
 
 
-register.filter(pluralize)
+register.filter(defaultfilters.pluralize)

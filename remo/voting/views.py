@@ -84,10 +84,10 @@ def edit_voting(request, slug=None):
     else:
         RangePollFormset = (inlineformset_factory(Poll, RangePoll,
                             formset=forms.BaseRangePollInlineFormSet,
-                            extra=extra_range_polls, can_delete=True))
+                            extra=extra_range_polls, can_delete=True, fields='__all__'))
         RadioPollFormset = (inlineformset_factory(Poll, RadioPoll,
                             formset=forms.BaseRadioPollInlineFormSet,
-                            extra=extra_radio_polls, can_delete=True))
+                            extra=extra_radio_polls, can_delete=True, fields='__all__'))
 
         range_poll_formset = RangePollFormset(request.POST or None,
                                               instance=poll,

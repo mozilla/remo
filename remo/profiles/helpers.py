@@ -1,3 +1,4 @@
+import hashlib
 import urlparse
 
 from datetime import timedelta
@@ -5,11 +6,9 @@ from datetime import timedelta
 from django.utils import timezone
 
 from django.conf import settings
-from funfactory.helpers import urlparams
 from jingo import register
 
-from libravatar import libravatar_url
-
+from remo.base.helpers import urlparams
 from remo.profiles.models import FunctionalArea, UserAvatar
 from remo.reports.utils import get_last_report
 
@@ -39,7 +38,8 @@ def get_avatar_url(user, size=50):
     now = timezone.now()
 
     if (user_avatar.last_update < now - timedelta(days=7)) or created:
-        user_avatar.avatar_url = libravatar_url(email=user.email, https=True)
+        email_hash = hashlib.md5(user.email.encode('utf-8').strip().lower()).hexdigest()
+        user_avatar.avatar_url = settings.GRAVATAR_URL + email_hash
         user_avatar.save()
 
     avatar_url = urlparams(user_avatar.avatar_url, default=default_img_url)

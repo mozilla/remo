@@ -16,11 +16,8 @@ from django_sha2 import get_password_hashers
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-ROOT = os.path.dirname(os.path.join(BASE_DIR, '..'))
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+ROOT = BASE_DIR
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
@@ -33,9 +30,25 @@ HMAC_KEYS = {
     '2015-12-15': config('DJANGO_HMAC_KEY'),
 }
 
-
 # Application definition
 INSTALLED_APPS = [
+    # Django apps
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # Third party apps
+    'django_jinja',
+    'django_browserid',
+    'tastypie',
+    'waffle',
+    'import_export',
+    'django_nose',
+    'django_filters',
+    'rest_framework',
+    'session_csrf',
     # Project specific apps
     'remo.base',
     'remo.profiles',
@@ -46,24 +59,6 @@ INSTALLED_APPS = [
     'remo.api',
     'remo.events',
     'remo.voting',
-
-    # Third party apps
-    'django_jinja',
-    'django_browserid',
-    'tastypie',
-    'waffle',
-    'import_export',
-    'django_nose',
-    'django_filters',
-    'rest_framework',
-
-    # Django apps
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
 ]
 
 for app in config('EXTRA_APPS', default='', cast=Csv()):
@@ -96,17 +91,16 @@ DATABASES = {
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
-
 LANGUAGE_CODE = config('LANGUAGE_CODE', default='en-us')
 TIME_ZONE = config('TIME_ZONE', default='UTC')
 USE_I18N = config('USE_I18N', default=False, cast=bool)
 USE_L10N = config('USE_L10N', default=False, cast=bool)
 USE_TZ = config('USE_TZ', default=True, cast=bool)
 
+# Media and static files settings
 STATIC_ROOT = config('STATIC_ROOT', default=os.path.join(BASE_DIR, 'static'))
 STATIC_URL = config('STATIC_URL', '/static/')
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-
 MEDIA_ROOT = config('MEDIA_ROOT', default=os.path.join(BASE_DIR, 'media'))
 MEDIA_URL = config('MEDIA_URL', '/media/')
 
@@ -115,35 +109,24 @@ SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=not DEBUG, cast=
 LOGGING_CONFIG = None
 LOGGING = {}
 
+CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.template.context_processors.debug',
+    'django.template.context_processors.request',
+    'session_csrf.context_processor',
+    'django.template.context_processors.media',
+    'django.template.context_processors.static',
+    'django.template.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'remo.base.context_processors.globals',
+)
+
 TEMPLATES = [
-    {
-        'BACKEND': 'django_jinja.backend.Jinja2',
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'match_extension': '.html',
-            'app_dirname': 'templates/jinja2',
-            'newstyle_gettext': True,
-            'context_processors': [
-                'session_csrf.context_processor',
-            ],
-            'debug': False
-        }
-    },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': [
-                'django.contrib.auth.context_processors.auth',
-                'django.template.context_processors.debug',
-                'django.template.context_processors.i18n',
-                'django.template.context_processors.media',
-                'django.template.context_processors.static',
-                'django.template.context_processors.tz',
-                'django.contrib.messages.context_processors.messages',
-                'session_csrf.context_processor',
-            ],
-            'debug': False
+            'context_processors': CONTEXT_PROCESSORS
         }
     },
 ]
@@ -200,3 +183,6 @@ CSP_STYLE_SRC = (
 
 # This is needed to get a CRSF token in /admin
 ANON_ALWAYS = True
+
+# URL constants
+GRAVATAR_URL = 'https://seccdn.libravatar.org/avatar/'
