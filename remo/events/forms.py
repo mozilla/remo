@@ -1,4 +1,3 @@
-import happyforms
 from django import forms
 from django.db.models import Q
 from django.conf import settings
@@ -104,7 +103,7 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
         return super(BaseEventMetricsFormset, self).save()
 
 
-class EventMetricsForm(happyforms.ModelForm):
+class EventMetricsForm(forms.ModelForm):
     """EventMetrics form."""
     metric = forms.ModelChoiceField(
         queryset=EventMetric.active_objects.all(),
@@ -152,7 +151,7 @@ class PostEventMetricsForm(EventMetricsForm):
             self.fields['expected_outcome'].widget.attrs['readonly'] = True
 
 
-class EventForm(happyforms.ModelForm):
+class EventForm(forms.ModelForm):
     """Form of an event."""
     categories = forms.ChoiceField(choices=[])
     country = forms.ChoiceField(
@@ -395,7 +394,7 @@ class PostEventForm(EventForm):
         self.fields['estimated_attendance'].widget.attrs['readonly'] = True
 
 
-class EventCommentForm(happyforms.ModelForm):
+class EventCommentForm(forms.ModelForm):
     """Form of an event comment."""
 
     class Meta:
@@ -403,7 +402,7 @@ class EventCommentForm(happyforms.ModelForm):
         fields = ['comment']
 
 
-class EventMetricForm(happyforms.ModelForm):
+class EventMetricForm(forms.ModelForm):
     """Form for EventMetric Model."""
 
     class Meta:

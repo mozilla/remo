@@ -1,5 +1,3 @@
-import happyforms
-
 from django import forms
 from django.db.models import Q
 from django.contrib.auth.models import Group, User
@@ -8,13 +6,13 @@ from django.db.models import F
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from django.utils.timezone import now, utc
 
-from datetimewidgets import SplitSelectDateTimeWidget
+from remo.base.datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.utils import validate_datetime
 from models import (Poll, PollComment, RadioPoll,
                     RadioPollChoice, RangePoll, RangePollChoice)
 
 
-class PollCommentForm(happyforms.ModelForm):
+class PollCommentForm(forms.ModelForm):
     """Form of a poll comment."""
 
     class Meta:
@@ -23,7 +21,7 @@ class PollCommentForm(happyforms.ModelForm):
         widgets = {'comment': forms.TextInput()}
 
 
-class RangePollChoiceVoteForm(happyforms.Form):
+class RangePollChoiceVoteForm(forms.Form):
     """Range voting vote form."""
 
     def __init__(self, choices, *args, **kwargs):
@@ -57,7 +55,7 @@ class RangePollChoiceVoteForm(happyforms.Form):
              .filter(pk=nominee_id).update(votes=F('votes')+int(votes)))
 
 
-class RadioPollChoiceVoteForm(happyforms.Form):
+class RadioPollChoiceVoteForm(forms.Form):
     """Radio voting vote form."""
 
     def __init__(self, radio_poll, user=None, *args, **kwargs):
@@ -91,7 +89,7 @@ class RadioPollChoiceVoteForm(happyforms.Form):
                                            comment=comment)
 
 
-class PollEditForm(happyforms.ModelForm):
+class PollEditForm(forms.ModelForm):
     """Poll Edit Form."""
     name = forms.CharField(required=True)
     end = forms.DateTimeField(required=False)

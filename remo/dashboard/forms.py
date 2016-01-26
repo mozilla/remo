@@ -1,5 +1,3 @@
-import happyforms
-
 from django import forms
 from django.contrib import messages
 
@@ -31,7 +29,7 @@ class EmailRepsForm(BaseEmailUsersForm):
             messages.error(request, 'Email not sent. An error occured.')
 
 
-class TrackFunctionalAreasForm(happyforms.ModelForm):
+class TrackFunctionalAreasForm(forms.ModelForm):
     """Form for tracking interests in functional areas for Mozillians."""
 
     class Meta:
