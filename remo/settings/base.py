@@ -176,6 +176,7 @@ PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
 # Django-CSP
 CSP_DEFAULT_SRC = (
     "'self'",
+    'https://*.mozilla.org',
 )
 CSP_FONT_SRC = (
     "'self'",
@@ -186,6 +187,8 @@ CSP_FONT_SRC = (
 )
 CSP_IMG_SRC = (
     "'self'",
+    'https://*.gravatar.com',
+    'https://*.wp.com',
     'http://*.mozilla.net',
     'https://*.mozilla.net',
     'http://*.mozilla.org',
@@ -197,14 +200,21 @@ CSP_SCRIPT_SRC = (
     'https://*.mozilla.org',
     'http://*.mozilla.net',
     'https://*.mozilla.net',
+    'https://login.persona.org',
+    'http://*.mapbox.com',
 )
+
 CSP_STYLE_SRC = (
     "'self'",
-    "'unsafe-inline'",
     'http://*.mozilla.org',
     'https://*.mozilla.org',
     'http://*.mozilla.net',
     'https://*.mozilla.net',
+)
+
+CSP_CHILD_SRC = (
+    "'self'",
+    'https://login.persona.org',
 )
 
 # This is needed to get a CRSF token in /admin
