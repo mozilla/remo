@@ -156,6 +156,10 @@ PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
 # Django-CSP
 CSP_DEFAULT_SRC = (
     "'self'",
+    'https://*.mozilla.org',
+    'http://*.mapbox.com',
+    'https://*.mapbox.com',
+    'https://*.persona.org',
 )
 CSP_FONT_SRC = (
     "'self'",
@@ -163,28 +167,50 @@ CSP_FONT_SRC = (
     'https://*.mozilla.net',
     'http://*.mozilla.org',
     'https://*.mozilla.org',
+    'https://mozorg.cdn.mozilla.net',
+    'http://mozorg.cdn.mozilla.net',
 )
 CSP_IMG_SRC = (
     "'self'",
+    'data:',
     'http://*.mozilla.net',
     'https://*.mozilla.net',
     'http://*.mozilla.org',
     'https://*.mozilla.org',
+    '*.google-analytics.com',
+    '*.gravatar.com',
+    '*.wp.com',
+    '*.libravatar.com',
+    'http://*.mapbox.com',
+    'https://*.mapbox.com',
 )
 CSP_SCRIPT_SRC = (
     "'self'",
-    'http://*.mozilla.org',
-    'https://*.mozilla.org',
+    "'unsafe-eval'",  # TODO: remove this by pre-compiling handlebars
+    'http://www.mozilla.org',
+    'https://www.mozilla.org',
     'http://*.mozilla.net',
     'https://*.mozilla.net',
+    'https://*.google-analytics.com',
+    'https://login.persona.org',
+    'http://*.mapbox.com',
+    'https://*.mapbox.com',
 )
+
 CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
-    'http://*.mozilla.org',
-    'https://*.mozilla.org',
+    'http://www.mozilla.org',
+    'https://www.mozilla.org',
     'http://*.mozilla.net',
     'https://*.mozilla.net',
+    'http://*.mapbox.com',
+    'https://*.mapbox.com',
+)
+
+CSP_CHILD_SRC = (
+    "'self'",
+    'https://login.persona.org',
 )
 
 LOG_LEVEL = logging.INFO
