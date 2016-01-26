@@ -30,7 +30,7 @@ def list_featured(request):
         # If page is out of range, deliver last page of results.
         featured = paginator.page(paginator.num_pages)
 
-    return render(request, 'featuredrep_list.html', {'objects': featured})
+    return render(request, 'featuredrep_list.jinja', {'objects': featured})
 
 
 @never_cache
@@ -67,7 +67,7 @@ def edit_featured(request, feature_id=None):
     reps = User.objects.filter(userprofile__registration_complete=True,
                                groups__name='Rep')
 
-    return render(request, 'featuredrep_alter.html',
+    return render(request, 'featuredrep_alter.jinja',
                   {'form': form, 'post_to': post_to, 'reps': reps})
 
 

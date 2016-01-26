@@ -13,7 +13,7 @@ import forms
 from remo.base.decorators import permission_check
 from remo.base.utils import get_or_create_instance
 from remo.profiles.models import UserProfile
-from remo.voting.helpers import user_has_poll_permissions
+from remo.voting.templatetags.helpers import user_has_poll_permissions
 from remo.voting.models import Poll, PollComment, RadioPoll, RangePoll, Vote
 
 
@@ -39,7 +39,7 @@ def list_votings(request):
     except EmptyPage:
         past_polls = past_polls_paginator.page(past_polls_paginator.num_pages)
 
-    return render(request, 'list_votings.html',
+    return render(request, 'list_votings.jinja',
                   {'user': user,
                    'past_polls': past_polls,
                    'current_polls': current_polls,
@@ -116,7 +116,7 @@ def edit_voting(request, slug=None):
 
         return redirect('voting_edit_voting', slug=poll.slug)
 
-    return render(request, 'edit_voting.html',
+    return render(request, 'edit_voting.jinja',
                   {'created': created,
                    'poll': poll,
                    'poll_form': poll_form,
@@ -148,7 +148,7 @@ def view_voting(request, slug):
 
     # if the voting period has ended, display the results
     if poll.is_past_voting:
-        return render(request, 'view_voting.html', data)
+        return render(request, 'view_voting.jinja', data)
 
     # avoid multiple votes from the same user
     if Vote.objects.filter(poll=poll, user=user).exists():
@@ -220,7 +220,7 @@ def view_voting(request, slug):
     data['range_poll_choice_forms'] = range_poll_choice_forms
     data['radio_poll_choice_forms'] = radio_poll_choice_forms
 
-    return render(request, 'vote_voting.html', data)
+    return render(request, 'vote_voting.jinja', data)
 
 
 @permission_check(permissions=['voting.delete_poll'])

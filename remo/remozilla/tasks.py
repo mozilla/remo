@@ -9,8 +9,8 @@ from django.utils import timezone
 import requests
 import waffle
 from celery.task import task
-from funfactory.helpers import urlparams
 
+from remo.base.templatetags.helpers import urlparams
 from remo.base.utils import get_object_or_none
 from remo.remozilla.models import Bug
 from remo.remozilla.utils import get_last_updated_date, set_last_updated_date

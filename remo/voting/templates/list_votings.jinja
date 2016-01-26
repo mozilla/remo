@@ -1,0 +1,189 @@
+{% extends "base_fd4.jinja" %}
+{% block pagetitle %}Mozilla Reps - Voting{% endblock %}
+
+{% block content %}
+<main role="main" class="voting-main">
+  <div class="row">
+    <div class="large-10 columns">
+      <h1>Voting</h1>
+    </div>
+    {% if user.has_perm('voting.add_poll') %}
+      <div class="large-2 columns align-right">
+        <a href="{{ url('voting_new_voting') }}"
+           class="button small update" role="button"
+           id="voting-create-button">Create voting</a>
+      </div>
+    {% endif %}
+  </div>
+
+  {% macro display_polls(objects, show_pagination) -%}
+    <div class="large-12 columns">
+      <table class="dashboard-table responsive">
+        <thead>
+          <tr>
+            <th class="dashboard-clickable type-string">Name</th>
+            <th class="dashboard-clickable type-string">Start Date</th>
+            <th class="dashboard-clickable type-string">End Date</th>
+            <th class="dashboard-clickable type-string">Eligible Groups</th>
+            <th class="dashboard-clickable type-string align-center">Users Voted</th>
+            <th class="dashboard-clickable type-string align-center">Voting Progress</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for poll in objects %}
+            <tr>
+              <td>
+                <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
+                  {{ poll.name }}
+                </a>
+              </td>
+              <td title="{{ poll.start|format_datetime }}"
+                  data-time="{{ poll.start|format_datetime_iso }}">
+                {{ poll.start|format_datetime }}
+              </td>
+              <td title="{{ poll.end|format_datetime }}"
+                  data-time="{{ poll.end|format_datetime_iso }}">
+                {{ poll.end|format_datetime }}
+              </td>
+              <td>{{ poll.valid_groups }}</td>
+              <td class="align-center">{{ poll|get_users_voted }}</td>
+              <td>
+                <span class="meter_text">{{ poll|get_meter_value }}%</span>
+                <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                  <div class="progressbar">
+                    <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
+                  </div>
+                </meter>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if show_pagination %}
+        <!-- Paginator -->
+        {% include "includes/pagination.jinja" %}
+      {% endif %}
+    </div>
+  {%- endmacro%}
+
+  <div class="row">
+    <div class="large-12 columns">
+
+      <!-- Current votes block -->
+      <div class="dashboard-box">
+        <div class="row">
+          <div class="large-12 columns">
+            <h2>Current Votes</h2>
+          </div>
+        </div>
+
+        <div class="row">
+          {% if current_polls %}
+            <div class="large-12 columns">
+              <table class="dashboard-table responsive">
+                <thead>
+                  <tr>
+                    <th class="dashboard-clickable type-string">Name</th>
+                    <th class="dashboard-clickable type-string">Start Date</th>
+                    <th class="dashboard-clickable type-string">End Date</th>
+                    <th class="dashboard-clickable type-string">Eligible Groups</th>
+                    <th class="dashboard-clickable type-string align-center">Voted</th>
+                    <th class="dashboard-clickable type-string align-center">Users Voted</th>
+                    <th class="dashboard-clickable type-string align-center">Voting Progress</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for poll in current_polls %}
+                    <tr>
+                      <td>
+                        <a href="{{ url('voting_view_voting', slug=poll.slug) }}">
+                          {{ poll.name }}
+                        </a>
+                      </td>
+                      <td title="{{ poll.start|format_datetime }}"
+                          data-time="{{ poll.start|format_datetime_iso }}">
+                        {{ poll.start|format_datetime }}
+                      </td>
+                      <td title="{{ poll.end|format_datetime }}"
+                          data-time="{{ poll.end|format_datetime_iso }}">
+                        {{ poll.end|format_datetime }}
+                      </td>
+                      <td>{{ poll.valid_groups }}</td>
+                      <td class="align-center">
+                        {% if user_has_voted(user,poll) %}
+                          <span class="user-voted"></span>
+                        {% endif %}
+                      </td>
+                      <td class="align-center">{{ poll|get_users_voted }}</td>
+                      <td>
+                        <span class="meter_text">{{ poll|get_meter_value }}%</span>
+                        <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                          <div class="progressbar">
+                            <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
+                          </div>
+                        </meter>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="large-12 columns no-bugs">
+              <p>No current votes found!</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <!-- end Current votes block -->
+
+      <!-- Future votes block -->
+      <div class="dashboard-box">
+        <div class="row">
+          <div class="large-12 columns">
+            <h2>Future Votes</h2>
+          </div>
+        </div>
+
+        <div class="row">
+          {% if future_polls %}
+            {{ display_polls(future_polls, show_pagination=False) }}
+          {% else %}
+            <div class="large-12 columns no-bugs">
+              <p>No future votes found!</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <!-- end Future votes block -->
+
+      <!-- Past votes block -->
+      <div class="dashboard-box">
+        <div class="row">
+          <div class="large-12 columns">
+            <h2>Past Votes</h2>
+          </div>
+        </div>
+
+        <div class="row">
+          {% if past_polls %}
+            {{ display_polls(past_polls, show_pagination=True) }}
+          {% else %}
+            <div class="large-12 columns no-bugs">
+              <p>No past votes found!</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <!-- end Past votes block -->
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('base/js/stupidtable.js') }}"></script>
+    <script src="{{ static('voting/js/voting_list.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

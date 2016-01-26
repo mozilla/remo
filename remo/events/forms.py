@@ -12,10 +12,10 @@ from django_statsd.clients import statsd
 from pytz import common_timezones, timezone
 
 from remo.base.datetimewidgets import SplitSelectDateTimeWidget
-from remo.base.helpers import get_full_name
+from remo.base.templatetags.helpers import get_full_name
 from remo.base.utils import get_date, get_object_or_none, validate_datetime
 from remo.events.models import EventMetric
-from remo.events.helpers import get_event_link
+from remo.events.templatetags.helpers import get_event_link
 from remo.profiles.models import FunctionalArea
 from remo.reports import ACTIVITY_POST_EVENT_METRICS
 from remo.reports.models import Activity, Campaign, NGReport

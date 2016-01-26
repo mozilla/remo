@@ -18,7 +18,7 @@ def new_reps_reminder():
     reps = UserProfile.objects
     reps_num = reps.count()
     new_reps = reps.filter(date_joined_program__month=prev.month)
-    email_template = 'emails/new_reps_monthly_reminder.txt'
+    email_template = 'emails/new_reps_monthly_reminder.jinja'
     subject = '[Info] New Reps for %s' % prev_date
     recipient = settings.REPS_MENTORS_LIST
     data = {'reps': new_reps, 'date': prev_date, 'reps_num': reps_num}

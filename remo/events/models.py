@@ -286,7 +286,7 @@ class Metric(models.Model):
 def email_event_owner_on_add_comment(sender, instance, **kwargs):
     """Email event owner when a comment is added to event."""
     subject = '[Event] User %s commented on event "%s"'
-    email_template = 'email/owner_notification_on_add_comment.txt'
+    email_template = 'email/owner_notification_on_add_comment.jinja'
     event = instance.event
     owner = instance.event.owner
     event_url = reverse('events_view_event', kwargs={'slug': event.slug})

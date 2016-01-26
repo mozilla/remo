@@ -4,11 +4,12 @@ import logging
 import os
 
 from django.utils.functional import lazy
+from django_jinja.builtins import DEFAULT_EXTENSIONS
 from django_sha2 import get_password_hashers
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-ROOT = BASE_DIR
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+path = lambda *a: os.path.abspath(os.path.join(ROOT, *a))  # noqa
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'remo.urls'
 DEV = False
@@ -59,11 +60,29 @@ MIDDLEWARE_CLASSES = (
 )
 
 # Media and static files settings
-# STATIC_ROOT = config('STATIC_ROOT', default=os.path.join(BASE_DIR, 'static'))
-# STATIC_URL = config('STATIC_URL', '/static/')
-# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-# MEDIA_ROOT = config('MEDIA_ROOT', default=os.path.join(BASE_DIR, 'media'))
-# MEDIA_URL = config('MEDIA_URL', '/media/')
+STATIC_ROOT = path('static')
+STATIC_URL = '/static/'
+
+# Storage of static files
+COMPRESS_ROOT = STATIC_ROOT
+COMPRESS_CSS_FILTERS = (
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.CSSMinFilter'
+)
+COMPRESS_PRECOMPILERS = (
+    ('text/less', 'lessc {infile} {outfile}'),
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+# Absolute path to the directory that holds media.
+MEDIA_ROOT = path('media')
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+MEDIA_URL = '/media/'
 
 SESSION_COOKIE_SECURE = not DEBUG
 
@@ -81,7 +100,30 @@ CONTEXT_PROCESSORS = (
 
 TEMPLATES = [
     {
+        'BACKEND': 'django_jinja.backend.Jinja2',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'app_dirname': 'jinja2',
+            # Don't match loaders based on file extension
+            'match_extension': None,
+            'newstyle_gettext': True,
+            'context_processors': CONTEXT_PROCESSORS,
+            'undefined': 'jinja2.Undefined',
+            'extensions': DEFAULT_EXTENSIONS + [
+                'compressor.contrib.jinja2ext.CompressorExtension',
+                'waffle.jinja.WaffleExtension'
+            ],
+            'globals': {
+                'browserid_info': 'django_browserid.helpers.browserid_info',
+                'browserid_login': 'django_browserid.helpers.browserid_login',
+                'browserid_logout': 'django_browserid.helpers.browserid_logout'
+            }
+        }
+    },
+    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': CONTEXT_PROCESSORS

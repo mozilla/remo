@@ -48,10 +48,10 @@ def get_last_report(user):
 def send_report_notification(reps, weeks):
     """Send notification to inactive reps."""
     rep_subject = '[Reminder] Please share your recent activities'
-    rep_mail_body = 'emails/reps_ng_report_notification.txt'
+    rep_mail_body = 'emails/reps_ng_report_notification.jinja'
     mentor_subject = ('[Report] Mentee without report for the last %d weeks'
                       % weeks)
-    mentor_mail_body = 'emails/mentor_ng_report_notification.txt'
+    mentor_mail_body = 'emails/mentor_ng_report_notification.jinja'
 
     for rep in reps:
         mentor = rep.userprofile.mentor

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from remo.base.helpers import absolutify
+from remo.base.templatetags.helpers import absolutify
 from remo.events.models import Event
 from remo.profiles.api.serializers import (FunctionalAreaSerializer,
                                            UserSerializer)

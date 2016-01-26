@@ -16,12 +16,12 @@ from django.views.decorators.cache import cache_control, never_cache
 import waffle
 from django_statsd.clients import statsd
 from django_browserid.auth import default_username_algo
-from funfactory.helpers import urlparams
 from product_details import product_details
 
 import forms
 
 from remo.base.decorators import permission_check
+from remo.base.templatetags.helpers import urlparams
 from remo.events.utils import get_events_for_user
 from remo.profiles.models import UserProfile, UserStatus
 from remo.profiles.models import FunctionalArea
@@ -118,7 +118,7 @@ def edit(request, display_name):
     functional_areas = map(int, profileform['functional_areas'].value())
     user_is_alumni = user.groups.filter(name='Alumni').exists()
 
-    return render(request, 'profiles_edit.html',
+    return render(request, 'profiles_edit.jinja',
                   {'userform': userform,
                    'profileform': profileform,
                    'profile_date_form': profile_date_form,
@@ -146,7 +146,7 @@ def list_profiles(request):
                     groups__name='Rep')
             .order_by('userprofile__country', 'last_name', 'first_name'))
 
-    return render(request, 'profiles_people.html',
+    return render(request, 'profiles_people.jinja',
                   {'countries': countries,
                    'reps': reps,
                    'areas': FunctionalArea.objects.all()})
@@ -187,7 +187,7 @@ def view_profile(request, display_name):
             date = (status.expected_date.strftime('%d %B %Y')
                     if status.expected_date > today else None)
             msg = render_to_string(
-                'includes/view_profile_unavailable_msg.html',
+                'includes/view_profile_unavailable_msg.jinja',
                 {'date': date,
                  'display_name': user.userprofile.display_name})
             messages.info(request, mark_safe(msg))
@@ -201,7 +201,7 @@ def view_profile(request, display_name):
         messages.warning(request, ('Only mentors can nominate a mentee.'))
 
     if user_is_alumni:
-        msg = render_to_string('includes/alumni_msg.html')
+        msg = render_to_string('includes/alumni_msg.jinja')
         messages.info(request, mark_safe(msg))
 
     today = now().date()
@@ -219,7 +219,7 @@ def view_profile(request, display_name):
     data['request_user'] = request.user
     data['nominee_form'] = nominee_form
 
-    return render(request, 'profiles_view.html', data)
+    return render(request, 'profiles_view.jinja', data)
 
 
 @permission_check()
@@ -251,7 +251,7 @@ def invite(request):
                                    'now shoot some mails!'))
         return redirect('profiles_invite')
 
-    return render(request, 'profiles_invite.html', {'form': form})
+    return render(request, 'profiles_invite.jinja', {'form': form})
 
 
 @permission_check(permissions=['profiles.can_delete_profiles'])
@@ -282,4 +282,4 @@ def list_alumni(request):
     except EmptyPage:
         objects = alumni_paginator.page(alumni_paginator.num_pages)
 
-    return render(request, 'profiles_list_alumni.html', {'objects': objects})
+    return render(request, 'profiles_list_alumni.jinja', {'objects': objects})

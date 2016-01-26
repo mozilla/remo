@@ -1,0 +1,181 @@
+{% extends "base_fd4.jinja" %}
+
+{% block pagetitle %}
+Mozilla Reps - Events
+{% endblock %}
+
+{% block logo %}
+<h1><span class="metabold">mozilla</span> reps</h1>
+{% endblock %}
+
+{% block content %}
+
+<main role="main" class="events-main">
+  <div class="row">
+    <div class="large-12 columns align-right">
+      {% if perms.events.can_edit_events %}
+        <a href="{{ url('events_new_event') }}"
+           class="small button update" id="events-create-button">Create event</a>
+      {% endif %}
+      <dl id="events-viz-switcher" class="sub-nav dashboard-filter hide-for-small">
+        <dd class="active">
+          <a id="events-map-button" href="#">Map</a>
+        </dd>
+        <dd>
+          <a id="events-timeline-button" href="#">Timeline</a>
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+
+  <!-- Map & Vizualization -->
+  <div class="row {% if perms.events.can_edit_events %}top-margined{% endif %}">
+    <div class="large-12 columns">
+      <div id="map" class="map300"></div>
+      <div class="hide-for-small">
+        <div id="event-timeline"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="map-overlay" class="hidden">
+    <div id="map-overlay-text">
+      Please refine search to view events.
+    </div>
+  </div>
+
+  <div id="timeline-overlay" class="hidden">
+    <div id="timeline-overlay-text">
+      Please refine search to view timeline.
+    </div>
+  </div>
+
+  <!-- Search box -->
+  <div class="row">
+    <form id="events-searchform">
+      <div class="large-9 columns" id="search">
+        <span class="pictogram-search" id="search-icon">
+          <div id="search-ready-icon" class="pict-icon large search"></div>
+          <div id="search-loading-icon"></div>
+        </span>
+        <input type="text" placeholder="Loading..." id="searchfield"
+               class="input-text big" disabled="disabled">
+      </div>
+      <div class="large-3 columns">
+        <select id="events-period-selector">
+          <option value="all">All Events</option>
+          <option value="future">Current and Future</option>
+          <option value="past">Past</option>
+          <option value="custom">Custom</option>
+        </select>
+        <span id="adv-search-icon-events" title="Advanced Options" class="pict-icon large tools"></span>
+      </div>
+    </form>
+  </div>
+
+  <!-- Advanced search box -->
+  <div class="row hidden" id="adv-search">
+    <div class="large-12 columns">
+      <div class="row">
+        <form id="searchform">
+          <div class="large-2 columns">
+            <select id="adv-search-categories" class="expand">
+              <option value="">All Categories</option>
+              {% for category in categories %}
+                <option value="{{ category.name|lower }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="large-2 columns">
+            <select id="adv-search-initiatives" class="expand">
+              <option value="">All Initiatives</option>
+              {% for initiative in initiatives %}
+                <option value="{{ initiative.name|lower }}">{{ initiative.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="large-2 columns">
+            <select id="adv-search-attendance" class="expand">
+              <option value="">Est. Attendance</option>
+              <option value="10">1-10</option>
+              <option value="50">11-50</option>
+              <option value="100">51-100</option>
+              <option value="500">101-500</option>
+              <option value="1000">501-1000</option>
+              <option value="2000">More than 1000</option>
+            </select>
+          </div>
+          <div class="large-2 columns">
+            <input type="text" class="datepicker input-text big"
+                   id="date-start" placeholder="Start Range Date"/>
+          </div>
+          <div class="large-2 columns">
+            <input type="text" class="datepicker input-text big"
+                   id="date-end" placeholder="End Range Date"/>
+          </div>
+          <div class="large-2 columns">
+            <a id="icalendar-export-button"
+               class="small button" href="#">Export iCalendar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Events listing -->
+  <div class="row">
+    <div class="large-12 columns">
+      <!-- Table start -->
+      <table id="events-table">
+        <tbody id="events-table-body">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Loader animation -->
+  <div class="row" id="events-loading-wrapper">
+    <div class="large-12 columns">
+      <div id="events-loading"></div>
+    </div>
+  </div>
+
+  <div class="row end-row">
+    <div id="events-number" class="large-12 columns reps-number">
+    </div>
+  </div>
+</main>
+
+<!-- Event templates -->
+{% include 'includes/list_events_template.jinja' %}
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress css %}
+    <link rel="stylesheet" href="{{ static('base/css/mapbox.css') }}"
+          media="screen,projection,tv" />
+    <link rel="stylesheet" href="{{ static('base/css/L.Control.Locate.css') }}"
+          media="screen,projection,tv" />
+    <link rel="stylesheet" href="{{ static('events/css/jquery-ui-1.10.0.custom.css') }}"
+          media="screen,projection,tv" />
+    <link rel="stylesheet" href="{{ static('events/css/timeline/timeline.css') }}"
+          media="screen,projection,tv" />
+  {% endcompress %}
+  <!--[if lte IE 8]>
+      <link rel="stylesheet" href="{{ static('base/css/mapbox.ie.css') }}" />
+  <![endif]-->
+
+  <script src="{{ static('events/js/timeline/timeline.js') }}"></script>
+  <script src="{{ static('events/js/timeline/storyjs-embed.js') }}"></script>
+
+  {% compress js %}
+    <script src="{{ static('base/js/mapbox.js') }}"></script>
+    <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
+    <script src="{{ static('events/js/jquery-ui-1.10.0.custom.js') }}"></script>
+    <script src="{{ static('base/js/handlebars-v3.0.3.js') }}"></script>
+    <script src="{{ static('events/js/template_helpers.js') }}"></script>
+    <script src="{{ static('base/js/heartcode-canvasloader-min.js') }}"></script>
+    <script src="{{ static('events/js/events_list.js') }}"></script>
+  {% endcompress %}
+{% endblock %}
