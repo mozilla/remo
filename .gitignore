@@ -20,3 +20,4 @@ media
 venv
 vagrantconfig_local.yaml
 /static
+.env
