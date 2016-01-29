@@ -13,11 +13,9 @@ from django.dispatch import receiver
 from django.utils.timezone import now
 
 from django_statsd.clients import statsd
-from south.signals import post_migrate
 from uuslug import uuslug
 
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import add_permissions_to_groups
 from remo.dashboard.models import ActionItem, Item
 from remo.remozilla.models import Bug
 from remo.remozilla.utils import get_bugzilla_url
@@ -273,20 +271,6 @@ def poll_delete_reminder(sender, instance, **kwargs):
             celery_control.revoke(instance.task_start_id)
         if instance.task_end_id:
             celery_control.revoke(instance.task_end_id)
-
-
-@receiver(post_migrate, dispatch_uid='voting_set_groups_signal')
-def voting_set_groups(app, sender, signal, **kwargs):
-    """Set permissions to groups."""
-    if (isinstance(app, basestring) and app != 'voting'):
-        return True
-
-    permissions = {'add_poll': ['Admin', 'Council', 'Mentor'],
-                   'delete_poll': ['Admin', 'Council', 'Mentor'],
-                   'change_poll': ['Admin', 'Council', 'Mentor'],
-                   'delete_pollcomment': ['Admin']}
-
-    add_permissions_to_groups('voting', permissions)
 
 
 @receiver(post_save, sender=Bug,

@@ -4,17 +4,15 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models.signals import m2m_changed, post_save, pre_delete
+from django.db.models.signals import m2m_changed, post_migrate, post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.timezone import now
 
 import caching.base
 from django_statsd.clients import statsd
 from product_details import product_details
-from south.signals import post_migrate
 
 import remo.base.utils as utils
-from remo.base.utils import add_permissions_to_groups
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import daterange, get_date, get_object_or_none
@@ -29,20 +27,6 @@ from remo.reports import (ACTIVITY_CAMPAIGN, ACTIVITY_EVENT_ATTEND,
 COUNTRIES_LIST = product_details.get_regions('en').values()
 VERIFY_ACTIVITY_WEEKS = 2
 VERIFY_ACTION = 'Verify the activity of'
-
-
-@receiver(post_migrate, dispatch_uid='report_set_groups_signal')
-def report_set_groups(app, sender, signal, **kwargs):
-    """Set permissions to groups."""
-    if (isinstance(app, basestring) and app != 'reports'):
-        return True
-
-    perms = {'add_ngreport': ['Admin', 'Mentor'],
-             'change_ngreport': ['Admin', 'Mentor'],
-             'delete_ngreport': ['Admin', 'Mentor'],
-             'delete_ngreportcomment': ['Admin', 'Mentor']}
-
-    add_permissions_to_groups('reports', perms)
 
 
 class Activity(models.Model):

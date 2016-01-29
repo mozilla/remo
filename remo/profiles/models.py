@@ -17,7 +17,6 @@ from django.utils import timezone
 import caching.base
 from celery.task import control as celery_control
 from django_statsd.clients import statsd
-from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
 from remo.base.utils import get_object_or_none
@@ -451,16 +450,3 @@ def user_set_inactive_post_save(sender, instance, raw, **kwargs):
     if instance.first_name and not raw:
         instance.userprofile.registration_complete = True
         instance.userprofile.save()
-
-
-@receiver(post_migrate, dispatch_uid='profiles_set_groups_signal')
-def profiles_set_groups(app, sender, signal, **kwargs):
-    """Set permissions to groups."""
-    if (isinstance(app, basestring) and app != 'profiles'):
-        return True
-
-    perms = {'create_user': ['Admin', 'Mentor'],
-             'can_edit_profiles': ['Admin'],
-             'can_delete_profiles': ['Admin']}
-
-    add_permissions_to_groups('profiles', perms)
