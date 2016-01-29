@@ -2,11 +2,11 @@ import calendar
 import datetime
 import math
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ValidationError
-from django.db.models import get_app, get_models
 from django.utils import timezone
 
 
@@ -106,9 +106,8 @@ def add_permissions_to_groups(app, permissions):
     """Assign permissions to groups."""
 
     # Make sure that all app permissions are created.
-    # Related to South bug http://south.aeracode.org/ticket/211
-    app_obj = get_app(app)
-    create_permissions(app_obj, get_models(app_mod=app_obj), verbosity=2)
+    app_obj = apps.get_app_config(app)
+    create_permissions(app_obj, interactive=False)
 
     for perm_name, groups in permissions.iteritems():
         for group_name in groups:

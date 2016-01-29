@@ -14,12 +14,10 @@ from django.dispatch import receiver
 from django.utils.timezone import now
 
 import caching.base
-from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import add_permissions_to_groups
 from remo.dashboard.models import ActionItem, Item
 from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
@@ -281,21 +279,6 @@ class Metric(models.Model):
     event = models.ForeignKey('Event')
     title = models.CharField(max_length=300)
     outcome = models.CharField(max_length=300)
-
-
-@receiver(post_migrate, dispatch_uid='event_set_groups_signal')
-def event_set_groups(app, sender, signal, **kwargs):
-    """Set permissions to groups."""
-    if (isinstance(app, basestring) and app != 'events'):
-        return True
-
-    perms = {'can_edit_events': ['Admin', 'Council', 'Mentor', 'Rep'],
-             'can_delete_events': ['Admin', 'Council', 'Mentor'],
-             'can_delete_event_comments': ['Admin'],
-             'can_subscribe_to_events': ['Admin', 'Council', 'Mentor', 'Rep',
-                                         'Alumni', 'Mozillians']}
-
-    add_permissions_to_groups('events', perms)
 
 
 @receiver(post_save, sender=EventComment,
