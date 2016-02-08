@@ -5,7 +5,7 @@ python:
 before_script:
   - flake8 remo
 before_install:
-  - mysql -e 'create database remo character set utf8;'
+  - mysql -e 'create database remo character set utf8; SET @@GLOBAL.wait_timeout=28800;'
   - git submodule update --init --recursive
 install:
   - pip install -r requirements/dev.txt
