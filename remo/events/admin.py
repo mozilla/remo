@@ -5,9 +5,10 @@ from import_export.admin import ExportMixin
 from models import Attendance, Event, EventMetric, EventMetricOutcome
 
 
-class AttendanceInline(admin.StackedInline):
+class AttendanceInline(admin.TabularInline):
     """Attendance Inline."""
     model = Attendance
+    extra = 1
 
 
 class EventResource(resources.ModelResource):
