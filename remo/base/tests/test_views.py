@@ -20,7 +20,7 @@ from nose.tools import eq_, ok_
 from test_utils import TestCase
 
 from remo.base import mozillians
-from remo.base.helpers import AES_PADDING, enc_string, mailhide, pad_string
+from remo.base.templatetags.helpers import AES_PADDING, enc_string, mailhide, pad_string
 from remo.base.tests import (MozillianResponse, RemoTestCase,
                              VOUCHED_MOZILLIAN, NOT_VOUCHED_MOZILLIAN,
                              requires_login, requires_permission)

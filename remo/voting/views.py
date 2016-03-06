@@ -13,7 +13,7 @@ import forms
 from remo.base.decorators import permission_check
 from remo.base.utils import get_or_create_instance
 from remo.profiles.models import UserProfile
-from remo.voting.helpers import user_has_poll_permissions
+from remo.voting.templatetags.helpers import user_has_poll_permissions
 from remo.voting.models import Poll, PollComment, RadioPoll, RangePoll, Vote
 
 
@@ -84,10 +84,10 @@ def edit_voting(request, slug=None):
     else:
         RangePollFormset = (inlineformset_factory(Poll, RangePoll,
                             formset=forms.BaseRangePollInlineFormSet,
-                            extra=extra_range_polls, can_delete=True))
+                            extra=extra_range_polls, can_delete=True, fields='__all__'))
         RadioPollFormset = (inlineformset_factory(Poll, RadioPoll,
                             formset=forms.BaseRadioPollInlineFormSet,
-                            extra=extra_radio_polls, can_delete=True))
+                            extra=extra_radio_polls, can_delete=True, fields='__all__'))
 
         range_poll_formset = RangePollFormset(request.POST or None,
                                               instance=poll,

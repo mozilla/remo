@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.timezone import now
 
-import happyforms
 
 from remo.profiles.models import FunctionalArea
 from remo.reports import UNLISTED_ACTIVITIES
@@ -11,7 +10,7 @@ from remo.reports.models import Activity, Campaign, NGReport, NGReportComment
 
 
 # New Generation reporting system
-class NGReportForm(happyforms.ModelForm):
+class NGReportForm(forms.ModelForm):
     report_date = forms.DateField(input_formats=['%d %B %Y'])
     activity = forms.ModelChoiceField(
         queryset=Activity.active_objects.exclude(name__in=UNLISTED_ACTIVITIES))
@@ -72,7 +71,7 @@ class NGReportForm(happyforms.ModelForm):
                    'latitude': forms.HiddenInput()}
 
 
-class NGVerifyReportForm(happyforms.ModelForm):
+class NGVerifyReportForm(forms.ModelForm):
     """Form to verify a recruitment."""
 
     class Meta:
@@ -80,7 +79,7 @@ class NGVerifyReportForm(happyforms.ModelForm):
         fields = ['verified_activity']
 
 
-class NGReportCommentForm(happyforms.ModelForm):
+class NGReportCommentForm(forms.ModelForm):
     """Model Form for new generation commenting system."""
 
     class Meta:
@@ -89,15 +88,17 @@ class NGReportCommentForm(happyforms.ModelForm):
         widgets = {'comment': forms.TextInput()}
 
 
-class ActivityForm(happyforms.ModelForm):
+class ActivityForm(forms.ModelForm):
     """Form of activity type."""
 
     class Meta:
         model = Activity
+        fields = ['name']
 
 
-class CampaignForm(happyforms.ModelForm):
+class CampaignForm(forms.ModelForm):
     """Form of campaign type."""
 
     class Meta:
         model = Campaign
+        fields = ['name']

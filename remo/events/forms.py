@@ -1,4 +1,3 @@
-import happyforms
 from django import forms
 from django.db.models import Q
 from django.conf import settings
@@ -11,11 +10,11 @@ from product_details import product_details
 from django_statsd.clients import statsd
 from pytz import common_timezones, timezone
 
-from datetimewidgets import SplitSelectDateTimeWidget
-from remo.base.helpers import get_full_name
+from remo.base.datetimewidgets import SplitSelectDateTimeWidget
+from remo.base.templatetags.helpers import get_full_name
 from remo.base.utils import get_date, get_object_or_none, validate_datetime
 from remo.events.models import EventMetric
-from remo.events.helpers import get_event_link
+from remo.events.templatetags.helpers import get_event_link
 from remo.profiles.models import FunctionalArea
 from remo.reports import ACTIVITY_POST_EVENT_METRICS
 from remo.reports.models import Activity, Campaign, NGReport
@@ -104,7 +103,7 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
         return super(BaseEventMetricsFormset, self).save()
 
 
-class EventMetricsForm(happyforms.ModelForm):
+class EventMetricsForm(forms.ModelForm):
     """EventMetrics form."""
     metric = forms.ModelChoiceField(
         queryset=EventMetric.active_objects.all(),
@@ -152,7 +151,7 @@ class PostEventMetricsForm(EventMetricsForm):
             self.fields['expected_outcome'].widget.attrs['readonly'] = True
 
 
-class EventForm(happyforms.ModelForm):
+class EventForm(forms.ModelForm):
     """Form of an event."""
     categories = forms.ChoiceField(choices=[])
     country = forms.ChoiceField(
@@ -395,7 +394,7 @@ class PostEventForm(EventForm):
         self.fields['estimated_attendance'].widget.attrs['readonly'] = True
 
 
-class EventCommentForm(happyforms.ModelForm):
+class EventCommentForm(forms.ModelForm):
     """Form of an event comment."""
 
     class Meta:
@@ -403,8 +402,9 @@ class EventCommentForm(happyforms.ModelForm):
         fields = ['comment']
 
 
-class EventMetricForm(happyforms.ModelForm):
+class EventMetricForm(forms.ModelForm):
     """Form for EventMetric Model."""
 
     class Meta:
         model = EventMetric
+        fields = ['name']

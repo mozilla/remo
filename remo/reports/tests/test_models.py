@@ -9,7 +9,7 @@ from test_utils import TestCase
 import mock
 
 from remo.base.tests import RemoTestCase
-from remo.events.helpers import get_event_link
+from remo.events.templatetags.helpers import get_event_link
 from remo.events.tests import EventFactory, AttendanceFactory
 from remo.profiles.tests import UserFactory
 from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
