@@ -5,6 +5,12 @@ from models import (Poll, PollComment,  RadioPoll, RadioPollChoice,
                     RangePoll, RangePollChoice, Vote)
 
 
+class VoteInline(admin.StackedInline):
+    """Vote model inline."""
+    model = Vote
+    extra = 0
+
+
 class RangePollChoiceInline(admin.StackedInline):
     """Poll Range Votes Inline."""
     model = RangePollChoice
@@ -46,7 +52,7 @@ class PollCommentInline(admin.StackedInline):
 
 class PollAdmin(ExportMixin, admin.ModelAdmin):
     """Voting Admin."""
-    inlines = [RangePollInline, RadioPollInline, PollCommentInline]
+    inlines = [RangePollInline, RadioPollInline, PollCommentInline, VoteInline]
     search_fields = ['name']
     list_display = ['name', 'start', 'end', 'valid_groups']
     date_hierarchy = 'start'
