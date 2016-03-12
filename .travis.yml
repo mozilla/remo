@@ -2,9 +2,9 @@ language: python
 sudo: false
 python:
   - "2.7"
-before_script:
-  - flake8 remo
 before_install:
+  - pip install flake8
+  - flake8 remo
   - mysql -e 'create database remo character set utf8; SET @@GLOBAL.wait_timeout=28800;'
   - git submodule update --init --recursive
 install:
