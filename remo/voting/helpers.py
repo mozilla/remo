@@ -27,7 +27,7 @@ def get_meter_value(poll):
     users_voted = float(get_users_voted(poll))
     voters_group = float(get_voters_per_group(poll))
     try:
-        val = (users_voted/voters_group)*100
+        val = (users_voted / voters_group) * 100
         return int(val)
     except ZeroDivisionError:
         return 0

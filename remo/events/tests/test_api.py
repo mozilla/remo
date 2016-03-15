@@ -111,7 +111,7 @@ class TestEventsKPIView(RemoTestCase):
 
         response = EventsKPIView().get(request)
         eq_(response.data['quarter_total'], 1)
-        eq_(response.data['quarter_growth_percentage'], -(3-2)*100/2.0)
+        eq_(response.data['quarter_growth_percentage'], -(3 - 2) * 100 / 2.0)
 
     @patch('remo.events.api.views.now')
     @patch('remo.base.utils.timezone.now')
@@ -140,7 +140,7 @@ class TestEventsKPIView(RemoTestCase):
 
         response = EventsKPIView().get(request)
         eq_(response.data['week_total'], 1)
-        eq_(response.data['week_growth_percentage'], (1-2)*100/2.0)
+        eq_(response.data['week_growth_percentage'], (1 - 2) * 100 / 2.0)
 
     @patch('remo.events.api.views.now')
     @patch('remo.base.utils.timezone.now')
@@ -179,7 +179,7 @@ class TestEventsKPIView(RemoTestCase):
 
         response = EventsKPIView().get(request)
         eq_(response.data['week_total'], 3)
-        eq_(response.data['week_growth_percentage'], (3-2)*100/2.0)
+        eq_(response.data['week_growth_percentage'], (3 - 2) * 100 / 2.0)
         total_per_week = [
             {'week': 1, 'events': 1},
             {'week': 2, 'events': 4},

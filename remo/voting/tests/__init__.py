@@ -30,7 +30,7 @@ class PollFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: 'Voting{0} example'.format(n))
     start = fuzzy.FuzzyDateTime(datetime(2011, 1, 1, tzinfo=pytz.UTC))
     end = fuzzy.FuzzyDateTime(POLL_END_DT + timedelta(days=2),
-                              POLL_END_DT + timedelta(days=365*2))
+                              POLL_END_DT + timedelta(days=365 * 2))
     valid_groups = fuzzy.FuzzyChoice(VALID_GROUPS)
     description = factory.Sequence(lambda n: ('This is a description {0}'
                                               .format(n)))
