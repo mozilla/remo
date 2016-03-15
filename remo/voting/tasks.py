@@ -77,7 +77,7 @@ def extend_voting_period():
     for poll in polls:
         if not poll.is_extended:
             budget_poll = poll.radio_polls.get(question='Budget Approval')
-            majority = reduce(or_, map(lambda x: x.votes > council_count/2,
+            majority = reduce(or_, map(lambda x: x.votes > council_count / 2,
                                        budget_poll.answers.all()))
             if not majority:
                 poll.end += timedelta(seconds=EXTEND_VOTING_PERIOD)

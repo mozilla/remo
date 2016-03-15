@@ -158,8 +158,8 @@ def get_quarter(date=None):
     if not date:
         date = timezone.now()
 
-    quarter = int(math.ceil(date.month/3.0))
-    first_month_of_quarter = 1 + 3*(quarter-1)
+    quarter = int(math.ceil(date.month / 3.0))
+    first_month_of_quarter = 1 + 3 * (quarter - 1)
     quarter_start = datetime.datetime(date.year, first_month_of_quarter, 1)
 
     return (quarter, quarter_start)

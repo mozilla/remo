@@ -83,7 +83,7 @@ class EventsKPIView(APIView):
         diff = quarter_total - previous_quarter_total
         try:
             # Percentage change of events since start of quarter
-            percent_quarter = diff/float(previous_quarter_total)
+            percent_quarter = diff / float(previous_quarter_total)
         except ZeroDivisionError:
             if diff > 0:
                 percent_quarter = 100
@@ -105,7 +105,7 @@ class EventsKPIView(APIView):
         diff = week_total - prev_week_total
         try:
             # Percentage change of events compared with previous week
-            percent_week = diff/float(prev_week_total)
+            percent_week = diff / float(prev_week_total)
         except ZeroDivisionError:
             if diff > 0:
                 percent_week = 100
@@ -120,14 +120,14 @@ class EventsKPIView(APIView):
 
             # Total number of events (per week) for previous weeks
             count = events.qs.filter(start__range=[start, end]).count()
-            weekly_count.append({'week': weeks-i, 'events': count})
+            weekly_count.append({'week': weeks - i, 'events': count})
 
         kwargs = {
             'total': total,
             'quarter_total': quarter_total,
-            'quarter_growth_percentage': percent_quarter*100,
+            'quarter_growth_percentage': percent_quarter * 100,
             'week_total': week_total,
-            'week_growth_percentage': percent_week*100,
+            'week_growth_percentage': percent_week * 100,
             'total_per_week': weekly_count
         }
 

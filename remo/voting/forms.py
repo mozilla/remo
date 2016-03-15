@@ -32,7 +32,7 @@ class RangePollChoiceVoteForm(happyforms.Form):
         Dynamically set fields for the participants in a range voting.
         """
         super(RangePollChoiceVoteForm, self).__init__(*args, **kwargs)
-        nominees = tuple((i, '%d' % i) for i in range(0, choices.count()+1))
+        nominees = tuple((i, '%d' % i) for i in range(0, choices.count() + 1))
         for choice in choices:
             self.fields['range_poll__%s' % str(choice.id)] = (
                 forms.ChoiceField(widget=forms.Select(),
@@ -54,7 +54,7 @@ class RangePollChoiceVoteForm(happyforms.Form):
         for nominee_id, votes in self.cleaned_data.items():
             nominee_id = nominee_id.split('__')[1]
             (RangePollChoice.objects
-             .filter(pk=nominee_id).update(votes=F('votes')+int(votes)))
+             .filter(pk=nominee_id).update(votes=F('votes') + int(votes)))
 
 
 class RadioPollChoiceVoteForm(happyforms.Form):
@@ -79,7 +79,7 @@ class RadioPollChoiceVoteForm(happyforms.Form):
         radio_poll_choice_id = self.cleaned_data.values()[0]
         if radio_poll_choice_id != 'None':
             (RadioPollChoice.objects
-             .filter(pk=radio_poll_choice_id).update(votes=F('votes')+1))
+             .filter(pk=radio_poll_choice_id).update(votes=F('votes') + 1))
             radio_poll_choice = RadioPollChoice.objects.get(
                 pk=radio_poll_choice_id)
             poll = radio_poll_choice.radio_poll.poll

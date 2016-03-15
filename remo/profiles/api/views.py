@@ -117,7 +117,7 @@ class PeopleKPIView(APIView):
         diff = quarter_total - previous_quarter_total
         try:
             # Percentage change of events compared with previous week
-            quarter_ratio = diff/float(previous_quarter_total) * 100
+            quarter_ratio = diff / float(previous_quarter_total) * 100
         except ZeroDivisionError:
             if diff > 0:
                 quarter_ratio = 100
@@ -140,7 +140,7 @@ class PeopleKPIView(APIView):
         diff = week_total - prev_week_total
         try:
             # Percentage change of events compared with previous week
-            week_ratio = diff/float(prev_week_total) * 100
+            week_ratio = diff / float(prev_week_total) * 100
         except ZeroDivisionError:
             if diff > 0:
                 week_ratio = 100
@@ -155,7 +155,7 @@ class PeopleKPIView(APIView):
             # Total number of reps (per week) for the past 6 weeks
             count = people.qs.filter(
                 userprofile__date_joined_program__range=[start, end]).count()
-            weekly_count.append({'week': weeks-i, 'people': count})
+            weekly_count.append({'week': weeks - i, 'people': count})
 
         # Get the number of reports for each user.
 
@@ -221,7 +221,7 @@ class PeopleKPIView(APIView):
                                                 offset=CASUAL_INACTIVE)
                              .exclude(id__in=active_ids).count())
 
-            weekly_contribution.append({'week': weeks-i,
+            weekly_contribution.append({'week': weeks - i,
                                         'core': core_weekly,
                                         'active': active_weekly,
                                         'casual': casual_weekly,

@@ -164,4 +164,4 @@ class TestPeopleKPIView(RemoTestCase):
 
         response = PeopleKPIView().get(request)
         eq_(response.data['week_total'], 1)
-        eq_(response.data['week_growth_percentage'], (1-2)*100/2.0)
+        eq_(response.data['week_growth_percentage'], (1 - 2) * 100 / 2.0)
