@@ -5,10 +5,10 @@ from datetime import timedelta
 from django.utils import timezone
 
 from django.conf import settings
-from funfactory.helpers import urlparams
 from jingo import register
 
-from libravatar import libravatar_url
+import urllib2
+import json
 
 from remo.profiles.models import FunctionalArea, UserAvatar
 from remo.reports.utils import get_last_report
@@ -30,21 +30,40 @@ def get_avatar_url(user, size=50):
     if not user:
         return None
 
-    default_img_url = reduce(lambda u, x: urlparse.urljoin(u, x),
-                             [settings.SITE_URL,
-                              settings.STATIC_URL,
-                              'base/img/remo/remo_avatar.png'])
-
     user_avatar, created = UserAvatar.objects.get_or_create(user=user)
     now = timezone.now()
+    avatar_url = ''
 
     if (user_avatar.last_update < now - timedelta(days=7)) or created:
-        user_avatar.avatar_url = libravatar_url(email=user.email, https=True)
-        user_avatar.save()
+        # Get the user id
+        ask_json = '&format=json'
+        user_url = 'https://mozillians.org/api/v2/users?api-key='
+        user_url = user_url + settings.MOZILLIANS_KEY
+        req = urllib2.Request(user_url + '&email=' + user.email + ask_json)
+        opener = urllib2.build_opener()
+        f = opener.open(req)
+        response = json.loads(f.read())
+        f.close()
+        if response['count'] > 0:
+            user_url = response['results'][0]['_url']
+            user_url = user_url + '?api-key=' + settings.MOZILLIANS_KEY
+            req_avatar = urllib2.Request(user_url + ask_json)
+            opener = urllib2.build_opener()
+            f_avatar = opener.open(req_avatar)
+            response_avatar = json.loads(f_avatar.read())
+            f_avatar.close()
+            user_avatar.avatar_url = response_avatar['photo']['150x150']
+            avatar_url = user_avatar.avatar_url
+            user_avatar.save()
+        else:
+            avatar_url = reduce(lambda u, x: urlparse.urljoin(u, x),
+                                [settings.SITE_URL,
+                                 settings.STATIC_URL,
+                                 'base/img/remo/remo_avatar.png'])
 
-    avatar_url = urlparams(user_avatar.avatar_url, default=default_img_url)
     if size != -1:
-        avatar_url = urlparams(avatar_url, size=size)
+        # TODO resize the image
+        pass
 
     return avatar_url
 

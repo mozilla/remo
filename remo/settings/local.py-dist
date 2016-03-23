@@ -109,6 +109,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # BROWSERID_AUTOLOGIN_EMAIL = 'your_email@example.com'
 # BROWSERID_AUTOLOGIN_ENABLED = True
 
+MOZILLIANS_KEY = 'key'
+
 # remozilla configuration
 # REMOZILLA_USERNAME = ''
 # REMOZILLA_PASSWORD = ''

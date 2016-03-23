@@ -58,19 +58,19 @@ When you want to start contributing...
 
    Create your own admin account::
 
-    $ docker-compose run web ./manage.py createsuperuser
+     $ docker-compose run web ./manage.py createsuperuser
 
 #. Add demo users.
 
-    $ docker-compose run web ./manage.py loaddata demo_users
+     $ docker-compose run web ./manage.py loaddata demo_users
 
 #. Add demo functional areas.
 
-    $ docker-compose run web ./manage.py loaddata demo_functional_areas
+     $ docker-compose run web ./manage.py loaddata demo_functional_areas
 
 #. Add demo events.
 
-    $ docker-compose run web ./manage.py loaddata demo_events
+     $ docker-compose run web ./manage.py loaddata demo_events
 
 ************
 Running ReMo
