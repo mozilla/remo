@@ -55,8 +55,24 @@ class EventAdmin(ExportMixin, admin.ModelAdmin):
         return obj.owner.userprofile.display_name
 
 
+class AttendanceResource(resources.ModelResource):
+    user_full_name = fields.Field()
+    event_name = fields.Field()
+
+    class Meta:
+        model = Attendance
+        export_order = ['event_name', 'user_full_name']
+
+    def dehydrate_user_full_name(self, obj):
+        return obj.user.get_full_name()
+
+    def dehydrate_event_name(self, obj):
+        return obj.event.name
+
+
 class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
     """Attendance Admin"""
+    resource_class = AttendanceResource
     model = Attendance
     list_display = ('event', 'user', 'date_subscribed',)
     search_fields = ('event__name', 'user__first_name', 'user__last_name',)
