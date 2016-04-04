@@ -55,6 +55,13 @@ class EventAdmin(ExportMixin, admin.ModelAdmin):
         return obj.owner.userprofile.display_name
 
 
+class AttendanceAdmin(ExportMixin, admin.ModelAdmin):
+    """Attendance Admin"""
+    model = Attendance
+    list_display = ('event', 'user', 'date_subscribed',)
+    search_fields = ('event__name', 'user__first_name', 'user__last_name',)
+
+
 class EventMetricAdmin(ExportMixin, admin.ModelAdmin):
     """EventMetric Admin."""
     model = EventMetric
@@ -69,5 +76,6 @@ class EventMetricOutcomeAdmin(ExportMixin, admin.ModelAdmin):
     search_fields = ('event__name', 'metric__name')
 
 admin.site.register(Event, EventAdmin)
+admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(EventMetric, EventMetricAdmin)
 admin.site.register(EventMetricOutcome, EventMetricOutcomeAdmin)
