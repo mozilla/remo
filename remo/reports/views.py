@@ -200,14 +200,15 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
         report_list = report_list.filter(functional_areas=functional_area)
         pageheader += ' for area %s' % functional_area.name
 
-    if 'month' and 'year' in request.GET:
+    month = request.GET.get('month')
+    year = request.GET.get('year')
+    if month and year:
         try:
-            month = month2number(request.GET['month'])
+            month = month2number(month)
             # Make sure that year is an integer too
-            int(request.GET['year'])
+            year = int(year)
         except (TypeError, ValueError):
             raise Http404()
-        year = request.GET['year']
         report_list = report_list.filter(report_date__year=year,
                                          report_date__month=month)
 
