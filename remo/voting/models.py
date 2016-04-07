@@ -228,20 +228,22 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
 
     start_template = 'emails/voting_starting_reminder.jinja'
     end_template = 'emails/voting_results_reminder.jinja'
+    task_start_id = ''
+    task_end_id = ''
 
     if not instance.task_start_id or instance.is_future_voting:
         start_reminder = send_voting_mail.apply_async(
             eta=instance.start, kwargs={'voting_id': instance.id,
                                         'subject': subject_start,
                                         'email_template': start_template})
-        (Poll.objects.filter(pk=instance.pk)
-                     .update(task_start_id=start_reminder.task_id))
+        task_start_id = start_reminder.task_id
     end_reminder = send_voting_mail.apply_async(
         eta=instance.end, kwargs={'voting_id': instance.id,
                                   'subject': subject_end,
                                   'email_template': end_template})
-    (Poll.objects.filter(pk=instance.pk)
-                 .update(task_end_id=end_reminder.task_id))
+    task_end_id = end_reminder.task_id
+    Poll.objects.filter(pk=instance.pk).update(task_start_id=task_start_id,
+                                               task_end_id=task_end_id)
 
 
 @receiver(post_save, sender=Poll,
@@ -288,7 +290,7 @@ def automated_poll(sender, instance, **kwargs):
 
     remobot = User.objects.get(username='remobot')
 
-    with transaction.commit_on_success():
+    with transaction.atomic():
         poll = (Poll.objects
                 .create(name=instance.summary,
                         description=instance.first_comment,

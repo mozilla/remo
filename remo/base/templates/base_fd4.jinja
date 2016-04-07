@@ -90,7 +90,8 @@
                     {% set next=request.get_full_path() %}
                   {% endif %}
                   <span id="login-menu-locator">
-                    {{ browserid_login(next=request.GET.next|default(next|default(''))) }}
+                    {{ browserid_login(link_class='',
+                                       next=request.GET.next|default(next|default(''))) }}
                   </span>
                   or
                   <a href="#" data-reveal-id="join-modal">Join</a>

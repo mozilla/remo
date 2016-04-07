@@ -137,7 +137,7 @@ def create_rotm_poll():
         description = 'Automated vote for the Rep of this month.'
         mentor_group = Group.objects.get(name='Mentor')
 
-        with transaction.commit_on_success():
+        with transaction.atomic():
             poll = Poll.objects.create(name=poll_name,
                                        description=description,
                                        valid_groups=mentor_group,

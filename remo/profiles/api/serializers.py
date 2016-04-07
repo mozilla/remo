@@ -41,6 +41,8 @@ class UserProfileDetailedSerializer(serializers.HyperlinkedModelSerializer):
     groups = GroupSerializer(source='user.groups', many=True)
     functional_areas = FunctionalAreaSerializer(many=True)
     remo_url = serializers.SerializerMethodField()
+    date_joined_program = serializers.DateTimeField(format='%Y-%m-%d')
+    date_left_program = serializers.DateTimeField(format='%Y-%m-%d')
 
     class Meta:
         model = UserProfile

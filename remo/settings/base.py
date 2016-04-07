@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'session_csrf',
+    'compressor',
     # Project specific apps
     'remo.base',
     'remo.profiles',
@@ -86,6 +87,39 @@ MEDIA_URL = '/media/'
 
 SESSION_COOKIE_SECURE = not DEBUG
 
+# Instruct session-csrf to always produce tokens for anonymous users
+ANON_ALWAYS = True
+
+FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
+
+ADMINS = (
+    ('Mozilla Reps Devs', 'reps-dev@mozilla.com'),
+)
+
+MANAGERS = ADMINS
+
+ETHERPAD_URL = 'https://public.etherpad-mozilla.org/p/'
+ETHERPAD_PREFIX = 'remo-'
+
+CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
+                  'event/?callbackurl=%(callbackurl)s')
+
+
+REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
+REPS_COUNCIL_ALIAS = 'reps-council@mozilla.com'
+
+# Mozillians API
+MOZILLIANS_API_BASE = 'https://mozillians.org'
+
+ALLOWED_HOSTS = ['reps.mozilla.org']
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+# Statsd Graphite
+STATSD_CLIENT = 'django_statsd.clients.normal'
+MAPBOX_TOKEN = 'examples.map-i86nkdio'
+
+SERVER_EMAIL = 'reps-dev@mozilla.com'
+
 CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.template.context_processors.debug',
@@ -101,35 +135,38 @@ CONTEXT_PROCESSORS = (
 TEMPLATES = [
     {
         'BACKEND': 'django_jinja.backend.Jinja2',
-        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'app_dirname': 'jinja2',
-            # Don't match loaders based on file extension
-            'match_extension': None,
+            'match_extension': '.jinja',
             'newstyle_gettext': True,
             'context_processors': CONTEXT_PROCESSORS,
             'undefined': 'jinja2.Undefined',
             'extensions': DEFAULT_EXTENSIONS + [
                 'compressor.contrib.jinja2ext.CompressorExtension',
-                'waffle.jinja.WaffleExtension'
+                'waffle.jinja.WaffleExtension',
+                'caching.ext.cache'
             ],
             'globals': {
                 'browserid_info': 'django_browserid.helpers.browserid_info',
                 'browserid_login': 'django_browserid.helpers.browserid_login',
-                'browserid_logout': 'django_browserid.helpers.browserid_logout'
+                'browserid_logout': 'django_browserid.helpers.browserid_logout',
+                'browserid_js': 'django_browserid.helpers.browserid_js'
             }
         }
     },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': CONTEXT_PROCESSORS
         }
     },
 ]
+
+
+def COMPRESS_JINJA2_GET_ENVIRONMENT():
+    from django.template import engines
+    return engines['jinja2'].env
 
 WSGI_APPLICATION = 'remo.wsgi.application'
 
@@ -153,6 +190,10 @@ HMAC_KEYS = {
 
 PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
 
+AUTHENTICATION_BACKENDS = [
+    'django_browserid.auth.BrowserIDBackend',
+    'django.contrib.auth.backends.ModelBackend'
+]
 # Django-CSP
 CSP_DEFAULT_SRC = (
     "'self'",
@@ -285,7 +326,7 @@ COMPRESS_OFFLINE = True
 
 def _request_args():
     from django.conf import settings
-    from tower import ugettext_lazy as _lazy
+    from django.utils.translation import ugettext_lazy as _lazy
 
     args = {'siteName': _lazy('Mozilla Reps'), }
 
@@ -320,6 +361,9 @@ REST_FRAMEWORK = {
         'rest_framework.filters.DjangoFilterBackend',
         'rest_framework.filters.OrderingFilter',
     ),
+    'DATE_FORMAT': None,
+    'TIME_FORMAT': None,
+    'DATETIME_FORMAT': None,
 }
 
 # URL constants

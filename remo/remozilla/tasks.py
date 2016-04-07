@@ -43,7 +43,7 @@ def parse_bugzilla_time(time):
 
 
 @task
-@transaction.commit_on_success
+@transaction.atomic
 def fetch_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
 

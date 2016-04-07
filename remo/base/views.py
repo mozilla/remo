@@ -68,7 +68,7 @@ def robots_txt(request):
     else:
         robots += 'Disallow: /\n'
 
-    return http.HttpResponse(robots, mimetype='text/plain')
+    return http.HttpResponse(robots, content_type='text/plain')
 
 
 @never_cache
