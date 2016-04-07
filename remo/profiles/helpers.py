@@ -5,11 +5,10 @@ from datetime import timedelta
 from django.utils import timezone
 
 from django.conf import settings
-from funfactory.helpers import urlparams
 from jingo import register
-
 from libravatar import libravatar_url
 
+from remo.base.helpers import urlparams
 from remo.profiles.models import FunctionalArea, UserAvatar
 from remo.reports.utils import get_last_report
 

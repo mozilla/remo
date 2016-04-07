@@ -252,7 +252,7 @@ class BaseRangePollChoiceInlineFormset(BaseInlineFormSet):
 RangePollChoiceFormset = (
     inlineformset_factory(RangePoll, RangePollChoice,
                           formset=BaseRangePollChoiceInlineFormset, extra=1,
-                          exclude='votes', can_delete=True))
+                          exclude=('votes',), can_delete=True))
 
 
 class BaseRangePollInlineFormSet(BaseInlineFormSet):
@@ -392,7 +392,7 @@ class BaseRadioPollChoiceInlineFormset(BaseInlineFormSet):
 RadioPollChoiceFormset = (
     inlineformset_factory(RadioPoll, RadioPollChoice,
                           formset=BaseRadioPollChoiceInlineFormset, extra=1,
-                          exclude='votes', can_delete=True))
+                          exclude=('votes',), can_delete=True))
 
 
 class BaseRadioPollInlineFormSet(BaseInlineFormSet):

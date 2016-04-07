@@ -1,7 +1,8 @@
+from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
-from django.core.validators import email_re
+from django.core.validators import validate_email
 from django.template.loader import render_to_string
 
 from celery.task import task
@@ -47,10 +48,12 @@ def send_remo_mail(subject, recipients_list, sender=None,
             ctx_data = {'user': user,
                         'userprofile': user.userprofile}
             data.update(ctx_data)
-        elif email_re.match(recipient):
-            to = recipient
         else:
-            return
+            try:
+                validate_email(recipient)
+                to = recipient
+            except forms.ValidationError:
+                return
 
         if email_template:
             message = render_to_string(email_template, data)

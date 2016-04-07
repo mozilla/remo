@@ -4,6 +4,9 @@ from tastypie.exceptions import ImmediateHttpResponse
 from tastypie.throttle import CacheThrottle
 
 
+default_app_config = 'remo.api.apps.ApiConfig'
+
+
 class HttpCache(NoCache):
     """Cache class that sets cache-control to response headers."""
 

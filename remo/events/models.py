@@ -124,7 +124,7 @@ class Event(caching.base.CachingMixin, models.Model):
     times_edited = models.PositiveIntegerField(default=0, editable=False)
     categories = models.ManyToManyField(FunctionalArea,
                                         related_name='events_categories',
-                                        blank=True, null=True)
+                                        blank=True)
     goals = models.ManyToManyField(EventGoal, related_name='events_goals',
                                    blank=True)
     metrics = models.ManyToManyField(EventMetric, through='EventMetricOutcome')
