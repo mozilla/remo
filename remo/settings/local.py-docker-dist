@@ -44,7 +44,7 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DEBUG = TEMPLATE_DEBUG = True
+DEBUG = True
 
 CELERY_ALWAYS_EAGER = True
 
@@ -78,3 +78,6 @@ HMAC_KEYS = {
 
 from django_sha2 import get_password_hashers
 PASSWORD_HASHERS = get_password_hashers(base.BASE_PASSWORD_HASHERS, HMAC_KEYS)
+
+# Celery configuration
+BROKER_URL = 'amqp://guest:guest@broker:5672//'

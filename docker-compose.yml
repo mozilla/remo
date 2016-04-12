@@ -5,12 +5,30 @@ db:
     - MYSQL_USER=remo
     - MYSQL_PASSWORD=remo
     - MYSQL_ROOT_PASSWORD=root
+memcached:
+  image: memcached
+broker:
+  image: rabbitmq
+celery:
+  build: .
+  volumes:
+    - .:/code
+  links:
+    - db
+    - broker
+    - memcached
+  command: celery -A remo worker -l INFO
+  environment:
+    - C_FORCE_ROOT=true
 web:
   build: .
-  command: python manage.py runserver 0.0.0.0:8000
   ports:
     - "8000:8000"
   volumes:
     - .:/code
   links:
     - db
+    - broker
+    - celery
+    - memcached
+  command: python manage.py runserver 0.0.0.0:8000
