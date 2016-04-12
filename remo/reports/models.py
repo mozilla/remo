@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models.signals import m2m_changed, post_migrate, post_save, pre_delete
+from django.db.models.signals import m2m_changed, post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.timezone import now
 

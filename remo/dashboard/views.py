@@ -208,7 +208,7 @@ def stats_dashboard(request):
         ng_reports__report_date__range=[get_date(weeks=-8), get_date(weeks=8)])
 
     active = reps.filter(q_active)
-    inactive_low = reps.filter(q_inactive & ~q_active)
+    inactive_low = reps.filter(~q_active & q_inactive)
     inactive_high = reps.filter(~q_inactive)
 
     args = {}

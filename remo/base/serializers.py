@@ -4,7 +4,6 @@ import cStringIO
 
 from django.conf import settings
 from django.http import Http404
-from django.template import Context
 from django.template.loader import get_template
 from django.utils import timezone
 from tastypie.serializers import Serializer
@@ -159,7 +158,6 @@ class iCalSerializer(Serializer):
             events = [data.obj]
 
         date_now = timezone.now()
-        ical = get_template('multi_event_ical_template.ics')
+        ical = get_template('multi_event_ical_template.jinja')
 
-        return ical.render(Context({'events': events, 'date_now': date_now,
-                                    'host': settings.SITE_URL}))
+        return ical.render({'events': events, 'date_now': date_now, 'host': settings.SITE_URL})

@@ -38,7 +38,7 @@ class NGReportFormTests(RemoTestCase):
         eq_(db_obj.longitude, 44.33)
         eq_(db_obj.latitude, 55.66)
         eq_(db_obj.location, 'world')
-        eq_(db_obj.link, 'https://example.com/')
+        eq_(db_obj.link, 'https://example.com')
         eq_(db_obj.link_description, 'Test link.')
         eq_(db_obj.activity_description, 'Test activity'),
         eq_(db_obj.functional_areas.all().count(), 1)

@@ -22,7 +22,7 @@ from uuslug import uuslug as slugify
 from remo.base.utils import get_object_or_none
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import add_permissions_to_groups, get_date
+from remo.base.utils import get_date
 from remo.dashboard.models import ActionItem, Item
 from remo.remozilla.models import Bug, WAITING_MENTOR_VALIDATION_ACTION
 
@@ -277,8 +277,7 @@ class UserStatus(caching.base.CachingMixin, models.Model):
         ordering = ['-expected_date', '-created_on']
 
 
-@receiver(post_save, sender=UserStatus,
-          dispatch_uid='profiles_user_status_email_reminder')
+@receiver(post_save, sender=UserStatus, dispatch_uid='profiles_user_status_email_reminder')
 def user_status_email_reminder(sender, instance, created, raw, **kwargs):
     """Send email notifications when a user submits
     an unavailability notice.
@@ -385,8 +384,7 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
                 break
 
 
-@receiver(pre_save, sender=UserProfile,
-          dispatch_uid='userprofile_email_mentor_notification')
+@receiver(pre_save, sender=UserProfile, dispatch_uid='userprofile_email_mentor_notification')
 def email_mentor_notification(sender, instance, raw, **kwargs):
     """Notify mentor when his/her mentee changes mentor on his/her profile."""
     if not instance.mentor:
@@ -443,8 +441,7 @@ def create_profile(sender, instance, created, raw, **kwargs):
         profile, new = UserProfile.objects.get_or_create(user=instance)
 
 
-@receiver(post_save, sender=User,
-          dispatch_uid='user_set_inactive_post_save_signal')
+@receiver(post_save, sender=User, dispatch_uid='user_set_inactive_post_save_signal')
 def user_set_inactive_post_save(sender, instance, raw, **kwargs):
     """Set user inactive if there is no associated UserProfile."""
     if instance.first_name and not raw:

@@ -6,7 +6,6 @@ from remo.profiles.tests import UserFactory
 
 class FeaturedRepFactory(factory.django.DjangoModelFactory):
     """Factory for FeaturedRep model."""
-    FACTORY_FOR = FeaturedRep
 
     created_by = factory.SubFactory(UserFactory)
 
@@ -23,3 +22,6 @@ class FeaturedRepFactory(factory.django.DjangoModelFactory):
             for i in range(2):
                 area = UserFactory.create()
                 self.users.add(area)
+
+    class Meta:
+        model = FeaturedRep

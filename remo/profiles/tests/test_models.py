@@ -1,18 +1,17 @@
 import datetime
 
 from django.contrib.auth.models import User
-from django.core import mail
 from django.core.exceptions import ValidationError
 
+from mock import MagicMock, patch
 from nose.tools import eq_, ok_, raises
-from test_utils import TestCase
 
 from remo.base.tests import RemoTestCase
 from remo.profiles.models import DISPLAY_NAME_MAX_LENGTH, UserProfile
 from remo.profiles.tests import UserFactory, UserStatusFactory
 
 
-class UserTest(TestCase):
+class UserTest(RemoTestCase):
     """Tests related to User Model."""
 
     def setUp(self):
@@ -45,8 +44,7 @@ class UserTest(TestCase):
 
     def test_new_user_has_display_name(self):
         """Test that new users get a display_name automatically generated."""
-        eq_(self.new_user.userprofile.display_name,
-            'x' * (DISPLAY_NAME_MAX_LENGTH - 1))
+        eq_(self.new_user.userprofile.display_name, 'x' * (DISPLAY_NAME_MAX_LENGTH - 1))
 
     def test_new_user_conflicting_display_names(self):
         """Test that display_name automatic calculation function will
@@ -86,7 +84,7 @@ class UserTest(TestCase):
         eq_(new_user.userprofile.display_name, 'x' * DISPLAY_NAME_MAX_LENGTH)
 
 
-class UserProfileTest(TestCase):
+class UserProfileTest(RemoTestCase):
     """Tests related to UserProfile Model."""
 
     def setUp(self):
@@ -276,7 +274,7 @@ class UserProfileTest(TestCase):
         self.rep.userprofile.full_clean()
 
 
-class PermissionTest(TestCase):
+class PermissionTest(RemoTestCase):
     """Tests related to User Permissions."""
 
     def setUp(self):
@@ -316,52 +314,52 @@ class PermissionTest(TestCase):
 class EmailMentorNotification(RemoTestCase):
     """Test that a mentor receives an email when a Mente changes  mentor."""
 
-    def test_send_email_on_mentor_change(self):
+    @patch('remo.profiles.models.send_remo_mail.delay')
+    def test_send_email_on_mentor_change(self, mocked_mail):
         """Test that old mentor gets an email."""
         new_mentor = UserFactory.create(groups=['Rep', 'Mentor'])
         old_mentor = UserFactory.create(groups=['Rep', 'Mentor'])
-        user = UserFactory.create(groups=['Rep'],
-                                  userprofile__mentor=old_mentor)
+        user = UserFactory.create(groups=['Rep'], userprofile__mentor=old_mentor)
         user.userprofile.mentor = new_mentor
         user.userprofile.save()
-        eq_(len(mail.outbox), 3)
-        recipients = set([mail.outbox[0].to[0],
-                          mail.outbox[1].to[0],
-                          mail.outbox[2].to[0]])
-        receivers = set(['{0} <{1}>'.format(new_mentor.get_full_name(),
-                                            new_mentor.email),
-                         '{0} <{1}>'.format(old_mentor.get_full_name(),
-                                            old_mentor.email),
-                         '{0} <{1}>'.format(user.get_full_name(),
-                                            user.email)])
-        eq_(recipients, receivers)
-        eq_(set([msg.extra_headers['Reply-To'] for msg in mail.outbox]),
-            set([new_mentor.email, user.email]))
+        ok_(mocked_mail.called)
+        # Total of 3 emails, one has 2 recipients
+        eq_(mocked_mail.call_count, 2)
+        data1 = mocked_mail.call_args_list[0][1]
+        data2 = mocked_mail.call_args_list[1][1]
+        recipients = data1['recipients_list'] + data2['recipients_list']
+        eq_(set(recipients), set([new_mentor.id, old_mentor.id, user.id]))
+        eq_(data1['headers']['Reply-To'], user.email)
+        eq_(data2['headers']['Reply-To'], new_mentor.email)
 
 
 class UserStatusNotification(RemoTestCase):
     """Tests email notifications when a user becomes unavailable."""
 
-    def test_base(self):
+    @patch('remo.profiles.models.send_remo_mail.apply_async')
+    def test_base(self, mocked_mail):
+        task = MagicMock()
+        task.task_id = 1
+        mocked_mail.return_value = task
         mentor = UserFactory.create()
         rep = UserFactory.create(userprofile__mentor=mentor)
         UserStatusFactory.create(user=rep)
-        eq_(len(mail.outbox), 2)
-        eq_(mail.outbox[0].subject,
-            'Confirm if you are available for Reps activities')
-        msg = ('Reach out to {0} - expected to be available again'
-               .format(rep.get_full_name()))
-        eq_(mail.outbox[1].subject, msg)
-        eq_(mail.outbox[0].to[0],
-            '{0} <{1}>'.format(rep.get_full_name(), rep.email))
-        eq_(mail.outbox[1].to[0],
-            '{0} <{1}>'.format(mentor.get_full_name(), mentor.email))
+        ok_(mocked_mail.called)
+        eq_(mocked_mail.call_count, 2)
+        data1 = mocked_mail.call_args_list[0][1]
+        data2 = mocked_mail.call_args_list[1][1]
+        eq_(data1['kwargs']['subject'], 'Confirm if you are available for Reps activities')
+        eq_(data2['kwargs']['subject'], ('Reach out to {0} - expected to be available '
+                                         'again').format(rep.get_full_name()))
 
-    def test_user_without_mentor(self):
+    @patch('remo.profiles.models.send_remo_mail.apply_async')
+    def test_user_without_mentor(self, mocked_mail):
+        task = MagicMock()
+        task.task_id = 1
+        mocked_mail.return_value = task
         rep = UserFactory.create(userprofile__mentor=None)
         UserStatusFactory.create(user=rep)
-        eq_(len(mail.outbox), 1)
-        eq_(mail.outbox[0].subject,
-            'Confirm if you are available for Reps activities')
-        eq_(mail.outbox[0].to[0],
-            '{0} <{1}>'.format(rep.get_full_name(), rep.email))
+        ok_(mocked_mail.called)
+        eq_(mocked_mail.call_count, 1)
+        data = mocked_mail.call_args_list[0][1]
+        eq_(data['kwargs']['subject'], 'Confirm if you are available for Reps activities')

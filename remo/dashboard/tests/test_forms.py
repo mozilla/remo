@@ -4,13 +4,13 @@ from django.test.client import RequestFactory
 
 from mock import ANY, patch
 from nose.tools import eq_, ok_
-from test_utils import TestCase
 
+from remo.base.tests import RemoTestCase
 from remo.dashboard.forms import EmailRepsForm
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
-class EmailRepsFormsTest(TestCase):
+class EmailRepsFormsTest(RemoTestCase):
 
     def setUp(self):
         self.functional_area = FunctionalAreaFactory.create()

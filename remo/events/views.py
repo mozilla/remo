@@ -280,7 +280,7 @@ def count_converted_visitors(request, slug):
 def export_single_event_to_ical(request, slug):
     """ICal export of single event."""
     event = get_object_or_404(Event, slug=slug)
-    ical = render(request, 'multi_event_ical_template.ics',
+    ical = render(request, 'multi_event_ical_template.jinja',
                   {'events': [event],
                    'date_now': now(),
                    'host': settings.SITE_URL})

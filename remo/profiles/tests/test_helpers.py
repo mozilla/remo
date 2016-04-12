@@ -3,7 +3,6 @@ from datetime import timedelta
 import django.utils.timezone as timezone
 
 from nose.tools import eq_, ok_
-from test_utils import TestCase
 
 from remo.base.tests import RemoTestCase
 from remo.profiles.templatetags.helpers import get_activity_level, get_avatar_url
@@ -11,7 +10,7 @@ from remo.profiles.tests import UserFactory, UserAvatarFactory
 from remo.reports.tests import NGReportFactory
 
 
-class HelpersTest(TestCase):
+class HelpersTest(RemoTestCase):
     """Tests helpers."""
 
     def test_cached_avatar(self):

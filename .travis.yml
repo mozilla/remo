@@ -7,11 +7,12 @@ before_install:
   - pip install flake8
   - flake8 remo
   - mysql -e 'create database remo character set utf8; SET @@GLOBAL.wait_timeout=28800;'
-  - git submodule update --init --recursive
 install:
-  - pip install -r requirements/dev.txt
+  - npm install -g less
+  - pip install coverage
+  - bin/peep.py install -r requirements/dev.txt
 script:
-  - python manage.py test --with-coverage --cover-erase --cover-package=remo
+  - coverage run --source=remo manage.py test
 after_success:
   - pip install coveralls
   - coveralls
