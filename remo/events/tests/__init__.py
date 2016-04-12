@@ -22,7 +22,6 @@ ATTENDANCE_CHOICES = [10, 50, 100, 500, 1000, 2000]
 
 class EventFactory(factory.django.DjangoModelFactory):
     """Factory for Event model."""
-    FACTORY_FOR = Event
 
     name = factory.Sequence(lambda n: 'Event #%s' % n)
     start = fuzzy.FuzzyDateTime(START_DT, END_DT)
@@ -47,6 +46,9 @@ class EventFactory(factory.django.DjangoModelFactory):
     budget_bug = factory.SubFactory(BugFactory)
     times_edited = fuzzy.FuzzyInteger(10)
 
+    class Meta:
+        model = Event
+
     @factory.post_generation
     def categories(self, create, extracted, **kwargs):
         """Add event categories after event creation."""
@@ -62,16 +64,18 @@ class EventFactory(factory.django.DjangoModelFactory):
 
 class AttendanceFactory(factory.django.DjangoModelFactory):
     """Factory for Attendance model."""
-    FACTORY_FOR = Attendance
 
     user = factory.SubFactory(UserFactory)
     event = factory.SubFactory(EventFactory)
     email = factory.SelfAttribute('user.email')
 
+    class Meta:
+        model = Attendance
+
 
 class EventCommentFactory(factory.django.DjangoModelFactory):
     """Factory for EventComment model."""
-    FACTORY_FOR = EventComment
+    model = EventComment
 
     user = factory.SubFactory(UserFactory)
     event = factory.SubFactory(EventFactory)
@@ -80,14 +84,18 @@ class EventCommentFactory(factory.django.DjangoModelFactory):
 
 
 class EventMetricFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = EventMetric
 
     name = factory.Sequence(lambda n: 'EventMetric #{0}'.format(n))
 
+    class Meta:
+        model = EventMetric
+
 
 class EventMetricOutcomeFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = EventMetricOutcome
 
     event = factory.SubFactory(EventFactory)
     metric = factory.SubFactory(EventMetricFactory)
     expected_outcome = fuzzy.FuzzyInteger(1, 100)
+
+    class Meta:
+        model = EventMetricOutcome

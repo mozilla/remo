@@ -15,19 +15,22 @@ from remo.reports.models import (Activity, Campaign, NGReport,
 
 
 class ActivityFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = Activity
 
     name = factory.Sequence(lambda n: 'Activity #{0}'.format(n))
 
+    class Meta:
+        model = Activity
+
 
 class CampaignFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = Campaign
 
     name = factory.Sequence(lambda n: 'Campaign #{0}'.format(n))
 
+    class Meta:
+        model = Campaign
+
 
 class NGReportFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = NGReport
 
     user = factory.SubFactory(UserFactory, userprofile__initial_council=True)
     mentor = factory.SelfAttribute('user.userprofile.mentor')
@@ -38,6 +41,9 @@ class NGReportFactory(factory.django.DjangoModelFactory):
     is_passive = False
     link = 'www.example.com'
     report_date = fuzzy.FuzzyDate(datetime.date(2013, 01, 01), now().date())
+
+    class Meta:
+        model = NGReport
 
     @factory.post_generation
     def functional_areas(self, create, extracted, **kwargs):
@@ -56,11 +62,13 @@ class NGReportFactory(factory.django.DjangoModelFactory):
 
 
 class NGReportCommentFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = NGReportComment
 
     user = factory.SubFactory(UserFactory, userprofile__initial_council=True)
     report = factory.SubFactory(NGReportFactory)
     comment = factory.Sequence(lambda n: 'Comment #{0}'.format(n))
+
+    class Meta:
+        model = NGReportComment
 
 
 class NGReportCommentFactoryNoSignals(NGReportCommentFactory):

@@ -2,13 +2,13 @@ from datetime import timedelta
 
 from django.utils.timezone import now
 from nose.tools import eq_, ok_
-from test_utils import TestCase
 
+from remo.base.tests import RemoTestCase
 from remo.events.tests import EventFactory
 from remo.profiles.models import FunctionalArea
 
 
-class ModelsTest(TestCase):
+class ModelsTest(RemoTestCase):
     """Tests related to Events Models."""
 
     def setUp(self):

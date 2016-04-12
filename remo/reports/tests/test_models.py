@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.core import mail
 from django.utils.timezone import now
 from nose.tools import eq_, ok_
-from test_utils import TestCase
 
 import mock
 
@@ -18,7 +17,7 @@ from remo.reports.tests import (NGReportFactory, NGReportCommentFactory,
                                 NGReportCommentFactoryNoSignals)
 
 
-class NGReportTest(TestCase):
+class NGReportTest(RemoTestCase):
     def test_get_absolute_url(self):
         report = NGReportFactory.create(
             report_date=datetime.date(2012, 01, 01), id=9999)
@@ -85,7 +84,7 @@ class NGReportTest(TestCase):
         ok_(not user.userprofile.current_streak_start)
 
 
-class NGReportComment(TestCase):
+class NGReportComment(RemoTestCase):
     def test_get_absolute_delete_url(self):
         report = NGReportFactory.create(
             report_date=datetime.date(2012, 01, 01), id=9999)
@@ -96,7 +95,7 @@ class NGReportComment(TestCase):
              % (report.user.userprofile.display_name, report_comment.id)))
 
 
-class NGReportAttendanceSignalTests(TestCase):
+class NGReportAttendanceSignalTests(RemoTestCase):
     def test_owner(self):
         """Test creating a passive attendance report for event owner."""
         activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
@@ -156,7 +155,7 @@ class NGReportAttendanceSignalTests(TestCase):
         ok_(not query.exists())
 
 
-class NGReportEventCreationSignalTests(TestCase):
+class NGReportEventCreationSignalTests(RemoTestCase):
 
     def test_create(self):
         """Test creating a passive report after creating an event."""
@@ -233,7 +232,7 @@ class NGReportEventCreationSignalTests(TestCase):
                                  lambda x: x.name)
 
 
-class NGReportCommentSignalTests(TestCase):
+class NGReportCommentSignalTests(RemoTestCase):
     def test_comment_one_user(self):
         """Test sending email when a new comment is added on a NGReport
         and the user has the option enabled in his/her settings.
@@ -296,7 +295,7 @@ class NGReportCommentSignalTests(TestCase):
         eq_(mail.outbox[0].subject, msg)
 
 
-class NGReportDeleteSignalTests(TestCase):
+class NGReportDeleteSignalTests(RemoTestCase):
 
     def test_current_streak_oldest_report(self):
         """Update current and longest streak counters when the oldest

@@ -1,24 +1,23 @@
 from datetime import datetime, timedelta
 
+from django.db.models.signals import post_save
 from django.contrib.auth.models import Group, User
-from django.core import mail
 from django.utils.timezone import now
 
+from factory.django import mute_signals
 from mock import patch
 from nose.tools import eq_, ok_
-from test_utils import TestCase
 
-from remo.base.utils import get_date, number2month
 from remo.base.tests import RemoTestCase
+from remo.base.utils import get_date, number2month
 from remo.remozilla.tests import BugFactory
 from remo.profiles.tests import UserFactory
 from remo.voting.models import Poll, RangePoll, RangePollChoice
 from remo.voting.tasks import create_rotm_poll, extend_voting_period
-from remo.voting.tests import (VoteFactory, PollFactory, PollFactoryNoSignals,
-                               RadioPollChoiceFactory, RadioPollFactory)
+from remo.voting.tests import VoteFactory, PollFactory, RadioPollChoiceFactory, RadioPollFactory
 
 
-class VotingTestTasks(TestCase):
+class VotingTestTasks(RemoTestCase):
     """Test sending notifications."""
 
     @patch('remo.voting.tasks.EXTEND_VOTING_PERIOD', 24 * 3600)
@@ -33,12 +32,13 @@ class VotingTestTasks(TestCase):
         User.objects.filter(groups__name='Council').delete()
         council = UserFactory.create_batch(9, groups=['Council'])
 
-        automated_poll = PollFactoryNoSignals.create(name='poll',
-                                                     start=start, end=end,
-                                                     valid_groups=group,
-                                                     created_by=user,
-                                                     automated_poll=True,
-                                                     bug=bug)
+        with mute_signals(post_save):
+            automated_poll = PollFactory.create(name='poll',
+                                                start=start, end=end,
+                                                valid_groups=group,
+                                                created_by=user,
+                                                automated_poll=True,
+                                                bug=bug)
 
         radio_poll = RadioPollFactory.create(poll=automated_poll,
                                              question='Budget Approval')
@@ -48,7 +48,8 @@ class VotingTestTasks(TestCase):
                                       radio_poll=radio_poll)
         VoteFactory.create(user=council[0], poll=automated_poll)
 
-        extend_voting_period()
+        with patch('remo.voting.tasks.send_remo_mail.delay') as mocked_mail:
+            extend_voting_period()
 
         poll = Poll.objects.get(pk=automated_poll.id)
         eq_(poll.end.year, new_end.year)
@@ -59,11 +60,9 @@ class VotingTestTasks(TestCase):
         eq_(poll.end.second, 0)
         ok_(poll.is_extended)
 
-        reminders = map(lambda x: x.subject, mail.outbox)
-        msg = '[Urgent] Voting extended for poll'
-
-        # Test that those who voted don't receive notification
-        eq_(reminders.count(msg), 8)
+        # Test that only the 1 that hasn't voted gets a notification
+        ok_(mocked_mail.called)
+        eq_(mocked_mail.call_count, 1)
 
     @patch('remo.voting.tasks.EXTEND_VOTING_PERIOD', 24 * 3600)
     def test_extend_voting_period_majority(self):
@@ -76,12 +75,13 @@ class VotingTestTasks(TestCase):
         User.objects.filter(groups__name='Council').delete()
         UserFactory.create_batch(9, groups=['Council'])
 
-        automated_poll = PollFactoryNoSignals.create(name='poll',
-                                                     start=start, end=end,
-                                                     valid_groups=group,
-                                                     created_by=user,
-                                                     automated_poll=True,
-                                                     bug=bug)
+        with mute_signals(post_save):
+            automated_poll = PollFactory.create(name='poll',
+                                                start=start, end=end,
+                                                valid_groups=group,
+                                                created_by=user,
+                                                automated_poll=True,
+                                                bug=bug)
 
         radio_poll = RadioPollFactory.create(poll=automated_poll,
                                              question='Budget Approval')

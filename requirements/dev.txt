@@ -63,8 +63,6 @@ ipdb==0.9.1
 # sha256: T8LkeK3c8XAWZX3_MLLY1hHoNB-sGczydogC9mNde4o
 # sha256: oRPV9a16errO-d9ew_KvI6IKKABZIVd7Fd1YTQmdWQA
 pep8==1.7.0
-# sha256: dap2aAC0psxgM44Bsbals1kqkfzCgQslYgSYuRVntHs
-https://github.com/jbalogh/test-utils/archive/master.zip#egg=test-utils
 # sha256: 74ZW8DS5rdF6lbPJebJoYm08KRb1AuZqrHJp9ohyuN4
 # sha256: coSkDe5JOThL6oIJ2Lt10g8pFCqPeCE3NHelbME7Yvk
 # sha256: j9_uo_GFS_0Re_Ch8T4Uwzd78UwbcZH0l_No3wjcu1U

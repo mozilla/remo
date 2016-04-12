@@ -17,7 +17,6 @@ import mock
 from jinja2 import Markup
 from nose.exc import SkipTest
 from nose.tools import eq_, ok_
-from test_utils import TestCase
 
 from remo.base import mozillians
 from remo.base.templatetags.helpers import AES_PADDING, enc_string, mailhide, pad_string
@@ -38,7 +37,7 @@ assert json.loads(VOUCHED_MOZILLIAN)
 assert json.loads(NOT_VOUCHED_MOZILLIAN)
 
 
-class MozilliansTest(TestCase):
+class MozilliansTest(RemoTestCase):
     """Test Moziilians."""
 
     @mock.patch('requests.get')
@@ -105,7 +104,7 @@ class MozilliansTest(TestCase):
         eq_(user.get_full_name(), u'Anonymous Mozillian')
 
 
-class ViewsTest(TestCase):
+class ViewsTest(RemoTestCase):
     """Test views."""
     fixtures = ['demo_users.json']
 

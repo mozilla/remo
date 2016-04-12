@@ -11,9 +11,8 @@ from django.utils.timezone import make_aware, now
 from mock import ANY
 from nose.tools import eq_, ok_
 from pytz import timezone
-from test_utils import TestCase
 
-from remo.base.tests import requires_login, requires_permission
+from remo.base.tests import RemoTestCase, requires_login, requires_permission
 from remo.events.models import Event, EventComment, EventMetricOutcome
 from remo.events.tests import (AttendanceFactory, EventCommentFactory,
                                EventFactory, EventMetricFactory,
@@ -22,7 +21,7 @@ from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 from remo.reports.tests import CampaignFactory
 
 
-class ViewsTest(TestCase):
+class ViewsTest(RemoTestCase):
     """Tests related to Events Views."""
 
     def setUp(self):

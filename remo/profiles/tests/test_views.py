@@ -9,13 +9,12 @@ from django.utils.timezone import now
 import mock
 from nose.tools import eq_, ok_
 from pyquery import PyQuery as pq
-from test_utils import TestCase
 
 from remo.base.tests import RemoTestCase, requires_permission, requires_login
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
 
-class ViewsTest(TestCase):
+class ViewsTest(RemoTestCase):
     """Tests related to Profiles Views."""
 
     def setUp(self):

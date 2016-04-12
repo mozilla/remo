@@ -1,5 +1,4 @@
 from nose.tools import eq_, ok_
-from test_utils import TestCase
 
 from remo.base.tests import RemoTestCase
 from remo.base.utils import get_date
@@ -8,7 +7,7 @@ from remo.profiles.models import UserStatus
 from remo.profiles.tests import UserFactory, UserStatusFactory
 
 
-class ChangeUserFormTest(TestCase):
+class ChangeUserFormTest(RemoTestCase):
 
     def test_change_valid_bugzilla_email(self):
         """Test change bugzilla email with a valid one."""

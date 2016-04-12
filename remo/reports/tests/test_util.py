@@ -4,9 +4,9 @@ from django.core.urlresolvers import reverse
 from django.utils.timezone import now
 
 import mock
-from funfactory.helpers import urlparams
 from nose.tools import eq_, ok_
 
+from remo.base.templatetags.helpers import urlparams
 from remo.base.tests import RemoTestCase
 from remo.base.utils import month2number
 from remo.profiles.tests import UserFactory

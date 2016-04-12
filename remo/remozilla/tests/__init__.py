@@ -15,7 +15,6 @@ DUE_DT = datetime.datetime(2013, 1, 1, tzinfo=utc)
 
 
 class BugFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = Bug
 
     bug_id = fuzzy.FuzzyInteger(50000, 200000)
     bug_creation_time = fuzzy.FuzzyDateTime(CREATION_DT, CHANGE_DT)
@@ -25,6 +24,9 @@ class BugFactory(factory.django.DjangoModelFactory):
     component = fuzzy.FuzzyChoice(COMPONENTS)
     summary = 'Bug summary'
     whiteboard = 'Bug whiteboard'
+
+    class Meta:
+        model = Bug
 
     @factory.post_generation
     def add_cc_users(self, create, extracted, **kwargs):

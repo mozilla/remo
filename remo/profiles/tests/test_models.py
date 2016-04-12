@@ -5,14 +5,13 @@ from django.core import mail
 from django.core.exceptions import ValidationError
 
 from nose.tools import eq_, ok_, raises
-from test_utils import TestCase
 
 from remo.base.tests import RemoTestCase
 from remo.profiles.models import DISPLAY_NAME_MAX_LENGTH, UserProfile
 from remo.profiles.tests import UserFactory, UserStatusFactory
 
 
-class UserTest(TestCase):
+class UserTest(RemoTestCase):
     """Tests related to User Model."""
 
     def setUp(self):
@@ -86,7 +85,7 @@ class UserTest(TestCase):
         eq_(new_user.userprofile.display_name, 'x' * DISPLAY_NAME_MAX_LENGTH)
 
 
-class UserProfileTest(TestCase):
+class UserProfileTest(RemoTestCase):
     """Tests related to UserProfile Model."""
 
     def setUp(self):
@@ -276,7 +275,7 @@ class UserProfileTest(TestCase):
         self.rep.userprofile.full_clean()
 
 
-class PermissionTest(TestCase):
+class PermissionTest(RemoTestCase):
     """Tests related to User Permissions."""
 
     def setUp(self):
