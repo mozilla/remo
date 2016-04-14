@@ -3,12 +3,13 @@ from urllib import quote
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.mail import mail_admins
 from django.db import transaction
 from django.utils import timezone
 
 import requests
 import waffle
-from celery.task import task
+from celery.task import periodic_task, task
 from funfactory.helpers import urlparams
 
 from remo.base.utils import get_object_or_none
@@ -43,8 +44,13 @@ def parse_bugzilla_time(time):
 
 
 @task
-@transaction.commit_on_success
 def fetch_bugs(components=COMPONENTS, days=None):
+    return
+
+
+@periodic_task(run_every=timedelta(minutes=15))
+@transaction.commit_on_success
+def fetch_remo_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
 
     Loop over components and fetch bugs updated the last days. Link
@@ -159,3 +165,12 @@ def fetch_bugs(components=COMPONENTS, days=None):
             url = urlparams(url, offset=offset)
 
     set_last_updated_date(now)
+
+    def on_failure(self, *args, **kwargs):
+        # Make sure to email admins on error
+        import traceback
+        import StringIO
+        tb = StringIO.StringIO()
+        traceback.print_exc(file=tb)
+        tb.seek(0)
+        mail_admins('Fetch bugs error', tb.read())

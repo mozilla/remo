@@ -3,7 +3,7 @@ from optparse import make_option
 from django.core.mail import mail_admins
 from django.core.management.base import BaseCommand
 
-from remo.remozilla.tasks import fetch_bugs
+from remo.remozilla.tasks import fetch_remo_bugs
 
 
 class Command(BaseCommand):
@@ -19,7 +19,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Command handler."""
         try:
-            fetch_bugs(days=options['days'])
+            fetch_remo_bugs(days=options['days'])
         except Exception:
             # Make sure to email admins on error
             import traceback
