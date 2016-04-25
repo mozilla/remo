@@ -37,3 +37,6 @@
 [submodule "vendor-local/src/django"]
 	path = vendor-local/src/django
 	url = git://github.com/django/django.git
+[submodule "vendor-local/src/kombu"]
+	path = vendor-local/src/kombu
+	url = git://github.com/celery/kombu.git
