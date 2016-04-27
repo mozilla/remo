@@ -11,23 +11,25 @@ from remo.base.tests import RemoTestCase
 from remo.base.utils import get_date
 from remo.events.tests import EventFactory
 from remo.profiles.tests import UserFactory, UserStatusFactory
-from remo.reports import ACTIVITY_EVENT_ATTEND
+from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
 from remo.reports.models import Activity, NGReport
 from remo.reports.tasks import (calculate_longest_streaks,
                                 send_first_report_notification,
                                 send_second_report_notification,
                                 send_report_digest,
                                 zero_current_streak)
-from remo.reports.tests import NGReportFactory
+from remo.reports.tests import ActivityFactory, NGReportFactory
 
 
 class SendReportDigestTests(RemoTestCase):
+
+    def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
+
     def test_base(self):
         mentor = UserFactory.create(groups=['Mentor'])
-        report_1 = NGReportFactory.create(
-            mentor=mentor, report_date=date(2013, 11, 1))
-        report_2 = NGReportFactory.create(
-            mentor=mentor, report_date=date(2014, 1, 1))
+        report_1 = NGReportFactory.create(mentor=mentor, report_date=date(2013, 11, 1))
+        report_2 = NGReportFactory.create(mentor=mentor, report_date=date(2014, 1, 1))
         NGReport.objects.update(created_on=date(2014, 1, 1))
 
         with patch('remo.reports.tasks.now') as datetime_now:
@@ -43,8 +45,9 @@ class SendReportDigestTests(RemoTestCase):
         eq_(set(call_args[1]['reports']), set([report_1, report_2]))
         eq_(call_args[1]['datestring'], 'Wed 01 Jan 2014')
 
-        send_mail_mock.assert_called_with(
-            'Wed 01 Jan 2014', 'rendered', settings.FROM_EMAIL, [mentor.email])
+        send_mail_mock.assert_called_with('Wed 01 Jan 2014', 'rendered',
+                                          settings.FROM_EMAIL,
+                                          [mentor.email])
 
     def test_other_dates_noevent_not_included(self):
         """Reports created on previous days should not be included.
@@ -67,8 +70,7 @@ class SendReportDigestTests(RemoTestCase):
         UserFactory.create(groups=['Mentor'])
         today = now().date()
         mentor = UserFactory.create(groups=['Mentor'])
-        activity, created = Activity.objects.get_or_create(
-            name=ACTIVITY_EVENT_ATTEND)
+        activity, created = Activity.objects.get_or_create(name=ACTIVITY_EVENT_ATTEND)
         event = EventFactory.create()
         report = NGReportFactory.create(report_date=today,
                                         activity=activity,
@@ -88,8 +90,7 @@ class SendInactivityNotifications(RemoTestCase):
         rep = UserFactory.create(
             groups=['Rep'], userprofile__mentor=mentor,
             userprofile__date_joined_program=get_date(days=-100))
-        NGReportFactory.create(user=rep,
-                               report_date=today - timedelta(weeks=5))
+        NGReportFactory.create(user=rep, report_date=today - timedelta(weeks=5))
 
         rep_subject = '[Reminder] Please share your recent activities'
         mentor_subject = '[Report] Mentee without report for the last 4 weeks'
@@ -108,10 +109,8 @@ class SendInactivityNotifications(RemoTestCase):
     def test_with_report_filled(self):
         mentor = UserFactory.create(groups=['Mentor'])
         today = now().date()
-        rep = UserFactory.create(
-            groups=['Rep'], userprofile__mentor=mentor)
-        NGReportFactory.create(user=rep,
-                               report_date=today - timedelta(weeks=2))
+        rep = UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
+        NGReportFactory.create(user=rep, report_date=today - timedelta(weeks=2))
 
         with patch('remo.reports.utils.send_remo_mail') as mail_mock:
             send_second_report_notification()
@@ -123,8 +122,7 @@ class SendInactivityNotifications(RemoTestCase):
         rep = UserFactory.create(
             groups=['Rep'], userprofile__mentor=mentor,
             userprofile__first_report_notification=today - timedelta(weeks=4))
-        NGReportFactory.create(user=rep,
-                               report_date=today - timedelta(weeks=9))
+        NGReportFactory.create(user=rep, report_date=today - timedelta(weeks=9))
 
         rep_subject = '[Reminder] Please share your recent activities'
         mentor_subject = '[Report] Mentee without report for the last 8 weeks'
@@ -236,6 +234,5 @@ class UpdateStreakCountersTaskTest(RemoTestCase):
         calculate_longest_streaks()
 
         user = User.objects.get(pk=user.id)
-        eq_(user.userprofile.longest_streak_start,
-            date.today() - timedelta(weeks=3))
+        eq_(user.userprofile.longest_streak_start, date.today() - timedelta(weeks=3))
         eq_(user.userprofile.longest_streak_end, date.today())

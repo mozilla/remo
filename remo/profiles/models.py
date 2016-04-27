@@ -22,7 +22,7 @@ from uuslug import uuslug as slugify
 from remo.base.utils import get_object_or_none
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import add_permissions_to_groups, get_date
+from remo.base.utils import get_date
 from remo.dashboard.models import ActionItem, Item
 from remo.remozilla.models import Bug, WAITING_MENTOR_VALIDATION_ACTION
 

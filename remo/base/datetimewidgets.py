@@ -200,7 +200,7 @@ class SelectTimeWidget(Widget):
         # NOTE: if meridiem is None, assume 24-hr
         if meridiem is not None:
             if meridiem.lower().startswith('p') and int(h) != 12:
-                h = (int(h)+12) % 24
+                h = (int(h) + 12) % 24
             elif meridiem.lower().startswith('a') and int(h) == 12:
                 h = 0
 
