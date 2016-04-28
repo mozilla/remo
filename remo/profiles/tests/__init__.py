@@ -56,12 +56,9 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
     @classmethod
     def _create(cls, target_class, *args, **kwargs):
         dispatch_uid = 'userprofile_email_mentor_notification'
-        pre_save.disconnect(email_mentor_notification, UserProfile,
-                            dispatch_uid=dispatch_uid)
-        profile = super(UserProfileFactory, cls)._create(target_class,
-                                                         *args, **kwargs)
-        pre_save.connect(email_mentor_notification, UserProfile,
-                         dispatch_uid=dispatch_uid)
+        pre_save.disconnect(email_mentor_notification, UserProfile, dispatch_uid=dispatch_uid)
+        profile = super(UserProfileFactory, cls)._create(target_class, *args, **kwargs)
+        pre_save.connect(email_mentor_notification, UserProfile, dispatch_uid=dispatch_uid)
         return profile
 
     @factory.post_generation
@@ -107,13 +104,11 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     @classmethod
     def _create(cls, target_class, *args, **kwargs):
-        post_save.disconnect(create_profile, User,
-                             dispatch_uid='create_profile_signal')
+        post_save.disconnect(create_profile, User, dispatch_uid='create_profile_signal')
         post_save.disconnect(user_set_inactive_post_save, User,
                              dispatch_uid='user_set_inactive_post_save_signal')
         user = super(UserFactory, cls)._create(target_class, *args, **kwargs)
-        post_save.connect(create_profile, User,
-                          dispatch_uid='create_profile_signal')
+        post_save.connect(create_profile, User, dispatch_uid='create_profile_signal')
         post_save.connect(user_set_inactive_post_save, User,
                           dispatch_uid='user_set_inactive_post_save_signal')
         return user
