@@ -6,12 +6,15 @@ from nose.tools import eq_, ok_
 from remo.base.tests import RemoTestCase
 from remo.events.tests import EventFactory
 from remo.profiles.models import FunctionalArea
+from remo.reports import ACTIVITY_EVENT_CREATE
+from remo.reports.tests import ActivityFactory
 
 
 class ModelsTest(RemoTestCase):
     """Tests related to Events Models."""
 
     def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
         self.event = EventFactory.create()
 
     def test_similar_events_category_country(self):

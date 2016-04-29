@@ -75,12 +75,14 @@ class AttendanceFactory(factory.django.DjangoModelFactory):
 
 class EventCommentFactory(factory.django.DjangoModelFactory):
     """Factory for EventComment model."""
-    model = EventComment
 
     user = factory.SubFactory(UserFactory)
     event = factory.SubFactory(EventFactory)
     comment = factory.LazyAttribute(lambda o: 'Comment for %s from %s'
                                     % (o.event, o.user))
+
+    class Meta:
+        model = EventComment
 
 
 class EventMetricFactory(factory.django.DjangoModelFactory):
