@@ -1,2 +1,0 @@
--r compiled.txt
--r prod.txt
