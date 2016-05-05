@@ -13,11 +13,9 @@ from django.dispatch import receiver
 from django.utils.timezone import now
 
 from django_statsd.clients import statsd
-from south.signals import post_migrate
 from uuslug import uuslug
 
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import add_permissions_to_groups
 from remo.dashboard.models import ActionItem, Item
 from remo.remozilla.models import Bug
 from remo.remozilla.utils import get_bugzilla_url
@@ -228,22 +226,24 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
     subject_start = '[Voting] Cast your vote for "%s" now!' % instance.name
     subject_end = '[Voting] Results for "%s"' % instance.name
 
-    start_template = 'emails/voting_starting_reminder.txt'
-    end_template = 'emails/voting_results_reminder.txt'
+    start_template = 'emails/voting_starting_reminder.jinja'
+    end_template = 'emails/voting_results_reminder.jinja'
+    task_start_id = ''
+    task_end_id = ''
 
     if not instance.task_start_id or instance.is_future_voting:
         start_reminder = send_voting_mail.apply_async(
             eta=instance.start, kwargs={'voting_id': instance.id,
                                         'subject': subject_start,
                                         'email_template': start_template})
-        (Poll.objects.filter(pk=instance.pk)
-                     .update(task_start_id=start_reminder.task_id))
+        task_start_id = start_reminder.task_id
     end_reminder = send_voting_mail.apply_async(
         eta=instance.end, kwargs={'voting_id': instance.id,
                                   'subject': subject_end,
                                   'email_template': end_template})
-    (Poll.objects.filter(pk=instance.pk)
-                 .update(task_end_id=end_reminder.task_id))
+    task_end_id = end_reminder.task_id
+    Poll.objects.filter(pk=instance.pk).update(task_start_id=task_start_id,
+                                               task_end_id=task_end_id)
 
 
 @receiver(post_save, sender=Poll,
@@ -251,7 +251,7 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
 def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
     """Send email reminders when a vote starts/ends."""
     if instance.automated_poll and created:
-        template = 'emails/review_budget_notify_council.txt'
+        template = 'emails/review_budget_notify_council.jinja'
         subject = (u'Discuss [Bug {id}] - {summary}'
                    .format(id=instance.bug.bug_id,
                            summary=unicode(instance.bug.summary)))
@@ -275,20 +275,6 @@ def poll_delete_reminder(sender, instance, **kwargs):
             celery_control.revoke(instance.task_end_id)
 
 
-@receiver(post_migrate, dispatch_uid='voting_set_groups_signal')
-def voting_set_groups(app, sender, signal, **kwargs):
-    """Set permissions to groups."""
-    if (isinstance(app, basestring) and app != 'voting'):
-        return True
-
-    permissions = {'add_poll': ['Admin', 'Council', 'Mentor'],
-                   'delete_poll': ['Admin', 'Council', 'Mentor'],
-                   'change_poll': ['Admin', 'Council', 'Mentor'],
-                   'delete_pollcomment': ['Admin']}
-
-    add_permissions_to_groups('voting', permissions)
-
-
 @receiver(post_save, sender=Bug,
           dispatch_uid='remozilla_automated_poll_signal')
 def automated_poll(sender, instance, **kwargs):
@@ -304,7 +290,7 @@ def automated_poll(sender, instance, **kwargs):
 
     remobot = User.objects.get(username='remobot')
 
-    with transaction.commit_on_success():
+    with transaction.atomic():
         poll = (Poll.objects
                 .create(name=instance.summary,
                         description=instance.first_comment,
@@ -334,7 +320,7 @@ def email_commenters_on_add_poll_comment(sender, instance, **kwargs):
     poll = instance.poll
     if poll.comments_allowed:
         subject = '[Voting] User {0} commented on {1}'
-        email_template = 'emails/user_notification_on_add_poll_comment.txt'
+        email_template = 'emails/user_notification_on_add_poll_comment.jinja'
 
         # Send an email to all users commented so far on the poll except from
         # the user who made the comment. Dedup the list with unique IDs.

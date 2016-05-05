@@ -1,5 +1,3 @@
-import happyforms
-
 from django import forms
 from django.db.models import Q
 from django.contrib.auth.models import Group, User
@@ -8,13 +6,13 @@ from django.db.models import F
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from django.utils.timezone import now, utc
 
-from datetimewidgets import SplitSelectDateTimeWidget
+from remo.base.datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.utils import validate_datetime
 from models import (Poll, PollComment, RadioPoll,
                     RadioPollChoice, RangePoll, RangePollChoice)
 
 
-class PollCommentForm(happyforms.ModelForm):
+class PollCommentForm(forms.ModelForm):
     """Form of a poll comment."""
 
     class Meta:
@@ -23,7 +21,7 @@ class PollCommentForm(happyforms.ModelForm):
         widgets = {'comment': forms.TextInput()}
 
 
-class RangePollChoiceVoteForm(happyforms.Form):
+class RangePollChoiceVoteForm(forms.Form):
     """Range voting vote form."""
 
     def __init__(self, choices, *args, **kwargs):
@@ -57,7 +55,7 @@ class RangePollChoiceVoteForm(happyforms.Form):
              .filter(pk=nominee_id).update(votes=F('votes') + int(votes)))
 
 
-class RadioPollChoiceVoteForm(happyforms.Form):
+class RadioPollChoiceVoteForm(forms.Form):
     """Radio voting vote form."""
 
     def __init__(self, radio_poll, user=None, *args, **kwargs):
@@ -91,7 +89,7 @@ class RadioPollChoiceVoteForm(happyforms.Form):
                                            comment=comment)
 
 
-class PollEditForm(happyforms.ModelForm):
+class PollEditForm(forms.ModelForm):
     """Poll Edit Form."""
     name = forms.CharField(required=True)
     end = forms.DateTimeField(required=False)
@@ -218,8 +216,7 @@ class BaseRangePollChoiceInlineFormset(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         """Initialize form."""
         self._user_list = kwargs.pop('user_list')
-        (super(BaseRangePollChoiceInlineFormset, self)
-         .__init__(*args, **kwargs))
+        super(BaseRangePollChoiceInlineFormset, self).__init__(*args, **kwargs)
 
     def add_fields(self, form, index):
         """Add extra fields."""
@@ -232,16 +229,16 @@ class BaseRangePollChoiceInlineFormset(BaseInlineFormSet):
         Check if the user has already been nominated in
         the same voting.
         """
+        # Do not check, unless all forms are valid
         if any(self.errors):
-            # Do not check, unless all forms are valid
             return
+
         names = []
         for i, form in enumerate(self.forms):
             if 'nominee' in form.cleaned_data:
                 name = form.cleaned_data['nominee']
                 if name in names:
-                    self.errors[i]['nominee'] = (u'This user has already '
-                                                 'been nominated.')
+                    self.errors[i]['nominee'] = u'This user has already been nominated.'
                     raise ValidationError({'nominee': ['Error']})
                 names.append(name)
 
@@ -252,7 +249,7 @@ class BaseRangePollChoiceInlineFormset(BaseInlineFormSet):
 RangePollChoiceFormset = (
     inlineformset_factory(RangePoll, RangePollChoice,
                           formset=BaseRangePollChoiceInlineFormset, extra=1,
-                          exclude='votes', can_delete=True))
+                          exclude=('votes',), can_delete=True))
 
 
 class BaseRangePollInlineFormSet(BaseInlineFormSet):
@@ -265,10 +262,8 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
 
     def _count_filled_forms(self):
         """Count valid, filled forms with delete == False."""
-        return len([form for form in self.forms if
-                    form.is_valid() and
-                    len(form.cleaned_data) and
-                    form.cleaned_data['DELETE'] is False])
+        return len([form for form in self.forms if form.is_valid() and
+                    len(form.cleaned_data) and form.cleaned_data['DELETE'] is False])
 
     def add_fields(self, form, index):
         """Add extra fields."""
@@ -295,14 +290,14 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
 
         for form in self.forms:
             if hasattr(form, 'nested'):
-                for n in form.nested:
+                for nested_form in form.nested:
                     if form.is_bound:
-                        n.is_bound = True
-                    for nform in n:
+                        nested_form.is_bound = True
+                    for nform in nested_form:
                         nform.data = form.data
                         if form.is_bound:
                             nform.is_bound = True
-                    result = result and n.is_valid()
+                    result = result and nested_form.is_valid()
         return result
 
     def save_new(self, form, commit=True):
@@ -351,8 +346,7 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
             if 'name' in form.cleaned_data:
                 name = form.cleaned_data['name']
                 if name in names:
-                    self.errors[i]['name'] = (u'Each range poll '
-                                              'must have a unique name')
+                    self.errors[i]['name'] = u'Each range poll must have a unique name.'
                     raise ValidationError({'name': ['Error']})
                 names.append(name)
 
@@ -392,7 +386,7 @@ class BaseRadioPollChoiceInlineFormset(BaseInlineFormSet):
 RadioPollChoiceFormset = (
     inlineformset_factory(RadioPoll, RadioPollChoice,
                           formset=BaseRadioPollChoiceInlineFormset, extra=1,
-                          exclude='votes', can_delete=True))
+                          exclude=('votes',), can_delete=True))
 
 
 class BaseRadioPollInlineFormSet(BaseInlineFormSet):

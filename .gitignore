@@ -13,10 +13,8 @@ build
 tmp/*
 *~
 *.mo
-.vagrant
 .virtualenv
-/vendor-local/lib/python/*.egg-info/*
 media
 venv
-vagrantconfig_local.yaml
 /static
+.env

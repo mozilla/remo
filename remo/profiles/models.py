@@ -17,13 +17,12 @@ from django.utils import timezone
 import caching.base
 from celery.task import control as celery_control
 from django_statsd.clients import statsd
-from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
 from remo.base.utils import get_object_or_none
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import add_permissions_to_groups, get_date
+from remo.base.utils import get_date
 from remo.dashboard.models import ActionItem, Item
 from remo.remozilla.models import Bug, WAITING_MENTOR_VALIDATION_ACTION
 
@@ -234,9 +233,7 @@ class UserAvatar(caching.base.CachingMixin, models.Model):
     """User Avatar Model."""
     user = models.OneToOneField(User)
     avatar_url = models.URLField(max_length=400, default='')
-    last_update = models.DateTimeField(default=(timezone.now() -
-                                                datetime.timedelta(hours=25)),
-                                       auto_now=True)
+    last_update = models.DateTimeField(auto_now=True)
 
     objects = caching.base.CachingManager()
 
@@ -280,8 +277,7 @@ class UserStatus(caching.base.CachingMixin, models.Model):
         ordering = ['-expected_date', '-created_on']
 
 
-@receiver(post_save, sender=UserStatus,
-          dispatch_uid='profiles_user_status_email_reminder')
+@receiver(post_save, sender=UserStatus, dispatch_uid='profiles_user_status_email_reminder')
 def user_status_email_reminder(sender, instance, created, raw, **kwargs):
     """Send email notifications when a user submits
     an unavailability notice.
@@ -295,7 +291,7 @@ def user_status_email_reminder(sender, instance, created, raw, **kwargs):
 
     if created:
         subject_rep = 'Confirm if you are available for Reps activities'
-        rep_template = 'emails/rep_availability_reminder.txt'
+        rep_template = 'emails/rep_availability_reminder.jinja'
         notification_datetime = datetime.datetime.combine(
             instance.expected_date - datetime.timedelta(days=1),
             datetime.datetime.min.time())
@@ -318,7 +314,7 @@ def user_status_email_reminder(sender, instance, created, raw, **kwargs):
                     'subject': subject_rep,
                     'data': data})
         if mentor_profile:
-            mentor_template = 'emails/mentor_availability_reminder.txt'
+            mentor_template = 'emails/mentor_availability_reminder.jinja'
             subject_mentor = ('Reach out to {0} - '
                               'expected to be available again'
                               .format(instance.user.get_full_name()))
@@ -388,8 +384,7 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
                 break
 
 
-@receiver(pre_save, sender=UserProfile,
-          dispatch_uid='userprofile_email_mentor_notification')
+@receiver(pre_save, sender=UserProfile, dispatch_uid='userprofile_email_mentor_notification')
 def email_mentor_notification(sender, instance, raw, **kwargs):
     """Notify mentor when his/her mentee changes mentor on his/her profile."""
     if not instance.mentor:
@@ -402,7 +397,7 @@ def email_mentor_notification(sender, instance, raw, **kwargs):
 
     if user_profile.mentor != instance.mentor:
         subject = '[Reps] Mentor reassignment.'
-        email_template = 'emails/mentor_change_notification.txt'
+        email_template = 'emails/mentor_change_notification.jinja'
         mentors_recipients = [user_profile.mentor.id, instance.mentor.id]
         rep_recipient = [instance.user.id]
         ctx_data = {'rep_user': instance.user,
@@ -446,23 +441,9 @@ def create_profile(sender, instance, created, raw, **kwargs):
         profile, new = UserProfile.objects.get_or_create(user=instance)
 
 
-@receiver(post_save, sender=User,
-          dispatch_uid='user_set_inactive_post_save_signal')
+@receiver(post_save, sender=User, dispatch_uid='user_set_inactive_post_save_signal')
 def user_set_inactive_post_save(sender, instance, raw, **kwargs):
     """Set user inactive if there is no associated UserProfile."""
     if instance.first_name and not raw:
         instance.userprofile.registration_complete = True
         instance.userprofile.save()
-
-
-@receiver(post_migrate, dispatch_uid='profiles_set_groups_signal')
-def profiles_set_groups(app, sender, signal, **kwargs):
-    """Set permissions to groups."""
-    if (isinstance(app, basestring) and app != 'profiles'):
-        return True
-
-    perms = {'create_user': ['Admin', 'Mentor'],
-             'can_edit_profiles': ['Admin'],
-             'can_delete_profiles': ['Admin']}
-
-    add_permissions_to_groups('profiles', perms)

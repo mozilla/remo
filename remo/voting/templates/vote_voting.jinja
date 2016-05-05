@@ -1,0 +1,331 @@
+{% extends "base_fd4.jinja" %}
+
+{% block pagetitle %}
+Mozilla Reps - {{ poll.name }} - Vote
+{% endblock %}
+
+{% block content %}
+<main role="main" class="voting-main">
+  <form method="post">
+    {% csrf_token %}
+    <div class="row">
+      {% if range_poll_choice_forms|formset_errors_exist or
+            radio_poll_choice_forms|formset_errors_exist %}
+        <div class="large-12 columns">
+          <small class="error">Please correct the errors below.</small>
+        </div>
+      {% endif %}
+      <div class="large-8 columns">
+        <h1>{{ poll.name|urlize(50) }}</h1>
+      </div>
+      <div class="large-4 columns align-right hide-for-small">
+        {% if user_has_poll_permissions(user, poll) %}
+          <a href="{{ url('voting_edit_voting', slug=poll.slug) }}"
+             class="small button">
+            Edit voting
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-6 columns">
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large time"></div>
+          </div>
+          <div class="large-9 pull-2 columns">
+            <div class="row">
+              <div class="large-10 columns end">
+                <div class="voting-single-date">
+                  <div class="row">
+                    {% if not is_multiday(poll.start, poll.end) %}
+                    {# this is single voting #}
+                    <div class="large-3 small-3 columns">
+                      <div class="number">
+                        {{ poll.start|strftime('%d') }}
+                      </div>
+                    </div>
+                    <div class="large-5 small-5 columns">
+                      <div class="month">
+                        {{ poll.start|strftime('%b %Y')|upper }}
+                      </div>
+                      <div class="single-day">
+                        {{ poll.start|strftime('%A') }}
+                      </div>
+                    </div>
+                    <div class="large-4 small-4 columns end">
+                      <div class="date-times tip-bottom"
+                           data-tooltip
+                           data-width="140"
+                           data-date-start="{{ poll.start|format_datetime_iso }}"
+                           data-date-end="{{ poll.end|format_datetime_iso }}"
+                           data-is-multidate="false"
+                           id="datetime-tip">
+                        <div class="time-start">
+                          {{ poll.start|strftime('%H:%M') }}
+                        </div>
+                        <div class="time-end">
+                          {{ poll.end|strftime('%H:%M') }}
+                        </div>
+                          <div class="pict-icon small single time"></div>
+                      </div>
+                    </div>
+                  {% else %}
+                    {# Voting is multiday #}
+                    <!-- Voting is multiday -->
+                    <div class="large-12 columns">
+                      <div class="large-11 small-12 columns">
+                        <div class="row">
+                          <div class="large-7 small-6 columns date">
+                            <time>
+                              {{ poll.start|strftime('%d %b %Y')|upper }}
+                            </time>
+                          </div>
+                          <div class="large-5 small-6 columns day">
+                            {{ poll.start|strftime('%A') }}
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="large-7 small-6 columns date">
+                            <time>
+                              {{ poll.end|strftime('%d %b %Y')|upper }}
+                            </time>
+                          </div>
+                          <div class="large-5 small-6 columns day">
+                            {{ poll.end|strftime('%A') }}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="large-1 hide-for-small columns">
+                        <div class="tip-bottom"
+                             data-tooltip
+                             data-width="120"
+                             data-date-start="{{ poll.start|format_datetime_iso }}"
+                             data-date-end="{{ poll.end|format_datetime_iso }}"
+                             data-is-multidate="true"
+                             id="datetime-tip">
+                          <div class="pict-icon small time"></div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large tag"></div>
+          </div>
+          <div class="large-11 columns">
+            <!-- Description -->
+            <p>
+              <span class="label inline">
+                Description
+              </span>
+              {{ poll.description|urlize(150)|nl2br }}
+            </p>
+          </div>
+        </div>
+
+        {% if range_poll_choice_forms %}
+          <div class="row">
+            <div class="large-1 columns">
+              <!-- Editable Content wiki like -->
+              <div class="pict-icon large news"></div>
+            </div>
+            <div class="large-11 columns">
+              <p>
+                Range voting is a voting method for elections under which voters score each
+                candidate, the scores are added up, and the candidate(s) with the highest score win.
+              </p>
+              <p>
+                For each candiate select from the drop down menu a score from 0 to the highest number.
+                There is no quota, and you can freely assign different or same scores to different candidates.
+              </p>
+              <p>
+                More info can be found in the Wikipedia article on
+                 <a href="http://en.wikipedia.org/wiki/Range_voting" target="_blank">Range Voting</a>.
+              </p>
+            </div>
+          </div>
+        {% endif %}
+
+      </div>
+
+      <div class="large-6 columns">
+        {% if range_poll_choice_forms %}
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large people"></div>
+            </div>
+            <div class="large-11 columns">
+              <div class="meter-container">
+                <span class="meter_text">{{ poll|get_meter_value }}%</span>
+                <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                  <div class="progressbar">
+                    <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
+                  </div>
+                </meter>
+              </div>
+              <p>
+                {% for range_poll, choice_form in range_poll_choice_forms.items() %}
+                  <span class="label">
+                    Range vote for {{ range_poll.name }}
+                  </span>
+                  {% for choice in choice_form %}
+                    <div class="row poll-choice">
+                      <div class="large-10 columns">
+                        <label for="{{ choice.id_for_label }}">
+                          {% set nominee=get_nominee(choice.label) %}
+                          {% if nominee %}
+                            <a href="{{ url('profiles_view_profile',
+                               display_name=nominee|get_display_name) }}"
+                               target="_blank">
+                              {{ choice.label }}
+                            </a>
+                          {% else %}
+                            {{ choice.label }}
+                          {% endif %}
+                        </label>
+                      </div>
+                      <div class="large-2 columns">
+                        {{ choice }}
+                      </div>
+                    </div>
+                    {{ field_errors(choice) }}
+                  {% endfor %}
+                {% endfor %}
+              </p>
+            </div>
+          </div>
+        {% endif %}
+
+        {% if radio_poll_choice_forms %}
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large list"></div>
+            </div>
+            <div class="large-11 columns">
+              <div class="meter-container">
+                <span class="meter_text">{{ poll|get_meter_value }}%</span>
+                <meter min="0" optimum="85" value="{{ poll|get_meter_value }}" max="100" high="80">
+                  <div class="progressbar">
+                    <span class="progressspan" data-percent="{{ poll|get_meter_value }}"></span>
+                  </div>
+                </meter>
+              </div>
+              <p>
+                {% for radio_poll, choice_form in radio_poll_choice_forms.items() %}
+                  <span class="label">
+                    Vote for {{ radio_poll.question }}
+                  </span>
+                  {% if poll.is_current_voting and not user_voted %}
+                    {% for choice in choice_form %}
+                      {{ choice }}
+                      {{ field_errors(choice) }}
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              </p>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="row show-for-small controls-footer">
+          <div class="small-12 columns">
+            {% if user_has_poll_permissions(user, poll) %}
+              <a href="{{ url('voting_edit_voting', slug=poll.slug) }}"
+                 class="small button">
+                Edit voting
+              </a>
+            {% endif %}
+            {% if poll.is_current_voting and not user_voted %}
+              <button class="button small confirm">Vote</button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <!-- Vote button -->
+      <div class="large-4 columns align-right hide-for-small">
+        {% if poll.is_current_voting and not user_voted %}
+          <button class="button small confirm">Vote</button>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+
+  <!-- Comments -->
+  {% if poll.comments_allowed %}
+    <div class="row">
+      <div class="large-12 columns">
+        <div class="row report-box">
+          <div class="columns comment-icon">
+            <div class="pict-icon large talk"></div>
+          </div>
+          <div class="columns report-item comment-item">
+            {% for comment in poll.comments.all() %}
+              <div class="report-comment">
+                {% if perms.voting.delete_pollcomment or
+                      comment.user == request.user %}
+                  <form method="post" action="{{ comment.get_absolute_delete_url() }}">
+                    {% csrf_token %}
+                    <button type="submit" class="report-delete-comment">&#215;</button>
+                  </form>
+                {% endif %}
+                <span class="label inline">
+                  Comment {{ loop.index }}
+                </span>
+                <span class="grayed">by </span>
+                {% if comment.user.userprofile.display_name == 'ReMoBot' %}
+                  {{ comment.user.get_full_name() }}
+                {% else %}
+                  <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
+                    {{ comment.user.get_full_name() }}
+                  </a>
+                {% endif %}
+                <span class="grayed"
+                      data-time="{{ comment.created_on|format_datetime_iso }}"
+                      title="{{ comment.created_on }}">
+                  at {{ comment.created_on }}
+                </span><br>
+                {% if comment.user.userprofile.display_name == 'ReMoBot' %}
+                  {{ comment.comment|markdown }}
+                {% else %}
+                  {{ comment.comment|urlize(50) }}
+                {% endif %}
+              </div>
+            {% endfor %}
+            <div id="report-comment-post">
+              <form method="post" actions="{{ poll.get_absolute_url() }}"
+                    class="custom">
+                {% csrf_token %}
+                {{ field_with_attrs(comment_form.comment,
+                                    class="flat",
+                                    placeholder="Add comment to this poll") }}
+                {{ field_errors(comment_form.comment) }}
+                <div id="post-comment" class="align-right">
+                  <button type="submit" class="small button">
+                    Post comment
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+</main>
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('voting/js/voting_view_voting.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

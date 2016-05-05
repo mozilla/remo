@@ -14,7 +14,7 @@ from tastypie.resources import ModelResource
 
 from remo.api import HttpCache, RemoAPIThrottle, RemoThrottleMixin
 from remo.base.serializers import iCalSerializer
-from remo.events.helpers import is_multiday
+from remo.events.templatetags.helpers import is_multiday
 from remo.events.models import Event, EventMetric, EventMetricOutcome
 from remo.reports.models import Campaign
 

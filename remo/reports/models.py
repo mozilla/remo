@@ -11,10 +11,8 @@ from django.utils.timezone import now
 import caching.base
 from django_statsd.clients import statsd
 from product_details import product_details
-from south.signals import post_migrate
 
 import remo.base.utils as utils
-from remo.base.utils import add_permissions_to_groups
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import daterange, get_date, get_object_or_none
@@ -29,20 +27,6 @@ from remo.reports import (ACTIVITY_CAMPAIGN, ACTIVITY_EVENT_ATTEND,
 COUNTRIES_LIST = product_details.get_regions('en').values()
 VERIFY_ACTIVITY_WEEKS = 2
 VERIFY_ACTION = 'Verify the activity of'
-
-
-@receiver(post_migrate, dispatch_uid='report_set_groups_signal')
-def report_set_groups(app, sender, signal, **kwargs):
-    """Set permissions to groups."""
-    if (isinstance(app, basestring) and app != 'reports'):
-        return True
-
-    perms = {'add_ngreport': ['Admin', 'Mentor'],
-             'change_ngreport': ['Admin', 'Mentor'],
-             'delete_ngreport': ['Admin', 'Mentor'],
-             'delete_ngreportcomment': ['Admin', 'Mentor']}
-
-    add_permissions_to_groups('reports', perms)
 
 
 class Activity(models.Model):
@@ -322,7 +306,7 @@ class NGReportComment(models.Model):
           dispatch_uid='create_passive_attendance_report_signal')
 def create_passive_attendance_report(sender, instance, **kwargs):
     """Automatically create a passive report after event attendance save."""
-    from remo.events.helpers import get_event_link
+    from remo.events.templatetags.helpers import get_event_link
 
     if instance.user.groups.filter(name='Rep').exists():
         activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
@@ -350,7 +334,7 @@ def create_passive_attendance_report(sender, instance, **kwargs):
           dispatch_uid='create_update_passive_event_creation_report_signal')
 def create_update_passive_event_report(sender, instance, created, **kwargs):
     """Automatically create/update a passive report on event creation."""
-    from remo.events.helpers import get_event_link
+    from remo.events.templatetags.helpers import get_event_link
 
     attrs = {
         'report_date': instance.start.date(),
@@ -433,7 +417,7 @@ def update_passive_report_functional_areas(sender, instance, action, pk_set,
 def email_commenters_on_add_ng_report_comment(sender, instance, **kwargs):
     """Email a user when a comment is added to a continuous report instance."""
     subject = '[Report] User {0} commented on {1}'
-    email_template = 'emails/user_notification_on_add_ng_report_comment.txt'
+    email_template = 'emails/user_notification_on_add_ng_report_comment.jinja'
     report = instance.report
 
     # Send an email to all users commented so far on the report except fom

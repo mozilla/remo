@@ -1,0 +1,1219 @@
+{% extends "dashboard.jinja" %}
+
+{% block body_content %}
+<!-- Action Items Section -->
+<div class="dashboard-box">
+  <div class="row">
+    <div class="large-7 columns">
+      <h2>Action Items</h2>
+    </div>
+    <div class="large-5 columns">
+      <dl class="sub-nav dashboard-filter">
+        <dt>Filter:</dt>
+        <dd class="active">
+          <a role="button" id="dashboard-action-items-mine-button" href="#">
+            Mine
+          </a>
+        </dd>
+        {% if mentees_action_items %}
+          <dd>
+            <a role="button" id="dashboard-action-items-mentees-button" href="#">
+              My mentees
+            </a>
+          </dd>
+        {% endif %}
+      </dl>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- my block -->
+    {% if action_items %}
+      <div id="dashboard-action-items-mine-block" class="large-12 columns">
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th>Summary</th>
+              <th>Expires</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache action_items %}
+              {% for action_item in action_items %}
+                <tr>
+                  <td>
+                    <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
+                  </td>
+                  <td>
+                    {% if action_item.due_date %}
+                      <span class="date-range">
+                        {{ action_item.due_date|strftime('%d %b %Y') }}
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td class="priority-{{ action_item.get_priority_display()|lower }}">
+                    {{ action_item.get_priority_display() }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+        <div class="dashboard-priority-reference">
+          <ul>
+            <li class="dashboard-priority-minor">
+              Minor
+            </li>
+            <li class="dashboard-priority-normal">
+              Normal
+            </li>
+            <li class="dashboard-priority-major">
+              Major
+            </li>
+            <li class="dashboard-priority-critical">
+              Critical
+            </li>
+            <li class="dashboard-priority-blocker">
+              Blocker
+            </li>
+          </ul>
+        </div>
+        <div class="align-right">
+          <a role="button" class="small button" href="{{ url('list_action_items') }}">
+            View my action items
+          </a>
+        </div>
+      </div>
+    {% else %}
+      <div class="large-12 columns reports-found">
+        <p>Congratulations! No Action Items found!</p>
+      </div>
+    {% endif %}
+    <!-- end my block -->
+
+    <!-- mentees block -->
+    {% if mentees_action_items %}
+      <div id="dashboard-action-items-mentees-block" class="large-12 columns hidden">
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Summary</th>
+              <th>Expires</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache mentees_action_items %}
+              {% for action_item in mentees_action_items %}
+                <tr>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    action_item.user|get_display_name) }}">
+                      {{ action_item.user.get_full_name() }}
+                  </td>
+                  <td>
+                    <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
+                  </td>
+                  <td>
+                    {% if action_item.due_date %}
+                      <span class="date-range">
+                        {{ action_item.due_date|strftime('%d %b %Y') }}
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td class="priority-{{ action_item.get_priority_display()|lower }}">
+                    {{ action_item.get_priority_display() }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+        <div class="dashboard-priority-reference">
+          <ul>
+            <li class="dashboard-priority-minor">
+              Minor
+            </li>
+            <li class="dashboard-priority-normal">
+              Normal
+            </li>
+            <li class="dashboard-priority-major">
+              Major
+            </li>
+            <li class="dashboard-priority-critical">
+              Critical
+            </li>
+            <li class="dashboard-priority-blocker">
+              Blocker
+            </li>
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+    <!-- end mentees block -->
+  </div>
+</div>
+
+<!-- continuous reports block -->
+<div class="dashboard-box">
+  <div class="row">
+    <div class="large-7 columns">
+      <h2>Activities</h2>
+    </div>
+    <div class="large-5 columns">
+      <dl class="sub-nav dashboard-filter">
+        <dt>Filter:</dt>
+        <dd class="active">
+          <a role="button" id="dashboard-continuous-reports-mine-button" href="#">
+            Mine
+          </a>
+        </dd>
+        {% if mentees_ng_reportees %}
+          <dd>
+            <a role="button" id="dashboard-continuous-reports-mentees-button" href="#">
+              My mentees
+            </a>
+          </dd>
+        {% endif %}
+        <dd>
+          <a role="button" href="{{ url('list_ng_reports') }}">
+            All
+          </a>
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- my block -->
+    {% if user %}
+      <div id="dashboard-continuous-reports-mine-block" class="large-12 columns">
+        <table class="dashboard-table responsive">
+          <tbody>
+            <tr>
+              <td>
+                {% set activities=count_ng_reports(user, current_streak=True) %}
+                {{ activities }}
+                {% if activities != 1 %}
+                  activities
+                {% else %}
+                  activity
+                {% endif %}
+                {% if activities > 0 %}
+                  <br>
+                  <span class="date-range">
+                    {{ date_to_weeks(user.userprofile.current_streak_start,
+                                      today.date()) }} weeks<br>
+                    {% if is_same_day(user.userprofile.current_streak_start) %}
+                        Today
+                    {% else %}
+                        {{ user.userprofile.current_streak_start|strftime('%d %b %Y')}}
+                        &nbsp;-&nbsp;
+                        {{ today|strftime('%d %b %Y')}}
+                    {% endif %}
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                {% set activities=count_ng_reports(user, longest_streak=True) %}
+                {{ activities }}
+                {% if activities != 1 %}
+                  activities
+                {% else %}
+                  activity
+                {% endif %}
+                {% if activities > 0 %}
+                  <br>
+                  <span class="date-range">
+                    {{ date_to_weeks(user.userprofile.longest_streak_start,
+                                      user.userprofile.longest_streak_end) }} weeks<br>
+                    {% if is_same_day(user.userprofile.longest_streak_start) %}
+                      Today
+                    {% elif is_same_day(user.userprofile.longest_streak_start,
+                                        user.userprofile.longest_streak_end) %}
+                      {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
+                    {% else %}
+                      {{ user.userprofile.longest_streak_start|strftime('%d %b %Y')}}
+                      &nbsp;-&nbsp;
+                      {{ user.userprofile.longest_streak_end|strftime('%d %b %Y')}}
+                    {% endif %}
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                {% set activities=count_ng_reports(user, period=4) %}
+                {{ activities }}
+                {% if activities != 1 %}
+                  activities
+                {% else %}
+                  activity
+                {% endif %}
+                {% if activities > 0 %}
+                  <br>
+                  <span class="date-range">
+                    {{ get_date_n_weeks_before(today, 4)|strftime('%d %b %Y')}}
+                    &nbsp;-&nbsp;
+                    {{ today|strftime('%d %b %Y')}}
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                {% set activities=count_ng_reports(user, period=8) %}
+                {{ activities }}
+                {% if activities != 1 %}
+                  activities
+                {% else %}
+                  activity
+                {% endif %}
+                <br>
+                {% if activities > 0 %}
+                  <span class="date-range">
+                    {{ get_date_n_weeks_before(today, 8)|strftime('%d %b %Y')}}
+                    &nbsp;-&nbsp;
+                    {{ today|strftime('%d %b %Y')}}
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                {% set activities=count_ng_reports(user) %}
+                {{ activities }}
+                {% if activities != 1 %}
+                  activities
+                {% else %}
+                  activity
+                {% endif %}
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Current streak</th>
+              <th>Longest streak</th>
+              <th>Last 4 weeks</th>
+              <th>Last 8 weeks</th>
+              <th>All time</th>
+            </tr>
+          </tfoot>
+        </table>
+        <div class="align-right">
+          <a href="{{ url('list_ng_reports_rep', user.userprofile.display_name) }}"
+              role="button"
+              class="small button">
+              View my reports
+          </a>
+        </div>
+      </div>
+    {% endif %}
+    <!-- end my block -->
+
+    <!-- mentees block -->
+    {% if mentees_ng_reportees %}
+      <div id="dashboard-continuous-reports-mentees-block" class="large-12 columns hidden">
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Current streak</th>
+              <th>Longest streak</th>
+              <th>Last 4 weeks</th>
+              <th>Last 8 weeks</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache mentees_ng_reportees %}
+              {% for reportee in mentees_ng_reportees %}
+                <tr>
+                  <td class="{{ reportee|get_activity_level }}
+                      {% if reportee|user_is_unavailable %}
+                        unavailable
+                      {% endif %}">
+                    <a href="{{ url('profiles_view_profile',
+                                    reportee|get_display_name) }}"
+                       {% if reportee|user_is_unavailable %}
+                         title="Rep Unavailable"
+                       {% endif %}>
+                      {{ reportee.get_full_name() }}
+                    </a>
+                  </td>
+                  <td>{{ count_ng_reports(reportee, current_streak=True) }} weeks</td>
+                  <td>{{ count_ng_reports(reportee, longest_streak=True) }} weeks</td>
+                  <td>{{ count_ng_reports(reportee, period=4) }} activities</td>
+                  <td>{{ count_ng_reports(reportee, period=8) }} activities</td>
+                  <td>{{ count_ng_reports(reportee) }} activities</td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+        <div class="inactive-reference">
+          <ul>
+            <li class="inactive-reference-low">
+              No activities in past 4 weeks.
+            </li>
+            <li class="inactive-reference-high">
+              No activities in past 8 weeks.
+            </li>
+            <li class="unavailable-reference-marker">
+              Rep currently unavailable.
+            </li>
+          </ul>
+        </div>
+        <div class="align-right">
+          <a href="{{ url('list_ng_reports_mentor', user.userprofile.display_name) }}"
+              role="button"
+              class="small button">
+              Mentees reports
+          </a>
+        </div>
+        {% if mentees_emails is not none %}
+          <div class="align-right">
+            <button data-reveal-id="mail-modal"
+              class="small button">Email my mentees</button>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+    <!-- end mentees block -->
+  </div>
+</div>
+<!-- end continuous reports block -->
+
+<div class="row">
+  <div class="large-12 columns align-right dashboard-action">
+    <a href="{{ url('reports_new_ng_report') }}"
+       target="_blank"
+       role="button"
+       class="small button">
+      Add new report
+    </a>
+  </div>
+</div>
+
+<!-- budget requests block -->
+<div class="row">
+  <div class="dashboard-box">
+    <div class="large-7 columns">
+      <h2>Budget Requests</h2>
+    </div>
+    <div class="large-5 columns">
+      <dl class="sub-nav dashboard-filter">
+        <dt>Filter:</dt>
+        <dd class="active">
+          <a id="dashboard-br-mine-button" href="#">Mine</a>
+        </dd>
+        {% if mentees_budget_requests is defined %}
+          <dd>
+            <a id="dashboard-br-mentees-button" href="#">My mentees</a>
+          </dd>
+        {% endif %}
+        {% if all_budget_requests is defined %}
+          <dd>
+            <a id="dashboard-br-all-button" href="#">All</a>
+          </dd>
+        {% endif %}
+      </dl>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div id="dashboard-br-my-block" class="large-12 columns">
+    {% if my_budget_requests %}
+      <table class="dashboard-table responsive">
+        <thead>
+          <tr>
+            <th class="dashboard-clickable type-int">ID</th>
+            <th class="dashboard-clickable type-string">Creator</th>
+            <th>Summary</th>
+            <th class="dashboard-clickable type-string">Whiteboard</th>
+            <th class="dashboard-clickable type-string">Status</th>
+            <th class="dashboard-clickable type-string">Last updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% cache my_budget_requests %}
+            {% for bug in my_budget_requests %}
+              <tr class='my-budget-request'>
+                <td>
+                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ bug.bug_id }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                                  bug.creator|get_display_name) }}">
+                    {{ bug.creator|get_display_name }}
+                  </a>
+                </td>
+                <td>
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
+                      {{ bug.summary }}
+                    </div>
+                  </div>
+                  <div class="show-for-small">
+                    {{ bug.summary }}
+                  </div>
+                </td>
+                <td>{{ bug.whiteboard }}</td>
+                <td>{{ bug.status }}</td>
+                <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                    data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                    data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                  {{ bug.bug_last_change_time|format_datetime }}
+                </td>
+              </tr>
+            {% endfor %}
+          {% endcache %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="row">
+        <div class="large-12 columns no-bugs">
+          <p>No Bugs found!</p>
+        </div>
+      </div>
+    {% endif %}
+    <div class="align-right">
+      <a href="https://bugzilla.mozilla.org/buglist.cgi?emailcc1=1&emailreporter1=1&email1={{ user.email|urlencode }}&component=Budget%20Requests&product=Mozilla%20Reps"
+         target="_blank"
+         role="button"
+         class="small button">
+        View on Bugzilla
+      </a>
+    </div>
+  </div> <!-- end my_budget_requests -->
+
+  {% if mentees_budget_requests is defined %}
+    <div id="dashboard-br-mentees-block" class="large-12 hidden columns">
+      {% if mentees_budget_requests %}
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th class="dashboard-clickable type-int">ID</th>
+              <th class="dashboard-clickable type-string">Creator</th>
+              <th>Summary</th>
+              <th class="dashboard-clickable type-string">Whiteboard</th>
+              <th class="dashboard-clickable type-string">Status</th>
+              <th class="dashboard-clickable type-string">Last updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache mentees_budget_requests %}
+              {% for bug in mentees_budget_requests %}
+                <tr class='my-budget-request'>
+                  <td>
+                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                      {{ bug.bug_id }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
+                  <td>
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
+                        {{ bug.summary }}
+                      </div>
+                    </div>
+                    <div class="show-for-small">
+                      {{ bug.summary }}
+                    </div>
+                  </td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                    {{ bug.bug_last_change_time|format_datetime }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="row">
+          <div class="large-12 columns no-bugs">
+            <p>No Bugs found!</p>
+          </div>
+        </div>
+      {% endif %}
+    </div> <!-- end mentees_budget_requests -->
+  {% endif %}
+
+  {% if all_budget_requests is defined %}
+    <div id="dashboard-br-all-block" class="large-12 hidden columns">
+      {% if all_budget_requests %}
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th class="dashboard-clickable type-int">ID</th>
+              <th class="dashboard-clickable type-string">Creator</th>
+              <th>Summary</th>
+              <th class="dashboard-clickable type-string">Whiteboard</th>
+              <th class="dashboard-clickable type-string">Status</th>
+              <th class="dashboard-clickable type-string">Last updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache all_budget_requests %}
+              {% for bug in all_budget_requests %}
+                <tr class='my-budget-request'>
+                  <td>
+                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                      {{ bug.bug_id }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
+                  <td>
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
+                        {{ bug.summary }}
+                      </div>
+                    </div>
+                    <div class="show-for-small">
+                      {{ bug.summary }}
+                    </div>
+                  </td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                    {{ bug.bug_last_change_time|format_datetime }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="row">
+          <div class="large-12 columns no-bugs">
+            <p>No Bugs found!</p>
+          </div>
+        </div>
+      {% endif %}
+      <div class="align-right">
+        <a href="https://bugzilla.mozilla.org/buglist.cgi?list_id=2655390;resolution=---;classification=Other;query_format=advanced;component=Budget%20Requests;product=Mozilla%20Reps"
+           class="small button" target="_blank" role="button">See all bugs</a>
+      </div>
+    </div> <!-- end all_budget_requests -->
+  {% endif %}
+</div>
+
+<!-- New Budget Request -->
+<div class="row">
+  <div class="large-12 columns align-right dashboard-action">
+    <a href="https://bugzilla.mozilla.org/form.reps.budget"
+       target="_blank"
+       role="button"
+       class="small button">
+      New Budget Request
+    </a>
+  </div>
+</div>
+
+<!-- end budget requests block -->
+
+
+<!-- swag requests block -->
+<div class="row">
+  <div class=" dashboard-box">
+    <div class="large-7 columns">
+      <h2>Swag Requests</h2>
+    </div>
+    <div class="large-5 columns">
+      <dl class="sub-nav dashboard-filter">
+        <dt>Filter:</dt>
+        <dd class="active">
+          <a id="dashboard-sr-mine-button" href="#">Mine</a>
+        </dd>
+        {% if mentees_swag_requests is defined %}
+          <dd>
+            <a id="dashboard-sr-mentees-button" href="#">My mentees</a>
+          </dd>
+        {% endif %}
+        {% if all_swag_requests is defined %}
+          <dd>
+            <a id="dashboard-sr-all-button" href="#">All</a>
+          </dd>
+        {% endif %}
+      </dl>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div id="dashboard-sr-my-block" class="large-12 columns">
+    {% if my_swag_requests %}
+      <table class="dashboard-table responsive">
+        <thead>
+          <tr>
+            <th class="dashboard-clickable type-int">ID</th>
+            <th class="dashboard-clickable type-string">Creator</th>
+            <th>Summary</th>
+            <th class="dashboard-clickable type-string">Whiteboard</th>
+            <th class="dashboard-clickable type-string">Status</th>
+            <th class="dashboard-clickable type-string">Last updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% cache my_swag_requests %}
+            {% for bug in my_swag_requests %}
+              <tr class='my-swag-request'>
+                <td>
+                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ bug.bug_id }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                                  bug.creator|get_display_name) }}">
+                    {{ bug.creator|get_display_name }}
+                  </a>
+                </td>
+                <td>
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
+                      {{ bug.summary }}
+                    </div>
+                  </div>
+                  <div class="show-for-small">
+                    {{ bug.summary }}
+                  </div>
+                </td>
+                <td>{{ bug.whiteboard }}</td>
+                <td>{{ bug.status }}</td>
+                <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                    data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                    data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                  {{ bug.bug_last_change_time|format_datetime }}
+                </td>
+              </tr>
+            {% endfor %}
+          {% endcache %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="row">
+        <div class="large-12 columns no-bugs">
+          <p>No Bugs found!</p>
+        </div>
+      </div>
+    {% endif %}
+    <div class="align-right">
+      <a href="https://bugzilla.mozilla.org/buglist.cgi?emailcc1=1&emailreporter1=1&email1={{ user.email|urlencode }}&component=Swag%20Requests&product=Mozilla%20Reps"
+         target="_blank"
+         role="button"
+         class="small button">
+        View on Bugzilla
+      </a>
+    </div>
+  </div> <!-- end my_swag_requests -->
+
+  {% if mentees_swag_requests is defined %}
+    <div id="dashboard-sr-mentees-block" class="large-12 hidden columns">
+      {% if mentees_swag_requests %}
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th class="dashboard-clickable type-int">ID</th>
+              <th class="dashboard-clickable type-string">Creator</th>
+              <th>Summary</th>
+              <th class="dashboard-clickable type-string">Whiteboard</th>
+              <th class="dashboard-clickable type-string">Status</th>
+              <th class="dashboard-clickable type-string">Last updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache mentees_swag_requests %}
+              {% for bug in mentees_swag_requests %}
+                <tr class='my-swag-request'>
+                  <td>
+                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                      {{ bug.bug_id }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
+                  <td>
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
+                        {{ bug.summary }}
+                      </div>
+                    </div>
+                    <div class="show-for-small">
+                      {{ bug.summary }}
+                    </div>
+                  </td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                    {{ bug.bug_last_change_time|format_datetime }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="row">
+          <div class="large-12 columns no-bugs">
+            <p>No Bugs found!</p>
+          </div>
+        </div>
+      {% endif %}
+    </div> <!-- end mentees_swag_requests -->
+  {% endif %}
+
+  {% if all_swag_requests is defined %}
+    <div id="dashboard-sr-all-block" class="large-12 hidden columns">
+      {% if all_swag_requests %}
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th class="dashboard-clickable type-int">ID</th>
+              <th class="dashboard-clickable type-string">Creator</th>
+              <th>Summary</th>
+              <th class="dashboard-clickable type-string">Whiteboard</th>
+              <th class="dashboard-clickable type-string">Status</th>
+              <th class="dashboard-clickable type-string">Last updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache all_swag_requests %}
+              {% for bug in all_swag_requests %}
+                <tr class='my-swag-request'>
+                  <td>
+                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                      {{ bug.bug_id }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
+                  <td>
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
+                        {{ bug.summary }}
+                      </div>
+                    </div>
+                    <div class="show-for-small">
+                      {{ bug.summary }}
+                    </div>
+                  </td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                    {{ bug.bug_last_change_time|format_datetime }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="row">
+          <div class="large-12 columns no-bugs">
+            <p>No Bugs found!</p>
+          </div>
+        </div>
+      {% endif %}
+      <div class="align-right">
+        <a href="https://bugzilla.mozilla.org/buglist.cgi?list_id=2655390;resolution=---;classification=Other;query_format=advanced;component=Swag%20Requests;product=Mozilla%20Reps"
+           class="small button" target="_blank">See all bugs</a>
+      </div>
+    </div> <!-- end all_swag_requests -->
+  {% endif %}
+</div>
+
+<!-- New Swag Request -->
+<div class="row">
+  <div class="large-12 columns align-right dashboard-action">
+    <a href="https://bugzilla.mozilla.org/form.reps.swag"
+       target="_blank"
+       class="small button">
+      New Swag Request
+    </a>
+  </div>
+</div>
+<!-- end swag requests block -->
+
+
+<!-- community it requests block -->
+{% if my_cit_requests is defined %}
+  <div class="row">
+    <div class="large-7 columns dashboard-box">
+      <h2>Community IT Requests</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div id="dashboard-citr-block" class="large-12 columns">
+      {% if my_cit_requests %}
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th class="dashboard-clickable type-int">ID</th>
+              <th class="dashboard-clickable type-string">Creator</th>
+              <th>Summary</th>
+              <th class="dashboard-clickable type-string">Whiteboard</th>
+              <th class="dashboard-clickable type-string">Status</th>
+              <th class="dashboard-clickable type-string">Last updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache my_cit_requests %}
+              {% for bug in my_cit_requests %}
+                <tr class='my-cit-request'>
+                  <td>
+                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                      {{ bug.bug_id }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
+                  <td>
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
+                        {{ bug.summary }}
+                      </div>
+                    </div>
+                    <div class="show-for-small">
+                      {{ bug.summary }}
+                    </div>
+                  </td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}">
+                    {{ bug.bug_last_change_time|format_datetime }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="row">
+          <div class="large-12 columns no-bugs">
+            <p>No Bugs found!</p>
+          </div>
+        </div>
+      {% endif %}
+    </div> <!-- end my_cit_requests -->
+  </div>
+{% endif %}
+<!-- end community it requests block -->
+
+<!-- mentorship requests block -->
+{% if my_mentorship_requests is defined %}
+  <div class="row">
+    <div class="large-7 columns dashboard-box">
+      <h2>Mentorship</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div id="dashboard-mentorship-block" class="large-12 columns">
+      {% if my_mentorship_requests %}
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th class="dashboard-clickable type-int">ID</th>
+              <th class="dashboard-clickable type-string">Creator</th>
+              <th>Summary</th>
+              <th class="dashboard-clickable type-string">Whiteboard</th>
+              <th class="dashboard-clickable type-string">Status</th>
+              <th class="dashboard-clickable type-string">Last updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache my_mentorship_requests %}
+              {% for bug in my_mentorship_requests %}
+                <tr class='my-mentorship-request
+                    {{ bug.assigned_to|ifeq(request.user, 'assigned-request') }}'>
+                  <td>
+                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                      {{ bug.bug_id }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
+                  <td>
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
+                        {{ bug.summary }}
+                      </div>
+                    </div>
+                    <div class="show-for-small">
+                      {{ bug.summary }}
+                    </div>
+                  </td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                    {{ bug.bug_last_change_time|format_datetime }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+    {% else %}
+      <div class="row">
+        <div class="large-12 columns no-bugs">
+          <p>No Bugs found!</p>
+        </div>
+      </div>
+    {% endif %}
+    </div> <!-- end my_mentorship_requests -->
+  </div>
+{% endif %}
+<!-- end mentorship requests block -->
+
+<!-- planning requests block -->
+{% if my_planning_requests is defined %}
+  <div class="row">
+    <div class="large-7 columns dashboard-box">
+      <h2>Planning</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div id="dashboard-mentorship-block" class="large-12 columns">
+      {% if my_planning_requests %}
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th class="dashboard-clickable type-int">ID</th>
+              <th class="dashboard-clickable type-string">Creator</th>
+              <th>Summary</th>
+              <th class="dashboard-clickable type-string">Whiteboard</th>
+              <th class="dashboard-clickable type-string">Status</th>
+              <th class="dashboard-clickable type-string">Last updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% cache my_planning_requests %}
+              {% for bug in my_planning_requests %}
+                <tr class='my-planning-request
+                    {{ bug.assigned_to|ifeq(request.user, 'assigned-request') }}'>
+                  <td>
+                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                      {{ bug.bug_id }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    bug.creator|get_display_name) }}">
+                      {{ bug.creator|get_display_name }}
+                    </a>
+                  </td>
+                  <td>
+                    <div class="hide-for-small">
+                      <div class="overflow-fix" title="{{ bug.summary }}">
+                        {{ bug.summary }}
+                      </div>
+                    </div>
+                    <div class="show-for-small">
+                      {{ bug.summary }}
+                    </div>
+                  </td>
+                  <td>{{ bug.whiteboard }}</td>
+                  <td>{{ bug.status }}</td>
+                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                    {{ bug.bug_last_change_time|format_datetime }}
+                  </td>
+                </tr>
+              {% endfor %}
+            {% endcache %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="row">
+          <div class="large-12 columns no-bugs">
+            <p>No Bugs found!</p>
+          </div>
+        </div>
+      {% endif %}
+    </div> <!-- end my_planning_requests -->
+  </div>
+{% endif %}
+<!-- end planning requests block -->
+
+<!-- Admin block -->
+{% if is_admin is defined %}
+  <div class="row">
+    <div class="large-7 columns dashboard-box">
+      <h2>Administration</h2>
+    </div>
+  </div>
+  <div class="section-container auto" data-section>
+    {% if reps_without_mentors is defined %}
+    <div {% if reps_without_mentors is defined %}
+            class="active section"
+         {% else %}
+            class="section"
+         {% endif %}>
+      <p class="title">
+        <a href="#nomentors">No mentors</a>
+      </p>
+      <div id="nomentorsTab" class="content">
+        <div class="row">
+          <p class="desc">
+            Reps without mentors set are displayed here:
+          </p>
+          <table class="dashboard-table responsive">
+            <thead>
+              <tr>
+                <th class="dashboard-clickable type-string">Username</th>
+                <th class="dashboard-clickable type-string">Full Name</th>
+                <th class="dashboard-clickable type-string">Account created on</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rep in reps_without_mentors %}
+                <tr>
+                  <td>
+                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                      {{ rep|get_display_name }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                      {{ rep.get_full_name() }}
+                    </a>
+                  </td>
+                  <td title="{{ rep.date_joined|format_datetime }}"
+                      data-time="{{ rep.date_joined|format_datetime_iso }}">
+                    {{ rep.date_joined|format_datetime }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% if reps_without_profile is defined %}
+    <div {% if reps_without_mentors is not defined %}
+            class="active section"
+         {% else %}
+            class="section"
+         {% endif %}>
+      <p class="title">
+        <a href="#emptyprofiles">Empty profiles</a>
+      </p>
+      <div id="emptyprofilesTab" class="content">
+        <div class="row">
+          <p class="desc">
+            Reps that are invited but not filled their profiles are displayed here:
+          </p>
+          <table class="dashboard-table responsive">
+            <thead>
+              <tr>
+                <th class="dashboard-clickable type-string">Bugzilla Mail</th>
+                <th class="dashboard-clickable type-string">Invited by</th>
+                <th class="dashboard-clickable type-string">Date Invited</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rep in reps_without_profile %}
+                <tr>
+                  <td>
+                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                      {{ rep.email }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile',
+                                    rep.userprofile.added_by|get_display_name) }}">
+                      {{ rep.userprofile.added_by|get_display_name }}
+                    </a>
+                  </td>
+                  <td title="{{ rep.date_joined|format_datetime }}"
+                      data-time="{{ rep.date_joined|format_datetime_iso }}">
+                    {{ rep.date_joined|format_datetime }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <!-- End Admin block -->
+{% endif %}
+{% endblock %}
+
+{% block modals %}
+<!-- Mail my mentees Reveal Modal -->
+{% if mentees_emails is not none %}
+  <div id="mail-modal" class="reveal-modal small">
+    <a class="close-reveal-modal">&#215;</a>
+    <p class="lead">Email your mentees</p>
+    <form id="email-mentees-form" method="post"
+          action="{{ url('email_mentees') }}">
+      {% csrf_token %}
+      {% for field in email_mentees_form %}
+        {{field}} {{ field.label }}
+        <br>
+      {% endfor %}
+
+      <div class="row">
+        <div id="send-mail" class="align-right">
+          <button type="submit" class="medium button update">
+            Send email
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endif %}
+<!-- Mail my mentees Reveal Modal End -->
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('base/js/stupidtable.js') }}"></script>
+    <script src="{{ static('base/js/dashboard.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

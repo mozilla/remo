@@ -1,0 +1,136 @@
+{% extends "base_fd4.jinja" %}
+{% block pagetitle %}Mozilla Reps - Action Items{% endblock %}
+
+{% block logo %}
+  <h1><span class="metabold">mozilla</span> reps</h1>
+{% endblock %}
+
+{% block content %}
+
+<main role="main" class="action-items-main">
+  <div class="row">
+    <div class="large-12 columns">
+      <h2>{{ pageheader }}</h2>
+    </div>
+  </div>
+
+  <form method="get" id="searchform-action-items" role="search">
+    <!-- Search box -->
+    <div class="row">
+      <div class="large-10 columns" id="action-items-search">
+        <div class="pict-icon large search"></div>
+        <input type="text" placeholder="Search using any keyword"
+               id="searchfield" name="query" value="{{ query }}">
+      </div>
+      <div class="large-2 columns align-right" id="search-action-itesm">
+        <button type="submit" class="small button update">
+          Search
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Action Items are here -->
+  {% if number_of_action_items > 0 %}
+    <div class="row">
+      <div class="large-12 columns" id="action-items-list">
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th>
+                {% if sort_key == 'action_asc' %}
+                  {# We use '#' instead of url() to feed the urlparams
+                     filter because this template is used by three
+                     different urls and therefore we want the link to
+                     relative to the current url. #}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='action_desc', query=query) }}">
+                    Name <span class="pict-table-icon desc"></span>
+                  </a>
+                {% elif sort_key == 'action_desc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='action_asc', query=query) }}">
+                    Name <span class="pict-table-icon asc"></span>
+                  </a>
+                {% else %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='action_asc', query=query) }}">
+                    Name
+                  </a>
+                {% endif %}
+              </th>
+              <th>
+                {% if sort_key == 'action_item_date_asc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='action_item_date_desc', query=query) }}">
+                    Due Date <span class="pict-table-icon desc"></span>
+                  </a>
+                {% elif sort_key == 'action_item_date_desc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='action_item_date_asc', query=query) }}">
+                    Due Date <span class="pict-table-icon asc"></span>
+                  </a>
+                {% else %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='action_item_date_asc', query=query) }}">
+                    Due Date
+                  </a>
+                {% endif %}
+              </th>
+              <th>
+                {% if sort_key == 'action_item_priority_asc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='action_item_priority_desc', query=query) }}">
+                    Priority <span class="pict-table-icon desc"></span>
+                  </a>
+                {% elif sort_key == 'action_item_priority_desc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='action_item_priority_asc', query=query) }}">
+                    Priority <span class="pict-table-icon asc"></span>
+                  </a>
+                {% else %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='action_item_priority_asc', query=query) }}">
+                    Priority
+                  </a>
+                {% endif %}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for action_item in objects %}
+              <tr>
+                <td>
+                  <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
+                </td>
+                <td>
+                  {% if action_item.due_date %}
+                    <span class="date-range">
+                      {{ action_item.due_date|strftime('%d %b %Y') }}
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="priority-{{ action_item.get_priority_display()|lower }}">
+                  {{ action_item.get_priority_display() }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Paginator -->
+    {% include "includes/pagination.jinja" %}
+
+  {% endif %}
+
+  <div class="row">
+    <div class="large-12 columns action-items-found">
+      {% if number_of_action_items == 0 %}
+        <p>No Action Items found!</p>
+      {% else %}
+        <p>{{ number_of_action_items }} action items found</p>
+      {% endif %}
+    </div>
+  </div>
+</main>
+
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress js %}
+    <script src="{{ static('dashboard/js/action_items_list.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

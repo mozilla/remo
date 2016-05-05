@@ -1,0 +1,31 @@
+{% extends "base_fd4.jinja" %}
+{% block pagetitle %}Mozilla Reps - Adding a new rep{% endblock %}
+
+{% block content %}
+
+<!-- Adding new rep -->
+<div class="row">
+  <div class="large-12 columns">
+    <h4>Adding new rep</h4>
+  </div>
+</div>
+
+<!-- Two column block -->
+<div class="row">
+  <div class="large-6 columns">
+    <p>Please enter the Bugzilla email address of the newly accepted rep and click "Add Rep".</p>
+    <form action="{{ url('profiles_invite') }}" method="post">
+      {% csrf_token %}
+      <input type="text" name="email" placeholder="Bugzilla mail" required>
+      {% if form.email.errors %}
+        <small class="error">
+          {{ form.email.errors }}
+        </small>
+      {% endif %}
+      <button type="submit" class="button medium">
+        Add rep
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

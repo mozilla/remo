@@ -1,10 +1,10 @@
 from nose.tools import eq_
-from test_utils import TestCase
 
 from remo.base.serializers import flatten_dict
+from remo.base.tests import RemoTestCase
 
 
-class TestSerializers(TestCase):
+class TestSerializers(RemoTestCase):
     """Test Serializers."""
 
     def test_dictionary_convertion(self):

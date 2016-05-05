@@ -1,12 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
 
-import happyforms
-
 from models import FeaturedRep
 
 
-class FeaturedRepForm(happyforms.ModelForm):
+class FeaturedRepForm(forms.ModelForm):
     """Form to create a new FeaturedRep object."""
     users = forms.ModelMultipleChoiceField(
         queryset=User.objects.filter(

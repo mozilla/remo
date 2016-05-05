@@ -1,0 +1,199 @@
+{% extends "base_fd4.jinja" %}
+
+{% block pagetitle %}
+  {{ super() }} - Taking a break notification
+{% endblock %}
+
+{% block content %}
+<main role="main" class="availability-main">
+  <form id="edit-availability-form" method="post">
+    {% csrf_token %}
+
+    {% if created %}
+      {% if status_form.errors %}
+        <div class="row">
+          <div class="large-12 columns">
+            <small role="alert" class="error">Please correct the errors below.</small>
+          </div>
+        </div>
+      {% endif %}
+      <div class="row">
+        <div class="large-6 columns">
+          <h1>
+            Taking a break notification
+          </h1>
+          <p>
+            We all need breaks. Let us know when you will be back and if a Rep
+            will replace you while you are taking a break.
+          </p>
+        </div>
+      </div>
+
+      <!-- Start Date section -->
+      <div class="row">
+        <div class="large-6 columns">
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large time"></div>
+            </div>
+            <div class="large-11 columns">
+              <label for="id_start_date">
+                I plan to take a break starting on
+              </label>
+              <div id="availability-date"
+                   class="has-tip tip-left"
+                   title="Start date"
+                   data-tooltip
+                   data-options="disable-for-touch:true">
+                {{ field_with_attrs(status_form.start_date,
+                                    class="datepicker",
+                                    autocomplete="off",
+                                    placeholder="DD-MM-YYYY",
+                                    readonly="readonly") }}
+              </div>
+              {{ field_errors(status_form.start_date) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Return Date section -->
+      <div class="row">
+        <div class="large-6 columns">
+          <div class="row">
+            <div class="large-1 columns">
+              <!-- Empty column -->
+            </div>
+            <div class="large-11 columns">
+              <label class="required" for="id_expected_date">
+                I plan to be active again in the Reps Program starting on
+              </label>
+              <div id="availability-date"
+                  class="has-tip tip-left"
+                  title="Expected return date"
+                  data-tooltip
+                  data-options="disable-for-touch:true">
+                {{ field_with_attrs(status_form.expected_date,
+                                    class="datepicker",
+                                    autocomplete="off",
+                                    placeholder="DD-MM-YYYY",
+                                    readonly="readonly") }}
+              </div>
+              {{ field_errors(status_form.expected_date) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Replacement Rep -->
+      <div class="row">
+        <div class="large-6 columns">
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large people"></div>
+            </div>
+            <div class="large-11 columns">
+              <p class="required">
+                Will a Rep replace you while you are unavailable?
+              </p>
+              <div id="replacement-rep-radio"
+                  class="has-tip tip-left"
+                  title="Replacement Rep"
+                  data-tooltip
+                  data-options="disable-for-touch:true">
+                <p>
+                  {% for choice in status_form.is_replaced %}
+                    {{ choice }}
+                  {% endfor %}
+                </p>
+              </div>
+
+              <div id="replacement-rep-panel">
+                <label class="required" for="id_replacement_rep">
+                  Which Rep will replace you?
+                </label>
+                <div id="replacement-rep"
+                    class="has-tip tip-left"
+                    title="Select a Rep"
+                    data-tooltip
+                    data-options="disable-for-touch:true">
+                  {{ status_form.replacement_rep }}
+                </div>
+                {{ field_errors(status_form.replacement_rep) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mail/unavailability reason section -->
+      <div class="row">
+        <div class="large-6 columns">
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large edit"></div>
+            </div>
+            <div class="large-11 columns">
+              <label class="required" for="id_body">
+                Why are you taking a break?
+              </label>
+              <div id="availability-date"
+                  class="has-tip tip-left"
+                  title="Describe shortly the reasons for your break."
+                  data-tooltip
+                  data-options="disable-for-touch:true">
+                {{ field_with_attrs(email_form.body,
+                  placeholder="Any information entered here is sent to your mentor but not stored anywhere",
+                  rows=4) }}
+              </div>
+              {{ field_errors(email_form.body) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="large-12 columns">
+          <p>
+            Your mentor will be notified of your break.
+          </p>
+        </div>
+      </div>
+    {% else %}
+      <!-- Rep available section -->
+      <div class="row">
+        <div class="large-12 columns">
+          <h2>
+            Update your availability status.
+          </h2>
+          <div class="large-12 columns">
+            <p>
+              Click the submit button below if you are ready
+              to resume your activities.
+            </p>
+            {{ status_form.expected_date }}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="large-12 columns">
+        <button type="submit" class="small button confirm">Submit</button>
+      </div>
+    </div>
+  </form>
+</main>
+
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress css %}
+    <link rel="stylesheet" href="{{ static('events/css/jquery-ui-1.10.0.custom.css') }}"
+          media="screen,projection,tv" />
+  {% endcompress %}
+  {% compress js %}
+    <script src="{{ static('events/js/jquery-ui-1.10.0.custom.js') }}"></script>
+    <script src="{{ static('base/js/edit_availability.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

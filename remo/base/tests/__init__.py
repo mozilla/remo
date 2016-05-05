@@ -1,13 +1,14 @@
-from contextlib import nested
+from contextlib import contextmanager, nested
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
+from django.test import TestCase as BaseTestCase
 from django.test.client import Client
 from django.test.utils import override_settings
 
+from django_jinja.backend import Template as Jinja_Template
 from mock import patch
 from nose.tools import make_decorator, ok_
-from test_utils import TestCase as BaseTestCase
 
 
 AUTHENTICATION_BACKENDS = (
@@ -80,17 +81,18 @@ class MozillianResponse(object):
 @override_settings(AUTHENTICATION_BACKENDS=AUTHENTICATION_BACKENDS,
                    PASSWORD_HASHERS=PASSWORD_HASHERS)
 class RemoTestCase(BaseTestCase):
-    def get(self, url, data={}, user=None, follow=True):
-        client = Client()
-        if user:
-            client.login(email=user.email)
-        return client.get(url, data, follow=follow)
 
-    def post(self, url, data={}, user=None, follow=True):
+    @contextmanager
+    def login(self, user):
         client = Client()
-        if user:
-            client.login(email=user.email)
-        return client.post(url, data, follow=follow)
+        client.login(email=user.email)
+        yield client
+
+    def assertJinja2TemplateUsed(self, response, template_name, **kwargs):
+        for template in response.templates:
+            if isinstance(template, Jinja_Template):
+                self.assertEqual(template.template.name, template_name)
+                break
 
 
 def requires_login():

@@ -7,10 +7,8 @@ from mock import patch
 from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
-from remo.profiles.api.serializers import (FunctionalAreaSerializer,
-                                           GroupSerializer,
-                                           UserProfileDetailedSerializer,
-                                           UserSerializer)
+from remo.profiles.api.serializers import (FunctionalAreaSerializer, GroupSerializer,
+                                           UserProfileDetailedSerializer, UserSerializer)
 from remo.profiles.api.views import PeopleKPIView
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
 
@@ -50,19 +48,18 @@ class TestUserProfileDetailedSerializer(RemoTestCase):
     def test_base(self):
         mentor = UserFactory.create()
         functional_areas = FunctionalAreaFactory.create_batch(2)
-        user = UserFactory.create(
-            userprofile__mentor=mentor, groups=['Rep'],
-            userprofile__functional_areas=functional_areas)
+        user = UserFactory.create(userprofile__mentor=mentor, groups=['Rep'],
+                                  userprofile__functional_areas=functional_areas)
+
         url = '/api/beta/users/%s' % user.id
         request = RequestFactory().get(url)
         profile = user.userprofile
-        data = UserProfileDetailedSerializer(user.userprofile,
-                                             context={'request': request}).data
+        data = UserProfileDetailedSerializer(user.userprofile, context={'request': request}).data
+
         eq_(data['first_name'], user.first_name)
         eq_(data['last_name'], user.last_name)
         eq_(data['display_name'], profile.display_name)
-        eq_(data['date_joined_program'],
-            profile.date_joined_program.strftime('%Y-%m-%d'))
+        eq_(data['date_joined_program'], profile.date_joined_program.strftime('%Y-%m-%d'))
         eq_(data['date_left_program'], profile.date_left_program)
         eq_(data['city'], profile.city)
         eq_(data['region'], profile.region)
@@ -89,13 +86,11 @@ class TestUserProfileDetailedSerializer(RemoTestCase):
     def test_get_remo_url(self):
         mentor = UserFactory.create()
         functional_areas = FunctionalAreaFactory.create_batch(2)
-        user = UserFactory.create(
-            userprofile__mentor=mentor, groups=['Rep'],
-            userprofile__functional_areas=functional_areas)
+        user = UserFactory.create(userprofile__mentor=mentor, groups=['Rep'],
+                                  userprofile__functional_areas=functional_areas)
         url = '/api/beta/users/%s' % user.id
         request = RequestFactory().get(url)
-        data = UserProfileDetailedSerializer(user.userprofile,
-                                             context={'request': request}).data
+        data = UserProfileDetailedSerializer(user.userprofile, context={'request': request}).data
         ok_(user.userprofile.get_absolute_url() in data['remo_url'])
 
 
@@ -117,18 +112,13 @@ class TestPeopleKPIView(RemoTestCase):
 
         # Previous quarter
         start = datetime(2014, 12, 5)
-        UserFactory.create(groups=['Rep'],
-                           userprofile__date_joined_program=start)
-
+        UserFactory.create(groups=['Rep'], userprofile__date_joined_program=start)
         # This quarter
         start = datetime(2015, 1, 5)
-        UserFactory.create(groups=['Rep'],
-                           userprofile__date_joined_program=start)
-
+        UserFactory.create(groups=['Rep'], userprofile__date_joined_program=start)
         # Next quarter
         start = datetime(2015, 5, 3)
-        UserFactory.create(groups=['Rep'],
-                           userprofile__date_joined_program=start)
+        UserFactory.create(groups=['Rep'], userprofile__date_joined_program=start)
 
         request = self.factory.get(self.url)
         request.query_params = dict()
@@ -146,18 +136,13 @@ class TestPeopleKPIView(RemoTestCase):
 
         # Current week
         start = datetime(2015, 2, 22)
-        UserFactory.create(groups=['Rep'],
-                           userprofile__date_joined_program=start)
-
+        UserFactory.create(groups=['Rep'], userprofile__date_joined_program=start)
         # Previous week
         start = datetime(2015, 2, 18)
-        UserFactory.create(groups=['Rep'],
-                           userprofile__date_joined_program=start)
-
+        UserFactory.create(groups=['Rep'], userprofile__date_joined_program=start)
         # Next week
         start = datetime(2015, 3, 4)
-        UserFactory.create(groups=['Rep'],
-                           userprofile__date_joined_program=start)
+        UserFactory.create(groups=['Rep'], userprofile__date_joined_program=start)
 
         request = self.factory.get(self.url)
         request.query_params = dict()

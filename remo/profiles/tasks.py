@@ -95,7 +95,7 @@ def send_rotm_nomination_reminder():
             waffle.switch_is_active('enable_rotm_tasks')):
         data = {'month': number2month(now_date.month)}
         subject = 'Nominate Rep of the month'
-        template = 'emails/mentors_rotm_reminder.txt'
+        template = 'emails/mentors_rotm_reminder.jinja'
         send_remo_mail(subject=subject,
                        email_template=template,
                        recipients_list=[settings.REPS_MENTORS_LIST],

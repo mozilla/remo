@@ -1,11 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.dispatch import receiver
 from django.utils.timezone import now
-
-from south.signals import post_migrate
-
-from remo.base.utils import add_permissions_to_groups
 
 
 class FeaturedRep(models.Model):
@@ -38,15 +33,3 @@ class FeaturedRep(models.Model):
         if not self.pk:
             self.created_on = now()
         super(FeaturedRep, self).save(*args, **kwargs)
-
-
-@receiver(post_migrate, dispatch_uid='featuredrep_set_groups_signal')
-def featuredrep_set_groups(app, sender, signal, **kwargs):
-    """Set permissions to groups."""
-    if (isinstance(app, basestring) and app != 'featuredrep'):
-        return True
-
-    perms = {'can_edit_featured': ['Admin', 'Council'],
-             'can_delete_featured': ['Admin', 'Council']}
-
-    add_permissions_to_groups('featuredrep', perms)

@@ -3,19 +3,19 @@ from django.contrib.auth.models import User
 
 from nose.exc import SkipTest
 from nose.tools import eq_, ok_, raises
-from test_utils import TestCase
 from urlparse import urlparse, parse_qs
 
 import requests
 from mock import ANY, Mock, patch
 
+from remo.base.tests import RemoTestCase
 from remo.profiles.tests import UserFactory
 from remo.remozilla.models import Bug
 from remo.remozilla.tasks import fetch_bugs
 from remo.remozilla.utils import get_last_updated_date
 
 
-class FetchBugsTest(TestCase):
+class FetchBugsTest(RemoTestCase):
     fixtures = ['demo_users.json',
                 'demo_bugs.json']
 

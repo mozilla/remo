@@ -87,7 +87,7 @@ def extend_voting_period():
                               .exclude(pk__in=poll.users_voted.all())
                               .values_list('id', flat=True))
                 ctx_data = {'poll': poll}
-                template = 'emails/voting_vote_reminder.txt'
+                template = 'emails/voting_vote_reminder.jinja'
                 send_remo_mail.delay(subject=subject,
                                      recipients_list=recipients,
                                      email_template=template,
@@ -137,7 +137,7 @@ def create_rotm_poll():
         description = 'Automated vote for the Rep of this month.'
         mentor_group = Group.objects.get(name='Mentor')
 
-        with transaction.commit_on_success():
+        with transaction.atomic():
             poll = Poll.objects.create(name=poll_name,
                                        description=description,
                                        valid_groups=mentor_group,

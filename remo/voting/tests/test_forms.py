@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 
 from nose.tools import ok_
-from test_utils import TestCase
 
 from remo.base.tests import RemoTestCase
 from remo.profiles.tests import UserFactory
@@ -13,7 +12,7 @@ from remo.voting.tests import (PollFactory, RadioPollFactory,
                                RangePollChoiceFactory)
 
 
-class PollAddFormTest(TestCase):
+class PollAddFormTest(RemoTestCase):
     """Tests related to PollAddForm form."""
 
     def setUp(self):
@@ -88,11 +87,11 @@ class PollAddFormTest(TestCase):
         RangePollFormset = inlineformset_factory(
             Poll, RangePoll,
             formset=forms.BaseRangePollInlineFormSet,
-            extra=1, can_delete=True)
+            extra=1, exclude=('votes',), can_delete=True)
         RadioPollFormset = inlineformset_factory(
             Poll, RadioPoll,
             formset=forms.BaseRadioPollInlineFormSet,
-            extra=1, can_delete=True)
+            extra=1, can_delete=True, exclude=('votes',))
 
         self.range_poll_formset = (
             RangePollFormset(self.range_formset_data, instance=self.poll,

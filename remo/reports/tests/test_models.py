@@ -1,57 +1,50 @@
 import datetime
 
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
-from django.core import mail
 from django.utils.timezone import now
-from nose.tools import eq_, ok_
-from test_utils import TestCase
 
 import mock
+from factory.django import mute_signals
+from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
-from remo.events.helpers import get_event_link
+from remo.events.templatetags.helpers import get_event_link
 from remo.events.tests import EventFactory, AttendanceFactory
 from remo.profiles.tests import UserFactory
 from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
 from remo.reports.models import Activity, NGReport
-from remo.reports.tests import (NGReportFactory, NGReportCommentFactory,
-                                NGReportCommentFactoryNoSignals)
+from remo.reports.tests import ActivityFactory, NGReportFactory, NGReportCommentFactory
 
 
-class NGReportTest(TestCase):
+class NGReportTest(RemoTestCase):
     def test_get_absolute_url(self):
         report = NGReportFactory.create(
             report_date=datetime.date(2012, 01, 01), id=9999)
         eq_(report.get_absolute_url(),
-            ('/u/%s/r/2012/January/1/9999/'
-             % report.user.userprofile.display_name))
+            '/u/{0}/r/2012/January/1/9999/'.format(report.user.userprofile.display_name))
 
     def test_get_absolute_edit_url(self):
         report = NGReportFactory.create(
             report_date=datetime.date(2012, 01, 01), id=9999)
         eq_(report.get_absolute_edit_url(),
-            ('/u/%s/r/2012/January/1/9999/edit/'
-             % report.user.userprofile.display_name))
+            '/u/{0}/r/2012/January/1/9999/edit/'.format(report.user.userprofile.display_name))
 
     def test_get_absolute_delete_url(self):
         report = NGReportFactory.create(
             report_date=datetime.date(2012, 01, 01), id=9999)
         eq_(report.get_absolute_delete_url(),
-            ('/u/%s/r/2012/January/1/9999/delete/'
-             % report.user.userprofile.display_name))
+            '/u/{0}/r/2012/January/1/9999/delete/'.format(report.user.userprofile.display_name))
 
     def test_current_longest_streak(self):
         today = now().date()
         user = UserFactory.create()
 
         for i in range(0, 2):
-            NGReportFactory.create(
-                user=user, report_date=today - datetime.timedelta(days=i))
+            NGReportFactory.create(user=user, report_date=today - datetime.timedelta(days=i))
 
-        eq_(user.userprofile.current_streak_start,
-            today - datetime.timedelta(days=1))
-        eq_(user.userprofile.longest_streak_start,
-            today - datetime.timedelta(days=1))
+        eq_(user.userprofile.current_streak_start, today - datetime.timedelta(days=1))
+        eq_(user.userprofile.longest_streak_start, today - datetime.timedelta(days=1))
         eq_(user.userprofile.longest_streak_end, today)
 
     def test_different_current_longest_streak(self):
@@ -60,18 +53,14 @@ class NGReportTest(TestCase):
         user = UserFactory.create()
         # longest streak
         for i in range(0, 3):
-            NGReportFactory.create(
-                user=user, report_date=past_day - datetime.timedelta(days=i))
+            NGReportFactory.create(user=user, report_date=past_day - datetime.timedelta(days=i))
 
         # current streak
         for i in range(0, 2):
-            NGReportFactory.create(
-                user=user, report_date=today - datetime.timedelta(days=i))
+            NGReportFactory.create(user=user, report_date=today - datetime.timedelta(days=i))
 
-        eq_(user.userprofile.current_streak_start,
-            today - datetime.timedelta(days=1))
-        eq_(user.userprofile.longest_streak_start,
-            past_day - datetime.timedelta(days=2))
+        eq_(user.userprofile.current_streak_start, today - datetime.timedelta(days=1))
+        eq_(user.userprofile.longest_streak_start, past_day - datetime.timedelta(days=2))
         eq_(user.userprofile.longest_streak_end, past_day)
 
     def test_current_streak_counter_with_past_reports(self):
@@ -79,24 +68,26 @@ class NGReportTest(TestCase):
 
         user = UserFactory.create()
         for i in range(0, 5):
-            NGReportFactory.create(
-                user=user, report_date=past_day - datetime.timedelta(days=i))
+            NGReportFactory.create(user=user, report_date=past_day - datetime.timedelta(days=i))
 
         ok_(not user.userprofile.current_streak_start)
 
 
-class NGReportComment(TestCase):
+class NGReportComment(RemoTestCase):
     def test_get_absolute_delete_url(self):
-        report = NGReportFactory.create(
-            report_date=datetime.date(2012, 01, 01), id=9999)
-        report_comment = NGReportCommentFactory.create(report=report,
-                                                       user=report.user)
+        report = NGReportFactory.create(report_date=datetime.date(2012, 01, 01), id=9999)
+        report_comment = NGReportCommentFactory.create(report=report, user=report.user)
         eq_(report_comment.get_absolute_delete_url(),
-            ('/u/%s/r/2012/January/1/9999/comment/%s/delete/'
-             % (report.user.userprofile.display_name, report_comment.id)))
+            '/u/{0}/r/2012/January/1/9999/comment/{1}/delete/'.format(
+                report.user.userprofile.display_name, report_comment.id))
 
 
-class NGReportAttendanceSignalTests(TestCase):
+class NGReportAttendanceSignalTests(RemoTestCase):
+
+    def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_ATTEND)
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
+
     def test_owner(self):
         """Test creating a passive attendance report for event owner."""
         activity = Activity.objects.get(name=ACTIVITY_EVENT_ATTEND)
@@ -156,16 +147,18 @@ class NGReportAttendanceSignalTests(TestCase):
         ok_(not query.exists())
 
 
-class NGReportEventCreationSignalTests(TestCase):
+class NGReportEventCreationSignalTests(RemoTestCase):
+
+    def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_ATTEND)
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
 
     def test_create(self):
         """Test creating a passive report after creating an event."""
         activity = Activity.objects.get(name=ACTIVITY_EVENT_CREATE)
-        event = EventFactory.build()
-        event.owner = UserFactory.create()
-        event.save()
-        report = NGReport.objects.get(event=event, user=event.owner,
-                                      activity=activity)
+        owner = UserFactory.create()
+        event = EventFactory.create(owner=owner)
+        report = NGReport.objects.get(event=event, user=event.owner, activity=activity)
 
         location = '%s, %s, %s' % (event.city, event.region, event.country)
         eq_(report.mentor, event.owner.userprofile.mentor)
@@ -209,8 +202,7 @@ class NGReportEventCreationSignalTests(TestCase):
     def test_edit_owner(self):
         """Test change event ownership."""
         owner = UserFactory.create()
-        event = EventFactory.build(owner=owner)
-        event.save()
+        EventFactory.create(owner=owner)
         report = NGReport.objects.get(user=owner)
         new_owner = UserFactory.create()
         report.event.owner = new_owner
@@ -233,26 +225,26 @@ class NGReportEventCreationSignalTests(TestCase):
                                  lambda x: x.name)
 
 
-class NGReportCommentSignalTests(TestCase):
-    def test_comment_one_user(self):
+class NGReportCommentSignalTests(RemoTestCase):
+
+    @mock.patch('remo.reports.models.send_remo_mail.delay')
+    def test_comment_one_user(self, mocked_mail):
         """Test sending email when a new comment is added on a NGReport
         and the user has the option enabled in his/her settings.
         """
         commenter = UserFactory.create()
-        reporter = UserFactory.create(
-            userprofile__receive_email_on_add_comment=True)
+        reporter = UserFactory.create(userprofile__receive_email_on_add_comment=True)
         report = NGReportFactory.create(user=reporter)
-        NGReportCommentFactory.create(user=commenter, report=report,
-                                      comment='This is a comment')
+        NGReportCommentFactory.create(user=commenter, report=report, comment='This is a comment')
 
-        eq_(len(mail.outbox), 1)
-        eq_('%s <%s>' % (reporter.get_full_name(), reporter.email),
-            mail.outbox[0].to[0])
-        msg = ('[Report] User {0} commented on {1}'
-               .format(commenter.get_full_name(), report))
-        eq_(mail.outbox[0].subject, msg)
+        ok_(mocked_mail.called)
+        eq_(mocked_mail.call_count, 1)
+        mocked_data = mocked_mail.call_args_list[0][1]
+        msg = '[Report] User {0} commented on {1}'.format(commenter.get_full_name(), report)
+        eq_(mocked_data['subject'], msg)
 
-    def test_one_user_settings_False(self):
+    @mock.patch('remo.reports.models.send_remo_mail.delay')
+    def test_one_user_settings_False(self, mocked_mail):
         """Test sending email when a new comment is added on a NGReport
         and the user has the option disabled in his/her settings.
         """
@@ -262,41 +254,34 @@ class NGReportCommentSignalTests(TestCase):
         report = NGReportFactory.create(user=user)
         NGReportCommentFactory.create(user=comment_user, report=report,
                                       comment='This is a comment')
+        ok_(not mocked_mail.called)
 
-        eq_(len(mail.outbox), 0)
-
-    def test_comment_multiple_users(self):
+    @mock.patch('remo.reports.models.send_remo_mail.delay')
+    def test_comment_multiple_users(self, mocked_mail):
         """Test sending email when a new comment is added on a NGReport
         and the users have the option enabled in their settings.
         """
         commenter = UserFactory.create()
-        reporter = UserFactory.create(
-            userprofile__receive_email_on_add_comment=True)
+        reporter = UserFactory.create(userprofile__receive_email_on_add_comment=True)
         report = NGReportFactory.create(user=reporter)
         users_with_comments = UserFactory.create_batch(
             2, userprofile__receive_email_on_add_comment=True)
         # disconnect the signals in order to add two users in NGReportComment
-        for user_obj in users_with_comments:
-            NGReportCommentFactoryNoSignals.create(
-                user=user_obj, report=report, comment='This is a comment')
+        with mute_signals(post_save):
+            for user_obj in users_with_comments:
+                NGReportCommentFactory.create(user=user_obj, report=report,
+                                              comment='This is a comment')
         NGReportCommentFactory.create(user=commenter, report=report,
                                       comment='This is a comment')
 
-        eq_(len(mail.outbox), 3)
-        recipients = ['%s <%s>' % (reporter.get_full_name(), reporter.email),
-                      '%s <%s>' % (users_with_comments[0].get_full_name(),
-                                   users_with_comments[0].email),
-                      '%s <%s>' % (users_with_comments[1].get_full_name(),
-                                   users_with_comments[1].email)]
-        receivers = [mail.outbox[0].to[0], mail.outbox[1].to[0],
-                     mail.outbox[2].to[0]]
-        eq_(set(recipients), set(receivers))
-        msg = ('[Report] User {0} commented on {1}'
-               .format(commenter.get_full_name(), report))
-        eq_(mail.outbox[0].subject, msg)
+        ok_(mocked_mail.called)
+        eq_(mocked_mail.call_count, 3)
+        msg = '[Report] User {0} commented on {1}'.format(commenter.get_full_name(), report)
+        mocked_data = mocked_mail.call_args_list[0][1]
+        eq_(mocked_data['subject'], msg)
 
 
-class NGReportDeleteSignalTests(TestCase):
+class NGReportDeleteSignalTests(RemoTestCase):
 
     def test_current_streak_oldest_report(self):
         """Update current and longest streak counters when the oldest

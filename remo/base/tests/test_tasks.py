@@ -16,8 +16,7 @@ class SendRemoMailTests(RemoTestCase):
         subject = 'This is the subject'
         message = 'This is the message'
         from_email = u'Joe Doe <joe@example.com>'
-        to = u'%s %s <%s>' % (recipient.first_name,
-                              recipient.last_name, recipient.email)
+        to = u'%s %s <%s>' % (recipient.first_name, recipient.last_name, recipient.email)
 
         with patch('remo.base.tasks.EmailMessage') as mocked_email_message:
             send_remo_mail(subject, recipients_list=[recipient.id],
@@ -34,16 +33,16 @@ class SendRemoMailTests(RemoTestCase):
         recipient = UserFactory.create()
         subject = 'This is the subject'
         message = 'This is the message'
-        to = u'%s %s <%s>' % (recipient.first_name,
-                              recipient.last_name, recipient.email)
+        to = u'%s %s <%s>' % (recipient.first_name, recipient.last_name, recipient.email)
 
         with patch('remo.base.tasks.EmailMessage') as mocked_email_message:
-            send_remo_mail(subject, recipients_list=[recipient.id],
-                           message=message)
+            send_remo_mail(subject, recipients_list=[recipient.id], message=message)
 
-        mocked_email_message.assert_called_once_with(
-            body=message, to=[to], subject=subject, headers={},
-            from_email=settings.FROM_EMAIL)
+        mocked_email_message.assert_called_once_with(body=message,
+                                                     to=[to],
+                                                     subject=subject,
+                                                     headers={},
+                                                     from_email=settings.FROM_EMAIL)
 
     def test_without_message_and_template(self):
         recipient = UserFactory.create()
@@ -51,8 +50,7 @@ class SendRemoMailTests(RemoTestCase):
         from_email = u'Joe Doe <joe@example.com>'
 
         with patch('remo.base.tasks.EmailMessage') as mocked_email_message:
-            send_remo_mail(subject, recipients_list=[recipient.id],
-                           sender=from_email,)
+            send_remo_mail(subject, recipients_list=[recipient.id], sender=from_email,)
         ok_(not mocked_email_message.called)
 
     def test_without_recipients(self):
@@ -61,8 +59,7 @@ class SendRemoMailTests(RemoTestCase):
         from_email = u'Joe Doe <joe@example.com>'
 
         with patch('remo.base.tasks.EmailMessage') as mocked_email_message:
-            send_remo_mail(subject, sender=from_email, message=message,
-                           recipients_list=None)
+            send_remo_mail(subject, sender=from_email, message=message, recipients_list=None)
         ok_(not mocked_email_message.called)
 
     def test_send_to_valid_email_address(self):
@@ -71,8 +68,8 @@ class SendRemoMailTests(RemoTestCase):
         from_email = u'Joe Doe <joe@example.com>'
 
         with patch('remo.base.tasks.EmailMessage') as mocked_email_message:
-            send_remo_mail(subject, recipients_list=['mail@example.com'],
-                           sender=from_email, message=message)
+            send_remo_mail(subject, recipients_list=['mail@example.com'], sender=from_email,
+                           message=message)
 
         mocked_email_message.assert_called_once_with(body=message,
                                                      to=['mail@example.com'],
@@ -87,8 +84,8 @@ class SendRemoMailTests(RemoTestCase):
         from_email = u'Joe Doe <joe@example.com>'
 
         with patch('remo.base.tasks.EmailMessage') as mocked_email_message:
-            send_remo_mail(subject, recipients_list=['Not an address'],
-                           sender=from_email, message=message)
+            send_remo_mail(subject, recipients_list=['Not an address'], sender=from_email,
+                           message=message)
         ok_(not mocked_email_message.called)
 
     def test_headers(self):
@@ -98,8 +95,8 @@ class SendRemoMailTests(RemoTestCase):
         headers = {'Reply-To': 'mail@example.com'}
 
         with patch('remo.base.tasks.EmailMessage') as mocked_email_message:
-            send_remo_mail(subject, recipients_list=['mail@example.com'],
-                           sender=from_email, message=message, headers=headers)
+            send_remo_mail(subject, recipients_list=['mail@example.com'], sender=from_email,
+                           message=message, headers=headers)
 
         mocked_email_message.assert_called_once_with(body=message,
                                                      to=['mail@example.com'],

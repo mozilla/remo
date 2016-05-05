@@ -1,0 +1,60 @@
+{% extends "base_fd4.jinja" %}
+{% block pagetitle %}Mozilla Reps - Stats{% endblock %}
+
+{% block content %}
+<main role="main" class="dashboard-main">
+  <div class="row">
+    <div class="large-6 columns">
+      <h1>Stats Dashboard</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-6 columns">
+      <div class="dashboard-stats-activities-block">
+        <h2>Overview</h2>
+        <p>General overview of the reps program.</p>
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Reps</th>
+              <th>Past events</th>
+              <th>Future events</th>
+              <th>Activities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ reps }}</td>
+              <td>{{ past_events }}</td>
+              <td>{{ future_events }}</td>
+              <td>{{ activities }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="large-6 columns">
+      <h2>Activities</h2>
+      <p>When have Reps done activities recently?</p>
+      <div class="dashboard-stats-activities-block">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Past or upcoming 4 weeks</th>
+              <th>Past or upcoming 4-8 weeks</th>
+              <th>Past or upcoming 8+ weeks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ active_users }}</td>
+              <td>{{ inactive_low_users }}</td>
+              <td>{{ inactive_high_users }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

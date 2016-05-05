@@ -8,10 +8,9 @@ from django.core.urlresolvers import reverse
 from django.test.client import Client
 from django.utils.timezone import now
 
-from funfactory.helpers import urlparams
 from nose.tools import eq_, ok_
-from test_utils import TestCase
 
+from remo.base.templatetags.helpers import urlparams
 from remo.base.tests import RemoTestCase
 from remo.dashboard.models import ActionItem
 from remo.events.tests import EventFactory
@@ -21,7 +20,7 @@ from remo.remozilla.tests import BugFactory
 from remo.reports.tests import NGReportFactory
 
 
-class ViewsTest(TestCase):
+class ViewsTest(RemoTestCase):
     """Test views."""
     fixtures = ['demo_users.json']
 

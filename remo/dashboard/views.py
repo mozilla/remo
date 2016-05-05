@@ -91,7 +91,7 @@ def dashboard_mozillians(request, user):
     args['tracked_interests'] = tracked_interests
     args['reps_email_form'] = reps_email_form
     statsd.incr('dashboard.dashboard_mozillians')
-    return render(request, 'dashboard_mozillians.html', args)
+    return render(request, 'dashboard_mozillians.jinja', args)
 
 
 @never_cache
@@ -180,7 +180,7 @@ def dashboard(request):
             userprofile__registration_complete=False)
 
     statsd.incr('dashboard.dashboard_reps')
-    return render(request, 'dashboard_reps.html', args)
+    return render(request, 'dashboard_reps.jinja', args)
 
 
 @permission_check(group='Mentor')
@@ -220,7 +220,7 @@ def stats_dashboard(request):
     args['future_events'] = Event.objects.filter(start__gte=now()).count()
     args['activities'] = NGReport.objects.all().count()
 
-    return render(request, 'stats_dashboard.html', args)
+    return render(request, 'stats_dashboard.jinja', args)
 
 
 @never_cache
@@ -265,7 +265,7 @@ def list_action_items(request):
     except (EmptyPage, InvalidPage):
         actions = paginator.page(paginator.num_pages)
 
-    return render(request, 'list_action_items.html',
+    return render(request, 'list_action_items.jinja',
                   {'objects': actions,
                    'number_of_action_items': number_of_action_items,
                    'sort_key': sort_key,
@@ -287,6 +287,6 @@ def kpi(request):
                     groups__name='Rep')
             .order_by('userprofile__country', 'last_name', 'first_name'))
 
-    return render(request, 'kpi.html',
+    return render(request, 'kpi.jinja',
                   {'reps': reps, 'countries': countries,
                    'categories': categories, 'initiatives': initiatives})
