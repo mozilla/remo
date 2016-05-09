@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -6,7 +6,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.template.loader import render_to_string
-from django.utils.timezone import now
+from django.utils.timezone import make_aware, now
+
+import pytz
 
 from celery.task import periodic_task, task
 from django_statsd.clients import statsd
@@ -27,9 +29,9 @@ def send_report_digest():
     # This would include reports created today about past events or
     # non-events, and reports created in the past for events that
     # occurred today, but not reports created today for future events
-    reports = NGReport.objects.filter(Q(created_on__year=today.year,
-                                        created_on__month=today.month,
-                                        created_on__day=today.day,
+    query_start = make_aware(datetime.combine(today, datetime.min.time()), pytz.UTC)
+    query_end = make_aware(datetime.combine(today, datetime.max.time()), pytz.UTC)
+    reports = NGReport.objects.filter(Q(created_on__range=[query_start, query_end],
                                         report_date__lte=today) |
                                       Q(report_date=today,
                                         activity__name__in=[
