@@ -110,6 +110,7 @@ def setup_dependencies(ctx):
         activate_env = os.path.join(venv_bin_path, 'activate_this.py')
         execfile(activate_env, dict(__file__=activate_env))
 
+        ctx.local('pip install --upgrade pip==7.0.3')
         ctx.local('pip --version')
         ctx.local('./peep.sh install -r requirements/prod.txt')
         # Make the venv relocatable
