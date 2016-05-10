@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from remo.base.helpers import absolutify
+from remo.base.templatetags.helpers import absolutify
 from remo.events.api.serializers import EventSerializer
 from remo.profiles.api.serializers import (FunctionalAreaSerializer,
                                            UserSerializer)
@@ -27,6 +27,7 @@ class ActivitiesDetailedSerializer(serializers.HyperlinkedModelSerializer):
     event = EventSerializer()
     functional_areas = FunctionalAreaSerializer(many=True)
     remo_url = serializers.SerializerMethodField()
+    report_date = serializers.DateTimeField(format='%Y-%m-%d')
 
     class Meta:
         model = NGReport

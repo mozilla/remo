@@ -230,3 +230,13 @@ ipaddress==1.0.16
 # sha256: QF2zLq6jbrli5hMOTQCHdi1QAYsUI3sCyMT-lm1WFbI
 # sha256: YIuE10Z4F4HKyrX6P3pS_s5GBHsD9Ohhmt484m0MhPI
 fake-factory==0.5.7
+# sha256: 8ZYNi_8Kr62SUrnoAnl0j-fr5ecZSH0TLMsSgVI822I
+pyDNS==2.3.6
+# sha256: n4KpA86-rHgRg7cKHnuummALFPLnGHalvaeUTautX0w
+https://github.com/mozilla/happyforms/archive/master.zip#egg=happyforms
+# sha256: MxjtKWAkDWHLxlWIWO4AwQ7td6ZQjE0e2Ob39IOZyXU
+# sha256: xTXEQDgC9us4FzzUhj5BniJ0khoBqKrYpbSXwTHGKHU
+Babel==2.3.4
+# sha256: br3J4K0Yj50bLN2bxZy-Qr-TGHXoKeelleazq9wFzfs
+# sha256: CrLGK4eYfjJS-J0wt87b7BKgGvknSvn_pIEI8sE8YGI
+imagesize==0.7.1

@@ -7,6 +7,7 @@ from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
 from remo.events.tests import EventFactory
+from remo.reports import ACTIVITY_EVENT_CREATE
 from remo.reports.api.views import ActivitiesKPIView
 from remo.reports.api.serializers import (ActivitiesDetailedSerializer,
                                           ActivitiesSerializer)
@@ -30,13 +31,16 @@ class TestActivitySerializer(RemoTestCase):
 
 class TestActivityDetailedSerializer(RemoTestCase):
 
+    def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
+
     def test_base(self):
         mentor = UserFactory.create()
         user = UserFactory.create(userprofile__mentor=mentor)
-        event = EventFactory.create()
-        functional_areas = [FunctionalAreaFactory.create()]
         campaign = CampaignFactory.create()
         activity = ActivityFactory.create()
+        event = EventFactory.create()
+        functional_areas = [FunctionalAreaFactory.create()]
         report = NGReportFactory.create(
             functional_areas=functional_areas, mentor=mentor,
             campaign=campaign, user=user, event=event, activity=activity)

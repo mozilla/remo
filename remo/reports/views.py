@@ -10,11 +10,10 @@ from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 
 from django_statsd.clients import statsd
-from funfactory.helpers import urlparams
 
 import forms
-
 from remo.base.decorators import permission_check
+from remo.base.templatetags.helpers import urlparams
 from remo.base.utils import month2number
 from remo.profiles.models import FunctionalArea, UserProfile
 from remo.reports import ACTIVITY_CAMPAIGN, UNLISTED_ACTIVITIES
@@ -74,7 +73,7 @@ def edit_ng_report(request, display_name='', year=None,
         report_form.save()
         return redirect(report.get_absolute_url())
 
-    return render(request, 'edit_ng_report.html',
+    return render(request, 'edit_ng_report.jinja',
                   {'report_form': report_form,
                    'pageuser': user,
                    'report': report,
@@ -103,7 +102,7 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
                 'editable': editable,
                 'comment_form': comment_form,
                 'verification_form': verification_form}
-    template = 'view_ng_report.html'
+    template = 'view_ng_report.jinja'
 
     if request.method == 'POST':
         # Process comment form
@@ -256,7 +255,7 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
     except (EmptyPage, InvalidPage):
         reports = paginator.page(paginator.num_pages)
 
-    return render(request, 'list_ng_reports.html',
+    return render(request, 'list_ng_reports.jinja',
                   {'objects': reports,
                    'number_of_reports': number_of_reports,
                    'sort_key': sort_key,

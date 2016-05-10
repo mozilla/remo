@@ -8,25 +8,28 @@ from django.test.utils import override_settings
 from django.utils.encoding import iri_to_uri
 from django.utils.timezone import make_aware, now
 
+from django_jinja.backend import Template as Jinja_Template
 from mock import ANY
 from nose.tools import eq_, ok_
 from pytz import timezone
-from test_utils import TestCase
 
-from remo.base.tests import requires_login, requires_permission
+from remo.base.tests import RemoTestCase, requires_login, requires_permission
 from remo.events.models import Event, EventComment, EventMetricOutcome
 from remo.events.tests import (AttendanceFactory, EventCommentFactory,
                                EventFactory, EventMetricFactory,
                                EventMetricOutcomeFactory)
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
-from remo.reports.tests import CampaignFactory
+from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE
+from remo.reports.tests import ActivityFactory, CampaignFactory
 
 
-class ViewsTest(TestCase):
+class ViewsTest(RemoTestCase):
     """Tests related to Events Views."""
 
     def setUp(self):
-
+        """Setup method for some initial data."""
+        ActivityFactory.create(name=ACTIVITY_EVENT_ATTEND)
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
         functional_area = FunctionalAreaFactory.create()
         metrics = EventMetricFactory.create_batch(3)
         campaign = CampaignFactory.create()
@@ -74,13 +77,13 @@ class ViewsTest(TestCase):
     def test_view_events_list(self):
         """Get list events page."""
         response = self.client.get(reverse('events_list_events'))
-        self.assertTemplateUsed(response, 'list_events.html')
+        self.assertJinja2TemplateUsed(response, 'list_events.jinja')
 
     def test_view_event_page(self):
         """Get view event page."""
         event = EventFactory.create()
         response = self.client.get(event.get_absolute_url())
-        self.assertTemplateUsed(response, 'view_event.html')
+        self.assertJinja2TemplateUsed(response, 'view_event.jinja')
 
     @mock.patch('django.contrib.messages.error')
     def test_post_comment_on_event_unauthed(self, mock_error):
@@ -90,7 +93,7 @@ class ViewsTest(TestCase):
         response = self.client.post(event.get_absolute_url(),
                                     {'comment': comment},
                                     follow=True)
-        self.assertTemplateUsed(response, 'main.html')
+        self.assertJinja2TemplateUsed(response, 'main.jinja')
         mock_error.assert_called_with(ANY, 'Permission Denied')
 
     @mock.patch('django.contrib.messages.success')
@@ -103,13 +106,13 @@ class ViewsTest(TestCase):
         user = UserFactory.create(**kwargs)
         comment = 'This is a new comment'
 
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(event.get_absolute_url(),
-                                    {'comment': comment},
-                                    follow=True)
+        with self.login(user) as client:
+            response = client.post(event.get_absolute_url(), {'comment': comment}, follow=True)
         comment = event.eventcomment_set.get(user=user)
 
-        self.assertTemplateUsed(response, 'view_event.html')
+        ok_('view_event.jinja' in [template.template.name
+                                   for template in response.templates
+                                   if isinstance(template, Jinja_Template)])
         mock_success.assert_called_with(ANY, 'Comment saved')
         eq_(comment.comment, 'This is a new comment')
 
@@ -136,8 +139,8 @@ class ViewsTest(TestCase):
         comment_delete = reverse('events_delete_event_comment',
                                  kwargs={'slug': event.slug,
                                          'pk': comment.id})
-        self.client.login(username=user.username, password='passwd')
-        self.client.post(comment_delete, follow=True)
+        with self.login(user) as client:
+            client.post(comment_delete, follow=True)
         ok_(EventComment.objects.filter(pk=comment.id).exists())
 
     @mock.patch('django.contrib.messages.success')
@@ -149,12 +152,12 @@ class ViewsTest(TestCase):
         comment_delete = reverse('events_delete_event_comment',
                                  kwargs={'slug': event.slug,
                                          'pk': comment.id})
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(comment_delete, follow=True)
+        with self.login(user) as client:
+            response = client.post(comment_delete, follow=True)
 
         mock_success.assert_called_with(ANY, 'Comment successfully deleted.')
         ok_(not EventComment.objects.filter(pk=comment.id).exists())
-        self.assertTemplateUsed(response, 'view_event.html')
+        self.assertJinja2TemplateUsed(response, 'view_event.jinja')
 
     @mock.patch('django.contrib.messages.success')
     def test_post_delete_event_comment_admin(self, mock_success):
@@ -165,10 +168,10 @@ class ViewsTest(TestCase):
         comment_delete = reverse('events_delete_event_comment',
                                  kwargs={'slug': event.slug,
                                          'pk': comment.id})
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(comment_delete, follow=True)
+        with self.login(user) as client:
+            response = client.post(comment_delete, follow=True)
         mock_success.assert_called_with(ANY, 'Comment successfully deleted.')
-        self.assertTemplateUsed(response, 'view_event.html')
+        self.assertJinja2TemplateUsed(response, 'view_event.jinja')
 
     def test_subscription_management_no_perms(self):
         """Subscribe to event without permissions."""
@@ -176,22 +179,18 @@ class ViewsTest(TestCase):
         response = self.client.post(reverse('events_subscribe_to_event',
                                             kwargs={'slug': event.slug}),
                                     follow=True)
-        self.assertTemplateUsed(response, 'main.html',
-                                ('Anonymous user is not returned to '
-                                 'main.html to login'))
+        self.assertJinja2TemplateUsed(response, 'main.jinja')
 
     @mock.patch('django.contrib.messages.info')
     def test_subscription_management_rep(self, mock_info):
         """ Subscribe rep to event."""
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create()
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(reverse('events_subscribe_to_event',
-                                            kwargs={'slug': event.slug}),
-                                    follow=True)
-        self.assertTemplateUsed(response, 'view_event.html',
-                                ('Rep user is not returned to '
-                                 'event page after subscribing.'))
+        with self.login(user) as client:
+            response = client.post(reverse('events_subscribe_to_event',
+                                           kwargs={'slug': event.slug}),
+                                   follow=True)
+        self.assertJinja2TemplateUsed(response, 'view_event.jinja')
         ok_(mock_info.called, 'messages.info() was not called')
 
     @mock.patch('django.contrib.messages.warning')
@@ -200,13 +199,11 @@ class ViewsTest(TestCase):
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create()
         AttendanceFactory.create(user=user, event=event)
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(reverse('events_subscribe_to_event',
-                                            kwargs={'slug': event.slug}),
-                                    follow=True)
-        self.assertTemplateUsed(response, 'view_event.html',
-                                ('Rep user is not returned to '
-                                 'event page after subscribing.'))
+        with self.login(user) as client:
+            response = client.post(reverse('events_subscribe_to_event',
+                                           kwargs={'slug': event.slug}),
+                                   follow=True)
+        self.assertJinja2TemplateUsed(response, 'view_event.jinja')
         msg = 'You are already subscribed to this event.'
         mock_warning.assert_called_with(ANY, msg)
 
@@ -224,13 +221,11 @@ class ViewsTest(TestCase):
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create()
         AttendanceFactory.create(user=user, event=event)
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(reverse('events_unsubscribe_from_event',
-                                            kwargs={'slug': event.slug}),
-                                    follow=True)
-        self.assertTemplateUsed(response, 'view_event.html',
-                                ('Rep user is not returned to '
-                                 'event page after unsubscribing.'))
+        with self.login(user) as client:
+            response = client.post(reverse('events_unsubscribe_from_event',
+                                           kwargs={'slug': event.slug}),
+                                   follow=True)
+        self.assertJinja2TemplateUsed(response, 'view_event.jinja')
         msg = 'You have unsubscribed from this event.'
         mock_success.assert_called_with(ANY, msg)
 
@@ -240,13 +235,11 @@ class ViewsTest(TestCase):
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create()
 
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(reverse('events_unsubscribe_from_event',
-                                            kwargs={'slug': event.slug}),
-                                    follow=True)
-        self.assertTemplateUsed(response, 'view_event.html',
-                                ('Rep user is not returned to '
-                                 'event page after unsubscribing.'))
+        with self.login(user) as client:
+            response = client.post(reverse('events_unsubscribe_from_event',
+                                           kwargs={'slug': event.slug}),
+                                   follow=True)
+        self.assertJinja2TemplateUsed(response, 'view_event.jinja')
         msg = 'You are not subscribed to this event.'
         mock_warning.assert_called_with(ANY, msg)
 
@@ -262,12 +255,11 @@ class ViewsTest(TestCase):
         """Test delete event no permissions."""
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create()
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.get(reverse('events_delete_event',
-                                           kwargs={'slug': event.slug}),
-                                   follow=True)
-        self.assertTemplateUsed(response, 'main.html',
-                                ('Rep is not returned to main.html.'))
+        with self.login(user) as client:
+            response = client.get(reverse('events_delete_event',
+                                          kwargs={'slug': event.slug}),
+                                  follow=True)
+        self.assertJinja2TemplateUsed(response, 'main.jinja')
         ok_(Event.objects.filter(pk=event.id).exists())
 
     @mock.patch('django.contrib.messages.success')
@@ -275,14 +267,11 @@ class ViewsTest(TestCase):
         """Test delete event with owner permissions."""
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create(owner=user)
-        self.client.login(username=user.username, password='passwd')
-
-        response = self.client.post(reverse('events_delete_event',
-                                            kwargs={'slug': event.slug}),
-                                    follow=True)
-        self.assertTemplateUsed(response, 'list_events.html',
-                                ('User %s not returned to '
-                                 'main.html.' % user))
+        with self.login(user) as client:
+            response = client.post(reverse('events_delete_event',
+                                           kwargs={'slug': event.slug}),
+                                   follow=True)
+        self.assertJinja2TemplateUsed(response, 'list_events.jinja')
         ok_(not Event.objects.filter(pk=event.id).exists())
         mock_success.assert_called_with(ANY, 'Event successfully deleted.')
 
@@ -291,13 +280,11 @@ class ViewsTest(TestCase):
         """Test delete event with mentor permissions."""
         user = UserFactory.create(groups=['Mentor'])
         event = EventFactory.create()
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(reverse('events_delete_event',
-                                            kwargs={'slug': event.slug}),
-                                    follow=True)
-        self.assertTemplateUsed(response, 'list_events.html',
-                                ('User %s not returned to '
-                                 'main.html.' % user))
+        with self.login(user) as client:
+            response = client.post(reverse('events_delete_event',
+                                           kwargs={'slug': event.slug}),
+                                   follow=True)
+        self.assertJinja2TemplateUsed(response, 'list_events.jinja')
         ok_(not Event.objects.filter(pk=event.id).exists())
         mock_success.assert_called_with(ANY, 'Event successfully deleted.')
 
@@ -306,13 +293,11 @@ class ViewsTest(TestCase):
         """Test delete event with councelor permissions."""
         user = UserFactory.create(groups=['Council'])
         event = EventFactory.create()
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(reverse('events_delete_event',
-                                            kwargs={'slug': event.slug}),
-                                    follow=True)
-        self.assertTemplateUsed(response, 'list_events.html',
-                                ('User %s not returned to '
-                                 'main.html.' % user))
+        with self.login(user) as client:
+            response = client.post(reverse('events_delete_event',
+                                           kwargs={'slug': event.slug}),
+                                   follow=True)
+        self.assertJinja2TemplateUsed(response, 'list_events.jinja')
         ok_(not Event.objects.filter(pk=event.id).exists())
         mock_success.assert_called_with(ANY, 'Event successfully deleted.')
 
@@ -321,13 +306,10 @@ class ViewsTest(TestCase):
         """Test delete event with admin permissions."""
         user = UserFactory.create(groups=['Admin'])
         event = EventFactory.create()
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(reverse('events_delete_event',
-                                            kwargs={'slug': event.slug}),
-                                    follow=True)
-        self.assertTemplateUsed(response, 'list_events.html',
-                                ('User %s not returned to '
-                                 'main.html.' % user))
+        with self.login(user) as client:
+            response = client.post(reverse('events_delete_event', kwargs={'slug': event.slug}),
+                                   follow=True)
+        self.assertJinja2TemplateUsed(response, 'list_events.jinja')
         ok_(not Event.objects.filter(pk=event.id).exists())
         mock_success.assert_called_with(ANY, 'Event successfully deleted.')
 
@@ -346,7 +328,7 @@ class ViewsTest(TestCase):
         event = EventFactory.create()
         response = self.client.get(reverse('events_icalendar_event',
                                            kwargs={'slug': event.slug}))
-        self.assertTemplateUsed(response, 'multi_event_ical_template.ics')
+        self.assertJinja2TemplateUsed(response, 'multi_event_ical_template.jinja')
         self.failUnless(response['Content-Type'].startswith('text/calendar'))
 
     def test_multi_event_ical_export(self):
@@ -437,9 +419,9 @@ class ViewsTest(TestCase):
     def test_post_create_event_rep(self, mock_success):
         """Test create new event with rep permissions."""
         user = UserFactory.create(groups=['Rep'])
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(reverse('events_new_event'), self.data,
-                                    follow=True)
+        with self.login(user) as client:
+            response = client.post(reverse('events_new_event'), self.data,
+                                   follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully created.')
         eq_(mock_success.call_count, 1)
         eq_(response.status_code, 200)
@@ -447,38 +429,38 @@ class ViewsTest(TestCase):
     def test_get_create_event_rep(self):
         """Test get create event page with rep permissions."""
         user = UserFactory.create(groups=['Rep'])
-        self.client.login(username=user.username, password='passwd')
         url = reverse('events_new_event')
-        response = self.client.get(url, follow=True)
+        with self.login(user) as client:
+            response = client.get(url, follow=True)
         eq_(response.request['PATH_INFO'], url)
         ok_(response.context['creating'])
         ok_(not response.context['event_form'].editable_owner)
-        self.assertTemplateUsed('edit_event.html')
+        self.assertJinja2TemplateUsed(response, 'edit_event.jinja')
 
     def test_get_edit_event_rep(self):
         """Test get event edit page with rep permissions."""
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create()
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.get(event.get_absolute_edit_url(), follow=True)
+        with self.login(user) as client:
+            response = client.get(event.get_absolute_edit_url(), follow=True)
         eq_(response.request['PATH_INFO'], event.get_absolute_edit_url())
         ok_(not response.context['creating'])
         ok_(not response.context['event_form'].editable_owner)
         eq_(response.context['event'].slug, event.slug)
-        self.assertTemplateUsed('edit_event.html')
+        self.assertJinja2TemplateUsed(response, 'edit_event.jinja')
 
     @mock.patch('django.contrib.messages.success')
     def test_get_edit_event_admin(self, mock_success):
         """Test get event edit page with admin permissions"""
         user = UserFactory.create(groups=['Admin'])
         event = EventFactory.create()
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.get(event.get_absolute_edit_url(), follow=True)
+        with self.login(user) as client:
+            response = client.get(event.get_absolute_edit_url(), follow=True)
         eq_(response.request['PATH_INFO'], event.get_absolute_edit_url())
         ok_(not response.context['creating'])
         ok_(response.context['event_form'].editable_owner)
         eq_(response.context['event'].slug, event.slug)
-        self.assertTemplateUsed('edit_event.html')
+        self.assertJinja2TemplateUsed(response, 'edit_event.jinja')
 
     @mock.patch('django.contrib.messages.success')
     @override_settings(ETHERPAD_URL="http://example.com")
@@ -491,9 +473,8 @@ class ViewsTest(TestCase):
         event = EventFactory.create(owner=user, start=start, end=end,
                                     actual_attendance=None)
         times_edited = event.times_edited
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.post(event.get_absolute_edit_url(), self.data,
-                                    follow=True)
+        with self.login(user) as client:
+            response = client.post(event.get_absolute_edit_url(), self.data, follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully updated.')
         eq_(mock_success.call_count, 1)
         eq_(response.request['PATH_INFO'], event.get_absolute_url())
@@ -561,15 +542,13 @@ class ViewsTest(TestCase):
         # Login as test-event owner
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory()
-        self.client.login(username=user.username, password='passwd')
 
         # Test invalid event date
         invalid_data = self.data.copy()
         invalid_data['end_form_0_year'] = invalid_data['start_form_0_year'] - 1
 
-        response = self.client.post(event.get_absolute_edit_url(),
-                                    invalid_data,
-                                    follow=True)
+        with self.login(user) as client:
+            response = client.post(event.get_absolute_edit_url(), invalid_data, follow=True)
         self.assertNotEqual(response.request['PATH_INFO'],
                             event.get_absolute_url())
 
@@ -608,8 +587,8 @@ class ViewsTest(TestCase):
         user = UserFactory.create(groups=['Admin'])
         event = EventFactory.create()
         mock_perm.side_effect = [True, False]
-        self.client.login(username=user.username, password='passwd')
-        response = self.client.get(event.get_absolute_edit_url(), follow=True)
+        with self.login(user) as client:
+            response = client.get(event.get_absolute_edit_url(), follow=True)
         eq_(response.request['PATH_INFO'], event.get_absolute_edit_url())
         ok_(not response.context['creating'])
         ok_(response.context['event_form'].editable_owner)
@@ -620,10 +599,10 @@ class ViewsTest(TestCase):
     def test_clone_event_legacy_metrics(self, mock_success):
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create(has_new_metrics=False)
-        self.client.login(username=user.username, password='passwd')
         event_clone_url = reverse('events_clone_event',
                                   kwargs={'slug': 'test-edit-event'})
-        response = self.client.post(event_clone_url, self.data, follow=True)
+        with self.login(user) as client:
+            response = client.post(event_clone_url, self.data, follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully created.')
         event = Event.objects.get(slug='test-edit-event')
         cloned_event_url = reverse('events_view_event',
@@ -636,10 +615,10 @@ class ViewsTest(TestCase):
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create()
         metrics = EventMetricOutcomeFactory.create_batch(3, event=event)
-        self.client.login(username=user.username, password='passwd')
         event_clone_url = reverse('events_clone_event',
                                   kwargs={'slug': 'test-edit-event'})
-        response = self.client.post(event_clone_url, self.data, follow=True)
+        with self.login(user) as client:
+            response = client.post(event_clone_url, self.data, follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully created.')
         event = Event.objects.get(slug='test-edit-event')
         cloned_event_url = reverse('events_view_event',
@@ -657,10 +636,10 @@ class ViewsTest(TestCase):
         event = EventFactory.create()
         metrics = EventMetricOutcomeFactory.create_batch(3, event=event,
                                                          outcome=None)
-        self.client.login(username=user.username, password='passwd')
         event_clone_url = reverse('events_clone_event',
                                   kwargs={'slug': 'test-edit-event'})
-        response = self.client.post(event_clone_url, self.data, follow=True)
+        with self.login(user) as client:
+            response = client.post(event_clone_url, self.data, follow=True)
         mock_success.assert_called_with(ANY, 'Event successfully created.')
         event = Event.objects.get(slug='test-edit-event')
         cloned_event_url = reverse('events_view_event',
@@ -677,7 +656,6 @@ class ViewsTest(TestCase):
         user = UserFactory.create(groups=['Rep'])
         event = EventFactory.create(slug='test-event', owner=user)
         AttendanceFactory.create_batch(3, event=event)
-        self.client.login(username=user.username, password='passwd')
         reps = event.attendees.all()
         valid_data = dict()
         for rep in reps:
@@ -689,8 +667,11 @@ class ViewsTest(TestCase):
         valid_data['slug'] = 'test-event'
 
         url = reverse('email_attendees', kwargs={'slug': event.slug})
-        response = self.client.post(url, valid_data, follow=True)
-        self.assertTemplateUsed(response, 'view_event.html')
+        with self.login(user) as client:
+            response = client.post(url, valid_data, follow=True)
+        ok_('view_event.jinja' in [template.template.name
+                                   for template in response.templates
+                                   if isinstance(template, Jinja_Template)])
 
         mock_success.assert_called_with(ANY, 'Email sent successfully.')
         eq_(len(mail.outbox), 4)
@@ -708,4 +689,4 @@ class ViewsTest(TestCase):
         expected_url = '/events/#/Paris%20&%20Orl%C3%A9ans'
         self.assertRedirects(response, expected_url=expected_url,
                              status_code=301, target_status_code=200)
-        self.assertTemplateUsed(response, 'list_events.html')
+        self.assertJinja2TemplateUsed(response, 'list_events.jinja')

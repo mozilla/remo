@@ -3,7 +3,7 @@ from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase
 from remo.profiles.tests import UserFactory
-from remo.voting.helpers import get_nominee, user_has_poll_permissions
+from remo.voting.templatetags.helpers import get_nominee, user_has_poll_permissions
 from remo.voting.tests import PollFactory
 
 

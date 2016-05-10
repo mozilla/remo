@@ -1,4 +1,5 @@
 from . import base
+from .base import TEMPLATES
 
 from django_sha2 import get_password_hashers
 
@@ -29,7 +30,9 @@ MANAGERS = ADMINS
 
 # Debugging displays nice error messages, but leaks memory. Set this to False
 # on all server instances and True only for development.
-DEBUG = TEMPLATE_DEBUG = True
+DEBUG = True
+for backend in TEMPLATES:
+    backend['OPTIONS']['debug'] = DEBUG
 
 # Disable CSS/JS compression for development
 COMPRESS_ENABLED = False

@@ -9,12 +9,16 @@ from remo.events.models import Event
 from remo.events.tests import (EventFactory, EventMetricFactory,
                                EventMetricOutcomeFactory)
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
-from remo.reports import ACTIVITY_POST_EVENT_METRICS
-from remo.reports.tests import CampaignFactory
+from remo.reports import ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE, ACTIVITY_POST_EVENT_METRICS
+from remo.reports.tests import ActivityFactory, CampaignFactory
 from remo.reports.models import Activity, NGReport
 
 
 class InactiveCategoriesTest(RemoTestCase):
+
+    def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
+
     def test_edit_event(self):
         """Edit event with inactive categories."""
         start_form = {
@@ -49,16 +53,16 @@ class InactiveCategoriesTest(RemoTestCase):
 
 class EventMetricsFormsetTest(RemoTestCase):
 
+    def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
+
     def test_inactive_metrics_new(self):
         """Test active/inactive queryset in new event."""
         active_metrics = EventMetricFactory.create_batch(3)
         inactive_metrics = EventMetricFactory.create_batch(3, active=False)
 
-        formset = inlineformset_factory(
-            Event, Event.metrics.through,
-            form=EventMetricsForm,
-            formset=BaseEventMetricsFormset,
-            extra=2)
+        formset = inlineformset_factory(Event, Event.metrics.through, form=EventMetricsForm,
+                                        formset=BaseEventMetricsFormset, extra=2)
 
         forms = formset(instance=Event())
 
@@ -111,11 +115,8 @@ class EventMetricsFormsetTest(RemoTestCase):
             'eventmetricoutcome_set-TOTAL_FORMS': 2,
             'eventmetricoutcome_set-INITIAL_FORMS': 0}
 
-        formset = inlineformset_factory(
-            Event, Event.metrics.through,
-            form=EventMetricsForm,
-            formset=BaseEventMetricsFormset,
-            extra=2)
+        formset = inlineformset_factory(Event, Event.metrics.through, form=EventMetricsForm,
+                                        formset=BaseEventMetricsFormset, extra=2)
 
         forms = formset(instance=Event(), data=data)
         error_msg = 'This metric has already been selected.'
@@ -124,6 +125,12 @@ class EventMetricsFormsetTest(RemoTestCase):
 
 
 class PostEventFormTest(RemoTestCase):
+
+    def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
+        ActivityFactory.create(name=ACTIVITY_EVENT_ATTEND)
+        ActivityFactory.create(name=ACTIVITY_POST_EVENT_METRICS)
+
     def test_passive_report_save(self):
         """Test that a passive report is created on form save()"""
         start_form = {

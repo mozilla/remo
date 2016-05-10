@@ -5,7 +5,7 @@ WORKDIR /code
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    build-essential libxml2-dev libxslt1-dev python-dev \
+    build-essential libxml2-dev libxslt1-dev libffi-dev python-dev \
     libmysqlclient-dev python-pip node-less locales && \
     pip install --upgrade pip==7.0.3 && \
     rm -rf /var/lib/apt/lists/*

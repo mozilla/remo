@@ -1,11 +1,11 @@
 from nose.tools import eq_
-from test_utils import TestCase
 
+from remo.base.tests import RemoTestCase
 from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
 
 
-class ModelTest(TestCase):
+class ModelTest(RemoTestCase):
     """Test Bug Model."""
 
     def test_uppercase_status(self):

@@ -1,143 +1,126 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import migrations, models
+import django.db.models.deletion
+from django.conf import settings
+import caching.base
+import django.core.validators
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Attendance'
-        db.create_table('events_attendance', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('event', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['events.Event'])),
-            ('email', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('date_subscribed', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-        ))
-        db.send_create_signal('events', ['Attendance'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('remozilla', '0001_initial'),
+    ]
 
-        # Adding model 'Metric'
-        db.create_table('events_metric', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('event', self.gf('django.db.models.fields.related.ForeignKey')(related_name='metrics', to=orm['events.Event'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=300)),
-            ('outcome', self.gf('django.db.models.fields.CharField')(max_length=300)),
-        ))
-        db.send_create_signal('events', ['Metric'])
-
-        # Adding model 'Event'
-        db.create_table('events_event', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=100)),
-            ('start', self.gf('django.db.models.fields.DateTimeField')()),
-            ('end', self.gf('django.db.models.fields.DateTimeField')()),
-            ('venue', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('region', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('country', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('lat', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('lon', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
-            ('external_link', self.gf('django.db.models.fields.URLField')(max_length=300, null=True, blank=True)),
-            ('owner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='events_created', to=orm['auth.User'])),
-            ('planning_pad_url', self.gf('django.db.models.fields.URLField')(max_length=300)),
-            ('estimated_attendance', self.gf('django.db.models.fields.PositiveIntegerField')()),
-            ('description', self.gf('django.db.models.fields.TextField')()),
-            ('extra_content', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
-            ('mozilla_event', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('virtual_event', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('hashtag', self.gf('django.db.models.fields.CharField')(default='', max_length=50, null=True)),
-        ))
-        db.send_create_signal('events', ['Event'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Attendance'
-        db.delete_table('events_attendance')
-
-        # Deleting model 'Metric'
-        db.delete_table('events_metric')
-
-        # Deleting model 'Event'
-        db.delete_table('events_event')
-
-
-    models = {
-        'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        'auth.permission': {
-            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'events.attendance': {
-            'Meta': {'object_name': 'Attendance'},
-            'date_subscribed': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'email': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'event': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['events.Event']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
-        },
-        'events.event': {
-            'Meta': {'ordering': "['-start']", 'object_name': 'Event'},
-            'attendees': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'events_attended'", 'symmetrical': 'False', 'through': "orm['events.Attendance']", 'to': "orm['auth.User']"}),
-            'country': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'description': ('django.db.models.fields.TextField', [], {}),
-            'end': ('django.db.models.fields.DateTimeField', [], {}),
-            'estimated_attendance': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            'external_link': ('django.db.models.fields.URLField', [], {'max_length': '300', 'null': 'True', 'blank': 'True'}),
-            'extra_content': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
-            'hashtag': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'lat': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'lon': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'mozilla_event': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'events_created'", 'to': "orm['auth.User']"}),
-            'planning_pad_url': ('django.db.models.fields.URLField', [], {'max_length': '300'}),
-            'region': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100'}),
-            'start': ('django.db.models.fields.DateTimeField', [], {}),
-            'venue': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'virtual_event': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
-        },
-        'events.metric': {
-            'Meta': {'object_name': 'Metric'},
-            'event': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'metrics'", 'to': "orm['events.Event']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'outcome': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '300'})
-        }
-    }
-
-    complete_apps = ['events']
+    operations = [
+        migrations.CreateModel(
+            name='Attendance',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('email', models.BooleanField(default=True)),
+                ('date_subscribed', models.DateTimeField(auto_now_add=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Event',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=100)),
+                ('slug', models.SlugField(max_length=100, blank=True)),
+                ('start', models.DateTimeField()),
+                ('end', models.DateTimeField()),
+                ('timezone', models.CharField(max_length=100)),
+                ('venue', models.CharField(max_length=150)),
+                ('city', models.CharField(default=b'', max_length=50)),
+                ('region', models.CharField(default=b'', max_length=50, blank=True)),
+                ('country', models.CharField(max_length=50)),
+                ('lat', models.FloatField()),
+                ('lon', models.FloatField()),
+                ('external_link', models.URLField(max_length=300, null=True, blank=True)),
+                ('planning_pad_url', models.URLField(max_length=300, blank=True)),
+                ('estimated_attendance', models.PositiveIntegerField()),
+                ('actual_attendance', models.PositiveIntegerField(null=True, blank=True)),
+                ('description', models.TextField(validators=[django.core.validators.MaxLengthValidator(500), django.core.validators.MinLengthValidator(20)])),
+                ('extra_content', models.TextField(default=b'', blank=True)),
+                ('mozilla_event', models.BooleanField(default=False)),
+                ('hashtag', models.CharField(default=b'', max_length=50, blank=True)),
+                ('converted_visitors', models.PositiveIntegerField(default=0, editable=False)),
+                ('times_edited', models.PositiveIntegerField(default=0, editable=False)),
+                ('has_new_metrics', models.BooleanField(default=True)),
+                ('created_on', models.DateTimeField(auto_now_add=True, null=True)),
+                ('updated_on', models.DateTimeField(auto_now=True, null=True)),
+                ('attendees', models.ManyToManyField(related_name='events_attended', through='events.Attendance', to=settings.AUTH_USER_MODEL)),
+                ('budget_bug', models.ForeignKey(related_name='event_budget_requests', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='remozilla.Bug', null=True)),
+            ],
+            options={
+                'ordering': ['start'],
+                'permissions': (('can_subscribe_to_events', 'Can subscribe to events'), ('can_edit_events', 'Can edit events'), ('can_delete_events', 'Can delete events'), ('can_delete_event_comments', 'Can delete event comments')),
+            },
+            bases=(caching.base.CachingMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='EventComment',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created_on', models.DateTimeField(auto_now_add=True)),
+                ('comment', models.TextField()),
+                ('event', models.ForeignKey(to='events.Event')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['id'],
+            },
+        ),
+        migrations.CreateModel(
+            name='EventGoal',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=127, db_index=True)),
+                ('slug', models.SlugField(max_length=127, blank=True)),
+                ('active', models.BooleanField(default=True)),
+            ],
+            options={
+                'ordering': ['name'],
+                'verbose_name': 'event goal',
+                'verbose_name_plural': 'event goals',
+            },
+        ),
+        migrations.CreateModel(
+            name='EventMetric',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=100)),
+                ('active', models.BooleanField(default=True)),
+            ],
+            options={
+                'ordering': ['name'],
+            },
+        ),
+        migrations.CreateModel(
+            name='EventMetricOutcome',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('expected_outcome', models.IntegerField()),
+                ('outcome', models.IntegerField(null=True, blank=True)),
+                ('details', models.TextField(default=b'', blank=True, validators=[django.core.validators.MaxLengthValidator(1500)])),
+                ('event', models.ForeignKey(to='events.Event')),
+                ('metric', models.ForeignKey(to='events.EventMetric')),
+            ],
+            options={
+                'verbose_name': 'event outcome',
+                'verbose_name_plural': 'events outcome',
+            },
+        ),
+        migrations.CreateModel(
+            name='Metric',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(max_length=300)),
+                ('outcome', models.CharField(max_length=300)),
+                ('event', models.ForeignKey(to='events.Event')),
+            ],
+        ),
+    ]

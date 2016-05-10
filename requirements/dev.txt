@@ -58,8 +58,8 @@ docutils==0.12
 # sha256: 26QvGCtfbyZjDSIC79MDg3Etn32NjZiWs3riFF3sphY
 # sha256: 2FL-1Z2mfH5FyyGSAn2ov9kgp4VtKVwkekUQWWjSTVo
 ipython==4.2.0
-# sha256: DNUorB7ix_J9gB4XzG3WgG2z3Csn9E00M3GtT7CuaUo
-ipdb==0.9.1
+# sha256: WbOakYplSuytAXpvFnYAd5B1KkXWTDUDBQf0UnmkaeM
+ipdb==0.10.0
 # sha256: T8LkeK3c8XAWZX3_MLLY1hHoNB-sGczydogC9mNde4o
 # sha256: oRPV9a16errO-d9ew_KvI6IKKABZIVd7Fd1YTQmdWQA
 pep8==1.7.0

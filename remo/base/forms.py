@@ -32,12 +32,10 @@ class EmailUsersForm(BaseEmailUsersForm):
             # Insert method is used to override the order of form fields
             form_widget = forms.CheckboxInput(
                 attrs={'class': 'input-text-big'})
-            self.fields.insert(0, str(user.id),
-                               forms.BooleanField(
-                                   label=user,
-                                   initial=False,
-                                   required=False,
-                                   widget=form_widget))
+            self.fields.update([(str(user.id), forms.BooleanField(label=user,
+                                                                  initial=False,
+                                                                  required=False,
+                                                                  widget=form_widget))])
 
     def send_mail(self, request):
         """Send mail to recipients list."""
