@@ -1,0 +1,26 @@
+{% extends "base_fd4.jinja" %}
+{% block pagetitle %}Mozilla Reps - Dashboard{% endblock %}
+
+{% block content %}
+<main role="main" class="dashboard-main">
+<div class="row">
+  <div class="large-10 columns">
+    <h1>Dashboard</h1>
+  </div>
+  {% block mozillian_interests %}
+  {% endblock %}
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    {% block body_content %}
+    {% endblock %}
+  </div>
+</div>
+
+{% block modals %}
+{% endblock %}
+
+<!-- End of block from base.jinja -->
+</main>
+{% endblock %}

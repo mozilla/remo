@@ -17,10 +17,10 @@ from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from django_statsd.clients import statsd
-from funfactory.helpers import urlparams
 
 import forms
 from remo.base.decorators import permission_check
+from remo.base.templatetags.helpers import urlparams
 from remo.base.forms import EmailUsersForm
 from remo.base.utils import get_or_create_instance
 from remo.events.models import Attendance, Event, EventComment
@@ -42,7 +42,7 @@ def list_events(request):
             'categories': FunctionalArea.active_objects.all(),
             'initiatives': Campaign.active_objects.all()}
 
-    return render(request, 'list_events.html', data)
+    return render(request, 'list_events.jinja', data)
 
 
 @never_cache
@@ -69,7 +69,7 @@ def manage_subscription(request, slug, subscribe=True):
                 attendance.save()
                 if not event.is_past_event:
                     subscribed_text = render_to_string(
-                        'includes/subscribe_to_ical.html', {'event': event})
+                        'includes/subscribe_to_ical.jinja', {'event': event})
                     messages.info(request, mark_safe(subscribed_text))
                     statsd.incr('events.subscribe_to_event')
                 else:
@@ -108,7 +108,7 @@ def view_event(request, slug):
         event.has_new_metrics and not
             any([metric.outcome
                  for metric in event.eventmetricoutcome_set.all()])):
-        msg = render_to_string('includes/view_post_event_metrics.html',
+        msg = render_to_string('includes/view_post_event_metrics.jinja',
                                {'event': event})
         messages.info(request, mark_safe(msg))
 
@@ -130,7 +130,7 @@ def view_event(request, slug):
     else:
         event_comment_form = forms.EventCommentForm()
 
-    return render(request, 'view_event.html',
+    return render(request, 'view_event.jinja',
                   {'event': event, 'email_attendees_form': email_att_form,
                    'similar_events': event.get_similar_events(),
                    'comments': event.eventcomment_set.all(),
@@ -239,7 +239,7 @@ def edit_event(request, slug=None, clone=None):
          request.user.has_perm('events.can_delete_events'))):
         can_delete_event = True
 
-    return render(request, 'edit_event.html',
+    return render(request, 'edit_event.jinja',
                   {'creating': created,
                    'event': event,
                    'event_form': event_form,
@@ -280,11 +280,11 @@ def count_converted_visitors(request, slug):
 def export_single_event_to_ical(request, slug):
     """ICal export of single event."""
     event = get_object_or_404(Event, slug=slug)
-    ical = render(request, 'multi_event_ical_template.ics',
+    ical = render(request, 'multi_event_ical_template.jinja',
                   {'events': [event],
                    'date_now': now(),
                    'host': settings.SITE_URL})
-    response = HttpResponse(ical, mimetype='text/calendar')
+    response = HttpResponse(ical, content_type='text/calendar')
     ical_filename = event.slug + '.ics'
     response['Filename'] = ical_filename
     response['Content-Disposition'] = ('attachment; filename="%s"' %

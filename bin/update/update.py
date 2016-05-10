@@ -13,9 +13,12 @@ import urllib2
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from commander.deploy import task, hostgroups
-import commander_settings as settings
+from commander.deploy import hostgroups, task  # noqa
+import commander_settings as settings  # noqa
 
+# Setup venv path
+venv_bin_path = os.path.join(settings.SRC_DIR, '..', 'venv', 'bin')
+os.environ['PATH'] = venv_bin_path + os.pathsep + os.environ['PATH']
 
 NEW_RELIC_URL = 'https://rpm.newrelic.com/deployments.xml'
 NEW_RELIC_APP_ID = getattr(settings, 'NEW_RELIC_APP_ID', False)
@@ -28,10 +31,7 @@ def update_code(ctx, tag):
     with ctx.lcd(settings.SRC_DIR):
         ctx.local('git fetch')
         ctx.local('git checkout -f %s' % tag)
-        ctx.local('git submodule sync')
-        ctx.local('git submodule update --init --recursive')
         ctx.local("find . -type f -name '.gitignore' -o -name '*.pyc' -delete")
-        ctx.local('git clean -xdff "vendor-local/"')
 
 
 @task
@@ -39,7 +39,8 @@ def update_assets(ctx):
     with ctx.lcd(settings.SRC_DIR):
         # LANG=en_US.UTF-8 is sometimes necessary for the YUICompressor.
         ctx.local('LANG=en_US.UTF8 python ./manage.py collectstatic --noinput')
-        ctx.local('LANG=en_US.UTF8 python ./manage.py compress_jingo')
+        ctx.local('LANG=en_US.UTF8 python ./manage.py compress --engine jinja2')
+        ctx.local('LANG=en_US.UTF8 python ./manage.py update_product_details')
 
 
 @task
@@ -48,16 +49,7 @@ def update_db(ctx):
 
     """
     with ctx.lcd(settings.SRC_DIR):
-        ctx.local('python ./manage.py migrate')
-
-
-@task
-def update_product_details(ctx):
-    """Update the product details
-
-    """
-    with ctx.lcd(settings.SRC_DIR):
-        ctx.local('python ./manage.py update_product_details ')
+        ctx.local('python manage.py migrate --fake --noinput')
 
 
 @task
@@ -106,9 +98,34 @@ def update_info(ctx, tag):
 
 
 @task
+def setup_dependencies(ctx):
+    with ctx.lcd(settings.SRC_DIR):
+        # Creating a venv tries to open virtualenv/bin/python for
+        # writing, but because venv is using it, it fails.
+        # So we delete it and let virtualenv create a new one.
+        ctx.local('rm -f venv/bin/python venv/bin/python2.7')
+        ctx.local('virtualenv-2.7 --no-site-packages venv')
+
+        # Activate venv to append to the correct path to $PATH.
+        activate_env = os.path.join(venv_bin_path, 'activate_this.py')
+        execfile(activate_env, dict(__file__=activate_env))
+
+        ctx.local('pip --version')
+        ctx.local('./peep.sh install -r requirements/prod.txt')
+        # Make the venv relocatable
+        ctx.local('virtualenv-2.7 --relocatable venv')
+
+        # Fix lib64 symlink to be relative instead of absolute.
+        ctx.local('rm -f venv/lib64')
+        with ctx.lcd('venv'):
+            ctx.local('ln -s lib lib64')
+
+
+@task
 def pre_update(ctx, ref=settings.UPDATE_REF):
     """Update code to pick up changes to this file."""
     update_code(ref)
+    setup_dependencies()
     update_info(ref)
 
 

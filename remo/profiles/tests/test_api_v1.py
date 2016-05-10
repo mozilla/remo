@@ -4,14 +4,14 @@ from datetime import datetime
 from django.core.urlresolvers import reverse
 
 import mock
-from funfactory.helpers import urlparams
 from nose.tools import eq_
-from test_utils import TestCase
 
+from remo.base.templatetags.helpers import urlparams
+from remo.base.tests import RemoTestCase
 from remo.profiles.tests import UserFactory
 
 
-class APITest(TestCase):
+class APITest(RemoTestCase):
     """Tests profile API."""
 
     def test_rep_schema(self):

@@ -1,0 +1,114 @@
+{% extends "base_fd4.jinja" %}
+
+{% block pagetitle %}Mozilla Reps - Featured Reps {% endblock%}
+
+{% block content %}
+<main role="main" class="featured-reps">
+  <!-- List block -->
+  <div class="row">
+    <div class="large-12 columns">
+      <h3>
+        Featured Reps
+      </h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <p>
+        This is an archive of all past "Reps of the Month". This
+        special recognition is given each month by the Mozilla Reps
+        Council to a Rep who has gone above and beyond to help push the
+        Mozilla project forward in his/her region.
+      </p>
+    </div>
+  </div>
+  <!-- Adding new rep -->
+  {% if perms.featuredrep.can_edit_featured %}
+    <div class="row">
+      <div class="large-12 columns align-right">
+        <a href="{{ url('featuredrep_add_featured') }}"
+           role="button"
+           class="featured-button small button">Add new</a>
+      </div>
+    </div>
+  {% endif %}
+  <div class="row">
+    <div class="large-12 columns">
+      <table class="dashboard-table responsive">
+        <thead>
+          <tr>
+            <th>
+              Rep Name
+            </th>
+            <th>
+              Featured text
+            </th>
+            <th>
+              Date featured
+            </th>
+            {% if perms.profiles.can_edit_profiles %}
+              <th>
+                Actions
+              </th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for feature in objects %}
+          <tr>
+            <td>
+              {% for user in feature.users.all() %}
+                <a href="{{ url('profiles_view_profile', user.userprofile.display_name) }}">
+                  {{ user.get_full_name() }}
+                </a>
+              {% endfor %}
+            </td>
+            <td>
+              <div class="markdown">
+                {{ feature.text|markdown }}
+              </div>
+            </td>
+            <td>
+              {{ feature.created_on.strftime('%d-%m-%Y') }}
+            </td>
+            {% if (perms.featuredrep.can_edit_featured or
+                   perms.featuredrep.can_delete_featured) %}
+              <td>
+                {% if perms.featuredrep.can_edit_featured %}
+                  <a href="{{ url('featuredrep_edit_featured', feature.id) }}"
+                     class="featured-edit pictogram-button">
+                    <span class="pict-icon large pencil"</span>
+                   </a>
+                {% endif %}
+                {% if perms.featuredrep.can_delete_featured %}
+                  <form id="deleteform-{{ feature.id }}" method="post"
+                        action="{{ url('featuredrep_delete_featured', feature.id) }}">
+                    {% csrf_token %}
+                    <a href="#" class="featured-delete pictogram-button">
+                       <span class="pict-icon large close"</span>
+                    </a>
+                  </form>
+                {% endif %}
+              </td>
+            {% endif %}
+          </tr>
+          {% else %}
+          <tr>
+            <td>
+              No entries yet!
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Paginator -->
+  {% include "includes/pagination.jinja" %}
+</main>
+{% endblock %}
+
+{% block bottomextra %}
+<script src="{{ static('featuredrep/js/featuredrep.js') }}" type="text/javascript"></script>
+{% endblock %}

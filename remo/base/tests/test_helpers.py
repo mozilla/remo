@@ -1,6 +1,6 @@
 from nose.tools import eq_
 
-from remo.base.helpers import get_country_code
+from remo.base.templatetags.helpers import get_country_code
 from remo.base.tests import RemoTestCase
 
 

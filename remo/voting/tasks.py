@@ -8,8 +8,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.mail import send_mail
 from django.db import transaction
 from django.template.loader import render_to_string
-from django.utils.timezone import now
+from django.utils.timezone import make_aware, now
 
+import pytz
 import waffle
 
 from remo.base.tasks import send_remo_mail
@@ -69,10 +70,9 @@ def extend_voting_period():
     tomorrow = get_date(days=1)
     council_count = User.objects.filter(groups__name='Council').count()
 
-    polls = Poll.objects.filter(end__year=tomorrow.year,
-                                end__month=tomorrow.month,
-                                end__day=tomorrow.day,
-                                automated_poll=True)
+    query_start = make_aware(datetime.combine(tomorrow, datetime.min.time()), pytz.UTC)
+    query_end = make_aware(datetime.combine(tomorrow, datetime.max.time()), pytz.UTC)
+    polls = Poll.objects.filter(end__range=[query_start, query_end])
 
     for poll in polls:
         if not poll.is_extended:
@@ -87,7 +87,7 @@ def extend_voting_period():
                               .exclude(pk__in=poll.users_voted.all())
                               .values_list('id', flat=True))
                 ctx_data = {'poll': poll}
-                template = 'emails/voting_vote_reminder.txt'
+                template = 'emails/voting_vote_reminder.jinja'
                 send_remo_mail.delay(subject=subject,
                                      recipients_list=recipients,
                                      email_template=template,
@@ -137,7 +137,7 @@ def create_rotm_poll():
         description = 'Automated vote for the Rep of this month.'
         mentor_group = Group.objects.get(name='Mentor')
 
-        with transaction.commit_on_success():
+        with transaction.atomic():
             poll = Poll.objects.create(name=poll_name,
                                        description=description,
                                        valid_groups=mentor_group,

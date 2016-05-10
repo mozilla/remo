@@ -13,7 +13,7 @@ from django_browserid.auth import default_username_algo
 from product_details import product_details
 from pytz import common_timezones
 
-from remo.base.helpers import user_is_rep
+from remo.base.templatetags.helpers import user_is_rep
 from remo.base.utils import get_date
 from remo.profiles.models import FunctionalArea, UserProfile, UserStatus
 
@@ -170,11 +170,9 @@ class ChangeDatesForm(happyforms.ModelForm):
         model = UserProfile
         fields = ['date_joined_program', 'date_left_program']
         widgets = {'date_joined_program':
-                   SelectDateWidget(years=range(2011, now().date().year + 1),
-                                    required=False),
+                   SelectDateWidget(years=range(2011, now().date().year + 1)),
                    'date_left_program':
-                   SelectDateWidget(years=range(2011, now().date().year + 1),
-                                    required=False)}
+                   SelectDateWidget(years=range(2011, now().date().year + 1))}
 
     def __init__(self, *args, **kwargs):
         super(ChangeDatesForm, self).__init__(*args, **kwargs)
@@ -206,6 +204,7 @@ class FunctionalAreaForm(happyforms.ModelForm):
 
     class Meta:
         model = FunctionalArea
+        fields = ['name']
 
 
 class UserStatusForm(happyforms.ModelForm):

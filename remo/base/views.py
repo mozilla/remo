@@ -36,19 +36,19 @@ class BrowserIDVerify(Verify):
 def main(request):
     """Main page of the website."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
-    return render(request, 'main.html', {'featuredrep': featured_rep})
+    return render(request, 'main.jinja', {'featuredrep': featured_rep})
 
 
 def custom_404(request):
     """Custom 404 error handler."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
-    return http.HttpResponseNotFound(render(request, '404.html',
+    return http.HttpResponseNotFound(render(request, '404.jinja',
                                             {'featuredrep': featured_rep}))
 
 
 def custom_500(request):
     """Custom 500 error handler."""
-    return http.HttpResponseServerError(render(request, '500.html'))
+    return http.HttpResponseServerError(render(request, '500.jinja'))
 
 
 def robots_txt(request):
@@ -68,7 +68,7 @@ def robots_txt(request):
     else:
         robots += 'Disallow: /\n'
 
-    return http.HttpResponse(robots, mimetype='text/plain')
+    return http.HttpResponse(robots, content_type='text/plain')
 
 
 @never_cache
@@ -87,8 +87,8 @@ def edit_settings(request):
             statsd.incr('base.edit_setting_%s' % field)
         messages.success(request, 'Settings successfully edited.')
         return redirect('dashboard')
-    return render(request, 'settings.html', {'user': user,
-                                             'settingsform': form})
+    return render(request, 'settings.jinja', {'user': user,
+                                              'settingsform': form})
 
 
 @never_cache
@@ -132,7 +132,7 @@ def edit_availability(request, display_name):
                           .strftime('%d %B %Y'))
             msg = email_mentor_form.cleaned_data['body']
             mentee = request.user.get_full_name()
-            template = 'emails/mentor_unavailability_notification.txt'
+            template = 'emails/mentor_unavailability_notification.jinja'
 
             subject = ('[Mentee {0}] Mentee will be unavailable starting '
                        'on {1} until {2}'.format(mentee,
@@ -146,12 +146,12 @@ def edit_availability(request, display_name):
     args['status_form'] = status_form
     args['email_form'] = email_mentor_form
     args['created'] = created
-    return render(request, 'edit_availability.html', args)
+    return render(request, 'edit_availability.jinja', args)
 
 
 class BaseListView(PermissionMixin, generic.ListView):
     """Base content list view."""
-    template_name = 'base_content_list.html'
+    template_name = 'base_content_list.jinja'
     create_object_url = None
 
     def get_context_data(self, **kwargs):
@@ -164,7 +164,7 @@ class BaseListView(PermissionMixin, generic.ListView):
 
 class BaseCreateView(PermissionMixin, generic.CreateView):
     """Base content create view."""
-    template_name = 'base_content_edit.html'
+    template_name = 'base_content_edit.jinja'
 
     def get_context_data(self, **kwargs):
         context = super(BaseCreateView, self).get_context_data(**kwargs)
@@ -180,7 +180,7 @@ class BaseCreateView(PermissionMixin, generic.CreateView):
 
 class BaseUpdateView(PermissionMixin, generic.UpdateView):
     """Base content edit view."""
-    template_name = 'base_content_edit.html'
+    template_name = 'base_content_edit.jinja'
 
     def get_context_data(self, **kwargs):
         context = super(BaseUpdateView, self).get_context_data(**kwargs)

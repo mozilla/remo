@@ -1,0 +1,730 @@
+{% extends "base_fd4.jinja" %}
+
+{% block pagetitle %}
+Mozilla Reps - {{ event.name }}
+{% endblock %}
+
+{% set event_link = get_event_link(event) %}
+{% block headextra %}
+<meta property="og:title" content="{{ event.name }} - Mozilla Reps" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ event_link }}" />
+<meta property="og:image" content="{{ static('base/img/remo/remo-logo-og.jpg') }}" />
+<meta property="og:description" content="{{ event.description|truncate(200) }}">
+{% endblock %}
+
+{% block content %}
+<main role="main" class="events-main">
+  <div class="row">
+    <div class="large-8 columns">
+      <h1 class="event-single-title">{{ event.name }}</h1>
+    </div>
+    <div class="large-4 columns align-right hide-for-small">
+      <a href="{{ url('events_icalendar_event', slug=event.slug) }}"
+         role="button"
+         class="small button">
+        iCalendar
+      </a>
+      {% if perms.events.can_edit_events %}
+        <a href="{{ url('events_clone_event', slug=event.slug) }}"
+           role="button"
+           class="small button">
+          Clone
+        </a>
+        <a href="{{ url('events_edit_event', slug=event.slug) }}"
+           role="button"
+           class="small button">
+          Edit event
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="large-5 columns">
+      <div class="row">
+        <div class="large-1 columns">
+          <div class="pict-icon large time"></div>
+        </div>
+        <div class="large-11 columns">
+          <div class="row">
+            <div class="large-10 columns end">
+
+                <div class="event-single-date">
+                  <div class="row">
+                      {% if not is_multiday(event.local_start, event.local_end) %}
+                      {# Single day event #}
+                      <div class="large-3 small-3 columns">
+                        <div class="number">
+                          {{ event.local_start|strftime('%d') }}
+                        </div>
+                      </div>
+                      <div class="large-5 small-5 columns single-date-container">
+                        <div class="month">
+                          {{ event.local_start|strftime('%b %Y')|upper }}
+                        </div>
+                        <div class="single-day">
+                          {{ event.local_start|strftime('%A') }}
+                        </div>
+                      </div>
+                      <div class="large-4 small-4 columns end">
+                        <div class="date-times tip-bottom"
+                             data-tooltip
+                             data-width="140"
+                             data-date-start="{{ event.start|format_datetime_iso }}"
+                             data-date-end="{{ event.end|format_datetime_iso }}"
+                             data-date-local-start="{{ event.local_start|format_datetime_iso }}"
+                             data-date-local-end="{{ event.local_end|format_datetime_iso }}"
+                             data-is-multidate="false"
+                             id="datetime-tip">
+                          <div class="time-start">
+                            {{ event.local_start|strftime('%H:%M') }}
+                          </div>
+                          <div class="time-end">
+                            {{ event.local_end|strftime('%H:%M') }}
+                          </div>
+                            <div class="pict-icon small single time"></div>
+                        </div>
+                      </div>
+                    {% else %}
+                      {# Event is multiday #}
+                      <div class="large-12 columns">
+                        <div class="large-11 small-11 columns">
+                          <div class="row">
+                            <div class="large-7 small-6 columns date">
+                              <time datetime="{{ event.local_start }}">
+                                {{ event.local_start|strftime('%d %b %Y')|upper }}
+                              </time>
+                            </div>
+                            <div class="large-5 small-6 columns day">
+                              {{ event.local_start|strftime('%A') }}
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="large-7 small-6 columns date">
+                              <time datetime="{{ event.local_start }}">
+                                {{ event.local_end|strftime('%d %b %Y')|upper }}
+                              </time>
+                            </div>
+                            <div class="large-5 small-6 columns day">
+                              {{ event.local_end|strftime('%A') }}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="large-1 small-1 columns">
+                          <div class="tip-bottom"
+                               data-tooltip
+                               data-width="120"
+                               data-date-start="{{ event.start|format_datetime_iso }}"
+                               data-date-end="{{ event.end|format_datetime_iso }}"
+                               data-date-local-start="{{ event.local_start|format_datetime_iso }}"
+                               data-date-local-end="{{ event.local_end|format_datetime_iso }}"
+                               data-is-multidate="true"
+                               id="datetime-tip">
+                            <div class="pict-icon small time"></div>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="large-1 columns">
+          <div class="pict-icon large tag"></div>
+        </div>
+        <div class="large-11 columns">
+          <!-- Event Campaing/Intiatives -->
+          {% if event.campaign %}
+            <p>
+              <span class="label inline">
+                Initiative
+              </span>
+              <a href="{{ get_event_filtered_url(initiative=event.campaign.name) }}">
+                 {{ event.campaign.name }}
+              </a>
+            </p>
+          {% endif %}
+          <!-- Event categories -->
+          {% if event.categories.count() %}
+            <p>
+              <span class="label inline">
+                Category
+              </span>
+              {% for category in event.categories.all() %}
+                <a href="{{ get_event_filtered_url(category=category.name) }}">
+                  {{ category.name }}</a>{% if not loop.last %}, {% endif %}
+              {% endfor %}
+            </p>
+          {% endif %}
+          <!-- Display external URL if it exists -->
+          {% if event.external_link %}
+            <p>
+              <span class="label lnline">
+                URL
+              </span>
+              {{ event.external_link|urlize(50) }}
+            </p>
+          {% endif %}
+          {% if event.hashtag %}
+            <p>
+              <span class="label inline">
+                Hashtag
+              </span>
+              {{ event.hashtag }}
+            </p>
+          {% endif %}
+          <!-- Description -->
+          <p>
+            <span class="label inline">
+              Description
+            </span>
+            {{ event.description }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="large-1 columns">
+          <div class="pict-icon large share"></div>
+        </div>
+        <div class="large-11 columns">
+          <ul class="social-share">
+            <li>
+              <a class="fb has-tip tip-bottom"
+                 title="Share on Facebook"
+                 target="_blank"
+                 data-tooltip
+                 href="https://www.facebook.com/sharer/sharer.php?u={{ event_link }}">
+                Facebook
+              </a>
+            </li>
+            <li>
+              <a class="tw has-tip tip-bottom"
+                 title="Share on Twitter"
+                 target="_blank"
+                 data-tooltip
+                 href="http://twitter.com/share?url={{ event_link }}&amp;via=mozillareps&amp;text=Mozilla%20Reps%20-%20{{ event.name|urlencode }}">
+                Twitter
+              </a>
+            </li>
+            <li>
+              <a class="gp has-tip tip-bottom"
+                 title="Share on Google+"
+                 target="_blank"
+                 data-tooltip
+                 href="https://plus.google.com/share?url={{ event_link }}&amp;hl=en-US">
+                Google +
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="large-7 columns">
+      <div class="row">
+        <div class="large-1 columns">
+          <div class="pict-icon large pin"></div>
+        </div>
+        <div class="large-11 columns">
+          <div class="row">
+            <div class="large-5 columns">
+              <p>
+                <span class="label inline">
+                  Venue
+                </span>
+                {{ event.venue }}
+              </p>
+              <p>
+                <span class="label inline">
+                  City
+                </span>
+                {{ event.city }}
+              </p>
+              {% if event.region %}
+              <p>
+                <span class="label inline">
+                  Region
+                </span>
+                {{ event.region }}
+              </p>
+              {% endif %}
+              <p>
+                <span class="label inline">
+                  Country
+                </span>
+                {{ event.country }}
+              </p>
+              <p class="event-single-map-link">
+                <span class="label inline">
+                  Map Link
+                </span>
+                <a href="{{ get_link_to_osm(event.lat, event.lon) }}"
+                   target="_blank">
+                  OSM
+                </a>
+                -
+                <a href="{{ get_link_to_gmaps(event.lat, event.lon, event.name|urlencode) }}"
+                   target="_blank">
+                  G Maps
+                </a>
+              </p>
+            </div>
+            <div class="large-7 columns smallmap-profile-container">
+              <div id="map" class="map200"
+                   data-lat="{{ event.lat }}" data-lon="{{ event.lon }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- START Mashup code -->
+  <div class="row">
+    <div class="large-12 columns hide-for-small">
+      <div class="flickr-feed" >
+        <div id="flickr-mashup" data-hashtag="{{ event.hashtag }}">
+        </div>
+        <!-- Appended tweet-mashup code -->
+        <div id="tweet-mashup-container">
+          <div id="tweet-mashup" data-hashtag="{{ event.hashtag }}">
+          </div>
+        </div>
+        <!-- end of appended code -->
+      </div>
+    </div>
+  </div>
+  <!-- END Mashup code -->
+
+  {% macro display_attendee(attendee) -%}
+    <div class="event-single-attendee">
+      <div class="row">
+        <div class="large-3 small-3 columns grid-profile-image">
+          <img src="{{ attendee|get_avatar_url }}"
+               class="profiles-people-avatar"
+               alt="Avatar">
+        </div>
+        <div class="large-9 small-9 columns grid-profile-text">
+          <h6>{{ attendee.get_full_name() }}</h6>
+          <p class="event-single-attendee-text">
+            {{ get_attendee_role_event(attendee, event) }}
+          </p>
+        </div>
+      </div>
+    </div>
+  {%- endmacro %}
+  <div class="row">
+    <div class="large-7 columns">
+      {% if event.extra_content %}
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large news"></div>
+          </div>
+          <div class="large-11 columns">
+            <!-- Editable Content wiki like -->
+            <div class="markdown">
+              {{ event.extra_content|markdown }}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <div class="large-5 columns">
+      <!-- Next 3 events like this -->
+      {% if similar_events.exists() %}
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon event large"></div>
+          </div>
+          <div class="large-11 columns events-like-this">
+            <h5>Events like this</h5>
+            <ul>
+              {% for event in similar_events[:3] %}
+                {% with %}
+                  {% set start = event.local_start %}
+                  {% set end = event.local_end %}
+                  <li class="row">
+                    <div class="large-2 columns">
+                      <div class="event-date">
+                        {{ start.day }}
+                      </div>
+                    </div>
+                    <div class="event-detail large-10 columns">
+                      <a class="event-title" href="{{ get_event_link(event) }}">
+                        {{ event.name }}
+                      </a>
+                      <time datetime={{ start }}>
+                      {% if not is_multiday(start, end) %}
+                        {{ start|strftime('%d %B %Y') }}
+                      {% else %}
+                        {% if start.month == end.month %}
+                          {{ start.day }}-{{ end.day }} {{ start|strftime('%B %Y') }}
+                        {% else %}
+                          {{ start|strftime('%d %B %Y') }} - {{ end|strftime('%d %B %Y') }}
+                        {% endif %}
+                      {% endif %}
+                      </time>
+                      <p>
+                        <a href="{{ get_event_search_link(event.city) }}">{{ event.city }}</a>,
+                        <a href="{{ get_event_search_link(event.country) }}">{{ event.country }}</a>
+                      </p>
+                    </div>
+                  </li>
+                {% endwith %}
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+      <div class="row">
+        <div class="large-1 columns">
+          <div class="pict-icon large people"></div>
+        </div>
+        <div class="large-11 columns">
+          <p>
+            <span class="label inline">
+              {{ event|get_total_attendees }} attending, including...
+            </span>
+          </p>
+          <!-- Listing of organizer and attendees -->
+          {% for attendee in get_sorted_attendance_list(event) %}
+            {% if user_is_rep(attendee) or user_is_alumni(attendee) %}
+              <a href="{{ url('profiles_view_profile', display_name=attendee|get_display_name) }}"
+                 target="_blank">
+                {{ display_attendee(attendee) }}
+              </a>
+            {% endif %}
+            {% if user_is_mozillian(attendee) %}
+              {% if not attendee.userprofile.mozillian_username %}
+                {{ display_attendee(attendee) }}
+              {% else %}
+                <a href="{{ settings.MOZILLIANS_API_BASE + '/u/' +
+                            attendee.userprofile.mozillian_username }}"
+                  target="_blank">
+                  {{ display_attendee(attendee) }}
+                </a>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          {% if user.is_authenticated() %}
+            <p>
+              <span class="label inline">
+                Estimated Attendance
+              </span>
+              {{ event.estimated_attendance }}
+            </p>
+            {% if event.actual_attendance %}
+              <p>
+                <span class="label inline">
+                  Actual Attendance
+                </span>
+                {{ event.actual_attendance }}
+              </p>
+            {% endif %}
+          {% endif %}
+
+          <!-- End of listing of organizer and attendees -->
+          <!-- Attend and de-attend button only visible to Reps -->
+
+          <div class="row">
+          {% if request.user.is_authenticated() %}
+            <div class="large-6 columns">
+              <button data-reveal-id="mail-modal"
+                 class="small button">Mail Rep attendees
+              </button>
+            </div>
+          {% endif %}
+          {% if perms.events.can_subscribe_to_events %}
+            {% if request.user not in event.attendees.all() %}
+              <div id="event-attend-button" class="large-6 columns align-right">
+                <form method="post" action="{{ url('events_subscribe_to_event', slug=event.slug) }}">
+                  {% csrf_token %}
+                  <button class="small button">
+                    {% if event.is_past_event %}
+                      I attended this event
+                    {% else %}
+                      I will attend this event
+                    {% endif %}
+                  </button>
+                </form>
+              </div>
+            {% elif request.user != event.owner %}
+              <div id="event-attend-button" class="large-6 columns align-right">
+                <form method="post" action="{{ url('events_unsubscribe_from_event', slug=event.slug) }}">
+                  {% csrf_token %}
+                  <button class="small button alert">
+                    {% if event.is_past_event %}
+                      I missed this event
+                    {% else %}
+                      I will miss this event
+                    {% endif %}
+                  </button>
+                </form>
+              </div>
+            {% endif %}
+          {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if user.is_authenticated() %}
+    <div class="row">
+      <div class="large-7 columns">
+        <div class="row">
+        </div>
+      </div>
+      <div class="large-5 columns">
+        <!-- Tools section available to registered users -->
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large tools"></div>
+          </div>
+          <div class="large-11 columns">
+            {% if event.swag_bug %}
+              <p>
+                <span class="label inline">
+                  Swag request
+                </span>
+                <a href="{{ event.swag_bug.bug_id|get_bugzilla_url }}" target="_blank">
+                  {{ event.swag_bug.bug_id }}
+                </a>
+                <span class="request-status">
+                  {{ event.swag_bug.whiteboard }}
+                </span>
+              </p>
+            {% endif %}
+            {% if event.budget_bug %}
+              <p>
+                <span class="label inline">
+                  Budget request
+                </span>
+                <a href="{{ event.budget_bug.bug_id|get_bugzilla_url }}" target="_blank">
+                  {{ event.budget_bug.bug_id }}
+                </a>
+                <span class="request-status">
+                  {{ event.budget_bug.whiteboard }}
+                </span>
+              </p>
+            {% endif %}
+            <p>
+              Use the planning etherpad to plan your event with others and to collectively take notes during the event:
+            </p>
+            <div class="align-right">
+              <a href="{{ event.planning_pad_url }}"
+                 class="small button"
+                 target="_blank">
+                Planning pad
+              </a>
+            </div>
+            <p>
+              Use the "Get Involved" form to help people at your event sign up to Mozilla's Get Involved page.
+            </p>
+            <p>
+              This form will enable you to automatically keep track of their sign-ups during your event.
+            </p>
+            <div class="row">
+              <div class="large-6 columns event-single-signups-count">
+                Sign-ups count: {{ event.converted_visitors }}
+              </div>
+              <div class="large-6 columns align-right">
+                <a href="{{ get_contribute_link(event) }}"
+                   target="_blank"
+                   class="small button">
+                  Get involved form
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics section (visible to: all authenticated) - repeat if needed-->
+        {% for stat in event.eventmetricoutcome_set.all() %}
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large graph"></div>
+            </div>
+            <div class="large-11 columns">
+              <p>
+                <span class="label inline">
+                  Metric #{{ loop.index }}
+                </span>
+                {{ stat.metric.name }}
+              </p>
+              <p>
+                <span class="label inline">
+                  Goal #{{ loop.index }}
+                </span>
+                {{ stat.expected_outcome }}
+              </p>
+              {% if stat.outcome >= 0 and event.is_past_event %}
+                <p>
+                  <span class="label inline">
+                    Actual outcome #{{ loop.index }}
+                  </span>
+                  {{ stat.outcome }}
+                </p>
+                <p>
+                  {{ stat.details }}
+                </p>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+
+        <!-- For compatibility, show legacy metrics -->
+        {% set metrics_offset = event.eventmetricoutcome_set.all().count() %}
+        {% for metric in event.metric_set.all() %}
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large graph"></div>
+            </div>
+            <div class="large-11 columns">
+              <p>
+                <span class="label inline">
+                  Metric #{{ loop.index + metrics_offset }}
+                </span>
+                {{ metric.title }}
+              </p>
+              <p>
+                <span class="label inline">
+                  Goal #{{ loop.index + metrics_offset }}
+                </span>
+                {{ metric.outcome }}
+              </p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if user.is_authenticated() %}
+    <!-- Comments -->
+    <div class="row">
+      <div class="large-12 columns">
+        <div class="row event-box">
+          <div class="large-1 columns">
+            <div class="pict-icon large talk"></div>
+          </div>
+          <div class="large-11 columns event-item">
+            {% if comments|length > 0 %}
+              {% for comment in comments %}
+                <div class="event-comment">
+                  {% if perms.events.can_delete_event_comments or comment.user == request.user %}
+                    <form method="post" action="{{ comment|get_event_comment_delete_url }}"
+                          class="delete-comment">
+                      {% csrf_token %}
+                      <button type="submit" class="event-delete-comment">&#215;</button>
+                    </form>
+                  {% endif %}
+                  <div>
+                    <span class="label inline">
+                      Comment {{ loop.index }}
+                    </span>
+                    <span class="grayed">by </span>
+                    {% if user_is_mozillian(comment.user) %}
+                      {{ comment.user.get_full_name() }}
+                    {% else %}
+                      <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
+                        {{ comment.user.get_full_name() }}
+                      </a>
+                    {% endif %}
+                    <span class="grayed"
+                          data-time="{{ comment.created_on|format_datetime_iso }}"
+                          title="{{ comment.created_on }}">
+                          at {{ comment.created_on }}
+                    </span>
+                  </div>
+                  {{ comment.comment }}
+                </div>
+              {% endfor %}
+            {% endif %}
+            <div id="event-comment-post">
+              <form method="post" actions="{{ event_comment_form_url }}">
+                {% csrf_token %}
+                <textarea name="comment" class="flat"
+                          placeholder="Add comment to this event"
+                          name="past-items"></textarea>
+                <div id="post-comment" class="align-right">
+                  <button type="submit" class="small white button nice radius">
+                    Post comment
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="large-2 columns align-right show-for-small">
+    <a href="{{ url('events_icalendar_event', slug=event.slug) }}"
+       class="small button">
+      iCalendar
+    </a>
+    {% if perms.events.can_edit_events %}
+      <a href="{{ url('events_clone_event', slug=event.slug) }}"
+         class="small button">
+        Clone
+      </a>
+      <a href="{{ url('events_edit_event', slug=event.slug) }}"
+         class="small button">
+        Edit event
+      </a>
+    {% endif %}
+  </div>
+
+  {% if request.user.is_authenticated() %}
+    <!-- Mail attendees Reveal Modal -->
+    <div id="mail-modal" class="reveal-modal small">
+      <a class="close-reveal-modal">&#215;</a>
+      <p class="lead">Mail event attendees</p>
+      <h2>Mail attendees:</h2>
+      <form id="email-attendees-form" method="post"
+            action="{{ url('email_attendees', slug=event.slug) }}">
+        {% csrf_token %}
+        {% for field in email_attendees_form %}
+          <p>{{ field }} {{ field.label }}</p>
+        {% endfor %}
+        <div class="row">
+          <div id="send-mail" class="large-12 columns align-right">
+            <button type="submit" class="medium button update">
+              Send email
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Mail attendees Reveal Modal End -->
+  {% endif %}
+</main>
+{% endblock %}
+
+{% block bottomextra %}
+  {% compress css %}
+    <link rel="stylesheet" href="{{ static('base/css/mapbox.css') }}"
+          media="screen,projection,tv" />
+    <link rel="stylesheet" href="{{ static('base/css/L.Control.Locate.css') }}"
+          media="screen,projection,tv" />
+  {% endcompress %}
+  <!--[if lte IE 8]>
+    {% compress css %}
+      <link rel="stylesheet" href="{{ static('base/css/mapbox.ie.css') }}" />
+    {% endcompress %}
+  <![endif]-->
+  {% compress js %}
+    <script src="{{ static('base/js/mapbox.js') }}"></script>
+    <script src="{{ static('base/js/L.Control.Locate.js') }}"></script>
+    <script src="{{ static('events/js/jquery.zflickrfeed.js') }}"></script>
+    <script src="{{ static('events/js/jquery.tweet.js') }}"></script>
+    <script src="{{ static('events/js/events_view_event.js') }}"></script>
+  {% endcompress %}
+{% endblock %}

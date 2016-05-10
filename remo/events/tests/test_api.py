@@ -1,5 +1,4 @@
 from datetime import datetime
-from dateutil import parser
 from mock import patch
 
 from django.test import RequestFactory
@@ -12,10 +11,14 @@ from remo.events.api.serializers import (EventDetailedSerializer,
 from remo.events.api.views import EventsKPIView
 from remo.events.tests import EventFactory
 from remo.profiles.tests import FunctionalAreaFactory, UserFactory
-from remo.reports.tests import CampaignFactory
+from remo.reports import ACTIVITY_EVENT_CREATE
+from remo.reports.tests import ActivityFactory, CampaignFactory
 
 
 class TestEventSerializer(RemoTestCase):
+
+    def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
 
     def test_base(self):
         event = EventFactory.create()
@@ -28,24 +31,21 @@ class TestEventSerializer(RemoTestCase):
 
 class TestEventDetailedSerializer(RemoTestCase):
 
+    def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
+
     def test_base(self):
         user = UserFactory.create()
         categories = [FunctionalAreaFactory.create()]
         initiative = CampaignFactory.create()
-        event = EventFactory.create(categories=categories, owner=user,
-                                    campaign=initiative)
+        event = EventFactory.create(categories=categories, owner=user, campaign=initiative)
         url = '/api/beta/events/%s' % event.id
         request = RequestFactory().get(url)
-        data = EventDetailedSerializer(event,
-                                       context={'request': request}).data
-        serialized_start = parser.parse(data['start'])
-        serialized_end = parser.parse(data['end'])
+        data = EventDetailedSerializer(event, context={'request': request}).data
         eq_(data['name'], event.name)
         eq_(data['description'], event.description)
-        eq_(serialized_start.date(), event.start.date())
-        eq_(serialized_start.time(), event.start.time())
-        eq_(serialized_end.date(), event.end.date())
-        eq_(serialized_end.time(), event.end.time())
+        eq_(data['start'], event.start)
+        eq_(data['end'], event.end)
         eq_(data['timezone'], event.timezone)
         eq_(data['city'], event.city)
         eq_(data['region'], event.region)
@@ -67,8 +67,7 @@ class TestEventDetailedSerializer(RemoTestCase):
         event = EventFactory.create()
         url = '/api/beta/events/%s' % event.id
         request = RequestFactory().get(url)
-        data = EventDetailedSerializer(event,
-                                       context={'request': request}).data
+        data = EventDetailedSerializer(event, context={'request': request}).data
         ok_(event.get_absolute_url() in data['remo_url'])
 
 
@@ -76,6 +75,7 @@ class TestEventsKPIView(RemoTestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.url = '/api/kpi/events'
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
 
     def test_total(self):
         EventFactory.create()
@@ -95,12 +95,10 @@ class TestEventsKPIView(RemoTestCase):
         start = datetime(2014, 12, 5)
         end = datetime(2014, 12, 6)
         EventFactory.create_batch(2, start=start, end=end)
-
         # This quarter
         start = datetime(2015, 1, 5)
         end = datetime(2015, 1, 6)
         EventFactory.create(start=start, end=end)
-
         # Next quarter
         start = datetime(2015, 5, 3)
         end = datetime(2015, 5, 5)
@@ -124,12 +122,10 @@ class TestEventsKPIView(RemoTestCase):
         start = datetime(2015, 2, 25)
         end = datetime(2015, 2, 26)
         EventFactory.create(start=start, end=end)
-
         # Previous week
         start = datetime(2015, 2, 18)
         end = datetime(2015, 2, 19)
         EventFactory.create_batch(2, start=start, end=end)
-
         # Next week
         start = datetime(2015, 3, 4)
         end = datetime(2015, 3, 5)
@@ -153,22 +149,18 @@ class TestEventsKPIView(RemoTestCase):
         start = datetime(2015, 2, 25)
         end = datetime(2015, 2, 26)
         EventFactory.create_batch(3, start=start, end=end)
-
         # Week-1
         start = datetime(2015, 2, 18)
         end = datetime(2015, 2, 19)
         EventFactory.create_batch(2, start=start, end=end)
-
         # Week-2
         start = datetime(2015, 2, 11)
         end = datetime(2015, 2, 12)
         EventFactory.create_batch(4, start=start, end=end)
-
         # Week-3
         start = datetime(2015, 2, 4)
         end = datetime(2015, 2, 5)
         EventFactory.create(start=start, end=end)
-
         # Next week
         start = datetime(2015, 3, 4)
         end = datetime(2015, 3, 5)

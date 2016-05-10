@@ -78,7 +78,7 @@ class Bug(caching.base.CachingMixin, models.Model):
 
     def get_action_items(self):
         # Avoid circular dependency
-        from remo.base.helpers import user_is_rep
+        from remo.base.templatetags.helpers import user_is_rep
         from remo.dashboard.models import Item
         ActionItem = get_model('dashboard', 'ActionItem')
 
@@ -123,7 +123,7 @@ class Bug(caching.base.CachingMixin, models.Model):
 
     def save(self, *args, **kwargs):
         # Avoid circular dependency
-        from remo.base.helpers import user_is_rep
+        from remo.base.templatetags.helpers import user_is_rep
         ActionItem = get_model('dashboard', 'ActionItem')
 
         # Update action items

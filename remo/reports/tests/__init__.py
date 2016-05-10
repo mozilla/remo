@@ -1,7 +1,6 @@
 import datetime
 from random import randint
 
-from django.db.models.signals import post_save
 from django.utils.timezone import now
 
 import factory
@@ -9,25 +8,26 @@ from factory import fuzzy
 
 from remo.profiles.models import FunctionalArea
 from remo.profiles.tests import UserFactory
-from remo.reports.models import (Activity, Campaign, NGReport,
-                                 NGReportComment,
-                                 email_commenters_on_add_ng_report_comment)
+from remo.reports.models import Activity, Campaign, NGReport, NGReportComment
 
 
 class ActivityFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = Activity
 
     name = factory.Sequence(lambda n: 'Activity #{0}'.format(n))
 
+    class Meta:
+        model = Activity
+
 
 class CampaignFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = Campaign
 
     name = factory.Sequence(lambda n: 'Campaign #{0}'.format(n))
 
+    class Meta:
+        model = Campaign
+
 
 class NGReportFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = NGReport
 
     user = factory.SubFactory(UserFactory, userprofile__initial_council=True)
     mentor = factory.SelfAttribute('user.userprofile.mentor')
@@ -38,6 +38,9 @@ class NGReportFactory(factory.django.DjangoModelFactory):
     is_passive = False
     link = 'www.example.com'
     report_date = fuzzy.FuzzyDate(datetime.date(2013, 01, 01), now().date())
+
+    class Meta:
+        model = NGReport
 
     @factory.post_generation
     def functional_areas(self, create, extracted, **kwargs):
@@ -56,24 +59,10 @@ class NGReportFactory(factory.django.DjangoModelFactory):
 
 
 class NGReportCommentFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = NGReportComment
 
     user = factory.SubFactory(UserFactory, userprofile__initial_council=True)
     report = factory.SubFactory(NGReportFactory)
     comment = factory.Sequence(lambda n: 'Comment #{0}'.format(n))
 
-
-class NGReportCommentFactoryNoSignals(NGReportCommentFactory):
-
-    @classmethod
-    def _create(cls, target_class, *args, **kwargs):
-        dispatch_uid = 'email_commenters_on_add_ng_report_comment_signal'
-        post_save.disconnect(email_commenters_on_add_ng_report_comment,
-                             NGReportComment,
-                             dispatch_uid=dispatch_uid)
-        comment = super(NGReportCommentFactory, cls)._create(target_class,
-                                                             *args, **kwargs)
-        post_save.connect(email_commenters_on_add_ng_report_comment,
-                          NGReportComment,
-                          dispatch_uid=dispatch_uid)
-        return comment
+    class Meta:
+        model = NGReportComment

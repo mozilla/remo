@@ -3,19 +3,22 @@ import datetime
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
-from funfactory.helpers import urlparams
 from nose.tools import eq_, ok_
-from test_utils import TestCase
 
-from remo.events.helpers import (get_contribute_link, get_event_search_link,
-                                 get_sorted_attendance_list, is_multiday)
+from remo.base.templatetags.helpers import urlparams
+from remo.base.tests import RemoTestCase
+from remo.events.templatetags.helpers import (get_contribute_link, get_event_search_link,
+                                              get_sorted_attendance_list, is_multiday)
 from remo.events.tests import AttendanceFactory, EventFactory, START_DT
+from remo.reports import ACTIVITY_EVENT_CREATE
+from remo.reports.tests import ActivityFactory
 
 
-class HelpersTest(TestCase):
+class HelpersTest(RemoTestCase):
     """Tests related to Events' Helpers."""
 
     def setUp(self):
+        ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
         self.single_day_end = START_DT + datetime.timedelta(hours=4)
 
     def test_is_multiday(self):

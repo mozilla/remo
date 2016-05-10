@@ -15,3 +15,6 @@ UNLISTED_ACTIVITIES = [ACTIVITY_EVENT_ATTEND, ACTIVITY_EVENT_CREATE,
                        ACTIVITY_MONTH_PLANNING, ACTIVITY_MONTH_RECAP,
                        ACTIVITY_RECRUITMENT_EFFORT,
                        ACTIVITY_POST_EVENT_METRICS]
+
+
+default_app_config = 'remo.reports.apps.ReportsConfig'

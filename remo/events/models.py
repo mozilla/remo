@@ -14,12 +14,10 @@ from django.dispatch import receiver
 from django.utils.timezone import now
 
 import caching.base
-from south.signals import post_migrate
 from uuslug import uuslug as slugify
 
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import add_permissions_to_groups
 from remo.dashboard.models import ActionItem, Item
 from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
@@ -124,7 +122,7 @@ class Event(caching.base.CachingMixin, models.Model):
     times_edited = models.PositiveIntegerField(default=0, editable=False)
     categories = models.ManyToManyField(FunctionalArea,
                                         related_name='events_categories',
-                                        blank=True, null=True)
+                                        blank=True)
     goals = models.ManyToManyField(EventGoal, related_name='events_goals',
                                    blank=True)
     metrics = models.ManyToManyField(EventMetric, through='EventMetricOutcome')
@@ -283,27 +281,12 @@ class Metric(models.Model):
     outcome = models.CharField(max_length=300)
 
 
-@receiver(post_migrate, dispatch_uid='event_set_groups_signal')
-def event_set_groups(app, sender, signal, **kwargs):
-    """Set permissions to groups."""
-    if (isinstance(app, basestring) and app != 'events'):
-        return True
-
-    perms = {'can_edit_events': ['Admin', 'Council', 'Mentor', 'Rep'],
-             'can_delete_events': ['Admin', 'Council', 'Mentor'],
-             'can_delete_event_comments': ['Admin'],
-             'can_subscribe_to_events': ['Admin', 'Council', 'Mentor', 'Rep',
-                                         'Alumni', 'Mozillians']}
-
-    add_permissions_to_groups('events', perms)
-
-
 @receiver(post_save, sender=EventComment,
           dispatch_uid='email_event_owner_on_add_comment_signal')
 def email_event_owner_on_add_comment(sender, instance, **kwargs):
     """Email event owner when a comment is added to event."""
     subject = '[Event] User %s commented on event "%s"'
-    email_template = 'email/owner_notification_on_add_comment.txt'
+    email_template = 'email/owner_notification_on_add_comment.jinja'
     event = instance.event
     owner = instance.event.owner
     event_url = reverse('events_view_event', kwargs={'slug': event.slug})
