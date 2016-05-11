@@ -88,9 +88,6 @@ pbr==1.9.0
 funcsigs==1.0.0
 # sha256: HDW0rCBs7y0kgWyJ-Jzyid09OM98RJuz-re_bUPwGx8
 ordereddict==1.1
-# sha256: MxjtKWAkDWHLxlWIWO4AwQ7td6ZQjE0e2Ob39IOZyXU
-# sha256: xTXEQDgC9us4FzzUhj5BniJ0khoBqKrYpbSXwTHGKHU
-babel==2.3.4
 # sha256: nzvNPEAcPoYuwOvm0sBp68ASzhQsziCcCYzLWwkTbok
 # sha256: kZ8mpossF6djTamT2RM54oiWT5PCdPE0Pju74gluESg
 snowballstemmer==1.2.1
