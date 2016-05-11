@@ -17,4 +17,5 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
 COPY requirements /code/requirements/
-RUN pip install --no-cache-dir -r requirements/dev.txt
+COPY bin/peep.py /code/bin/peep.py
+RUN python bin/peep.py install --no-cache-dir -r requirements/dev.txt
