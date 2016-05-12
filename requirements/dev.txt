@@ -160,3 +160,7 @@ pickleshare==0.7.2
 ptyprocess==0.5.1
 # sha256: IyeV68qvLhIDltu6o6Ep7aUXV-6q4ZEVWPTvjuQU_Gw
 pexpect==4.0.1
+# sha256: Yhjpq9YS-1rPsXXqfHsCYAbeTflpHZpzybOQz6GkHCs
+# sha256: OgYkolGiZGPJ36D_pjXsUcQmU4CYDZpQ1lYRw8K9gqY
+# sha256: DEP6hOk60OTb7K_8ZlasHK8aSDWbK7Cl2jr4QWTj9Js
+ipython_genutils==0.1.0
