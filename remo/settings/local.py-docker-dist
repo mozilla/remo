@@ -86,3 +86,27 @@ PASSWORD_HASHERS = get_password_hashers(base.BASE_PASSWORD_HASHERS, HMAC_KEYS)
 
 # Celery configuration
 BROKER_URL = 'amqp://guest:guest@broker:5672//'
+
+CSP_DEFAULT_SRC = base.CSP_DEFAULT_SRC + (
+    'http://*.mapbox.com',
+)
+CSP_FONT_SRC = base.CSP_FONT_SRC + (
+    'http://*.mozilla.net',
+    'http://*.mozilla.org',
+    'http://mozorg.cdn.mozilla.net',
+)
+CSP_IMG_SRC = base.CSP_IMG_SRC + (
+    'http://*.mozilla.net',
+    'http://*.mozilla.org',
+    'http://*.mapbox.com',
+)
+CSP_SCRIPT_SRC = base.CSP_SCRIPT_SRC + (
+    'http://*.mozilla.net',
+    'http://*.mozilla.org',
+    'http://*.mapbox.com',
+)
+CSP_STYLE_SRC = base.CSP_STYLE_SRC + (
+    'http://*.mozilla.net',
+    'http://*.mozilla.org',
+    'http://*.mapbox.com',
+)
