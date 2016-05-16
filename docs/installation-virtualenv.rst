@@ -9,7 +9,7 @@ Preparing Your System
 
 **Prerequisites:** You 'll need python, virtualenv, pip, git and mysql-server.
 
-#. **Install prerequisites:**
+#. Install prerequisites:
 
    Most Linux distributions come with a packaged version for all the prerequisites.
 
@@ -25,35 +25,27 @@ Build the Environment
 
 When you want to start contributing...
 
-#. **Clone ReMo repository.**
+#.  `Fork the main ReMo repository`_ (https://github.com/mozilla/remo) on GitHub.
 
-   Mozilla Reps Portal is hosted on `<http://github.com/mozilla/remo>`_.
+#.  Clone your fork to your local machine::
 
-   Clone the repository locally::
-
-     $ git clone --recursive http://github.com/mozilla/remo
-
-
-   .. note::
-
-      Make sure you use ``--recursive`` when checking the repo out!
-      If you didn't, you can load all the submodules with ``git
-      submodule update --init --recursive``.
+       $ git clone git@github.com:YOUR_USERNAME/remo.git remo
+       (lots of output - be patient...)
 
 
-#. **Create your python virtual environment.**::
+#. Create your python virtual environment.::
 
    $ cd remo/
    $ virtualenv --no-site-packages venv
 
 
-#. **Activate your python virtual environment.**::
+#. Activate your python virtual environment.::
 
    $ source venv/bin/activate
 
-#. **Install development and compiled requirements.**::
+#. Install development and compiled requirements.::
 
-     (venv)$ pip install -r requirements/dev.txt
+     (venv)$ ./peep.sh install -r requirements/dev.txt
 
    .. note::
 
@@ -69,25 +61,13 @@ When you want to start contributing...
       will be available only within this environment. Your system's
       python libraries will remain intact.
 
-#. **Create the database.**
 
-   The provided configuration assumes a database with the
-   name `remo` for user `root` with password `root`
-   and the server listens to `127.0.0.1:8000`.
-   So, it is important not to forget to create the database
-   `remo` in your mysql server and add your root password
-   to your local.py file. You can alter the configuration
-   to fit your own needs.
-
-   For example for user `root` with password `root`::
-
-   $ mysql -uroot -proot -B -e 'CREATE DATABASE remo CHARACTER SET utf8;'
-
-#. **Configure your local ReMo installation.**::
+#. Configure your local ReMo installation.::
 
      (venv)$ cp settings/local.py-dist settings/local.py
 
-#. **Choose a HMAC_KEY.**
+
+#. Choose a HMAC_KEY.
 
    For development purposes you can uncomment the key '2012-06-15'
    with HMAC_KEYS dictionary in your *local.py*::
@@ -97,7 +77,7 @@ When you want to start contributing...
     }
 
 
-#. **Set SITE_URL and BROWSERID_AUDIENCES.**
+#. Set SITE_URL and BROWSERID_AUDIENCES.
 
    For development purposes you can uncomment the lines::
 
@@ -106,7 +86,7 @@ When you want to start contributing...
 
    in your *local.py* or BrowserID will fail to log you in.
 
-#. **Activate MailHide.**
+#. Activate MailHide.
 
    We use `MailHide
    <https://developers.google.com/recaptcha/docs/mailhideapi>`_ to
@@ -126,12 +106,28 @@ When you want to start contributing...
    pair of keys.
 
 
-#. **Sync DB.**::
+#. Setting up a MySQL database for development:
 
-     (venv)$ ./manage.py syncdb --noinput --migrate
+   Install the MySQL server. Many Linux distributions provide an installable
+   package. If your OS does not, you can find downloadable install packages
+   on the `MySQL site`_.
+
+#. Start the mysql client program as the mysql root user::
+
+    $ mysql -u root -p
+    Enter password: ........
+    mysql>
+
+#. Create a ``remo`` database::
+
+    mysql> create database remo character set utf8;
+
+#. Sync DB.::
+
+     (venv)$ ./manage.py migrate --noinput
 
 
-#. **Create an admin account.**
+#. Create an admin account.
 
    Create your own admin account::
 
@@ -144,7 +140,7 @@ When you want to start contributing...
       email address is required for your admin account.
 
 
-#. **Update product_details package.**
+#. Update product_details package.
 
    Package `product_details` provides information about countries. We
    use it in country selection lists. The information get pulled form
@@ -153,7 +149,7 @@ When you want to start contributing...
      (venv)$ ./manage.py update_product_details
 
 
-#. **Collect static files.**
+#. Collect static files.
 
    Various packages provide static files. We need to collect them in
    the STATIC_DIR::
@@ -161,12 +157,12 @@ When you want to start contributing...
      (venv)$ ./manage.py collectstatic
 
 
-#. **Load demo data (optional).**
+#. Load demo data (optional).
 
    Depending on what you are going to develop you may need to have
    some demo data.
 
-   To load *demo users* run (within your VM)::
+   To load *demo users* run (within your virtual env)::
 
      (venv)$ ./manage.py loaddata demo_users
 
@@ -185,5 +181,8 @@ When you want to start contributing...
    .. note::
 
       Fetching bugzilla bug requires a Mozilla Reps Admin account on
-      Bugzilla. Ping `giorgos` on #remo-dev to give you access if
+      Bugzilla. Ping `nemo-yiannis` or `tasos` on #remo-dev to give you access if
       your project requires it.
+
+.. _MySQL site: http://dev.mysql.com/downloads/mysql/
+.. _Fork the main ReMo repository: https://github.com/mozilla/remo/fork
