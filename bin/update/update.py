@@ -40,7 +40,7 @@ def update_assets(ctx):
         # LANG=en_US.UTF-8 is sometimes necessary for the YUICompressor.
         ctx.local('LANG=en_US.UTF8 python ./manage.py collectstatic --noinput')
         ctx.local('LANG=en_US.UTF8 python ./manage.py compress --engine jinja2 --extension=.jinja')
-        ctx.local('LANG=en_US.UTF8 python ./manage.py update_product_details')
+        # ctx.local('LANG=en_US.UTF8 python ./manage.py update_product_details')
 
 
 @task
@@ -50,8 +50,8 @@ def update_db(ctx):
     """
     with ctx.lcd(settings.SRC_DIR):
         ctx.local('python manage.py migrate --list')
-        ctx.local('python manage.py migrate product_details')
-        ctx.local('python manage.py migrate --fake --noinput')
+        ctx.local('python manage.py migrate events --fake --noinput')
+        ctx.local('python manage.py migrate --fake-initial --noinput')
 
 
 @task
