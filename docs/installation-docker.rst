@@ -7,44 +7,25 @@ Getting your own development environment.
 Preparing Your System
 ---------------------
 
-**Prerequisites:** You 'll need to install docker and docker-compose in your system.
+#. You need to install docker in your system. The `installation guide <https://docs.docker.com/installation>`_ covers many operating systems but for now we only support Linux.
 
-#. **Install prerequisites:**
-
-   Most Linux distributions come with a packaged version for docker and docker-compose.
-
-   - For debian based systems::
-
-     $ sudo apt-get install docker.io docker-compose
-
-   For other Linux distributions, you can consult the `installation guide <https://docs.docker.com/installation/#installation>`_.
-   More information about docker-compose can be found `here <https://docs.docker.com/compose/>`_.
-
+#. We are using an orchestration tool for docker called `docker-compose <https://docs.docker.com/compose//>`_ that helps us automate the procedure of initiating our docker containers required for development. Installation instructions can be found `in Compose's documentation <https://docs.docker.com/compose/install/>`_. *Version required*: 1.0.1 or newer.
 
 
 Build the Environment
 ---------------------
 
 When you want to start contributing...
+#. `Fork the main ReMo repository <https://github.com/mozilla/remo>`_.
+#. Clone your fork to your local machine::
 
-#. **Clone ReMo repository.**
+     $ git clone git@github.com:YOUR_USERNAME/remo.git remo
+     (lots of output - be patient...)
+     $ cd remo
 
-   Mozilla Reps Portal is hosted on `<https://github.com/mozilla/remo>`_.
+#. Configure your local ReMo installation::
 
-   Clone the repository locally::
-
-     $ git clone --recursive https://github.com/mozilla/remo
-
-
-   .. note::
-
-      Make sure you use ``--recursive`` when checking the repo out!
-      If you didn't, you can load all the submodules with ``git
-      submodule update --init --recursive``.
-
-#. **Configure your local ReMo installation.**::
-
-     $ cp settings/local.py-docker-dist settings/local.py
+     $ cp remo/settings/local.py-docker-dist remo/settings/local.py
 
 #. Update the product details::
 
@@ -52,7 +33,7 @@ When you want to start contributing...
 
 #. Create the database tables and run the migrations::
 
-     $ docker-compose run web python manage.py syncdb --noinput --migrate
+     $ docker-compose run web python manage.py migrate --noinput
 
 #. Create an admin account.
 
@@ -60,15 +41,15 @@ When you want to start contributing...
 
     $ docker-compose run web ./manage.py createsuperuser
 
-#. Add demo users.
+#. Add demo users.::
 
     $ docker-compose run web ./manage.py loaddata demo_users
 
-#. Add demo functional areas.
+#. Add demo functional areas.::
 
     $ docker-compose run web ./manage.py loaddata demo_functional_areas
 
-#. Add demo events.
+#. Add demo events.::
 
     $ docker-compose run web ./manage.py loaddata demo_events
 
