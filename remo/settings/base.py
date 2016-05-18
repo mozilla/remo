@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'session_csrf',
     'compressor',
+    'product_details',
     # Project specific apps
     'remo.base',
     'remo.profiles',
