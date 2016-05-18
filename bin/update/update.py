@@ -49,6 +49,7 @@ def update_db(ctx):
 
     """
     with ctx.lcd(settings.SRC_DIR):
+        ctx.local('python manage.py migrate product_details')
         ctx.local('python manage.py migrate --fake --noinput')
 
 
