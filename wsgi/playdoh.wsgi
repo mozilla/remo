@@ -23,6 +23,7 @@ if newrelic:
         newrelic = False
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'remo.settings')
+os.environ.setdefault('CELERY_LOADER', 'django')
 
 # Add `remo` to the python path
 wsgidir = os.path.dirname(__file__)
