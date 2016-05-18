@@ -91,9 +91,6 @@ ordereddict==1.1
 # sha256: nzvNPEAcPoYuwOvm0sBp68ASzhQsziCcCYzLWwkTbok
 # sha256: kZ8mpossF6djTamT2RM54oiWT5PCdPE0Pju74gluESg
 snowballstemmer==1.2.1
-# sha256: br3J4K0Yj50bLN2bxZy-Qr-TGHXoKeelleazq9wFzfs
-# sha256: CrLGK4eYfjJS-J0wt87b7BKgGvknSvn_pIEI8sE8YGI
-imagesize==0.7.1
 # sha256: 1XYCs9cwwuy5eKIT-s4LehbOqkomNXU2G9T9niZppUQ
 # sha256: 9BaoTg0N28KI9rjywnbRC0DKEjhWLNntWnUSkuxke3E
 alabaster==0.7.7
