@@ -4,6 +4,9 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
+# Monkeypatch log_settings
+import log_settings  # noqa
+
 handler404 = 'remo.base.views.custom_404'
 handler500 = 'remo.base.views.custom_500'
 robots_txt = 'remo.base.views.robots_txt'
