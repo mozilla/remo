@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'session_csrf',
     'compressor',
     'product_details',
+    'djcelery',
     # Project specific apps
     'remo.base',
     'remo.profiles',
