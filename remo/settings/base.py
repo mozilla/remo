@@ -160,6 +160,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'APP_DIRS': True,
+        'DIRS': [
+            'remo/profiles/templates',
+        ],
         'OPTIONS': {
             'context_processors': CONTEXT_PROCESSORS
         }
