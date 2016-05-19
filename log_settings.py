@@ -1,5 +1,6 @@
 import logging
 import logging.handlers
+import socket
 
 from django.conf import settings
 
@@ -14,6 +15,12 @@ class NullHandler(logging.Handler):
 
 
 base_fmt = ('%(name)s:%(levelname)s %(message)s :%(pathname)s:%(lineno)s')
+use_syslog = settings.HAS_SYSLOG and not settings.DEBUG
+
+if use_syslog:
+    hostname = socket.gethostname()
+else:
+    hostname = 'localhost'
 
 cfg = {
     'version': 1,
@@ -27,7 +34,7 @@ cfg = {
         'prod': {
             '()': commonware.log.Formatter,
             'datefmt': '%H:%M:%s',
-            'format': '%s: [%%(REMOTE_ADDR)s] %s' % (settings.SYSLOG_TAG, base_fmt),
+            'format': '%s %s: [%%(REMOTE_ADDR)s] %s' % (hostname, settings.SYSLOG_TAG, base_fmt),
         },
     },
     'handlers': {
@@ -40,24 +47,34 @@ cfg = {
             'facility': logging.handlers.SysLogHandler.LOG_LOCAL7,
             'formatter': 'prod',
         },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        },
         'null': {
             '()': NullHandler,
         }
     },
     'loggers': {
-        'i': {},
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
     },
     'root': {},
 }
 
 for key, value in settings.LOGGING.items():
-    cfg[key].update(value)
+    if hasattr(cfg[key], 'update'):
+        cfg[key].update(value)
+    else:
+        cfg[key] = value
 
 # Set the level and handlers for all loggers.
 for logger in cfg['loggers'].values() + [cfg['root']]:
-    syslog = settings.HAS_SYSLOG and not settings.DEBUG
     if 'handlers' not in logger:
-        logger['handlers'] = ['syslog' if syslog else 'console']
+        logger['handlers'] = ['syslog' if use_syslog else 'console']
     if 'level' not in logger:
         logger['level'] = settings.LOG_LEVEL
     if logger is not cfg['root'] and 'propagate' not in logger:
