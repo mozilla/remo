@@ -40,19 +40,15 @@ def update_assets(ctx):
         # LANG=en_US.UTF-8 is sometimes necessary for the YUICompressor.
         ctx.local('LANG=en_US.UTF8 python ./manage.py collectstatic --noinput')
         ctx.local('LANG=en_US.UTF8 python ./manage.py compress --engine jinja2 --extension=.jinja')
-        # ctx.local('LANG=en_US.UTF8 python ./manage.py update_product_details')
+        ctx.local('LANG=en_US.UTF8 python ./manage.py update_product_details')
 
 
 @task
 def update_db(ctx):
-    """Update the database schema, if necessary.
-
-    """
+    """Update the database schema, if necessary."""
     with ctx.lcd(settings.SRC_DIR):
         ctx.local('python manage.py migrate --list')
-        ctx.local('python manage.py migrate djcelery zero --noinput')
-        ctx.local('python manage.py migrate djcelery --noinput')
-
+        ctx.local('python manage.py migrate --noinput')
 
 @task
 def checkin_changes(ctx):
@@ -83,7 +79,6 @@ def update_info(ctx, tag):
         ctx.local('git branch >> static/revision_info.txt')
         ctx.local('git log -3 >> static/revision_info.txt')
         ctx.local('git status >> static/revision_info.txt')
-        ctx.local('git submodule status >> static/revision_info.txt')
         ctx.local('git rev-parse HEAD > static/revision.txt')
 
         if NEW_RELIC_API_KEY and NEW_RELIC_APP_ID:
