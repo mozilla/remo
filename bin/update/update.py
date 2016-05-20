@@ -50,7 +50,8 @@ def update_db(ctx):
     """
     with ctx.lcd(settings.SRC_DIR):
         ctx.local('python manage.py migrate --list')
-        ctx.local('python manage.py migrate --fake-initial --noinput')
+        # ctx.local('python manage.py migrate --fake-initial --noinput')
+        ctx.local('python manage.py migrate events --fake --noinput')
 
 
 @task
