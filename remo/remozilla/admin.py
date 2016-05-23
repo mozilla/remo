@@ -8,11 +8,11 @@ from remo.remozilla.models import Bug, Status
 
 def encode_bugzilla_strings(modeladmin, request, queryset):
     for obj in queryset:
+        kwargs = {}
         fields = ['component', 'summary', 'whiteboard', 'status', 'resolution', 'first_comment']
         for field in fields:
-            value = smart_text(getattr(obj, field))
-            setattr(obj, field, value)
-        obj.save()
+            kwargs[field] = smart_text(getattr(obj, field))
+        Bug.objects.filter(pk=obj.id).update(**kwargs)
 
 encode_bugzilla_strings.short_description = 'Encode bugzilla strings'
 
