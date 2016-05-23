@@ -5,13 +5,14 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import post_save
-from django.utils.encoding import smart_text
+from django.utils.encoding import python_2_unicode_compatible
 
 from remo.remozilla.models import Bug
 
 Item = namedtuple('Item', ['name', 'user', 'priority', 'due_date'])
 
 
+@python_2_unicode_compatible
 class ActionItem(models.Model):
     """ActionItem Model."""
     # List of priorities - borrowed from bugzilla
@@ -54,8 +55,8 @@ class ActionItem(models.Model):
     class Meta:
         ordering = ['-due_date', '-updated_on', '-created_on']
 
-    def __unicode__(self):
-        return smart_text(self.name)
+    def __str__(self):
+        return self.name
 
     @staticmethod
     def create(instance, **kwargs):
