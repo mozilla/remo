@@ -5,6 +5,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import post_save
+from django.utils.encoding import smart_text
 
 from remo.remozilla.models import Bug
 
@@ -54,7 +55,7 @@ class ActionItem(models.Model):
         ordering = ['-due_date', '-updated_on', '-created_on']
 
     def __unicode__(self):
-        return unicode(self.name)
+        return smart_text(self.name)
 
     @staticmethod
     def create(instance, **kwargs):

@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import m2m_changed, post_save, pre_delete
 from django.dispatch import receiver
+from django.utils.encoding import smart_text
 from django.utils.timezone import now
 
 import caching.base
@@ -42,7 +43,7 @@ class Activity(models.Model):
         verbose_name_plural = 'activities'
 
     def __unicode__(self):
-        return self.name
+        return smart_text(self.name)
 
     def get_absolute_edit_url(self):
         return reverse('edit_activity', kwargs={'pk': self.id})
@@ -78,7 +79,7 @@ class Campaign(models.Model):
         verbose_name_plural = 'initiatives'
 
     def __unicode__(self):
-        return self.name
+        return smart_text(self.name)
 
     def get_absolute_edit_url(self):
         return reverse('edit_campaign', kwargs={'pk': self.id})
@@ -269,13 +270,13 @@ class NGReport(caching.base.CachingMixin, models.Model):
 
     def __unicode__(self):
         if self.activity.name == ACTIVITY_EVENT_ATTEND and self.event:
-            return 'Attended event "%s"' % self.event.name
+            return u'Attended event "%s"' % self.event.name
         elif self.activity.name == ACTIVITY_EVENT_CREATE and self.event:
-            return 'Organized event "%s"' % self.event.name
+            return u'Organized event "%s"' % self.event.name
         elif self.activity.name == ACTIVITY_CAMPAIGN:
-            return 'Participated in campaign "%s"' % self.campaign.name
+            return u'Participated in campaign "%s"' % self.campaign.name
         else:
-            return self.activity.name
+            return smart_text(self.activity.name)
 
 
 class NGReportComment(models.Model):

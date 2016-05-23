@@ -11,6 +11,7 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.encoding import smart_text
 from django.utils.timezone import now
 
 import caching.base
@@ -35,7 +36,7 @@ class Attendance(models.Model):
     date_subscribed = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return '%s %s' % (self.user, self.event)
+        return smart_text('%s %s' % (self.user, self.event))
 
 
 class EventGoal(models.Model):
@@ -60,7 +61,7 @@ class EventGoal(models.Model):
         return reverse('edit_event_goal', kwargs={'pk': self.id})
 
     def __unicode__(self):
-        return self.name
+        return smart_text(self.name)
 
     class Meta:
         ordering = ['name']
@@ -80,7 +81,7 @@ class EventMetric(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        return self.name
+        return smart_text(self.name)
 
     def get_absolute_edit_url(self):
         return reverse('edit_metric', kwargs={'pk': self.id})
@@ -143,7 +144,7 @@ class Event(caching.base.CachingMixin, models.Model):
 
     def __unicode__(self):
         """Event unicode representation."""
-        return self.name
+        return smart_text(self.name)
 
     def _make_local(self, obj):
         """Return a datetime obj localized in self.timezone."""
