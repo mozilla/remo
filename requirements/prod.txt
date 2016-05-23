@@ -244,3 +244,9 @@ imagesize==0.7.1
 commonware==0.4.2
 # sha256: 7PtznHX-9-MbfAyCzpG10swOn2oUs97FlaummAxzHP0
 https://github.com/mozilla/nuggets/archive/master.zip#egg=nuggets
+# sha256: iIooDyTc_yzFWsDlH8dkSEsoT5H_cRohnkWabV923is
+# sha256: MOUA8TkhxzyW9Jpt0q373ZK8P64SGD6RsGsuRYNIYgY
+contextlib2==0.5.3
+# sha256: Lvg31Tuabr1U2oCI7ukDKgW7PsJ6elyvPc5smOEJKBE
+# sha256: XSiQvvIil-DXhKhLETonqjv9hrZgxUG8CeA1oLX3MKQ
+raven==5.18.0
