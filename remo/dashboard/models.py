@@ -54,7 +54,7 @@ class ActionItem(models.Model):
         ordering = ['-due_date', '-updated_on', '-created_on']
 
     def __unicode__(self):
-        return self.name
+        return unicode(self.name)
 
     @staticmethod
     def create(instance, **kwargs):

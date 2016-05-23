@@ -58,8 +58,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
     # Check the server response and get the token
     if error:
-        raise ValueError('Invalid response from server, {0}.'
-                         .format(response['error']))
+        raise ValueError('Invalid response from server, {0}.'.format(response['error']))
     token = response['token']
 
     now = timezone.now()
@@ -80,8 +79,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
             # Check the server response and get the token
             if error:
-                raise ValueError('Invalid response from server, {0}.'
-                                 .format(bugs['message']))
+                raise ValueError('Invalid response from server, {0}.'.format(bugs['message']))
 
             remo_bugs = bugs.get('bugs', [])
             if not remo_bugs:
@@ -100,12 +98,11 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 bug, created = Bug.objects.get_or_create(bug_id=bdata['id'])
 
                 bug.summary = unicode(bdata.get('summary', ''))
-                creator_email = bdata['creator']
+                creator_email = unicode(bdata['creator'])
                 bug.creator = get_object_or_none(User, email=creator_email)
-                bug.bug_creation_time = (
-                    parse_bugzilla_time(bdata['creation_time']))
-                bug.component = bdata['component']
-                bug.whiteboard = bdata.get('whiteboard', '')
+                bug.bug_creation_time = parse_bugzilla_time(bdata['creation_time'])
+                bug.component = unicode(bdata['component'])
+                bug.whiteboard = unicode(bdata.get('whiteboard', ''))
 
                 bug.cc.clear()
                 for email in bdata.get('cc', []):
@@ -115,10 +112,9 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
                 bug.assigned_to = get_object_or_none(
                     User, email=bdata['assigned_to'])
-                bug.status = bdata['status']
-                bug.resolution = bdata.get('resolution', '')
-                bug.bug_last_change_time = parse_bugzilla_time(
-                    bdata.get('last_change_time'))
+                bug.status = unicode(bdata['status'])
+                bug.resolution = unicode(bdata.get('resolution', ''))
+                bug.bug_last_change_time = parse_bugzilla_time(bdata.get('last_change_time'))
 
                 automated_voting_trigger = 0
                 bug.budget_needinfo.clear()
@@ -143,8 +139,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
                         if user:
                             bug.budget_needinfo.add(user)
 
-                if ((automated_voting_trigger == 2 and
-                     waffle.switch_is_active('automated_polls'))):
+                if automated_voting_trigger == 2 and waffle.switch_is_active('automated_polls'):
                     bug.council_vote_requested = True
 
                 unicode_id = unicode(bdata['id'])
