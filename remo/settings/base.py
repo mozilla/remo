@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'compressor',
     'product_details',
     'djcelery',
+    'raven.contrib.django.raven_compat',
     # Project specific apps
     'remo.base',
     'remo.profiles',
