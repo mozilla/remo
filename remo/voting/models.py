@@ -220,8 +220,7 @@ class PollComment(models.Model):
         ordering = ['created_on']
 
 
-@receiver(post_save, sender=Poll,
-          dispatch_uid='voting_poll_email_reminder_signal')
+@receiver(post_save, sender=Poll, dispatch_uid='voting_poll_email_reminder_signal')
 def poll_email_reminder(sender, instance, raw, **kwargs):
     """Send email reminders when a vote starts/ends."""
     subject_start = '[Voting] Cast your vote for "%s" now!' % instance.name
@@ -247,15 +246,13 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
                                                task_end_id=task_end_id)
 
 
-@receiver(post_save, sender=Poll,
-          dispatch_uid='voting_automated_poll_discussion_email')
+@receiver(post_save, sender=Poll, dispatch_uid='voting_automated_poll_discussion_email')
 def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
     """Send email reminders when a vote starts/ends."""
     if instance.automated_poll and created:
         template = 'emails/review_budget_notify_council.jinja'
-        subject = (u'Discuss [Bug {id}] - {summary}'
-                   .format(id=instance.bug.bug_id,
-                           summary=unicode(instance.bug.summary)))
+        subject = u'Discuss [Bug {id}] - {summary}'.format(id=instance.bug.bug_id,
+                                                           summary=unicode(instance.bug.summary))
         data = {'bug': instance.bug,
                 'BUGZILLA_URL': get_bugzilla_url(instance.bug),
                 'poll': instance}
@@ -265,8 +262,7 @@ def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
             data=data)
 
 
-@receiver(pre_delete, sender=Poll,
-          dispatch_uid='voting_poll_delete_reminder_signal')
+@receiver(pre_delete, sender=Poll, dispatch_uid='voting_poll_delete_reminder_signal')
 def poll_delete_reminder(sender, instance, **kwargs):
     """Revoke the task if a voting is deleted."""
     if not settings.CELERY_ALWAYS_EAGER:
@@ -276,8 +272,7 @@ def poll_delete_reminder(sender, instance, **kwargs):
             celery_control.revoke(instance.task_end_id)
 
 
-@receiver(post_save, sender=Bug,
-          dispatch_uid='remozilla_automated_poll_signal')
+@receiver(post_save, sender=Bug, dispatch_uid='remozilla_automated_poll_signal')
 def automated_poll(sender, instance, **kwargs):
     """Create a radio poll automatically.
 
@@ -292,23 +287,18 @@ def automated_poll(sender, instance, **kwargs):
     remobot = User.objects.get(username='remobot')
 
     with transaction.atomic():
-        poll = (Poll.objects
-                .create(name=instance.summary,
-                        description=instance.first_comment,
-                        valid_groups=Group.objects.get(name='Council'),
-                        start=(now() +
-                               timedelta(BUDGET_REQUEST_PERIOD_START)),
-                        end=(now() +
-                             timedelta(days=BUDGET_REQUEST_PERIOD_END)),
-                        bug=instance,
-                        created_by=remobot,
-                        automated_poll=True))
+        poll = (Poll.objects.create(name=smart_text(instance.summary),
+                                    description=smart_text(instance.first_comment),
+                                    valid_groups=Group.objects.get(name='Council'),
+                                    start=(now() + timedelta(BUDGET_REQUEST_PERIOD_START)),
+                                    end=(now() + timedelta(days=BUDGET_REQUEST_PERIOD_END)),
+                                    bug=instance,
+                                    created_by=remobot,
+                                    automated_poll=True))
 
-        radio_poll = RadioPoll.objects.create(poll=poll,
-                                              question='Budget Approval')
+        radio_poll = RadioPoll.objects.create(poll=poll, question='Budget Approval')
 
-        RadioPollChoice.objects.create(answer='Approved',
-                                       radio_poll=radio_poll)
+        RadioPollChoice.objects.create(answer='Approved', radio_poll=radio_poll)
         RadioPollChoice.objects.create(answer='Denied', radio_poll=radio_poll)
 
         statsd.incr('voting.create_automated_poll')
