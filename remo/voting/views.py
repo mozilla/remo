@@ -133,8 +133,7 @@ def view_voting(request, slug):
     poll = get_object_or_404(Poll, slug=slug)
     # If the user does not belong to a valid poll group
     if not user_has_poll_permissions(user, poll):
-        messages.error(request, ('You do not have the permissions to '
-                                 'vote on this voting.'))
+        messages.error(request, u'You do not have the permissions to vote on this voting.')
         return redirect('voting_list_votings')
 
     range_poll_choice_forms = {}
@@ -166,12 +165,10 @@ def view_voting(request, slug):
 
     # pack the forms for rendering
     for item in poll.range_polls.all():
-        range_poll_choice_forms[item] = forms.RangePollChoiceVoteForm(
-            choices=item.choices.all())
+        range_poll_choice_forms[item] = forms.RangePollChoiceVoteForm(choices=item.choices.all())
 
     for item in poll.radio_polls.all():
-        radio_poll_choice_forms[item] = forms.RadioPollChoiceVoteForm(
-            radio_poll=item)
+        radio_poll_choice_forms[item] = forms.RadioPollChoiceVoteForm(radio_poll=item)
 
     if request.method == 'POST':
         # Process comment form
@@ -198,8 +195,7 @@ def view_voting(request, slug):
             # Process poll form
             forms_valid = True
             # validate all forms
-            for item in (range_poll_choice_forms.values() +
-                         radio_poll_choice_forms.values()):
+            for item in (range_poll_choice_forms.values() + radio_poll_choice_forms.values()):
                 if not item.is_valid():
                     forms_valid = False
                     break
@@ -211,8 +207,7 @@ def view_voting(request, slug):
                     radio_poll_form.save()
 
                 Vote.objects.create(user=user, poll=poll)
-                messages.success(request, ('Your vote has been '
-                                           'successfully registered.'))
+                messages.success(request, u'Your vote has been successfully registered.')
                 statsd.incr('voting.vote_voting')
                 return redirect('voting_list_votings')
 
@@ -234,8 +229,7 @@ def delete_voting(request, slug):
 
 
 @permission_check(permissions=['voting.delete_pollcomment'],
-                  filter_field='display_name', owner_field='user',
-                  model=UserProfile)
+                  filter_field='display_name', owner_field='user', model=UserProfile)
 def delete_poll_comment(request, slug, display_name, comment_id):
     poll = get_object_or_404(Poll, slug=slug)
     if comment_id and request.method == 'POST':

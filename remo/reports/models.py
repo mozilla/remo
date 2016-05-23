@@ -97,15 +97,11 @@ class NGReport(caching.base.CachingMixin, models.Model):
     report_date = models.DateField(db_index=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-    mentor = models.ForeignKey(User, null=True,
-                               on_delete=models.SET_NULL,
+    mentor = models.ForeignKey(User, null=True, on_delete=models.SET_NULL,
                                related_name='ng_reports_mentored')
-    activity = models.ForeignKey(Activity,
-                                 related_name='ng_reports')
-    campaign = models.ForeignKey(Campaign, null=True, blank=True,
-                                 related_name='ng_reports')
-    functional_areas = models.ManyToManyField(
-        FunctionalArea, related_name='ng_reports')
+    activity = models.ForeignKey(Activity, related_name='ng_reports')
+    campaign = models.ForeignKey(Campaign, null=True, blank=True, related_name='ng_reports')
+    functional_areas = models.ManyToManyField(FunctionalArea, related_name='ng_reports')
     longitude = models.FloatField(blank=False, null=True)
     latitude = models.FloatField(blank=False, null=True)
     location = models.CharField(max_length=150, blank=True, default='')
@@ -130,16 +126,13 @@ class NGReport(caching.base.CachingMixin, models.Model):
         return args
 
     def get_absolute_url(self):
-        return reverse('remo.reports.views.view_ng_report',
-                       args=self._get_url_args())
+        return reverse('remo.reports.views.view_ng_report', args=self._get_url_args())
 
     def get_absolute_edit_url(self):
-        return reverse('remo.reports.views.edit_ng_report',
-                       args=self._get_url_args())
+        return reverse('remo.reports.views.edit_ng_report', args=self._get_url_args())
 
     def get_absolute_delete_url(self):
-        return reverse('remo.reports.views.delete_ng_report',
-                       args=self._get_url_args())
+        return reverse('remo.reports.views.delete_ng_report', args=self._get_url_args())
 
     @property
     def get_report_date(self):
@@ -187,8 +180,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
         super(NGReport, self).save()
 
         # Resolve the verified action items.
-        action_item_name = u'{0} {1}'.format(VERIFY_ACTION,
-                                             self.user.get_full_name())
+        action_item_name = u'{0} {1}'.format(VERIFY_ACTION, self.user.get_full_name())
         if self.verified_activity:
             ActionItem.resolve(instance=self,
                                user=self.mentor,
@@ -203,13 +195,11 @@ class NGReport(caching.base.CachingMixin, models.Model):
         # If there is already a running streak and the report date
         # is within this streak, update the current streak counter.
         if (current_start and self.report_date < current_start and
-            self.report_date in daterange((current_start - one_week),
-                                          current_start)):
+                self.report_date in daterange((current_start - one_week), current_start)):
             current_start = self.report_date
         # If there isn't any current streak, and the report date
         # is within the current week, let's start the counting.
-        elif (not current_start and
-                self.report_date in daterange(get_date(-7), today)):
+        elif not current_start and self.report_date in daterange(get_date(-7), today):
             current_start = self.report_date
 
         # Longest streak section
@@ -233,8 +223,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
             # This happens only when a user appends a report, dated in the
             # range of longest streak counters and it's out of the range
             # of current streak counter.
-            elif self.report_date in daterange(longest_start - one_week,
-                                               longest_end + one_week):
+            elif self.report_date in daterange(longest_start - one_week, longest_end + one_week):
                 if self.report_date < longest_start:
                     longest_start = self.report_date
                 elif self.report_date > longest_end:
@@ -383,8 +372,7 @@ def delete_passive_attendance_report(sender, instance, **kwargs):
     statsd.incr('reports.delete_passive_attendance')
 
 
-@receiver(pre_delete, sender=Event,
-          dispatch_uid='delete_passive_report_event_signal')
+@receiver(pre_delete, sender=Event, dispatch_uid='delete_passive_report_event_signal')
 def delete_passive_event_report(sender, instance, **kwargs):
     """Automatically delete a passive report after an event is deleted."""
     NGReport.objects.filter(event=instance).delete()
@@ -433,8 +421,7 @@ def email_commenters_on_add_ng_report_comment(sender, instance, **kwargs):
 
     for user_id in commenters:
         user = User.objects.get(pk=user_id)
-        if (user.userprofile.receive_email_on_add_comment and
-                user != instance.user):
+        if user.userprofile.receive_email_on_add_comment and user != instance.user:
             ctx_data = {'report': report, 'user': user,
                         'commenter': instance.user,
                         'comment': instance.comment,
@@ -444,8 +431,7 @@ def email_commenters_on_add_ng_report_comment(sender, instance, **kwargs):
                                  email_template=email_template, data=ctx_data)
 
 
-@receiver(pre_delete, sender=NGReport,
-          dispatch_uid='delete_ng_report_signal')
+@receiver(pre_delete, sender=NGReport, dispatch_uid='delete_ng_report_signal')
 def delete_ng_report(sender, instance, **kwargs):
     """Automatically update user's streak counters."""
     today = get_date()
@@ -456,20 +442,17 @@ def delete_ng_report(sender, instance, **kwargs):
     # If instance is in the future or there is another
     # report that date, don't do anything
     if (instance.is_future_report or
-        (NGReport.objects
-         .filter(user=instance.user, report_date=instance.report_date)
-         .exclude(pk=instance.id).exists())):
+            (NGReport.objects.filter(user=instance.user, report_date=instance.report_date)
+                             .exclude(pk=instance.id).exists())):
         return
 
     try:
-        next_report = instance.get_next_by_report_date(
-            user=instance.user, report_date__lte=today)
+        next_report = instance.get_next_by_report_date(user=instance.user, report_date__lte=today)
     except NGReport.DoesNotExist:
         next_report = None
 
     try:
-        previous_report = instance.get_previous_by_report_date(
-            user=instance.user)
+        previous_report = instance.get_previous_by_report_date(user=instance.user)
     except NGReport.DoesNotExist:
         previous_report = None
 
@@ -482,7 +465,7 @@ def delete_ng_report(sender, instance, **kwargs):
     # If the deleted report is between the range of the longest
     # streak counters, we need to update them.
     elif (longest_start and longest_end and
-          instance.report_date in daterange(longest_start, longest_end)):
+            instance.report_date in daterange(longest_start, longest_end)):
 
         if longest_start == instance.report_date and next_report:
             longest_start = next_report.report_date
@@ -515,8 +498,7 @@ def delete_ng_report(sender, instance, **kwargs):
 
     # If the deleted report is between the range of the current
     # streak counter and today, then we need to update the counter.
-    if (current_start and
-            instance.report_date in daterange(current_start, today)):
+    if current_start and instance.report_date in daterange(current_start, today):
         if current_start == instance.report_date and next_report:
             current_start = next_report.report_date
         elif (previous_report and next_report and

@@ -63,8 +63,7 @@ def manage_subscription(request, slug, subscribe=True):
 
         if subscribe:
             if not created:
-                messages.warning(request, ('You are already subscribed to '
-                                           'this event.'))
+                messages.warning(request, u'You are already subscribed to this event.')
             else:
                 attendance.save()
                 if not event.is_past_event:
@@ -76,17 +75,13 @@ def manage_subscription(request, slug, subscribe=True):
                     messages.info(request, 'You subscribed to this event.')
         else:
             if created:
-                messages.warning(request, ('You are not subscribed '
-                                           'to this event.'))
+                messages.warning(request, u'You are not subscribed to this event.')
 
             elif request.user == event.owner:
-                messages.error(request, ('Event owner cannot unsubscribe '
-                                         'from event.'))
-
+                messages.error(request, u'Event owner cannot unsubscribe from event.')
             else:
                 attendance.delete()
-                messages.success(request, ('You have unsubscribed '
-                                           'from this event.'))
+                messages.success(request, u'You have unsubscribed from this event.')
                 statsd.incr('events.unsubscribe_from_event')
 
     return redirect('events_view_event', slug=event.slug)
@@ -106,10 +101,8 @@ def view_event(request, slug):
     # Display a message if the event owner needs to submit post event data
     if (request.user == event.owner and event.is_past_event and
         event.has_new_metrics and not
-            any([metric.outcome
-                 for metric in event.eventmetricoutcome_set.all()])):
-        msg = render_to_string('includes/view_post_event_metrics.jinja',
-                               {'event': event})
+            any([metric.outcome for metric in event.eventmetricoutcome_set.all()])):
+        msg = render_to_string('includes/view_post_event_metrics.jinja', {'event': event})
         messages.info(request, mark_safe(msg))
 
     if request.method == 'POST':
@@ -118,8 +111,7 @@ def view_event(request, slug):
             return redirect('main')
 
         event_comment = EventComment(event=event, user=request.user)
-        event_comment_form = forms.EventCommentForm(request.POST,
-                                                    instance=event_comment)
+        event_comment_form = forms.EventCommentForm(request.POST, instance=event_comment)
         if event_comment_form.is_valid():
             event_comment_form.save()
             messages.success(request, 'Comment saved')
@@ -139,8 +131,7 @@ def view_event(request, slug):
 
 
 @permission_check(permissions=['events.can_delete_event_comments'],
-                  filter_field='pk', owner_field='user',
-                  model=EventComment)
+                  filter_field='pk', owner_field='user', model=EventComment)
 def delete_event_comment(request, slug, pk):
     if request.method == 'POST':
         if pk:
@@ -249,8 +240,7 @@ def edit_event(request, slug=None, clone=None):
 
 @never_cache
 @permission_check(permissions=['events.can_delete_events'],
-                  owner_field='owner', model=Event,
-                  filter_field='slug')
+                  owner_field='owner', model=Event, filter_field='slug')
 def delete_event(request, slug):
     """Delete event view."""
     if request.method == 'POST':
@@ -287,8 +277,7 @@ def export_single_event_to_ical(request, slug):
     response = HttpResponse(ical, content_type='text/calendar')
     ical_filename = event.slug + '.ics'
     response['Filename'] = ical_filename
-    response['Content-Disposition'] = ('attachment; filename="%s"' %
-                                       (ical_filename))
+    response['Content-Disposition'] = ('attachment; filename="%s"' % (ical_filename))
     statsd.incr('events.export_single_ical')
     return response
 
@@ -313,8 +302,7 @@ def multiple_event_ical(request, period, start=None, end=None, search=None):
     """Redirect iCal URL to API query."""
 
     # Create API query
-    url = reverse('api_dispatch_list', kwargs={'api_name': 'v1',
-                                               'resource_name': 'event'})
+    url = reverse('api_dispatch_list', kwargs={'api_name': 'v1', 'resource_name': 'event'})
     if period == 'all':
         url = urlparams(url, start__gt='1970-01-01')
     elif period == 'future':

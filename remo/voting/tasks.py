@@ -43,11 +43,9 @@ def send_voting_mail(voting_id, subject, email_template):
 
     if poll.automated_poll:
         message = render_to_string(email_template, data)
-        send_mail(subject, message, settings.FROM_EMAIL,
-                  [settings.REPS_COUNCIL_ALIAS])
+        send_mail(subject, message, settings.FROM_EMAIL, [settings.REPS_COUNCIL_ALIAS])
     else:
-        user_list = (User.objects.filter(groups=poll.valid_groups)
-                     .exclude(username='remobot'))
+        user_list = User.objects.filter(groups=poll.valid_groups).exclude(username='remobot')
 
         for user in user_list:
             ctx_data = {'user': user,
@@ -103,8 +101,7 @@ def resolve_action_items():
     end = datetime.combine(get_date(days=-1), datetime.max.time())
     polls = Poll.objects.filter(end__range=[start, end])
     action_model = ContentType.objects.get_for_model(Poll)
-    items = ActionItem.objects.filter(content_type=action_model,
-                                      object_id__in=polls)
+    items = ActionItem.objects.filter(content_type=action_model, object_id__in=polls)
     items.update(resolved=True)
 
 
@@ -121,8 +118,7 @@ def create_rotm_poll():
     create_poll_flag = True
 
     poll_name = 'Rep of the month for {0}'.format(number2month(now().month))
-    start = (datetime.combine(rotm_nomination_end_date(),
-                              datetime.min.time()) + timedelta(days=1))
+    start = datetime.combine(rotm_nomination_end_date(), datetime.min.time()) + timedelta(days=1)
     end = start + timedelta(days=ROTM_VOTING_DAYS)
     rotm_poll = Poll.objects.filter(name=poll_name, start=start, end=end)
 
@@ -144,9 +140,7 @@ def create_rotm_poll():
                                        start=start,
                                        end=end,
                                        created_by=remobot)
-            range_poll = RangePoll.objects.create(
-                poll=poll, name='Rep of the month nominees')
+            range_poll = RangePoll.objects.create(poll=poll, name='Rep of the month nominees')
 
             for nominee in nominees:
-                RangePollChoice.objects.create(range_poll=range_poll,
-                                               nominee=nominee)
+                RangePollChoice.objects.create(range_poll=range_poll, nominee=nominee)

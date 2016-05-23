@@ -23,14 +23,12 @@ BUGZILLA_FIELDS = [u'is_confirmed', u'summary', u'creator', u'creation_time',
                    u'status', u'assigned_to', u'resolution',
                    u'last_change_time', u'flags']
 
-LOGIN_URL = ('https://bugzilla.mozilla.org/rest/login?login={username}'
-             '&password={password}')
+LOGIN_URL = u'https://bugzilla.mozilla.org/rest/login?login={username}&password={password}'
 URL = ('https://bugzilla.mozilla.org/rest/bug?token={token}'
        '&product=Mozilla%20Reps&component={component}&'
        'include_fields={fields}&last_change_time={timestamp}&'
        'offset={offset}&limit={limit}')
-COMMENT_URL = ('https://bugzilla.mozilla.org/rest/bug/{id}/comment?'
-               'token={token}')
+COMMENT_URL = u'https://bugzilla.mozilla.org/rest/bug/{id}/comment?token={token}'
 LIMIT = 100
 
 
@@ -121,8 +119,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 bug.council_member_assigned = False
                 bug.pending_mentor_validation = False
                 for flag in bdata.get('flags', []):
-                    if ((flag['status'] == '?' and
-                         flag['name'] == 'remo-approval')):
+                    if flag['status'] == '?' and flag['name'] == 'remo-approval':
                         automated_voting_trigger += 1
                         if 'Council Reviewer Assigned' in bug.whiteboard:
                             bug.council_member_assigned = True

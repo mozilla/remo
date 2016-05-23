@@ -34,12 +34,9 @@ LIST_NG_REPORTS_VALID_SORTS = {
 
 
 @never_cache
-@permission_check(permissions=['reports.add_ngreport',
-                               'reports.change_ngreport'],
-                  filter_field='display_name', owner_field='user',
-                  model=UserProfile)
-def edit_ng_report(request, display_name='', year=None,
-                   month=None, day=None, id=None):
+@permission_check(permissions=['reports.add_ngreport', 'reports.change_ngreport'],
+                  filter_field='display_name', owner_field='user', model=UserProfile)
+def edit_ng_report(request, display_name='', year=None, month=None, day=None, id=None):
     user = request.user
     created = False
     initial = {}
@@ -53,15 +50,13 @@ def edit_ng_report(request, display_name='', year=None,
                    'latitude': user.userprofile.lat,
                    'longitude': user.userprofile.lon}
     else:
-        report = get_object_or_404(
-            NGReport, pk=id, user__userprofile__display_name=display_name)
+        report = get_object_or_404(NGReport, pk=id, user__userprofile__display_name=display_name)
 
     if not created and report.activity.name in UNLISTED_ACTIVITIES:
         messages.warning(request, 'You cannot edit this report.')
         return redirect(report.get_absolute_url())
 
-    report_form = forms.NGReportForm(request.POST or None, instance=report,
-                                     initial=initial)
+    report_form = forms.NGReportForm(request.POST or None, instance=report, initial=initial)
     if report_form.is_valid():
         if created:
             report.user = user
@@ -122,8 +117,7 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
 
         # Process verification form
         else:
-            verification_form = forms.NGVerifyReportForm(request.POST,
-                                                         instance=report)
+            verification_form = forms.NGVerifyReportForm(request.POST, instance=report)
             if verification_form.is_valid():
                 if ((not request.user.is_authenticated()) or
                     (not request.user.groups.filter(
@@ -131,22 +125,18 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
                     messages.error(request, 'Permission denied.')
                     return redirect('main')
                 if verification_form.cleaned_data['verified_activity']:
-                    messages.success(request,
-                                     ('Activity verified successfully.'))
+                    messages.success(request, u'Activity verified successfully.')
                 else:
-                    messages.success(request,
-                                     ('Activiy invalidated successfully.'))
+                    messages.success(request, u'Activiy invalidated successfully.')
                 verification_form.save()
-                ctx_data['verification_form'] = forms.NGVerifyReportForm(
-                    instance=report)
+                ctx_data['verification_form'] = forms.NGVerifyReportForm(instance=report)
 
     return render(request, template, ctx_data)
 
 
 @never_cache
 @permission_check(permissions=['reports.delete_ngreport'],
-                  filter_field='display_name', owner_field='user',
-                  model=UserProfile)
+                  filter_field='display_name', owner_field='user', model=UserProfile)
 def delete_ng_report(request, display_name, year, month, day, id):
     user = get_object_or_404(User, userprofile__display_name=display_name)
     if request.method == 'POST':
@@ -161,10 +151,8 @@ def delete_ng_report(request, display_name, year, month, day, id):
 
 
 @permission_check(permissions=['reports.delete_ngreportcomment'],
-                  filter_field='display_name', owner_field='user',
-                  model=UserProfile)
-def delete_ng_report_comment(request, display_name, year, month, day, id,
-                             comment_id):
+                  filter_field='display_name', owner_field='user', model=UserProfile)
+def delete_ng_report_comment(request, display_name, year, month, day, id, comment_id):
     report = get_object_or_404(NGReport, pk=id)
     if comment_id and request.method == 'POST':
         report_comment = get_object_or_404(NGReportComment, pk=comment_id)
@@ -182,8 +170,7 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
     pageuser_is_mentor = False
 
     if mentor or rep:
-        user = get_object_or_404(
-            User, userprofile__display_name__iexact=mentor or rep)
+        user = get_object_or_404(User, userprofile__display_name__iexact=mentor or rep)
 
         if mentor:
             report_list = report_list.filter(mentor=user)
@@ -194,8 +181,7 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
             pageheader = 'Activities for %s' % user.get_full_name()
 
     if functional_area_slug:
-        functional_area = get_object_or_404(FunctionalArea,
-                                            slug=functional_area_slug)
+        functional_area = get_object_or_404(FunctionalArea, slug=functional_area_slug)
         report_list = report_list.filter(functional_areas=functional_area)
         pageheader += ' for area %s' % functional_area.name
 
@@ -208,8 +194,7 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
             year = int(year)
         except (TypeError, ValueError):
             raise Http404()
-        report_list = report_list.filter(report_date__year=year,
-                                         report_date__month=month)
+        report_list = report_list.filter(report_date__year=year, report_date__month=month)
 
     if 'query' in request.GET:
         query = request.GET['query'].strip()

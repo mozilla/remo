@@ -96,8 +96,7 @@ class Event(caching.base.CachingMixin, models.Model):
     timezone = models.CharField(max_length=100)
     venue = models.CharField(max_length=150)
     city = models.CharField(max_length=50, blank=False, default='')
-    region = models.CharField(max_length=50, null=False, blank=True,
-                              default='')
+    region = models.CharField(max_length=50, null=False, blank=True, default='')
     country = models.CharField(max_length=50)
     lat = models.FloatField()
     lon = models.FloatField()
@@ -106,13 +105,11 @@ class Event(caching.base.CachingMixin, models.Model):
     planning_pad_url = models.URLField(blank=True, max_length=300)
     estimated_attendance = models.PositiveIntegerField()
     actual_attendance = models.PositiveIntegerField(null=True, blank=True)
-    description = models.TextField(validators=[MaxLengthValidator(500),
-                                               MinLengthValidator(20)])
+    description = models.TextField(validators=[MaxLengthValidator(500), MinLengthValidator(20)])
     extra_content = models.TextField(blank=True, default='')
     mozilla_event = models.BooleanField(default=False)
     hashtag = models.CharField(max_length=50, blank=True, default='')
-    attendees = models.ManyToManyField(User, related_name='events_attended',
-                                       through='Attendance')
+    attendees = models.ManyToManyField(User, related_name='events_attended', through='Attendance')
     converted_visitors = models.PositiveIntegerField(editable=False, default=0)
     swag_bug = models.ForeignKey(Bug, null=True, blank=True,
                                  on_delete=models.SET_NULL,
@@ -124,15 +121,13 @@ class Event(caching.base.CachingMixin, models.Model):
     categories = models.ManyToManyField(FunctionalArea,
                                         related_name='events_categories',
                                         blank=True)
-    goals = models.ManyToManyField(EventGoal, related_name='events_goals',
-                                   blank=True)
+    goals = models.ManyToManyField(EventGoal, related_name='events_goals', blank=True)
     metrics = models.ManyToManyField(EventMetric, through='EventMetricOutcome')
     has_new_metrics = models.BooleanField(default=True)
     action_items = generic.GenericRelation(ActionItem)
     created_on = models.DateTimeField(auto_now_add=True, null=True)
     updated_on = models.DateTimeField(auto_now=True, null=True)
-    campaign = models.ForeignKey('reports.Campaign', related_name='events',
-                                 null=True, blank=False)
+    campaign = models.ForeignKey('reports.Campaign', related_name='events', null=True, blank=False)
 
     objects = caching.base.CachingManager()
 
@@ -170,8 +165,7 @@ class Event(caching.base.CachingMixin, models.Model):
             current_event = Event.objects.get(id=self.pk)
             if current_event.owner != self.owner:
                 model = ContentType.objects.get_for_model(self)
-                action_items = ActionItem.objects.filter(content_type=model,
-                                                         object_id=self.pk)
+                action_items = ActionItem.objects.filter(content_type=model, object_id=self.pk)
                 action_items.update(user=self.owner)
 
         super(Event, self).save(*args, **kwargs)
@@ -213,8 +207,7 @@ class Event(caching.base.CachingMixin, models.Model):
         country = Q(country=self.country)
         category = Q(categories__in=self.categories.all())
 
-        if ((events.filter(country, category).distinct().count() <
-             SIMILAR_EVENTS)):
+        if (events.filter(country, category).distinct().count() < SIMILAR_EVENTS):
             if events.filter(country).count() < SIMILAR_EVENTS:
                 return events.filter(category).distinct()
             return events.filter(country)
@@ -246,8 +239,7 @@ class EventMetricOutcome(models.Model):
     metric = models.ForeignKey(EventMetric)
     expected_outcome = models.IntegerField()
     outcome = models.IntegerField(null=True, blank=True)
-    details = models.TextField(validators=[MaxLengthValidator(1500)],
-                               blank=True, default='')
+    details = models.TextField(validators=[MaxLengthValidator(1500)], blank=True, default='')
 
     class Meta:
         verbose_name = 'event outcome'
@@ -259,9 +251,7 @@ class EventMetricOutcome(models.Model):
         # Resolve action items for post event metrics
         # if only is past event
         if self.event.is_past_event:
-            ActionItem.resolve(instance=self.event,
-                               user=self.event.owner,
-                               name=self.event.name)
+            ActionItem.resolve(instance=self.event, user=self.event.owner, name=self.event.name)
 
 
 class EventComment(models.Model):
@@ -282,8 +272,7 @@ class Metric(models.Model):
     outcome = models.CharField(max_length=300)
 
 
-@receiver(post_save, sender=EventComment,
-          dispatch_uid='email_event_owner_on_add_comment_signal')
+@receiver(post_save, sender=EventComment, dispatch_uid='email_event_owner_on_add_comment_signal')
 def email_event_owner_on_add_comment(sender, instance, **kwargs):
     """Email event owner when a comment is added to event."""
     subject = '[Event] User %s commented on event "%s"'
@@ -294,7 +283,6 @@ def email_event_owner_on_add_comment(sender, instance, **kwargs):
     ctx_data = {'event': event, 'owner': owner, 'user': instance.user,
                 'comment': instance.comment, 'event_url': event_url}
     if owner.userprofile.receive_email_on_add_event_comment:
-        subject = subject % (instance.user.get_full_name(),
-                             instance.event.name)
+        subject = subject % (instance.user.get_full_name(), instance.event.name)
         send_remo_mail.delay(subject=subject, recipients_list=[owner.id],
                              email_template=email_template, data=ctx_data)
