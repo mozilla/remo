@@ -10,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
+from django.utils.encoding import smart_text
 from django.utils.timezone import now
 
 from django_statsd.clients import statsd
@@ -75,7 +76,7 @@ class Poll(models.Model):
         return False
 
     def __unicode__(self):
-        return self.name
+        return smart_text(self.name)
 
     class Meta:
         ordering = ['-created_on']
@@ -167,7 +168,7 @@ class RangePoll(models.Model):
     poll = models.ForeignKey(Poll, related_name='range_polls')
 
     def __unicode__(self):
-        return self.name
+        return smart_text(self.name)
 
 
 class RangePollChoice(models.Model):
@@ -186,7 +187,7 @@ class RadioPoll(models.Model):
     poll = models.ForeignKey(Poll, related_name='radio_polls')
 
     def __unicode__(self):
-        return self.question
+        return smart_text(self.question)
 
 
 class RadioPollChoice(models.Model):
@@ -196,7 +197,7 @@ class RadioPollChoice(models.Model):
     radio_poll = models.ForeignKey(RadioPoll, related_name='answers')
 
     def __unicode__(self):
-        return self.answer
+        return smart_text(self.answer)
 
     class Meta:
         ordering = ['radio_poll__question']
