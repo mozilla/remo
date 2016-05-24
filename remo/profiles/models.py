@@ -13,6 +13,7 @@ from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 import caching.base
 from celery.task import control as celery_control
@@ -65,6 +66,7 @@ def _validate_mentor(data, **kwargs):
     return data
 
 
+@python_2_unicode_compatible
 class FunctionalArea(models.Model):
     """Mozilla functional areas."""
     name = models.CharField(max_length=100, unique=True)
@@ -83,7 +85,7 @@ class FunctionalArea(models.Model):
     def get_absolute_edit_url(self):
         return reverse('edit_functional_area', kwargs={'pk': self.id})
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -229,6 +231,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
         return [action_item]
 
 
+@python_2_unicode_compatible
 class UserAvatar(caching.base.CachingMixin, models.Model):
     """User Avatar Model."""
     user = models.OneToOneField(User)
@@ -237,10 +240,11 @@ class UserAvatar(caching.base.CachingMixin, models.Model):
 
     objects = caching.base.CachingManager()
 
-    def __unicode__(self):
-        return "UserAvatar:%s" % self.user.userprofile.display_name
+    def __str__(self):
+        return u'UserAvatar:%s' % self.user.userprofile.display_name
 
 
+@python_2_unicode_compatible
 class UserStatus(caching.base.CachingMixin, models.Model):
     """Model for inactiviy/unavailability data."""
     user = models.ForeignKey(User, related_name='status')
@@ -260,7 +264,7 @@ class UserStatus(caching.base.CachingMixin, models.Model):
             return True
         return False
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.get_full_name()
 
     def save(self, *args, **kwargs):

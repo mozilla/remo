@@ -11,7 +11,7 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.encoding import smart_text
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import now
 
 import caching.base
@@ -28,6 +28,7 @@ SIMILAR_EVENTS = 3
 POST_EVENT_METRICS_ACTION = 'Submit post event metrics for'
 
 
+@python_2_unicode_compatible
 class Attendance(models.Model):
     """Attendance Model."""
     user = models.ForeignKey(User)
@@ -35,10 +36,11 @@ class Attendance(models.Model):
     email = models.BooleanField(default=True)
     date_subscribed = models.DateTimeField(auto_now_add=True)
 
-    def __unicode__(self):
-        return smart_text('%s %s' % (self.user, self.event))
+    def __str__(self):
+        return u'%s %s' % (self.user, self.event)
 
 
+@python_2_unicode_compatible
 class EventGoal(models.Model):
     """Event Goals Model."""
     name = models.CharField(db_index=True, max_length=127, unique=True)
@@ -60,8 +62,8 @@ class EventGoal(models.Model):
     def get_absolute_edit_url(self):
         return reverse('edit_event_goal', kwargs={'pk': self.id})
 
-    def __unicode__(self):
-        return smart_text(self.name)
+    def __str__(self):
+        return self.name
 
     class Meta:
         ordering = ['name']
@@ -69,6 +71,7 @@ class EventGoal(models.Model):
         verbose_name_plural = 'event goals'
 
 
+@python_2_unicode_compatible
 class EventMetric(models.Model):
     """New generation event metrics."""
     name = models.CharField(max_length=100)
@@ -80,13 +83,14 @@ class EventMetric(models.Model):
     class Meta:
         ordering = ['name']
 
-    def __unicode__(self):
-        return smart_text(self.name)
+    def __str__(self):
+        return self.name
 
     def get_absolute_edit_url(self):
         return reverse('edit_metric', kwargs={'pk': self.id})
 
 
+@python_2_unicode_compatible
 class Event(caching.base.CachingMixin, models.Model):
     """Event Model."""
     name = models.CharField(max_length=100)
@@ -137,9 +141,9 @@ class Event(caching.base.CachingMixin, models.Model):
     def get_absolute_edit_url(self):
         return reverse('events_edit_event', kwargs={'slug': self.slug})
 
-    def __unicode__(self):
+    def __str__(self):
         """Event unicode representation."""
-        return smart_text(self.name)
+        return self.name
 
     def _make_local(self, obj):
         """Return a datetime obj localized in self.timezone."""
