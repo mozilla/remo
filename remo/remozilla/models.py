@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from datetime import datetime
 
 from django.db.models.loading import get_model
@@ -12,13 +13,13 @@ from django.utils.timezone import utc
 import caching.base
 
 
-ADD_RECEIPTS_ACTION = u'Add receipts for'
-ADD_REPORT_ACTION = u'Add report for'
-ADD_PHOTOS_ACTION = u'Add photos for'
-ADD_REPORTS_PHOTOS_ACTION = u'Add reports/photos for'
-REVIEW_BUDGET_REQUEST_ACTION = u'Review budget request'
-WAITING_MENTOR_VALIDATION_ACTION = u'Waiting mentor validation for'
-NEEDINFO_ACTION = u'Need info for'
+ADD_RECEIPTS_ACTION = 'Add receipts for'
+ADD_REPORT_ACTION = 'Add report for'
+ADD_PHOTOS_ACTION = 'Add photos for'
+ADD_REPORTS_PHOTOS_ACTION = 'Add reports/photos for'
+REVIEW_BUDGET_REQUEST_ACTION = 'Review budget request'
+WAITING_MENTOR_VALIDATION_ACTION = 'Waiting mentor validation for'
+NEEDINFO_ACTION = 'Need info for'
 BUG_ATTRS = ['waiting_receipts', 'waiting_report',
              'waiting_photos', 'waiting_report_photos',
              'council_member_assigned',
@@ -26,7 +27,7 @@ BUG_ATTRS = ['waiting_receipts', 'waiting_report',
 
 
 def _get_action_name(action_name, instance):
-    return u'{0} {1}'.format(action_name, instance.summary)
+    return '{0} {1}'.format(action_name, instance.summary)
 
 
 class Bug(caching.base.CachingMixin, models.Model):
@@ -56,7 +57,7 @@ class Bug(caching.base.CachingMixin, models.Model):
     objects = caching.base.CachingManager()
 
     def __unicode__(self):
-        return u'%d' % self.bug_id
+        return '%d' % self.bug_id
 
     @property
     def waiting_receipts(self):
@@ -139,7 +140,7 @@ class Bug(caching.base.CachingMixin, models.Model):
                                     ADD_REPORTS_PHOTOS_ACTION,
                                     REVIEW_BUDGET_REQUEST_ACTION,
                                     WAITING_MENTOR_VALIDATION_ACTION]
-                action_names = ([u'{0} {1}'.format(action, self.summary)
+                action_names = (['{0} {1}'.format(action, self.summary)
                                  for action in possible_actions])
                 # Resolve any non-valid action items.
                 invalid_actions = []
@@ -191,10 +192,7 @@ def update_budget_needinfo_action_items(sender, instance, action, pk_set, **kwar
     """Update ActionItem objects on needinfo change."""
 
     ActionItem = get_model('dashboard', 'ActionItem')
-    if isinstance(instance.summary, str):
-        name = '{0} {1}'.format(NEEDINFO_ACTION, instance.summary)
-    else:
-        name = u'{0} {1}'.format(NEEDINFO_ACTION, instance.summary)
+    name = '{0} {1}'.format(NEEDINFO_ACTION, instance.summary)
     if action == 'post_remove':
         for pk in pk_set:
             ActionItem.resolve(instance=instance, user=User.objects.get(pk=pk), name=name)
