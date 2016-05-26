@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from datetime import datetime, timedelta
 from urllib import quote
 
@@ -18,17 +20,17 @@ from remo.remozilla.utils import get_last_updated_date, set_last_updated_date
 COMPONENTS = ['Budget Requests', 'Community IT Requests', 'Mentorship',
               'Swag Requests', 'Planning']
 
-BUGZILLA_FIELDS = [u'is_confirmed', u'summary', u'creator', u'creation_time',
-                   u'component', u'whiteboard', u'op_sys', u'cc', u'id',
-                   u'status', u'assigned_to', u'resolution',
-                   u'last_change_time', u'flags']
+BUGZILLA_FIELDS = ['is_confirmed', 'summary', 'creator', 'creation_time',
+                   'component', 'whiteboard', 'op_sys', 'cc', 'id',
+                   'status', 'assigned_to', 'resolution',
+                   'last_change_time', 'flags']
 
-LOGIN_URL = u'https://bugzilla.mozilla.org/rest/login?login={username}&password={password}'
+LOGIN_URL = 'https://bugzilla.mozilla.org/rest/login?login={username}&password={password}'
 URL = ('https://bugzilla.mozilla.org/rest/bug?token={token}'
        '&product=Mozilla%20Reps&component={component}&'
        'include_fields={fields}&last_change_time={timestamp}&'
        'offset={offset}&limit={limit}')
-COMMENT_URL = u'https://bugzilla.mozilla.org/rest/bug/{id}/comment?token={token}'
+COMMENT_URL = 'https://bugzilla.mozilla.org/rest/bug/{id}/comment?token={token}'
 LIMIT = 100
 
 
@@ -95,12 +97,12 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
                 bug, created = Bug.objects.get_or_create(bug_id=bdata['id'])
 
-                bug.summary = unicode(bdata.get('summary', ''))
-                creator_email = unicode(bdata['creator'])
+                bug.summary = bdata.get('summary', '')
+                creator_email = bdata['creator']
                 bug.creator = get_object_or_none(User, email=creator_email)
                 bug.bug_creation_time = parse_bugzilla_time(bdata['creation_time'])
-                bug.component = unicode(bdata['component'])
-                bug.whiteboard = unicode(bdata.get('whiteboard', ''))
+                bug.component = bdata['component']
+                bug.whiteboard = bdata.get('whiteboard', '')
 
                 bug.cc.clear()
                 for email in bdata.get('cc', []):
@@ -110,8 +112,8 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
                 bug.assigned_to = get_object_or_none(
                     User, email=bdata['assigned_to'])
-                bug.status = unicode(bdata['status'])
-                bug.resolution = unicode(bdata.get('resolution', ''))
+                bug.status = bdata['status']
+                bug.resolution = bdata.get('resolution', '')
                 bug.bug_last_change_time = parse_bugzilla_time(bdata.get('last_change_time'))
 
                 automated_voting_trigger = 0
@@ -139,11 +141,11 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 if automated_voting_trigger == 2 and waffle.switch_is_active('automated_polls'):
                     bug.council_vote_requested = True
 
-                unicode_id = unicode(bdata['id'])
+                unicode_id = str(bdata['id'])
                 bug_comments = comments['bugs'][unicode_id]['comments']
                 if bug_comments and bug_comments[0].get('text', ''):
                     # Enforce unicode encoding.
-                    bug.first_comment = unicode(bug_comments[0]['text'])
+                    bug.first_comment = bug_comments[0]['text']
 
                 bug.save()
 
