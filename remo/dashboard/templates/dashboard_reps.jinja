@@ -39,25 +39,23 @@
             </tr>
           </thead>
           <tbody>
-            {% cache action_items %}
-              {% for action_item in action_items %}
-                <tr>
-                  <td>
-                    <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
-                  </td>
-                  <td>
-                    {% if action_item.due_date %}
-                      <span class="date-range">
-                        {{ action_item.due_date|strftime('%d %b %Y') }}
-                      </span>
-                    {% endif %}
-                  </td>
-                  <td class="priority-{{ action_item.get_priority_display()|lower }}">
-                    {{ action_item.get_priority_display() }}
-                  </td>
-                </tr>
-              {% endfor %}
-            {% endcache %}
+            {% for action_item in action_items %}
+              <tr>
+                <td>
+                  <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
+                </td>
+                <td>
+                  {% if action_item.due_date %}
+                    <span class="date-range">
+                      {{ action_item.due_date|strftime('%d %b %Y') }}
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="priority-{{ action_item.get_priority_display()|lower }}">
+                  {{ action_item.get_priority_display() }}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
         <div class="dashboard-priority-reference">
@@ -105,30 +103,28 @@
             </tr>
           </thead>
           <tbody>
-            {% cache mentees_action_items %}
-              {% for action_item in mentees_action_items %}
-                <tr>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    action_item.user|get_display_name) }}">
-                      {{ action_item.user.get_full_name() }}
-                  </td>
-                  <td>
-                    <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
-                  </td>
-                  <td>
-                    {% if action_item.due_date %}
-                      <span class="date-range">
-                        {{ action_item.due_date|strftime('%d %b %Y') }}
-                      </span>
-                    {% endif %}
-                  </td>
-                  <td class="priority-{{ action_item.get_priority_display()|lower }}">
-                    {{ action_item.get_priority_display() }}
-                  </td>
-                </tr>
-              {% endfor %}
-            {% endcache %}
+            {% for action_item in mentees_action_items %}
+              <tr>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                           action_item.user|get_display_name) }}">
+                    {{ action_item.user.get_full_name() }}
+                </td>
+                <td>
+                  <a href="{{ action_item.get_absolute_url() }}">{{ action_item }}</a>
+                </td>
+                <td>
+                  {% if action_item.due_date %}
+                    <span class="date-range">
+                      {{ action_item.due_date|strftime('%d %b %Y') }}
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="priority-{{ action_item.get_priority_display()|lower }}">
+                  {{ action_item.get_priority_display() }}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
         <div class="dashboard-priority-reference">
@@ -323,29 +319,27 @@
             </tr>
           </thead>
           <tbody>
-            {% cache mentees_ng_reportees %}
-              {% for reportee in mentees_ng_reportees %}
-                <tr>
-                  <td class="{{ reportee|get_activity_level }}
-                      {% if reportee|user_is_unavailable %}
-                        unavailable
-                      {% endif %}">
-                    <a href="{{ url('profiles_view_profile',
-                                    reportee|get_display_name) }}"
-                       {% if reportee|user_is_unavailable %}
-                         title="Rep Unavailable"
-                       {% endif %}>
-                      {{ reportee.get_full_name() }}
-                    </a>
-                  </td>
-                  <td>{{ count_ng_reports(reportee, current_streak=True) }} weeks</td>
-                  <td>{{ count_ng_reports(reportee, longest_streak=True) }} weeks</td>
-                  <td>{{ count_ng_reports(reportee, period=4) }} activities</td>
-                  <td>{{ count_ng_reports(reportee, period=8) }} activities</td>
-                  <td>{{ count_ng_reports(reportee) }} activities</td>
-                </tr>
-              {% endfor %}
-            {% endcache %}
+            {% for reportee in mentees_ng_reportees %}
+              <tr>
+                <td class="{{ reportee|get_activity_level }}
+                           {% if reportee|user_is_unavailable %}
+                           unavailable
+                           {% endif %}">
+                  <a href="{{ url('profiles_view_profile',
+                           reportee|get_display_name) }}"
+                    {% if reportee|user_is_unavailable %}
+                    title="Rep Unavailable"
+                    {% endif %}>
+                    {{ reportee.get_full_name() }}
+                  </a>
+                </td>
+                <td>{{ count_ng_reports(reportee, current_streak=True) }} weeks</td>
+                <td>{{ count_ng_reports(reportee, longest_streak=True) }} weeks</td>
+                <td>{{ count_ng_reports(reportee, period=4) }} activities</td>
+                <td>{{ count_ng_reports(reportee, period=8) }} activities</td>
+                <td>{{ count_ng_reports(reportee) }} activities</td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
         <div class="inactive-reference">
@@ -434,40 +428,38 @@
           </tr>
         </thead>
         <tbody>
-          {% cache my_budget_requests %}
-            {% for bug in my_budget_requests %}
-              <tr class='my-budget-request'>
-                <td>
-                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                    {{ bug.bug_id }}
-                  </a>
-                </td>
-                <td>
-                  <a href="{{ url('profiles_view_profile',
-                                  bug.creator|get_display_name) }}">
-                    {{ bug.creator|get_display_name }}
-                  </a>
-                </td>
-                <td>
-                  <div class="hide-for-small">
-                    <div class="overflow-fix" title="{{ bug.summary }}">
-                      {{ bug.summary }}
-                    </div>
-                  </div>
-                  <div class="show-for-small">
+          {% for bug in my_budget_requests %}
+            <tr class='my-budget-request'>
+              <td>
+                <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                  {{ bug.bug_id }}
+                </a>
+              </td>
+              <td>
+                <a href="{{ url('profiles_view_profile',
+                         bug.creator|get_display_name) }}">
+                  {{ bug.creator|get_display_name }}
+                </a>
+              </td>
+              <td>
+                <div class="hide-for-small">
+                  <div class="overflow-fix" title="{{ bug.summary }}">
                     {{ bug.summary }}
                   </div>
-                </td>
-                <td>{{ bug.whiteboard }}</td>
-                <td>{{ bug.status }}</td>
-                <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                    data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
-                    data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
-                  {{ bug.bug_last_change_time|format_datetime }}
-                </td>
-              </tr>
-            {% endfor %}
-          {% endcache %}
+                </div>
+                <div class="show-for-small">
+                  {{ bug.summary }}
+                </div>
+              </td>
+              <td>{{ bug.whiteboard }}</td>
+              <td>{{ bug.status }}</td>
+              <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                {{ bug.bug_last_change_time|format_datetime }}
+              </td>
+            </tr>
+          {% endfor %}
         </tbody>
       </table>
     {% else %}
@@ -502,40 +494,38 @@
             </tr>
           </thead>
           <tbody>
-            {% cache mentees_budget_requests %}
-              {% for bug in mentees_budget_requests %}
-                <tr class='my-budget-request'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>
-                    <div class="hide-for-small">
-                      <div class="overflow-fix" title="{{ bug.summary }}">
-                        {{ bug.summary }}
-                      </div>
-                    </div>
-                    <div class="show-for-small">
+            {% for bug in mentees_budget_requests %}
+              <tr class='my-budget-request'>
+                <td>
+                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ bug.bug_id }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                           bug.creator|get_display_name) }}">
+                    {{ bug.creator|get_display_name }}
+                  </a>
+                </td>
+                <td>
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
                       {{ bug.summary }}
                     </div>
-                  </td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
-                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
-                    {{ bug.bug_last_change_time|format_datetime }}
-                  </td>
-                </tr>
-              {% endfor %}
-            {% endcache %}
+                  </div>
+                  <div class="show-for-small">
+                    {{ bug.summary }}
+                  </div>
+                </td>
+                <td>{{ bug.whiteboard }}</td>
+                <td>{{ bug.status }}</td>
+                <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                  data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                  data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                  {{ bug.bug_last_change_time|format_datetime }}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       {% else %}
@@ -563,40 +553,38 @@
             </tr>
           </thead>
           <tbody>
-            {% cache all_budget_requests %}
-              {% for bug in all_budget_requests %}
-                <tr class='my-budget-request'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>
-                    <div class="hide-for-small">
-                      <div class="overflow-fix" title="{{ bug.summary }}">
-                        {{ bug.summary }}
-                      </div>
-                    </div>
-                    <div class="show-for-small">
+            {% for bug in all_budget_requests %}
+              <tr class='my-budget-request'>
+                <td>
+                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ bug.bug_id }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                           bug.creator|get_display_name) }}">
+                    {{ bug.creator|get_display_name }}
+                  </a>
+                </td>
+                <td>
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
                       {{ bug.summary }}
                     </div>
-                  </td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
-                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
-                    {{ bug.bug_last_change_time|format_datetime }}
-                  </td>
-                </tr>
-              {% endfor %}
-            {% endcache %}
+                  </div>
+                  <div class="show-for-small">
+                    {{ bug.summary }}
+                  </div>
+                </td>
+                <td>{{ bug.whiteboard }}</td>
+                <td>{{ bug.status }}</td>
+                <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                  data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                  data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                  {{ bug.bug_last_change_time|format_datetime }}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       {% else %}
@@ -671,40 +659,38 @@
           </tr>
         </thead>
         <tbody>
-          {% cache my_swag_requests %}
-            {% for bug in my_swag_requests %}
-              <tr class='my-swag-request'>
-                <td>
-                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                    {{ bug.bug_id }}
-                  </a>
-                </td>
-                <td>
-                  <a href="{{ url('profiles_view_profile',
-                                  bug.creator|get_display_name) }}">
-                    {{ bug.creator|get_display_name }}
-                  </a>
-                </td>
-                <td>
-                  <div class="hide-for-small">
-                    <div class="overflow-fix" title="{{ bug.summary }}">
-                      {{ bug.summary }}
-                    </div>
-                  </div>
-                  <div class="show-for-small">
+          {% for bug in my_swag_requests %}
+            <tr class='my-swag-request'>
+              <td>
+                <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                  {{ bug.bug_id }}
+                </a>
+              </td>
+              <td>
+                <a href="{{ url('profiles_view_profile',
+                         bug.creator|get_display_name) }}">
+                  {{ bug.creator|get_display_name }}
+                </a>
+              </td>
+              <td>
+                <div class="hide-for-small">
+                  <div class="overflow-fix" title="{{ bug.summary }}">
                     {{ bug.summary }}
                   </div>
-                </td>
-                <td>{{ bug.whiteboard }}</td>
-                <td>{{ bug.status }}</td>
-                <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                    data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
-                    data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
-                  {{ bug.bug_last_change_time|format_datetime }}
-                </td>
-              </tr>
-            {% endfor %}
-          {% endcache %}
+                </div>
+                <div class="show-for-small">
+                  {{ bug.summary }}
+                </div>
+              </td>
+              <td>{{ bug.whiteboard }}</td>
+              <td>{{ bug.status }}</td>
+              <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                {{ bug.bug_last_change_time|format_datetime }}
+              </td>
+            </tr>
+          {% endfor %}
         </tbody>
       </table>
     {% else %}
@@ -739,40 +725,38 @@
             </tr>
           </thead>
           <tbody>
-            {% cache mentees_swag_requests %}
-              {% for bug in mentees_swag_requests %}
-                <tr class='my-swag-request'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>
-                    <div class="hide-for-small">
-                      <div class="overflow-fix" title="{{ bug.summary }}">
-                        {{ bug.summary }}
-                      </div>
-                    </div>
-                    <div class="show-for-small">
+            {% for bug in mentees_swag_requests %}
+              <tr class='my-swag-request'>
+                <td>
+                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ bug.bug_id }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                           bug.creator|get_display_name) }}">
+                    {{ bug.creator|get_display_name }}
+                  </a>
+                </td>
+                <td>
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
                       {{ bug.summary }}
                     </div>
-                  </td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
-                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
-                    {{ bug.bug_last_change_time|format_datetime }}
-                  </td>
-                </tr>
-              {% endfor %}
-            {% endcache %}
+                  </div>
+                  <div class="show-for-small">
+                    {{ bug.summary }}
+                  </div>
+                </td>
+                <td>{{ bug.whiteboard }}</td>
+                <td>{{ bug.status }}</td>
+                <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                  data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                  data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                  {{ bug.bug_last_change_time|format_datetime }}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       {% else %}
@@ -800,40 +784,38 @@
             </tr>
           </thead>
           <tbody>
-            {% cache all_swag_requests %}
-              {% for bug in all_swag_requests %}
-                <tr class='my-swag-request'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>
-                    <div class="hide-for-small">
-                      <div class="overflow-fix" title="{{ bug.summary }}">
-                        {{ bug.summary }}
-                      </div>
-                    </div>
-                    <div class="show-for-small">
+            {% for bug in all_swag_requests %}
+              <tr class='my-swag-request'>
+                <td>
+                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ bug.bug_id }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                           bug.creator|get_display_name) }}">
+                    {{ bug.creator|get_display_name }}
+                  </a>
+                </td>
+                <td>
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
                       {{ bug.summary }}
                     </div>
-                  </td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
-                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
-                    {{ bug.bug_last_change_time|format_datetime }}
-                  </td>
-                </tr>
-              {% endfor %}
-            {% endcache %}
+                  </div>
+                  <div class="show-for-small">
+                    {{ bug.summary }}
+                  </div>
+                </td>
+                <td>{{ bug.whiteboard }}</td>
+                <td>{{ bug.status }}</td>
+                <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                  data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                  data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                  {{ bug.bug_last_change_time|format_datetime }}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       {% else %}
@@ -886,40 +868,38 @@
             </tr>
           </thead>
           <tbody>
-            {% cache my_cit_requests %}
-              {% for bug in my_cit_requests %}
-                <tr class='my-cit-request'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>
-                    <div class="hide-for-small">
-                      <div class="overflow-fix" title="{{ bug.summary }}">
-                        {{ bug.summary }}
-                      </div>
-                    </div>
-                    <div class="show-for-small">
+            {% for bug in my_cit_requests %}
+              <tr class='my-cit-request'>
+                <td>
+                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ bug.bug_id }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                           bug.creator|get_display_name) }}">
+                    {{ bug.creator|get_display_name }}
+                  </a>
+                </td>
+                <td>
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
                       {{ bug.summary }}
                     </div>
-                  </td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}"
-                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}">
-                    {{ bug.bug_last_change_time|format_datetime }}
-                  </td>
-                </tr>
-              {% endfor %}
-            {% endcache %}
+                  </div>
+                  <div class="show-for-small">
+                    {{ bug.summary }}
+                  </div>
+                </td>
+                <td>{{ bug.whiteboard }}</td>
+                <td>{{ bug.status }}</td>
+                <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                  data-time="{{ bug.bug_last_change_time|format_datetime_iso }}"
+                  data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}">
+                  {{ bug.bug_last_change_time|format_datetime }}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       {% else %}
@@ -956,41 +936,39 @@
             </tr>
           </thead>
           <tbody>
-            {% cache my_mentorship_requests %}
-              {% for bug in my_mentorship_requests %}
-                <tr class='my-mentorship-request
-                    {{ bug.assigned_to|ifeq(request.user, 'assigned-request') }}'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>
-                    <div class="hide-for-small">
-                      <div class="overflow-fix" title="{{ bug.summary }}">
-                        {{ bug.summary }}
-                      </div>
-                    </div>
-                    <div class="show-for-small">
+            {% for bug in my_mentorship_requests %}
+              <tr class='my-mentorship-request
+                         {{ bug.assigned_to|ifeq(request.user, 'assigned-request') }}'>
+                <td>
+                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ bug.bug_id }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                           bug.creator|get_display_name) }}">
+                    {{ bug.creator|get_display_name }}
+                  </a>
+                </td>
+                <td>
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
                       {{ bug.summary }}
                     </div>
-                  </td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
-                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
-                    {{ bug.bug_last_change_time|format_datetime }}
-                  </td>
-                </tr>
-              {% endfor %}
-            {% endcache %}
+                  </div>
+                  <div class="show-for-small">
+                    {{ bug.summary }}
+                  </div>
+                </td>
+                <td>{{ bug.whiteboard }}</td>
+                <td>{{ bug.status }}</td>
+                <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                  data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                  data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                  {{ bug.bug_last_change_time|format_datetime }}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
     {% else %}
@@ -1027,41 +1005,39 @@
             </tr>
           </thead>
           <tbody>
-            {% cache my_planning_requests %}
-              {% for bug in my_planning_requests %}
-                <tr class='my-planning-request
-                    {{ bug.assigned_to|ifeq(request.user, 'assigned-request') }}'>
-                  <td>
-                    <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
-                      {{ bug.bug_id }}
-                    </a>
-                  </td>
-                  <td>
-                    <a href="{{ url('profiles_view_profile',
-                                    bug.creator|get_display_name) }}">
-                      {{ bug.creator|get_display_name }}
-                    </a>
-                  </td>
-                  <td>
-                    <div class="hide-for-small">
-                      <div class="overflow-fix" title="{{ bug.summary }}">
-                        {{ bug.summary }}
-                      </div>
-                    </div>
-                    <div class="show-for-small">
+            {% for bug in my_planning_requests %}
+              <tr class='my-planning-request
+                         {{ bug.assigned_to|ifeq(request.user, 'assigned-request') }}'>
+                <td>
+                  <a href="{{ bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ bug.bug_id }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                           bug.creator|get_display_name) }}">
+                    {{ bug.creator|get_display_name }}
+                  </a>
+                </td>
+                <td>
+                  <div class="hide-for-small">
+                    <div class="overflow-fix" title="{{ bug.summary }}">
                       {{ bug.summary }}
                     </div>
-                  </td>
-                  <td>{{ bug.whiteboard }}</td>
-                  <td>{{ bug.status }}</td>
-                  <td title="{{ bug.bug_last_change_time|format_datetime }}"
-                      data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
-                      data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
-                    {{ bug.bug_last_change_time|format_datetime }}
-                  </td>
-                </tr>
-              {% endfor %}
-            {% endcache %}
+                  </div>
+                  <div class="show-for-small">
+                    {{ bug.summary }}
+                  </div>
+                </td>
+                <td>{{ bug.whiteboard }}</td>
+                <td>{{ bug.status }}</td>
+                <td title="{{ bug.bug_last_change_time|format_datetime }}"
+                  data-order-by="{{ bug.bug_last_change_time|format_datetime_unix }}"
+                  data-time="{{ bug.bug_last_change_time|format_datetime_iso }}">
+                  {{ bug.bug_last_change_time|format_datetime }}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       {% else %}
