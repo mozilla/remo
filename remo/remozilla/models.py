@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from datetime import datetime
 
 from django.db.models.loading import get_model
@@ -57,7 +56,7 @@ class Bug(caching.base.CachingMixin, models.Model):
     objects = caching.base.CachingManager()
 
     def __unicode__(self):
-        return '%d' % self.bug_id
+        return u'%d' % self.bug_id
 
     @property
     def waiting_receipts(self):
