@@ -74,10 +74,6 @@ class Bug(caching.base.CachingMixin, models.Model):
     def waiting_photos(self):
         return '[waiting photos]' in self.whiteboard
 
-    @property
-    def get_summary(self):
-        return u'{0}'.format(self.summary)
-
     def get_action_items(self):
         # Avoid circular dependency
         from remo.base.templatetags.helpers import user_is_rep
