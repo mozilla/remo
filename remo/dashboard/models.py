@@ -73,7 +73,7 @@ class ActionItem(models.Model):
             if not action_items.exists():
                 data = {
                     'content_object': instance,
-                    'name': item.name,
+                    'name': smart_text(item.name),
                     'user': item.user,
                     'priority': item.priority,
                     'due_date': item.due_date
