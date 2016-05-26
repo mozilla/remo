@@ -12,7 +12,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.urlresolvers import reverse
 from django.template import defaultfilters
 from django.template.loader import render_to_string
-from django.utils.encoding import smart_str
+from django.utils.encoding import smart_str, smart_text
 from django.utils.html import strip_tags
 
 import jinja2
@@ -367,3 +367,9 @@ def nl2br(string):
 def ifeq(a, b, text):
     """Return ``text`` if ``a == b``."""
     return jinja2.Markup(text if a == b else '')
+
+
+# For unicodedecode error debugging purposes
+@library.filter
+def get_smart_text(text):
+    return smart_text(text)
