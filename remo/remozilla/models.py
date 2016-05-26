@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from datetime import datetime
 
 from django.db.models.loading import get_model
