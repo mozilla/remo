@@ -39,7 +39,6 @@
             </tr>
           </thead>
           <tbody>
-            {% cache action_items %}
               {% for action_item in action_items %}
                 <tr>
                   <td>
@@ -57,7 +56,6 @@
                   </td>
                 </tr>
               {% endfor %}
-            {% endcache %}
           </tbody>
         </table>
         <div class="dashboard-priority-reference">
@@ -105,7 +103,6 @@
             </tr>
           </thead>
           <tbody>
-            {% cache mentees_action_items %}
               {% for action_item in mentees_action_items %}
                 <tr>
                   <td>
@@ -128,7 +125,6 @@
                   </td>
                 </tr>
               {% endfor %}
-            {% endcache %}
           </tbody>
         </table>
         <div class="dashboard-priority-reference">
@@ -323,7 +319,6 @@
             </tr>
           </thead>
           <tbody>
-            {% cache mentees_ng_reportees %}
               {% for reportee in mentees_ng_reportees %}
                 <tr>
                   <td class="{{ reportee|get_activity_level }}
@@ -345,7 +340,6 @@
                   <td>{{ count_ng_reports(reportee) }} activities</td>
                 </tr>
               {% endfor %}
-            {% endcache %}
           </tbody>
         </table>
         <div class="inactive-reference">
@@ -434,7 +428,6 @@
           </tr>
         </thead>
         <tbody>
-          {% cache my_budget_requests %}
             {% for bug in my_budget_requests %}
               <tr class='my-budget-request'>
                 <td>
@@ -467,7 +460,6 @@
                 </td>
               </tr>
             {% endfor %}
-          {% endcache %}
         </tbody>
       </table>
     {% else %}
@@ -502,7 +494,6 @@
             </tr>
           </thead>
           <tbody>
-            {% cache mentees_budget_requests %}
               {% for bug in mentees_budget_requests %}
                 <tr class='my-budget-request'>
                   <td>
@@ -535,7 +526,6 @@
                   </td>
                 </tr>
               {% endfor %}
-            {% endcache %}
           </tbody>
         </table>
       {% else %}
@@ -563,7 +553,6 @@
             </tr>
           </thead>
           <tbody>
-            {% cache all_budget_requests %}
               {% for bug in all_budget_requests %}
                 <tr class='my-budget-request'>
                   <td>
@@ -596,7 +585,6 @@
                   </td>
                 </tr>
               {% endfor %}
-            {% endcache %}
           </tbody>
         </table>
       {% else %}
@@ -671,7 +659,6 @@
           </tr>
         </thead>
         <tbody>
-          {% cache my_swag_requests %}
             {% for bug in my_swag_requests %}
               <tr class='my-swag-request'>
                 <td>
@@ -704,7 +691,6 @@
                 </td>
               </tr>
             {% endfor %}
-          {% endcache %}
         </tbody>
       </table>
     {% else %}
@@ -739,7 +725,6 @@
             </tr>
           </thead>
           <tbody>
-            {% cache mentees_swag_requests %}
               {% for bug in mentees_swag_requests %}
                 <tr class='my-swag-request'>
                   <td>
@@ -772,7 +757,6 @@
                   </td>
                 </tr>
               {% endfor %}
-            {% endcache %}
           </tbody>
         </table>
       {% else %}
@@ -800,7 +784,6 @@
             </tr>
           </thead>
           <tbody>
-            {% cache all_swag_requests %}
               {% for bug in all_swag_requests %}
                 <tr class='my-swag-request'>
                   <td>
@@ -833,7 +816,6 @@
                   </td>
                 </tr>
               {% endfor %}
-            {% endcache %}
           </tbody>
         </table>
       {% else %}
@@ -886,7 +868,6 @@
             </tr>
           </thead>
           <tbody>
-            {% cache my_cit_requests %}
               {% for bug in my_cit_requests %}
                 <tr class='my-cit-request'>
                   <td>
@@ -919,7 +900,6 @@
                   </td>
                 </tr>
               {% endfor %}
-            {% endcache %}
           </tbody>
         </table>
       {% else %}
@@ -956,7 +936,6 @@
             </tr>
           </thead>
           <tbody>
-            {% cache my_mentorship_requests %}
               {% for bug in my_mentorship_requests %}
                 <tr class='my-mentorship-request
                     {{ bug.assigned_to|ifeq(request.user, 'assigned-request') }}'>
@@ -990,7 +969,6 @@
                   </td>
                 </tr>
               {% endfor %}
-            {% endcache %}
           </tbody>
         </table>
     {% else %}
@@ -1027,7 +1005,6 @@
             </tr>
           </thead>
           <tbody>
-            {% cache my_planning_requests %}
               {% for bug in my_planning_requests %}
                 <tr class='my-planning-request
                     {{ bug.assigned_to|ifeq(request.user, 'assigned-request') }}'>
@@ -1061,7 +1038,6 @@
                   </td>
                 </tr>
               {% endfor %}
-            {% endcache %}
           </tbody>
         </table>
       {% else %}
