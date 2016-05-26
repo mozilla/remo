@@ -37,11 +37,11 @@ class RemozillaActionItems(RemoTestCase):
 
         whiteboard = '[waiting receipts]'
         user = UserFactory.create(groups=['Rep'])
-        bug = BugFactory.create(whiteboard=whiteboard, assigned_to=user, summary="À summary")
+        bug = BugFactory.create(whiteboard=whiteboard, assigned_to=user, summary=u'À summary')
 
         items = ActionItem.objects.filter(content_type=model, object_id=bug.id)
         eq_(items.count(), 1)
-        eq_(items[0].name.encode('utf-8'), 'Add receipts for ' + bug.summary)
+        eq_(items[0].name, 'Add receipts for ' + bug.summary)
         eq_(items[0].user, user)
         eq_(items[0].priority, ActionItem.NORMAL)
 
