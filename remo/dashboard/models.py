@@ -89,10 +89,8 @@ class ActionItem(models.Model):
                                                  user=user,
                                                  resolved=False)
                        .values_list('id', flat=True))
-        action_items = (ActionItem.objects.filter(pk__in=items)
-                                          .filter(name__icontains=name))
+        action_items = ActionItem.objects.filter(pk__in=items).filter(name__icontains=name)
         action_items.update(completed=True, resolved=True)
 
 
-post_save.connect(ActionItem.create, sender=Bug,
-                  dispatch_uid='create_action_items_bugzilla_sig')
+post_save.connect(ActionItem.create, sender=Bug, dispatch_uid='create_action_items_bugzilla_sig')

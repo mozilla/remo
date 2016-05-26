@@ -34,10 +34,10 @@ class RangePollChoiceVoteForm(happyforms.Form):
         super(RangePollChoiceVoteForm, self).__init__(*args, **kwargs)
         nominees = tuple((i, '%d' % i) for i in range(0, choices.count() + 1))
         for choice in choices:
-            self.fields['range_poll__%s' % str(choice.id)] = (
-                forms.ChoiceField(widget=forms.Select(),
-                                  choices=nominees,
-                                  label=choice.nominee.get_full_name()))
+            self.fields['range_poll__%s' % str(choice.id)] = forms.ChoiceField(
+                widget=forms.Select(),
+                choices=nominees,
+                label=choice.nominee.get_full_name())
 
     def clean(self, *args, **kwargs):
         """Custom clean method."""
@@ -53,8 +53,7 @@ class RangePollChoiceVoteForm(happyforms.Form):
     def save(self, *args, **kwargs):
         for nominee_id, votes in self.cleaned_data.items():
             nominee_id = nominee_id.split('__')[1]
-            (RangePollChoice.objects
-             .filter(pk=nominee_id).update(votes=F('votes') + int(votes)))
+            RangePollChoice.objects.filter(pk=nominee_id).update(votes=F('votes') + int(votes))
 
 
 class RadioPollChoiceVoteForm(happyforms.Form):
@@ -70,25 +69,22 @@ class RadioPollChoiceVoteForm(happyforms.Form):
 
         choices = ((('', '----'),) +
                    tuple(radio_poll.answers.values_list('id', 'answer')))
-        self.fields['radio_poll__%s' % str(radio_poll.id)] = (
-            forms.ChoiceField(widget=forms.Select(),
-                              choices=choices,
-                              label=radio_poll.question))
+        self.fields['radio_poll__%s' % str(radio_poll.id)] = forms.ChoiceField(
+            widget=forms.Select(),
+            choices=choices,
+            label=radio_poll.question)
 
     def save(self, *args, **kwargs):
         radio_poll_choice_id = self.cleaned_data.values()[0]
         if radio_poll_choice_id != 'None':
-            (RadioPollChoice.objects
-             .filter(pk=radio_poll_choice_id).update(votes=F('votes') + 1))
-            radio_poll_choice = RadioPollChoice.objects.get(
-                pk=radio_poll_choice_id)
+            RadioPollChoice.objects.filter(pk=radio_poll_choice_id).update(votes=F('votes') + 1)
+            radio_poll_choice = RadioPollChoice.objects.get(pk=radio_poll_choice_id)
             poll = radio_poll_choice.radio_poll.poll
             if poll.automated_poll and self.user:
                 commenter = User.objects.get(username='remobot')
                 comment = '**{0}**  voted: **{1}**'.format(
                     self.user, radio_poll_choice.answer)
-                PollComment.objects.create(poll=poll, user=commenter,
-                                           comment=comment)
+                PollComment.objects.create(poll=poll, user=commenter, comment=comment)
 
 
 class PollEditForm(happyforms.ModelForm):
@@ -106,9 +102,8 @@ class PollEditForm(happyforms.ModelForm):
         instance = self.instance
         # Set the year portion of the widget
         end_year = getattr(self.instance.end, 'year', now().year)
-        self.fields['end_form'] = forms.DateTimeField(
-            widget=SplitSelectDateTimeWidget(
-                years=range(end_year, now().year + 10), minute_step=5),
+        self.fields['end_form'] = forms.DateTimeField(widget=SplitSelectDateTimeWidget(
+            years=range(end_year, now().year + 10), minute_step=5),
             validators=[validate_datetime])
         if self.instance.end:
             self.fields['end_form'].initial = instance.end
@@ -141,8 +136,7 @@ class PollAddForm(PollEditForm):
     """Poll Add Form."""
     start = forms.DateTimeField(required=False)
     valid_groups = forms.ModelChoiceField(
-        queryset=Group.objects.all().exclude(Q(name='Mozillians') |
-                                             Q(name='Alumni')),
+        queryset=Group.objects.all().exclude(Q(name='Mozillians') | Q(name='Alumni')),
         error_messages={'required': 'Please select an option from the list.'})
 
     def __init__(self, *args, **kwargs):
@@ -157,9 +151,8 @@ class PollAddForm(PollEditForm):
         instance = self.instance
         # Set the year portion of the widget
         start_year = getattr(self.instance.start, 'year', now().year)
-        self.fields['start_form'] = forms.DateTimeField(
-            widget=SplitSelectDateTimeWidget(
-                years=range(start_year, now().year + 10), minute_step=5),
+        self.fields['start_form'] = forms.DateTimeField(widget=SplitSelectDateTimeWidget(
+            years=range(start_year, now().year + 10), minute_step=5),
             validators=[validate_datetime])
 
         if self.instance.start:
@@ -206,8 +199,7 @@ class PollAddForm(PollEditForm):
 
     class Meta:
         model = Poll
-        fields = ['name', 'start', 'end', 'valid_groups', 'description',
-                  'comments_allowed']
+        fields = ['name', 'start', 'end', 'valid_groups', 'description', 'comments_allowed']
         widgets = {'start': SplitSelectDateTimeWidget(),
                    'end': SplitSelectDateTimeWidget()}
 
@@ -248,10 +240,9 @@ class BaseRangePollChoiceInlineFormset(BaseInlineFormSet):
         model = RangePollChoice
 
 
-RangePollChoiceFormset = (
-    inlineformset_factory(RangePoll, RangePollChoice,
-                          formset=BaseRangePollChoiceInlineFormset, extra=1,
-                          exclude=('votes',), can_delete=True))
+RangePollChoiceFormset = inlineformset_factory(RangePoll, RangePollChoice,
+                                               formset=BaseRangePollChoiceInlineFormset, extra=1,
+                                               exclude=('votes',), can_delete=True)
 
 
 class BaseRangePollInlineFormSet(BaseInlineFormSet):
@@ -281,10 +272,9 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
         data = self.data if self.data and index is not None else None
 
         # store the formset in the .nested property
-        form.nested = [
-            RangePollChoiceFormset(data=data, instance=instance,
-                                   prefix='%s_range_choices' % pk_value,
-                                   user_list=self._user_list)]
+        form.nested = [RangePollChoiceFormset(data=data, instance=instance,
+                                              prefix='%s_range_choices' % pk_value,
+                                              user_list=self._user_list)]
 
     def is_valid(self):
         """Validate nested forms."""
@@ -307,8 +297,7 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
 
         Saves and returns a new model instance for the given form.
         """
-        instance = (super(BaseRangePollInlineFormSet, self)
-                    .save_new(form, commit=commit))
+        instance = super(BaseRangePollInlineFormSet, self).save_new(form, commit=commit)
 
         # Updated form's instance ref
         form.instance = instance
@@ -376,8 +365,7 @@ class BaseRadioPollChoiceInlineFormset(BaseInlineFormSet):
             if 'answer' in form.cleaned_data:
                 answer = form.cleaned_data['answer']
                 if answer in answers:
-                    self.errors[i]['answer'] = (u'This answer has already '
-                                                'been submited.')
+                    self.errors[i]['answer'] = u'This answer has already been submited.'
                     raise ValidationError({'answer': ['Error']})
                 answers.append(answer)
 
@@ -385,10 +373,9 @@ class BaseRadioPollChoiceInlineFormset(BaseInlineFormSet):
         model = RadioPollChoice
 
 
-RadioPollChoiceFormset = (
-    inlineformset_factory(RadioPoll, RadioPollChoice,
-                          formset=BaseRadioPollChoiceInlineFormset, extra=1,
-                          exclude=('votes',), can_delete=True))
+RadioPollChoiceFormset = inlineformset_factory(RadioPoll, RadioPollChoice,
+                                               formset=BaseRadioPollChoiceInlineFormset, extra=1,
+                                               exclude=('votes',), can_delete=True)
 
 
 class BaseRadioPollInlineFormSet(BaseInlineFormSet):
@@ -418,9 +405,8 @@ class BaseRadioPollInlineFormSet(BaseInlineFormSet):
 
         data = self.data if self.data and index is not None else None
         # store the formset in the .nested property
-        form.nested = [
-            RadioPollChoiceFormset(data=data, instance=instance,
-                                   prefix='%s_radio_choices' % pk_value)]
+        form.nested = [RadioPollChoiceFormset(data=data, instance=instance,
+                                              prefix='%s_radio_choices' % pk_value)]
 
     def is_valid(self):
         """Validate nested forms."""
@@ -446,9 +432,7 @@ class BaseRadioPollInlineFormSet(BaseInlineFormSet):
 
         Saves and returns a new model instance for the given form
         """
-        instance = (super(BaseRadioPollInlineFormSet, self)
-                    .save_new(form, commit=commit))
-
+        instance = super(BaseRadioPollInlineFormSet, self).save_new(form, commit=commit)
         # Updated form's instance ref
         form.instance = instance
 
@@ -488,8 +472,7 @@ class BaseRadioPollInlineFormSet(BaseInlineFormSet):
             if 'question' in form.cleaned_data:
                 question = form.cleaned_data['question']
                 if question in questions:
-                    self.errors[i]['question'] = (u'Each question must be '
-                                                  'unique in a radio poll')
+                    self.errors[i]['question'] = u'Each question must be unique in a radio poll'
                     raise ValidationError({'question': ['Error']})
                 questions.append(question)
 

@@ -29,11 +29,9 @@ def notify_event_owners_to_input_metrics():
         # Before sending an email check that an action item already exists.
         # If it does, then we have already sent this email.
 
-        action_item = ActionItem.objects.filter(content_type=event_model,
-                                                object_id=event.id)
+        action_item = ActionItem.objects.filter(content_type=event_model, object_id=event.id)
         if not action_item.exists():
-            subject = ('[Reminder] Please add the actual metrics for event {0}'
-                       .format(event.name))
+            subject = '[Reminder] Please add the actual metrics for event {0}'.format(event.name)
             template = 'email/event_creator_notification_to_input_metrics.jinja'
             data = {'event': event}
             send_remo_mail.delay(subject=subject, email_template=template,

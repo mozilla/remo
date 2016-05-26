@@ -36,11 +36,9 @@ class Bug(caching.base.CachingMixin, models.Model):
     bug_id = models.PositiveIntegerField(unique=True)
     bug_creation_time = models.DateTimeField(blank=True, null=True)
     bug_last_change_time = models.DateTimeField(blank=True, null=True)
-    creator = models.ForeignKey(User, null=True, blank=True,
-                                related_name='bugs_created',
+    creator = models.ForeignKey(User, null=True, blank=True, related_name='bugs_created',
                                 on_delete=models.SET_NULL)
-    assigned_to = models.ForeignKey(User, null=True, blank=True,
-                                    related_name='bugs_assigned',
+    assigned_to = models.ForeignKey(User, null=True, blank=True, related_name='bugs_assigned',
                                     on_delete=models.SET_NULL)
     cc = models.ManyToManyField(User, related_name='bugs_cced')
     component = models.CharField(max_length=200)
@@ -101,17 +99,14 @@ class Bug(caching.base.CachingMixin, models.Model):
 
         for action_name, attr, priority in actions:
             if getattr(self, attr, None):
-                action_item = Item(action_name, self.assigned_to,
-                                   priority, None)
+                action_item = Item(action_name, self.assigned_to, priority, None)
                 action_items.append(action_item)
 
-        mentor_action = _get_action_name(WAITING_MENTOR_VALIDATION_ACTION,
-                                         self)
+        mentor_action = _get_action_name(WAITING_MENTOR_VALIDATION_ACTION, self)
         if self.assigned_to and user_is_rep(self.assigned_to):
             mentor = self.assigned_to
             if self.pending_mentor_validation:
-                action_item = Item(mentor_action, mentor,
-                                   ActionItem.BLOCKER, None)
+                action_item = Item(mentor_action, mentor, ActionItem.BLOCKER, None)
                 action_items.append(action_item)
 
         action_name = _get_action_name(NEEDINFO_ACTION, self)
@@ -130,8 +125,9 @@ class Bug(caching.base.CachingMixin, models.Model):
         action_model = ContentType.objects.get_for_model(self)
         if self.pk:
             # Get saved action item
-            action_items = ActionItem.objects.filter(
-                content_type=action_model, object_id=self.pk, resolved=False)
+            action_items = ActionItem.objects.filter(content_type=action_model,
+                                                     object_id=self.pk,
+                                                     resolved=False)
             # If there is no user or user is not rep or the bug is resolved,
             # resolve the action item too!
             if (not self.assigned_to or not user_is_rep(self.assigned_to) or
@@ -150,17 +146,14 @@ class Bug(caching.base.CachingMixin, models.Model):
                 for action_name, attr in zip(action_names, BUG_ATTRS):
                     if not getattr(self, attr):
                         invalid_actions.append(action_name)
-                invalid_action_items = action_items.filter(
-                    name__in=invalid_actions)
+                invalid_action_items = action_items.filter(name__in=invalid_actions)
                 for invalid_item in invalid_action_items:
-                    ActionItem.resolve(self, invalid_item.user,
-                                       invalid_item.name)
+                    ActionItem.resolve(self, invalid_item.user, invalid_item.name)
 
                 # If the bug changed owner, re-assign it
                 current_bug = Bug.objects.get(id=self.pk)
                 if current_bug.assigned_to != self.assigned_to:
-                    (action_items.filter(name__in=action_names)
-                     .update(user=self.assigned_to))
+                    action_items.filter(name__in=action_names).update(user=self.assigned_to)
 
         super(Bug, self).save()
 
@@ -175,8 +168,7 @@ class Status(models.Model):
     the time-stamp of the last successful sync with Bugzilla.
 
     """
-    last_updated = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0,
-                                                         tzinfo=utc))
+    last_updated = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, tzinfo=utc))
 
     def __unicode__(self):
         return "Last update: %s" % self.last_updated.strftime('%H:%M %d %b %Y')
@@ -194,18 +186,15 @@ def set_uppercase_pre_save(sender, instance, **kwargs):
         instance.resolution = instance.resolution.upper()
 
 
-@receiver(m2m_changed, sender=Bug.budget_needinfo.through,
-          dispatch_uid='update_needinfo_signal')
-def update_budget_needinfo_action_items(sender, instance, action, pk_set,
-                                        **kwargs):
+@receiver(m2m_changed, sender=Bug.budget_needinfo.through, dispatch_uid='update_needinfo_signal')
+def update_budget_needinfo_action_items(sender, instance, action, pk_set, **kwargs):
     """Update ActionItem objects on needinfo change."""
 
     ActionItem = get_model('dashboard', 'ActionItem')
     name = u'{0} {1}'.format(NEEDINFO_ACTION, instance.summary)
     if action == 'post_remove':
         for pk in pk_set:
-            ActionItem.resolve(instance=instance, user=User.objects.get(pk=pk),
-                               name=name)
+            ActionItem.resolve(instance=instance, user=User.objects.get(pk=pk), name=name)
 
     if action == 'pre_clear':
         for user in instance.budget_needinfo.all():

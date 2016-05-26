@@ -46,8 +46,7 @@ class MinBaseInlineFormSet(forms.models.BaseInlineFormSet):
     def clean(self):
         """Make sure that we have at least min_forms filled."""
         if (self.min_forms > self._count_filled_forms()):
-            raise ValidationError('You must fill at least %d forms' %
-                                  self.min_forms)
+            raise ValidationError('You must fill at least %d forms' % self.min_forms)
 
         return super(MinBaseInlineFormSet, self).clean()
 
@@ -90,8 +89,7 @@ class BaseEventMetricsFormset(MinBaseInlineFormSet):
         if self.clone:
             form.instance.id = None
             return self.save_new(form)
-        return (super(BaseEventMetricsFormset, self).
-                save_existing(form, instance, commit))
+        return super(BaseEventMetricsFormset, self).save_existing(form, instance, commit)
 
     def save(self, *args, **kwargs):
         """Override save on cloned events."""
@@ -134,8 +132,7 @@ class EventMetricsForm(happyforms.ModelForm):
 
 class PostEventMetricsForm(EventMetricsForm):
     """PostEventMetrics form."""
-    outcome = forms.IntegerField(
-        error_messages={'invalid': 'Please enter a number.'})
+    outcome = forms.IntegerField(error_messages={'invalid': 'Please enter a number.'})
 
     class Meta(EventMetricsForm.Meta):
         fields = ('metric', 'expected_outcome', 'outcome', 'details')
@@ -159,8 +156,7 @@ class EventForm(happyforms.ModelForm):
         validators=[MinValueValidator(1)],
         error_messages={'invalid': 'Please enter a number.'})
     owner = forms.IntegerField(required=False)
-    timezone = forms.ChoiceField(choices=zip(common_timezones,
-                                             common_timezones))
+    timezone = forms.ChoiceField(choices=zip(common_timezones, common_timezones))
     start = forms.DateTimeField(required=False)
     end = forms.DateTimeField(required=False)
     campaign = forms.ModelChoiceField(queryset=Campaign.active_objects.all())
@@ -182,8 +178,7 @@ class EventForm(happyforms.ModelForm):
         categories_query = FunctionalArea.objects.filter(Q(active=True))
 
         if self.instance.id and self.instance.categories.all():
-            categories_query |= categories_query.filter(Q(
-                id__in=self.instance.categories.all()))
+            categories_query |= categories_query.filter(Q(id__in=self.instance.categories.all()))
             initial_category = self.instance.categories.all()[0]
             self.fields['categories'].initial = initial_category.id
 
@@ -207,35 +202,30 @@ class EventForm(happyforms.ModelForm):
             initial_user = self.user
         if self.editable_owner:
             self.fields['owner_form'] = forms.ModelChoiceField(
-                queryset=User.objects.filter(
-                    userprofile__registration_complete=True,
-                    groups__name='Rep').order_by('first_name'),
+                queryset=User.objects.filter(userprofile__registration_complete=True,
+                                             groups__name='Rep').order_by('first_name'),
                 empty_label='Owner', initial=initial_user.id)
         else:
-            self.fields['owner_form'] = forms.CharField(
-                required=False, initial=get_full_name(initial_user),
-                widget=forms.TextInput(attrs={'readonly': 'readonly',
-                                              'class': 'input-text big'}))
+            self.fields['owner_form'] = forms.CharField(required=False,
+                                                        initial=get_full_name(initial_user),
+                                                        widget=forms.TextInput(
+                                                            attrs={'readonly': 'readonly',
+                                                                   'class': 'input-text big'}))
 
         instance = self.instance
         # Dynamically set the year portion of the datetime widget
-        start_year = min(getattr(self.instance.start, 'year', now().year),
-                         now().year - 1)
-        end_year = min(getattr(self.instance.end, 'year', now().year),
-                       now().year - 1)
+        start_year = min(getattr(self.instance.start, 'year', now().year), now().year - 1)
+        end_year = min(getattr(self.instance.end, 'year', now().year), now().year - 1)
 
-        self.fields['start_form'] = forms.DateTimeField(
-            widget=SplitSelectDateTimeWidget(
-                years=range(start_year, start_year + 10), minute_step=5),
+        self.fields['start_form'] = forms.DateTimeField(widget=SplitSelectDateTimeWidget(
+            years=range(start_year, start_year + 10), minute_step=5),
             validators=[validate_datetime])
-        self.fields['end_form'] = forms.DateTimeField(
-            widget=SplitSelectDateTimeWidget(
-                years=range(end_year, end_year + 10), minute_step=5),
+        self.fields['end_form'] = forms.DateTimeField(widget=SplitSelectDateTimeWidget(
+            years=range(end_year, end_year + 10), minute_step=5),
             validators=[validate_datetime])
         # Make times local to venue
         if self.instance.start:
-            start = make_naive(instance.local_start,
-                               timezone(instance.timezone))
+            start = make_naive(instance.local_start, timezone(instance.timezone))
             self.fields['start_form'].initial = start
 
         if self.instance.end:
@@ -266,11 +256,9 @@ class EventForm(happyforms.ModelForm):
             raise ValidationError('Please correct the form errors.')
         # Set timezone
         t = timezone(cdata['timezone'])
-        start = make_naive(cdata['start_form'],
-                           timezone(settings.TIME_ZONE))
+        start = make_naive(cdata['start_form'], timezone(settings.TIME_ZONE))
         cdata['start'] = t.localize(start)
-        end = make_naive(cdata['end_form'],
-                         timezone(settings.TIME_ZONE))
+        end = make_naive(cdata['end_form'], timezone(settings.TIME_ZONE))
         cdata['end'] = t.localize(end)
 
         # Do not allow cloning with a past date
@@ -350,9 +338,8 @@ class EventForm(happyforms.ModelForm):
 
 class PostEventForm(EventForm):
     """Post event form."""
-    actual_attendance = forms.IntegerField(
-        validators=[MinValueValidator(1)],
-        error_messages={'invalid': 'Please enter a number.'})
+    actual_attendance = forms.IntegerField(validators=[MinValueValidator(1)],
+                                           error_messages={'invalid': 'Please enter a number.'})
 
     def save(self, *args, **kwargs):
         """Create post event data report."""
