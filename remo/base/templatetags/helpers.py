@@ -372,4 +372,4 @@ def ifeq(a, b, text):
 # For unicodedecode error debugging purposes
 @library.filter
 def get_smart_text(text):
-    return smart_text(text)
+    return 'debug string'
