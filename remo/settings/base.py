@@ -203,54 +203,41 @@ AUTHENTICATION_BACKENDS = [
 CSP_DEFAULT_SRC = (
     "'self'",
     'https://*.mozilla.org',
-    'http://*.mapbox.com',
     'https://*.mapbox.com',
     'https://*.persona.org',
 )
 CSP_FONT_SRC = (
     "'self'",
-    'http://*.mozilla.net',
     'https://*.mozilla.net',
-    'http://*.mozilla.org',
     'https://*.mozilla.org',
     'https://mozorg.cdn.mozilla.net',
-    'http://mozorg.cdn.mozilla.net',
 )
 CSP_IMG_SRC = (
     "'self'",
     'data:',
-    'http://*.mozilla.net',
     'https://*.mozilla.net',
-    'http://*.mozilla.org',
     'https://*.mozilla.org',
     '*.google-analytics.com',
     '*.gravatar.com',
     '*.wp.com',
     'https://*.libravatar.org',
-    'http://*.mapbox.com',
     'https://*.mapbox.com',
 )
 CSP_SCRIPT_SRC = (
     "'self'",
     "'unsafe-eval'",  # TODO: remove this by pre-compiling handlebars
-    'http://www.mozilla.org',
     'https://www.mozilla.org',
-    'http://*.mozilla.net',
     'https://*.mozilla.net',
     'https://*.google-analytics.com',
     'https://login.persona.org',
-    'http://*.mapbox.com',
     'https://*.mapbox.com',
 )
 
 CSP_STYLE_SRC = (
     "'self'",
     "'unsafe-inline'",
-    'http://www.mozilla.org',
     'https://www.mozilla.org',
-    'http://*.mozilla.net',
     'https://*.mozilla.net',
-    'http://*.mapbox.com',
     'https://*.mapbox.com',
 )
 
