@@ -58,6 +58,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'csp.middleware.CSPMiddleware',
     'remo.base.middleware.RegisterMiddleware',
     'waffle.middleware.WaffleMiddleware'
@@ -92,6 +93,12 @@ SESSION_COOKIE_SECURE = not DEBUG
 
 # Instruct session-csrf to always produce tokens for anonymous users
 ANON_ALWAYS = True
+
+# Security Middleware
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year
 
 FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
 
