@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import m2m_changed, pre_save
 from django.dispatch import receiver
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import utc
 
 import caching.base
@@ -29,6 +30,7 @@ def _get_action_name(action_name, instance):
     return u'{0} {1}'.format(action_name, instance.summary)
 
 
+@python_2_unicode_compatible
 class Bug(caching.base.CachingMixin, models.Model):
     """Bug model definition."""
     created_on = models.DateTimeField(auto_now_add=True)
@@ -55,7 +57,7 @@ class Bug(caching.base.CachingMixin, models.Model):
 
     objects = caching.base.CachingManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%d' % self.bug_id
 
     @property
@@ -161,6 +163,7 @@ class Bug(caching.base.CachingMixin, models.Model):
         ordering = ['-bug_last_change_time']
 
 
+@python_2_unicode_compatible
 class Status(models.Model):
     """Status model definition.
 
@@ -170,8 +173,8 @@ class Status(models.Model):
     """
     last_updated = models.DateTimeField(default=datetime(1970, 1, 1, 0, 0, tzinfo=utc))
 
-    def __unicode__(self):
-        return "Last update: %s" % self.last_updated.strftime('%H:%M %d %b %Y')
+    def __str__(self):
+        return u'Last update: %s' % self.last_updated.strftime('%H:%M %d %b %Y')
 
     class Meta:
         verbose_name_plural = 'statuses'

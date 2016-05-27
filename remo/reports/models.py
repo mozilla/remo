@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import m2m_changed, post_save, pre_delete
 from django.dispatch import receiver
-from django.utils.encoding import smart_text
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import now
 
 import caching.base
@@ -30,6 +30,7 @@ VERIFY_ACTIVITY_WEEKS = 2
 VERIFY_ACTION = 'Verify the activity of'
 
 
+@python_2_unicode_compatible
 class Activity(models.Model):
     name = models.CharField(max_length=100)
     active = models.BooleanField(default=True)
@@ -42,8 +43,8 @@ class Activity(models.Model):
         verbose_name = 'activity'
         verbose_name_plural = 'activities'
 
-    def __unicode__(self):
-        return smart_text(self.name)
+    def __str__(self):
+        return self.name
 
     def get_absolute_edit_url(self):
         return reverse('edit_activity', kwargs={'pk': self.id})
@@ -61,6 +62,7 @@ class Activity(models.Model):
         return False
 
 
+@python_2_unicode_compatible
 class Campaign(models.Model):
     """Campaign/Initiatives model.
 
@@ -78,13 +80,14 @@ class Campaign(models.Model):
         verbose_name = 'initiative'
         verbose_name_plural = 'initiatives'
 
-    def __unicode__(self):
-        return smart_text(self.name)
+    def __str__(self):
+        return self.name
 
     def get_absolute_edit_url(self):
         return reverse('edit_campaign', kwargs={'pk': self.id})
 
 
+@python_2_unicode_compatible
 class NGReport(caching.base.CachingMixin, models.Model):
     """ Continuous Reporting Model.
 
@@ -257,7 +260,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
         ordering = ['-report_date', '-created_on']
         get_latest_by = 'report_date'
 
-    def __unicode__(self):
+    def __str__(self):
         if self.activity.name == ACTIVITY_EVENT_ATTEND and self.event:
             return u'Attended event "%s"' % self.event.name
         elif self.activity.name == ACTIVITY_EVENT_CREATE and self.event:
@@ -265,7 +268,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
         elif self.activity.name == ACTIVITY_CAMPAIGN:
             return u'Participated in campaign "%s"' % self.campaign.name
         else:
-            return smart_text(self.activity.name)
+            return self.activity.name
 
 
 class NGReportComment(models.Model):

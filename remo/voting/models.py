@@ -10,7 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-from django.utils.encoding import smart_text
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import now
 
 from django_statsd.clients import statsd
@@ -30,6 +30,7 @@ VOTE_ACTION = 'Cast your vote for'
 BUDGET_VOTE_ACTION = 'Cast your vote for budget request'
 
 
+@python_2_unicode_compatible
 class Poll(models.Model):
     """Poll Model."""
     name = models.CharField(max_length=300)
@@ -75,8 +76,8 @@ class Poll(models.Model):
             return True
         return False
 
-    def __unicode__(self):
-        return smart_text(self.name)
+    def __str__(self):
+        return self.name
 
     class Meta:
         ordering = ['-created_on']
@@ -142,13 +143,14 @@ class Poll(models.Model):
         return action_items
 
 
+@python_2_unicode_compatible
 class Vote(models.Model):
     """Vote model."""
     user = models.ForeignKey(User, related_name='votes')
     poll = models.ForeignKey(Poll)
     date_voted = models.DateField(auto_now_add=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'{0} {1}'.format(self.user, self.poll)
 
     def save(self, *args, **kwargs):
@@ -162,13 +164,14 @@ class Vote(models.Model):
                            name=name)
 
 
+@python_2_unicode_compatible
 class RangePoll(models.Model):
     """Range Poll Model."""
     name = models.CharField(max_length=500, default='')
     poll = models.ForeignKey(Poll, related_name='range_polls')
 
-    def __unicode__(self):
-        return smart_text(self.name)
+    def __str__(self):
+        return self.name
 
 
 class RangePollChoice(models.Model):
@@ -181,23 +184,25 @@ class RangePollChoice(models.Model):
         ordering = ['nominee__first_name', 'nominee__last_name']
 
 
+@python_2_unicode_compatible
 class RadioPoll(models.Model):
     """Radio Poll Model."""
     question = models.CharField(max_length=500)
     poll = models.ForeignKey(Poll, related_name='radio_polls')
 
-    def __unicode__(self):
-        return smart_text(self.question)
+    def __str__(self):
+        return self.question
 
 
+@python_2_unicode_compatible
 class RadioPollChoice(models.Model):
     """Radio Poll Choice Model."""
     answer = models.CharField(max_length=500)
     votes = models.IntegerField(default=0)
     radio_poll = models.ForeignKey(RadioPoll, related_name='answers')
 
-    def __unicode__(self):
-        return smart_text(self.answer)
+    def __str__(self):
+        return self.answer
 
     class Meta:
         ordering = ['radio_poll__question']
