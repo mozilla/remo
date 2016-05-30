@@ -1,4 +1,4 @@
-from django.conf.urls import include, patterns, url
+from django.conf.urls import include, url
 
 from rest_framework import routers
 from tastypie.api import Api
@@ -38,12 +38,10 @@ router.register(r'users', UserProfileViewSet)
 router.register(r'events', EventsViewSet)
 router.register(r'activities', ActivitiesViewSet)
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'', include(v1_api.urls)),
     url(r'^remo/v1/', include(router.urls), name='v1root'),
     url(r'^kpi/events/', EventsKPIView.as_view(), name='kpi-events'),
-    url(r'^kpi/activities/', ActivitiesKPIView.as_view(),
-        name='kpi-activities'),
+    url(r'^kpi/activities/', ActivitiesKPIView.as_view(), name='kpi-activities'),
     url(r'^kpi/people/', PeopleKPIView.as_view(), name='kpi-people')
-)
+]

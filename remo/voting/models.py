@@ -39,11 +39,9 @@ class Poll(models.Model):
     end = models.DateTimeField()
     valid_groups = models.ForeignKey(Group, related_name='valid_polls')
     created_on = models.DateTimeField(auto_now_add=True)
-    description = models.TextField(validators=[MaxLengthValidator(2500),
-                                               MinLengthValidator(20)])
+    description = models.TextField(validators=[MaxLengthValidator(2500), MinLengthValidator(20)])
     created_by = models.ForeignKey(User, related_name='range_polls_created')
-    users_voted = models.ManyToManyField(User, related_name='polls_voted',
-                                         through='Vote')
+    users_voted = models.ManyToManyField(User, related_name='polls_voted', through='Vote')
     task_start_id = models.CharField(max_length=256, blank=True,
                                      null=True, editable=False, default='')
     task_end_id = models.CharField(max_length=256, blank=True, null=True,
@@ -55,8 +53,7 @@ class Poll(models.Model):
     action_items = generic.GenericRelation(ActionItem)
 
     def get_absolute_url(self):
-        return reverse('remo.voting.views.view_voting',
-                       args=[self.slug])
+        return reverse('remo.voting.views.view_voting', args=[self.slug])
 
     @property
     def is_future_voting(self):
@@ -94,8 +91,7 @@ class Poll(models.Model):
             # Update action items
             current_poll = Poll.objects.get(id=self.pk)
             action_model = ContentType.objects.get_for_model(self)
-            action_items = ActionItem.objects.filter(content_type=action_model,
-                                                     object_id=self.pk)
+            action_items = ActionItem.objects.filter(content_type=action_model, object_id=self.pk)
 
             if current_poll.end != self.end:
                 action_items.update(due_date=self.end.date())
@@ -133,9 +129,8 @@ class Poll(models.Model):
             priority = ActionItem.NORMAL
 
         # Exclude the users that already have voted
-        users = (User.objects.filter(groups=self.valid_groups)
-                 .exclude(pk__in=self.vote_set.values_list('user',
-                                                           flat=True)))
+        users = User.objects.filter(groups=self.valid_groups).exclude(
+            pk__in=self.vote_set.values_list('user', flat=True))
         for user in users:
             action_item = Item(name, user, priority, due_date)
             action_items.append(action_item)
@@ -160,8 +155,7 @@ class Vote(models.Model):
             name = u'{0} {1}'.format(VOTE_ACTION, self.poll.name)
 
         super(Vote, self).save(*args, **kwargs)
-        ActionItem.resolve(instance=self.poll, user=self.user,
-                           name=name)
+        ActionItem.resolve(instance=self.poll, user=self.user, name=name)
 
 
 @python_2_unicode_compatible
@@ -225,8 +219,7 @@ class PollComment(models.Model):
         ordering = ['created_on']
 
 
-@receiver(post_save, sender=Poll,
-          dispatch_uid='voting_poll_email_reminder_signal')
+@receiver(post_save, sender=Poll, dispatch_uid='voting_poll_email_reminder_signal')
 def poll_email_reminder(sender, instance, raw, **kwargs):
     """Send email reminders when a vote starts/ends."""
     subject_start = '[Voting] Cast your vote for "%s" now!' % instance.name
@@ -252,15 +245,13 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
                                                task_end_id=task_end_id)
 
 
-@receiver(post_save, sender=Poll,
-          dispatch_uid='voting_automated_poll_discussion_email')
+@receiver(post_save, sender=Poll, dispatch_uid='voting_automated_poll_discussion_email')
 def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
     """Send email reminders when a vote starts/ends."""
     if instance.automated_poll and created:
         template = 'emails/review_budget_notify_review_team.jinja'
-        subject = (u'Discuss [Bug {id}] - {summary}'
-                   .format(id=instance.bug.bug_id,
-                           summary=unicode(instance.bug.summary)))
+        subject = u'Discuss [Bug {id}] - {summary}'.format(id=instance.bug.bug_id,
+                                                           summary=unicode(instance.bug.summary))
         data = {'bug': instance.bug,
                 'BUGZILLA_URL': get_bugzilla_url(instance.bug),
                 'poll': instance}
@@ -290,30 +281,24 @@ def automated_poll(sender, instance, **kwargs):
     a new Poll and let Review members vote.
 
     """
-    if ((not instance.council_vote_requested or
-         Poll.objects.filter(bug=instance).exists())):
+    if not instance.council_vote_requested or Poll.objects.filter(bug=instance).exists():
         return
 
     remobot = User.objects.get(username='remobot')
 
     with transaction.atomic():
-        poll = (Poll.objects
-                .create(name=instance.summary,
-                        description=instance.first_comment,
-                        valid_groups=Group.objects.get(name='Review'),
-                        start=(now() +
-                               timedelta(BUDGET_REQUEST_PERIOD_START)),
-                        end=(now() +
-                             timedelta(days=BUDGET_REQUEST_PERIOD_END)),
-                        bug=instance,
-                        created_by=remobot,
-                        automated_poll=True))
+        poll = (Poll.objects.create(name=instance.summary,
+                                    description=instance.first_comment,
+                                    valid_groups=Group.objects.get(name='Council'),
+                                    start=now() + timedelta(BUDGET_REQUEST_PERIOD_START),
+                                    end=now() + timedelta(days=BUDGET_REQUEST_PERIOD_END),
+                                    bug=instance,
+                                    created_by=remobot,
+                                    automated_poll=True))
 
-        radio_poll = RadioPoll.objects.create(poll=poll,
-                                              question='Budget Approval')
+        radio_poll = RadioPoll.objects.create(poll=poll, question='Budget Approval')
 
-        RadioPollChoice.objects.create(answer='Approved',
-                                       radio_poll=radio_poll)
+        RadioPollChoice.objects.create(answer='Approved', radio_poll=radio_poll)
         RadioPollChoice.objects.create(answer='Denied', radio_poll=radio_poll)
 
         statsd.incr('voting.create_automated_poll')
@@ -340,8 +325,7 @@ def email_commenters_on_add_poll_comment(sender, instance, **kwargs):
 
         for user_id in commenters:
             user = User.objects.get(pk=user_id)
-            if (user.userprofile.receive_email_on_add_voting_comment and
-                    user != instance.user):
+            if (user.userprofile.receive_email_on_add_voting_comment and user != instance.user):
                 ctx_data = {'poll': poll, 'user': user,
                             'commenter': instance.user,
                             'comment': instance.comment,
