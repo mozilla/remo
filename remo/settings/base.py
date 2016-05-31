@@ -238,6 +238,7 @@ CSP_SCRIPT_SRC = (
     'https://*.google-analytics.com',
     'https://login.persona.org',
     'https://*.mapbox.com',
+    'https://ajax.googleapis.com',
 )
 
 CSP_STYLE_SRC = (
