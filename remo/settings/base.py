@@ -241,6 +241,7 @@ CSP_SCRIPT_SRC = (
     'https://login.persona.org',
     'http://*.mapbox.com',
     'https://*.mapbox.com',
+    'https://ajax.googleapis.com',
 )
 
 CSP_STYLE_SRC = (
