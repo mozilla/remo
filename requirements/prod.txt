@@ -218,3 +218,5 @@ raven==5.18.0 \
 hashin==0.6.0 \
     --hash=sha256:8d54551aae64dc8c135dfd5c89efd81a5014f7ce79da642b3fc3eef44ccf7a26 \
     --hash=sha256:7563490ec8c9c361e48c7623898b3585143d379714a03bee4c3d52fb13e85086
+django-import-export==0.4.5 \
+    --hash=sha256:0406f781a771c39e325474df09644a5cea5188dfac7ecace4f32d664920abd00
