@@ -14,6 +14,8 @@ class AttendanceInline(admin.TabularInline):
 class EventResource(resources.ModelResource):
     event_categories = fields.Field()
     event_metrics = fields.Field()
+    owner = fields.Field(column_name='owner')
+    campaign = fields.Field(column_name='campaign')
 
     class Meta:
         model = Event
@@ -36,6 +38,14 @@ class EventResource(resources.ModelResource):
             else:
                 metrics = ', '.join(x.name for x in event_metrics)
             return metrics
+        return ''
+
+    def dehydrate_owner(self, event):
+        return event.owner.get_full_name()
+
+    def dehydrate_campaign(self, event):
+        if event.campaign:
+            return event.campaign.name
         return ''
 
 
