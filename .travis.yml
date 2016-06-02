@@ -10,6 +10,8 @@ install:
   - npm install -g less
   - pip install coverage
   - pip install --require-hashes --no-deps -r requirements/dev.txt
+cache:
+  - pip
 script:
   - coverage run --source=remo manage.py test
 after_success:
