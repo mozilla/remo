@@ -1,5 +1,4 @@
-# Adding peep so we can track it on requires.io. For packages
-# installation we use peep.py shipped in ./bin
+# Packages required for the production environment.
 
 Django==1.8.13 \
     --hash=sha256:dad5da0cd7f3cca7da3ac42a19abba30f5cc10fae4976e474051e7085b4e95d1 \
