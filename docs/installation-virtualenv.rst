@@ -39,9 +39,10 @@ When you want to start contributing...
 
    $ source venv/bin/activate
 
-#. Install development and compiled requirements.::
+#. Install development requirements.::
 
-     (venv)$ ./peep.sh install -r requirements/dev.txt
+     (venv)$ python ./bin/pipstrap.py
+     (venv)$ pip install --require-hashes --no-deps -r requirements/dev.txt
 
    .. note::
 
