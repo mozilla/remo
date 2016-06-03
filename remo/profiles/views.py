@@ -1,10 +1,10 @@
+from django.db.models import Q
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group, User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
-from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -14,6 +14,7 @@ from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_control, never_cache
 
 import waffle
+from dal import autocomplete
 from django_statsd.clients import statsd
 from django_browserid.auth import default_username_algo
 from product_details import product_details
@@ -283,3 +284,42 @@ def list_alumni(request):
         objects = alumni_paginator.page(alumni_paginator.num_pages)
 
     return render(request, 'profiles_list_alumni.jinja', {'objects': objects})
+
+
+class BaseUserAutocompleteView(autocomplete.Select2QuerySetView):
+    """Base class view for django-autocomplete-light."""
+
+    def get_queryset(self):
+        """Base queryset used in the ReMo portal.
+
+        Return all the users who have completed their profile registration and
+        belong to the Rep Group.
+        """
+        # Use this internally, reject non-authenticated users.
+        if not self.request.user.is_authenticated():
+            return User.objects.none()
+
+        qs = User.objects.filter(userprofile__registration_complete=True)
+
+        self.q_base_filter = (Q(last_name__icontains=self.q) |
+                              Q(first_name__icontains=self.q) |
+                              Q(email__icontains=self.q) |
+                              Q(username__icontains=self.q))
+
+        if self.q:
+            qs = qs.filter(self.q_base_filter)
+        return qs
+
+
+class MentorsAutocompleteView(BaseUserAutocompleteView):
+    """Autocomplete view.
+
+    Populate the queryset with all the users belonging to the Mentor Group.
+    """
+    def get_queryset(self):
+
+        qs = super(MentorsAutocompleteView, self).get_queryset().filter(groups__name='Mentor')
+
+        if self.q:
+            qs = qs.filter(self.q_base_filter)
+        return qs

@@ -9,6 +9,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 
+from dal import autocomplete
 from django_browserid.auth import default_username_algo
 from product_details import product_details
 from pytz import common_timezones
@@ -105,11 +106,11 @@ class ChangeProfileForm(happyforms.ModelForm):
                                                         (True, "Female"),
                                                         (False, "Male")))
     mentor = forms.ModelChoiceField(
-        queryset=(User.objects.filter(userprofile__registration_complete=True,
-                                      groups__name='Mentor')
-                  .order_by('first_name')),
+        queryset=User.objects.filter(
+            userprofile__registration_complete=True, groups__name='Mentor').order_by('first_name'),
         required=False,
-        empty_label=u'Please choose a mentor')
+        empty_label=u'Please choose a mentor',
+        widget=autocomplete.ModelSelect2(url='mentors-autocomplete'))
     country = forms.ChoiceField(
         choices=[],
         error_messages={'required': 'Please select one option from the list.'})

@@ -8,6 +8,7 @@ from django.core.validators import MinValueValidator
 from django.utils.timezone import make_naive, now
 from product_details import product_details
 
+from dal import autocomplete
 from django_statsd.clients import statsd
 from pytz import common_timezones, timezone
 
@@ -204,7 +205,8 @@ class EventForm(happyforms.ModelForm):
             self.fields['owner_form'] = forms.ModelChoiceField(
                 queryset=User.objects.filter(userprofile__registration_complete=True,
                                              groups__name='Rep').order_by('first_name'),
-                empty_label='Owner', initial=initial_user.id)
+                empty_label='Owner', initial=initial_user.id,
+                widget=autocomplete.ModelSelect2(url='reps-autocomplete'))
         else:
             self.fields['owner_form'] = forms.CharField(required=False,
                                                         initial=get_full_name(initial_user),
