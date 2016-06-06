@@ -13,13 +13,38 @@ class NGReportCommentInline(admin.StackedInline):
 
 
 class NGReportResource(resources.ModelResource):
-    user = fields.Field()
+    user = fields.Field(column_name='user')
+    mentor = fields.Field(column_name='mentor')
 
     class Meta:
         model = NGReport
+        fields = ('user', 'report_date', 'mentor', 'activity', 'campaign', 'functional_areas',
+                  'location', 'country', 'is_passive', 'event', 'activity_description',
+                  'verified_activity', 'link', 'link_description',)
 
     def dehydrate_user(self, ngreport):
         return ngreport.user.get_full_name()
+
+    def dehydrate_mentor(self, ngreport):
+        if ngreport.mentor:
+            return ngreport.mentor.get_full_name()
+        return ''
+
+    def dehydrate_campaign(self, ngreport):
+        if ngreport.campaign:
+            return ngreport.campaign.name
+        return ''
+
+    def dehydrate_activity(self, ngreport):
+        if ngreport.activity:
+            return ngreport.activity.name
+        return ''
+
+    def dehydrate_functional_areas(self, ngreport):
+        if ngreport.functional_areas.all().exists():
+            functional_areas = ', '.join([x.name for x in ngreport.functional_areas.all()])
+            return functional_areas
+        return ''
 
 
 class NGReportAdmin(ExportMixin, admin.ModelAdmin):
