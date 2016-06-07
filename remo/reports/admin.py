@@ -46,6 +46,11 @@ class NGReportResource(resources.ModelResource):
             return functional_areas
         return ''
 
+    def dehydrate_event(self, ngreport):
+        if ngreport.event:
+            return ngreport.event.name
+        return ''
+
 
 class NGReportAdmin(ExportMixin, admin.ModelAdmin):
     """New Generation Report Admin."""
