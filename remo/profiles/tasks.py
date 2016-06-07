@@ -53,6 +53,10 @@ def check_mozillian_username():
             user.first_name = 'Anonymous'
             user.last_name = 'Mozillian'
             user.userprofile.mozillian_username = ''
+        if len(user.last_name) > 30:
+            user.last_name = user.last_name[:30]
+        if len(user.first_name) > 30:
+            user.first_name = user.first_name[:30]
         user.save()
         user.userprofile.save()
 

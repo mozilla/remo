@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.utils.timezone import now
 
 from mock import ANY, call, patch
@@ -9,9 +10,8 @@ from nose.tools import eq_, ok_
 from remo.base.tests import RemoTestCase
 from remo.base.utils import number2month
 from remo.profiles.models import UserProfile, UserStatus
-from remo.profiles.tasks import (reset_rotm_nominees,
-                                 send_rotm_nomination_reminder,
-                                 set_unavailability_flag)
+from remo.profiles.tasks import (check_mozillian_username, reset_rotm_nominees,
+                                 send_rotm_nomination_reminder, set_unavailability_flag)
 from remo.profiles.tests import UserFactory, UserStatusFactory
 from remo.base.utils import get_date
 
@@ -82,3 +82,19 @@ class UserStatusTests(RemoTestCase):
         set_unavailability_flag()
         status = UserStatus.objects.get(user=rep)
         ok_(status.is_unavailable)
+
+
+class MozillianUsernameTests(RemoTestCase):
+
+    @patch('remo.profiles.tasks.is_vouched')
+    def test_mozillian_username_length(self, mocked_vouch_status):
+        mozillian = UserFactory.create(first_name='Awesome', last_name='Mozillian',
+                                       groups=['Mozillians'])
+        mocked_vouch_status.return_value = {'is_vouched': True,
+                                            'username': 'foobar',
+                                            'full_name': ('A really really long name for our '
+                                                          ' Awesome Mozillian')}
+        check_mozillian_username()
+        mozillian = User.objects.get(id=mozillian.id)
+        eq_(mozillian.first_name, 'A')
+        eq_(mozillian.last_name, 'really really long name for ou')
