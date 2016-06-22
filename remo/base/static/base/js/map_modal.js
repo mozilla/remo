@@ -45,7 +45,7 @@ $(document).ready(function() {
 
             map.on('locationfound', handleLocationFound);
 
-            if (lat && lng) {
+            if (lat && lat!=='None' && lng && lng!=='None') {
                 // Same zoom-level as in events list
                 center = new L.LatLng(lat, lng);
                 map.setView(center, 5);

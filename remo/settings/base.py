@@ -233,6 +233,7 @@ CSP_IMG_SRC = (
 CSP_SCRIPT_SRC = (
     "'self'",
     "'unsafe-eval'",  # TODO: remove this by pre-compiling handlebars
+    'data:',
     'https://www.mozilla.org',
     'https://*.mozilla.net',
     'https://*.google-analytics.com',
