@@ -16,7 +16,6 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 import caching.base
-from celery.task import control as celery_control
 from django_statsd.clients import statsd
 from uuslug import uuslug as slugify
 
@@ -24,6 +23,7 @@ from remo.base.utils import get_object_or_none
 from remo.base.models import GenericActiveManager
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date
+from remo.celery import app as celery_app
 from remo.dashboard.models import ActionItem, Item
 from remo.remozilla.models import Bug, WAITING_MENTOR_VALIDATION_ACTION
 
@@ -337,9 +337,9 @@ def user_status_email_reminder(sender, instance, created, raw, **kwargs):
     elif not settings.CELERY_ALWAYS_EAGER:
         # revoke the tasks in case a user returns sooner
         if rep_profile.unavailability_task_id:
-            celery_control.revoke(rep_profile.unavailability_task_id)
+            celery_app.control.revoke(rep_profile.unavailability_task_id)
         if mentor_profile.unavailability_task_id:
-            celery_control.revoke(mentor_profile.unavailability_task_id)
+            celery_app.control.revoke(mentor_profile.unavailability_task_id)
 
 
 @receiver(pre_save, sender=UserProfile,

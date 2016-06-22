@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from celery.task import control as celery_control
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.conf import settings
@@ -17,6 +16,7 @@ from django_statsd.clients import statsd
 from uuslug import uuslug
 
 from remo.base.tasks import send_remo_mail
+from remo.celery import app as celery_app
 from remo.dashboard.models import ActionItem, Item
 from remo.remozilla.models import Bug
 from remo.remozilla.utils import get_bugzilla_url
@@ -106,10 +106,10 @@ class Poll(models.Model):
 
             if not settings.CELERY_ALWAYS_EAGER:
                 if self.is_current_voting:
-                    celery_control.revoke(self.task_end_id)
+                    celery_app.control.revoke(self.task_end_id)
                 elif self.is_future_voting:
-                    celery_control.revoke(self.task_start_id)
-                    celery_control.revoke(self.task_end_id)
+                    celery_app.control.revoke(self.task_start_id)
+                    celery_app.control.revoke(self.task_end_id)
 
             if not self.is_future_voting:
                 obj = Poll.objects.get(pk=self.id)
@@ -276,9 +276,9 @@ def poll_delete_reminder(sender, instance, **kwargs):
     """Revoke the task if a voting is deleted."""
     if not settings.CELERY_ALWAYS_EAGER:
         if instance.task_start_id:
-            celery_control.revoke(instance.task_start_id)
+            celery_app.control.revoke(instance.task_start_id)
         if instance.task_end_id:
-            celery_control.revoke(instance.task_end_id)
+            celery_app.control.revoke(instance.task_end_id)
 
 
 @receiver(post_save, sender=Bug,
