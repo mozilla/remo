@@ -226,6 +226,11 @@ def view_voting(request, slug):
                     radio_poll_form.save()
 
                 Vote.objects.create(user=user, poll=poll)
+                # Append a comment that the user voted successfully.
+                comment_msg = u'**{0}** voted successfully.'.format(user)
+                commenter = User.objects.get(username='remobot')
+                PollComment.objects.create(poll=poll, user=commenter, comment=comment_msg)
+
                 messages.success(request, u'Your vote has been successfully registered.')
                 statsd.incr('voting.vote_voting')
                 return redirect('voting_list_votings')
