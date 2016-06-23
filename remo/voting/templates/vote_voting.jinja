@@ -127,7 +127,7 @@ Mozilla Reps - {{ poll.name }} - Vote
               <span class="label inline">
                 Description
               </span>
-              {{ poll.description|urlize(150)|nl2br }}
+              {{ poll.description|urlize(150)|markdown|nl2br }}
             </p>
           </div>
         </div>
