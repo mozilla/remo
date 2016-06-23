@@ -35,7 +35,7 @@ def send_generic_mail(recipient_list, subject, email_template, data={}):
     send_mail(subject, message, settings.FROM_EMAIL, recipient_list)
 
 
-@periodic_task(run_every=timedelta(hours=24), soft_time_limit=300)
+@periodic_task(run_every=timedelta(hours=24), soft_time_limit=600)
 def check_mozillian_username():
     mozillians = User.objects.filter(groups__name='Mozillians')
 
