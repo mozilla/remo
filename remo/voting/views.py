@@ -13,6 +13,7 @@ import forms
 from remo.base.decorators import permission_check
 from remo.base.utils import get_or_create_instance
 from remo.profiles.models import UserProfile
+from remo.remozilla.models import Bug
 from remo.voting.templatetags.helpers import user_has_poll_permissions
 from remo.voting.models import Poll, PollComment, RadioPoll, RangePoll, Vote
 
@@ -221,8 +222,14 @@ def view_voting(request, slug):
 def delete_voting(request, slug):
     """Delete voting view."""
     if request.method == 'POST':
-        voting = get_object_or_404(Poll, slug=slug)
-        voting.delete()
+        poll = get_object_or_404(Poll, slug=slug)
+
+        if poll.automated_poll and Bug.objects.filter(id=poll.bug.id):
+            # This will trigger a cascade delete, removing also the poll.
+            Bug.objects.filter(id=poll.bug.id).delete()
+        else:
+            poll.delete()
+
         messages.success(request, 'Voting successfully deleted.')
         statsd.incr('voting.delete_voting')
     return redirect('voting_list_votings')

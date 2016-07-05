@@ -1,6 +1,7 @@
 import pytz
 from datetime import datetime, timedelta
 
+from django.db.models.signals import post_save
 from django.contrib.auth.models import Group, Permission
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
@@ -8,10 +9,12 @@ from django.test.client import Client, RequestFactory
 from django.utils.timezone import make_aware, now
 
 import mock
+from factory.django import mute_signals
 from nose.tools import eq_, ok_
 
 from remo.base.tests import RemoTestCase, requires_login, requires_permission
 from remo.profiles.tests import UserFactory
+from remo.remozilla.models import Bug
 from remo.remozilla.tests import BugFactory
 from remo.voting.models import (Poll, PollComment, RadioPoll, RadioPollChoice,
                                 RangePoll, RangePollChoice)
@@ -456,6 +459,32 @@ class ViewsTest(RemoTestCase):
             self.assertJinja2TemplateUsed(response, 'list_votings.jinja')
             ok_(faked_message.called)
             eq_(faked_message.call_args_list[0][0][1], 'Voting successfully deleted.')
+
+    def test_view_delete_automated_poll(self):
+        with mute_signals(post_save):
+            poll_start = now() - timedelta(days=5)
+            poll_user = UserFactory.create(groups=['Council'])
+            poll_group = Group.objects.get(name='Council')
+            bug = BugFactory.create()
+            swag_poll = PollFactory.create(name='swag poll', start=poll_start,
+                                           end=poll_start + timedelta(days=15),
+                                           created_by=poll_user,
+                                           valid_groups=poll_group,
+                                           bug=bug,
+                                           automated_poll=True,
+                                           description='Swag poll description.',
+                                           slug='swag-poll')
+
+        with mock.patch('remo.voting.views.messages.success') as faked_message:
+            with self.login(self.admin) as client:
+                response = client.post(reverse('voting_delete_voting',
+                                               kwargs={'slug': swag_poll.slug}),
+                                       follow=True)
+            self.assertJinja2TemplateUsed(response, 'list_votings.jinja')
+            ok_(faked_message.called)
+            eq_(faked_message.call_args_list[0][0][1], 'Voting successfully deleted.')
+            ok_(not Poll.objects.filter(id=swag_poll.id).exists())
+            ok_(not Bug.objects.filter(id=bug.id).exists())
 
 
 class VotingCommentingSystem(RemoTestCase):
