@@ -56,7 +56,7 @@ function hash_get_value(key) {
     var values = hash.split('/').filter(function(element, index) { return (index % 2 === 1); });
     var index_of_key = keys.indexOf(key);
     if (index_of_key > -1) {
-        return values[index_of_key].toLowerCase();
+        return decodeURI(values[index_of_key].toLowerCase());
     }
 
     return;
