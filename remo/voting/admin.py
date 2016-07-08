@@ -58,7 +58,7 @@ class PollAdmin(ExportMixin, admin.ModelAdmin):
     search_fields = ['name']
     list_display = ['name', 'start', 'end', 'valid_groups']
     date_hierarchy = 'start'
-    readonly_fields = ['task_start_id', 'task_end_id', 'bug']
+    readonly_fields = ['task_start_id', 'task_end_id']
     list_filter = ['automated_poll', 'is_extended', 'comments_allowed']
     actions = ['delete_model']
 
