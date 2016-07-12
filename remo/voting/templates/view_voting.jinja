@@ -202,7 +202,7 @@ Mozilla Reps - {{ poll.name }} - Results
                       title="{{ comment.created_on }}">
                   at {{ comment.created_on }}
                 </span><br>
-                {{ comment.comment }}
+                {{ comment.comment|urlize(50) }}
               </div>
             {% endfor %}
           </div>
