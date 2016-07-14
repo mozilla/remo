@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.contrib.contenttypes.models import ContentType
 
 from celery.task import periodic_task
+from waffle.decorators import waffle_switch
 
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date
@@ -10,6 +11,7 @@ from remo.dashboard.models import ActionItem
 from remo.events.models import Event
 
 
+@waffle_switch('switch_notify_event_owners_to_input_metrics')
 @periodic_task(run_every=timedelta(days=1))
 def notify_event_owners_to_input_metrics():
     """Send an email to event creators.

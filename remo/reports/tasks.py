@@ -12,6 +12,7 @@ import pytz
 
 from celery.task import periodic_task, task
 from django_statsd.clients import statsd
+from waffle.decorators import waffle_switch
 
 from remo.base.utils import get_date
 from remo.dashboard.models import ActionItem
@@ -60,6 +61,7 @@ def send_report_digest():
         send_mail(subject, message, settings.FROM_EMAIL, [mentor.email])
 
 
+@waffle_switch('switch_send_first_report_notification')
 @periodic_task(run_every=timedelta(days=1))
 def send_first_report_notification():
     """Send inactivity notification after 4 weeks."""
@@ -85,6 +87,7 @@ def send_first_report_notification():
     statsd.incr('reports.send_first_report_notification')
 
 
+@waffle_switch('switch_send_second_report_notification')
 @periodic_task(run_every=timedelta(days=1))
 def send_second_report_notification():
     """Send inactivity notification after 8 weeks."""
@@ -126,6 +129,7 @@ def zero_current_streak():
         rep.userprofile.save()
 
 
+@waffle_switch('switch_calculate_longest_streaks')
 @periodic_task(run_every=timedelta(days=1))
 def calculate_longest_streaks():
     """Calculate user's longest streaks."""
