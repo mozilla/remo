@@ -10,6 +10,7 @@ from django.utils.timezone import now
 
 import waffle
 from celery.task import periodic_task, task
+from waffle.decorators import waffle_switch
 
 from remo.base.mozillians import is_vouched
 from remo.base.tasks import send_remo_mail
@@ -35,6 +36,7 @@ def send_generic_mail(recipient_list, subject, email_template, data={}):
     send_mail(subject, message, settings.FROM_EMAIL, recipient_list)
 
 
+@waffle_switch('switch_check_mozillian_username')
 @periodic_task(run_every=timedelta(hours=24), soft_time_limit=600)
 def check_mozillian_username():
     mozillians = User.objects.filter(groups__name='Mozillians')
@@ -67,6 +69,7 @@ def check_celery():
     pass
 
 
+@waffle_switch('switch_reset_rotm_nominees')
 @periodic_task(run_every=timedelta(hours=24))
 def reset_rotm_nominees():
     """Reset the Rep of the month nomination in user profiles.
@@ -86,6 +89,7 @@ def reset_rotm_nominees():
             nominee.save()
 
 
+@waffle_switch('switch_send_rotm_nomination_reminder')
 @periodic_task(run_every=timedelta(hours=24))
 def send_rotm_nomination_reminder():
     """ Send an email reminder to all mentors.
@@ -109,6 +113,7 @@ def send_rotm_nomination_reminder():
             ActionItem.create(mentor.userprofile)
 
 
+@waffle_switch('switch_set_unavailability_flag')
 @periodic_task(run_every=timedelta(hours=12))
 def set_unavailability_flag():
     """Set the unavailable flag in UserStatus.
@@ -122,6 +127,7 @@ def set_unavailability_flag():
                        .update(is_unavailable=True))
 
 
+@waffle_switch('switch_resolve_nomination_action_items')
 @periodic_task(run_every=timedelta(hours=24))
 def resolve_nomination_action_items():
     """Resolve action items.

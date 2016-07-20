@@ -159,8 +159,6 @@ cffi==1.5.0 \
 django-compressor==2.0 \
     --hash=sha256:d2de4e3a93fbf789eef979b455c0962c83db57022858654bf4e596d34f9e3cb1 \
     --hash=sha256:b1618260798e0c26ef52c8e6c14d445783756eca92f2ab1b8db8bee8ecc9b8c3
-django-celery==3.1.17 \
-    --hash=sha256:254a95b0a4386df1fd949823942f6312c80fba3c88c5efad79cad8648bc5feb5
 beautifulsoup4==4.4.1 \
     --hash=sha256:82a253245aed9875f141dd98a7462572bca93d064cf3117bd33de4b61ee18e68 \
     --hash=sha256:2c264254f6cfce64c3bd9d48885208093a73b9095645f600de0a277ce01ea0e5 \

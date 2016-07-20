@@ -12,6 +12,7 @@ from django.utils.timezone import make_aware, now
 
 import pytz
 import waffle
+from waffle.decorators import waffle_switch
 
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date, number2month
@@ -55,6 +56,7 @@ def send_voting_mail(voting_id, subject, email_template):
             send_mail(subject, message, settings.FROM_EMAIL, [user.email])
 
 
+@waffle_switch('switch_extend_voting_period')
 @periodic_task(run_every=timedelta(hours=8))
 def extend_voting_period():
     """Extend voting period by EXTEND_VOTING_PERIOD if there is no
@@ -92,6 +94,7 @@ def extend_voting_period():
                                      data=ctx_data)
 
 
+@waffle_switch('switch_resovle_action_items')
 @periodic_task(run_every=timedelta(days=1))
 def resolve_action_items():
     # avoid circular dependencies
@@ -105,6 +108,7 @@ def resolve_action_items():
     items.update(resolved=True)
 
 
+@waffle_switch('switch_create_rotm_poll')
 @periodic_task(run_every=timedelta(hours=24))
 def create_rotm_poll():
     """Create a poll for the Rep of the month nominee.

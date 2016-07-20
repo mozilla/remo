@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'session_csrf',
     'compressor',
     'product_details',
-    'djcelery',
     'raven.contrib.django.raven_compat',
     # Project specific apps
     'remo.base',
@@ -317,7 +316,6 @@ ALLOWED_HOSTS = ['reps.mozilla.org']
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'UTC'
 CELERY_TASK_RESULTS_EXPIRES = 3600
@@ -347,10 +345,6 @@ STATSD_CLIENT = 'django_statsd.clients.normal'
 
 # Paginator settings
 ITEMS_PER_PAGE = 20
-
-# django-celery setup
-import djcelery  # noqa
-djcelery.setup_loader()
 
 MAPBOX_TOKEN = 'examples.map-i86nkdio'
 
