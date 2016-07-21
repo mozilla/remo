@@ -131,19 +131,19 @@ Mozilla Reps - {{ poll.name }} - Results
                 </span>
               </p>
               <!-- Results -->
-              {% for choice in range_poll.choices.all() %}
-              <div class="row">
-                <div class="large-11 columns poll-answer">
-                  <a href="{{ url('profiles_view_profile',
-                     display_name=choice.nominee|get_display_name) }}"
-                     target="_blank">
-                    {{ choice.nominee.get_full_name() }}
-                  </a>
+              {% for choice in range_poll.choices.all()|sort(attribute='votes', reverse=True) %}
+                <div class="row">
+                  <div class="large-11 columns poll-answer">
+                    <a href="{{ url('profiles_view_profile',
+                      display_name=choice.nominee|get_display_name) }}"
+                      target="_blank">
+                      {{ choice.nominee.get_full_name() }}
+                    </a>
+                  </div>
+                  <div class="large-1 columns poll-answer">
+                    {{ choice.votes }}
+                  </div>
                 </div>
-                <div class="large-1 columns poll-answer">
-                  {{ choice.votes }}
-                </div>
-              </div>
               {% endfor %}
             {% endfor %}
           </div>
