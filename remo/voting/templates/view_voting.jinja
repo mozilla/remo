@@ -109,7 +109,7 @@ Mozilla Reps - {{ poll.name }} - Results
             <span class="label inline">
               Description
             </span>
-            {{ poll.description|urlize(150)|linebreaks }}
+            {{ poll.description|urlize(150)|markdown|nl2br }}
           </p>
         </div>
       </div>
