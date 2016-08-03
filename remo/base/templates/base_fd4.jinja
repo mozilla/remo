@@ -214,8 +214,28 @@
                   <a href="{{ url('profiles_list_profiles') }}"
                      class="main {{ active(request, '^/people/') }}">People</a>
                 </li>
-                <li class="last">
+                <li>
                   <a href="{{ url('events_list_events') }}" class="main">Events</a>
+                </li>
+                <li>
+                  <a href="https://blog.mozilla.org/mozillareps"
+                     class="main">Blog</a>
+                </li>
+                <li>
+                  <a href="http://planet.mozillareps.org"
+                     class="main">Planet</a>
+                </li>
+                <li>
+                  <a href="https://wiki.mozilla.org/ReMo"
+                     class="main">Wiki</a>
+                </li>
+                <li>
+                  <a href="{{ url('labs') }}"
+                     class="main {{ active(request, '^/labs/$') }}">Labs</a>
+                </li>
+                <li class="last">
+                  <a href="{{ url('faq') }}"
+                     class="main {{ active(request, '^/faq/$') }}">FAQ</a>
                 </li>
               </ul>
             </nav>
