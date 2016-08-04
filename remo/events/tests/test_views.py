@@ -313,16 +313,6 @@ class ViewsTest(RemoTestCase):
         ok_(not Event.objects.filter(pk=event.id).exists())
         mock_success.assert_called_with(ANY, 'Event successfully deleted.')
 
-    def test_converted_visitors(self):
-        """Test converted visitors counter."""
-        event = EventFactory.create()
-        converted_visitors = event.converted_visitors + 1
-        self.client.post(reverse('events_count_converted_visitors',
-                                 kwargs={'slug': event.slug}),
-                         follow=True)
-        event = Event.objects.get(slug=event.slug)
-        eq_(event.converted_visitors, converted_visitors)
-
     def test_export_event_to_ical(self):
         """Test ical export."""
         event = EventFactory.create()

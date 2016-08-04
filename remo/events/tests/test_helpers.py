@@ -1,14 +1,13 @@
 import datetime
 
-from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from nose.tools import eq_, ok_
 
 from remo.base.templatetags.helpers import urlparams
 from remo.base.tests import RemoTestCase
-from remo.events.templatetags.helpers import (get_contribute_link, get_event_search_link,
-                                              get_sorted_attendance_list, is_multiday)
+from remo.events.templatetags.helpers import (get_event_search_link, get_sorted_attendance_list,
+                                              is_multiday)
 from remo.events.tests import AttendanceFactory, EventFactory, START_DT
 from remo.reports import ACTIVITY_EVENT_CREATE
 from remo.reports.tests import ActivityFactory
@@ -43,15 +42,6 @@ class HelpersTest(RemoTestCase):
 
         eq_(copy_list, sorted_list[1:],
             'List is not properly sorted.')
-
-    def test_contribute_link(self):
-        """Test /contribute link generation."""
-        e = EventFactory.create(start=START_DT, end=self.single_day_end)
-        url = (settings.CONTRIBUTE_URL %
-               {'callbackurl': (settings.SITE_URL +
-                                reverse('events_count_converted_visitors',
-                                        kwargs={'slug': e.slug}))})
-        eq_(get_contribute_link(e), url)
 
     def test_get_event_search_link(self):
         """Test event search link generation."""

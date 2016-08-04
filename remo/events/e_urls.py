@@ -14,8 +14,6 @@ urlpatterns = [
         {'subscribe': True}, name='events_subscribe_to_event'),
     url(r'^(?P<slug>[a-z0-9-]+)/unsubscribe/$', events_views.manage_subscription,
         {'subscribe': False}, name='events_unsubscribe_from_event'),
-    url(r'^(?P<slug>[a-z0-9-]+)/plusoneconverted/$', events_views.count_converted_visitors,
-        name='events_count_converted_visitors'),
     url(r'^(?P<slug>[a-z0-9-]+)/ical/$', events_views.export_single_event_to_ical,
         name='events_icalendar_event'),
     url(r'^(?P<slug>[a-z0-9-]+)/emailattendees/$', events_views.email_attendees,
