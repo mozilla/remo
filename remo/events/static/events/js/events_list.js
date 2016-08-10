@@ -514,7 +514,10 @@ function send_query(newquery) {
     }
 
     if (period === 'custom' || category || initiative) {
-        EventsLib.adv_search_elm.show();
+        EventsLib.adv_search_elm.slideDown();
+    }
+    else if (period === 'future' || period === 'past' || period === 'all') {
+        EventsLib.adv_search_elm.slideUp();
     }
 
     // Abort previous request
