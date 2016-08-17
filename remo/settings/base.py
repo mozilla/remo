@@ -92,6 +92,7 @@ MEDIA_URL = '/media/'
 SESSION_COOKIE_SECURE = not DEBUG
 
 # Instruct session-csrf to always produce tokens for anonymous users
+# This is needed to get a CRSF token in /admin
 ANON_ALWAYS = True
 
 # Security Middleware
@@ -283,9 +284,6 @@ BROWSERID_AUDIENCES = [SITE_URL]
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
 LOGOUT_REDIRECT_URL = '/'
-
-# This is needed to get a CRSF token in /admin
-ANON_ALWAYS = True
 
 FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
 
