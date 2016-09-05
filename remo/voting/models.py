@@ -38,6 +38,7 @@ class Poll(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     valid_groups = models.ForeignKey(Group, related_name='valid_polls')
+    poll_groups = models.ManyToManyField(Group)
     created_on = models.DateTimeField(auto_now_add=True)
     description = models.TextField(validators=[MaxLengthValidator(2500),
                                                MinLengthValidator(20)])
