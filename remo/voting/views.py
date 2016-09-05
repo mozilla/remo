@@ -24,7 +24,7 @@ def list_votings(request):
     user = request.user
     polls = Poll.objects.all()
     if not user.groups.filter(name='Admin').exists():
-        polls = Poll.objects.filter(valid_groups__in=user.groups.all())
+        polls = Poll.objects.filter(poll_groups__in=user.groups.all())
 
     past_polls_query = polls.filter(end__lt=now())
     current_polls = polls.filter(start__lt=now(), end__gt=now())

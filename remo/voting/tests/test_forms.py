@@ -43,7 +43,7 @@ class PollAddFormTest(RemoTestCase):
             'start_form_0_year': u'2018',
             'start_form_1_hour': u'12',
             'start_form_1_minute': u'00',
-            'valid_groups': u'1'}
+            'poll_groups': ['1']}
 
         self.radio_formset_data = {
             'radio_polls-0-id': u'%d' % self.radio_poll.id,

@@ -45,7 +45,7 @@
                   data-time="{{ poll.end|format_datetime_iso }}">
                 {{ poll.end|format_datetime }}
               </td>
-              <td>{{ poll.valid_groups }}</td>
+              <td>{{ poll.poll_groups.all()|join(", ") }}</td>
               <td class="align-center">{{ poll|get_users_voted }}</td>
               <td>
                 <span class="meter_text">{{ poll|get_meter_value }}%</span>
@@ -108,7 +108,9 @@
                           data-time="{{ poll.end|format_datetime_iso }}">
                         {{ poll.end|format_datetime }}
                       </td>
-                      <td>{{ poll.valid_groups }}</td>
+                      <td>
+                        {{ poll.poll_groups.all()|join(", ") }}
+                      </td>
                       <td class="align-center">
                         {% if user_has_voted(user,poll) %}
                           <span class="user-voted"></span>

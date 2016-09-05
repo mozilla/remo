@@ -135,7 +135,7 @@ class PollEditForm(happyforms.ModelForm):
 class PollAddForm(PollEditForm):
     """Poll Add Form."""
     start = forms.DateTimeField(required=False)
-    valid_groups = forms.ModelChoiceField(
+    poll_groups = forms.ModelMultipleChoiceField(
         queryset=Group.objects.all().exclude(Q(name='Mozillians') | Q(name='Alumni')),
         error_messages={'required': 'Please select an option from the list.'})
 
@@ -199,7 +199,7 @@ class PollAddForm(PollEditForm):
 
     class Meta:
         model = Poll
-        fields = ['name', 'start', 'end', 'valid_groups', 'description', 'comments_allowed']
+        fields = ['name', 'start', 'end', 'poll_groups', 'description', 'comments_allowed']
         widgets = {'start': SplitSelectDateTimeWidget(),
                    'end': SplitSelectDateTimeWidget()}
 

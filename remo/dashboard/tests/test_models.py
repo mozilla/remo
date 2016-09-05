@@ -239,7 +239,8 @@ class VotingActionItems(RemoTestCase):
         council = Group.objects.get(name='Council')
         user = UserFactory.create(groups=['Council'])
         start = now() - timedelta(hours=3)
-        poll = PollFactory.create(valid_groups=council, start=start)
+        poll = PollFactory.create(start=start)
+        poll.poll_groups.add(council)
 
         items = ActionItem.objects.filter(content_type=model, object_id=poll.id)
         eq_(items.count(), 1)
@@ -260,7 +261,8 @@ class VotingActionItems(RemoTestCase):
         bug = BugFactory.create()
 
         start = now() - timedelta(hours=3)
-        poll = PollFactory.create(valid_groups=council, automated_poll=True, bug=bug, start=start)
+        poll = PollFactory.create(automated_poll=True, bug=bug, start=start)
+        poll.poll_groups.add(council)
 
         items = ActionItem.objects.filter(content_type=model, object_id=poll.id)
         eq_(items.count(), 1)
@@ -278,7 +280,8 @@ class VotingActionItems(RemoTestCase):
 
         council = Group.objects.get(name='Council')
         start = now() + timedelta(hours=3)
-        PollFactory.create(valid_groups=council, start=start)
+        poll = PollFactory.create(start=start)
+        poll.poll_groups.add(council)
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 0)
@@ -291,7 +294,8 @@ class VotingActionItems(RemoTestCase):
         council = Group.objects.get(name='Council')
         user = UserFactory.create(groups=['Council'])
         start = now() - timedelta(hours=3)
-        poll = PollFactory.create(valid_groups=council, start=start)
+        poll = PollFactory.create(start=start)
+        poll.poll_groups.add(council)
         VoteFactory.create(poll=poll, user=user)
 
         items = ActionItem.objects.filter(content_type=model, object_id=poll.id)
@@ -309,7 +313,8 @@ class VotingActionItems(RemoTestCase):
         council = Group.objects.get(name='Council')
         UserFactory.create(groups=['Council'])
         start = now() - timedelta(hours=3)
-        poll = PollFactory.create(valid_groups=council, start=start)
+        poll = PollFactory.create(start=start)
+        poll.poll_groups.add(council)
 
         poll.end = poll.end + timedelta(days=4)
         poll.save()
@@ -329,9 +334,8 @@ class VotingActionItems(RemoTestCase):
         UserFactory.create(groups=['Council'])
 
         start = now() - timedelta(hours=3)
-        poll = PollFactory.create(valid_groups=council,
-                                  end=now() - timedelta(days=1),
-                                  start=start)
+        poll = PollFactory.create(end=now() - timedelta(days=1), start=start)
+        poll.poll_groups.add(council)
 
         items = ActionItem.objects.filter(content_type=model)
         eq_(items.count(), 1)
@@ -342,7 +346,7 @@ class VotingActionItems(RemoTestCase):
             ok_(item.resolved)
             ok_(not item.completed)
 
-    def test_update_valid_groups(self):
+    def test_update_poll_groups(self):
         model = ContentType.objects.get_for_model(Poll)
         items = ActionItem.objects.filter(content_type=model)
         ok_(not items.exists())
@@ -352,8 +356,9 @@ class VotingActionItems(RemoTestCase):
         UserFactory.create_batch(3, groups=['Council'])
         UserFactory.create_batch(4, groups=['Rep'])
         start = now() - timedelta(hours=3)
-        poll = PollFactory.create(valid_groups=council, start=start)
-        poll.valid_groups = reps
+        poll = PollFactory.create(start=start)
+        poll.poll_groups.add(council)
+        poll.poll_groups = reps
         poll.save()
 
         items = ActionItem.objects.filter(content_type=model, object_id=poll.id)
@@ -374,9 +379,8 @@ class VotingActionItems(RemoTestCase):
         user = UserFactory.create(groups=['Admin'])
 
         start = now() - timedelta(hours=3)
-        poll = PollFactory.create(valid_groups=council,
-                                  end=now() - timedelta(days=1),
-                                  start=start)
+        poll = PollFactory.create(end=now() - timedelta(days=1), start=start)
+        poll.poll_groups.add(council)
         VoteFactory.create(poll=poll, user=user)
 
         # Check that there is only one action item and it's resolved

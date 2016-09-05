@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.db.models.signals import m2m_changed
 from django.core.urlresolvers import reverse
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.conf import settings
@@ -37,11 +38,9 @@ class Poll(models.Model):
     slug = models.SlugField(blank=True, max_length=255)
     start = models.DateTimeField()
     end = models.DateTimeField()
-    valid_groups = models.ForeignKey(Group, related_name='valid_polls')
     poll_groups = models.ManyToManyField(Group)
     created_on = models.DateTimeField(auto_now_add=True)
-    description = models.TextField(validators=[MaxLengthValidator(2500),
-                                               MinLengthValidator(20)])
+    description = models.TextField(validators=[MaxLengthValidator(2500), MinLengthValidator(20)])
     created_by = models.ForeignKey(User, related_name='range_polls_created')
     users_voted = models.ManyToManyField(User, related_name='polls_voted',
                                          through='Vote')
@@ -86,24 +85,17 @@ class Poll(models.Model):
     def save(self, *args, **kwargs):
         """Custom save method."""
 
-        create_action_items = False
-
         if not self.pk:
             self.slug = uuslug(self.name, instance=self)
-            create_action_items = True
         else:
             # Update action items
             current_poll = Poll.objects.get(id=self.pk)
-            action_model = ContentType.objects.get_for_model(self)
-            action_items = ActionItem.objects.filter(content_type=action_model,
-                                                     object_id=self.pk)
 
             if current_poll.end != self.end:
+                action_model = ContentType.objects.get_for_model(self)
+                action_items = ActionItem.objects.filter(content_type=action_model,
+                                                         object_id=self.pk)
                 action_items.update(due_date=self.end.date())
-
-            if current_poll.valid_groups != self.valid_groups:
-                action_items.delete()
-                create_action_items = True
 
             if not settings.CELERY_ALWAYS_EAGER:
                 if self.is_current_voting:
@@ -119,9 +111,6 @@ class Poll(models.Model):
 
         super(Poll, self).save()
 
-        if create_action_items:
-            ActionItem.create(self)
-
     def get_action_items(self):
         action_items = []
         due_date = self.end.date()
@@ -134,14 +123,28 @@ class Poll(models.Model):
             priority = ActionItem.NORMAL
 
         # Exclude the users that already have voted
-        users = (User.objects.filter(groups=self.valid_groups)
-                 .exclude(pk__in=self.vote_set.values_list('user',
-                                                           flat=True)))
+        users = (User.objects.filter(groups=self.poll_groups.all())
+                     .exclude(pk__in=self.vote_set.values_list('user', flat=True)).distinct())
         for user in users:
             action_item = Item(name, user, priority, due_date)
             action_items.append(action_item)
 
         return action_items
+
+
+@receiver(m2m_changed, sender=Poll.poll_groups.through,
+          dispatch_uid='update_voting_action_items_signal')
+def update_voting_action_items(sender, instance, action, pk_set, **kwargs):
+    """M2M signal to create/update action items related to the voting app."""
+
+    action_model = ContentType.objects.get_for_model(instance)
+    action_items = ActionItem.objects.filter(content_type=action_model, object_id=instance.pk)
+
+    if action == 'post_clear':
+        action_items.delete()
+
+    if action == 'post_add':
+        ActionItem.create(instance)
 
 
 @python_2_unicode_compatible
@@ -298,17 +301,14 @@ def automated_poll(sender, instance, **kwargs):
     remobot = User.objects.get(username='remobot')
 
     with transaction.atomic():
-        poll = (Poll.objects
-                .create(name=instance.summary,
-                        description=instance.first_comment,
-                        valid_groups=Group.objects.get(name='Council'),
-                        start=(now() +
-                               timedelta(BUDGET_REQUEST_PERIOD_START)),
-                        end=(now() +
-                             timedelta(days=BUDGET_REQUEST_PERIOD_END)),
-                        bug=instance,
-                        created_by=remobot,
-                        automated_poll=True))
+        poll = (Poll.objects.create(name=instance.summary,
+                                    description=instance.first_comment,
+                                    start=now() + timedelta(BUDGET_REQUEST_PERIOD_START),
+                                    end=now() + timedelta(days=BUDGET_REQUEST_PERIOD_END),
+                                    bug=instance,
+                                    created_by=remobot,
+                                    automated_poll=True))
+        poll.poll_groups.add(Group.objects.get(name='Council'))
 
         radio_poll = RadioPoll.objects.create(poll=poll,
                                               question='Budget Approval')
