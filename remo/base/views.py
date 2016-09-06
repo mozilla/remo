@@ -1,15 +1,16 @@
 from django import http
-from django_browserid.http import JSONResponse
-from django_browserid.views import Verify
 from django.db.models import Q
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.views import generic
 from django.views.decorators.cache import cache_control, never_cache
 
+from dal import autocomplete
+from django_browserid.http import JSONResponse
+from django_browserid.views import Verify
 from django_statsd.clients import statsd
 
 import forms
@@ -217,3 +218,18 @@ class BaseDeleteView(PermissionMixin, generic.DeleteView):
             return super(BaseDeleteView, self).delete(request, *args, **kwargs)
         messages.error(self.request, 'Object cannot be deleted.')
         return redirect(self.success_url)
+
+
+class GroupsAutocomplete(autocomplete.Select2QuerySetView):
+    """View used be the django-autocomplete group widget."""
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated():
+            return Group.objects.none()
+
+        qs = Group.objects.exclude(Q(name='Mozillians') | Q(name='Alumni'))
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs

@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 
+from remo.base.views import GroupsAutocomplete
+
 
 urlpatterns = patterns(
     '',
@@ -11,4 +13,6 @@ urlpatterns = patterns(
     url(r'labs/$', TemplateView.as_view(template_name='labs.jinja'),
         name='labs'),
     url(r'^$', 'remo.base.views.main', name='main'),
+    # django-autocomplete-light urls
+    url(r'^groups-autocomplete/$', GroupsAutocomplete.as_view(), name='groups-autocomplete'),
 )

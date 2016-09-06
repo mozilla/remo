@@ -13,10 +13,8 @@ urlpatterns = patterns(
     url(r'^invite/$', 'remo.profiles.views.invite', name='profiles_invite'),
     url(r'^invite$', RedirectView.as_view(url='invite/', permanent=True)),
     url(r'^alumni$', RedirectView.as_view(url='alumni/', permanent=True)),
-    url(r'^alumni/$', 'remo.profiles.views.list_alumni',
-        name='profiles_alumni'),
-    url(r'^$', 'remo.profiles.views.list_profiles',
-        name='profiles_list_profiles'),
+    url(r'^alumni/$', 'remo.profiles.views.list_alumni', name='profiles_alumni'),
+    url(r'^$', 'remo.profiles.views.list_profiles', name='profiles_list_profiles'),
     # This url is intentionally left without a $
     url(r'^', 'remo.profiles.views.redirect_list_profiles',
         name='profiles_list_profiles_redirect'),
