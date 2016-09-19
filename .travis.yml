@@ -2,18 +2,18 @@ language: python
 sudo: false
 python:
   - "2.7.11"
-before_install:
-  - pip install flake8
-  - flake8 remo
+before_script:
   - mysql -e 'create database remo character set utf8; SET @@GLOBAL.wait_timeout=28800;'
+  - cp remo/settings/localtravis.py remo/settings/local.py
 install:
   - npm install -g less
-  - pip install coverage
-  - pip install --require-hashes --no-deps -r requirements/dev.txt
+  - pip install coverage tox
+env:
+  - TOX_ENV=flake8
+  - TOX_ENV=tests
 cache:
   - pip
 script:
-  - coverage run --source=remo manage.py test
+  - tox -e $TOX_ENV
 after_success:
-  - pip install coveralls
   - coveralls

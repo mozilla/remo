@@ -190,7 +190,13 @@ class UserAdmin(ExportMixin, UserAdmin):
                     'userprofile__is_rotm_nominee',
                     'userprofile__date_joined_program',
                     'ng_reports__report_date'))
+    list_display = UserAdmin.list_display + ('get_groups',)
     search_fields = (UserAdmin.search_fields + ('userprofile__country',))
+
+    def get_groups(self, obj):
+        user_groups = [group.name for group in obj.groups.all()]
+        return (', ').join(user_groups)
+    get_groups.short_descriptions = 'Groups'
 
     def get_urls(self):
         """Return custom and UserAdmin urls."""

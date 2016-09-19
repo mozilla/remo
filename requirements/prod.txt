@@ -54,8 +54,6 @@ djangorestframework==3.1.0 \
 django-tastypie==0.12.2 \
     --hash=sha256:21625ce191ccb734f47b90ef92b603d04366bb67d0eb52bd060a8d76e6706018 \
     --hash=sha256:7feccf811a8c2c60bc227e0d956015f0ea6097c804660e8f4a4ada0e74817c24
-port==0.3.2 \
-    --hash=sha256:4fcbffe5c64346dbf57b7640c5e64a9dcd3a20679e52cc3edaeaf2e41285cd7d
 nose==1.3.7 \
     --hash=sha256:dadcddc0aefbf99eea214e0f1232b94f2fa9bd98fa8353711dacb112bfcbbb2a \
     --hash=sha256:9ff7c6cc443f8c51994b34a667bbcf45afd6d945be7477b52e97516fd17c53ac \

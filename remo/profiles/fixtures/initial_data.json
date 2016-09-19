@@ -46,5 +46,13 @@
             "name": "Alumni",
             "permissions": []
         }
+    },
+    {
+        "pk": 7,
+        "model": "auth.group",
+        "fields": {
+            "name": "Review",
+            "permissions": []
+        }
     }
 ]
