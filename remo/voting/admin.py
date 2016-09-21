@@ -56,7 +56,7 @@ class PollAdmin(ExportMixin, admin.ModelAdmin):
 
     inlines = [RangePollInline, RadioPollInline, PollCommentInline, VoteInline]
     search_fields = ['name']
-    list_display = ['name', 'start', 'end', 'valid_groups']
+    list_display = ['name', 'start', 'end']
     date_hierarchy = 'start'
     readonly_fields = ['task_start_id', 'task_end_id']
     list_filter = ['automated_poll', 'is_extended', 'comments_allowed']

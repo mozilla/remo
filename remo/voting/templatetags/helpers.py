@@ -17,7 +17,10 @@ def get_users_voted(poll):
 def get_voters_per_group(poll):
     """Return the number of users of a specific poll per group."""
 
-    return User.objects.filter(groups=poll.valid_groups).count()
+    total_users = 0
+    for group in poll.poll_groups.all():
+        total_users += User.objects.filter(groups=group).count()
+    return total_users
 
 
 @library.filter
@@ -37,8 +40,8 @@ def get_meter_value(poll):
 def user_has_poll_permissions(user, poll):
     """Check if a user's group has permissions for a specific poll."""
 
-    if user.groups.filter(Q(id=poll.valid_groups.id) |
-                          Q(name='Admin')).exists():
+    poll_groups_id = poll.poll_groups.all().values_list('id', flat=True)
+    if user.groups.filter(Q(id__in=poll_groups_id) | Q(name='Admin')).exists():
         return True
     return False
 

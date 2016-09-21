@@ -45,7 +45,8 @@ def send_voting_mail(voting_id, subject, email_template):
         message = render_to_string(email_template, data)
         send_mail(subject, message, settings.FROM_EMAIL, [settings.REPS_COUNCIL_ALIAS])
     else:
-        user_list = User.objects.filter(groups=poll.valid_groups).exclude(username='remobot')
+        user_list = (User.objects.filter(groups=poll.poll_groups.all())
+                                 .exclude(username='remobot').distinct())
 
         for user in user_list:
             ctx_data = {'user': user,
@@ -81,8 +82,8 @@ def extend_voting_period():
                 poll.end += timedelta(seconds=EXTEND_VOTING_PERIOD)
                 poll.save()
                 subject = '[Urgent] Voting extended for {0}'.format(poll.name)
-                recipients = (User.objects.filter(groups=poll.valid_groups)
-                              .exclude(pk__in=poll.users_voted.all())
+                recipients = (User.objects.filter(groups=poll.poll_groups.all())
+                              .exclude(pk__in=poll.users_voted.all().distinct())
                               .values_list('id', flat=True))
                 ctx_data = {'poll': poll}
                 template = 'emails/voting_vote_reminder.jinja'
@@ -136,10 +137,10 @@ def create_rotm_poll():
         with transaction.atomic():
             poll = Poll.objects.create(name=poll_name,
                                        description=description,
-                                       valid_groups=mentor_group,
                                        start=start,
                                        end=end,
                                        created_by=remobot)
+            poll.poll_groups.add(mentor_group)
             range_poll = RangePoll.objects.create(poll=poll, name='Rep of the month nominees')
 
             for nominee in nominees:

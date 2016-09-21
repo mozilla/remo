@@ -8,6 +8,8 @@ from django.db.models import F
 from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from django.utils.timezone import now, utc
 
+from dal import autocomplete
+
 from remo.base.datetimewidgets import SplitSelectDateTimeWidget
 from remo.base.utils import validate_datetime
 from models import (Poll, PollComment, RadioPoll,
@@ -129,13 +131,16 @@ class PollEditForm(happyforms.ModelForm):
     class Meta:
         model = Poll
         fields = ['name', 'end', 'description', 'comments_allowed']
-        widgets = {'end': SplitSelectDateTimeWidget()}
+        widgets = {
+            'end': SplitSelectDateTimeWidget(),
+            'poll_groups': autocomplete.ModelSelect2Multiple(url='base:groups-autocomplete')
+        }
 
 
 class PollAddForm(PollEditForm):
     """Poll Add Form."""
     start = forms.DateTimeField(required=False)
-    valid_groups = forms.ModelChoiceField(
+    poll_groups = forms.ModelMultipleChoiceField(
         queryset=Group.objects.all().exclude(Q(name='Mozillians') | Q(name='Alumni')),
         error_messages={'required': 'Please select an option from the list.'})
 
@@ -199,9 +204,12 @@ class PollAddForm(PollEditForm):
 
     class Meta:
         model = Poll
-        fields = ['name', 'start', 'end', 'valid_groups', 'description', 'comments_allowed']
-        widgets = {'start': SplitSelectDateTimeWidget(),
-                   'end': SplitSelectDateTimeWidget()}
+        fields = ['name', 'start', 'end', 'poll_groups', 'description', 'comments_allowed']
+        widgets = {
+            'start': SplitSelectDateTimeWidget(),
+            'end': SplitSelectDateTimeWidget(),
+            'poll_groups': autocomplete.ModelSelect2Multiple(url='base:groups-autocomplete')
+        }
 
 
 class BaseRangePollChoiceInlineFormset(BaseInlineFormSet):

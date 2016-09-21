@@ -17,6 +17,9 @@ DEBUG = False
 
 # Application definition
 INSTALLED_APPS = [
+    # Django-autocomplete-ligth needs to be installed before admin
+    'dal',
+    'dal_select2',
     # Django apps
     'django.contrib.admin',
     'django.contrib.auth',

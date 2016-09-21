@@ -22,17 +22,24 @@ class PollFactory(factory.django.DjangoModelFactory):
     start = fuzzy.FuzzyDateTime(datetime(2011, 1, 1, tzinfo=pytz.UTC))
     end = fuzzy.FuzzyDateTime(POLL_END_DT + timedelta(days=2),
                               POLL_END_DT + timedelta(days=365 * 2))
-    description = factory.Sequence(lambda n: ('This is a description {0}'
-                                              .format(n)))
+    description = factory.Sequence(lambda n: ('This is a description {0}'.format(n)))
     created_by = factory.SubFactory(UserFactory)
 
     class Meta:
         model = Poll
 
-    @factory.lazy_attribute
-    def valid_groups(self):
-        group_names = ['Admin', 'Council', 'Mentor', 'Rep', 'Mozillians']
-        return Group.objects.filter(name__in=group_names).order_by('?')[0]
+    @factory.post_generation
+    def poll_groups(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for group in extracted:
+                self.poll_groups.add(group)
+        else:
+            group_names = ['Admin', 'Council', 'Mentor', 'Rep', 'Mozillians']
+            group = Group.objects.filter(name__in=group_names).order_by('?')[0]
+            self.poll_groups.add(group)
 
 
 class VoteFactory(factory.django.DjangoModelFactory):

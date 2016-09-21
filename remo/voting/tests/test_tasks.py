@@ -35,7 +35,7 @@ class VotingTestTasks(RemoTestCase):
         with mute_signals(post_save):
             automated_poll = PollFactory.create(name='poll',
                                                 start=start, end=end,
-                                                valid_groups=group,
+                                                poll_groups=[group],
                                                 created_by=user,
                                                 automated_poll=True,
                                                 bug=bug)
@@ -78,7 +78,7 @@ class VotingTestTasks(RemoTestCase):
         with mute_signals(post_save):
             automated_poll = PollFactory.create(name='poll',
                                                 start=start, end=end,
-                                                valid_groups=group,
+                                                poll_groups=[group],
                                                 created_by=user,
                                                 automated_poll=True,
                                                 bug=bug)
@@ -158,7 +158,7 @@ class VotingRotmTestTasks(RemoTestCase):
         mentor_group = Group.objects.get(name='Mentor')
         poll = PollFactory.create(start=poll_start,
                                   end=poll_end,
-                                  valid_groups=mentor_group,
+                                  poll_groups=[mentor_group],
                                   name=poll_name)
 
         create_rotm_poll()

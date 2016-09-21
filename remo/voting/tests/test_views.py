@@ -35,10 +35,11 @@ class ViewsTest(RemoTestCase):
         poll_start = now() + timedelta(days=5)
         self.admin_group = Group.objects.get(name='Admin')
         self.rep_group = Group.objects.get(name='Rep')
-        self.poll = PollFactory.create(valid_groups=self.admin_group,
+        self.poll = PollFactory.create(poll_groups=[self.admin_group],
                                        start=poll_start,
                                        end=poll_start + timedelta(days=10),
                                        comments_allowed=False)
+        self.poll.poll_groups.add(self.admin_group)
         self.range_poll = RangePollFactory(poll=self.poll)
         self.range_poll_choice1 = RangePollChoiceFactory(range_poll=self.range_poll,
                                                          nominee=self.nominee1)
@@ -56,7 +57,7 @@ class ViewsTest(RemoTestCase):
             'name': u'Test edit voting',
             'description': u'This is a description.',
             'created_by': self.poll.created_by.id,
-            'valid_groups': self.admin_group.id,
+            'poll_groups': [self.admin_group.id],
             'start_form_0_year': 2018,
             'start_form_0_month': 10,
             'start_form_0_day': 01,
@@ -103,7 +104,7 @@ class ViewsTest(RemoTestCase):
             'name': u'Test edit voting',
             'description': u'This is a description.',
             'created_by': self.nominee1.id,
-            'valid_groups': self.admin_group.id,
+            'poll_groups': [self.admin_group.id],
             'start_form_0_year': 2011,
             'end_form_0_year': 2018,
             'end_form_0_month': 10,
@@ -137,7 +138,7 @@ class ViewsTest(RemoTestCase):
         """View a voting."""
         rep_group = Group.objects.get(name='Rep')
         poll_start = now() - timedelta(days=5)
-        poll = PollFactory.create(valid_groups=rep_group,
+        poll = PollFactory.create(poll_groups=[rep_group],
                                   end=poll_start + timedelta(days=10))
 
         # Anonymous user.
@@ -163,7 +164,7 @@ class ViewsTest(RemoTestCase):
     def test_view_cast_a_vote(self, fake_messages):
         """Cast a vote on a voting."""
         poll_start = now() - timedelta(days=5)
-        poll = PollFactory.create(valid_groups=self.rep_group, start=poll_start,
+        poll = PollFactory.create(poll_groups=[self.rep_group], start=poll_start,
                                   end=poll_start + timedelta(days=10),
                                   comments_allowed=False)
 
@@ -207,7 +208,7 @@ class ViewsTest(RemoTestCase):
         swag_poll = PollFactory.create(name='swag poll', start=poll_start,
                                        end=poll_start + timedelta(days=15),
                                        created_by=poll_user,
-                                       valid_groups=poll_group,
+                                       poll_groups=[poll_group],
                                        bug=bug,
                                        automated_poll=True,
                                        description='Swag poll description.',
@@ -230,7 +231,7 @@ class ViewsTest(RemoTestCase):
     def test_view_voting_results(self, faked_message):
         """View the results of a voting."""
         poll_start = now() - timedelta(days=5)
-        poll = PollFactory.create(valid_groups=self.rep_group,
+        poll = PollFactory.create(poll_groups=[self.rep_group],
                                   start=poll_start,
                                   end=poll_start - timedelta(days=3),
                                   comments_allowed=False)
@@ -257,7 +258,7 @@ class ViewsTest(RemoTestCase):
     def test_view_future_voting(self):
         """View a voting planned to start in the future."""
         poll_start = now() + timedelta(days=5)
-        poll = PollFactory.create(valid_groups=self.rep_group,
+        poll = PollFactory.create(poll_groups=[self.rep_group],
                                   start=poll_start,
                                   end=poll_start + timedelta(days=10),
                                   comments_allowed=False)
@@ -295,13 +296,15 @@ class ViewsTest(RemoTestCase):
         poll = Poll.objects.get(name='Test edit voting')
 
         # Test fields with the same name in POST data and models.
-        excluded = ['valid_groups', 'created_by']
+        excluded = ['poll_groups', 'created_by']
         for field in set(self.edit_future_data).difference(set(excluded)):
             if getattr(poll, field, None):
                 eq_(getattr(poll, field), self.edit_future_data[field])
 
         # Test excluded fields.
-        eq_(self.edit_future_data['valid_groups'], poll.valid_groups.id)
+        groups_data = []
+        eq_(self.edit_future_data['poll_groups'], groups_data.extend(
+            poll.poll_groups.all().values_list('id', flat=True)))
         eq_(self.edit_future_data['created_by'], poll.created_by.id)
 
         # Ensure Range/Radio Polls are saved.
@@ -349,7 +352,7 @@ class ViewsTest(RemoTestCase):
     def test_view_edit_current_voting(self):
         """Test current voting test."""
         poll_start = now() - timedelta(days=5)
-        poll = PollFactory.create(valid_groups=self.admin_group, start=poll_start,
+        poll = PollFactory.create(poll_groups=[self.admin_group], start=poll_start,
                                   end=poll_start + timedelta(days=10),
                                   comments_allowed=False,
                                   created_by=self.nominee1)
@@ -377,14 +380,16 @@ class ViewsTest(RemoTestCase):
         poll = Poll.objects.get(name='Test edit voting')
 
         # Test fields with the same name in POST data and models.
-        excluded = ['valid_groups', 'created_by']
+        excluded = ['poll_groups', 'created_by']
         for field in set(self.edit_current_data).difference(set(excluded)):
             if getattr(poll, field, None):
                 eq_(getattr(poll, field), self.edit_current_data[field])
 
         # Test excluded fields.
         eq_(self.edit_current_data['created_by'], poll.created_by.id)
-        eq_(self.edit_current_data['valid_groups'], poll.valid_groups.id)
+        groups_data = []
+        eq_(self.edit_current_data['poll_groups'], groups_data.extend(
+            poll.poll_groups.all().values_list('id', flat=True)))
 
         # Ensure voting end is saved.
         month = self.edit_current_data['end_form_0_month']
@@ -402,7 +407,8 @@ class ViewsTest(RemoTestCase):
     def test_view_edit_voting(self):
         """Test view edit voting."""
         poll_start = now() - timedelta(days=5)
-        poll = PollFactory.create(valid_groups=self.admin_group, start=poll_start,
+        poll = PollFactory.create(poll_groups=[self.admin_group],
+                                  start=poll_start,
                                   end=poll_start + timedelta(days=10),
                                   comments_allowed=False,
                                   created_by=self.nominee1)
@@ -469,7 +475,7 @@ class ViewsTest(RemoTestCase):
             swag_poll = PollFactory.create(name='swag poll', start=poll_start,
                                            end=poll_start + timedelta(days=15),
                                            created_by=poll_user,
-                                           valid_groups=poll_group,
+                                           poll_groups=[poll_group],
                                            bug=bug,
                                            automated_poll=True,
                                            description='Swag poll description.',
@@ -494,7 +500,7 @@ class VotingCommentingSystem(RemoTestCase):
     def test_post_a_comment(self, form_mock, messages_mock):
         user = UserFactory.create(groups=['Rep'])
         group = Group.objects.get(name='Rep')
-        poll = PollFactory.create(created_by=user, valid_groups=group)
+        poll = PollFactory.create(created_by=user, poll_groups=[group])
         form_mock.is_valid.return_value = True
         with self.login(user) as client:
             response = client.post(poll.get_absolute_url(),
@@ -511,7 +517,7 @@ class VotingCommentingSystem(RemoTestCase):
     def test_delete_as_owner(self, redirect_mock):
         user = UserFactory.create(groups=['Rep'])
         group = Group.objects.get(name='Rep')
-        poll = PollFactory.create(created_by=user, valid_groups=group)
+        poll = PollFactory.create(created_by=user, poll_groups=[group])
         comment = PollCommentFactory.create(poll=poll, user=user,
                                             comment='This is a comment')
         with self.login(user) as client:
@@ -530,7 +536,7 @@ class VotingCommentingSystem(RemoTestCase):
     def test_delete_as_other_rep(self):
         user = UserFactory.create(groups=['Rep'])
         group = Group.objects.get(name='Rep')
-        poll = PollFactory.create(created_by=user, valid_groups=group)
+        poll = PollFactory.create(created_by=user, poll_groups=[group])
         comment = PollCommentFactory.create(poll=poll, user=user,
                                             comment='This is a comment')
         other_rep = UserFactory.create(groups=['Rep'])
