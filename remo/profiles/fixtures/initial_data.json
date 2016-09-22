@@ -54,5 +54,13 @@
             "name": "Review",
             "permissions": []
         }
+    },
+    {
+        "pk": 8,
+        "model": "auth.group",
+        "fields": {
+            "name": "Peers",
+            "permissions": []
+        }
     }
 ]

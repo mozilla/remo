@@ -82,7 +82,8 @@ def edit(request, display_name):
                       'Council': 'council_group',
                       'Rep': 'rep_group',
                       'Alumni': 'alumni_group',
-                      'Review': 'review_group'}
+                      'Review': 'review_group',
+                      'Peers': 'peers_group'}
 
             for group_db, group_html in groups.items():
                 if Group.objects.filter(name=group_db).exists():
@@ -114,7 +115,7 @@ def edit(request, display_name):
         user = User.objects.get(pk=user.id)
 
     group_bits = map(lambda x: user.groups.filter(name=x).exists(),
-                     ['Admin', 'Council', 'Mentor', 'Rep', 'Alumni', 'Review'])
+                     ['Admin', 'Council', 'Mentor', 'Rep', 'Alumni', 'Review', 'Peers'])
 
     functional_areas = map(int, profileform['functional_areas'].value())
     user_is_alumni = user.groups.filter(name='Alumni').exists()
