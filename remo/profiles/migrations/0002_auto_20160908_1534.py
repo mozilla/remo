@@ -5,12 +5,13 @@ from django.db import migrations, models
 
 
 def forwards(apps, schema_editor):
-    """Populate mozillian_username with username data."""
+    """Create 'Review' group."""
     Group = apps.get_model('auth', 'Group')
     Group.objects.create(name='Review')
 
 
 def backwards(apps, schema_editor):
+    """Delete 'Review' group."""
     Group = apps.get_model('auth', 'Group')
     Group.objects.filter(name='Review').delete()
 
