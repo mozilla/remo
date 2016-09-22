@@ -12,7 +12,9 @@ env:
   - TOX_ENV=flake8
   - TOX_ENV=tests
 cache:
-  - pip
+  directories:
+  - $HOME/.cache/pip
+  - $TRAVIS_BUILD_DIR/.tox
 script:
   - tox -e $TOX_ENV
 after_success:
