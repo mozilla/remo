@@ -10,9 +10,9 @@ def voting_set_groups(sender, **kwargs):
     if (isinstance(app_label, basestring) and app_label != 'voting'):
         return True
 
-    permissions = {'add_poll': ['Admin', 'Council', 'Mentor'],
-                   'delete_poll': ['Admin', 'Council', 'Mentor'],
-                   'change_poll': ['Admin', 'Council', 'Mentor'],
+    permissions = {'add_poll': ['Admin', 'Council', 'Mentor', 'Review'],
+                   'delete_poll': ['Admin', 'Council', 'Mentor', 'Review'],
+                   'change_poll': ['Admin', 'Council', 'Mentor', 'Review'],
                    'delete_pollcomment': ['Admin']}
 
     add_permissions_to_groups('voting', permissions)
