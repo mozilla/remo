@@ -34,7 +34,7 @@ class TestUserSerializer(RemoTestCase):
 
     def test_base(self):
         user = UserFactory.create()
-        url = '/api/beta/users/%s' % user.id
+        url = '/api/remo/v1/users/%s' % user.id
         request = RequestFactory().get(url)
         serializer = UserSerializer(user, context={'request': request})
         eq_(serializer.data['first_name'], user.first_name)
@@ -51,7 +51,7 @@ class TestUserProfileDetailedSerializer(RemoTestCase):
         user = UserFactory.create(userprofile__mentor=mentor, groups=['Rep'],
                                   userprofile__functional_areas=functional_areas)
 
-        url = '/api/beta/users/%s' % user.id
+        url = '/api/remo/v1/users/%s' % user.id
         request = RequestFactory().get(url)
         profile = user.userprofile
         data = UserProfileDetailedSerializer(user.userprofile, context={'request': request}).data
@@ -88,7 +88,7 @@ class TestUserProfileDetailedSerializer(RemoTestCase):
         functional_areas = FunctionalAreaFactory.create_batch(2)
         user = UserFactory.create(userprofile__mentor=mentor, groups=['Rep'],
                                   userprofile__functional_areas=functional_areas)
-        url = '/api/beta/users/%s' % user.id
+        url = '/api/remo/v1/users/%s' % user.id
         request = RequestFactory().get(url)
         data = UserProfileDetailedSerializer(user.userprofile, context={'request': request}).data
         ok_(user.userprofile.get_absolute_url() in data['remo_url'])

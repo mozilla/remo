@@ -22,7 +22,7 @@ class TestEventSerializer(RemoTestCase):
 
     def test_base(self):
         event = EventFactory.create()
-        url = '/api/beta/events/%s' % event.id
+        url = '/api/remo/v1/events/%s' % event.id
         request = RequestFactory().get(url)
         serializer = EventSerializer(event, context={'request': request})
         eq_(serializer.data['name'], event.name)
@@ -39,7 +39,7 @@ class TestEventDetailedSerializer(RemoTestCase):
         categories = [FunctionalAreaFactory.create()]
         initiative = CampaignFactory.create()
         event = EventFactory.create(categories=categories, owner=user, campaign=initiative)
-        url = '/api/beta/events/%s' % event.id
+        url = '/api/remo/v1/events/%s' % event.id
         request = RequestFactory().get(url)
         data = EventDetailedSerializer(event, context={'request': request}).data
         eq_(data['name'], event.name)
@@ -65,7 +65,7 @@ class TestEventDetailedSerializer(RemoTestCase):
 
     def test_get_remo_url(self):
         event = EventFactory.create()
-        url = '/api/beta/events/%s' % event.id
+        url = '/api/remo/v1/events/%s' % event.id
         request = RequestFactory().get(url)
         data = EventDetailedSerializer(event, context={'request': request}).data
         ok_(event.get_absolute_url() in data['remo_url'])
