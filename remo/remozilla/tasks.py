@@ -32,6 +32,9 @@ URL = ('https://bugzilla.mozilla.org/rest/bug?token={token}'
        'offset={offset}&limit={limit}')
 COMMENT_URL = 'https://bugzilla.mozilla.org/rest/bug/{id}/comment?token={token}'
 LIMIT = 100
+BUG_WHITEBOARD = 'Review Team approval needed'
+BUG_REVIEW = 'remo-review'
+BUG_APPROVAL = 'remo-approval'
 
 
 def parse_bugzilla_time(time):
@@ -121,15 +124,15 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 bug.council_member_assigned = False
                 bug.pending_mentor_validation = False
                 for flag in bdata.get('flags', []):
-                    if flag['status'] == '?' and flag['name'] == 'remo-approval':
+                    if flag['status'] == '?' and flag['name'] == BUG_APPROVAL:
                         automated_voting_trigger += 1
-                        if 'Council Reviewer Assigned' in bug.whiteboard:
+                        if BUG_WHITEBOARD in bug.whiteboard:
                             bug.council_member_assigned = True
                     if ((flag['status'] == '?' and
                          flag['name'] == 'needinfo' and 'requestee' in flag and
-                         flag['requestee'] == (settings.REPS_COUNCIL_ALIAS))):
+                         flag['requestee'] == (settings.REPS_REVIEW_ALIAS))):
                         automated_voting_trigger += 1
-                    if flag['status'] == '?' and flag['name'] == 'remo-review':
+                    if flag['status'] == '?' and flag['name'] == BUG_REVIEW:
                         bug.pending_mentor_validation = True
                     if (flag['status'] == '?' and flag['name'] == 'needinfo' and
                             'requestee' in flag):
