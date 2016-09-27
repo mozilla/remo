@@ -51,8 +51,8 @@ HMAC_KEYS = {
 # Cache backend settings. Enables Cache Machine's memcache backend.
 CACHES = {
     'default': {
-        'BACKEND': 'caching.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': 'localhost:11211',
     }
 }
 
