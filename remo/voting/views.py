@@ -23,8 +23,16 @@ def list_votings(request):
     """List votings view."""
     user = request.user
     polls = Poll.objects.all()
-    if not user.groups.filter(name='Admin').exists():
-        polls = Poll.objects.filter(valid_groups__in=user.groups.all())
+
+    is_admin = user.groups.filter(name='Admin').exists()
+    is_peer = user.groups.filter(name='Peers').exists()
+    is_council = user.groups.filter(name='Council').exists()
+
+    if not (is_admin or is_peer):
+        poll_groups = list(user.groups.values_list('name', flat=True))
+        if is_council:
+            poll_groups += ['Review']
+        polls = Poll.objects.filter(valid_groups__name__in=poll_groups)
 
     past_polls_query = polls.filter(end__lt=now())
     current_polls = polls.filter(start__lt=now(), end__gt=now())
@@ -132,8 +140,14 @@ def edit_voting(request, slug=None):
 def view_voting(request, slug):
     user = request.user
     poll = get_object_or_404(Poll, slug=slug)
+
+    is_council = request.user.groups.filter(name='Council').exists()
+    is_peer = request.user.groups.filter(name='Peers').exists()
+    is_review_poll = poll.valid_groups.name == 'Review'
+    read_only_perms = is_peer or (is_council and is_review_poll)
+
     # If the user does not belong to a valid poll group
-    if not user_has_poll_permissions(user, poll):
+    if not user_has_poll_permissions(user, poll) and not read_only_perms:
         messages.error(request, u'You do not have the permissions to vote on this voting.')
         return redirect('voting_list_votings')
 
@@ -142,8 +156,11 @@ def view_voting(request, slug):
     user_voted = False
     comment_form = forms.PollCommentForm()
 
-    data = {'poll': poll,
-            'comment_form': comment_form}
+    data = {
+        'poll': poll,
+        'comment_form': comment_form,
+        'read_only_access': read_only_perms
+    }
 
     # if the voting period has ended, display the results
     if poll.is_past_voting:
