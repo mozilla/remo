@@ -21,7 +21,7 @@ class TestActivitySerializer(RemoTestCase):
     def test_base(self):
         activity = ActivityFactory.create()
         report = NGReportFactory.create(activity=activity)
-        url = '/api/beta/activities/%s' % report.id
+        url = '/api/remo/v1/activities/%s' % report.id
         request = RequestFactory().get(url)
         serializer = ActivitiesSerializer(report,
                                           context={'request': request})
@@ -44,7 +44,7 @@ class TestActivityDetailedSerializer(RemoTestCase):
         report = NGReportFactory.create(
             functional_areas=functional_areas, mentor=mentor,
             campaign=campaign, user=user, event=event, activity=activity)
-        url = '/api/beta/activities/%s' % report.id
+        url = '/api/remo/v1/activities/%s' % report.id
         request = RequestFactory().get(url)
         data = ActivitiesDetailedSerializer(report,
                                             context={'request': request}).data
@@ -72,7 +72,7 @@ class TestActivityDetailedSerializer(RemoTestCase):
 
     def test_get_remo_url(self):
         report = NGReportFactory.create()
-        url = '/api/beta/activities/%s' % report.id
+        url = '/api/remo/v1/activities/%s' % report.id
         request = RequestFactory().get(url)
         data = ActivitiesDetailedSerializer(
             report, context={'request': request}).data

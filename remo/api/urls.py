@@ -24,7 +24,7 @@ router.register(r'activities', ActivitiesViewSet)
 urlpatterns = patterns(
     '',
     url(r'', include(v1_api.urls)),
-    url(r'^beta/', include(router.urls), name='v1root'),
+    url(r'^remo/v1/', include(router.urls), name='v1root'),
     url(r'^kpi/events/', EventsKPIView.as_view(), name='kpi-events'),
     url(r'^kpi/activities/', ActivitiesKPIView.as_view(),
         name='kpi-activities'),
