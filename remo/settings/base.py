@@ -118,6 +118,7 @@ CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
 
 REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
 REPS_COUNCIL_ALIAS = 'reps-council@mozilla.com'
+REPS_REVIEW_ALIAS = 'reps-review@mozilla.com'
 
 # Mozillians API
 MOZILLIANS_API_BASE = 'https://mozillians.org'
