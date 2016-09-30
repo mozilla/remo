@@ -196,7 +196,7 @@ class UserAdmin(ExportMixin, UserAdmin):
     def get_groups(self, obj):
         user_groups = [group.name for group in obj.groups.all()]
         return (', ').join(user_groups)
-    get_groups.short_descriptions = 'Groups'
+    get_groups.short_description = 'Groups'
 
     def get_urls(self):
         """Return custom and UserAdmin urls."""
