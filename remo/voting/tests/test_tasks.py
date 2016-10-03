@@ -28,9 +28,9 @@ class VotingTestTasks(RemoTestCase):
         new_end = datetime.combine(get_date(days=2), datetime.min.time())
 
         user = UserFactory.create(groups=['Admin'])
-        group = Group.objects.get(name='Council')
-        User.objects.filter(groups__name='Council').delete()
-        council = UserFactory.create_batch(9, groups=['Council'])
+        group = Group.objects.get(name='Review')
+        User.objects.filter(groups__name='Review').delete()
+        review = UserFactory.create_batch(9, groups=['Review'])
 
         with mute_signals(post_save):
             automated_poll = PollFactory.create(name='poll',
@@ -46,7 +46,7 @@ class VotingTestTasks(RemoTestCase):
                                       radio_poll=radio_poll)
         RadioPollChoiceFactory.create(answer='Denied', votes=4,
                                       radio_poll=radio_poll)
-        VoteFactory.create(user=council[0], poll=automated_poll)
+        VoteFactory.create(user=review[0], poll=automated_poll)
 
         with patch('remo.voting.tasks.send_remo_mail.delay') as mocked_mail:
             extend_voting_period()
@@ -71,9 +71,9 @@ class VotingTestTasks(RemoTestCase):
         end = datetime.combine(get_date(days=1), datetime.min.time())
 
         user = UserFactory.create(groups=['Admin'])
-        group = Group.objects.get(name='Council')
-        User.objects.filter(groups__name='Council').delete()
-        UserFactory.create_batch(9, groups=['Council'])
+        group = Group.objects.get(name='Review')
+        User.objects.filter(groups__name='Review').delete()
+        UserFactory.create_batch(9, groups=['Review'])
 
         with mute_signals(post_save):
             automated_poll = PollFactory.create(name='poll',

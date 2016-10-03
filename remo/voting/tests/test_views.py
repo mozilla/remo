@@ -463,8 +463,8 @@ class ViewsTest(RemoTestCase):
     def test_view_delete_automated_poll(self):
         with mute_signals(post_save):
             poll_start = now() - timedelta(days=5)
-            poll_user = UserFactory.create(groups=['Council'])
-            poll_group = Group.objects.get(name='Council')
+            poll_user = UserFactory.create(groups=['Review'])
+            poll_group = Group.objects.get(name='Review')
             bug = BugFactory.create()
             swag_poll = PollFactory.create(name='swag poll', start=poll_start,
                                            end=poll_start + timedelta(days=15),
