@@ -390,4 +390,4 @@ class EventMetricForm(happyforms.ModelForm):
 
     class Meta:
         model = EventMetric
-        fields = ['name']
+        fields = ['name', 'active']
