@@ -94,7 +94,7 @@ class ActivityForm(happyforms.ModelForm):
 
     class Meta:
         model = Activity
-        fields = ['name']
+        fields = ['name', 'active']
 
 
 class CampaignForm(happyforms.ModelForm):
@@ -102,4 +102,4 @@ class CampaignForm(happyforms.ModelForm):
 
     class Meta:
         model = Campaign
-        fields = ['name']
+        fields = ['name', 'active']

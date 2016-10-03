@@ -204,7 +204,7 @@ class FunctionalAreaForm(happyforms.ModelForm):
 
     class Meta:
         model = FunctionalArea
-        fields = ['name']
+        fields = ['name', 'active']
 
 
 class UserStatusForm(happyforms.ModelForm):
