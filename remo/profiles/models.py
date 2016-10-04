@@ -15,7 +15,6 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
-import caching.base
 from django_statsd.clients import statsd
 from uuslug import uuslug as slugify
 
@@ -94,7 +93,7 @@ class FunctionalArea(models.Model):
         verbose_name_plural = 'functional areas'
 
 
-class UserProfile(caching.base.CachingMixin, models.Model):
+class UserProfile(models.Model):
     """Definition of UserProfile Model."""
     user = models.OneToOneField(User)
     registration_complete = models.BooleanField(default=False)
@@ -184,8 +183,6 @@ class UserProfile(caching.base.CachingMixin, models.Model):
     is_rotm_nominee = models.BooleanField(default=False)
     action_items = generic.GenericRelation('dashboard.ActionItem')
 
-    objects = caching.base.CachingManager()
-
     class Meta:
         permissions = (('create_user', 'Can create new user'),
                        ('can_edit_profiles', 'Can edit profiles'),
@@ -232,20 +229,18 @@ class UserProfile(caching.base.CachingMixin, models.Model):
 
 
 @python_2_unicode_compatible
-class UserAvatar(caching.base.CachingMixin, models.Model):
+class UserAvatar(models.Model):
     """User Avatar Model."""
     user = models.OneToOneField(User)
     avatar_url = models.URLField(max_length=400, default='')
     last_update = models.DateTimeField(auto_now=True)
-
-    objects = caching.base.CachingManager()
 
     def __str__(self):
         return u'UserAvatar:%s' % self.user.userprofile.display_name
 
 
 @python_2_unicode_compatible
-class UserStatus(caching.base.CachingMixin, models.Model):
+class UserStatus(models.Model):
     """Model for inactiviy/unavailability data."""
     user = models.ForeignKey(User, related_name='status')
     start_date = models.DateField(blank=True, default=get_date)
@@ -255,8 +250,6 @@ class UserStatus(caching.base.CachingMixin, models.Model):
                                         related_name='replaced_rep')
     created_on = models.DateTimeField(auto_now_add=True)
     is_unavailable = models.BooleanField(default=False)
-
-    objects = caching.base.CachingManager()
 
     @property
     def is_future_date(self):
