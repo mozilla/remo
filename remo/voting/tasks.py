@@ -66,7 +66,7 @@ def extend_voting_period():
     from remo.voting.models import Poll
 
     tomorrow = get_date(days=1)
-    council_count = User.objects.filter(groups__name='Council').count()
+    review_count = User.objects.filter(groups__name='Review').count()
 
     query_start = make_aware(datetime.combine(tomorrow, datetime.min.time()), pytz.UTC)
     query_end = make_aware(datetime.combine(tomorrow, datetime.max.time()), pytz.UTC)
@@ -75,7 +75,7 @@ def extend_voting_period():
     for poll in polls:
         if not poll.is_extended:
             budget_poll = poll.radio_polls.get(question='Budget Approval')
-            majority = reduce(or_, map(lambda x: x.votes > council_count / 2,
+            majority = reduce(or_, map(lambda x: x.votes > review_count / 2,
                                        budget_poll.answers.all()))
             if not majority:
                 poll.end += timedelta(seconds=EXTEND_VOTING_PERIOD)

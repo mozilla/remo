@@ -287,7 +287,7 @@ def automated_poll(sender, instance, **kwargs):
     """Create a radio poll automatically.
 
     If a bug lands in our database with council_vote_requested, create
-    a new Poll and let Council members vote.
+    a new Poll and let Review members vote.
 
     """
     if ((not instance.council_vote_requested or
@@ -300,7 +300,7 @@ def automated_poll(sender, instance, **kwargs):
         poll = (Poll.objects
                 .create(name=instance.summary,
                         description=instance.first_comment,
-                        valid_groups=Group.objects.get(name='Council'),
+                        valid_groups=Group.objects.get(name='Review'),
                         start=(now() +
                                timedelta(BUDGET_REQUEST_PERIOD_START)),
                         end=(now() +
