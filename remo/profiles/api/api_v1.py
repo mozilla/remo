@@ -123,8 +123,7 @@ class RepResource(RemoThrottleMixin, ModelResource):
                                 full=True, null=True)
 
     class Meta:
-        cache = HttpCache(control={'max_age': 3600, 'public': True,
-                                   's-maxage': 3600})
+        cache = HttpCache(control={'max_age': 3600, 'public': True, 's-maxage': 3600})
         queryset = User.objects.filter(userprofile__registration_complete=True,
                                        groups__name='Rep')
         resource_name = 'rep'
@@ -178,14 +177,15 @@ class RepResource(RemoThrottleMixin, ModelResource):
         group = request.GET.get('group', None)
         if group:
             if group == 'mentor':
-                base_object_list = (base_object_list.
-                                    filter(groups__name='Mentor'))
+                base_object_list = base_object_list.filter(groups__name='Mentor')
             elif group == 'council':
-                base_object_list = (base_object_list.
-                                    filter(groups__name='Council'))
+                base_object_list = base_object_list.filter(groups__name='Council')
             elif group == 'rep':
-                base_object_list = (base_object_list.
-                                    filter(groups__name='Rep'))
+                base_object_list = base_object_list.filter(groups__name='Rep')
+            elif group == 'review':
+                base_object_list = base_object_list.filter(groups__name='Review')
+            elif group == 'peers':
+                base_object_list = base_object_list.filter(groups__name='Peers')
 
         return base_object_list
 
@@ -213,8 +213,7 @@ class RepResource(RemoThrottleMixin, ModelResource):
 
     def create_response(self, request, data, **response_kwargs):
         """Add HTTP header to specify the filename of CSV exports."""
-        response = super(RepResource, self).create_response(
-            request, data, **response_kwargs)
+        response = super(RepResource, self).create_response(request, data, **response_kwargs)
 
         if self.determine_format(request) == 'text/csv':
             today = now().date()
