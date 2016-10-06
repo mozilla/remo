@@ -6,10 +6,10 @@ from django.utils.timezone import now
 
 import django_filters
 from rest_framework.views import APIView
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.response import Response
 
 from remo.api.serializers import BaseKPISerializer
+from remo.api.views import BaseReadOnlyModelViewset
 from remo.base.utils import get_quarter
 from remo.events.api.serializers import (EventDetailedSerializer,
                                          EventSerializer)
@@ -30,7 +30,7 @@ class EventsFilter(django_filters.FilterSet):
                   'country', 'lat', 'lon')
 
 
-class EventsViewSet(ReadOnlyModelViewSet):
+class EventsViewSet(BaseReadOnlyModelViewset):
     """Return a list of events."""
     serializer_class = EventSerializer
     model = Event
