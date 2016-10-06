@@ -1,3 +1,6 @@
+import json
+import logging
+
 from django import http
 from django_browserid.http import JSONResponse
 from django_browserid.views import Verify
@@ -5,12 +8,15 @@ from django.db.models import Q
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.http import Http404
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.views import generic
 from django.views.decorators.cache import cache_control, never_cache
 
 from django_statsd.clients import statsd
+from raven.contrib.django.models import client
 
 import forms
 import utils
@@ -217,3 +223,30 @@ class BaseDeleteView(PermissionMixin, generic.DeleteView):
             return super(BaseDeleteView, self).delete(request, *args, **kwargs)
         messages.error(self.request, 'Object cannot be deleted.')
         return redirect(self.success_url)
+
+
+@require_POST
+@csrf_exempt
+def capture_csp_violation(request):
+    data = client.get_data_from_request(request)
+    data.update({
+        'level': logging.INFO,
+        'logger': 'CSP',
+    })
+    try:
+        csp_data = json.loads(request.body)
+    except ValueError:
+        # Cannot decode CSP violation data, ignore
+        return HttpResponseBadRequest('Invalid CSP Report')
+
+    try:
+        blocked_uri = csp_data['csp-report']['blocked-uri']
+    except KeyError:
+        # Incomplete CSP report
+        return HttpResponseBadRequest('Incomplete CSP Report')
+
+    client.captureMessage(
+        message='CSP Violation: {}'.format(blocked_uri),
+        data=data)
+
+    return HttpResponse('Captured CSP violation, thanks for reporting.')

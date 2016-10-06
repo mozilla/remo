@@ -257,6 +257,10 @@ CSP_CHILD_SRC = (
     'https://login.persona.org',
 )
 
+CSP_REPORT_ONLY = False
+CSP_REPORT_ENABLE = True
+CSP_REPORT_URI = '/capture-csp-violation'
+
 LOG_LEVEL = logging.INFO
 HAS_SYSLOG = True
 LOGGING_CONFIG = None

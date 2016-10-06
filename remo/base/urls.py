@@ -11,4 +11,7 @@ urlpatterns = patterns(
     url(r'labs/$', TemplateView.as_view(template_name='labs.jinja'),
         name='labs'),
     url(r'^$', 'remo.base.views.main', name='main'),
+    # CSP violations
+    url(r'^capture-csp-violation$', 'remo.base.views.capture_csp_violation',
+        name='capture-csp-violation'),
 )
