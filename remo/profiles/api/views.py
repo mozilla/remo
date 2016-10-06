@@ -8,12 +8,12 @@ from django.utils.timezone import now
 
 import django_filters
 from rest_framework.views import APIView
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.response import Response
 
 from remo.profiles.api.serializers import (PeopleKPISerializer,
                                            UserProfileDetailedSerializer,
                                            UserSerializer)
+from remo.api.views import BaseReadOnlyModelViewset
 from remo.base.utils import get_quarter
 from remo.profiles.models import UserProfile
 
@@ -54,7 +54,7 @@ class UserProfileFilter(django_filters.FilterSet):
         fields = ('first_name', 'last_name')
 
 
-class UserProfileViewSet(ReadOnlyModelViewSet):
+class UserProfileViewSet(BaseReadOnlyModelViewset):
     """Returns a list of Reps profiles."""
     serializer_class = UserSerializer
     model = User

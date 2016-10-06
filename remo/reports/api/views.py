@@ -6,9 +6,9 @@ from django.utils.timezone import now
 
 import django_filters
 from rest_framework.views import APIView
-from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.response import Response
 
+from remo.api.views import BaseReadOnlyModelViewset
 from remo.api.serializers import BaseKPISerializer
 from remo.base.utils import get_quarter
 from remo.reports.api.serializers import (ActivitiesDetailedSerializer,
@@ -33,7 +33,7 @@ class ActivitiesFilter(django_filters.FilterSet):
                   'link_description')
 
 
-class ActivitiesViewSet(ReadOnlyModelViewSet):
+class ActivitiesViewSet(BaseReadOnlyModelViewset):
     """Return a list of activities."""
     serializer_class = ActivitiesSerializer
     model = NGReport
