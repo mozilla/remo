@@ -286,35 +286,11 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-FROM_EMAIL = 'The ReMoBot <reps@mozilla.com>'
-
-ADMINS = (
-    ('Mozilla Reps Devs', 'reps-dev@mozilla.com'),
-)
-MANAGERS = ADMINS
-
 # Allow robots to crawl the site.
 ENGAGE_ROBOTS = True
 
 TIME_ZONE = 'UTC'
 USE_TZ = True
-
-ETHERPAD_URL = 'https://public.etherpad-mozilla.org/p/'
-ETHERPAD_PREFIX = 'remo-'
-
-CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
-                  'event/?callbackurl=%(callbackurl)s')
-
-
-REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
-REPS_COUNCIL_ALIAS = 'reps-council@mozilla.com'
-
-# Mozillians API
-MOZILLIANS_API_BASE = 'https://mozillians.org'
-
-ALLOWED_HOSTS = ['reps.mozilla.org']
-
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_ENABLE_UTC = True
