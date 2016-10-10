@@ -112,8 +112,7 @@ MANAGERS = ADMINS
 ETHERPAD_URL = 'https://public.etherpad-mozilla.org/p/'
 ETHERPAD_PREFIX = 'remo-'
 
-CONTRIBUTE_URL = ('http://www.mozilla.org/contribute/'
-                  'event/?callbackurl=%(callbackurl)s')
+CONTRIBUTE_URL = 'http://www.mozilla.org/contribute/event/?callbackurl=%(callbackurl)s'
 
 
 REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
@@ -215,12 +214,14 @@ CSP_DEFAULT_SRC = (
     'https://*.mapbox.com',
     'https://*.persona.org',
 )
+
 CSP_FONT_SRC = (
     "'self'",
     'https://*.mozilla.net',
     'https://*.mozilla.org',
     'https://mozorg.cdn.mozilla.net',
 )
+
 CSP_IMG_SRC = (
     "'self'",
     'data:',
@@ -232,16 +233,18 @@ CSP_IMG_SRC = (
     'https://*.libravatar.org',
     'https://*.mapbox.com',
 )
+
 CSP_SCRIPT_SRC = (
     "'self'",
     "'unsafe-eval'",  # TODO: remove this by pre-compiling handlebars
-    'data:',
     'https://www.mozilla.org',
     'https://*.mozilla.net',
-    'https://*.google-analytics.com',
+    'https://ssl.google-analytics.com',
     'https://login.persona.org',
     'https://*.mapbox.com',
     'https://ajax.googleapis.com',
+    # Allow google-analytics
+    "'sha256-8w+7qKYFP3Pxpf/bGVp4hbU7I3vcqFSwUaUnkuBl4mc='",
 )
 
 CSP_STYLE_SRC = (
