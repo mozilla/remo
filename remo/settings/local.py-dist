@@ -149,3 +149,4 @@ CSP_STYLE_SRC = base.CSP_STYLE_SRC + (
     'http://*.mozilla.org',
     'http://*.mapbox.com',
 )
+CSP_REPORT_ENABLE = False
