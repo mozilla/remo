@@ -412,6 +412,16 @@ class LegacyReportingTests(RemoTestCase):
                               'month': 'January',
                               'year': 2011})
         response = Client().get(url, follow=True)
-        redirect_url = '/reports/rep/%s/?year=2011&month=January'
-        self.assertRedirects(response, redirect_url % display_name)
+        expected_redirect_url = '/reports/rep/{}/'.format(display_name)
+
+        self.assertEqual(response.status_code, 200)
+        redirect_full_url, redirect_code = response.redirect_chain[0]
+        self.assertEqual(redirect_code, 302)
+
+        redirect_url, redirect_params = redirect_full_url.split('?')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(redirect_url.endswith(expected_redirect_url))
+        self.assertEqual(set(redirect_params.split('&')),
+                         set(['year=2011', 'month=January']))
         eq_(response.context['number_of_reports'], 3)
