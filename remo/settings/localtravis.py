@@ -51,8 +51,7 @@ HMAC_KEYS = {
 # Cache backend settings. Enables Cache Machine's memcache backend.
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': 'localhost:11211',
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache'
     }
 }
 
