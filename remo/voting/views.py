@@ -142,9 +142,10 @@ def view_voting(request, slug):
     poll = get_object_or_404(Poll, slug=slug)
 
     is_council = request.user.groups.filter(name='Council').exists()
-    is_peer = request.user.groups.filter(name='Peers').exists()
+    is_peer = user.groups.filter(name='Peers').exists()
     is_review_poll = poll.valid_groups.name == 'Review'
-    read_only_perms = is_peer or (is_council and is_review_poll)
+    user_should_vote = user.groups.filter(id=poll.valid_groups.id).exists()
+    read_only_perms = (is_peer or (is_council and is_review_poll)) and not user_should_vote
 
     # If the user does not belong to a valid poll group
     if not user_has_poll_permissions(user, poll) and not read_only_perms:
