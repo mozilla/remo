@@ -243,6 +243,9 @@ CSP_SCRIPT_SRC = (
     'https://login.persona.org',
     'https://*.mapbox.com',
     'https://ajax.googleapis.com',
+    'https://search.twitter.com',
+    'https://secure.flickr.com',
+
     # Allow google-analytics
     "'sha256-8w+7qKYFP3Pxpf/bGVp4hbU7I3vcqFSwUaUnkuBl4mc='",
 )
