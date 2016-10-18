@@ -9,17 +9,6 @@ memcached:
   image: memcached
 broker:
   image: rabbitmq
-celery:
-  build: .
-  volumes:
-    - .:/code
-  links:
-    - db
-    - broker
-    - memcached
-  command: celery -A remo worker -l INFO
-  environment:
-    - C_FORCE_ROOT=true
 web:
   build: .
   ports:
@@ -29,6 +18,16 @@ web:
   links:
     - db
     - broker
-    - celery
     - memcached
-  command: python manage.py runserver 0.0.0.0:8000
+  command: bash -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+celery:
+  build: .
+  volumes:
+    - .:/code
+  links:
+    - db
+    - broker
+    - memcached
+  command: celery -A remo worker -B -l INFO
+  environment:
+    - C_FORCE_ROOT=true
