@@ -266,7 +266,7 @@ def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
                 'poll': instance}
         send_remo_mail.delay(
             subject=subject, email_template=template,
-            recipients_list=[settings.REPS_COUNCIL_ALIAS],
+            recipients_list=[settings.REPS_REVIEW_ALIAS],
             data=data)
 
 
