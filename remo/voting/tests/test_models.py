@@ -60,7 +60,7 @@ class AutomatedRadioPollTest(RemoTestCase):
         mocked_send_mail.delay.assert_called_once_with(
             subject=subject,
             email_template='emails/review_budget_notify_review_team.jinja',
-            recipients_list=[settings.REPS_COUNCIL_ALIAS],
+            recipients_list=[settings.REPS_REVIEW_ALIAS],
             data=data)
 
     def test_send_discussion_email_to_council_edit(self):
