@@ -232,6 +232,7 @@ CSP_IMG_SRC = (
     '*.wp.com',
     'https://*.libravatar.org',
     'https://*.mapbox.com',
+    'https://*.staticflickr.com',
 )
 
 CSP_SCRIPT_SRC = (
