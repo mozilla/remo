@@ -5,6 +5,9 @@ db:
     - MYSQL_USER=remo
     - MYSQL_PASSWORD=remo
     - MYSQL_ROOT_PASSWORD=root
+  entrypoint:
+    - docker-entrypoint.sh
+    - --max_allowed_packet=2M
 memcached:
   image: memcached
 broker:
