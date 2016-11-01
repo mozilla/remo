@@ -1,37 +1,45 @@
-db:
-  image: mysql:5.5
-  environment:
-    - MYSQL_DATABASE=remo
-    - MYSQL_USER=remo
-    - MYSQL_PASSWORD=remo
-    - MYSQL_ROOT_PASSWORD=root
-  entrypoint:
-    - docker-entrypoint.sh
-    - --max_allowed_packet=2M
-memcached:
-  image: memcached
-broker:
-  image: rabbitmq
-celery:
-  build: .
-  volumes:
-    - .:/code
-  links:
-    - db
-    - broker
-    - memcached
-  command: celery -A remo worker -l INFO
-  environment:
-    - C_FORCE_ROOT=true
-web:
-  build: .
-  ports:
-    - "8000:8000"
-  volumes:
-    - .:/code
-  links:
-    - db
-    - broker
-    - celery
-    - memcached
-  command: python manage.py runserver 0.0.0.0:8000
+version: '2'
+services:
+  db:
+    image: mysql:5.5
+    environment:
+      - MYSQL_DATABASE=remo
+      - MYSQL_USER=remo
+      - MYSQL_PASSWORD=remo
+      - MYSQL_ROOT_PASSWORD=root
+    entrypoint:
+      - docker-entrypoint.sh
+      - --max_allowed_packet=2M
+  memcached:
+    image: memcached
+  broker:
+    image: rabbitmq
+  celery:
+    build: .
+    volumes:
+      - .:/code
+    links:
+      - db
+      - broker
+      - memcached
+    command: bash -c "python manage.py migrate django-celery && celery -A remo worker -l INFO"
+    environment:
+      - C_FORCE_ROOT=true
+    depends_on:
+      - broker
+  web:
+    build: .
+    depends_on:
+      - db
+      - memcached
+      - celery
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+    links:
+      - db
+      - broker
+      - celery
+      - memcached
+    command: bash -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
