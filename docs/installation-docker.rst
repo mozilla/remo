@@ -27,6 +27,15 @@ When you want to start contributing...
 
      $ cp remo/settings/local.py-docker-dist remo/settings/local.py
 
+#. Choose a HMAC_KEY.
+
+   For development purposes you can uncomment the key '2012-06-15'
+   with HMAC_KEYS dictionary in your *local.py*::
+
+     HMAC_KEYS = {
+        '2012-06-15': 'some key',
+     }
+
 #. Update the product details::
 
      $ docker-compose run web python manage.py update_product_details -f
