@@ -280,11 +280,6 @@ LOGGING = {
     }
 }
 
-# Add BrowserID as authentication backend
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
-                           'remo.base.backend.RemoBrowserIDBackend')
-
-
 # Required for BrowserID. Very important security feature
 SITE_URL = 'https://reps.mozilla.org'
 
