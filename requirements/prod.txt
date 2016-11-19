@@ -218,3 +218,5 @@ hashin==0.6.0 \
     --hash=sha256:7563490ec8c9c361e48c7623898b3585143d379714a03bee4c3d52fb13e85086
 django-import-export==0.4.5 \
     --hash=sha256:0406f781a771c39e325474df09644a5cea5188dfac7ecace4f32d664920abd00
+django-autocomplete-light==3.1.6 \
+    --hash=sha256:94ff1ef39501fa4541eb6130a30ed95e7af52486a6e041fa1fbe56beea5e8495
