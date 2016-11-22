@@ -179,6 +179,7 @@ def COMPRESS_JINJA2_GET_ENVIRONMENT():
     from django.template import engines
     return engines['jinja2'].env
 
+
 # Auth
 # The first hasher in this list will be used for new passwords.
 # Any other hasher in the list can be used for existing passwords.

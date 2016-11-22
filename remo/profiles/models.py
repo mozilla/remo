@@ -37,6 +37,7 @@ def user_unicode(self):
     """Return user's full name."""
     return self.get_full_name()
 
+
 # Monkey patch unicode(User)
 User.__unicode__ = user_unicode
 

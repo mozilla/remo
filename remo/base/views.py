@@ -2,8 +2,6 @@ import json
 import logging
 
 from django import http
-from django_browserid.http import JSONResponse
-from django_browserid.views import Verify
 from django.db.models import Q
 from django.conf import settings
 from django.contrib import messages
