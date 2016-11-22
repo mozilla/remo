@@ -4,6 +4,7 @@ import logging
 import os
 
 from django.utils.functional import lazy
+
 from django_jinja.builtins import DEFAULT_EXTENSIONS
 from django_sha2 import get_password_hashers
 
@@ -26,7 +27,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Third party apps
     'django_jinja',
-    'django_browserid',
     'tastypie',
     'waffle',
     'import_export',
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'product_details',
     'djcelery',
     'raven.contrib.django.raven_compat',
+    'mozilla_django_oidc',
     # Project specific apps
     'remo.base',
     'remo.profiles',
@@ -61,7 +62,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'csp.middleware.CSPMiddleware',
     'remo.base.middleware.RegisterMiddleware',
-    'waffle.middleware.WaffleMiddleware'
+    'waffle.middleware.WaffleMiddleware',
+    'mozilla_django_oidc.contrib.auth0.middleware.RefreshIDToken',
 )
 
 # Media and static files settings
@@ -158,12 +160,6 @@ TEMPLATES = [
                 'waffle.jinja.WaffleExtension',
                 'caching.ext.cache'
             ],
-            'globals': {
-                'browserid_info': 'django_browserid.helpers.browserid_info',
-                'browserid_login': 'django_browserid.helpers.browserid_login',
-                'browserid_logout': 'django_browserid.helpers.browserid_logout',
-                'browserid_js': 'django_browserid.helpers.browserid_js'
-            }
         }
     },
     {
@@ -204,7 +200,7 @@ HMAC_KEYS = {
 PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
 
 AUTHENTICATION_BACKENDS = [
-    'django_browserid.auth.BrowserIDBackend',
+    'remo.base.backend.RemoAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend'
 ]
 # Django-CSP
@@ -212,7 +208,6 @@ CSP_DEFAULT_SRC = (
     "'self'",
     'https://*.mozilla.org',
     'https://*.mapbox.com',
-    'https://*.persona.org',
 )
 
 CSP_FONT_SRC = (
@@ -233,7 +228,6 @@ CSP_IMG_SRC = (
     'https://*.libravatar.org',
     'https://*.mapbox.com',
     'https://*.staticflickr.com',
-    'https://*.persona.org',
 )
 
 CSP_SCRIPT_SRC = (
@@ -242,7 +236,6 @@ CSP_SCRIPT_SRC = (
     'https://www.mozilla.org',
     'https://*.mozilla.net',
     'https://ssl.google-analytics.com',
-    'https://login.persona.org',
     'https://*.mapbox.com',
     'https://ajax.googleapis.com',
     'https://search.twitter.com',
@@ -262,7 +255,6 @@ CSP_STYLE_SRC = (
 
 CSP_CHILD_SRC = (
     "'self'",
-    'https://login.persona.org',
 )
 
 CSP_REPORT_ONLY = False
@@ -280,20 +272,8 @@ LOGGING = {
     }
 }
 
-# Add BrowserID as authentication backend
-AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
-                           'remo.base.backend.RemoBrowserIDBackend')
-
-
-# Required for BrowserID. Very important security feature
 SITE_URL = 'https://reps.mozilla.org'
 
-# Override BrowserID verification
-BROWSERID_VERIFY_CLASS = 'remo.base.views.BrowserIDVerify'
-# Browserid Audiences
-BROWSERID_AUDIENCES = [SITE_URL]
-
-# Optional BrowserID settings
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGIN_REDIRECT_URL_FAILURE = '/'
 LOGOUT_REDIRECT_URL = '/'
@@ -315,19 +295,6 @@ CELERY_ALWAYS_EAGER = True
 
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
-
-
-def _request_args():
-    from django.conf import settings
-    from django.utils.translation import ugettext_lazy as _lazy
-
-    args = {'siteName': _lazy('Mozilla Reps'), }
-
-    if settings.SITE_URL.startswith('https'):
-        args['siteLogo'] = '/static/base/img/remo/remo_logo_medium.png'
-
-    return args
-BROWSERID_REQUEST_ARGS = lazy(_request_args, dict)()
 
 # Statsd Graphite
 STATSD_CLIENT = 'django_statsd.clients.normal'
@@ -372,3 +339,17 @@ CACHES = {
         'LOCATION': '127.0.0.1:11211',
     }
 }
+
+
+# Auth0 configuration
+def lazy_oidc_op_domain():
+    from django.conf import settings
+
+    if settings.SITE_URL == 'https://reps-dev.allizom.org':
+        return 'auth-dev.mozilla.auth0.com'
+    return 'auth.mozilla.auth0.com'
+
+
+OIDC_CALLBACK_CLASS = 'remo.base.views.OIDCCallbackView'
+OIDC_OP_DOMAIN = lazy(lazy_oidc_op_domain, str)()
+OIDC_STORE_ACCESS_TOKEN = True

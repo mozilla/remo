@@ -62,9 +62,6 @@
 </head>
 
 <body data-mapbox-token="{{ settings.MAPBOX_TOKEN }}">
-  <!-- BrowserID -->
-  {{ browserid_info() }}
-
   <!-- Wrapper for background -->
   <div id="wrapper">
 
@@ -90,8 +87,9 @@
                     {% set next=request.get_full_path() %}
                   {% endif %}
                   <span id="login-menu-locator">
-                    {{ browserid_login(link_class='',
-                                       next=request.GET.next|default(next|default(''))) }}
+                    <a href="{{ url('oidc_authentication_init') }}">
+                      Login
+                    </a>
                   </span>
                   or
                   <a href="#" data-reveal-id="join-modal">Join</a>
@@ -108,7 +106,7 @@
                       [<a id="settings-menu-locator"
                           href="{{ url('edit_settings') }}"> Settings </a>]
                     {% endif %}
-                    [{{ browserid_logout(text='Sign out') }}]
+                    [<a href="{{ url('oidc_logout') }}">Logout</a>]
                   </div>
                   <div class="show-for-small">
                     {% if user_is_rep(user) %}
@@ -123,7 +121,7 @@
                           href="{{ url('edit_settings') }}"> Settings </a>]
                     {% endif %}
                     <div>
-                      [{{ browserid_logout(text='Sign out') }}]
+                      [<a href="{{ url('oidc_logout') }}">Logout</a>]
                     </div>
                   </div>
                 {% endif %}
@@ -362,7 +360,6 @@
     <script src="{{ static('base/js/app.js') }}"></script>
     <script src="{{ static('base/js/init.js') }}"></script>
   {% endcompress %}
-  {{ browserid_js() }}
 </body>
 
 </html>

@@ -74,12 +74,6 @@ SECRET_KEY = 'some secret'
 
 SESSION_COOKIE_SECURE=False
 
-# Uncomment the following lines to use django_browserid for offline developemnt
-# AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
-# 'django_browserid.auth.AutoLoginBackend',
-# 'django_browserid.auth.BrowserIDBackend')
-#
-
 # Uncomment these to activate and customize Celery:
 # CELERY_ALWAYS_EAGER = False  # required to activate celeryd
 # BROKER_HOST = 'localhost'
@@ -100,10 +94,7 @@ SESSION_COOKIE_SECURE=False
 # Uncomment the following two lines for local development, or BrowserID
 # will fail to log you in.
 # SITE_URL = 'http://127.0.0.1:8000'
-# BROWSERID_AUDIENCES = [SITE_URL]
-# Auto-login for offline development
-# BROWSERID_AUTOLOGIN_EMAIL = 'your_email@example.com'
-# BROWSERID_AUTOLOGIN_ENABLED = True
+# ALLOWED_HOSTS = [u'127.0.0.1']
 
 # remozilla configuration
 # REMOZILLA_USERNAME = ''

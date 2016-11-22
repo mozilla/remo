@@ -16,6 +16,7 @@ from django.views import generic
 from django.views.decorators.cache import cache_control, never_cache
 
 from django_statsd.clients import statsd
+from mozilla_django_oidc.views import OIDCAuthenticationCallbackView
 from raven.contrib.django.models import client
 
 import forms
@@ -27,7 +28,7 @@ from remo.profiles.forms import UserStatusForm
 from remo.profiles.models import UserProfile, UserStatus
 
 
-class BrowserIDVerify(Verify):
+class OIDCCallbackView(OIDCAuthenticationCallbackView):
 
     def login_failure(self, msg=''):
         if not msg:
@@ -35,7 +36,7 @@ class BrowserIDVerify(Verify):
                    'an accepted Rep or a vouched Mozillian '
                    'and you use your Bugzilla email to login.')
         messages.warning(self.request, msg)
-        return JSONResponse({'redirect': self.failure_url})
+        return super(OIDCCallbackView, self).login_failure()
 
 
 @cache_control(private=True, no_cache=True)

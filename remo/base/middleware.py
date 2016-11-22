@@ -20,8 +20,8 @@ class RegisterMiddleware(object):
             request.user.userprofile.registration_complete and not
                 request.user.groups.filter(name='Mozillians').exists()):
             allow_urls = [
-                reverse('browserid.csrf'),
-                reverse('browserid.logout'),
+                reverse('oidc_authentication_init'),
+                reverse('oidc_authentication_callback'),
                 reverse('profiles_edit',
                         kwargs={'display_name':
                                 request.user.userprofile.display_name})]

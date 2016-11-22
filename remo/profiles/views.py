@@ -15,7 +15,7 @@ from django.views.decorators.cache import cache_control, never_cache
 
 import waffle
 from django_statsd.clients import statsd
-from django_browserid.auth import default_username_algo
+from mozilla_django_oidc.auth import default_username_algo
 from product_details import product_details
 
 import forms
@@ -27,8 +27,7 @@ from remo.profiles.models import UserProfile, UserStatus
 from remo.profiles.models import FunctionalArea
 from remo.voting.tasks import rotm_nomination_end_date
 
-USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
-                        default_username_algo)
+USERNAME_ALGO = getattr(settings, 'OIDC_USERNAME_ALGO', default_username_algo)
 
 
 @never_cache

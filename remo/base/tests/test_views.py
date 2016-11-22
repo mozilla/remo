@@ -23,7 +23,6 @@ from remo.base.templatetags.helpers import AES_PADDING, enc_string, mailhide, pa
 from remo.base.tests import (MozillianResponse, RemoTestCase,
                              VOUCHED_MOZILLIAN, NOT_VOUCHED_MOZILLIAN,
                              requires_login, requires_permission)
-from remo.base.tests.browserid_mock import mock_browserid
 from remo.base.views import robots_txt
 from remo.profiles.models import FunctionalArea
 from remo.profiles.tasks import check_mozillian_username
@@ -112,34 +111,6 @@ class ViewsTest(RemoTestCase):
     def setUp(self):
         self.settings_data = {'receive_email_on_add_comment': True}
         self.user_edit_settings_url = reverse('edit_settings')
-
-    def _login_attempt(self, email, assertion='assertion123', next=None):
-        if not next:
-            next = '/'
-        with mock_browserid(email):
-            post_data = {'assertion': assertion,
-                         'next': next}
-            return self.client.post('/browserid/login/', post_data)
-
-    def test_bad_verification(self):
-        """Bad verification -> failure."""
-        response = self._login_attempt(None)
-        eq_(response['content-type'], 'application/json')
-        redirect = json.loads(response.content)['redirect']
-        eq_(redirect, settings.LOGIN_REDIRECT_URL_FAILURE)
-
-    def test_invalid_login(self):
-        """Bad BrowserID form - no assertion -> failure."""
-        response = self._login_attempt(None, None)
-        eq_(response['content-type'], 'application/json')
-        redirect = json.loads(response.content)['redirect']
-        eq_(redirect, settings.LOGIN_REDIRECT_URL_FAILURE)
-
-    def test_is_vouched(self):
-        """Login with vouched email."""
-        response = self._login_attempt('vouched@mail.com')
-        eq_(response.status_code, 200)
-        ok_(reverse('dashboard'))
 
     def test_view_main_page(self):
         """Get main page."""
