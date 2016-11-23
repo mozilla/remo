@@ -37,9 +37,6 @@ MySQL-python==1.2.5 \
     --hash=sha256:811040b647e5d5686f84db415efd697e6250008b112b6909ba77ac059e140c74
 django-sha2==0.4 \
     --hash=sha256:b06a86451a99d6c26bfa65082999dbf658e087e596e9292cce688b53eabaaada
-django-browserid==1.0.1 \
-    --hash=sha256:c612cb27ea867176c424a43059e1e058f17c3eed2b635c088413e552113dfc48 \
-    --hash=sha256:d1b40982f65287ea8b278625b0e32aedfbeeee834c0cd64e09f0f0d8b6273541
 factory_boy==2.6.0 \
     --hash=sha256:116610a170918df342db2c4bafbc8f4b91780c49878f929d89e360f10ad29d2a \
     --hash=sha256:75e4c9786ed28d19ec7fb500f3c7221a6eb87748cbc6f5e2eeaca4c3d68f30cb
@@ -83,8 +80,6 @@ django-statsd-mozilla==0.3.16 \
     --hash=sha256:925f0f13e5a1e7863e5ed1179fd0f6f1a519e5a0293714ba76745286aad7ed02
 django-uuslug==1.1.7 \
     --hash=sha256:6c7079d7d645552f921f52c7604e3bd750b7af029cb86f1ae5b0e92c44f922be
-pycrypto==2.6.1 \
-    --hash=sha256:f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c
 kombu==3.0.33 \
     --hash=sha256:6741a5d7e8b8f53151aabd47fd3df1195aed540b169b2d7684b904ff112b483c \
     --hash=sha256:853d18ca958a598787ceb8c297a369745b82965bf28276861272f14745977999
@@ -218,3 +213,14 @@ hashin==0.6.0 \
     --hash=sha256:7563490ec8c9c361e48c7623898b3585143d379714a03bee4c3d52fb13e85086
 django-import-export==0.4.5 \
     --hash=sha256:0406f781a771c39e325474df09644a5cea5188dfac7ecace4f32d664920abd00
+https://github.com/mozilla/mozilla-django-oidc/archive/0.1.5.zip#egg=mozilla-django-oidc==0.1.5 \
+    --hash=sha256:ece31b922a098946516daecfae227fd40bc2258a87a042eb509c9c1badddd877
+python-jose==1.3.2 \
+    --hash=sha256:35eca894ab91db1774251296949679396c46d6bc506ea03804b8f7a7d0204392
+pycrypto==2.6.1 \
+    --hash=sha256:f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c
+ecdsa==0.13 \
+    --hash=sha256:40d002cf360d0e035cf2cb985e1308d41aaa087cbfc135b2dc2d844296ea546c \
+    --hash=sha256:64cf1ee26d1cde3c73c6d7d107f835fed7c6a2904aef9eac223d57ad800c43fa
+future==0.16.0 \
+    --hash=sha256:e39ced1ab767b5936646cedba8bcce582398233d6a627067d4c6a454c90cfedb

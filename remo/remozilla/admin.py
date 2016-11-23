@@ -14,6 +14,7 @@ def encode_bugzilla_strings(modeladmin, request, queryset):
             kwargs[field] = smart_text(getattr(obj, field))
         Bug.objects.filter(pk=obj.id).update(**kwargs)
 
+
 encode_bugzilla_strings.short_description = 'Encode bugzilla strings'
 
 
@@ -24,6 +25,7 @@ class BugAdmin(ExportMixin, admin.ModelAdmin):
     list_filter = ('status', 'resolution', 'council_vote_requested',)
     search_fields = ('bug_id', 'summary', 'id',)
     actions = [encode_bugzilla_strings]
+
 
 admin.site.register(Bug, BugAdmin)
 admin.site.register(Status)

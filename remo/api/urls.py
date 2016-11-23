@@ -32,6 +32,7 @@ class RemoRouter(routers.DefaultRouter):
 
         return RemoAPIRoot.as_view()
 
+
 router = RemoRouter()
 router.register(r'users', UserProfileViewSet)
 router.register(r'events', EventsViewSet)

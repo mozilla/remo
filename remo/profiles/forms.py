@@ -9,7 +9,7 @@ from django.forms.extras.widgets import SelectDateWidget
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 
-from django_browserid.auth import default_username_algo
+from mozilla_django_oidc.auth import default_username_algo
 from product_details import product_details
 from pytz import common_timezones
 
@@ -18,8 +18,7 @@ from remo.base.utils import get_date
 from remo.profiles.models import FunctionalArea, UserProfile, UserStatus
 
 
-USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
-                        default_username_algo)
+USERNAME_ALGO = getattr(settings, 'OIDC_USERNAME_ALGO', default_username_algo)
 BOOLEAN_CHOICES = ((True, 'Yes'), (False, 'No'))
 # Max period that a user can be unavailable in weeks
 MAX_UNAVAILABILITY_PERIOD = 12

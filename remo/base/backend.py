@@ -1,18 +1,22 @@
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 
-from django_browserid.auth import BrowserIDBackend, default_username_algo
+from mozilla_django_oidc.auth import OIDCAuthenticationBackend, default_username_algo
 
 from remo.base.mozillians import BadStatusCodeError, is_vouched
 
 
-USERNAME_ALGO = getattr(settings, 'BROWSERID_USERNAME_ALGO',
-                        default_username_algo)
+USERNAME_ALGO = getattr(settings, 'OIDC_USERNAME_ALGO', default_username_algo)
 
 
-class RemoBrowserIDBackend(BrowserIDBackend):
+class RemoAuthenticationBackend(OIDCAuthenticationBackend):
+    """Authentication Backend for the ReMo portal."""
 
-    def create_user(self, email):
+    def create_user(self, claims):
+        """ Override create_user method to anonymize user data
+        based on privacy settings in mozillians.org.
+        """
+        email = claims.get('email')
         try:
             data = is_vouched(email)
         except BadStatusCodeError:

@@ -10,6 +10,7 @@ def encode_action_item_names(modeladmin, request, queryset):
     for obj in queryset:
         ActionItem.objects.filter(pk=obj.id).update(name=smart_text(obj.name))
 
+
 encode_action_item_names.short_description = 'Encode action item names'
 
 

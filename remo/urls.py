@@ -34,8 +34,8 @@ urlpatterns = patterns(
     # Featuredrep
     url(r'^featured/', include('remo.featuredrep.urls')),
 
-    # Browserid
-    url(r'', include('django_browserid.urls')),
+    # Login
+    url(r'oidc/', include('mozilla_django_oidc.urls')),
 
     # API
     url(r'^api/', include('remo.api.urls')),

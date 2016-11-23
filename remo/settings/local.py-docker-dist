@@ -9,6 +9,7 @@ PROTOCOL = "http://"
 PORT = 8000
 
 SITE_URL = '%s%s:%d' % (PROTOCOL, DOMAIN, PORT)
+ALLOWED_HOSTS = [u'127.0.0.1']
 ROOT_URLCONF = 'remo.urls'
 
 DATABASES = {
@@ -72,8 +73,6 @@ CACHES = {
 # Demo keys, replace with valid ones.
 MAILHIDE_PUB_KEY = '02Ni54q--g1yltekhaSmPYHQ=='
 MAILHIDE_PRIV_KEY = 'fe55a9921917184732077e3fed19d0be'
-SITE_URL = 'http://127.0.0.1:8000'
-BROWSERID_AUDIENCES = [SITE_URL]
 
 # Playdoh ships with Bcrypt+HMAC by default because it's the most secure.
 # To use bcrypt, fill in a secret HMAC key. It cannot be blank.
