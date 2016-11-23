@@ -354,3 +354,4 @@ def lazy_oidc_op_domain():
 OIDC_CALLBACK_CLASS = 'remo.base.views.OIDCCallbackView'
 OIDC_OP_DOMAIN = lazy(lazy_oidc_op_domain, str)()
 OIDC_STORE_ACCESS_TOKEN = True
+OIDC_RP_CLIENT_SECRET_ENCODED = True
