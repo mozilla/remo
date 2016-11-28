@@ -20,6 +20,21 @@ from remo.profiles.tasks import check_celery
 admin.site.unregister(User)
 
 
+class UserProfileFilter(SimpleListFilter):
+    title = 'has associated profile'
+    parameter_name = 'has_userprofile'
+
+    def lookups(self, request, model_admin):
+        return (('False', 'No'), ('True', 'Yes'))
+
+    def queryset(self, request, queryset):
+        if self.value() == 'False':
+            return queryset.filter(userprofile__isnull=True)
+        elif self.value() == 'True':
+            return queryset.filter(userprofile__isnull=False)
+        return queryset
+
+
 class RepProfileFilter(SimpleListFilter):
     title = 'Rep profiles'
     parameter_name = 'rep_profile'
@@ -189,7 +204,7 @@ class UserAdmin(ExportMixin, UserAdmin):
                     AdminProfileFilter, ActivityCampaign,
                     'userprofile__is_rotm_nominee',
                     'userprofile__date_joined_program',
-                    'ng_reports__report_date'))
+                    'ng_reports__report_date', UserProfileFilter))
     list_display = UserAdmin.list_display + ('get_groups',)
     search_fields = (UserAdmin.search_fields + ('userprofile__country',))
 
