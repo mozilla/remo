@@ -22,6 +22,7 @@ class RegisterMiddleware(object):
             allow_urls = [
                 reverse('oidc_authentication_init'),
                 reverse('oidc_authentication_callback'),
+                reverse('oidc_logout'),
                 reverse('profiles_edit',
                         kwargs={'display_name':
                                 request.user.userprofile.display_name})]
