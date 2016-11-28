@@ -449,6 +449,10 @@ def create_profile(sender, instance, created, raw, **kwargs):
 @receiver(post_save, sender=User, dispatch_uid='user_set_inactive_post_save_signal')
 def user_set_inactive_post_save(sender, instance, raw, **kwargs):
     """Set user inactive if there is no associated UserProfile."""
-    if instance.first_name and not raw:
+    if raw:
+        return
+
+    if (instance.first_name and instance.userprofile and not
+            instance.userprofile.registration_complete):
         instance.userprofile.registration_complete = True
         instance.userprofile.save()
