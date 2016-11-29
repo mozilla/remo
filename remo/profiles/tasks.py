@@ -83,6 +83,7 @@ def reset_rotm_nominees():
         nominees = UserProfile.objects.filter(is_rotm_nominee=True)
         for nominee in nominees:
             nominee.is_rotm_nominee = False
+            nominee.rotm_nominated_by = None
             nominee.save()
 
 

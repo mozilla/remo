@@ -183,6 +183,10 @@ class UserProfile(caching.base.CachingMixin, models.Model):
                                               null=True, editable=False,
                                               default='')
     is_rotm_nominee = models.BooleanField(default=False)
+    rotm_nominated_by = models.ForeignKey(User, null=True, blank=True,
+                                          related_name='rotm_nominations',
+                                          validators=[_validate_mentor],
+                                          on_delete=models.SET_NULL)
     action_items = generic.GenericRelation('dashboard.ActionItem')
 
     objects = caching.base.CachingManager()

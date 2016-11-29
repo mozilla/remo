@@ -194,11 +194,11 @@ def view_profile(request, display_name):
             messages.info(request, mark_safe(msg))
 
     if nominee_form.is_valid():
-        if ((is_nomination_period or
-             waffle.switch_is_active('enable_rotm_tasks')) and
-                request.user.groups.filter(name='Mentor').exists()):
-            nominee_form.save()
+        if ((is_nomination_period or waffle.switch_is_active('enable_rotm_tasks')) and
+                request.user.groups.filter(name='Mentor').exists() and request.user != user):
+            nominee_form.save(nominated_by=request.user)
             return redirect('profiles_view_profile', display_name=display_name)
+
         messages.warning(request, ('Only mentors can nominate a mentee.'))
 
     if user_is_alumni:

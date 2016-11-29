@@ -256,8 +256,9 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
                 {% endfor %}
               </h6>
             {% endif %}
-            {% if (is_nomination_period and user_is_mentor(request_user) and
-                   user_is_rep(user_profile.user)) or waffle.switch('enable_rotm_tasks') %}
+            {% if ((is_nomination_period or waffle.switch('enable_rotm_tasks')) and
+                    user_is_mentor(request_user) and user_is_rep(user_profile.user) and
+                    request_user != user_profile.user) %}
               <p class="profile-item">
                 <form id="nominate-rotm-form" method="post"
                       actions="{{ url('profiles_view_profile', user_profile.display_name) }}">
@@ -268,7 +269,8 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
                           {% if user_nominated %}disabled{% endif %}"
                           data-user-nominated="{{ user_nominated }}"
                           title="You can nominate this user the first fifteen days of each month">
-                    {% if user_nominated %}User nominated!{% else %}Nominate for Rep of the month{% endif %}
+                    {% if user_nominated %}User nominated by {{ user_profile.rotm_nominated_by }}!
+                      {% else %}Nominate for Rep of the month{% endif %}
                   </button>
                 </form>
               </p>
