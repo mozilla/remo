@@ -30,8 +30,8 @@ Pygments==2.0.2 \
     --hash=sha256:0a3a2265e1efb0defa722d1f429730dc9df975adc3c60ac7d2b432bdf03c041d \
     --hash=sha256:5ded2fa9094fd7dfeb3da92636409fd702a0d07d606283504d7ee04401cee5cb \
     --hash=sha256:7320919084e6dac8f4540638a46447a3bd730fca172afc17d2c03eed22cf4f51
-django-jinja==2.1.2 \
-    --hash=sha256:fc2b6a65201b27711e800eb2e1262ff42a32f027bd2267e34121f1bd2bd6b933
+django-jinja==2.2.1 \
+    --hash=sha256:04c53ba90cbede97e6543b98291f1eec259e57dfa4e014a5fbf0291afcdae6a9
 MySQL-python==1.2.5 \
     --hash=sha256:ab22d1322099098730a57fd59d610f60738f95a1cb68dacca2d1c47cb0cbe8ee \
     --hash=sha256:811040b647e5d5686f84db415efd697e6250008b112b6909ba77ac059e140c74
