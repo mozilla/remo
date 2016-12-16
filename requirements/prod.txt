@@ -1,8 +1,8 @@
 # Packages required for the production environment.
 
-Django==1.8.16 \
-    --hash=sha256:cc3a95187788627dfdc94b41de908aadfc4241fabb3ceaef19f4bd3b89c0fdf7 \
-    --hash=sha256:224aaf17a28609707d942deafe6d0a5b382baf22a6f33e4e61c56c62f09081dd
+Django==1.8.17 \
+    --hash=sha256:87618c1011712faf7400e2a73315f4f4c3a6e68ab6309c3e642d5fef73d66d9e \
+    --hash=sha256:021bd648fcf454027063187e63a1ab4136c6929430ef5dfbe36235f60015eb07
 Jinja2==2.8 \
     --hash=sha256:1cc03ef32b64be19e0a5b54578dd790906a34943fe9102cfdae0d4495bd536b4 \
     --hash=sha256:bc1ff2ff88dbfacefde4ddde471d1417d3b304e8df103a7a9437d47269201bf4
