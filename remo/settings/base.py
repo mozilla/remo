@@ -154,8 +154,7 @@ TEMPLATES = [
             'undefined': 'jinja2.Undefined',
             'extensions': DEFAULT_EXTENSIONS + [
                 'compressor.contrib.jinja2ext.CompressorExtension',
-                'waffle.jinja.WaffleExtension',
-                'caching.ext.cache'
+                'waffle.jinja.WaffleExtension'
             ],
         }
     },
@@ -326,9 +325,6 @@ REST_FRAMEWORK = {
 
 # URL constants
 LIBRAVATAR_URL = 'https://seccdn.libravatar.org/avatar/'
-
-# Django-Cache-Machine
-CACHE_INVALIDATE_ON_CREATE = 'whole-model'
 
 # Auth
 CACHES = {

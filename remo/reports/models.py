@@ -9,7 +9,6 @@ from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import now
 
-import caching.base
 from django_statsd.clients import statsd
 from product_details import product_details
 
@@ -88,7 +87,7 @@ class Campaign(models.Model):
 
 
 @python_2_unicode_compatible
-class NGReport(caching.base.CachingMixin, models.Model):
+class NGReport(models.Model):
     """ Continuous Reporting Model.
 
     In order to be able to distinguish the old
@@ -117,8 +116,6 @@ class NGReport(caching.base.CachingMixin, models.Model):
                                             blank=True, default=False)
     country = models.CharField(max_length=50, blank=True, default='')
     action_items = generic.GenericRelation(ActionItem)
-
-    objects = caching.base.CachingManager()
 
     def _get_url_args(self):
         args = [self.user.userprofile.display_name,
