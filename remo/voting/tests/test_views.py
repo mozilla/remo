@@ -162,6 +162,7 @@ class ViewsTest(RemoTestCase):
     @mock.patch('remo.voting.views.messages')
     def test_view_cast_a_vote(self, fake_messages):
         """Cast a vote on a voting."""
+        UserFactory.create(username='remobot')
         poll_start = now() - timedelta(days=5)
         poll = PollFactory.create(valid_groups=self.rep_group, start=poll_start,
                                   end=poll_start + timedelta(days=10),
