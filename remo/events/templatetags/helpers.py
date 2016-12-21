@@ -6,13 +6,6 @@ from django_jinja import library
 from remo.base.templatetags.helpers import urlparams
 
 
-@library.filter
-def get_event_converted_visitor_callback_url(obj):
-    """Return event converted visitor callback url."""
-    return settings.SITE_URL + reverse('events_count_converted_visitors',
-                                       kwargs={'slug': obj.slug})
-
-
 @library.global_function
 def get_link_to_osm(lat, lon, zoom=15):
     """Return link to OSM centered in lat, lon."""
@@ -78,16 +71,6 @@ def get_sorted_attendance_list(event):
 def get_total_attendees(event):
     """Return the total number of people attending an event."""
     return event.attendees.all().count()
-
-
-@library.global_function
-def get_contribute_link(event):
-    """Returns custom link to m.o/contribute."""
-
-    return (settings.CONTRIBUTE_URL %
-            {'callbackurl': (settings.SITE_URL +
-                             reverse('events_count_converted_visitors',
-                                     kwargs={'slug': event.slug}))})
 
 
 @library.filter

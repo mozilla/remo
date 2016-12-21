@@ -114,9 +114,6 @@ MANAGERS = ADMINS
 ETHERPAD_URL = 'https://public.etherpad-mozilla.org/p/'
 ETHERPAD_PREFIX = 'remo-'
 
-CONTRIBUTE_URL = 'http://www.mozilla.org/contribute/event/?callbackurl=%(callbackurl)s'
-
-
 REPS_MENTORS_LIST = 'reps-mentors@lists.mozilla.org'
 REPS_COUNCIL_ALIAS = 'reps-council@mozilla.com'
 REPS_REVIEW_ALIAS = 'reps-review@mozilla.com'

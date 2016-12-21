@@ -14,7 +14,6 @@ from django.utils.encoding import iri_to_uri
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 from django.views.decorators.cache import cache_control, never_cache
-from django.views.decorators.csrf import csrf_exempt
 
 from django_statsd.clients import statsd
 
@@ -250,20 +249,6 @@ def delete_event(request, slug):
         messages.success(request, 'Event successfully deleted.')
 
     return redirect('events_list_events')
-
-
-@never_cache
-@csrf_exempt
-def count_converted_visitors(request, slug):
-    """Increase event subscribers."""
-    event = get_object_or_404(Event, slug=slug)
-
-    if request.method == 'POST':
-        event.converted_visitors += 1
-        event.save()
-        return HttpResponse('OK')
-
-    return redirect('events_view_event', slug=event.slug)
 
 
 @cache_control(max_age=1800, s_maxage=1800)
