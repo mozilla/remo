@@ -9,7 +9,7 @@ PROTOCOL = "http://"
 PORT = 8000
 
 SITE_URL = '%s%s:%d' % (PROTOCOL, DOMAIN, PORT)
-ALLOWED_HOSTS = [u'127.0.0.1']
+ALLOWED_HOSTS = [u'127.0.0.1', u'localhost']
 ROOT_URLCONF = 'remo.urls'
 
 DATABASES = {
