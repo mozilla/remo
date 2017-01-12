@@ -212,7 +212,7 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
 
     <div class="large-6 columns">
       <!-- The following div.row should be displayed if usergroups OR featuredrep -->
-      {% if usergroups or featured_rep.count() or user_is_mentor(request_user) %}
+      {% if usergroups or featured_rep.count() or (user_is_mentor(request_user) and is_nomination_period) %}
         <div class="row profile-detail-list">
           <div class="large-1 columns pictogram">
             <div class="pict-icon large award"></div>
