@@ -49,6 +49,7 @@ class Bug(caching.base.CachingMixin, models.Model):
     status = models.CharField(max_length=30, default='')
     resolution = models.CharField(max_length=30, default='')
     first_comment = models.TextField(default='', blank=True)
+    # this is now assigned to the review group
     council_vote_requested = models.BooleanField(default=False)
     council_member_assigned = models.BooleanField(default=False)
     pending_mentor_validation = models.BooleanField(default=False)
