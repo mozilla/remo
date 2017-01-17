@@ -272,8 +272,7 @@ def poll_delete_reminder(sender, instance, **kwargs):
             celery_app.control.revoke(instance.task_end_id)
 
 
-@receiver(post_save, sender=Bug,
-          dispatch_uid='remozilla_automated_poll_signal')
+@receiver(post_save, sender=Bug, dispatch_uid='remozilla_automated_poll_signal')
 def automated_poll(sender, instance, **kwargs):
     """Create a radio poll automatically.
 
@@ -289,7 +288,7 @@ def automated_poll(sender, instance, **kwargs):
     with transaction.atomic():
         poll = (Poll.objects.create(name=instance.summary,
                                     description=instance.first_comment,
-                                    valid_groups=Group.objects.get(name='Council'),
+                                    valid_groups=Group.objects.get(name='Review'),
                                     start=now() + timedelta(BUDGET_REQUEST_PERIOD_START),
                                     end=now() + timedelta(days=BUDGET_REQUEST_PERIOD_END),
                                     bug=instance,

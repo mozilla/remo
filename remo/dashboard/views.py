@@ -147,9 +147,11 @@ def dashboard(request):
         args['mentees_emails'] = my_mentees.values_list('first_name', 'last_name', 'email') or None
         args['email_mentees_form'] = EmailUsersForm(my_mentees)
 
-    if user.groups.filter(Q(name='Admin') | Q(name='Council')).exists():
+    if user.groups.filter(Q(name='Admin') | Q(name='Review')).exists():
         args['all_budget_requests'] = budget_requests.all()[:20]
         args['all_swag_requests'] = swag_requests.all()[:20]
+
+    if user.groups.filter(Q(name='Admin') | Q(name='Council')).exists():
         args['my_cit_requests'] = cit_requests
         args['my_planning_requests'] = planning_requests
     else:
