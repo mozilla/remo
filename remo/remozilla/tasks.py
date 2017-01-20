@@ -25,12 +25,11 @@ BUGZILLA_FIELDS = ['is_confirmed', 'summary', 'creator', 'creation_time',
                    'status', 'assigned_to', 'resolution',
                    'last_change_time', 'flags']
 
-LOGIN_URL = 'https://bugzilla.mozilla.org/rest/login?login={username}&password={password}'
-URL = ('https://bugzilla.mozilla.org/rest/bug?token={token}'
+URL = ('https://bugzilla.mozilla.org/rest/bug?api_key={api_key}'
        '&product=Mozilla%20Reps&component={component}&'
        'include_fields={fields}&last_change_time={timestamp}&'
        'offset={offset}&limit={limit}')
-COMMENT_URL = 'https://bugzilla.mozilla.org/rest/bug/{id}/comment?token={token}'
+COMMENT_URL = 'https://bugzilla.mozilla.org/rest/bug/{id}/comment?api_key={api_key}'
 LIMIT = 100
 BUG_WHITEBOARD = 'Review Team approval needed'
 BUG_REVIEW = 'remo-review'
@@ -54,16 +53,6 @@ def fetch_bugs(components=COMPONENTS, days=None):
     Bugzilla users with users on this website, when possible.
 
     """
-    login_url = LOGIN_URL.format(username=settings.REMOZILLA_USERNAME,
-                                 password=settings.REMOZILLA_PASSWORD)
-    response = requests.get(login_url).json()
-    error = response.get('error')
-
-    # Check the server response and get the token
-    if error:
-        raise ValueError('Invalid response from server, {0}.'.format(response['error']))
-    token = response['token']
-
     now = timezone.now()
     if not days:
         changed_date = get_last_updated_date()
@@ -72,7 +61,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
     for component in components:
         offset = 0
-        url = URL.format(token=token, component=quote(component),
+        url = URL.format(api_key=settings.REMOZILLA_API_KEY, component=quote(component),
                          fields=','.join(BUGZILLA_FIELDS),
                          timestamp=changed_date, offset=offset, limit=LIMIT)
 
@@ -80,7 +69,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
             bugs = requests.get(url).json()
             error = bugs.get('error')
 
-            # Check the server response and get the token
+            # Check the server response for errors
             if error:
                 raise ValueError('Invalid response from server, {0}.'.format(bugs['message']))
 
@@ -90,7 +79,8 @@ def fetch_bugs(components=COMPONENTS, days=None):
 
             for bdata in remo_bugs:
                 # Get comments for current bug
-                comment_url = COMMENT_URL.format(id=bdata['id'], token=token)
+                comment_url = COMMENT_URL.format(id=bdata['id'],
+                                                 api_key=settings.REMOZILLA_API_KEY)
                 comments = requests.get(comment_url).json()
                 error = comments.get('error')
 
