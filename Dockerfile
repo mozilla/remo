@@ -18,3 +18,4 @@ ENV LANGUAGE en_US.UTF-8
 
 COPY requirements /code/requirements/
 RUN pip install --require-hashes --no-deps -r requirements/dev.txt
+COPY . /code/
