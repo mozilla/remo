@@ -1,3 +1,4 @@
+import feedparser
 import json
 import logging
 
@@ -41,7 +42,10 @@ class OIDCCallbackView(OIDCAuthenticationCallbackView):
 def main(request):
     """Main page of the website."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
-    return render(request, 'main.jinja', {'featuredrep': featured_rep})
+    feed = feedparser.parse(settings.PLANET_URL)
+    planet_entries = feed.entries[:3]
+    return render(request, 'main.jinja', {'featuredrep': featured_rep,
+                                          'planet_entries': planet_entries})
 
 
 def custom_404(request):

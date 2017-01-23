@@ -327,6 +327,9 @@ REST_FRAMEWORK = {
 # URL constants
 LIBRAVATAR_URL = 'https://seccdn.libravatar.org/avatar/'
 
+# Planet feed URL
+PLANET_URL = 'http://planet.mozillareps.org/rss20.xml'
+
 # Django-Cache-Machine
 CACHE_INVALIDATE_ON_CREATE = 'whole-model'
 
