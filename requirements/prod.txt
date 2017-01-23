@@ -225,3 +225,5 @@ future==0.16.0 \
 mozilla-django-oidc==0.1.10 \
     --hash=sha256:620029825c6fb66da26a79426595ee8d863c0610ca706dc0c83bbcd8cde25242 \
     --hash=sha256:f674ad617c0a0d73c9ea8f85bfa6067bd45fbd802c8437ad8faa21899b41cb3b
+feedparser==5.2.1 \
+    --hash=sha256:cd2485472e41471632ed3029d44033ee420ad0b57111db95c240c9160a85831c

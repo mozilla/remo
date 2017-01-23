@@ -104,7 +104,12 @@
         Reps planet
       </h3>
       <div id="planet">
-        Fetching awesome Reps Planet posts...
+        {% for entry in planet_entries %}
+          <div class="ItemTitle">
+            <a href="{{ entry.link }}" target="_blank">{{ entry.title }}</a>
+          </div>
+          <div class="ItemContent">{{ entry.description }}</div>
+        {% endfor %}
       </div>
       <div class="row">
         <a class="large-12 columns more-posts" href="http://planet.mozillareps.org">See all posts in planet...</a>
@@ -118,7 +123,5 @@
 {% block bottomextra %}
   {% compress js %}
     <script src="{{ static('base/js/orbit.js') }}"></script>
-    <script src="{{ static('base/js/FeedEk.js') }}"></script>
-    <script src="{{ static('base/js/planet.js') }}"></script>
   {% endcompress %}
 {% endblock %}
