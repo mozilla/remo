@@ -55,7 +55,7 @@ def main(request):
         else:
             cache.set('planet', planet_feed, 60 * 60 * 8)
 
-    results = feedparser.parse(unicode(planet_feed)).entries[:3]
+    results = feedparser.parse(planet_feed).entries[:3]
 
     return render(request, 'main.jinja', {'featuredrep': featured_rep,
                                           'planet_entries': results})
