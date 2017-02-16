@@ -1,12 +1,14 @@
 import feedparser
 import json
 import logging
+import requests
 
 from django import http
 from django.db.models import Q
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
@@ -42,10 +44,21 @@ class OIDCCallbackView(OIDCAuthenticationCallbackView):
 def main(request):
     """Main page of the website."""
     featured_rep = utils.latest_object_or_none(FeaturedRep)
-    feed = feedparser.parse(settings.PLANET_URL)
-    planet_entries = feed.entries[:3]
+
+    planet_feed = cache.get('planet')
+    if not planet_feed:
+        try:
+            planet_feed = requests.get(settings.PLANET_URL,
+                                       timeout=settings.PLANET_MAX_TIMEOUT).text
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+            planet_feed = ''
+        else:
+            cache.set('planet', planet_feed, 60 * 60 * 8)
+
+    results = feedparser.parse(unicode(planet_feed)).entries[:3]
+
     return render(request, 'main.jinja', {'featuredrep': featured_rep,
-                                          'planet_entries': planet_entries})
+                                          'planet_entries': results})
 
 
 def custom_404(request):

@@ -329,6 +329,7 @@ LIBRAVATAR_URL = 'https://seccdn.libravatar.org/avatar/'
 
 # Planet feed URL
 PLANET_URL = 'http://planet.mozillareps.org/rss20.xml'
+PLANET_MAX_TIMEOUT = 5
 
 # Django-Cache-Machine
 CACHE_INVALIDATE_ON_CREATE = 'whole-model'
