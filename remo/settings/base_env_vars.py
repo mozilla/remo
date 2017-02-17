@@ -111,6 +111,13 @@ ADMINS = (
 )
 MANAGERS = ADMINS
 
+# SMTP settings
+EMAIL_HOST = config('SMTP_EMAIL_HOST', default='localhost')
+EMAIL_PORT = config('SMTP_EMAIL_PORT', default='1025')
+EMAIL_HOST_USER = config('SMTP_EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('SMTP_EMAIL_HOST_PASSWORD', default='')
+EMAIL_USE_TLS = config('SMTP_EMAIL_USE_TLS', default=False, cast=bool)
+
 # Etherpad
 ETHERPAD_URL = config('ETHERPAD_URL', default='https://public.etherpad-mozilla.org/p/')
 ETHERPAD_PREFIX = config('ETHERPAD_PREFIX', default='remo-')
@@ -151,6 +158,7 @@ LIBRAVATAR_URL = config('LIBRAVATAR_URL', default='https://seccdn.libravatar.org
 
 # Planet
 PLANET_URL = config('PLANET_URL', default='http://planet.mozillareps.org/rss20.xml')
+PLANET_MAX_TIMEOUT = config('PLANET_MAX_TIMEOUT', default=5, cast=int)
 
 # Bugzilla
 REMOZILLA_USERNAME = config('REMOZILLA_USERNAME', default='')
