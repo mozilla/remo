@@ -235,3 +235,5 @@ dj-database-url==0.4.2 \
 Unipath==1.1 \
     --hash=sha256:e6257e508d8abbfb6ddd8ec357e33589f1f48b1599127f23b017124d90b0fff7 \
     --hash=sha256:09839adcc72e8a24d4f76d63656f30b5a1f721fc40c9bcd79d8c67bdd8b47dae
+whitenoise==3.3.0 \
+    --hash=sha256:1d62a003a0ab747de96da45c831cbb512dcb7f69c1ef0bd20b1cd4ae45d8a0c4
