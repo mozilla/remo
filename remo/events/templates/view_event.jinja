@@ -301,10 +301,10 @@ Mozilla Reps - {{ event.name }}
   <!-- END Mashup code -->
 
   {% macro display_attendee(attendee) -%}
-    {% if event|get_total_attendees >= 3 %}
+    {% if event|get_total_attendees >= 5 %}
       <img src="{{ attendee|get_avatar_url }}"
-          class="profiles-people-avatar"
-          alt="Avatar">
+           class="profiles-people-avatar"
+           alt="Avatar">
     {% else %}
       <div class="event-single-attendee">
         <div class="row">
@@ -397,8 +397,8 @@ Mozilla Reps - {{ event.name }}
             </span>
           </p>
           <!-- Listing of organizer and attendees -->
-          {% if event|get_total_attendees >= 3 %}
-            <ul class="large-block-grid-5 small-block-grid-8">
+          {% if event|get_total_attendees >= 5 %}
+            <ul class="small-block-grid-5">
           {% else %}
             <ul class="small-block-grid-1">
           {% endif %}
