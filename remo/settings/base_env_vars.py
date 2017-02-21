@@ -130,6 +130,7 @@ ETHERPAD_PREFIX = config('ETHERPAD_PREFIX', default='remo-')
 
 # Mozillians API
 MOZILLIANS_API_BASE = config('MOZILLIANS_API_BASE', default='https://mozillians.org')
+MOZILLIANS_API_APPNAME = config('MOZILLIANS_API_APPNAME', default='')
 MOZILLIANS_API_KEY = config('MOZILLIANS_API_KEY', default='')
 
 # Project secutity settings
