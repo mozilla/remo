@@ -89,7 +89,11 @@ STATIC_URL = config('STATIC_URL', default='/static/')
 
 # URL that handles the media served from MEDIA_ROOT.
 MEDIA_URL = config('MEDIA_URL', default='/media/')
-SESSION_COOKIE_SECURE = not DEBUG
+
+# Session/Cookie settings
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
+SESSION_COOKIE_HTTPONLY = config('SESSION_COOKIE_HTTPONLY', default=True, cast=bool)
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
 
 # Instruct session-csrf to always produce tokens for anonymous users
 # This is needed to get a CRSF token in /admin
