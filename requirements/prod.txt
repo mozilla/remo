@@ -237,3 +237,6 @@ Unipath==1.1 \
     --hash=sha256:09839adcc72e8a24d4f76d63656f30b5a1f721fc40c9bcd79d8c67bdd8b47dae
 whitenoise==3.3.0 \
     --hash=sha256:1d62a003a0ab747de96da45c831cbb512dcb7f69c1ef0bd20b1cd4ae45d8a0c4
+gunicorn==19.6.0 \
+    --hash=sha256:723234ea1fa8dff370ab69830ba8bc37469a7cba13fd66055faeef24085e6530 \
+    --hash=sha256:813f6916d18a4c8e90efde72f419308b357692f81333cb1125f80013d22fb618

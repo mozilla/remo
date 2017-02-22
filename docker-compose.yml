@@ -15,20 +15,23 @@ services:
   broker:
     image: rabbitmq
   celery:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/dev
     volumes:
-      - .:/code
+      - .:/app
     links:
       - db
       - broker
       - memcached
-    command: bash -c "python manage.py migrate django-celery && celery -A remo worker -l INFO"
-    environment:
-      - C_FORCE_ROOT=true
+    command: ./bin/run-celery.sh
     depends_on:
       - broker
+      - db
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/dev
     depends_on:
       - db
       - memcached
@@ -36,10 +39,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/code
+      - .:/app
     links:
       - db
       - broker
       - celery
       - memcached
-    command: bash -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    command: ./bin/run-dev.sh
