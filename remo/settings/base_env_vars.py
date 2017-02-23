@@ -1,7 +1,6 @@
 # This is your project's main settings file that can be committed to your
 # repo. If you need to override a setting locally, use settings_local.py
 import logging
-from django.utils.functional import lazy
 
 from decouple import config
 from dj_database_url import parse as db_url
@@ -175,21 +174,10 @@ REMOZILLA_PASSWORD = config('REMOZILLA_PASSWORD', default='')
 MAILHIDE_PUB_KEY = config('MAILHIDE_PUB_KEY', default='')
 MAILHIDE_PRIV_KEY = config('MAILHIDE_PRIV_KEY', default='')
 
-
-# OIDC lib - Auth0 configuration
-def lazy_oidc_op_domain():
-    from django.conf import settings
-
-    if settings.SITE_URL == 'https://reps-dev.allizom.org':
-        return 'auth-dev.mozilla.auth0.com'
-    return 'auth.mozilla.auth0.com'
-
-
+# OIDC settings
 OIDC_CALLBACK_CLASS = config('OIDC_CALLBACK_CLASS', default='remo.base.views.OIDCCallbackView')
-REMO_DOMAIN = lazy(lazy_oidc_op_domain, str)()
 OIDC_STORE_ACCESS_TOKEN = config('OIDC_STORE_ACCESS_TOKEN', default=True, cast=bool)
 OIDC_RP_CLIENT_SECRET_ENCODED = config('OIDC_RP_CLIENT_SECRET_ENCODED', default=True, cast=bool)
-OIDC_OP_TOKEN_ENDPOINT = config('OIDC_OP_TOKEN_ENDPOINT', default='')
 AUTH0_DOMAIN = config('AUTH0_DOMAIN', default='')
 AUTH0_CLIENT_ID = config('AUTH0_CLIENT_ID', default='')
 OIDC_OP_AUTHORIZATION_ENDPOINT = config('OIDC_OP_AUTHORIZATION_ENDPOINT', default='')
@@ -197,7 +185,7 @@ OIDC_OP_TOKEN_ENDPOINT = config('OIDC_OP_TOKEN_ENDPOINT', default='')
 OIDC_OP_USER_ENDPOINT = config('OIDC_OP_USER_ENDPOINT', default='')
 OIDC_RP_CLIENT_ID = config('OIDC_RP_CLIENT_ID', default='')
 OIDC_RP_CLIENT_SECRET = config('OIDC_RP_CLIENT_SECRET', default='')
-OIDC_OP_DOMAIN = config('OIDC_OP_DOMAIN', default=REMO_DOMAIN)
+OIDC_OP_DOMAIN = config('OIDC_OP_DOMAIN', default='auth.mozilla.auth0.com')
 LOGIN_REDIRECT_URL = config('LOGIN_REDIRECT_URL', default='/dashboard/')
 LOGIN_REDIRECT_URL_FAILURE = config('LOGIN_REDIRECT_URL_FAILURE', default='/')
 LOGOUT_REDIRECT_URL = config('LOGOUT_REDIRECT_URL', default='/')
