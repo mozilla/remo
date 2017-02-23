@@ -1,4 +1,4 @@
 #!/bin/sh
 
-python manage.py migrate django-celery
+python manage.py migrate djcelery
 celery -A remo worker -l INFO
