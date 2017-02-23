@@ -301,21 +301,27 @@ Mozilla Reps - {{ event.name }}
   <!-- END Mashup code -->
 
   {% macro display_attendee(attendee) -%}
-    <div class="event-single-attendee">
-      <div class="row">
-        <div class="large-3 small-3 columns grid-profile-image">
-          <img src="{{ attendee|get_avatar_url }}"
-               class="profiles-people-avatar"
-               alt="Avatar">
-        </div>
-        <div class="large-9 small-9 columns grid-profile-text">
-          <h6>{{ attendee.get_full_name() }}</h6>
-          <p class="event-single-attendee-text">
-            {{ get_attendee_role_event(attendee, event) }}
-          </p>
+    {% if event|get_total_attendees >= 5 %}
+      <img src="{{ attendee|get_avatar_url }}"
+           class="profiles-people-avatar"
+           alt="Avatar">
+    {% else %}
+      <div class="event-single-attendee">
+        <div class="row">
+          <div class="large-3 small-3 columns grid-profile-image">
+            <img src="{{ attendee|get_avatar_url }}"
+                 class="profiles-people-avatar"
+                 alt="Avatar">
+          </div>
+          <div class="large-9 small-9 columns grid-profile-text">
+            <h6>{{ attendee.get_full_name() }}</h6>
+            <p class="event-single-attendee-text">
+              {{ get_attendee_role_event(attendee, event) }}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    {% endif %}
   {%- endmacro %}
   <div class="row">
     <div class="large-7 columns">
@@ -391,25 +397,38 @@ Mozilla Reps - {{ event.name }}
             </span>
           </p>
           <!-- Listing of organizer and attendees -->
+          {% if event|get_total_attendees >= 5 %}
+            <ul class="small-block-grid-5">
+          {% else %}
+            <ul class="small-block-grid-1">
+          {% endif %}
+
           {% for attendee in get_sorted_attendance_list(event) %}
             {% if user_is_rep(attendee) or user_is_alumni(attendee) %}
-              <a href="{{ url('profiles_view_profile', display_name=attendee|get_display_name) }}"
+              <li class='grid-profile-image'>
+                <a href="{{ url('profiles_view_profile', display_name=attendee|get_display_name) }}"
                  target="_blank">
-                {{ display_attendee(attendee) }}
-              </a>
+                  {{ display_attendee(attendee) }}
+                </a>
+              </li>
             {% endif %}
             {% if user_is_mozillian(attendee) %}
               {% if not attendee.userprofile.mozillian_username %}
-                {{ display_attendee(attendee) }}
+                <li class='grid-profile-image'>
+                  {{ display_attendee(attendee) }}
+                </li>
               {% else %}
-                <a href="{{ settings.MOZILLIANS_API_BASE + '/u/' +
+                <li class='grid-profile-image'>
+                  <a href="{{ settings.MOZILLIANS_API_BASE + '/u/' +
                             attendee.userprofile.mozillian_username }}"
                   target="_blank">
-                  {{ display_attendee(attendee) }}
-                </a>
+                    {{ display_attendee(attendee) }}
+                  </a>
+                </li>
               {% endif %}
             {% endif %}
           {% endfor %}
+          </ul>
 
           {% if user.is_authenticated() %}
             <p>
