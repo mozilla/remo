@@ -383,7 +383,7 @@ CACHE_INVALIDATE_ON_CREATE = 'whole-model'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
+        'LOCATION': config('CACHE_URL', default='127.0.0.1:11211'),
     }
 }
 

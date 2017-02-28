@@ -26,3 +26,4 @@ OIDC_OP_DOMAIN = ''
 OIDC_OP_STORE_ACCESS_TOKEN = True
 # Assuming user root with password root and db name remo
 DATABASE_URL = 'mysql://root:root@127.0.0.1:3306/remo'
+CACHE_URL = '127.0.0.1:11211'
