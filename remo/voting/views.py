@@ -41,12 +41,13 @@ def list_votings(request):
 
     if show_all_past == 'true':
         past_polls = polls.filter(end__lt=now())
-    else :
+    else:
+        show_all_past = 'false'
         past_polls = polls.filter(end__lt=now())[:10]
     
     return render(request, 'list_votings.jinja',
                   {'user': user,
-                   'show_all_past' : show_all_past,
+                   'show_all_past': show_all_past,
                    'past_polls': past_polls,
                    'current_polls': current_polls,
                    'future_polls': future_polls})
