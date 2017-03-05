@@ -23,6 +23,7 @@ def list_votings(request):
     """List votings view."""
     user = request.user
     polls = Poll.objects.all()
+    PAST_POLLS_PER_PAGE = 10
 
     is_admin = user.groups.filter(name='Admin').exists()
     is_peer = user.groups.filter(name='Peers').exists()
@@ -43,11 +44,12 @@ def list_votings(request):
         past_polls = polls.filter(end__lt=now())
     else:
         show_all_past = 'false'
-        past_polls = polls.filter(end__lt=now())[:10]
+        past_polls = polls.filter(end__lt=now())[:PAST_POLLS_PER_PAGE]
     
     return render(request, 'list_votings.jinja',
                   {'user': user,
                    'show_all_past': show_all_past,
+                   'past_polls_per_page': PAST_POLLS_PER_PAGE,
                    'past_polls': past_polls,
                    'current_polls': current_polls,
                    'future_polls': future_polls})
