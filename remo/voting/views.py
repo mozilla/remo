@@ -34,22 +34,19 @@ def list_votings(request):
             poll_groups += ['Review']
         polls = Poll.objects.filter(valid_groups__name__in=poll_groups)
 
-    past_polls_query = polls.filter(end__lt=now())
     current_polls = polls.filter(start__lt=now(), end__gt=now())
     future_polls = polls.filter(start__gt=now())
 
-    past_polls_paginator = Paginator(past_polls_query, settings.ITEMS_PER_PAGE)
-    past_polls_page = request.GET.get('page', 1)
+    show_all_past = request.GET.get('show_all_past','false')
 
-    try:
-        past_polls = past_polls_paginator.page(past_polls_page)
-    except PageNotAnInteger:
-        past_polls = past_polls_paginator.page(1)
-    except EmptyPage:
-        past_polls = past_polls_paginator.page(past_polls_paginator.num_pages)
-
+    if show_all_past == 'true':
+        past_polls = polls.filter(end__lt=now())
+    else :
+        past_polls = polls.filter(end__lt=now())[:10]
+    
     return render(request, 'list_votings.jinja',
                   {'user': user,
+                   'show_all_past' : show_all_past,
                    'past_polls': past_polls,
                    'current_polls': current_polls,
                    'future_polls': future_polls})
