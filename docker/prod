@@ -24,3 +24,4 @@ COPY . /app
 
 RUN chown webdev.webdev -R .
 USER webdev
+RUN bin/bootstrap.sh
