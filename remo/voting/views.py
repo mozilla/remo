@@ -1,7 +1,5 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
@@ -38,14 +36,14 @@ def list_votings(request):
     current_polls = polls.filter(start__lt=now(), end__gt=now())
     future_polls = polls.filter(start__gt=now())
 
-    show_all_past = request.GET.get('show_all_past','false')
+    show_all_past = request.GET.get('show_all_past', 'false')
 
     if show_all_past == 'true':
         past_polls = polls.filter(end__lt=now())
     else:
         show_all_past = 'false'
         past_polls = polls.filter(end__lt=now())[:PAST_POLLS_PER_PAGE]
-    
+
     return render(request, 'list_votings.jinja',
                   {'user': user,
                    'show_all_past': show_all_past,
