@@ -241,8 +241,8 @@ class EventMetricOutcome(models.Model):
     """New generation event metric stats."""
     event = models.ForeignKey(Event)
     metric = models.ForeignKey(EventMetric)
-    expected_outcome = models.IntegerField()
-    outcome = models.IntegerField(null=True, blank=True)
+    expected_outcome = models.PositiveIntegerField()
+    outcome = models.PositiveIntegerField(null=True, blank=True)
     details = models.TextField(validators=[MaxLengthValidator(1500)], blank=True, default='')
 
     class Meta:
