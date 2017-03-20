@@ -117,11 +117,19 @@ ADMINS = (
 MANAGERS = ADMINS
 
 # SMTP settings
-EMAIL_HOST = config('SMTP_EMAIL_HOST', default='localhost')
-EMAIL_PORT = config('SMTP_EMAIL_PORT', default='1025')
-EMAIL_HOST_USER = config('SMTP_EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = config('SMTP_EMAIL_HOST_PASSWORD', default='')
-EMAIL_USE_TLS = config('SMTP_EMAIL_USE_TLS', default=False, cast=bool)
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django_ses.SESBackend')
+if EMAIL_BACKEND == 'django_ses.SESBackend':
+    AWS_SES_REGION_NAME = config('AWS_SES_REGION_NAME', default='us-east-1')
+    AWS_SES_REGION_ENDPOINT = config('AWS_SES_REGION_ENDPOINT',
+                                     default='email.us-east-1.amazonaws.com')
+    AWS_SES_ACCESS_KEY_ID = config('AWS_SES_ACCESS_KEY_ID', default='')
+    AWS_SES_SECRET_ACCESS_KEY = config('AWS_SES_SECRET_ACCESS_KEY', default='')
+else:
+    EMAIL_HOST = config('SMTP_EMAIL_HOST', default='localhost')
+    EMAIL_PORT = config('SMTP_EMAIL_PORT', default='1025')
+    EMAIL_HOST_USER = config('SMTP_EMAIL_HOST_USER', default='')
+    EMAIL_HOST_PASSWORD = config('SMTP_EMAIL_HOST_PASSWORD', default='')
+    EMAIL_USE_TLS = config('SMTP_EMAIL_USE_TLS', default=False, cast=bool)
 
 # Etherpad
 ETHERPAD_URL = config('ETHERPAD_URL', default='https://public.etherpad-mozilla.org/p/')
