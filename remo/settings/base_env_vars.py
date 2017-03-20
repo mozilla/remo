@@ -1,5 +1,6 @@
 # This is your project's main settings file that can be committed to your
 # repo. If you need to override a setting locally, use settings_local.py
+import json
 import logging
 
 from decouple import config
@@ -360,6 +361,8 @@ CSP_CHILD_SRC = (
 LOGGING_CONFIG = None
 LOG_LEVEL = logging.INFO
 SYSLOG_TAG = 'http_app_remo'
+RAVEN_CONFIG = config('RAVEN_CONFIG', cast=json.loads, default='{}')
+
 LOGGING = {
     'loggers': {
         'remo': {'level': LOG_LEVEL}
