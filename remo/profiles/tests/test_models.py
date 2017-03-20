@@ -329,8 +329,6 @@ class EmailMentorNotification(RemoTestCase):
         data2 = mocked_mail.call_args_list[1][1]
         recipients = data1['recipients_list'] + data2['recipients_list']
         eq_(set(recipients), set([new_mentor.id, old_mentor.id, user.id]))
-        eq_(data1['headers']['Reply-To'], user.email)
-        eq_(data2['headers']['Reply-To'], new_mentor.email)
 
 
 class UserStatusNotification(RemoTestCase):

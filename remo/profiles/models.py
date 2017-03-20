@@ -415,12 +415,12 @@ def email_mentor_notification(sender, instance, raw, **kwargs):
                              subject=subject,
                              email_template=email_template,
                              data=ctx_data,
-                             headers={'Reply-To': instance.user.email})
+                             sender=instance.user.email)
         send_remo_mail.delay(recipients_list=rep_recipient,
                              subject=subject,
                              email_template=email_template,
                              data=ctx_data,
-                             headers={'Reply-To': instance.mentor.email})
+                             sender=instance.mentor.email)
         statsd.incr('profiles.change_mentor')
 
 

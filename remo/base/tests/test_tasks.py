@@ -26,8 +26,8 @@ class SendRemoMailTests(RemoTestCase):
                                                      to=[to],
                                                      cc=[from_email],
                                                      subject=subject,
-                                                     headers={},
-                                                     from_email=from_email)
+                                                     headers={'Reply-To': from_email},
+                                                     from_email=settings.FROM_EMAIL)
 
     def test_send_email_from_remobot(self):
         recipient = UserFactory.create()
@@ -75,8 +75,8 @@ class SendRemoMailTests(RemoTestCase):
                                                      to=['mail@example.com'],
                                                      cc=[from_email],
                                                      subject=subject,
-                                                     headers={},
-                                                     from_email=from_email)
+                                                     headers={'Reply-To': from_email},
+                                                     from_email=settings.FROM_EMAIL)
 
     def test_send_to_invalid_email_address(self):
         subject = 'This is the subject'
@@ -102,5 +102,5 @@ class SendRemoMailTests(RemoTestCase):
                                                      to=['mail@example.com'],
                                                      cc=[from_email],
                                                      subject=subject,
-                                                     from_email=from_email,
+                                                     from_email=settings.FROM_EMAIL,
                                                      headers=headers)
