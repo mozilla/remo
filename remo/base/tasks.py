@@ -58,12 +58,19 @@ def send_remo_mail(subject, recipients_list, sender=None,
         if email_template:
             message = render_to_string(email_template, data)
 
-        if not sender:
-            email = EmailMessage(subject=subject, body=message,
-                                 from_email=settings.FROM_EMAIL,
-                                 to=[to], headers=headers)
-        else:
-            email = EmailMessage(subject=subject, body=message,
-                                 from_email=sender, to=[to], cc=[sender],
-                                 headers=headers)
-        email.send()
+        email_data = {
+            'subject': subject,
+            'body': message,
+            'from_email': settings.FROM_EMAIL,
+            'to': [to],
+        }
+
+        if sender:
+            # If there is a sender, add a Reply-To header and send a copy to the sender
+            headers.update({'Reply-To': sender})
+            email_data.update({'cc': [sender]})
+
+        # Add the headers to the mail data
+        email_data.update({'headers': headers})
+        # Send the email
+        EmailMessage(**email_data).send()
