@@ -10,7 +10,7 @@ from django.utils.timezone import make_aware, now
 
 import pytz
 
-from celery.task import periodic_task, task
+from celery.task import task
 from django_statsd.clients import statsd
 
 from remo.base.utils import get_date
@@ -22,7 +22,7 @@ from remo.reports.utils import send_report_notification
 DIGEST_SUBJECT = 'Your mentee activity for {date}'
 
 
-@task()
+@task
 def send_report_digest():
     from remo.reports.models import NGReport
     today = now().date()
@@ -60,7 +60,7 @@ def send_report_digest():
         send_mail(subject, message, settings.FROM_EMAIL, [mentor.email])
 
 
-@periodic_task(run_every=timedelta(days=1))
+@task
 def send_first_report_notification():
     """Send inactivity notification after 4 weeks."""
     today = get_date()
@@ -85,7 +85,7 @@ def send_first_report_notification():
     statsd.incr('reports.send_first_report_notification')
 
 
-@periodic_task(run_every=timedelta(days=1))
+@task
 def send_second_report_notification():
     """Send inactivity notification after 8 weeks."""
     today = get_date()
@@ -110,7 +110,7 @@ def send_second_report_notification():
     statsd.incr('reports.send_second_report_notification')
 
 
-@task()
+@task
 def zero_current_streak():
     """Zero current streak.
 
@@ -126,7 +126,7 @@ def zero_current_streak():
         rep.userprofile.save()
 
 
-@periodic_task(run_every=timedelta(days=1))
+@task
 def calculate_longest_streaks():
     """Calculate user's longest streaks."""
     from remo.reports.models import NGReport
@@ -170,7 +170,7 @@ def calculate_longest_streaks():
         rep.userprofile.save()
 
 
-@periodic_task(run_every=timedelta(days=1))
+@task
 def resolve_report_action_items():
     """Resolve any action items.
 

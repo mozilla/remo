@@ -10,7 +10,7 @@ from django.utils import timezone
 
 import requests
 import waffle
-from celery.task import periodic_task
+from celery.task import task
 
 from remo.base.templatetags.helpers import urlparams
 from remo.base.utils import get_object_or_none
@@ -44,7 +44,7 @@ def parse_bugzilla_time(time):
     return datetimeobj
 
 
-@periodic_task(run_every=timedelta(minutes=15))
+@task
 @transaction.atomic
 def fetch_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
