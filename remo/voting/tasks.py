@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 from operator import or_
 
-from celery.task import periodic_task, task
+from celery.task import task
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.models import ContentType
@@ -55,7 +55,7 @@ def send_voting_mail(voting_id, subject, email_template):
             send_mail(subject, message, settings.FROM_EMAIL, [user.email])
 
 
-@periodic_task(run_every=timedelta(hours=8))
+@task
 def extend_voting_period():
     """Extend voting period by EXTEND_VOTING_PERIOD if there is no
     majority decision.
@@ -92,7 +92,7 @@ def extend_voting_period():
                                      data=ctx_data)
 
 
-@periodic_task(run_every=timedelta(days=1))
+@task
 def resolve_action_items():
     # avoid circular dependencies
     from remo.voting.models import Poll
@@ -105,7 +105,7 @@ def resolve_action_items():
     items.update(resolved=True)
 
 
-@periodic_task(run_every=timedelta(hours=24))
+@task
 def create_rotm_poll():
     """Create a poll for the Rep of the month nominee.
 

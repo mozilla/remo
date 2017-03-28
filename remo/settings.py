@@ -154,12 +154,13 @@ CSP_REPORT_URI = config('CSP_REPORT_URI', default='/capture-csp-violation')
 CELERY_ENABLE_UTC = config('CELERY_ENABLE_UTC', default=True, cast=bool)
 CELERY_TIMEZONE = config('CELERY_TIMEZONE', default='UTC')
 CELERY_TASK_RESULTS_EXPIRES = config('CELERY_TASK_RESULTS_EXPIRES', default=3600, cast=int)
-CELERY_ACCEPT_CONTENT = ['pickle']
+CELERY_ACCEPT_CONTENT = ['json']
 CELERY_SEND_TASK_ERROR_EMAILS = config('CELERY_SEND_TASK_ERROR_EMAILS', default=True, cast=bool)
 CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis')
-CELERY_ALWAYS_EAGER = config('CELERY_ALWAYS_EAGER', default=True, cast=bool)
+CELERY_TASK_ALWAYS_EAGER = config('CELERY_TASK_ALWAYS_EAGER', default=True, cast=bool)
 REDIS_CONNECT_RETRY = config('REDIS_CONNECT_RETRY',
                              default=CELERY_RESULT_BACKEND == 'redis', cast=bool)
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@broker:5672//')
 
 # Mapbox
 MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')

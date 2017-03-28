@@ -45,3 +45,4 @@ BROKER_URL = 'amqp://guest:guest@broker:5672//'
 # Cache
 CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
 CACHE_URL = '127.0.0.1:11211'
+CELERY_BROKER_URL = 'amqp://guest:guest@broker:5672//'
