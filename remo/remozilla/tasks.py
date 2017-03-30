@@ -44,7 +44,7 @@ def parse_bugzilla_time(time):
     return datetimeobj
 
 
-@periodic_task(run_every=timedelta(hours=1))
+@periodic_task(run_every=timedelta(minutes=15))
 @transaction.atomic
 def fetch_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
