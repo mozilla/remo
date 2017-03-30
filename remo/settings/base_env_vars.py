@@ -180,6 +180,7 @@ PLANET_MAX_TIMEOUT = config('PLANET_MAX_TIMEOUT', default=5, cast=int)
 # Bugzilla
 REMOZILLA_USERNAME = config('REMOZILLA_USERNAME', default='')
 REMOZILLA_PASSWORD = config('REMOZILLA_PASSWORD', default='')
+REMOZILLA_API_KEY = config('REMOZILLA_API_KEY', default='')
 
 # Mailhide
 MAILHIDE_PUB_KEY = config('MAILHIDE_PUB_KEY', default='')
