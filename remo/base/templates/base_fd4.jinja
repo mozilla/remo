@@ -145,8 +145,8 @@
             </div>
 
             <!-- Navigation -->
-            <nav role="navigation" class="large-9 columns hide-for-small" id="navigation-box">
-              <ul class="button-group">
+            <nav role="navigation" class="small-12 large-9 columns" id="navigation-box">
+              <ul>
                 <li>
                   {% if user.is_authenticated() %}
                     <a href="{{ url('dashboard') }}"
@@ -168,72 +168,42 @@
                      id="events-menu-locator"
                      class="main {{ active(request, '^/events/') }}">Events</a>
                 </li>
-                <li>
-                  <a href="https://blog.mozilla.org/mozillareps"
-                     id="blog-menu-locator"
-                     class="main">Blog</a>
+                <li class="dropdown">
+                  <a href="#" class="dropbtn">Communications</a>
+                  <ul class="dropdown-content">
+                    <li><a href="https://blog.mozilla.org/mozillareps"
+                           id="blog-menu-locator"
+                           class="main">Blog</a>
+                    </li>
+                    <li><a href="http://planet.mozillareps.org"
+                           id="planet-menu-locator"
+                           class="main">Planet</a>
+                    </li>
+                    <li><a href="https://discourse.mozilla-community.org/c/reps"
+                           id="forum-menu-locator"
+                           class="main">Forum</a>
+                    </li>
+                  </ul>
                 </li>
-                <li>
-                  <a href="http://planet.mozillareps.org"
-                     id="planet-menu-locator"
-                     class="main">Planet</a>
-                </li>
-                <li>
-                  <a href="https://wiki.mozilla.org/ReMo"
-                     id="wiki-menu-locator"
-                     class="main">Wiki</a>
+                <li class="dropdown">
+                  <a href="#" class="dropbtn">Documentation</a>
+                  <ul class="dropdown-content">
+                    <li>
+                      <a href="https://wiki.mozilla.org/ReMo"
+                         id="wiki-menu-locator"
+                         class="main">Wiki</a>
+                    </li>
+                    <li>
+                      <a href="{{ url('faq') }}"
+                         id="faq-menu-locator"
+                         class="main {{ active(request, '^/faq/$') }}">FAQ</a>
+                    </li>
+                  </ul>
                 </li>
                 <li>
                   <a href="{{ url('labs') }}"
                      id="labs-menu-locator"
                      class="main {{ active(request, '^/labs/$') }}">Labs</a>
-                </li>
-                <li class="last">
-                  <a href="{{ url('faq') }}"
-                     id="faq-menu-locator"
-                     class="main {{ active(request, '^/faq/$') }}">FAQ</a>
-                </li>
-              </ul>
-            </nav>
-
-            <!-- Mobile Navigation -->
-            <nav role="navigation" class="small-12 show-for-small hide-on-print" id="navigation-box-mobile">
-              <ul class="button-group">
-                <li>
-                  {% if user.is_authenticated() %}
-                    <a href="{{ url('dashboard') }}"
-                       class="main {{ active(request, '^/dashboard') }}">Dashboard</a>
-                  {% else %}
-                    <a href="{{ url('main') }}"
-                       class="main {{ active(request, '^/$') }}">Main</a>
-                  {% endif %}
-                </li>
-                <li>
-                  <a href="{{ url('profiles_list_profiles') }}"
-                     class="main {{ active(request, '^/people/') }}">People</a>
-                </li>
-                <li>
-                  <a href="{{ url('events_list_events') }}" class="main">Events</a>
-                </li>
-                <li>
-                  <a href="https://blog.mozilla.org/mozillareps"
-                     class="main">Blog</a>
-                </li>
-                <li>
-                  <a href="http://planet.mozillareps.org"
-                     class="main">Planet</a>
-                </li>
-                <li>
-                  <a href="https://wiki.mozilla.org/ReMo"
-                     class="main">Wiki</a>
-                </li>
-                <li>
-                  <a href="{{ url('labs') }}"
-                     class="main {{ active(request, '^/labs/$') }}">Labs</a>
-                </li>
-                <li class="last">
-                  <a href="{{ url('faq') }}"
-                     class="main {{ active(request, '^/faq/$') }}">FAQ</a>
                 </li>
               </ul>
             </nav>
