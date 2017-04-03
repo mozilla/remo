@@ -470,6 +470,7 @@ label.required:after {
 }
 
 #navigation-box {
+    padding-left: 0;
     font-family: 'Open Sans Light';
     font-size: 15px;
 
@@ -488,13 +489,13 @@ label.required:after {
         }
     }
 
-    >ul {
+    > ul {
         float: right;
         margin-bottom: 0;
-        >li{
+        > li {
             float: left;
             border-right: 1px solid #d3d3d3;
-            &.last {
+            &:last-child {
                 border-right:none;
                 a {
                     padding: 0 0 0 20px;
@@ -546,16 +547,18 @@ label.required:after {
         text-align: left;
     }
 
-    #navigation-box ul {
-        li {
-            a {
-                padding: 0 10px;
+    #navigation-box {
+        a {
+            padding: 0 10px;
+        }
+
+        > ul {
+            > li:first-child a {
+                padding-left: 0;
             }
 
-             &.last {
-                a {
-                    padding: 0 0 0 10px;
-                }
+            > li:last-child a {
+                padding: 0 0 0 10px;
             }
         }
     }
@@ -571,16 +574,20 @@ label.required:after {
     #navigation-box {
         padding: 0; 
 
-        >ul {
+        > ul {
             float: none;
             margin: 10px 0 0 0;
 
-            >li {
+            > li {
                 float: none;
                 border-right:none;
                 border-bottom: 1px solid rgb(221, 221, 221);
 
-                &.last {
+                &:first-child a {
+                    padding-left: 10px;
+                }
+
+                &:last-child {
                     border-bottom: none;
                 }
             }
