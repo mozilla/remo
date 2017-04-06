@@ -2099,9 +2099,7 @@ meter::-o-meter-suboptimum-value {
     textarea {
         height: auto;
     }
-    textarea + .required-field {
-        top: -50px;
-    }
+
     textarea.postevent-details {
         height: 100px;
         font-size: 13px;
@@ -2136,25 +2134,14 @@ meter::-o-meter-suboptimum-value {
         .copyblock {
             padding-bottom: 10px;
         }
-        .required-field {
-            top: -30px;
-            margin-bottom: -30px;
-        }
         button {
             margin-top: 10px;
         }
     }
     .category-select {
         margin-top: 10px;
-        .required-field {
-            top: 10px;
-        }
     }
-    .map-point-select {
-        button + .required-field {
-            top: 10px;
-        }
-    }
+    
     #event-attend-button button {
         padding: 8px 10px 10px;
     }
@@ -2162,6 +2149,28 @@ meter::-o-meter-suboptimum-value {
         font-weight: bold;
         margin-bottom: 30px;
     }
+
+    .section {
+        padding-right: 25px;
+        padding-bottom: 25px;
+    }
+
+    .required-field {
+        &:extend(.required-field);
+        left: 5px;
+        top:0;
+    }
+
+    .required-field-input:before {
+         &:extend(.required-field:before);
+    }
+
+    .required-field-input {
+        &:extend(.required-field);
+        left: 5px;
+        top: 10px;
+    }
+
 }
 
 .attending-event-msg {
@@ -2211,17 +2220,6 @@ meter::-o-meter-suboptimum-value {
 #icalendar-export-button {
     margin-top: 10px;
     padding-top: 6.5px;
-}
-
-.required-field {
-    float: none;
-    margin-bottom: 0px;
-    position: initial;
-}
-
-.section {
-    padding-right: 25px;
-    padding-bottom: 25px;
 }
 
 #mozilla_event {
