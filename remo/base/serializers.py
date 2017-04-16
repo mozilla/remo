@@ -149,7 +149,7 @@ class iCalSerializer(Serializer):
         """Convert data to iCal."""
         options = options or {}
 
-        if any(k in data for k in ('error_message', 'error')):
+        if any(k in data.data for k in ('error_message', 'error')):
             raise Http404
 
         if isinstance(data, dict) and 'objects' in data:
