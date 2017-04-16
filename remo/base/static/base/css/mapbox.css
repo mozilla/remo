@@ -76,7 +76,7 @@
 .leaflet-top,
 .leaflet-bottom {
 	position: absolute;
-	z-index: 1000;
+	z-index: 10;
 	pointer-events: none;
 	}
 .leaflet-top {
