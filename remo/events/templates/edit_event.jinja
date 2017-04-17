@@ -35,91 +35,134 @@
     </div>
 
     <div class="row">
-      <div class="large-6 columns">
+      <div class="large-6 columns section">
         <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon large tag"></div>
           </div>
           <div class="large-11 columns">
-            {{ field_with_attrs(event_form.name,
-                                placeholder='Event name',
-                                class='input-text big has-tip tip-left',
-                                title='Event name') }}
-            <div class="required-field"></div>
-            {{ field_errors(event_form.name) }}
-
-            {{ field_with_attrs(event_form.description,
-                                class='flat has-tip tip-left',
-                                title='Event description',
-                                placeholder='Description of event') }}
-            <div class="required-field"></div>
-            <p class="more-info">Minimum 20 characters.<br> Any practical
-            info should be added in the additional info section below.</p>
-            {{ field_errors(event_form.description) }}
-
-
-            {{ field_with_attrs(event_form.external_link,
-                                placeholder='External link',
-                                class='input-text big has-tip tip-left',
-                                title='External link') }}
-            {{ field_errors(event_form.external_link) }}
-
+            <div class="small-12 columns">
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field-input"></div>
+                </div>
+                <div class="small-11 columns">
+                  {{ field_with_attrs(event_form.name,
+                                      placeholder='Event name',
+                                      class='input-text big has-tip tip-left',
+                                      title='Event name') }}
+                  {{ field_errors(event_form.name) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field"></div>
+                </div>
+                <div class="small-11 columns">
+                  {{ field_with_attrs(event_form.description,
+                                      class='flat has-tip tip-left',
+                                      title='Event description',
+                                      placeholder='Description of event') }}
+                  <p class="more-info">Minimum 20 characters.<br> Any practical
+                  info should be added in the additional info section below.</p>
+                  {{ field_errors(event_form.description) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-11 small-offset-1 columns">
+                  {{ field_with_attrs(event_form.external_link,
+                                      placeholder='External link',
+                                      class='input-text big has-tip tip-left',
+                                      title='External link') }}
+                  {{ field_errors(event_form.external_link) }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="large-6 columns">
+      <div class="large-6 columns section">
         <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon large pin"></div>
           </div>
           <div class="large-11 columns map-point-select">
-            {{ field_with_attrs(event_form.venue,
+            <div class="small-12 columns">
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field-input"></div>
+                </div>
+                <div class="small-11 columns">
+                  {{ field_with_attrs(event_form.venue,
                                 placeholder='Venue',
                                 title='Event venue',
                                 class='input-text big has-tip tip-right') }}
-            <div class="required-field"></div>
-            {{ field_errors(event_form.venue) }}
-            <p class="more-info">If you don't know the name of venue yet, please type "TBD"</p>
+                  {{ field_errors(event_form.venue) }}
+                  <p class="more-info">If you don't know the name of venue yet, please type "TBD"</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field-button"></div>
+                </div>
+                <div class="small-11 columns">
+                  <button class="small button" data-reveal-id="map-point">
+                    Point event venue in map
+                  </button>
+                  {{ event_form.lat }}
+                  {{ event_form.lon }}
 
-            <button class="small button" data-reveal-id="map-point">
-              Point event venue in map
-            </button>
-            <div class="required-field"></div>
-            {{ event_form.lat }}
-            {{ event_form.lon }}
-
-            {# Avoid displaying two separate errors for lat and lon. #}
-            {% if event_form.lat.errors or event_form.lon.errors %}
-              <small class="error">
-                Please point venue in map.
-              </small>
-            {% endif %}
-
-            {{ field_with_attrs(event_form.city,
-                                placeholder='City',
-                                title='City',
-                                class='input-text big has-tip tip-right') }}
-            <div class="required-field"></div>
-            {{ field_errors(event_form.city) }}
-            <div class="required-field"></div>
-            {{ field_with_attrs(event_form.region,
-                                placeholder='Region',
-                                title='Region',
-                                class='input-text big has-tip tip-right') }}
-            {{ field_errors(event_form.region) }}
-
-            <div class="has-tip tip-right auto-width" title="Country">
-              {{ event_form.country }}
+                  {# Avoid displaying two separate errors for lat and lon. #}
+                  {% if event_form.lat.errors or event_form.lon.errors %}
+                    <small class="error">
+                      Please point venue in map.
+                    </small>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field-input"></div>
+                </div>
+                <div class="small-11 columns">
+                  {{ field_with_attrs(event_form.city,
+                                      placeholder='City',
+                                      title='City',
+                                      class='input-text big has-tip tip-right') }}
+                  {{ field_errors(event_form.city) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field-input"></div>
+                </div>
+                <div class="small-11 columns">
+                  {{ field_with_attrs(event_form.region,
+                                      placeholder='Region',
+                                      title='Region',
+                                      class='input-text big has-tip tip-right') }}
+                  {{ field_errors(event_form.region) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field"></div>
+                </div>
+                <div class="small-11 columns">
+                  <div class="has-tip tip-right auto-width" title="Country">
+                    {{ event_form.country }}
+                  </div>
+                  {{ field_errors(event_form.country) }}
+                </div>
+              </div>
             </div>
-            <div class="required-field"></div>
-            {{ field_errors(event_form.country) }}
           </div>
         </div>
       </div>
     </div>
 
     <div class="row">
-      <div class="large-6 columns">
+      <div class="large-6 columns section">
         <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon large time"></div>
@@ -133,168 +176,212 @@
               {{ event_form.end_form }}
             </div>
 
-            <!-- Start Date -->
-            <div class="row">
-              <div class="large-12">
-                <div class="has-tip tip-left" title="Event start date">
-                  <div id="start-month"
-                       class="large-6 small-6 columns events-edit-date">
-                    <!-- month -->
-                  </div>
-
-                  <div id="start-day"
-                       class="large-3 small-3 columns events-edit-date">
-                    <!-- day -->
-                  </div>
-
-                  <div id="start-year"
-                       class="large-3 small-3 columns events-edit-date">
-                    <!-- year -->
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Start Hour -->
-            <div class="row">
-              <div class="large-12">
-                <div class="has-tip tip-left" title="Event start hour">
-                  <div id="start-hour" class="large-3 small-3 columns">
-                    <!-- hour -->
-                  </div>
-
-                  <div id="start-minute" class="large-3 small-3 end columns">
-                    <!-- minute -->
+            <div class="small-12 columns">
+              <!-- Start Date -->
+              <div class="row">
+                <div class="small-11 small-offset-1 columns">
+                  <div class="row">
+                    <div class="large-12">
+                      <div class="has-tip tip-left" title="Event start date">
+                        <div id="start-month"
+                             class="large-6 small-6 columns events-edit-date">
+                          <!-- month -->
+                        </div>
+                        <div id="start-day"
+                             class="large-3 small-3 columns events-edit-date">
+                          <!-- day -->
+                        </div>
+                        <div id="start-year"
+                             class="large-3 small-3 columns events-edit-date">
+                          <!-- year -->
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="required-field"></div>
-
-
-            <!-- End Date -->
-            <div class="row">
-              <div class="large-12">
-                <div class="has-tip tip-left" title="Event end date">
-                  <div id="end-month"
-                       class="large-6 small-6 columns events-edit-date ">
-                    <!-- month -->
-                  </div>
-
-                  <div id="end-day"
-                       class="large-3 small-3 columns events-edit-date">
-                    <!-- day -->
-                  </div>
-
-                  <div id="end-year"
-                       class="large-3 small-3 columns events-edit-date">
-                    <!-- year -->
+              <!-- Start Hour -->
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field"></div>
+                </div>
+                <div class="small-11 columns">
+                  <div class="row">
+                    <div class="large-12">
+                      <div class="has-tip tip-left" title="Event start hour">
+                        <div id="start-hour" class="large-3 small-3 columns">
+                          <!-- hour -->
+                        </div>
+                        <div id="start-minute" class="large-3 small-3 end columns">
+                          <!-- minute -->
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- End Hour -->
-            <div class="row">
-              <div class="large-12">
-                <div class="has-tip tip-left" title="Event end hour">
-                  <div id="end-hour"
-                       class="large-3 small-3 columns events-edit-date">
-                    <!-- hour -->
-                  </div>
-
-                  <div id="end-minute"
-                       class="large-3 small-3 end columns events-edit-date">
-                    <!-- minute -->
+              <!-- End Date -->
+              <div class="row">
+                <div class="small-11 small-offset-1 columns">
+                  <div class="row">
+                    <div class="large-12">
+                      <div class="has-tip tip-left" title="Event end date">
+                        <div id="end-month"
+                             class="large-6 small-6 columns events-edit-date ">
+                          <!-- month -->
+                        </div>
+                        <div id="end-day"
+                             class="large-3 small-3 columns events-edit-date">
+                          <!-- day -->
+                        </div>
+                        <div id="end-year"
+                             class="large-3 small-3 columns events-edit-date">
+                          <!-- year -->
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="required-field"></div>
-
-            <div class="row">
-              <div class="large-12 columns">
-                {{ field_errors(event_form.start_form) }}
-                {{ field_errors(event_form.end_form) }}
+              <!-- End Hour -->
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field"></div>
+                </div>
+                <div class="small-11 columns">
+                  <div class="row">
+                    <div class="large-12">
+                      <div class="has-tip tip-left" title="Event end hour">
+                        <div id="end-hour"
+                             class="large-3 small-3 columns events-edit-date">
+                          <!-- hour -->
+                        </div>
+                        <div id="end-minute"
+                             class="large-3 small-3 end columns events-edit-date">
+                          <!-- minute -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <!-- Timezone -->
-            <div class="has-tip tip-left auto-width" title="Event timezone">
-              {{ event_form.timezone }}
-              {{ field_errors(event_form.timezone) }}
-            </div>
+              <div class="row">
+                <div class="large-12 columns">
+                  {{ field_errors(event_form.start_form) }}
+                  {{ field_errors(event_form.end_form) }}
+                </div>
+              </div>
 
-            <div class="required-field"></div>
-            <!-- Dropdown for zone hour goes here -->
-            <p class="more-info">Please enter date and time local to the venue.</p>
+              <!-- Timezone -->
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field"></div>
+                </div>
+                <div class="small-11 columns">
+                  <!-- Dropdown for zone hour goes here -->
+                  <div class="has-tip tip-left auto-width" title="Event timezone">
+                    {{ event_form.timezone }}
+                    {{ field_errors(event_form.timezone) }}
+                  </div>
+                </div>
+              </div>
+              <p class="more-info">Please enter date and time local to the venue.</p>
+            </div>
           </div>
         </div>
       </div>
-      <div class="large-6 columns">
+
+      <div class="large-6 columns section">
         <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon large people"></div>
           </div>
           <div class="large-11 columns">
-            <div class="has-tip tip-right auto-width" title="Event Owner">
-              {{ event_form.owner_form }}
-            </div>
-            {{ field_errors(event_form.owner_form) }}
-            <div class="required-field"></div>
-            <p class="more-info">Please specify the event owner.</p>
-
-
-            <p>{{ event_form.mozilla_event }}
-            Is Mozilla organizing this event?</p>
-
-            <p class="more-info">If this event is not directly organized by<br>
-            a Mozillian (e.g. FOSDEM, OSCON) please DO NOT check this box.</p>
-
-            <div class="has-tip tip-right auto-width"
-                 title="Estimated attendance" data-tooltip>
-              {{ field_with_attrs(event_form.estimated_attendance,
-                                  placeholder='Estimated attendance') }}
-            </div>
-            <div class="required-field"></div>
-            {{ field_errors(event_form.estimated_attendance) }}
-            <p class="more-info">Please specify the estimated attendance to this event.</p>
-
-            {% if event_form.actual_attendance %}
-              <div class="has-tip tip-right auto-width"
-                   title="Actual attendance" data-tooltip>
-                {{ field_with_attrs(event_form.actual_attendance,
-                                    placeholder='Actual attendance') }}
+            <div class="small-12 columns">
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field-input"></div>
+                </div>
+                <div class="small-11 columns">
+                  <div class="has-tip tip-right auto-width" title="Event Owner">
+                    {{ event_form.owner_form }}
+                  </div>
+                  {{ field_errors(event_form.owner_form) }}
+                  <p class="more-info">Please specify the event owner.</p>
+                </div>
               </div>
-              <div class="required-field"></div>
-              {{ field_errors(event_form.actual_attendance) }}
-              <p class="more-info">Please specify the actual attendance to this event.</p>
-            {% endif %}
+              <div class="row">
+                <div class="small-11 small-offset-1 columns">
+                  <p id="mozilla_event">{{ event_form.mozilla_event }}
+                  Is Mozilla organizing this event?</p>
+                  <p class="more-info">If this event is not directly organized by
+                  a Mozillian (e.g. FOSDEM, OSCON) please DO NOT check this box.</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field"></div>
+                </div>
+                <div class="small-11 columns">
+                  <div class="has-tip tip-right auto-width"
+                       title="Estimated attendance" data-tooltip>
+                    {{ field_with_attrs(event_form.estimated_attendance,
+                                        placeholder='Estimated attendance') }}
+                  </div>
+                  {{ field_errors(event_form.estimated_attendance) }}
+                  <p class="more-info">Please specify the estimated attendance to this event.</p>
+                </div>
+              </div>
+              {% if event_form.actual_attendance %}
+                <div class="row">
+                  <div class="small-1 columns">
+                    <div class="required-field-input"></div>
+                  </div>
+                  <div class="small-11 columns">
+                    <div class="has-tip tip-right auto-width"
+                         title="Actual attendance" data-tooltip>
+                      {{ field_with_attrs(event_form.actual_attendance,
+                                          placeholder='Actual attendance') }}
+                    </div>
+                    {{ field_errors(event_form.actual_attendance) }}
+                    <p class="more-info">Please specify the actual attendance to this event.</p>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="row">
-      <div class="large-6 columns">
+      <div class="large-6 columns section">
         <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon large news"></div>
           </div>
           <div class="large-11 columns">
-            {{ field_with_attrs(event_form.extra_content,
-                                class='flat event-single-info has-tip tip-left',
-                                title='Additional info',
-                                placeholder='Additional info') }}
-            {{ field_errors(event_form.extra_content) }}
-            <p class="more-info">In this field you can use
-              <a href="http://en.wikipedia.org/wiki/Markdown"
-              target="_blank">Markdown</a> syntax to add extra content,
-              like <br> schedule, booth times and location, instructions
-              for participants etc.
-            </p>
+            <div class="small-12 columns">
+              <div class="row">
+                <div class="small-11 small-offset-1 columns">
+                  {{ field_with_attrs(event_form.extra_content,
+                                      class='flat event-single-info has-tip tip-left',
+                                      title='Additional info',
+                                      placeholder='Additional info') }}
+                  {{ field_errors(event_form.extra_content) }}
+                  <p class="more-info">In this field you can use
+                    <a href="http://en.wikipedia.org/wiki/Markdown"
+                    target="_blank">Markdown</a> syntax to add extra content,
+                    like schedule, booth times and location, instructions
+                    for participants etc.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -306,15 +393,21 @@
             <div class="pict-icon large edit"></div>
           </div>
           <div class="large-11 columns">
-            {{ field_with_attrs(event_form.planning_pad_url,
-                                placeholder='Planning pad',
-                                title='Planning pad',
-                                class='input-text big has-tip tip-right') }}
-            {{ field_errors(event_form.planning_pad_url) }}
-            <p class="more-info">
-              Collaborative pad to plan your events with others.<br>
-              Leave blank to create one for you.
-            </p>
+            <div class="small-12 columns">
+              <div class="row">
+                <div class="small-11 small-offset-1 columns">
+                  {{ field_with_attrs(event_form.planning_pad_url,
+                                      placeholder='Planning pad',
+                                      title='Planning pad',
+                                      class='input-text big has-tip tip-right') }}
+                  {{ field_errors(event_form.planning_pad_url) }}
+                  <p class="more-info">
+                    Collaborative pad to plan your events with others.<br>
+                    Leave blank to create one for you.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -324,15 +417,21 @@
             <div class="pict-icon large speaker"></div>
           </div>
           <div class="large-11 columns">
-            {{ field_with_attrs(event_form.hashtag,
-                                placeholder='Event hashtag',
-                                title='Event hashtag',
-                                class='input-text big has-tip tip-right') }}
-            {{ field_errors(event_form.hashtag) }}
-            <p class="more-info">
-              Tag your pictures in Flickr and your tweets with this
-              hashtag.
-            </p>
+            <div class="small-12 columns">
+              <div class="row">
+                <div class="small-11 small-offset-1 columns">
+                  {{ field_with_attrs(event_form.hashtag,
+                                      placeholder='Event hashtag',
+                                      title='Event hashtag',
+                                      class='input-text big has-tip tip-right') }}
+                  {{ field_errors(event_form.hashtag) }}
+                  <p class="more-info">
+                    Tag your pictures in Flickr and your tweets with this
+                    hashtag.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -343,24 +442,44 @@
             <div class="pict-icon large medal"></div>
           </div>
           <div class="large-11 columns category-goal-select">
-            {{ event_form.campaign }}
-            {% if event_form.campaign.errors %}
-              <small class="error">
-               This field is required
-              </small>
-            {% endif %}
-            <div class="required-field"></div>
+            <div class="small-12 columns">
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field"></div>
+                </div>
+                <div class="small-11 small-offset-1 columns">
+                  {{ event_form.campaign }}
+                  {% if event_form.campaign.errors %}
+                    <small class="error">
+                     This field is required
+                    </small>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div class="row">
           <div class="large-1 columns">
             <div class="pict-icon large heart"></div>
           </div>
           <div class="large-11 columns category-select">
-            {{ event_form.categories }}
-            {% if event_form.categories.errors %}
-              <small class="error">
-                This field is required
-              </small>
-            {% endif %}
+            <div class="small-12 columns">
+              <div class="row">
+                <div class="small-1 columns">
+                  <div class="required-field"></div>
+                </div>
+                <div class="small-11 small-offset-1 columns">
+                  {{ event_form.categories }}
+                  {% if event_form.categories.errors %}
+                    <small class="error">
+                      This field is required
+                    </small>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -370,41 +489,49 @@
             <div class="pict-icon large tools"></div>
           </div>
           <div class="large-11 columns">
-            <div class="row">
-              <div class="{% if event.swag_bug %} large-12 {% else %} large-6 {% endif %} columns">
-                {{ field_with_attrs(event_form.swag_bug_form,
-                                    placeholder='Swag request',
-                                    class='input-text big') }}
-                {{ field_errors(event_form.swag_bug_form) }}
-                <p class="more-info">Swag Request bug number</p>
-              </div>
-              {% if not event.swag_bug %}
-                <div class="large-6 columns align-right top-margined">
-                  <a href="https://bugzilla.mozilla.org/form.reps.swag"
-                     target="_blank"
-                     class="small button">
-                    New Swag Request
-                  </a>
+            <div class="small-12 columns">
+
+             <div class="row">
+              <div class="small-11 small-offset-1 columns">
+                  <div class="{% if event.swag_bug %} large-12 {% else %} large-6 {% endif %} columns">
+                    {{ field_with_attrs(event_form.swag_bug_form,
+                                        placeholder='Swag request',
+                                        class='input-text big') }}
+                    {{ field_errors(event_form.swag_bug_form) }}
+                    <p class="more-info">Swag Request bug number</p>
+                  </div>
+                  {% if not event.swag_bug %}
+                    <div class="large-6 columns align-right top-margined">
+                      <a href="https://bugzilla.mozilla.org/form.reps.swag"
+                         target="_blank"
+                         class="small button">
+                        New Swag Request
+                      </a>
+                    </div>
+                  {% endif %}
                 </div>
-              {% endif %}
-            </div>
-            <div class="row">
-              <div class="{% if event.budget_bug %} large-12 {% else %} large-6 {% endif %} columns">
-                {{ field_with_attrs(event_form.budget_bug_form,
-                                    placeholder='Budget request',
-                                    class='input-text big') }}
-                {{ field_errors(event_form.budget_bug_form) }}
-                <p class="more-info">Budget Request bug number</p>
               </div>
-              {% if not event.budget_bug %}
-                <div class="large-6 columns align-right top-margined">
-                  <a href="https://bugzilla.mozilla.org/form.reps.budget"
-                     target="_blank"
-                     class="small button">
-                    New Budget Request
-                  </a>
+        
+              <div class="row">
+                <div class="small-11 small-offset-1 columns">
+                  <div class="{% if event.budget_bug %} large-12 {% else %} large-6 {% endif %} columns">
+                    {{ field_with_attrs(event_form.budget_bug_form,
+                                        placeholder='Budget request',
+                                        class='input-text big') }}
+                    {{ field_errors(event_form.budget_bug_form) }}
+                    <p class="more-info">Budget Request bug number</p>
+                  </div>
+                  {% if not event.budget_bug %}
+                    <div class="large-6 columns align-right top-margined">
+                      <a href="https://bugzilla.mozilla.org/form.reps.budget"
+                         target="_blank"
+                         class="small button">
+                        New Budget Request
+                      </a>
+                    </div>
+                  {% endif %}
                 </div>
-              {% endif %}
+              </div>
             </div>
           </div>
         </div>
@@ -420,42 +547,50 @@
                     <div class="pict-icon large graph"></div>
                   </div>
                   <div class="large-11 columns">
-                    <div class='has-tip tip-right' data-tooltip
-                         data-options='disable-for-touch:true'
-                         title='Metric'>
-                      {{ form.metric }}
-                    </div>
-                    {{ field_errors(form.metric) }}
-
-                    <div class='has-tip tip-right' title='Expected outcome' data-tooltip>
-                      {{ field_with_attrs(form.expected_outcome,
-                                          placeholder='Expected outcome (numeric)') }}
-                    </div>
-                    {{ field_errors(form.expected_outcome) }}
-                    {% if form.outcome %}
-                      <div class='has-tip tip-right' title='Actual outcome' data-tooltip>
-                        {{ field_with_attrs(form.outcome,
-                                            placeholder='Actual outcome (numeric)') }}
+                    <div class="small-12 columns">
+                      <div class="row">
+                        {% if loop.index <= 2 %}
+                          <div class="small-1 columns">
+                            <div class="required-field"></div>
+                          </div>
+                        {% endif %}  
+                        <div class="small-11 small-offset-1 columns">
+                          <div class='has-tip tip-right' data-tooltip
+                               data-options='disable-for-touch:true'
+                               title='Metric'>
+                               {{ form.metric }}
+                          </div>
+                          {{ field_errors(form.metric) }}
+                          <div class='has-tip tip-right' title='Expected outcome' data-tooltip>
+                            {{ field_with_attrs(form.expected_outcome,
+                                                placeholder='Expected outcome (numeric)') }}
+                          </div>
+                          {{ field_errors(form.expected_outcome) }}
+                          {% if form.outcome %}
+                            <div class='has-tip tip-right' title='Actual outcome' data-tooltip>
+                              {{ field_with_attrs(form.outcome,
+                                                  placeholder='Actual outcome (numeric)') }}
+                            </div>
+                            {{ field_errors(form.outcome) }}
+                            <div title="Event outcome Details">
+                              {{ field_with_attrs(form.details,
+                                                  class='postevent-details',
+                                                  placeholder="Event metric details, urls etc") }}
+                              <p class="more-info">Please add any additional information for this metric.</p>
+                            </div>
+                            {{ field_errors(form.details) }}
+                          {% endif %}
+                          <div class="events-delete-metric">
+                            {{ form.DELETE }} {{ form.DELETE.label_tag() }}
+                          </div>
+                        </div>
                       </div>
-                      {{ field_errors(form.outcome) }}
-                      <div title="Event outcome Details">
-                        {{ field_with_attrs(form.details,
-                                            class='postevent-details',
-                                            placeholder="Event metric details, urls etc") }}
-                        <p class="more-info">Please add any additional information for this metric.</p>
-                      </div>
-                      {{ field_errors(form.details) }}
-                    {% endif %}
-                    <div class="events-delete-metric">
-                      {{ form.DELETE }} {{ form.DELETE.label_tag() }}
                     </div>
                   </div>
                 </div>
               </div>
-              {% if loop.index <= 2 %}
-                <div class="required-field"></div>
-              {% endif %}
             {% endfor %}
+
             {% if not event.has_new_metrics or not event.is_past_event %}
               <div class="align-right">
                 <button id="events-add-metric-button" class="small button">
@@ -463,6 +598,7 @@
                 </button>
               </div>
             {% endif %}
+
             {% if metrics_formset.non_form_errors() %}
               <small class="error">
                 {{ metrics_formset.non_form_errors() }}

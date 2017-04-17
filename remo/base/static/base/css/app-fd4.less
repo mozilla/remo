@@ -2115,7 +2115,7 @@ meter::-o-meter-suboptimum-value {
 
 .events-main {
     p {
-        margin-top: 10px;
+        margin-bottom: 2em;
         font-size: 13px;
     }
     p.lead {
@@ -2124,9 +2124,7 @@ meter::-o-meter-suboptimum-value {
     textarea {
         height: auto;
     }
-    textarea + .required-field {
-        top: -50px;
-    }
+
     textarea.postevent-details {
         height: 100px;
         font-size: 13px;
@@ -2137,6 +2135,7 @@ meter::-o-meter-suboptimum-value {
         box-shadow: none;
     }
     .more-info {
+        text-align: left;
         font-size: 10px;
     }
     #searchform {
@@ -2160,31 +2159,41 @@ meter::-o-meter-suboptimum-value {
         .copyblock {
             padding-bottom: 10px;
         }
-        .required-field {
-            top: -30px;
-            margin-bottom: -30px;
-        }
         button {
             margin-top: 10px;
         }
     }
     .category-select {
         margin-top: 10px;
-        .required-field {
-            top: 10px;
-        }
     }
-    .map-point-select {
-        button + .required-field {
-            top: 10px;
-        }
-    }
+    
     #event-attend-button button {
         padding: 8px 10px 10px;
     }
     .event-single-title {
         font-weight: bold;
         margin-bottom: 30px;
+    }
+
+    .section {
+        padding-right: 25px;
+        padding-bottom: 25px;
+    }
+
+    .required-field {
+        &:extend(.required-field);
+        left: 5px;
+        top:18px;
+    }
+
+    .required-field-input:before {
+         &:extend(.required-field:before);
+    }
+
+    .required-field-input {
+        &:extend(.required-field);
+        left: 5px;
+        top: 20px;
     }
 }
 
@@ -2236,6 +2245,11 @@ meter::-o-meter-suboptimum-value {
     margin-top: 10px;
     padding-top: 6.5px;
 }
+
+#mozilla_event {
+    margin-bottom: 1em;
+}
+
 
 @media only screen and (max-width: @breakMedium) {
     #events-searchform {
