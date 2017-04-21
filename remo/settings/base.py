@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'session_csrf',
     'compressor',
     'product_details',
-    'djcelery',
     'raven.contrib.django.raven_compat',
     'mozilla_django_oidc',
     # Project specific apps
@@ -282,14 +281,13 @@ ENGAGE_ROBOTS = True
 TIME_ZONE = 'UTC'
 USE_TZ = True
 
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_ENABLE_UTC = True
 CELERY_TIMEZONE = 'UTC'
 CELERY_TASK_RESULTS_EXPIRES = 3600
-CELERY_ACCEPT_CONTENT = ['pickle']
+CELERY_ACCEPT_CONTENT = ['json']
 CELERY_SEND_TASK_ERROR_EMAILS = True
 CELERY_RESULT_BACKEND = 'amqp'
-CELERY_ALWAYS_EAGER = True
+CELERY_TASK_ALWAYS_EAGER = True
 
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
@@ -299,10 +297,6 @@ STATSD_CLIENT = 'django_statsd.clients.normal'
 
 # Paginator settings
 ITEMS_PER_PAGE = 20
-
-# django-celery setup
-import djcelery  # noqa
-djcelery.setup_loader()
 
 MAPBOX_TOKEN = 'examples.map-i86nkdio'
 

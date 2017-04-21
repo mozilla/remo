@@ -100,7 +100,7 @@ class Poll(models.Model):
                 action_items.delete()
                 create_action_items = True
 
-            if not settings.CELERY_ALWAYS_EAGER:
+            if not settings.CELERY_TASK_ALWAYS_EAGER:
                 if self.is_current_voting:
                     celery_app.control.revoke(self.task_end_id)
                 elif self.is_future_voting:
@@ -265,7 +265,7 @@ def automated_poll_discussion_email(sender, instance, created, raw, **kwargs):
           dispatch_uid='voting_poll_delete_reminder_signal')
 def poll_delete_reminder(sender, instance, **kwargs):
     """Revoke the task if a voting is deleted."""
-    if not settings.CELERY_ALWAYS_EAGER:
+    if not settings.CELERY_TASK_ALWAYS_EAGER:
         if instance.task_start_id:
             celery_app.control.revoke(instance.task_start_id)
         if instance.task_end_id:

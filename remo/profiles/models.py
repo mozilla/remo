@@ -339,7 +339,7 @@ def user_status_email_reminder(sender, instance, created, raw, **kwargs):
         # Update user profiles with the task IDs
         (UserProfile.objects.filter(pk=rep_profile.id)
          .update(unavailability_task_id=rep_reminder.task_id))
-    elif not settings.CELERY_ALWAYS_EAGER:
+    elif not settings.CELERY_TASK_ALWAYS_EAGER:
         # revoke the tasks in case a user returns sooner
         if rep_profile.unavailability_task_id:
             celery_app.control.revoke(rep_profile.unavailability_task_id)

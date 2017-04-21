@@ -65,7 +65,7 @@ class PollAdmin(ExportMixin, admin.ModelAdmin):
     def delete_model(self, request, obj):
         """Handle celery revocation before deleting the object."""
         # Avoid circular dependencies
-        from remo.base.tasks import app as celery_app
+        from remo.celery import app as celery_app
 
         if obj.task_end_id:
             celery_app.control.revoke(obj.task_end_id)
