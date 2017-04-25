@@ -1,5 +1,3 @@
-# This is your project's main settings file that can be committed to your
-# repo. If you need to override a setting locally, use settings_local.py
 import json
 import logging
 
@@ -10,7 +8,7 @@ from django_sha2 import get_password_hashers
 from unipath import Path
 
 # Root path of the project
-ROOT = Path(__file__).parent.parent.parent
+ROOT = Path(__file__).parent.parent
 # Defines the views served for root URLs.
 ROOT_URLCONF = 'remo.urls'
 STATIC_ROOT = Path('static').resolve()
@@ -231,12 +229,12 @@ COMPRESS_CSS_FILTERS = (
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
 )
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 # Statsd Graphite
@@ -396,7 +394,8 @@ CACHE_INVALIDATE_ON_CREATE = 'whole-model'
 # Cache
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'BACKEND': config('CACHE_BACKEND',
+                          default='django.core.cache.backends.memcached.MemcachedCache'),
         'LOCATION': config('CACHE_URL', default='127.0.0.1:11211'),
     }
 }

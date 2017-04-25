@@ -4,7 +4,6 @@ python:
   - "2.7.11"
 before_script:
   - mysql -e 'create database remo character set utf8; SET @@GLOBAL.wait_timeout=28800;'
-  - cp remo/settings/localtravis.py remo/settings/local.py
 install:
   - npm install -g less
   - pip install coverage tox
@@ -14,7 +13,6 @@ env:
 cache:
   directories:
   - $HOME/.cache/pip
-  - $TRAVIS_BUILD_DIR/.tox
 script:
   - tox -e $TOX_ENV
 after_success:
