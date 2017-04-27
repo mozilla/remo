@@ -10,10 +10,10 @@ from django.utils import timezone
 
 import requests
 import waffle
-from celery.task import task
 
 from remo.base.templatetags.helpers import urlparams
 from remo.base.utils import get_object_or_none
+from remo.celery import app
 from remo.remozilla.models import Bug
 from remo.remozilla.utils import get_last_updated_date, set_last_updated_date
 
@@ -44,7 +44,7 @@ def parse_bugzilla_time(time):
     return datetimeobj
 
 
-@task
+@app.task
 @transaction.atomic
 def fetch_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
@@ -52,6 +52,9 @@ def fetch_bugs(components=COMPONENTS, days=None):
     Loop over components and fetch bugs updated the last days. Link
     Bugzilla users with users on this website, when possible.
 
+    # TODO: This can trigger a does not exist error because the task was picked
+    # by the worker before the transaction was complete. Needs fixing after the
+    # upgrade to a Django version > 1.8
     """
     now = timezone.now()
     if not days:

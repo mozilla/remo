@@ -15,7 +15,7 @@ RUN_HOURLY = 60 * 60
 app = Celery('remo')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+app.autodiscover_tasks()
 
 
 @app.on_after_finalize.connect

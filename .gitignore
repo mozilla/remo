@@ -18,3 +18,4 @@ media
 venv
 /static
 .env
+celerybeat*
