@@ -11,7 +11,7 @@ from django.utils.timezone import now
 import waffle
 from celery.task import periodic_task, task
 
-from remo.base.mozillians import is_vouched
+from remo.base.mozillians import BadStatusCode, MozilliansClient, ResourceDoesNotExist
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date, number2month
 from remo.dashboard.models import ActionItem
@@ -38,14 +38,19 @@ def send_generic_mail(recipient_list, subject, email_template, data={}):
 @periodic_task(run_every=timedelta(hours=24), soft_time_limit=600)
 def check_mozillian_username():
     mozillians = User.objects.filter(groups__name='Mozillians')
+    client = MozilliansClient(settings.MOZILLIANS_API_URL,
+                              settings.MOZILLIANS_API_KEY)
 
     for user in mozillians:
-        data = is_vouched(user.email)
-        if data and data['is_vouched'] and 'full_name' in data:
-            first_name, last_name = (
-                data['full_name'].split(' ', 1)
-                if ' ' in data['full_name']
-                else ('', data['full_name']))
+        try:
+            data = client.lookup_user({'email': user.email})
+        except (BadStatusCode, ResourceDoesNotExist):
+            data = None
+
+        if data and data['is_vouched'] and data['full_name']['privacy'] == 'Public':
+            full_name = data['full_name']['value']
+            first_name, last_name = (full_name.split(' ', 1)
+                                     if ' ' in full_name else ('', full_name))
             user.first_name = first_name
             user.last_name = last_name
             user.userprofile.mozillian_username = data['username']
