@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.test import override_settings
 from django.utils.timezone import now
 
 from mock import ANY, call, patch
@@ -86,14 +87,20 @@ class UserStatusTests(RemoTestCase):
 
 class MozillianUsernameTests(RemoTestCase):
 
-    @patch('remo.profiles.tasks.is_vouched')
-    def test_mozillian_username_length(self, mocked_vouch_status):
+    @override_settings(MOZILLIANS_API_KEY='key')
+    @override_settings(MOZILLIANS_API_URL='https://example.com/api/v2/')
+    @patch('remo.profiles.tasks.MozilliansClient.lookup_user')
+    def test_mozillian_username_length(self, mocked_lookup):
         mozillian = UserFactory.create(first_name='Awesome', last_name='Mozillian',
                                        groups=['Mozillians'])
-        mocked_vouch_status.return_value = {'is_vouched': True,
-                                            'username': 'foobar',
-                                            'full_name': ('A really really long name for our '
-                                                          ' Awesome Mozillian')}
+        mocked_lookup.return_value = {
+            'is_vouched': True,
+            'username': 'foobar',
+            'full_name': {
+                'privacy': 'Public',
+                'value': 'A really really long name for our Awesome Mozillian'
+            }
+        }
         check_mozillian_username()
         mozillian = User.objects.get(id=mozillian.id)
         eq_(mozillian.first_name, 'A')

@@ -18,11 +18,8 @@ from jinja2 import Markup
 from nose.exc import SkipTest
 from nose.tools import eq_, ok_
 
-from remo.base import mozillians
 from remo.base.templatetags.helpers import AES_PADDING, enc_string, mailhide, pad_string
-from remo.base.tests import (MozillianResponse, RemoTestCase,
-                             VOUCHED_MOZILLIAN, NOT_VOUCHED_MOZILLIAN,
-                             requires_login, requires_permission)
+from remo.base.tests import RemoTestCase, requires_login, requires_permission
 from remo.base.views import robots_txt
 from remo.profiles.models import FunctionalArea
 from remo.profiles.tasks import check_mozillian_username
@@ -32,62 +29,37 @@ from remo.reports.models import Activity, Campaign
 from remo.reports.tests import ActivityFactory, CampaignFactory
 
 
-assert json.loads(VOUCHED_MOZILLIAN)
-assert json.loads(NOT_VOUCHED_MOZILLIAN)
-
-
 class MozilliansTest(RemoTestCase):
     """Test Moziilians."""
 
-    @mock.patch('remo.base.mozillians.requests.get')
-    @override_settings(MOZILLIANS_API_KEY='foo')
-    @override_settings(MOZILLIANS_API_APPNAME='bar')
-    def test_is_vouched(self, rget):
-        """Test a user with vouched status"""
-
-        def mocked_get(url, **options):
-            if 'vouched' in url:
-                return MozillianResponse(VOUCHED_MOZILLIAN)
-            if 'not_vouched' in url:
-                return MozillianResponse(NOT_VOUCHED_MOZILLIAN)
-            if 'trouble' in url:
-                return MozillianResponse('Failed', status_code=500)
-
-        rget.side_effect = mocked_get
-
-        ok_(mozillians.is_vouched('vouched@mail.com'))
-        ok_(not mozillians.is_vouched('not_vouched@mail.com'))
-
-        self.assertRaises(
-            mozillians.BadStatusCodeError,
-            mozillians.is_vouched,
-            'trouble@live.com')
-
-        try:
-            mozillians.is_vouched('trouble@live.com')
-            raise
-        except mozillians.BadStatusCodeError, msg:
-            ok_(settings.MOZILLIANS_API_KEY not in str(msg))
-
-    @mock.patch('remo.profiles.tasks.is_vouched')
-    def test_mozillian_username_exists(self, mocked_is_vouched):
+    @override_settings(MOZILLIANS_API_KEY='key')
+    @override_settings(MOZILLIANS_API_URL='https://example.com/api/v2/')
+    @mock.patch('remo.profiles.tasks.MozilliansClient.lookup_user')
+    def test_mozillian_username_exists(self, mocked_lookup):
         """Test that if an Anonymous Mozillians changes his
 
         settings in the mozillians.org, we update his username
         on our portal.
         """
         mozillian = UserFactory.create(groups=['Mozillians'])
-        mocked_is_vouched.return_value = {'is_vouched': True,
-                                          'email': mozillian.email,
-                                          'username': 'Mozillian',
-                                          'full_name': 'Awesome Mozillian'}
+        mocked_lookup.return_value = {
+            'is_vouched': True,
+            'email': mozillian.email,
+            'username': 'Mozillian',
+            'full_name': {
+                'privacy': 'Public',
+                'value': 'Awesome Mozillian'
+            }
+        }
         check_mozillian_username.apply()
         user = User.objects.get(email=mozillian.email)
         eq_(user.userprofile.mozillian_username, u'Mozillian')
         eq_(user.get_full_name(), u'Awesome Mozillian')
 
-    @mock.patch('remo.profiles.tasks.is_vouched')
-    def test_mozillian_username_missing(self, mocked_is_vouched):
+    @override_settings(MOZILLIANS_API_KEY='key')
+    @override_settings(MOZILLIANS_API_URL='https://example.com/api/v2/')
+    @mock.patch('remo.profiles.tasks.MozilliansClient.lookup_user')
+    def test_mozillian_username_missing(self, mocked_lookup):
         """Test that if a Mozillian changes his
 
         settings in the mozillians.org, we update his username
@@ -97,8 +69,15 @@ class MozilliansTest(RemoTestCase):
             groups=['Mozillians'], first_name='Awesome',
             last_name='Mozillian',
             userprofile__mozillian_username='Mozillian')
-        mocked_is_vouched.return_value = {'is_vouched': True,
-                                          'email': mozillian.email}
+        mocked_lookup.return_value = {
+            'is_vouched': True,
+            'email': mozillian.email,
+            'username': 'Mozillian',
+            'full_name': {
+                'privacy': 'Mozillians',
+                'value': 'Awesome Mozillian'
+            }
+        }
         check_mozillian_username.apply()
         user = User.objects.get(email=mozillian.email)
         eq_(user.userprofile.mozillian_username, '')

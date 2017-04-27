@@ -419,7 +419,7 @@ Mozilla Reps - {{ event.name }}
                 </li>
               {% else %}
                 <li class='grid-profile-image'>
-                  <a href="{{ settings.MOZILLIANS_API_BASE + '/u/' +
+                  <a href="{{ settings.MOZILLIANS_ORG + '/u/' +
                             attendee.userprofile.mozillian_username }}"
                   target="_blank">
                     {{ display_attendee(attendee) }}

@@ -15,8 +15,10 @@ class RemoBackendTests(RemoTestCase):
     @override_settings(OIDC_OP_USER_ENDPOINT='https://server.example.com/userinfo')
     @override_settings(OIDC_RP_CLIENT_ID='client_id')
     @override_settings(OIDC_RP_CLIENT_SECRET='client_secret')
-    @mock.patch('remo.base.backend.is_vouched')
-    def test_create_mozillian_user_with_private_data(self, mocked_vouched):
+    @override_settings(MOZILLIANS_API_KEY='key')
+    @override_settings(MOZILLIANS_API_URL='https://example.com/api/v2/')
+    @mock.patch('remo.base.backend.MozilliansClient.lookup_user')
+    def test_create_mozillian_user_with_private_data(self, mocked_lookup):
         """ Test user creation for user with private data in Mozillians."""
 
         email = 'mozillian@example.com'
@@ -25,8 +27,14 @@ class RemoBackendTests(RemoTestCase):
 
         backend = RemoAuthenticationBackend()
         backend.User = mock.Mock()
-        mocked_vouched.return_value = {'is_vouched': True,
-                                       'email': email}
+        mocked_lookup.return_value = {
+            'is_vouched': True,
+            'username': 'foobar',
+            'full_name': {
+                'privacy': 'Mozillians',
+                'value': 'Awesome Mozillian'
+            }
+        }
         claims = {
             'foo': 'bar',
             'email': email
@@ -40,8 +48,10 @@ class RemoBackendTests(RemoTestCase):
     @override_settings(OIDC_OP_USER_ENDPOINT='https://server.example.com/userinfo')
     @override_settings(OIDC_RP_CLIENT_ID='client_id')
     @override_settings(OIDC_RP_CLIENT_SECRET='client_secret')
-    @mock.patch('remo.base.backend.is_vouched')
-    def test_create_mozillian_user_with_public_name(self, mocked_vouched):
+    @override_settings(MOZILLIANS_API_KEY='key')
+    @override_settings(MOZILLIANS_API_URL='https://example.com/api/v2/')
+    @mock.patch('remo.base.backend.MozilliansClient.lookup_user')
+    def test_create_mozillian_user_with_public_name(self, mocked_lookup):
         """ Test user creation for user with private data in Mozillians."""
 
         email = 'mozillian@example.com'
@@ -50,10 +60,14 @@ class RemoBackendTests(RemoTestCase):
 
         backend = RemoAuthenticationBackend()
         backend.User = mock.Mock()
-        mocked_vouched.return_value = {'is_vouched': True,
-                                       'email': email,
-                                       'full_name': 'Awesome Mozillian',
-                                       'username': 'remobot'}
+        mocked_lookup.return_value = {
+            'is_vouched': True,
+            'username': 'foobar',
+            'full_name': {
+                'privacy': 'Public',
+                'value': 'Awesome Mozillian'
+            }
+        }
         claims = {
             'foo': 'bar',
             'email': email
