@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'session_csrf',
     'compressor',
     'product_details',
-    'djcelery',
     'raven.contrib.django.raven_compat',
     'mozilla_django_oidc',
     # Project specific apps
@@ -152,8 +151,6 @@ CSP_REPORT_ENABLE = config('CSP_REPORT_ENABLE', default=True, cast=bool)
 CSP_REPORT_URI = config('CSP_REPORT_URI', default='/capture-csp-violation')
 
 # Celery configuration
-CELERYBEAT_SCHEDULER = config('CELERYBEAT_SCHEDULER',
-                              default='djcelery.schedulers.DatabaseScheduler')
 CELERY_ENABLE_UTC = config('CELERY_ENABLE_UTC', default=True, cast=bool)
 CELERY_TIMEZONE = config('CELERY_TIMEZONE', default='UTC')
 CELERY_TASK_RESULTS_EXPIRES = config('CELERY_TASK_RESULTS_EXPIRES', default=3600, cast=int)
@@ -366,10 +363,6 @@ LOGGING = {
         'remo': {'level': LOG_LEVEL}
     }
 }
-
-# django-celery setup
-import djcelery  # noqa
-djcelery.setup_loader()
 
 # Django Rest Framework
 REST_FRAMEWORK = {
