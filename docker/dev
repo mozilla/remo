@@ -4,7 +4,6 @@ EXPOSE 8000
 WORKDIR /app
 CMD ["./bin/run-dev.sh"]
 
-RUN adduser --uid 431 --disabled-password --disabled-login --gecos 'webdev' --no-create-home webdev
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential libxml2-dev libxslt1-dev libffi-dev python-dev \
@@ -20,7 +19,3 @@ ENV LANGUAGE en_US.UTF-8
 
 COPY requirements /app/requirements/
 RUN pip install --no-cache-dir --require-hashes --no-deps -r requirements/dev.txt
-COPY . /app
-
-RUN chown webdev.webdev -R .
-USER webdev
