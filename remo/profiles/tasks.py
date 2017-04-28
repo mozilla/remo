@@ -1,5 +1,5 @@
 from calendar import monthrange
-from datetime import date, timedelta
+from datetime import date
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -9,11 +9,11 @@ from django.template.loader import render_to_string
 from django.utils.timezone import now
 
 import waffle
-from celery.task import periodic_task, task
 
 from remo.base.mozillians import BadStatusCode, MozilliansClient, ResourceDoesNotExist
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date, number2month
+from remo.celery import app
 from remo.dashboard.models import ActionItem
 from remo.profiles.models import (UserProfile, UserStatus,
                                   NOMINATION_ACTION_ITEM)
@@ -23,7 +23,7 @@ ROTM_REMINDER_DAY = 1
 NOMINATION_END_DAY = 10
 
 
-@task
+@app.task
 def send_generic_mail(recipient_list, subject, email_template, data={}):
     """Send email to recipient_list rendered using email_template and populated
     with data.
@@ -35,7 +35,7 @@ def send_generic_mail(recipient_list, subject, email_template, data={}):
     send_mail(subject, message, settings.FROM_EMAIL, recipient_list)
 
 
-@periodic_task(run_every=timedelta(hours=24), soft_time_limit=600)
+@app.task(task_soft_time_limit=600)
 def check_mozillian_username():
     mozillians = User.objects.filter(groups__name='Mozillians')
     client = MozilliansClient(settings.MOZILLIANS_API_URL,
@@ -66,13 +66,13 @@ def check_mozillian_username():
         user.userprofile.save()
 
 
-@task(ignore_result=False)
+@app.task(task_ignore_result=False)
 def check_celery():
     """Dummy celery task to check that everything runs smoothly."""
     pass
 
 
-@periodic_task(run_every=timedelta(hours=24))
+@app.task
 def reset_rotm_nominees():
     """Reset the Rep of the month nomination in user profiles.
 
@@ -92,7 +92,7 @@ def reset_rotm_nominees():
             nominee.save()
 
 
-@periodic_task(run_every=timedelta(hours=24))
+@app.task
 def send_rotm_nomination_reminder():
     """ Send an email reminder to all mentors.
 
@@ -115,7 +115,7 @@ def send_rotm_nomination_reminder():
             ActionItem.create(mentor.userprofile)
 
 
-@periodic_task(run_every=timedelta(hours=12))
+@app.task
 def set_unavailability_flag():
     """Set the unavailable flag in UserStatus.
 
@@ -128,7 +128,7 @@ def set_unavailability_flag():
                        .update(is_unavailable=True))
 
 
-@periodic_task(run_every=timedelta(hours=24))
+@app.task
 def resolve_nomination_action_items():
     """Resolve action items.
 

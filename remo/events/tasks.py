@@ -1,8 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.contrib.contenttypes.models import ContentType
 
-from celery.task import periodic_task
+from remo.celery import app
 
 from remo.base.tasks import send_remo_mail
 from remo.base.utils import get_date
@@ -10,7 +10,7 @@ from remo.dashboard.models import ActionItem
 from remo.events.models import Event
 
 
-@periodic_task(run_every=timedelta(days=1))
+@app.task
 def notify_event_owners_to_input_metrics():
     """Send an email to event creators.
 

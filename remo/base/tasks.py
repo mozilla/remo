@@ -5,10 +5,10 @@ from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.template.loader import render_to_string
 
-from celery.task import task
+from remo.celery import app
 
 
-@task
+@app.task
 def send_remo_mail(subject, recipients_list, sender=None,
                    message=None, email_template=None, data=None,
                    headers=None):
