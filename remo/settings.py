@@ -137,6 +137,9 @@ ETHERPAD_PREFIX = config('ETHERPAD_PREFIX', default='remo-')
 MOZILLIANS_API_URL = config('MOZILLIANS_API_URL', default='')
 MOZILLIANS_API_KEY = config('MOZILLIANS_API_KEY', default='')
 
+# mozillians.org url
+MOZILLIANS_ORG = config('MOZILLIANS_ORG', default='https://mozillians.org')
+
 # Project secutity settings
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
 SECRET_KEY = config('SECRET_KEY')
