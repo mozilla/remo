@@ -96,9 +96,11 @@
               {% raw %}<select id="id_{{ prefix }}-{{ count }}_range_choices-0-nominee"
                                name="{{ prefix }}-{{ count }}_range_choices-0-nominee">{% endraw %}
                 <option selected="selected" value="">---------</option>
-                {% for nominee in nominee_list %}
-                  <option value="{{ nominee.id }}">{{ nominee }}</option>
-                {% endfor %}
+                {% raw %}
+                  {{#each nominees}}
+                    <option value="{{ this.id }}">{{ this.full_name }}</option>
+                  {{/each}}
+                {% endraw %}
               </select>
             </div>
             <div class="required-field"></div>
@@ -180,9 +182,11 @@
         {% raw %}<select id="id_{{ prefix }}-{{ count }}-nominee"
                          name="{{ prefix }}-{{ count }}-nominee">{% endraw %}
           <option selected="selected" value="">---------</option>
-          {% for nominee in nominee_list %}
-            <option value="{{ nominee.id }}">{{ nominee }}</option>
-          {% endfor %}
+          {% raw %}
+            {{#each nominees}}
+              <option value="{{ this.id }}">{{ this.full_name }}</option>
+            {{/each}}
+          {% endraw %}
         </select>
       </div>
       <div class="required-field"></div>

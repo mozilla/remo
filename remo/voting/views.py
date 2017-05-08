@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import inlineformset_factory
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 
@@ -87,6 +88,12 @@ def edit_voting(request, slug=None):
     nominee_list = (User.objects.filter(groups__name='Rep',
                                         userprofile__registration_complete=True)
                         .order_by('first_name'))
+
+    if request.GET and request.is_ajax():
+        nominees = []
+        for nominee in nominee_list:
+            nominees += {'id': nominee.id, 'full_name': nominee}
+        return JsonResponse(nominees)
 
     if current_voting_edit:
         poll_form = forms.PollEditForm(request.POST or None, instance=poll)
