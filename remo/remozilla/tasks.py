@@ -117,7 +117,7 @@ def fetch_bugs(components=COMPONENTS, days=None):
                 bug.council_member_assigned = False
                 bug.pending_mentor_validation = False
                 for flag in bdata.get('flags', []):
-                    if flag['status'] == '?' and flag['name'] == BUG_APPROVAL:
+                    if flag['status'] == '+' and flag['name'] == BUG_APPROVAL:
                         automated_voting_trigger += 1
                         if BUG_WHITEBOARD in bug.whiteboard:
                             bug.council_member_assigned = True
