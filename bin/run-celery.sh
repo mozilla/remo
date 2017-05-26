@@ -1,3 +1,3 @@
 #!/bin/sh
 
-celery -A remo worker -B -l INFO
+celery -A remo worker -l INFO
