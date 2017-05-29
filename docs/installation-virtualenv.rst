@@ -62,17 +62,7 @@ When you want to start contributing...
 
 #. Configure your local ReMo installation.::
 
-     (venv)$ cp settings/local.py-dist settings/local.py
-
-
-#. Choose a HMAC_KEY.
-
-   For development purposes you can uncomment the key '2012-06-15'
-   with HMAC_KEYS dictionary in your *local.py*::
-
-    HMAC_KEYS = {
-       '2012-06-15': 'some key',
-    }
+     (venv)$ cp env-dist .env
 
 
 #. Activate MailHide.
