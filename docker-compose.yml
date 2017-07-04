@@ -7,6 +7,7 @@ services:
       - MYSQL_USER=remo
       - MYSQL_PASSWORD=remo
       - MYSQL_ROOT_PASSWORD=root
+    command: mysqld --max_allowed_packet=64M
   memcached:
     image: memcached
   broker:
