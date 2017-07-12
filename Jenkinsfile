@@ -1,7 +1,7 @@
 node('master'){
     switch(env.BRANCH_NAME) {
         case "master":
-            environment = "staging"
+            environment = "production"
         break
         case "production":
             environment = "production"
