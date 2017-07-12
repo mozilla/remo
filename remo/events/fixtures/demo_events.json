@@ -1,5 +1,19 @@
 [
     {
+        "pk": 1,
+        "model": "reports.activity",
+        "fields": {
+            "name": "Organized an Event"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "reports.activity",
+        "fields": {
+            "name": "Attended an Event"
+        }
+    },
+    {
         "pk": 3,
         "model": "events.event",
         "fields": {
