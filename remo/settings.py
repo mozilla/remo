@@ -163,7 +163,7 @@ CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis')
 CELERY_TASK_ALWAYS_EAGER = config('CELERY_TASK_ALWAYS_EAGER', default=False, cast=bool)
 REDIS_CONNECT_RETRY = config('REDIS_CONNECT_RETRY',
                              default=CELERY_RESULT_BACKEND == 'redis', cast=bool)
-CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@broker:5672//')
+BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@broker:5672//')
 
 # Mapbox
 MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')
