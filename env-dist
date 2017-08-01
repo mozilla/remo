@@ -22,6 +22,8 @@ OIDC_OP_DOMAIN = ''
 OIDC_OP_STORE_ACCESS_TOKEN = True
 # Assuming user remo with password remo and db name db_1
 DATABASE_URL = 'mysql://remo:remo@127.0.0.1:3306/db_1'
+# Mozillians
+MOZILLIANS_API_URL = https://mozillians.org/api/v2/
 # Debug flag
 DEBUG = True
 DEV = True
