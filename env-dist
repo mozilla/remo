@@ -22,6 +22,8 @@ OIDC_OP_DOMAIN = ''
 OIDC_OP_STORE_ACCESS_TOKEN = True
 # Assuming user remo with password remo and db name db_1
 DATABASE_URL = 'mysql://remo:remo@db:3306/remo'
+# Mozillians
+MOZILLIANS_API_URL = https://mozillians.org/api/v2/
 # Debug flag
 DEBUG = True
 DEV = True
@@ -40,9 +42,9 @@ SESSION_COOKIE_SECURE = False
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Celery
-CELERY_ALWAYS_EAGER = True
 BROKER_URL = 'amqp://guest:guest@broker:5672//'
 # Cache
 CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
 CACHE_URL = '127.0.0.1:11211'
 CELERY_BROKER_URL = 'amqp://guest:guest@broker:5672//'
+CELERY_TASK_ALWAYS_EAGER = True
