@@ -370,6 +370,8 @@ LOGGING = {
     }
 }
 
+HEALTHCHECKS_IO_URL = config('HEALTHCHECKS_IO_URL', default='')
+
 # Django Rest Framework
 REST_FRAMEWORK = {
     'URL_FIELD_NAME': '_url',

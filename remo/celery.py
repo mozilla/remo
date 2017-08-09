@@ -20,6 +20,7 @@ app.autodiscover_tasks()
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
+    from remo.base.tasks import celery_healthcheck
     from remo.events.tasks import notify_event_owners_to_input_metrics
     from remo.profiles.tasks import (check_mozillian_username, reset_rotm_nominees,
                                      send_rotm_nomination_reminder, set_unavailability_flag,
@@ -70,3 +71,6 @@ def setup_periodic_tasks(sender, **kwargs):
 
     sender.add_periodic_task(RUN_DAILY, create_rotm_poll.s(),
                              name='create-rotm-poll')
+
+    sender.add_periodic_task(RUN_HOURLY, celery_healthcheck.s(),
+                             name='celery-healthcheck')
