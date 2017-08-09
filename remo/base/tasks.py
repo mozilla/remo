@@ -5,6 +5,8 @@ from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.template.loader import render_to_string
 
+import requests
+
 from remo.celery import app
 
 
@@ -74,3 +76,11 @@ def send_remo_mail(subject, recipients_list, sender=None,
         email_data.update({'headers': headers})
         # Send the email
         EmailMessage(**email_data).send()
+
+
+@app.task
+def celery_healthcheck():
+    """Ping healthchecks.io periodically to monitor celery/celerybeat health."""
+
+    response = requests.get(settings.HEALTHCHECKS_IO_URL)
+    return response.status_code == requests.codes.ok
