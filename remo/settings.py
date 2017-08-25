@@ -165,6 +165,10 @@ CELERY_TASK_SERIALIZER = config('CELERY_TASK_SERIALIZER', default='pickle')
 REDIS_CONNECT_RETRY = config('REDIS_CONNECT_RETRY',
                              default=CELERY_RESULT_BACKEND == 'redis', cast=bool)
 BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@broker:5672//')
+if BROKER_URL.startswith('redis'):
+    BROKER_TRANSPORT_OPTIONS = {
+        'visibility_timeout': config('REDIS_VISIBILITY_TIMEOUT', default=432000, cast=int)
+    }
 
 # Mapbox
 MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')
