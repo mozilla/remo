@@ -167,7 +167,7 @@ REDIS_CONNECT_RETRY = config('REDIS_CONNECT_RETRY',
 BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@broker:5672//')
 if BROKER_URL.startswith('redis'):
     BROKER_TRANSPORT_OPTIONS = {
-        'visibility_timeout': config('REDIS_VISIBILITY_TIMEOUT', default=432000, cast=int)
+        'visibility_timeout': config('REDIS_VISIBILITY_TIMEOUT', default=604800, cast=int)
     }
 
 # Mapbox
