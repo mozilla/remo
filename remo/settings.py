@@ -117,11 +117,13 @@ MANAGERS = ADMINS
 # SMTP settings
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django_ses.SESBackend')
 if EMAIL_BACKEND == 'django_ses.SESBackend':
-    AWS_SES_REGION_NAME = config('AWS_SES_REGION_NAME', default='us-east-1')
+    if config('AWS_SES_OVERRIDE_BOTO', default=False, cast=bool):
+        AWS_SES_ACCESS_KEY_ID = config('AWS_SES_ACCESS_KEY_ID')
+        AWS_SES_SECRET_ACCESS_KEY = config('AWS_SES_SECRET_ACCESS_KEY')
+    AWS_SES_REGION_NAME = config('AWS_SES_REGION_NAME',
+                                 default='us-east-1')
     AWS_SES_REGION_ENDPOINT = config('AWS_SES_REGION_ENDPOINT',
                                      default='email.us-east-1.amazonaws.com')
-    AWS_SES_ACCESS_KEY_ID = config('AWS_SES_ACCESS_KEY_ID', default='')
-    AWS_SES_SECRET_ACCESS_KEY = config('AWS_SES_SECRET_ACCESS_KEY', default='')
 else:
     EMAIL_HOST = config('SMTP_EMAIL_HOST', default='localhost')
     EMAIL_PORT = config('SMTP_EMAIL_PORT', default='1025')
