@@ -44,8 +44,6 @@ factory_boy==2.6.0 \
 django-waffle==0.11 \
     --hash=sha256:9cd9e3a976849a3cd816830d7811b93543c1dc9da9f3cb1ccc2f9da831b8b025 \
     --hash=sha256:914b4b874fa6250a0897bc30b67e02034d92a7235ab72a91bf6da49b71751de4
-django-cache-machine==0.9.1 \
-    --hash=sha256:b377709bfa60ca483645c29c77a673550cba4267fa2e06eee1a0f2f634619506
 djangorestframework==3.1.0 \
     --hash=sha256:7c54612fdc829e483cc5353fc6239965b0a4e3a22a9eb618c0900e8764200949 \
     --hash=sha256:db00da5cffd31d84e2babce515c55bda5392ee8d26f1d99f5da945b2c333aabe

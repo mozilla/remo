@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import django.db.models.deletion
 from django.conf import settings
-import caching.base
 
 
 class Migration(migrations.Migration):
@@ -69,7 +68,7 @@ class Migration(migrations.Migration):
                 'ordering': ['-report_date', '-created_on'],
                 'get_latest_by': 'report_date',
             },
-            bases=(caching.base.CachingMixin, models.Model),
+            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='NGReportComment',

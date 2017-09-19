@@ -6,7 +6,6 @@ import remo.base.utils
 import remo.profiles.models
 import django.db.models.deletion
 from django.conf import settings
-import caching.base
 import django.core.validators
 
 
@@ -39,7 +38,7 @@ class Migration(migrations.Migration):
                 ('last_update', models.DateTimeField(auto_now=True)),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
-            bases=(caching.base.CachingMixin, models.Model),
+            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='UserProfile',
@@ -91,7 +90,7 @@ class Migration(migrations.Migration):
             options={
                 'permissions': (('create_user', 'Can create new user'), ('can_edit_profiles', 'Can edit profiles'), ('can_delete_profiles', 'Can delete profiles')),
             },
-            bases=(caching.base.CachingMixin, models.Model),
+            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='UserStatus',
@@ -109,6 +108,6 @@ class Migration(migrations.Migration):
                 'ordering': ['-expected_date', '-created_on'],
                 'verbose_name_plural': 'User Statuses',
             },
-            bases=(caching.base.CachingMixin, models.Model),
+            bases=(models.Model,),
         ),
     ]
