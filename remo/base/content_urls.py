@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.core.urlresolvers import reverse_lazy
 
 from remo.base.views import BaseCreateView, BaseListView, BaseUpdateView
@@ -10,8 +10,7 @@ from remo.reports.forms import ActivityForm, CampaignForm
 from remo.reports.models import Activity, Campaign
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url('^activities/$',
         BaseListView.as_view(
             groups=['Admin', 'Council'],
@@ -79,4 +78,4 @@ urlpatterns = patterns(
             model=EventMetric, form_class=EventMetricForm,
             success_url=reverse_lazy('list_metrics')),
         name='edit_metric'),
-)
+]

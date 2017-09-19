@@ -1,8 +1,9 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+
+from remo.dashboard import views
 
 
 # Action items urls
-urlpatterns = patterns(
-    'remo.dashboard.views',
-    url(r'^$', 'list_action_items', name='list_action_items'),
-)
+urlpatterns = [
+    url(r'^$', views.list_action_items, name='list_action_items'),
+]

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'product_details',
     'raven.contrib.django.raven_compat',
     'mozilla_django_oidc',
+    # Cors headers for DRF
+    'corsheaders',
     # Project specific apps
     'remo.base',
     'remo.profiles',
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -91,6 +94,9 @@ MEDIA_URL = config('MEDIA_URL', default='/media/')
 SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
 SESSION_COOKIE_HTTPONLY = config('SESSION_COOKIE_HTTPONLY', default=True, cast=bool)
 CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
+
+# CORF conf for DRM
+CORS_ORIGIN_ALLOW_ALL = config('CORS_ORIGIN_ALLOW_ALL', default=True)
 
 # Instruct session-csrf to always produce tokens for anonymous users
 # This is needed to get a CRSF token in /admin

@@ -1,7 +1,8 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns(
-    'remo.voting.views',
-    url(r'^$', 'list_votings', name='voting_list_votings'),
-    url(r'^new/$', 'edit_voting', name='voting_new_voting'),
-)
+from remo.voting import views
+
+urlpatterns = [
+    url(r'^$', views.list_votings, name='voting_list_votings'),
+    url(r'^new/$', views.edit_voting, name='voting_new_voting'),
+]

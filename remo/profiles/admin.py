@@ -1,6 +1,6 @@
 from socket import error as socket_error
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib import admin, messages
 from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.admin import UserAdmin
@@ -223,8 +223,7 @@ class UserAdmin(ExportMixin, UserAdmin):
             return update_wrapper(wrapper, view)
 
         urls = super(UserAdmin, self).get_urls()
-        my_urls = patterns('', url(r'check_celery', wrap(self.check_celery),
-                                   name='users_check_celery'))
+        my_urls = [url(r'check_celery', wrap(self.check_celery), name='users_check_celery')]
         return my_urls + urls
 
     def check_celery(self, request):

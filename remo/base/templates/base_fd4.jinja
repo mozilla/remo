@@ -83,9 +83,6 @@
             <div class="large-10 small-10 columns hide-on-print" id="login-box">
               <div class="account anonymous nomenu logout">
                 {% if not user.is_authenticated() %}
-                  {% if request.get_full_path() != '/' %}
-                    {% set next_url=request.REQUEST.next %}
-                  {% endif %}
                   <span id="login-menu-locator">
                     <a href="{{ url('oidc_authentication_init') }}?next={{ next_url }}">
                       Login

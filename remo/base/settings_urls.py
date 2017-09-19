@@ -1,9 +1,9 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
+from remo.base import views
 
-urlpatterns = patterns(
-    '',
-    url(r'^$', 'remo.base.views.edit_settings', name='edit_settings'),
+urlpatterns = [
+    url(r'^$', views.edit_settings, name='edit_settings'),
     url(r'^availability/(?P<display_name>[A-Za-z0-9_]+)/$',
-        'remo.base.views.edit_availability', name='edit_availability'),
-)
+        views.edit_availability, name='edit_availability'),
+]
