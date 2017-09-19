@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models.signals import m2m_changed, pre_save
-from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import utc
 
@@ -179,30 +177,3 @@ class Status(models.Model):
 
     class Meta:
         verbose_name_plural = 'statuses'
-
-
-@receiver(pre_save, sender=Bug, dispatch_uid='set_uppercase_pre_save_signal')
-def set_uppercase_pre_save(sender, instance, **kwargs):
-    """Convert status and resolution to uppercase prior to saving."""
-    if instance.status:
-        instance.status = instance.status.upper()
-    if instance.resolution:
-        instance.resolution = instance.resolution.upper()
-
-
-@receiver(m2m_changed, sender=Bug.budget_needinfo.through, dispatch_uid='update_needinfo_signal')
-def update_budget_needinfo_action_items(sender, instance, action, pk_set, **kwargs):
-    """Update ActionItem objects on needinfo change."""
-
-    ActionItem = get_model('dashboard', 'ActionItem')
-    name = u'{0} {1}'.format(NEEDINFO_ACTION, instance.summary)
-    if action == 'post_remove':
-        for pk in pk_set:
-            ActionItem.resolve(instance=instance, user=User.objects.get(pk=pk), name=name)
-
-    if action == 'pre_clear':
-        for user in instance.budget_needinfo.all():
-            ActionItem.resolve(instance=instance, user=user, name=name)
-
-    if action == 'post_add':
-        ActionItem.create(instance=instance)
