@@ -242,9 +242,6 @@ STATICFILES_FINDERS = (
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-# Statsd Graphite
-STATSD_CLIENT = 'django_statsd.clients.normal'
-
 CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.template.context_processors.debug',
