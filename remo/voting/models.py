@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse
 from django.core.validators import MinLengthValidator
 from django.conf import settings
 from django.contrib.auth.models import Group, User
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -42,7 +42,7 @@ class Poll(models.Model):
     automated_poll = models.BooleanField(default=False)
     comments_allowed = models.BooleanField(default=True)
     is_extended = models.BooleanField(default=False)
-    action_items = generic.GenericRelation(ActionItem)
+    action_items = GenericRelation(ActionItem)
 
     def get_absolute_url(self):
         return reverse('remo.voting.views.view_voting', args=[self.slug])

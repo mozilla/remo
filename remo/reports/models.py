@@ -1,7 +1,7 @@
 import datetime
 
 from django.contrib.auth.models import User
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -111,7 +111,7 @@ class NGReport(caching.base.CachingMixin, models.Model):
     verified_activity = models.BooleanField('I have verified this activity',
                                             blank=True, default=False)
     country = models.CharField(max_length=50, blank=True, default='')
-    action_items = generic.GenericRelation(ActionItem)
+    action_items = GenericRelation(ActionItem)
 
     objects = caching.base.CachingManager()
 

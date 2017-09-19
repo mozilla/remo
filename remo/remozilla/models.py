@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from django.db.models.loading import get_model
+from django.apps import apps
 from django.contrib.auth.models import User
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -52,7 +52,7 @@ class Bug(caching.base.CachingMixin, models.Model):
     council_member_assigned = models.BooleanField(default=False)
     pending_mentor_validation = models.BooleanField(default=False)
     budget_needinfo = models.ManyToManyField(User)
-    action_items = generic.GenericRelation('dashboard.ActionItem')
+    action_items = GenericRelation('dashboard.ActionItem')
 
     objects = caching.base.CachingManager()
 
@@ -79,7 +79,7 @@ class Bug(caching.base.CachingMixin, models.Model):
         # Avoid circular dependency
         from remo.base.templatetags.helpers import user_is_rep
         from remo.dashboard.models import Item
-        ActionItem = get_model('dashboard', 'ActionItem')
+        ActionItem = apps.get_model('dashboard', 'ActionItem')
 
         if not self.assigned_to or not user_is_rep(self.assigned_to):
             return []
@@ -120,7 +120,7 @@ class Bug(caching.base.CachingMixin, models.Model):
     def save(self, *args, **kwargs):
         # Avoid circular dependency
         from remo.base.templatetags.helpers import user_is_rep
-        ActionItem = get_model('dashboard', 'ActionItem')
+        ActionItem = apps.get_model('dashboard', 'ActionItem')
 
         # Update action items
         action_model = ContentType.objects.get_for_model(self)

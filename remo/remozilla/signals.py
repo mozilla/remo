@@ -1,12 +1,12 @@
+from django.apps import apps
 from django.contrib.auth.models import User
-from django.db.models.loading import get_model
 from django.db.models.signals import m2m_changed, pre_save
 from django.dispatch import receiver
 
 from remo.remozilla.models import Bug
 
 
-ActionItem = get_model('dashboard', 'ActionItem')
+ActionItem = apps.get_model('dashboard', 'ActionItem')
 
 ADD_RECEIPTS_ACTION = u'Add receipts for'
 ADD_REPORT_ACTION = u'Add report for'

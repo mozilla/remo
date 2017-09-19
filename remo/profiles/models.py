@@ -1,7 +1,7 @@
 import datetime
 
 from django.contrib.auth.models import User
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import RegexValidator
@@ -176,7 +176,7 @@ class UserProfile(caching.base.CachingMixin, models.Model):
                                           related_name='rotm_nominations',
                                           validators=[_validate_mentor],
                                           on_delete=models.SET_NULL)
-    action_items = generic.GenericRelation('dashboard.ActionItem')
+    action_items = GenericRelation('dashboard.ActionItem')
 
     objects = caching.base.CachingManager()
 

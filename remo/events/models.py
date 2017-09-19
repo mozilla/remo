@@ -3,7 +3,7 @@ from urlparse import urljoin
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.core.urlresolvers import reverse
@@ -16,7 +16,6 @@ import caching.base
 from uuslug import uuslug as slugify
 
 from remo.base.models import GenericActiveManager
-from remo.base.tasks import send_remo_mail
 from remo.dashboard.models import ActionItem, Item
 from remo.profiles.models import FunctionalArea
 from remo.remozilla.models import Bug
@@ -126,7 +125,7 @@ class Event(caching.base.CachingMixin, models.Model):
     goals = models.ManyToManyField(EventGoal, related_name='events_goals', blank=True)
     metrics = models.ManyToManyField(EventMetric, through='EventMetricOutcome')
     has_new_metrics = models.BooleanField(default=True)
-    action_items = generic.GenericRelation(ActionItem)
+    action_items = GenericRelation(ActionItem)
     created_on = models.DateTimeField(auto_now_add=True, null=True)
     updated_on = models.DateTimeField(auto_now=True, null=True)
     campaign = models.ForeignKey('reports.Campaign', related_name='events', null=True, blank=False)
