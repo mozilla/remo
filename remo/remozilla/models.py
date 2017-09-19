@@ -10,8 +10,6 @@ from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import utc
 
-import caching.base
-
 
 ADD_RECEIPTS_ACTION = u'Add receipts for'
 ADD_REPORT_ACTION = u'Add report for'
@@ -31,7 +29,7 @@ def _get_action_name(action_name, instance):
 
 
 @python_2_unicode_compatible
-class Bug(caching.base.CachingMixin, models.Model):
+class Bug(models.Model):
     """Bug model definition."""
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -55,8 +53,6 @@ class Bug(caching.base.CachingMixin, models.Model):
     pending_mentor_validation = models.BooleanField(default=False)
     budget_needinfo = models.ManyToManyField(User)
     action_items = generic.GenericRelation('dashboard.ActionItem')
-
-    objects = caching.base.CachingManager()
 
     def __str__(self):
         return u'%d' % self.bug_id

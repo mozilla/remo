@@ -14,7 +14,6 @@ from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.timezone import now
 
-import caching.base
 from uuslug import uuslug as slugify
 
 from remo.base.models import GenericActiveManager
@@ -91,7 +90,7 @@ class EventMetric(models.Model):
 
 
 @python_2_unicode_compatible
-class Event(caching.base.CachingMixin, models.Model):
+class Event(models.Model):
     """Event Model."""
     name = models.CharField(max_length=100)
     slug = models.SlugField(blank=True, max_length=100)
@@ -132,8 +131,6 @@ class Event(caching.base.CachingMixin, models.Model):
     created_on = models.DateTimeField(auto_now_add=True, null=True)
     updated_on = models.DateTimeField(auto_now=True, null=True)
     campaign = models.ForeignKey('reports.Campaign', related_name='events', null=True, blank=False)
-
-    objects = caching.base.CachingManager()
 
     def get_absolute_url(self):
         return reverse('events_view_event', kwargs={'slug': self.slug})

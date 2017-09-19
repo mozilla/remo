@@ -27,286 +27,280 @@
   <div class="row">
     <div class="large-12 columns dashboard-tabs">
       <ul class="tabs top-margined dashboard-tabs-labels">
-        {% cache tracked_interests %}
-          {% for key, data in tracked_interests|dictsort %}
-            <li>
-              <a href="#{{ key|replace(" ", "") }}"
-                 data-id="{{ data['id'] }}"
-                 {% if loop.first %} class="active"{% endif %}>{{ key }}
-              </a>
-            </li>
-          {% endfor %}
-        {% endcache %}
-      </ul>
-      {% cache tracked_interests %}
         {% for key, data in tracked_interests|dictsort %}
-          <div {% if loop.first %}class="content active"{% else %}class="content"{% endif %} id="{{ key|replace(" ", "") }}Tab">
-            <div class="container columns">
-              <!-- people block -->
-              <div class="dashboard-box">
-                <div class="row">
-                  <div class="large-12 sub-header">
-                    <h2>People</h2>
-                    <dl class="sub-nav dashboard-filter">
-                      <dt>Filter:</dt>
+          <li>
+            <a href="#{{ key|replace(" ", "") }}"
+                data-id="{{ data['id'] }}"
+                {% if loop.first %} class="active"{% endif %}>{{ key }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+      {% for key, data in tracked_interests|dictsort %}
+        <div {% if loop.first %}class="content active"{% else %}class="content"{% endif %} id="{{ key|replace(" ", "") }}Tab">
+          <div class="container columns">
+            <!-- people block -->
+            <div class="dashboard-box">
+              <div class="row">
+                <div class="large-12 sub-header">
+                  <h2>People</h2>
+                  <dl class="sub-nav dashboard-filter">
+                    <dt>Filter:</dt>
+                    <dd class="active">
+                      <a class="dashboard-mozillians-reps-grid-button" href="#">
+                          Reps Grid
+                      </a>
+                    </dd>
+                    <dd>
+                      <a class="dashboard-mozillians-reps-reports-button" href="#">
+                          Reps Reports
+                      </a>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+
+              <div class="row">
+                <!-- people grid block -->
+                <div class="dashboard-mozillians-reps-grid-block">
+                  {% if data['reps'] %}
+                    <ul class="large-block-grid-4 small-block-grid-1">
+                      {% for rep in data['reps'] %}
+                        <li>
+                          <a href="{{ url('profiles_view_profile', rep|get_display_name)}}">
+                            <div class="dashboard-mentee">
+                              <img src="{{ rep|get_avatar_url(50) }}"
+                                    class="profiles-people-avatar"
+                                    alt="avatar">
+                              <h6>{{ rep.get_full_name() }}</h6>
+                              {% if rep|user_is_unavailable %}
+                                <div class="pict-icon large triangle" title="Rep Unavailable">
+                                </div>
+                              {% endif %}
+                            </div>
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                    <!-- Display unavailable icon -->
+                    {% if unavailable_rep_exists[key] %}
+                      <div class="unavailable-reference">
+                        <p class="unavailable-reference-mozillians">
+                          Rep currently unavailable.
+                        <p>
+                      </div>
+                    {% endif %}
+                    <div class="align-right">
+                      <button data-reveal-id="mail-reps-modal"
+                          class="small button">Email Reps</button>
+                    </div>
+                  {% else %}
+                    <div class="row">
+                      <div class="large-12 columns no-bugs">
+                        <p>No Reps found with the specified interest!</p>
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+                <!-- end people grid block -->
+
+                <!-- continuous reports block -->
+                {% if reps_ng_reports and reps_ng_reports[key].exists() %}
+                  <div class="dashboard-box">
+                    <div id="dashboard-continuous-reports-all-block"
+                          class="dashboard-mozillians-reps-reports-block
+                                dashboard-continuous-reports-mozillians-unavailable
+                                large-12 columns hidden">
+                      <table class="dashboard-table responsive">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Current streak</th>
+                            <th>Longest streak</th>
+                            <th>Last 4 weeks</th>
+                            <th>Last 8 weeks</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for report in reps_ng_reports[key] %}
+                            <tr>
+                              <td {% if report.user|user_is_unavailable %}
+                                  class="unavailable" {% endif %}>
+                                <a href="{{ url('profiles_view_profile',
+                                    report.user|get_display_name) }}"
+                                    {% if report.user|user_is_unavailable %}
+                                      title="Rep Unavailable"
+                                    {% endif %}>
+                                {{ report.user.get_full_name() }}
+                                </a>
+                              </td>
+                              <td>
+                                {{ count_ng_reports(report.user, current_streak=True) }} days
+                              </td>
+                              <td>
+                                {{ count_ng_reports(report.user, longest_streak=True) }} days
+                              </td>
+                              <td>
+                                {{ count_ng_reports(report.user, period=4) }} activities
+                              </td>
+                              <td>
+                                {{ count_ng_reports(report.user, period=8) }} activities
+                              </td>
+                              <td>
+                                {{ count_ng_reports(report.user) }} activities
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                      <div class="unavailable-reference">
+                        <ul>
+                          <li class="unavailable-reference-marker">
+                            Rep currently unavailable.
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="align-right">
+                        {% set functional_area=key|get_functional_area %}
+                        <a href="{{ url('list_ng_reports_functional_area',
+                                        functional_area.slug) }}"
+                            role="button"
+                            class="small button">
+                          All reports
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                <!-- end continuous reports block -->
+                {% endif %}
+              </div>
+            </div>
+            <!-- end people block -->
+
+            <!-- events block -->
+            <div class="dashboard-box">
+              <div class="row">
+                <div class="large-12 sub-header">
+                  <h2>Events</h2>
+                  <dl class="sub-nav dashboard-filter">
+                    <dt>Filter:</dt>
                       <dd class="active">
-                        <a class="dashboard-mozillians-reps-grid-button" href="#">
-                           Reps Grid
+                        <a class="dashboard-events-future-button" href="#">
+                          Current & Future events
                         </a>
                       </dd>
                       <dd>
-                        <a class="dashboard-mozillians-reps-reports-button" href="#">
-                           Reps Reports
+                        <a class="dashboard-events-past-button" href="#">
+                          Past events
                         </a>
                       </dd>
-                    </dl>
-                  </div>
+                  </dl>
                 </div>
+              </div>
 
-                <div class="row">
-                  <!-- people grid block -->
-                  <div class="dashboard-mozillians-reps-grid-block">
-                    {% if data['reps'] %}
-                      <ul class="large-block-grid-4 small-block-grid-1">
-                        {% for rep in data['reps'] %}
-                          <li>
-                            <a href="{{ url('profiles_view_profile', rep|get_display_name)}}">
-                              <div class="dashboard-mentee">
-                                <img src="{{ rep|get_avatar_url(50) }}"
-                                     class="profiles-people-avatar"
-                                     alt="avatar">
-                                <h6>{{ rep.get_full_name() }}</h6>
-                                {% if rep|user_is_unavailable %}
-                                  <div class="pict-icon large triangle" title="Rep Unavailable">
-                                  </div>
-                                {% endif %}
-                              </div>
-                            </a>
-                          </li>
+              <div class="row">
+                <!-- Current and future events block -->
+                <div class="dashboard-events-future-block">
+                  {% if reps_current_events[key] %}
+                    <table class="dashboard-table responsive">
+                      <thead>
+                        <tr>
+                          <th class="dashboard-clickable type-string">Event Name</th>
+                          <th class="dashboard-clickable type-string">Start Date</th>
+                          <th class="dashboard-clickable type-string">End Date</th>
+                          <th class="dashboard-clickable type-string">City</th>
+                          <th class="dashboard-clickable type-string">Country</th>
+                          <th class="dashboard-clickable type-string">Owner</th>
+                          <th class="dashboard-clickable type-int align-center">Contribute Signups</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for event in reps_current_events[key] %}
+                          <tr>
+                            <td>
+                              <a href="{{ url('events_view_event', slug=event.slug) }}">
+                                  {{ event.name }}
+                              </a>
+                            </td>
+                            <td>{{ event.start|format_datetime }}</td>
+                            <td>{{ event.end|format_datetime }}</td>
+                            <td>{{ event.city }}</td>
+                            <td>{{ event.country }}</td>
+                            <td>
+                              <a href="{{ url('profiles_view_profile',
+                                              event.owner|get_display_name) }}">
+                                  {{ event.owner.get_full_name() }}
+                              </a>
+                            </td>
+                            <td class="align-center">{{ event.converted_visitors }}</td>
+                          </tr>
                         {% endfor %}
-                      </ul>
-                      <!-- Display unavailable icon -->
-                      {% if unavailable_rep_exists[key] %}
-                        <div class="unavailable-reference">
-                          <p class="unavailable-reference-mozillians">
-                            Rep currently unavailable.
-                          <p>
-                        </div>
-                      {% endif %}
-                      <div class="align-right">
-                        <button data-reveal-id="mail-reps-modal"
-                           class="small button">Email Reps</button>
-                      </div>
-                    {% else %}
-                      <div class="row">
-                        <div class="large-12 columns no-bugs">
-                          <p>No Reps found with the specified interest!</p>
-                        </div>
-                      </div>
-                    {% endif %}
-                  </div>
-                  <!-- end people grid block -->
-
-                  <!-- continuous reports block -->
-                  {% if reps_ng_reports and reps_ng_reports[key].exists() %}
-                    <div class="dashboard-box">
-                      <div id="dashboard-continuous-reports-all-block"
-                           class="dashboard-mozillians-reps-reports-block
-                                  dashboard-continuous-reports-mozillians-unavailable
-                                  large-12 columns hidden">
-                        <table class="dashboard-table responsive">
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-                              <th>Current streak</th>
-                              <th>Longest streak</th>
-                              <th>Last 4 weeks</th>
-                              <th>Last 8 weeks</th>
-                              <th>Total</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% cache reps_ng_reports[key] %}
-                              {% for report in reps_ng_reports[key] %}
-                                <tr>
-                                  <td {% if report.user|user_is_unavailable %}
-                                      class="unavailable" {% endif %}>
-                                    <a href="{{ url('profiles_view_profile',
-                                       report.user|get_display_name) }}"
-                                       {% if report.user|user_is_unavailable %}
-                                         title="Rep Unavailable"
-                                       {% endif %}>
-                                    {{ report.user.get_full_name() }}
-                                    </a>
-                                  </td>
-                                  <td>
-                                    {{ count_ng_reports(report.user, current_streak=True) }} days
-                                  </td>
-                                  <td>
-                                    {{ count_ng_reports(report.user, longest_streak=True) }} days
-                                  </td>
-                                  <td>
-                                    {{ count_ng_reports(report.user, period=4) }} activities
-                                  </td>
-                                  <td>
-                                    {{ count_ng_reports(report.user, period=8) }} activities
-                                  </td>
-                                  <td>
-                                    {{ count_ng_reports(report.user) }} activities
-                                  </td>
-                                </tr>
-                              {% endfor %}
-                            {% endcache %}
-                          </tbody>
-                        </table>
-                        <div class="unavailable-reference">
-                          <ul>
-                            <li class="unavailable-reference-marker">
-                              Rep currently unavailable.
-                            </li>
-                          </ul>
-                        </div>
-                        <div class="align-right">
-                          {% set functional_area=key|get_functional_area %}
-                          <a href="{{ url('list_ng_reports_functional_area',
-                                          functional_area.slug) }}"
-                             role="button"
-                             class="small button">
-                            All reports
-                          </a>
-                        </div>
+                      </tbody>
+                    </table>
+                  {% else %}
+                    <div class="row">
+                      <div class="large-12 columns no-bugs">
+                        <p>No events found for the specified interest!</p>
                       </div>
                     </div>
-                  <!-- end continuous reports block -->
                   {% endif %}
                 </div>
-              </div>
-              <!-- end people block -->
+                <!-- end Current and future events block -->
 
-              <!-- events block -->
-              <div class="dashboard-box">
-                <div class="row">
-                  <div class="large-12 sub-header">
-                    <h2>Events</h2>
-                    <dl class="sub-nav dashboard-filter">
-                      <dt>Filter:</dt>
-                        <dd class="active">
-                          <a class="dashboard-events-future-button" href="#">
-                            Current & Future events
-                          </a>
-                        </dd>
-                        <dd>
-                          <a class="dashboard-events-past-button" href="#">
-                            Past events
-                          </a>
-                        </dd>
-                    </dl>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <!-- Current and future events block -->
-                  <div class="dashboard-events-future-block">
-                    {% if reps_current_events[key] %}
-                      <table class="dashboard-table responsive">
-                        <thead>
+                <!-- Past events block-->
+                <div class="dashboard-events-past-block hidden">
+                  {% if reps_past_events[key] %}
+                    <table class="dashboard-table responsive">
+                      <thead>
+                        <tr>
+                          <th class="dashboard-clickable type-string">Event Name</th>
+                          <th class="dashboard-clickable type-string">Start Date</th>
+                          <th class="dashboard-clickable type-string">End Date</th>
+                          <th class="dashboard-clickable type-string">City</th>
+                          <th class="dashboard-clickable type-string">Country</th>
+                          <th class="dashboard-clickable type-string">Owner</th>
+                          <th class="dashboard-clickable type-int align-center">Contribute Signups</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for event in reps_past_events[key] %}
                           <tr>
-                            <th class="dashboard-clickable type-string">Event Name</th>
-                            <th class="dashboard-clickable type-string">Start Date</th>
-                            <th class="dashboard-clickable type-string">End Date</th>
-                            <th class="dashboard-clickable type-string">City</th>
-                            <th class="dashboard-clickable type-string">Country</th>
-                            <th class="dashboard-clickable type-string">Owner</th>
-                            <th class="dashboard-clickable type-int align-center">Contribute Signups</th>
+                            <td>
+                              <a href="{{ url('events_view_event', slug=event.slug) }}">
+                                  {{ event.name }}
+                              </a>
+                            </td>
+                            <td>{{ event.start|format_datetime }}</td>
+                            <td>{{ event.end|format_datetime }}</td>
+                            <td>{{ event.city }}</td>
+                            <td>{{ event.country }}</td>
+                            <td>
+                              <a href="{{ url('profiles_view_profile',
+                                              event.owner|get_display_name) }}">
+                                  {{ event.owner.get_full_name() }}
+                              </a>
+                            </td>
+                            <td class="align-center">{{ event.converted_visitors }}</td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {% for event in reps_current_events[key] %}
-                            <tr>
-                              <td>
-                                <a href="{{ url('events_view_event', slug=event.slug) }}">
-                                   {{ event.name }}
-                                </a>
-                              </td>
-                              <td>{{ event.start|format_datetime }}</td>
-                              <td>{{ event.end|format_datetime }}</td>
-                              <td>{{ event.city }}</td>
-                              <td>{{ event.country }}</td>
-                              <td>
-                                <a href="{{ url('profiles_view_profile',
-                                                event.owner|get_display_name) }}">
-                                   {{ event.owner.get_full_name() }}
-                                </a>
-                              </td>
-                              <td class="align-center">{{ event.converted_visitors }}</td>
-                            </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                    {% else %}
-                      <div class="row">
-                        <div class="large-12 columns no-bugs">
-                          <p>No events found for the specified interest!</p>
-                        </div>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  {% else %}
+                    <div class="row">
+                      <div class="large-12 columns no-bugs">
+                        <p>No events found for the specified interest!</p>
                       </div>
-                    {% endif %}
-                  </div>
-                  <!-- end Current and future events block -->
-
-                  <!-- Past events block-->
-                  <div class="dashboard-events-past-block hidden">
-                    {% if reps_past_events[key] %}
-                      <table class="dashboard-table responsive">
-                        <thead>
-                          <tr>
-                            <th class="dashboard-clickable type-string">Event Name</th>
-                            <th class="dashboard-clickable type-string">Start Date</th>
-                            <th class="dashboard-clickable type-string">End Date</th>
-                            <th class="dashboard-clickable type-string">City</th>
-                            <th class="dashboard-clickable type-string">Country</th>
-                            <th class="dashboard-clickable type-string">Owner</th>
-                            <th class="dashboard-clickable type-int align-center">Contribute Signups</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for event in reps_past_events[key] %}
-                            <tr>
-                              <td>
-                                <a href="{{ url('events_view_event', slug=event.slug) }}">
-                                   {{ event.name }}
-                                </a>
-                              </td>
-                              <td>{{ event.start|format_datetime }}</td>
-                              <td>{{ event.end|format_datetime }}</td>
-                              <td>{{ event.city }}</td>
-                              <td>{{ event.country }}</td>
-                              <td>
-                                <a href="{{ url('profiles_view_profile',
-                                                event.owner|get_display_name) }}">
-                                   {{ event.owner.get_full_name() }}
-                                </a>
-                              </td>
-                              <td class="align-center">{{ event.converted_visitors }}</td>
-                            </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                    {% else %}
-                      <div class="row">
-                        <div class="large-12 columns no-bugs">
-                          <p>No events found for the specified interest!</p>
-                        </div>
-                      </div>
-                    {% endif %}
-                  </div>
-                  <!-- end Past events block -->
+                    </div>
+                  {% endif %}
                 </div>
-                <!-- end events block -->
+                <!-- end Past events block -->
               </div>
+              <!-- end events block -->
             </div>
           </div>
-        {% endfor %}
-      {% endcache %}
+        </div>
+      {% endfor %}
     </div>
   </div>
 {% endif %}

@@ -6,7 +6,6 @@ import datetime
 from django.utils.timezone import utc
 import django.db.models.deletion
 from django.conf import settings
-import caching.base
 
 
 class Migration(migrations.Migration):
@@ -42,7 +41,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['-bug_last_change_time'],
             },
-            bases=(caching.base.CachingMixin, models.Model),
+            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Status',

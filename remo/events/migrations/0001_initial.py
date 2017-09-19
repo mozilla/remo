@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 import django.db.models.deletion
 from django.conf import settings
-import caching.base
 import django.core.validators
 
 
@@ -59,7 +58,7 @@ class Migration(migrations.Migration):
                 'ordering': ['start'],
                 'permissions': (('can_subscribe_to_events', 'Can subscribe to events'), ('can_edit_events', 'Can edit events'), ('can_delete_events', 'Can delete events'), ('can_delete_event_comments', 'Can delete event comments')),
             },
-            bases=(caching.base.CachingMixin, models.Model),
+            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='EventComment',

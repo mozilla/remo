@@ -271,8 +271,7 @@ TEMPLATES = [
             'undefined': 'jinja2.Undefined',
             'extensions': DEFAULT_EXTENSIONS + [
                 'compressor.contrib.jinja2ext.CompressorExtension',
-                'waffle.jinja.WaffleExtension',
-                'caching.ext.cache'
+                'waffle.jinja.WaffleExtension'
             ],
         }
     },
@@ -394,9 +393,6 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': None,
 }
 
-# Django-Cache-Machine
-CACHE_INVALIDATE_ON_CREATE = 'whole-model'
-
 # Cache
 CACHES = {
     'default': {
@@ -430,13 +426,6 @@ if DEV:
         'http://*.mozilla.org',
         'http://*.mapbox.com',
     )
-
-    CACHES = {
-        'default': {
-            'BACKEND': 'caching.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
-        }
-    }
 
 if DEBUG:
     for backend in TEMPLATES:
