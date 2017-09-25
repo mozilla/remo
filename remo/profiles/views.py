@@ -14,7 +14,6 @@ from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_control, never_cache
 
 import waffle
-from django_statsd.clients import statsd
 from mozilla_django_oidc.auth import default_username_algo
 from product_details import product_details
 
@@ -95,7 +94,6 @@ def edit(request, display_name):
             profile_date_form.save()
 
         messages.success(request, 'Profile successfully edited.')
-        statsd.incr('profiles.edit_profile')
 
         if request.user == user:
             return redirect('profiles_view_my_profile')
@@ -263,7 +261,6 @@ def delete_user(request, display_name):
     if request.method == 'POST':
         user.delete()
         messages.success(request, 'User was deleted.')
-        statsd.incr('profiles.delete_profile')
 
     return redirect('main')
 

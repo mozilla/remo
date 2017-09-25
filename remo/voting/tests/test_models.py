@@ -9,7 +9,8 @@ from remo.base.tests import RemoTestCase
 from remo.profiles.tests import UserFactory
 from remo.remozilla.tests import BugFactory
 from remo.remozilla.utils import get_bugzilla_url
-from remo.voting.models import Poll, automated_poll_discussion_email
+from remo.voting.models import Poll
+from remo.voting.signals import automated_poll_discussion_email
 from remo.voting.tests import PollCommentFactory, PollFactory
 
 
@@ -51,7 +52,7 @@ class AutomatedRadioPollTest(RemoTestCase):
         automated_poll = PollFactory.build(
             name='automated_poll', automated_poll=True, bug=bug)
 
-        with patch('remo.voting.models.send_remo_mail') as mocked_send_mail:
+        with patch('remo.voting.signals.send_remo_mail') as mocked_send_mail:
             automated_poll_discussion_email(None, automated_poll, True, {})
 
         subject = 'Discuss [Bug 989812] - Bug summary'
@@ -68,7 +69,7 @@ class AutomatedRadioPollTest(RemoTestCase):
         automated_poll = PollFactory.build(
             name='automated_poll', automated_poll=True, bug=bug)
 
-        with patch('remo.voting.models.send_remo_mail') as mocked_send_mail:
+        with patch('remo.voting.signals.send_remo_mail') as mocked_send_mail:
             automated_poll_discussion_email(None, automated_poll, False, {})
 
         ok_(not mocked_send_mail.called)
@@ -87,7 +88,7 @@ class VotingCommentSignalTests(RemoTestCase):
         with mute_signals(post_save):
             poll = PollFactory.create(created_by=creator)
 
-        with patch('remo.voting.models.send_remo_mail.delay') as mail_mock:
+        with patch('remo.voting.signals.send_remo_mail.delay') as mail_mock:
             PollCommentFactory.create(user=commenter, poll=poll, comment='This is a comment')
 
         ok_(mail_mock.called)
@@ -101,6 +102,6 @@ class VotingCommentSignalTests(RemoTestCase):
         user = UserFactory.create(userprofile__receive_email_on_add_voting_comment=False)
         with mute_signals(post_save):
             poll = PollFactory.create(created_by=user)
-        with patch('remo.voting.models.send_remo_mail.delay') as mail_mock:
+        with patch('remo.voting.signals.send_remo_mail.delay') as mail_mock:
             PollCommentFactory.create(user=commenter, poll=poll, comment='This is a comment')
         ok_(not mail_mock.called)

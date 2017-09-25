@@ -9,8 +9,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 
-from django_statsd.clients import statsd
-
 import forms
 from remo.base.decorators import permission_check
 from remo.base.templatetags.helpers import urlparams
@@ -61,10 +59,8 @@ def edit_ng_report(request, display_name='', year=None, month=None, day=None, id
         if created:
             report.user = user
             messages.success(request, 'Report successfully created.')
-            statsd.incr('reports.create_report')
         else:
             messages.success(request, 'Report successfully updated.')
-            statsd.incr('reports.edit_report')
         report_form.save()
         return redirect(report.get_absolute_url())
 
@@ -112,7 +108,6 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
                 obj.report = report
                 obj.save()
                 messages.success(request, 'Comment saved successfully.')
-                statsd.incr('reports.create_comment')
                 ctx_data['comment_form'] = forms.NGReportCommentForm()
 
         # Process verification form
@@ -143,7 +138,6 @@ def delete_ng_report(request, display_name, year, month, day, id):
         report = get_object_or_404(NGReport, id=id)
         report.delete()
         messages.success(request, 'Report successfully deleted.')
-        statsd.incr('reports.delete_report')
 
     if request.user == user:
         return redirect('profiles_view_my_profile')
@@ -158,7 +152,6 @@ def delete_ng_report_comment(request, display_name, year, month, day, id, commen
         report_comment = get_object_or_404(NGReportComment, pk=comment_id)
         report_comment.delete()
         messages.success(request, 'Comment successfully deleted.')
-        statsd.incr('reports.delete_comment')
     return redirect(report.get_absolute_url())
 
 

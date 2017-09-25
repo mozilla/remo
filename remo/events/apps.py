@@ -25,4 +25,5 @@ class EventsConfig(AppConfig):
     verbose_name = 'ReMo Events'
 
     def ready(self):
+        import remo.events.signals # noqa
         post_migrate.connect(event_set_groups, sender=self)

@@ -10,8 +10,6 @@ from django.utils.timezone import make_aware, now
 
 import pytz
 
-from django_statsd.clients import statsd
-
 from remo.base.utils import get_date
 from remo.celery import app
 from remo.dashboard.models import ActionItem
@@ -82,7 +80,6 @@ def send_first_report_notification():
     for user in inactive_users:
         user.userprofile.first_report_notification = today
         user.userprofile.save()
-    statsd.incr('reports.send_first_report_notification')
 
 
 @app.task
@@ -107,7 +104,6 @@ def send_second_report_notification():
     for user in inactive_users:
         user.userprofile.second_report_notification = today
         user.userprofile.save()
-    statsd.incr('reports.send_second_report_notification')
 
 
 @app.task
