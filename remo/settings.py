@@ -166,11 +166,10 @@ CELERY_TASK_ALWAYS_EAGER = config('CELERY_TASK_ALWAYS_EAGER', default=False, cas
 CELERY_TASK_SERIALIZER = config('CELERY_TASK_SERIALIZER', default='pickle')
 REDIS_CONNECT_RETRY = config('REDIS_CONNECT_RETRY',
                              default=CELERY_RESULT_BACKEND == 'redis', cast=bool)
-BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@broker:5672//')
-if BROKER_URL.startswith('redis'):
-    BROKER_TRANSPORT_OPTIONS = {
-        'visibility_timeout': config('REDIS_VISIBILITY_TIMEOUT', default=604800, cast=int),
-        'fanout_prefix': True
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@broker:5672//')
+if CELERY_BROKER_URL.startswith('redis'):
+    CELERY_BROKER_TRANSPORT_OPTIONS = {
+        'visibility_timeout': config('REDIS_VISIBILITY_TIMEOUT', default=604800, cast=int)
     }
 
 # Mapbox

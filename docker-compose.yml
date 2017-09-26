@@ -26,6 +26,8 @@ services:
     depends_on:
       - broker
       - db
+    environment:
+      - C_FORCE_ROOT=True
   web:
     build:
       context: .
