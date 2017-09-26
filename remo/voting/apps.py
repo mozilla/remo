@@ -24,4 +24,5 @@ class VotingConfig(AppConfig):
     verbose_name = 'ReMo Voting'
 
     def ready(self):
-        post_migrate.connect(voting_set_groups, self)
+        import remo.voting.signals # noqa
+        post_migrate.connect(voting_set_groups, sender=self)

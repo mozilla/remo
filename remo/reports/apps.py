@@ -24,4 +24,5 @@ class ReportsConfig(AppConfig):
     verbose_name = 'ReMo Reports'
 
     def ready(self):
+        import remo.reports.signals # noqa
         post_migrate.connect(report_set_groups, sender=self)

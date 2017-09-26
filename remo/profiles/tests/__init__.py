@@ -9,10 +9,9 @@ import factory
 from factory import fuzzy
 from product_details import product_details
 
-from remo.profiles.models import (FunctionalArea, UserAvatar, UserProfile,
-                                  UserStatus, create_profile,
-                                  email_mentor_notification,
-                                  user_set_inactive_post_save)
+from remo.profiles.models import FunctionalArea, UserAvatar, UserProfile, UserStatus
+from remo.profiles.signals import (create_profile, email_mentor_notification,
+                                   user_set_inactive_post_save)
 
 
 COUNTRIES = product_details.get_regions('en').values()

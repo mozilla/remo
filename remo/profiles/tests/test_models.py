@@ -314,7 +314,7 @@ class PermissionTest(RemoTestCase):
 class EmailMentorNotification(RemoTestCase):
     """Test that a mentor receives an email when a Mente changes  mentor."""
 
-    @patch('remo.profiles.models.send_remo_mail.delay')
+    @patch('remo.profiles.signals.send_remo_mail.delay')
     def test_send_email_on_mentor_change(self, mocked_mail):
         """Test that old mentor gets an email."""
         new_mentor = UserFactory.create(groups=['Rep', 'Mentor'])
@@ -334,7 +334,7 @@ class EmailMentorNotification(RemoTestCase):
 class UserStatusNotification(RemoTestCase):
     """Tests email notifications when a user becomes unavailable."""
 
-    @patch('remo.profiles.models.send_remo_mail.apply_async')
+    @patch('remo.profiles.signals.send_remo_mail.apply_async')
     def test_base(self, mocked_mail):
         task = MagicMock()
         task.task_id = 1
@@ -350,7 +350,7 @@ class UserStatusNotification(RemoTestCase):
         eq_(data2['kwargs']['subject'], ('Reach out to {0} - expected to be available '
                                          'again').format(rep.get_full_name()))
 
-    @patch('remo.profiles.models.send_remo_mail.apply_async')
+    @patch('remo.profiles.signals.send_remo_mail.apply_async')
     def test_user_without_mentor(self, mocked_mail):
         task = MagicMock()
         task.task_id = 1

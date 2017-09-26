@@ -15,8 +15,6 @@ from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 from django.views.decorators.cache import cache_control, never_cache
 
-from django_statsd.clients import statsd
-
 import forms
 from remo.base.decorators import permission_check
 from remo.base.templatetags.helpers import urlparams
@@ -69,7 +67,6 @@ def manage_subscription(request, slug, subscribe=True):
                     subscribed_text = render_to_string(
                         'includes/subscribe_to_ical.jinja', {'event': event})
                     messages.info(request, mark_safe(subscribed_text))
-                    statsd.incr('events.subscribe_to_event')
                 else:
                     messages.info(request, 'You subscribed to this event.')
         else:
@@ -81,7 +78,6 @@ def manage_subscription(request, slug, subscribe=True):
             else:
                 attendance.delete()
                 messages.success(request, u'You have unsubscribed from this event.')
-                statsd.incr('events.unsubscribe_from_event')
 
     return redirect('events_view_event', slug=event.slug)
 
@@ -114,7 +110,6 @@ def view_event(request, slug):
         if event_comment_form.is_valid():
             event_comment_form.save()
             messages.success(request, 'Comment saved')
-            statsd.incr('events.create_comment')
 
             # provide new clean form
             event_comment_form = forms.EventCommentForm()
@@ -137,7 +132,6 @@ def delete_event_comment(request, slug, pk):
             event_comment = get_object_or_404(EventComment, pk=pk)
             event_comment.delete()
             messages.success(request, 'Comment successfully deleted.')
-            statsd.incr('events.delete_comment')
 
     event_url = reverse('events_view_event', kwargs={'slug': slug})
 
@@ -211,13 +205,10 @@ def edit_event(request, slug=None, clone=None):
 
         if created:
             messages.success(request, 'Event successfully created.')
-            statsd.incr('events.create_event')
         elif clone:
             messages.success(request, 'Event successfully created.')
-            statsd.incr('events.clone_event')
         else:
             messages.success(request, 'Event successfully updated.')
-            statsd.incr('events.edit_event')
 
         metrics_formset.save()
 
@@ -245,7 +236,6 @@ def delete_event(request, slug):
     if request.method == 'POST':
         event = get_object_or_404(Event, slug=slug)
         event.delete()
-        statsd.incr('events.deleted')
         messages.success(request, 'Event successfully deleted.')
 
     return redirect('events_list_events')
@@ -263,7 +253,6 @@ def export_single_event_to_ical(request, slug):
     ical_filename = event.slug + '.ics'
     response['Filename'] = ical_filename
     response['Content-Disposition'] = ('attachment; filename="%s"' % (ical_filename))
-    statsd.incr('events.export_single_ical')
     return response
 
 
@@ -276,7 +265,6 @@ def email_attendees(request, slug):
     if request.method == 'POST':
         email_form = EmailUsersForm(attendees, request.POST)
         if email_form.is_valid():
-            statsd.incr('events.email_attendees.total')
             email_form.send_mail(request)
         else:
             messages.error(request, 'Email not sent. Invalid data.')
@@ -305,5 +293,4 @@ def multiple_event_ical(request, period, start=None, end=None, search=None):
     if search:
         url = urlparams(url, query=search)
 
-    statsd.incr('events.export_multiple_ical')
     return redirect(urlparams(url, format='ical', offset=0, limit=0))

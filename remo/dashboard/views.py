@@ -7,7 +7,6 @@ from django.shortcuts import redirect, render
 from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 
-from django_statsd.clients import statsd
 from product_details import product_details
 
 import forms
@@ -90,7 +89,6 @@ def dashboard_mozillians(request, user):
     args['reps_current_events'] = reps_current_events
     args['tracked_interests'] = tracked_interests
     args['reps_email_form'] = reps_email_form
-    statsd.incr('dashboard.dashboard_mozillians')
     return render(request, 'dashboard_mozillians.jinja', args)
 
 
@@ -164,7 +162,6 @@ def dashboard(request):
             userprofile__registration_complete=True, userprofile__mentor=None)
         args['reps_without_profile'] = reps.filter(userprofile__registration_complete=False)
 
-    statsd.incr('dashboard.dashboard_reps')
     return render(request, 'dashboard_reps.jinja', args)
 
 

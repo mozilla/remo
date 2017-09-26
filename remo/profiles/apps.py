@@ -23,4 +23,5 @@ class ProfilesConfig(AppConfig):
     verbose_name = 'ReMo Profiles'
 
     def ready(self):
-        post_migrate.connect(profiles_set_groups, self)
+        import remo.profiles.signals  # noqa
+        post_migrate.connect(profiles_set_groups, sender=self)

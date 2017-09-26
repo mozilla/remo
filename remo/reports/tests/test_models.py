@@ -227,7 +227,7 @@ class NGReportEventCreationSignalTests(RemoTestCase):
 
 class NGReportCommentSignalTests(RemoTestCase):
 
-    @mock.patch('remo.reports.models.send_remo_mail.delay')
+    @mock.patch('remo.reports.signals.send_remo_mail.delay')
     def test_comment_one_user(self, mocked_mail):
         """Test sending email when a new comment is added on a NGReport
         and the user has the option enabled in his/her settings.
@@ -243,7 +243,7 @@ class NGReportCommentSignalTests(RemoTestCase):
         msg = '[Report] User {0} commented on {1}'.format(commenter.get_full_name(), report)
         eq_(mocked_data['subject'], msg)
 
-    @mock.patch('remo.reports.models.send_remo_mail.delay')
+    @mock.patch('remo.reports.signals.send_remo_mail.delay')
     def test_one_user_settings_False(self, mocked_mail):
         """Test sending email when a new comment is added on a NGReport
         and the user has the option disabled in his/her settings.
@@ -256,7 +256,7 @@ class NGReportCommentSignalTests(RemoTestCase):
                                       comment='This is a comment')
         ok_(not mocked_mail.called)
 
-    @mock.patch('remo.reports.models.send_remo_mail.delay')
+    @mock.patch('remo.reports.signals.send_remo_mail.delay')
     def test_comment_multiple_users(self, mocked_mail):
         """Test sending email when a new comment is added on a NGReport
         and the users have the option enabled in their settings.

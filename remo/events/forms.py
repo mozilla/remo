@@ -8,7 +8,6 @@ from django.core.validators import MinValueValidator
 from django.utils.timezone import make_naive, now
 from product_details import product_details
 
-from django_statsd.clients import statsd
 from pytz import common_timezones, timezone
 
 from remo.base.datetimewidgets import SplitSelectDateTimeWidget
@@ -364,7 +363,6 @@ class PostEventForm(EventForm):
 
             report = NGReport.objects.create(**attrs)
             report.functional_areas.add(*event.categories.all())
-            statsd.incr('reports.create_passive_post_event_metrics')
 
         return event
 

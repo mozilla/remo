@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models.signals import post_save
 from django.utils.encoding import python_2_unicode_compatible
 
 from remo.remozilla.models import Bug
@@ -91,6 +90,3 @@ class ActionItem(models.Model):
                        .values_list('id', flat=True))
         action_items = ActionItem.objects.filter(pk__in=items).filter(name__icontains=name)
         action_items.update(completed=True, resolved=True)
-
-
-post_save.connect(ActionItem.create, sender=Bug, dispatch_uid='create_action_items_bugzilla_sig')
