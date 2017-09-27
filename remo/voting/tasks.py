@@ -13,7 +13,7 @@ import pytz
 import waffle
 
 from remo.base.tasks import send_remo_mail
-from remo.base.utils import get_date, number2month
+from remo.base.utils import cache_lock, get_date, number2month
 from remo.celery import app
 from remo.dashboard.models import ActionItem
 
@@ -27,8 +27,8 @@ def rotm_nomination_end_date():
     return date(now().year, now().month, 10)
 
 
-@app.task
-def send_voting_mail(voting_id, subject, email_template):
+@app.task(bind=True)
+def send_voting_mail(self, voting_id, subject, email_template):
     """Send to user_list emails based rendered using email_template
     and populated with data.
 
@@ -43,7 +43,7 @@ def send_voting_mail(voting_id, subject, email_template):
 
     if poll.automated_poll:
         message = render_to_string(email_template, data)
-        send_mail(subject, message, settings.FROM_EMAIL, [settings.REPS_REVIEW_ALIAS])
+        args = [subject, message, settings.FROM_EMAIL, [settings.REPS_REVIEW_ALIAS]]
     else:
         user_list = User.objects.filter(groups=poll.valid_groups).exclude(username='remobot')
 
@@ -52,7 +52,12 @@ def send_voting_mail(voting_id, subject, email_template):
                         'userprofile': user.userprofile}
             ctx_data.update(data)
             message = render_to_string(email_template, ctx_data)
-            send_mail(subject, message, settings.FROM_EMAIL, [user.email])
+            args = [subject, message, settings.FROM_EMAIL, [user.email]]
+
+    lock_id = 'lock-{}-{}'.format(self.request.id, self.name)
+    with cache_lock(lock_id, self.app.oid) as acquired:
+        if acquired:
+            send_mail(*args)
 
 
 @app.task

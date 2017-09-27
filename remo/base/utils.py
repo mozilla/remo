@@ -6,8 +6,11 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Group, Permission
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+
+from contextlib import contextmanager
 
 
 def absolutify(url):
@@ -158,3 +161,18 @@ def get_quarter(date=None):
     quarter_start = datetime.datetime(date.year, first_month_of_quarter, 1)
 
     return (quarter, quarter_start)
+
+
+@contextmanager
+def cache_lock(lock_id, oid):
+    from celery.five import monotonic
+
+    lock_expire = 60 * 10
+    timeout_at = monotonic() + lock_expire - 3
+    status = cache.add(lock_id, oid, lock_expire)
+
+    try:
+        yield status
+    finally:
+        if monotonic() < timeout_at:
+            cache.delete(lock_id)

@@ -7,11 +7,12 @@ from django.template.loader import render_to_string
 
 import requests
 
+from remo.base.utils import cache_lock
 from remo.celery import app
 
 
-@app.task
-def send_remo_mail(subject, recipients_list, sender=None,
+@app.task(bind=True)
+def send_remo_mail(self, subject, recipients_list, sender=None,
                    message=None, email_template=None, data=None,
                    headers=None):
     """Send email from /sender/ to /recipients_list/ with /subject/ and
@@ -74,8 +75,13 @@ def send_remo_mail(subject, recipients_list, sender=None,
 
         # Add the headers to the mail data
         email_data.update({'headers': headers})
+
         # Send the email
-        EmailMessage(**email_data).send()
+
+        lock_id = 'lock-{}-{}'.format(self.request.id, self.name)
+        with cache_lock(lock_id, self.app.oid) as acquired:
+            if acquired:
+                EmailMessage(**email_data).send()
 
 
 @app.task
