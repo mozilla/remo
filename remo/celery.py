@@ -24,6 +24,9 @@ class Celery(BaseCelery):
 
 app = Celery('remo')
 
+app.add_defaults({
+    'worker_hijack_root_logger': False
+})
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
