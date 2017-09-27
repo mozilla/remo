@@ -73,6 +73,12 @@ def check_celery():
 
 
 @app.task
+def raise_exception():
+    """Dummy celery task to raise an exception."""
+    raise Exception
+
+
+@app.task
 def reset_rotm_nominees():
     """Reset the Rep of the month nomination in user profiles.
 
