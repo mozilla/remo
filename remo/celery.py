@@ -2,7 +2,9 @@ from __future__ import absolute_import
 
 import os
 
-from celery import Celery
+from celery import Celery as BaseCelery
+from raven.contrib.celery import register_signal, register_logger_signal
+from raven.contrib.django.raven_compat.models import client as raven_client
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'remo.settings')
@@ -11,6 +13,13 @@ from django.conf import settings  # noqa
 
 RUN_DAILY = 60 * 60 * 24
 RUN_HOURLY = 60 * 60
+
+
+class Celery(BaseCelery):
+    def on_configure(self):
+        register_logger_signal(raven_client)
+        register_signal(raven_client)
+
 
 app = Celery('remo')
 
