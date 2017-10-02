@@ -186,6 +186,8 @@ class RepResource(RemoThrottleMixin, ModelResource):
                 base_object_list = base_object_list.filter(groups__name='Review')
             elif group == 'peers':
                 base_object_list = base_object_list.filter(groups__name='Peers')
+            elif group == 'resources':
+                base_object_list = base_object_list.filter(groups__name='Resources')
 
         return base_object_list
 

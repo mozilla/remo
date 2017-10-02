@@ -31,7 +31,8 @@ class PollFactory(factory.django.DjangoModelFactory):
 
     @factory.lazy_attribute
     def valid_groups(self):
-        group_names = ['Admin', 'Council', 'Mentor', 'Rep', 'Mozillians', 'Review', 'Peers']
+        group_names = ['Admin', 'Council', 'Mentor', 'Rep', 'Mozillians', 'Review',
+                       'Peers', 'Resources']
         return Group.objects.filter(name__in=group_names).order_by('?')[0]
 
 

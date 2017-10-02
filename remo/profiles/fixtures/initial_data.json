@@ -62,5 +62,13 @@
             "name": "Peers",
             "permissions": []
         }
+    },
+    {
+        "pk": 9,
+        "model": "auth.group",
+        "fields": {
+            "name": "Resources",
+            "permissions": []
+        }
     }
 ]
