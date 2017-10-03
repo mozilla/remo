@@ -223,6 +223,11 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
                 {% if usergroups.count() %}
                   {{ pageuser.first_name }} is a
                   {% for group in usergroups %}
+                    {% if group.name == "Resources" %}
+                      <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
+                        Reps Resources
+                      </a> member
+                    {% endif %}
                     {% if group.name == "Mentor" %}
                       <a href="{{ url('profiles_list_profiles') }}group/{{ group.name }}/">
                         Reps Mentor

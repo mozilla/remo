@@ -82,7 +82,8 @@ def edit(request, display_name):
                       'Rep': 'rep_group',
                       'Alumni': 'alumni_group',
                       'Review': 'review_group',
-                      'Peers': 'peers_group'}
+                      'Peers': 'peers_group',
+                      'Resources': 'resources_group'}
 
             for group_db, group_html in groups.items():
                 if Group.objects.filter(name=group_db).exists():
@@ -114,7 +115,8 @@ def edit(request, display_name):
         user = User.objects.get(pk=user.id)
 
     group_bits = map(lambda x: user.groups.filter(name=x).exists(),
-                     ['Admin', 'Council', 'Mentor', 'Rep', 'Alumni', 'Review', 'Peers'])
+                     ['Admin', 'Council', 'Mentor', 'Rep', 'Alumni', 'Review', 'Peers',
+                      'Resources'])
 
     functional_areas = map(int, profileform['functional_areas'].value())
     user_is_alumni = user.groups.filter(name='Alumni').exists()
@@ -169,7 +171,7 @@ def view_profile(request, display_name):
     nominee_form = forms.RotmNomineeForm(request.POST or None,
                                          instance=user.userprofile)
 
-    usergroups = user.groups.filter(Q(name='Mentor') | Q(name='Council'))
+    usergroups = user.groups.filter(Q(name='Mentor') | Q(name='Council') | Q(name='Resources'))
     is_nomination_period = now().date() < rotm_nomination_end_date()
     data = {'pageuser': user,
             'user_profile': user.userprofile,
