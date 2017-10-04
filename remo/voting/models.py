@@ -103,12 +103,9 @@ class Poll(models.Model):
             if not settings.CELERY_TASK_ALWAYS_EAGER:
                 if self.is_current_voting:
                     celery_app.control.revoke(self.task_end_id)
-                    self.task_end_id = ''
                 elif self.is_future_voting:
                     celery_app.control.revoke(self.task_start_id)
                     celery_app.control.revoke(self.task_end_id)
-                    self.task_end_id = ''
-                    self.task_start_id = ''
 
             if not self.is_future_voting:
                 obj = Poll.objects.get(pk=self.id)
@@ -237,7 +234,7 @@ def poll_email_reminder(sender, instance, raw, **kwargs):
                                         'subject': subject_start,
                                         'email_template': start_template})
         Poll.objects.filter(pk=instance.pk).update(task_start_id=start_reminder.task_id)
-    if not instance.task_end_id:
+    if not instance.is_past_voting:
         end_reminder = send_voting_mail.apply_async(
             eta=instance.end, kwargs={'voting_id': instance.id,
                                       'subject': subject_end,

@@ -118,7 +118,9 @@ def create_rotm_poll():
     create_poll_flag = True
 
     poll_name = 'Rep of the month for {0}'.format(number2month(now().month))
-    start = datetime.combine(rotm_nomination_end_date(), datetime.min.time()) + timedelta(days=1)
+    start = (datetime.combine(rotm_nomination_end_date(),
+                              datetime.min.time()) +
+             timedelta(days=1)).replace(tzinfo=pytz.UTC)
     end = start + timedelta(days=ROTM_VOTING_DAYS)
     rotm_poll = Poll.objects.filter(name=poll_name, start=start, end=end)
 

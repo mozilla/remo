@@ -1,3 +1,4 @@
+import pytz
 from datetime import datetime, timedelta
 
 from django.db.models.signals import post_save
@@ -150,7 +151,7 @@ class VotingRotmTestTasks(RemoTestCase):
         UserFactory.create(username='remobot')
         # Nomination ends on the 10th of each month
         mocked_now_date.return_value = datetime(now().year, now().month, 10)
-        poll_start = datetime(now().year, now().month, 1)
+        poll_start = datetime(now().year, now().month, 1, tzinfo=pytz.UTC)
         poll_end = poll_start + timedelta(days=14)
         poll_name = ('Rep of the month for {0}'.format(
                      number2month(now().month)))
