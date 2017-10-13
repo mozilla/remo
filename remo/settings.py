@@ -350,6 +350,14 @@ CSP_SCRIPT_SRC = (
 
     # Allow google-analytics
     "'sha256-8w+7qKYFP3Pxpf/bGVp4hbU7I3vcqFSwUaUnkuBl4mc='",
+    # Allow Django admin scripts
+    "'sha256-YAeNgc46QF0YbTBOhlJJtwaOwJTu1UEvFVe3ljLBobg='",
+    "'sha256-oCFnYcAHSMaBkeLUfc1dt043IHsvnM7FYC8rNVTr4z4='",
+    "'sha256-SjfMQo173oGUAkxAJmT3YNTlryI5ou9f6HkUz0QUJQs='",
+    "'sha256-lV6Q4R6n6P5zkatU4DiQ40kagqmlwvF0XXvRV/UfpPU='",
+    "'sha256-fH3rM69L3MlQuLHwmENXZ9SSP9u+7mECRGOpE5pY/Hw='",
+    "'sha256-fH3rM69L3MlQuLHwmENXZ9SSP9u+7mECRGOpE5pY/Hw='",
+    "'sha256-aGve+DiECXZoKccqA0Ry5ralTx6/zA1ehcFkWyKrlrU='",
 )
 CSP_STYLE_SRC = (
     "'self'",
