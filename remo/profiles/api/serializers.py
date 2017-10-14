@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from remo.api.serializers import BaseKPISerializer
 from remo.base.templatetags.helpers import absolutify
-from remo.profiles.models import FunctionalArea, UserProfile
+from remo.profiles.models import FunctionalArea, UserProfile, MobilisingInterest, MobilisingSkill
 
 
 class FunctionalAreaSerializer(serializers.ModelSerializer):
@@ -13,6 +13,24 @@ class FunctionalAreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = FunctionalArea
         queryset = FunctionalArea.objects.filter(active=True)
+        fields = ['name']
+
+
+class MobilisingSkillSerializer(serializers.ModelSerializer):
+    """Serializer for the MobilisingSkill model."""
+
+    class Meta:
+        model = MobilisingSkill
+        queryset = MobilisingSkill.objects.filter(active=True)
+        fields = ['name']
+
+
+class MobilisingInterestSerializer(serializers.ModelSerializer):
+    """Serializer for the MobilisingInterest model."""
+
+    class Meta:
+        model = MobilisingInterest
+        queryset = MobilisingInterest.objects.filter(active=True)
         fields = ['name']
 
 
@@ -40,6 +58,8 @@ class UserProfileDetailedSerializer(serializers.HyperlinkedModelSerializer):
     mentor = UserSerializer()
     groups = GroupSerializer(source='user.groups', many=True)
     functional_areas = FunctionalAreaSerializer(many=True)
+    mobilising_skills = MobilisingSkillSerializer(many=True)
+    mobilising_interests = MobilisingInterestSerializer(many=True)
     remo_url = serializers.SerializerMethodField()
     date_joined_program = serializers.DateTimeField(format='%Y-%m-%d')
     date_left_program = serializers.DateTimeField(format='%Y-%m-%d')
@@ -51,9 +71,9 @@ class UserProfileDetailedSerializer(serializers.HyperlinkedModelSerializer):
                   'date_joined_program', 'date_left_program', 'city', 'region',
                   'country', 'twitter_account', 'jabber_id', 'irc_name',
                   'wiki_profile_url', 'irc_channels', 'linkedin_url',
-                  'facebook_url', 'diaspora_url', 'functional_areas', 'bio',
-                  'mentor', 'mozillians_profile_url', 'timezone', 'groups',
-                  'remo_url']
+                  'facebook_url', 'diaspora_url', 'functional_areas', 'mobilising_skills',
+                  'mobilising_interests', 'bio', 'mentor', 'mozillians_profile_url',
+                  'timezone', 'groups', 'remo_url']
 
     def get_remo_url(self, obj):
         """

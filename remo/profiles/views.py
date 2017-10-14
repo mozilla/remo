@@ -24,7 +24,7 @@ from remo.base.decorators import permission_check
 from remo.base.templatetags.helpers import urlparams
 from remo.events.utils import get_events_for_user
 from remo.profiles.models import UserProfile, UserStatus
-from remo.profiles.models import FunctionalArea
+from remo.profiles.models import FunctionalArea, MobilisingInterest, MobilisingSkill
 from remo.voting.tasks import rotm_nomination_end_date
 
 USERNAME_ALGO = getattr(settings, 'OIDC_USERNAME_ALGO', default_username_algo)
@@ -119,6 +119,8 @@ def edit(request, display_name):
                       'Resources'])
 
     functional_areas = map(int, profileform['functional_areas'].value())
+    mobilising_skills = map(int, profileform['mobilising_skills'].value())
+    mobilising_interests = map(int, profileform['mobilising_interests'].value())
     user_is_alumni = user.groups.filter(name='Alumni').exists()
 
     return render(request, 'profiles_edit.jinja',
@@ -129,6 +131,8 @@ def edit(request, display_name):
                    'group_bits': group_bits,
                    'range_years': range(1950, now().date().year - 11),
                    'functional_areas': functional_areas,
+                   'mobilising_skills': mobilising_skills,
+                   'mobilising_interests': mobilising_interests,
                    'user_is_alumni': user_is_alumni})
 
 
@@ -152,7 +156,9 @@ def list_profiles(request):
     return render(request, 'profiles_people.jinja',
                   {'countries': countries,
                    'reps': reps,
-                   'areas': FunctionalArea.objects.all()})
+                   'areas': FunctionalArea.objects.all(),
+                   'skills': MobilisingSkill.objects.all(),
+                   'interests': MobilisingInterest.objects.all()})
 
 
 @cache_control(private=True, max_age=60 * 5)

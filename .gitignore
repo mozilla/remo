@@ -4,11 +4,13 @@ settings/local.py
 *.py[co]
 *.sw[po]
 .coverage
+.tox
 pip-log.txt
 docs/_gh-pages
 build.py
 build
 .DS_Store
+.vscode
 .noseids
 tmp/*
 *~

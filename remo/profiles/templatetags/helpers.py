@@ -56,6 +56,21 @@ def get_functional_area(name):
     except FunctionalArea.DoesNotExist:
         return None
 
+@library.filter
+def get_mobilising_skill(name):
+    """Return the Mobilising Skills object given the name."""
+    try:
+        return MobilisingSkill.objects.get(name=name)
+    except MobilisingSkill.DoesNotExist:
+        return None
+
+@library.filter
+def get_mobilising_interest(name):
+    """Return the Mobilising Interest object given the name."""
+    try:
+        return MobilisingInterest.objects.get(name=name)
+    except MobilisingInterest.DoesNotExist:
+        return None
 
 @library.filter
 def get_activity_level(user):

@@ -73,6 +73,16 @@ Mozilla Reps - Settings
                     <a href="{{ url('list_functional_areas') }}">Edit functional areas</a>
                   </p>
                 {% endif %}
+                {% if user_is_admin(user) %}
+                  <p>
+                    <a href="{{ url('list_mobilising_skills') }}">Edit mobilising skills</a>
+                  </p>
+                {% endif %}
+                {% if user_is_admin(user) %}
+                  <p>
+                    <a href="{{ url('list_mobilising_interests') }}">Edit mobilising interests</a>
+                  </p>
+                {% endif %}
                 <p>
                   <a href="{{ url('list_activities') }}">Edit activities</a>
                 </p>
