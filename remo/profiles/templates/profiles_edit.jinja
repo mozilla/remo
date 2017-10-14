@@ -488,6 +488,42 @@
             <div class="required-field"></div>
           </div>
         </div>
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large tools"></div>
+          </div>
+          <div class="large-11 columns edit-profile-item" id="skills">
+            <div>
+                <button class="small white button nice radius"
+                        data-reveal-id="mobilising-skills-modal"
+                        id="skills-button">Mark your mobilising skills</button>
+                {% if profileform.mobilising_skills.errors %}
+                  <small class="error">
+                    Please mark your mobilising skills
+                  </small>
+                {% endif %}
+            </div>
+            <div class="required-field"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="large-1 columns">
+            <div class="pict-icon large heart"></div>
+          </div>
+          <div class="large-11 columns edit-profile-item" id="mobilising-interest">
+            <div>
+                <button class="small white button nice radius"
+                        data-reveal-id="mobilising-interests-modal"
+                        id="interest-button">Mark your mobilising interests</button>
+                {% if profileform.mobilising_interests.errors %}
+                  <small class="error">
+                    Please mark your mobilising interests
+                  </small>
+                {% endif %}
+            </div>
+            <div class="required-field"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -623,6 +659,60 @@
       </ul>
       <a href="#" class="button small update close-reveal-modal">
         Choose these areas &raquo;
+      </a>
+    </div>
+
+    <!-- Mobilising skills modal -->
+    <div id="mobilising-skills-modal" class="reveal-modal medium">
+      <a class="close-reveal-modal">&#215;</a>
+      <p class="lead">
+        Specify your skills in Mobilising
+      </p>
+      <h3>
+        Mobilising Skills
+      </h3>
+      <ul class="large-block-grid-3 small-block-grid-1">
+        {% for choice in profileform.mobilising_skills.field.choices %}
+          <li>
+            <label for="{{ choice.1|replace(" ","-") }}-bit">
+              <input type="checkbox" name="mobilising_skills" value="{{ choice.0 }}"
+                     id="{{ choice.1|replace(" ","-") }}-bit"
+                     {% if choice.0 in mobilising_skills %}
+                       checked="checked"
+                     {% endif %}/>
+              {{ choice.1 }}
+          </li>
+        {% endfor %}
+      </ul>
+      <a href="#" class="button small update close-reveal-modal">
+        Choose these skills &raquo;
+      </a>
+    </div>
+
+    <!-- Mobilising interests modal -->
+    <div id="mobilising-interests-modal" class="reveal-modal medium">
+      <a class="close-reveal-modal">&#215;</a>
+      <p class="lead">
+        Specify your interests in Mobilising
+      </p>
+      <h3>
+        Mobilising Interests
+      </h3>
+      <ul class="large-block-grid-3 small-block-grid-1">
+        {% for choice in profileform.mobilising_interests.field.choices %}
+          <li>
+            <label for="{{ choice.1|replace(" ","-") }}-bit">
+              <input type="checkbox" name="mobilising_interests" value="{{ choice.0 }}"
+                     id="{{ choice.1|replace(" ","-") }}-bit"
+                     {% if choice.0 in mobilising_interests %}
+                       checked="checked"
+                     {% endif %}/>
+              {{ choice.1 }}
+          </li>
+        {% endfor %}
+      </ul>
+      <a href="#" class="button small update close-reveal-modal">
+        Choose these interests &raquo;
       </a>
     </div>
   </form>

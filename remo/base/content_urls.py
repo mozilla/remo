@@ -4,8 +4,8 @@ from django.core.urlresolvers import reverse_lazy
 from remo.base.views import BaseCreateView, BaseListView, BaseUpdateView
 from remo.events.models import EventMetric
 from remo.events.forms import EventMetricForm
-from remo.profiles.forms import FunctionalAreaForm
-from remo.profiles.models import FunctionalArea
+from remo.profiles.forms import FunctionalAreaForm, MobilisingSkillForm, MobilisingInterestForm
+from remo.profiles.models import FunctionalArea, MobilisingSkill, MobilisingInterest
 from remo.reports.forms import ActivityForm, CampaignForm
 from remo.reports.models import Activity, Campaign
 
@@ -61,6 +61,36 @@ urlpatterns = patterns(
             model=FunctionalArea, form_class=FunctionalAreaForm,
             success_url=reverse_lazy('list_functional_areas')),
         name='edit_functional_area'),
+    url('^mobilising_skills/$',
+        BaseListView.as_view(
+            model=MobilisingSkill,
+            create_object_url=reverse_lazy('create_mobilising_skills')),
+        name='list_mobilising_skills'),
+    url('^mobilising_skills/new/$',
+        BaseCreateView.as_view(
+            model=MobilisingSkill, form_class=MobilisingSkillForm,
+            success_url=reverse_lazy('list_mobilising_skills')),
+        name='create_mobilising_skills'),
+    url('^mobilising_skills/(?P<pk>\d+)/edit/$',
+        BaseUpdateView.as_view(
+            model=MobilisingSkill, form_class=MobilisingSkillForm,
+            success_url=reverse_lazy('list_mobilising_skills')),
+        name='edit_mobilising_skills'),
+    url('^mobilising_interests/$',
+        BaseListView.as_view(
+            model=MobilisingInterest,
+            create_object_url=reverse_lazy('create_mobilising_interests')),
+        name='list_mobilising_interests'),
+    url('^mobilising_interests/new/$',
+        BaseCreateView.as_view(
+            model=MobilisingInterest, form_class=MobilisingInterestForm,
+            success_url=reverse_lazy('list_mobilising_interests')),
+        name='create_mobilising_interests'),
+    url('^mobilising_interests/(?P<pk>\d+)/edit/$',
+        BaseUpdateView.as_view(
+            model=MobilisingSkill, form_class=MobilisingInterestForm,
+            success_url=reverse_lazy('list_mobilising_interests')),
+        name='edit_mobilising_interests'),
     url('^metrics/$',
         BaseListView.as_view(
             model=EventMetric,

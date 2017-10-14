@@ -94,6 +94,60 @@ class FunctionalArea(models.Model):
         verbose_name_plural = 'functional areas'
 
 
+@python_2_unicode_compatible
+class MobilisingSkill(models.Model):
+    """Mobilising skills."""
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(blank=True, max_length=100)
+    active = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    active_objects = GenericActiveManager()
+
+    def save(self, *args, **kwargs):
+        # Create unique slug
+        if not self.slug:
+            self.slug = slugify(self.name, instance=self)
+        super(MobilisingSkill, self).save(*args, **kwargs)
+
+    def get_absolute_edit_url(self):
+        return reverse('edit_mobilising_skills', kwargs={'pk': self.id})
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'mobilising skill'
+        verbose_name_plural = 'mobilising skills'
+
+@python_2_unicode_compatible
+class MobilisingInterest(models.Model):
+    """Mobilising interests."""
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(blank=True, max_length=100)
+    active = models.BooleanField(default=True)
+
+    objects = models.Manager()
+    active_objects = GenericActiveManager()
+
+    def save(self, *args, **kwargs):
+        # Create unique slug
+        if not self.slug:
+            self.slug = slugify(self.name, instance=self)
+        super(MobilisingInterest, self).save(*args, **kwargs)
+
+    def get_absolute_edit_url(self):
+        return reverse('edit_mobilising_interests', kwargs={'pk': self.id})
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'mobilising skill'
+        verbose_name_plural = 'mobilising skills'
+
 class UserProfile(models.Model):
     """Definition of UserProfile Model."""
     user = models.OneToOneField(User)
@@ -159,6 +213,10 @@ class UserProfile(models.Model):
                                on_delete=models.SET_NULL)
     functional_areas = models.ManyToManyField(
         FunctionalArea, related_name='users_matching')
+    mobilising_skills = models.ManyToManyField(
+        MobilisingSkill, related_name='users_matching')
+    mobilising_interests = models.ManyToManyField(
+        MobilisingInterest, related_name='users_matching')
     tracked_functional_areas = models.ManyToManyField(
         FunctionalArea, related_name='users_tracking')
     receive_email_on_add_comment = models.BooleanField(null=False,

@@ -10,6 +10,8 @@ ProfilesLib.noresults_elm = $('#profiles_noresults');
 ProfilesLib.adv_search_country_elm = $('#adv-search-country');
 ProfilesLib.adv_search_group_elm = $('#adv-search-group');
 ProfilesLib.adv_search_area_elm = $('#adv-search-area');
+ProfilesLib.adv_search_skill_elm = $('#adv-search-skill');
+ProfilesLib.adv_search_interest_elm = $('#adv-search-interest');
 ProfilesLib.search_ready_icon_elm = $('#search-ready-icon');
 ProfilesLib.search_loading_icon_elm = $('#search-loading-icon');
 ProfilesLib.grid_search_list_elm = $('#grid-search-list');
@@ -219,6 +221,18 @@ function send_query(newquery) {
         extra_q += '&profile__functional_areas__name__iexact=' + area;
     }
 
+    var skill = hash_get_value('skill');
+    set_dropdown_value(ProfilesLib.adv_search_skill_elm, skill);
+    if (skill) {
+        extra_q += '&profile__mobilising_skills__name__iexact=' + skill;
+    }
+
+    var interest = hash_get_value('interest');
+    set_dropdown_value(ProfilesLib.adv_search_interest_elm, interest);
+    if (interest) {
+        extra_q += '&profile__mobilising_interests__name__iexact=' + interest;
+    }
+
     var search = hash_get_value('search');
     ProfilesLib.searchfield_elm.val(search);
     if (search) {
@@ -306,6 +320,14 @@ function bind_events() {
         hash_set_value('area', ProfilesLib.adv_search_area_elm.val());
     });
 
+    ProfilesLib.adv_search_skill_elm.change(function() {
+        hash_set_value('skill', ProfilesLib.adv_search_skill_elm.val());
+    });
+
+    ProfilesLib.adv_search_interest_elm.change(function() {
+        hash_set_value('interest', ProfilesLib.adv_search_interest_elm.val());
+    });
+
     ProfilesLib.window_elm.bind('hashchange', function(e) {
         // Set icon.
         ProfilesLib.search_ready_icon_elm.hide();
@@ -324,6 +346,8 @@ function unbind_events() {
     ProfilesLib.adv_search_country_elm.unbind('change');
     ProfilesLib.adv_search_group_elm.unbind('change');
     ProfilesLib.adv_search_area_elm.unbind('change');
+    ProfilesLib.adv_search_skill_elm.unbind('change');
+    ProfilesLib.adv_search_interest_elm.unbind('change');
     ProfilesLib.window_elm.unbind('hashchange');
 }
 
@@ -407,6 +431,8 @@ $(document).ready(function () {
     // Set values to fields.
     set_dropdown_value(ProfilesLib.adv_search_group_elm, hash_get_value('group'));
     set_dropdown_value(ProfilesLib.adv_search_area_elm, hash_get_value('area'));
+    set_dropdown_value(ProfilesLib.adv_search_skill_elm, hash_get_value('skill'));
+    set_dropdown_value(ProfilesLib.adv_search_interest_elm, hash_get_value('interest'));
     set_dropdown_value(ProfilesLib.adv_search_country_elm, hash_get_value('country'));
 
     // Bind events.
