@@ -406,6 +406,7 @@ CACHES = {
         'BACKEND': config('CACHE_BACKEND',
                           default='django.core.cache.backends.memcached.MemcachedCache'),
         'LOCATION': config('CACHE_URL', default='127.0.0.1:11211'),
+        'KEY_PREFIX': config('CACHE_KEY_PREFIX', default='remo')
     }
 }
 
