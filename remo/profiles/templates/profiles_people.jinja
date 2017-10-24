@@ -71,6 +71,22 @@
             {% endfor %}
           </select>
         </div>
+        <div class="large-3 columns">
+          <select id="adv-search-skill">
+            <option value="">All Mobiliser Skills</option>
+            {% for skill in skills %}
+              <option value="{{ skill|lower }}">{{ skill }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="large-3 columns">
+          <select id="adv-search-interest">
+            <option value="">All Mobiliser Interests</option>
+            {% for interest in interests %}
+              <option value="{{ interest|lower }}">{{ interest }}</option>
+            {% endfor %}
+          </select>
+        </div>
         <div class="large-3 columns align-center">
           {% if user.is_authenticated() %}
             <button id="csv-export-button"

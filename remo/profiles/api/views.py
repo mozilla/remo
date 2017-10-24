@@ -35,6 +35,10 @@ class UserProfileFilter(django_filters.FilterSet):
     groups = django_filters.CharFilter(name='groups__name')
     functional_areas = django_filters.CharFilter(
         name='userprofile__functional_areas__name')
+    mobilising_skills = django_filters.CharFilter(
+        name='userprofile__mobilising_skills__name')
+    mobilising_interests = django_filters.CharFilter(
+        name='userprofile__mobilising_interests__name')
     mentor = django_filters.CharFilter(name='userprofile__mentor')
     city = django_filters.CharFilter(name='userprofile__city')
     region = django_filters.CharFilter(name='userprofile__region')

@@ -488,6 +488,44 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           </div>
         </div>
       {% endif %}
+      {% if user_profile.mobilising_skills.all() %}
+        <div class="row profile-detail-list">
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large tools"></div>
+          </div>
+          <div class="large-11 columns">
+            <p class="profile-item">
+              <span class="label radius">
+                Mobilising Skills
+              </span>
+              &nbsp;
+              {% for skill in user_profile.mobilising_skills.all() %}
+                <a href="{{ url('profiles_list_profiles') }}skills/{{ skill.name }}/">
+                   {{ skill.name }}</a>{% if not loop.last %}, {% endif %}
+              {% endfor %}
+            </p>
+          </div>
+        </div>
+      {% endif %}
+      {% if user_profile.mobilising_interests.all() %}
+        <div class="row profile-detail-list">
+          <div class="large-1 columns pictogram">
+            <div class="pict-icon large heart"></div>
+          </div>
+          <div class="large-11 columns">
+            <p class="profile-item">
+              <span class="label radius">
+                Mobilising Interests
+              </span>
+              &nbsp;
+              {% for interest in user_profile.mobilising_interests.all() %}
+                <a href="{{ url('profiles_list_profiles') }}interest/{{ interest.name }}/">
+                   {{ interest.name }}</a>{% if not loop.last %}, {% endif %}
+              {% endfor %}
+            </p>
+          </div>
+        </div>
+      {% endif %}
       {% if perms.profiles.can_edit_profiles %}
         {% if added_by %}
           <div class="row profile-detail-list">
