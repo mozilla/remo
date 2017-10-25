@@ -71,3 +71,7 @@ Running ReMo
      (lots of output - be patient...)
 
 #. Open the `local site <http://127.0.0.1:8000>`_ and develop!
+
+#. Run tests::
+
+     $ docker-compose run web ./manage.py test

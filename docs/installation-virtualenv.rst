@@ -165,5 +165,9 @@ When you want to start contributing...
       Bugzilla. Ping `nemo-yiannis` or `tasos` on #remo-dev to give you access if
       your project requires it.
 
+#. Run tests::
+
+     (venv)$ ./manage.py test
+
 .. _MySQL site: http://dev.mysql.com/downloads/mysql/
 .. _Fork the main ReMo repository: https://github.com/mozilla/remo/fork
