@@ -253,7 +253,8 @@ class UserProfile(models.Model):
     class Meta:
         permissions = (('create_user', 'Can create new user'),
                        ('can_edit_profiles', 'Can edit profiles'),
-                       ('can_delete_profiles', 'Can delete profiles'))
+                       ('can_delete_profiles', 'Can delete profiles'),
+                       ('can_change_mentor', 'Can change mentors'))
 
     def get_absolute_url(self):
         return reverse('remo.profiles.views.view_profile',
