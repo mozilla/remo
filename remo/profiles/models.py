@@ -146,8 +146,8 @@ class MobilisingInterest(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'mobilising skill'
-        verbose_name_plural = 'mobilising skills'
+        verbose_name = 'mobilising interest'
+        verbose_name_plural = 'mobilising interests'
 
 
 class UserProfile(models.Model):
