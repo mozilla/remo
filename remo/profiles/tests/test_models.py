@@ -281,7 +281,8 @@ class PermissionTest(RemoTestCase):
         """Setup tests."""
         self.permissions = [
             'profiles.create_user',
-            'profiles.can_edit_profiles']
+            'profiles.can_edit_profiles',
+            'profiles.can_change_mentor']
 
     def test_admin_group_has_all_permissions(self):
         """Test that admin group has all permissions."""
@@ -289,11 +290,10 @@ class PermissionTest(RemoTestCase):
         for permission in self.permissions:
             ok_(admin.has_perm(permission))
 
-    def test_council_group_has_no_permissions(self):
-        """Test that council group has no permissions."""
+    def test_council_group_has_mentor_change_permissions(self):
+        """Test that council group has mentor change permissions."""
         councelor = UserFactory.create(groups=['Council'])
-        for permission in self.permissions:
-            ok_(not councelor.has_perm(permission))
+        ok_(councelor.has_perm('profiles.can_edit_profiles'))
 
     def test_mentor_group_has_one_permission(self):
         """Test that mentor group has only create_user permission."""
