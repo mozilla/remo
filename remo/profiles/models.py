@@ -216,9 +216,11 @@ class UserProfile(models.Model):
     functional_areas = models.ManyToManyField(
         FunctionalArea, related_name='users_matching')
     mobilising_skills = models.ManyToManyField(
-        MobilisingSkill, related_name='users_matching_skills')
+        MobilisingSkill, related_name='users_matching_skills',
+        blank=True)
     mobilising_interests = models.ManyToManyField(
-        MobilisingInterest, related_name='users_matching_interests')
+        MobilisingInterest, related_name='users_matching_interests',
+        blank=True)
     tracked_functional_areas = models.ManyToManyField(
         FunctionalArea, related_name='users_tracking')
     receive_email_on_add_comment = models.BooleanField(null=False,
@@ -251,7 +253,8 @@ class UserProfile(models.Model):
     class Meta:
         permissions = (('create_user', 'Can create new user'),
                        ('can_edit_profiles', 'Can edit profiles'),
-                       ('can_delete_profiles', 'Can delete profiles'))
+                       ('can_delete_profiles', 'Can delete profiles'),
+                       ('can_change_mentor', 'Can change mentors'))
 
     def get_absolute_url(self):
         return reverse('remo.profiles.views.view_profile',
@@ -430,7 +433,10 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
         display_name = display_name[:DISPLAY_NAME_MAX_LENGTH]
 
         while True:
-            instance.display_name = display_name
+            # User created with management command can have blank email.
+            # That may result blank display_name.
+            # As display_name can not be blank, add `_` if its blank
+            instance.display_name = display_name or '_'
 
             try:
                 instance.validate_unique()

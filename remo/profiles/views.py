@@ -30,9 +30,15 @@ from remo.voting.tasks import rotm_nomination_end_date
 USERNAME_ALGO = getattr(settings, 'OIDC_USERNAME_ALGO', default_username_algo)
 
 
+def check_user_status(user):
+    if user.is_superuser or user.groups.filter(name__in=['Rep', 'Admin']):
+        return True
+
+    return False
+
+
 @never_cache
-@user_passes_test(lambda u: u.groups.filter(Q(name='Rep') | Q(name='Admin')),
-                  login_url=settings.LOGIN_REDIRECT_URL)
+@user_passes_test(check_user_status, login_url=settings.LOGIN_REDIRECT_URL)
 @permission_check(permissions=['profiles.can_edit_profiles'],
                   filter_field='display_name', owner_field='user',
                   model=UserProfile)

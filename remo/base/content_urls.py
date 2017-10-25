@@ -63,31 +63,37 @@ urlpatterns = patterns(
         name='edit_functional_area'),
     url('^mobilising_skills/$',
         BaseListView.as_view(
+            groups=['Admin', 'Council'],
             model=MobilisingSkill,
             create_object_url=reverse_lazy('create_mobilising_skills')),
         name='list_mobilising_skills'),
     url('^mobilising_skills/new/$',
         BaseCreateView.as_view(
+            groups=['Admin', 'Council'],
             model=MobilisingSkill, form_class=MobilisingSkillForm,
             success_url=reverse_lazy('list_mobilising_skills')),
         name='create_mobilising_skills'),
     url('^mobilising_skills/(?P<pk>\d+)/edit/$',
         BaseUpdateView.as_view(
+            groups=['Admin', 'Council'],
             model=MobilisingSkill, form_class=MobilisingSkillForm,
             success_url=reverse_lazy('list_mobilising_skills')),
         name='edit_mobilising_skills'),
     url('^mobilising_interests/$',
         BaseListView.as_view(
+            groups=['Admin', 'Council'],
             model=MobilisingInterest,
             create_object_url=reverse_lazy('create_mobilising_interests')),
         name='list_mobilising_interests'),
     url('^mobilising_interests/new/$',
         BaseCreateView.as_view(
+            groups=['Admin', 'Council'],
             model=MobilisingInterest, form_class=MobilisingInterestForm,
             success_url=reverse_lazy('list_mobilising_interests')),
         name='create_mobilising_interests'),
     url('^mobilising_interests/(?P<pk>\d+)/edit/$',
         BaseUpdateView.as_view(
+            groups=['Admin', 'Council'],
             model=MobilisingSkill, form_class=MobilisingInterestForm,
             success_url=reverse_lazy('list_mobilising_interests')),
         name='edit_mobilising_interests'),
