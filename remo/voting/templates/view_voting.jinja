@@ -20,7 +20,7 @@ Mozilla Reps - {{ poll.name }} - Results
         </div>
         <div class="large-9 pull-2 columns">
           <div class="row">
-            <div class="large-10 columns end">
+            <div class="large-12 columns end">
               <div class="voting-single-date">
                 <div class="row">
                   {% if not is_multiday(poll.start, poll.end) %}
@@ -62,7 +62,7 @@ Mozilla Reps - {{ poll.name }} - Results
                         <div class="row">
                           <div class="large-7 small-6 columns date">
                             <time>
-                              {{ poll.start|strftime('%d %b %Y')|upper }}
+                              {{ poll.start|strftime('%d %b %Y %H:%M')|upper }}
                             </time>
                           </div>
                           <div class="large-5 small-6 columns day">
@@ -72,7 +72,7 @@ Mozilla Reps - {{ poll.name }} - Results
                         <div class="row">
                           <div class="large-7 small-6 columns date">
                             <time>
-                              {{ poll.end|strftime('%d %b %Y')|upper }}
+                              {{ poll.end|strftime('%d %b %Y %H:%M')|upper }}
                             </time>
                           </div>
                           <div class="large-5 small-6 columns day">
