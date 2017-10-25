@@ -9,7 +9,8 @@ import factory
 from factory import fuzzy
 from product_details import product_details
 
-from remo.profiles.models import (FunctionalArea, UserAvatar, UserProfile,
+from remo.profiles.models import (FunctionalArea, MobilisingInterest, MobilisingSkill,
+                                  UserAvatar, UserProfile,
                                   UserStatus, create_profile,
                                   email_mentor_notification,
                                   user_set_inactive_post_save)
@@ -26,6 +27,24 @@ class FunctionalAreaFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = FunctionalArea
+
+
+class MobilisingSkillFactory(factory.django.DjangoModelFactory):
+    """Factory for FunctionalArea model."""
+
+    name = factory.Sequence(lambda n: 'Mobilising Skill #%s' % n)
+
+    class Meta:
+        model = MobilisingSkill
+
+
+class MobilisingInterestFactory(factory.django.DjangoModelFactory):
+    """Factory for FunctionalArea model."""
+
+    name = factory.Sequence(lambda n: 'Mobilising Interest #%s' % n)
+
+    class Meta:
+        model = MobilisingInterest
 
 
 class UserProfileFactory(factory.django.DjangoModelFactory):

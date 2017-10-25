@@ -1,0 +1,20 @@
+[
+  {
+      "pk": 2,
+      "model": "profiles.mobilisingskill",
+      "fields": {
+          "active": true,
+          "name": "WebVR",
+          "slug": "WebVR"
+      }
+  },
+  {
+      "pk": 3,
+      "model": "profiles.mobilisingskill",
+      "fields": {
+          "active": true,
+          "name": "Rust",
+          "slug": "Rust"
+      }
+  }
+]

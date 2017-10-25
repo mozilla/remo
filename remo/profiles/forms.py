@@ -15,7 +15,8 @@ from pytz import common_timezones
 
 from remo.base.templatetags.helpers import user_is_rep
 from remo.base.utils import get_date
-from remo.profiles.models import FunctionalArea, UserProfile, UserStatus
+from remo.profiles.models import (FunctionalArea, MobilisingInterest, MobilisingSkill,
+                                  UserProfile, UserStatus)
 
 
 USERNAME_ALGO = getattr(settings, 'OIDC_USERNAME_ALGO', default_username_algo)
@@ -159,7 +160,8 @@ class ChangeProfileForm(happyforms.ModelForm):
                   'irc_channels', 'facebook_url', 'linkedin_url',
                   'diaspora_url', 'personal_website_url', 'personal_blog_feed',
                   'bio', 'gender', 'mentor', 'wiki_profile_url',
-                  'functional_areas', 'timezone')
+                  'functional_areas', 'mobilising_skills', 'mobilising_interests',
+                  'timezone')
 
 
 class ChangeDatesForm(happyforms.ModelForm):
@@ -203,6 +205,22 @@ class FunctionalAreaForm(happyforms.ModelForm):
 
     class Meta:
         model = FunctionalArea
+        fields = ['name', 'active']
+
+
+class MobilisingSkillForm(happyforms.ModelForm):
+    """Form of mobilising skill."""
+
+    class Meta:
+        model = MobilisingSkill
+        fields = ['name', 'active']
+
+
+class MobilisingInterestForm(happyforms.ModelForm):
+    """Form of mobilising interest."""
+
+    class Meta:
+        model = MobilisingInterest
         fields = ['name', 'active']
 
 

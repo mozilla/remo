@@ -17,7 +17,7 @@ from tastypie.resources import ModelResource
 from remo.api import HttpCache, RemoAPIThrottle, RemoThrottleMixin
 from remo.base.serializers import CSVSerializer
 from remo.profiles.templatetags.helpers import get_avatar_url
-from remo.profiles.models import UserProfile, FunctionalArea
+from remo.profiles.models import UserProfile, FunctionalArea, MobilisingInterest, MobilisingSkill
 from remo.reports.models import NGReport
 from remo.reports.utils import get_last_report
 
@@ -38,6 +38,38 @@ class FunctionalAreasResource(RemoThrottleMixin, ModelResource):
         throttle = RemoAPIThrottle()
 
 
+class MobilisingSkillsResource(RemoThrottleMixin, ModelResource):
+    """Mobilising Skills Resource."""
+
+    class Meta:
+        queryset = MobilisingSkill.active_objects.all()
+        resource_name = 'mobilisingskills'
+        authentication = Authentication()
+        authorization = ReadOnlyAuthorization()
+        include_resource_uri = False
+        include_absolute_url = False
+        allowed_methods = ['get']
+        fields = ['name']
+        filtering = {'name': ALL}
+        throttle = RemoAPIThrottle()
+
+
+class MobilisingInterestsResource(RemoThrottleMixin, ModelResource):
+    """Mobilising Interests Resource."""
+
+    class Meta:
+        queryset = MobilisingInterest.active_objects.all()
+        resource_name = 'mobilisinginterests'
+        authentication = Authentication()
+        authorization = ReadOnlyAuthorization()
+        include_resource_uri = False
+        include_absolute_url = False
+        allowed_methods = ['get']
+        fields = ['name']
+        filtering = {'name': ALL}
+        throttle = RemoAPIThrottle()
+
+
 class ProfileResource(RemoThrottleMixin, ModelResource):
     """Profile Resource."""
     profile_url = fields.CharField()
@@ -47,6 +79,12 @@ class ProfileResource(RemoThrottleMixin, ModelResource):
     functional_areas = fields.ToManyField(FunctionalAreasResource,
                                           attribute='functional_areas',
                                           full=True, null=True)
+    mobilising_skills = fields.ToManyField(MobilisingSkillsResource,
+                                           attribute='mobilising_skills',
+                                           full=True, null=True)
+    mobilising_interests = fields.ToManyField(MobilisingInterestsResource,
+                                              attribute='mobilising_interests',
+                                              full=True, null=True)
     mentor = fields.ToOneField('remo.profiles.api.api_v1.RepResource',
                                attribute='mentor', null=True)
     last_report_date = fields.DateField()
@@ -70,7 +108,9 @@ class ProfileResource(RemoThrottleMixin, ModelResource):
                      'country': ALL,
                      'region': ALL,
                      'city': ALL,
-                     'functional_areas': ALL_WITH_RELATIONS}
+                     'functional_areas': ALL_WITH_RELATIONS,
+                     'mobilising_skills': ALL_WITH_RELATIONS,
+                     'mobilising_interests': ALL_WITH_RELATIONS}
         max_limit = 40
         throttle = RemoAPIThrottle()
 
@@ -80,6 +120,8 @@ class ProfileResource(RemoThrottleMixin, ModelResource):
             req = bundle.request.GET
             if req.get('format') == 'csv':
                 bundle.data.pop('functional_areas', None)
+                bundle.data.pop('mobilising_skills', None)
+                bundle.data.pop('mobilising_interests', None)
                 bundle.data.pop('personal_blog_feed', None)
                 bundle.data.pop('profile_url', None)
         return bundle
@@ -170,7 +212,9 @@ class RepResource(RemoThrottleMixin, ModelResource):
                      Q(userprofile__region__istartswith=query) |
                      Q(userprofile__city__istartswith=query) |
                      Q(userprofile__mozillians_profile_url__icontains=query) |
-                     Q(userprofile__functional_areas__name__istartswith=query))
+                     Q(userprofile__functional_areas__name__istartswith=query) |
+                     Q(userprofile__mobilising_skills__name__istartswith=query) |
+                     Q(userprofile__mobilising_interests__name__istartswith=query))
 
             base_object_list = base_object_list.filter(qset).distinct()
 
