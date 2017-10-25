@@ -42,11 +42,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userprofile',
             name='mobilising_interests',
-            field=models.ManyToManyField(related_name='users_matching', to='profiles.MobilisingInterest'),
+            field=models.ManyToManyField(related_name='users_matching_interests', to='profiles.MobilisingInterest'),
         ),
         migrations.AddField(
             model_name='userprofile',
             name='mobilising_skills',
-            field=models.ManyToManyField(related_name='users_matching', to='profiles.MobilisingSkill'),
+            field=models.ManyToManyField(related_name='users_matching_skills', to='profiles.MobilisingSkill'),
         ),
     ]

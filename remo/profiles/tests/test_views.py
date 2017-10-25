@@ -11,7 +11,8 @@ from nose.tools import eq_, ok_
 from pyquery import PyQuery as pq
 
 from remo.base.tests import RemoTestCase, requires_permission, requires_login
-from remo.profiles.tests import FunctionalAreaFactory, UserFactory
+from remo.profiles.tests import (FunctionalAreaFactory, MobilisingSkillFactory,
+                                 MobilisingInterestFactory, UserFactory)
 
 
 class ViewsTest(RemoTestCase):
@@ -23,6 +24,8 @@ class ViewsTest(RemoTestCase):
                                          userprofile__initial_council=True)
         self.rep = UserFactory.create(groups=['Rep'], userprofile__mentor=self.mentor)
         self.area = FunctionalAreaFactory.create()
+        self.mobilising_interest = MobilisingInterestFactory.create()
+        self.mobilising_skill = MobilisingSkillFactory.create()
         profile = self.rep.userprofile
 
         self.data = {'display_name': profile.display_name,
@@ -49,7 +52,9 @@ class ViewsTest(RemoTestCase):
                      'bio': u'This is my bio.',
                      'date_joined_program': '2011-07-01',
                      'mentor': profile.mentor.id,
-                     'functional_areas': self.area.id}
+                     'functional_areas': self.area.id,
+                     'mobilising_skills': self.mobilising_skill.id,
+                     'mobilising_interests': self.mobilising_interest.id}
 
         display_name = {'display_name': profile.display_name}
 

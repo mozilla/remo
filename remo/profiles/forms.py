@@ -15,7 +15,8 @@ from pytz import common_timezones
 
 from remo.base.templatetags.helpers import user_is_rep
 from remo.base.utils import get_date
-from remo.profiles.models import FunctionalArea, UserProfile, UserStatus, MobilisingInterest, MobilisingSkill
+from remo.profiles.models import (FunctionalArea, MobilisingInterest, MobilisingSkill,
+                                  UserProfile, UserStatus)
 
 
 USERNAME_ALGO = getattr(settings, 'OIDC_USERNAME_ALGO', default_username_algo)
@@ -206,12 +207,14 @@ class FunctionalAreaForm(happyforms.ModelForm):
         model = FunctionalArea
         fields = ['name', 'active']
 
+
 class MobilisingSkillForm(happyforms.ModelForm):
     """Form of mobilising skill."""
 
     class Meta:
         model = MobilisingSkill
         fields = ['name', 'active']
+
 
 class MobilisingInterestForm(happyforms.ModelForm):
     """Form of mobilising interest."""

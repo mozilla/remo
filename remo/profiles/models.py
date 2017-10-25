@@ -121,6 +121,7 @@ class MobilisingSkill(models.Model):
         verbose_name = 'mobilising skill'
         verbose_name_plural = 'mobilising skills'
 
+
 @python_2_unicode_compatible
 class MobilisingInterest(models.Model):
     """Mobilising interests."""
@@ -147,6 +148,7 @@ class MobilisingInterest(models.Model):
         ordering = ['name']
         verbose_name = 'mobilising skill'
         verbose_name_plural = 'mobilising skills'
+
 
 class UserProfile(models.Model):
     """Definition of UserProfile Model."""
@@ -214,9 +216,9 @@ class UserProfile(models.Model):
     functional_areas = models.ManyToManyField(
         FunctionalArea, related_name='users_matching')
     mobilising_skills = models.ManyToManyField(
-        MobilisingSkill, related_name='users_matching')
+        MobilisingSkill, related_name='users_matching_skills')
     mobilising_interests = models.ManyToManyField(
-        MobilisingInterest, related_name='users_matching')
+        MobilisingInterest, related_name='users_matching_interests')
     tracked_functional_areas = models.ManyToManyField(
         FunctionalArea, related_name='users_tracking')
     receive_email_on_add_comment = models.BooleanField(null=False,

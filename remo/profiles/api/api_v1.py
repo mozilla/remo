@@ -69,6 +69,7 @@ class MobilisingInterestsResource(RemoThrottleMixin, ModelResource):
         filtering = {'name': ALL}
         throttle = RemoAPIThrottle()
 
+
 class ProfileResource(RemoThrottleMixin, ModelResource):
     """Profile Resource."""
     profile_url = fields.CharField()
@@ -79,11 +80,11 @@ class ProfileResource(RemoThrottleMixin, ModelResource):
                                           attribute='functional_areas',
                                           full=True, null=True)
     mobilising_skills = fields.ToManyField(MobilisingSkillsResource,
-                                          attribute='mobilising_skills',
-                                          full=True, null=True)
+                                           attribute='mobilising_skills',
+                                           full=True, null=True)
     mobilising_interests = fields.ToManyField(MobilisingInterestsResource,
-                                          attribute='mobilising_interests',
-                                          full=True, null=True)
+                                              attribute='mobilising_interests',
+                                              full=True, null=True)
     mentor = fields.ToOneField('remo.profiles.api.api_v1.RepResource',
                                attribute='mentor', null=True)
     last_report_date = fields.DateField()
