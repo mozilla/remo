@@ -34,7 +34,7 @@ class EventsViewSet(BaseReadOnlyModelViewset):
     """Return a list of events."""
     serializer_class = EventSerializer
     model = Event
-    queryset = Event.objects.all()
+    queryset = Event.objects.all().order_by('-start')
     filter_class = EventsFilter
 
     def retrieve(self, request, pk):
