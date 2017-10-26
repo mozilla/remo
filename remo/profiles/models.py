@@ -216,9 +216,11 @@ class UserProfile(models.Model):
     functional_areas = models.ManyToManyField(
         FunctionalArea, related_name='users_matching')
     mobilising_skills = models.ManyToManyField(
-        MobilisingSkill, related_name='users_matching_skills')
+        MobilisingSkill, related_name='users_matching_skills',
+        blank=True)
     mobilising_interests = models.ManyToManyField(
-        MobilisingInterest, related_name='users_matching_interests')
+        MobilisingInterest, related_name='users_matching_interests',
+        blank=True)
     tracked_functional_areas = models.ManyToManyField(
         FunctionalArea, related_name='users_tracking')
     receive_email_on_add_comment = models.BooleanField(null=False,
