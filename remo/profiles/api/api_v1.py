@@ -39,7 +39,7 @@ class FunctionalAreasResource(RemoThrottleMixin, ModelResource):
 
 
 class MobilisingSkillsResource(RemoThrottleMixin, ModelResource):
-    """Mobilising Skills Resource."""
+    """Mobilising Expertise Resource."""
 
     class Meta:
         queryset = MobilisingSkill.active_objects.all()
@@ -55,7 +55,7 @@ class MobilisingSkillsResource(RemoThrottleMixin, ModelResource):
 
 
 class MobilisingInterestsResource(RemoThrottleMixin, ModelResource):
-    """Mobilising Interests Resource."""
+    """Mobilizing Learning Interests Resource."""
 
     class Meta:
         queryset = MobilisingInterest.active_objects.all()

@@ -143,11 +143,11 @@ When you want to start contributing...
 
      (venv)$ ./manage.py loaddata demo_functional_areas
 
-   To load *demo mobilising skills* run::
+   To load *demo mobilizing expertise* run::
 
      (venv)$ ./manage.py loaddata demo_mobilising_skills
 
-   To load *demo mobilising interests* run::
+   To load *demo mobilizing learning interests* run::
 
      (venv)$ ./manage.py loaddata demo_mobilising_interests
 

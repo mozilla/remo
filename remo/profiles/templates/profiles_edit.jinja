@@ -496,10 +496,10 @@
             <div>
                 <button class="small white button nice radius"
                         data-reveal-id="mobilising-skills-modal"
-                        id="skills-button">Mark your mobilising skills</button>
+                        id="skills-button">Mark your mobilizing expertise</button>
                 {% if profileform.mobilising_skills.errors %}
                   <small class="error">
-                    Please mark your mobilising skills
+                    Please mark your mobilizing expertise
                   </small>
                 {% endif %}
             </div>
@@ -514,10 +514,10 @@
             <div>
                 <button class="small white button nice radius"
                         data-reveal-id="mobilising-interests-modal"
-                        id="interest-button">Mark your mobilising interests</button>
+                        id="interest-button">Mark your mobilizing learning interests</button>
                 {% if profileform.mobilising_interests.errors %}
                   <small class="error">
-                    Please mark your mobilising interests
+                    Please mark your mobilizing learning interests
                   </small>
                 {% endif %}
             </div>
@@ -662,14 +662,14 @@
       </a>
     </div>
 
-    <!-- Mobilising skills modal -->
+    <!-- Mobilizing expertise modal -->
     <div id="mobilising-skills-modal" class="reveal-modal medium">
       <a class="close-reveal-modal">&#215;</a>
       <p class="lead">
-        Specify your skills in Mobilising
+        Specify your expertise in Mobilizing
       </p>
       <h3>
-        Mobilising Skills
+        Mobilizing Expertise
       </h3>
       <ul class="large-block-grid-3 small-block-grid-1">
         {% for choice in profileform.mobilising_skills.field.choices %}
@@ -689,14 +689,14 @@
       </a>
     </div>
 
-    <!-- Mobilising interests modal -->
+    <!-- Mobilizing learning interests modal -->
     <div id="mobilising-interests-modal" class="reveal-modal medium">
       <a class="close-reveal-modal">&#215;</a>
       <p class="lead">
-        Specify your interests in Mobilising
+        Specify your learning interests in Mobilizing
       </p>
       <h3>
-        Mobilising Interests
+        Mobilizing Learning Interests
       </h3>
       <ul class="large-block-grid-3 small-block-grid-1">
         {% for choice in profileform.mobilising_interests.field.choices %}
