@@ -49,11 +49,11 @@ When you want to start contributing...
 
     $ docker-compose run web ./manage.py loaddata demo_functional_areas
 
-#. Add demo mobilising skills::
+#. Add demo mobilizing expertise::
 
     $ docker-compose run web ./manage.py loaddata demo_mobilising_skills
 
-#. Add demo mobilising interests::
+#. Add demo mobilizing learning interests::
 
     $ docker-compose run web ./manage.py loaddata demo_mobilising_interests
 
