@@ -674,9 +674,9 @@
       <ul class="large-block-grid-3 small-block-grid-1">
         {% for choice in profileform.mobilising_skills.field.choices %}
           <li>
-            <label for="{{ choice.1|replace(" ","-") }}-bit">
+            <label for="{{ choice.1|replace(" ","-") }}-skill-bit">
               <input type="checkbox" name="mobilising_skills" value="{{ choice.0 }}"
-                     id="{{ choice.1|replace(" ","-") }}-bit"
+                     id="{{ choice.1|replace(" ","-") }}-skill-bit"
                      {% if choice.0 in mobilising_skills %}
                        checked="checked"
                      {% endif %}/>
@@ -701,9 +701,9 @@
       <ul class="large-block-grid-3 small-block-grid-1">
         {% for choice in profileform.mobilising_interests.field.choices %}
           <li>
-            <label for="{{ choice.1|replace(" ","-") }}-bit">
+            <label for="{{ choice.1|replace(" ","-") }}-interest-bit">
               <input type="checkbox" name="mobilising_interests" value="{{ choice.0 }}"
-                     id="{{ choice.1|replace(" ","-") }}-bit"
+                     id="{{ choice.1|replace(" ","-") }}-interest-bit"
                      {% if choice.0 in mobilising_interests %}
                        checked="checked"
                      {% endif %}/>
