@@ -6,9 +6,9 @@ METHOD:PUBLISH
 BEGIN:VEVENT
 UID:{{ host }}@{{ event.id }}
 CLASS:PUBLIC
-DTSTAMP:{{ date_now|format_datetime_utc }}
-DTSTART;TZID={{ event.timezone }}:{{ event.start|format_datetime_utc }}
-DTEND;TZID={{ event.timezone }}:{{ event.end|format_datetime_utc }}
+DTSTAMP:{{ date_now|format_datetime_utc }}Z
+DTSTART:{{ event.start|format_datetime_utc }}Z
+DTEND:{{ event.end|format_datetime_utc }}Z
 {{ "LOCATION:%s, %s, %s"|format(event.venue, event.city, event.country)|ical_escape_char|ical_format_lines }}
 {{ "SUMMARY:%s"|format(event.name)|ical_escape_char|ical_format_lines }}
 {{ "DESCRIPTION:%s"|format(event.description)|ical_escape_char|ical_format_lines }}
