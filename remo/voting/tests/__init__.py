@@ -22,8 +22,7 @@ class PollFactory(factory.django.DjangoModelFactory):
     start = fuzzy.FuzzyDateTime(datetime(2011, 1, 1, tzinfo=pytz.UTC))
     end = fuzzy.FuzzyDateTime(POLL_END_DT + timedelta(days=2),
                               POLL_END_DT + timedelta(days=365 * 2))
-    description = factory.Sequence(lambda n: ('This is a description {0}'
-                                              .format(n)))
+    description = factory.Sequence(lambda n: 'This is a description {0}'.format(n))
     created_by = factory.SubFactory(UserFactory)
 
     class Meta:
