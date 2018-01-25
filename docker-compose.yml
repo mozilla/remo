@@ -11,7 +11,7 @@ services:
   memcached:
     image: memcached
   broker:
-    image: rabbitmq
+    image: redis:3
   celery:
     build:
       context: .
