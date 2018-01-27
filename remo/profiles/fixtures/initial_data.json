@@ -70,5 +70,13 @@
             "name": "Resources",
             "permissions": []
         }
+    },
+    {
+        "pk": 10,
+        "model": "auth.group",
+        "fields": {
+            "name": "Onboarding",
+            "permissions": []
+        }
     }
 ]
