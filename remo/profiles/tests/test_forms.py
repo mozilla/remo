@@ -9,8 +9,8 @@ from remo.profiles.tests import UserFactory, UserStatusFactory
 
 class ChangeUserFormTest(RemoTestCase):
 
-    def test_change_valid_bugzilla_email(self):
-        """Test change bugzilla email with a valid one."""
+    def test_change_valid_login_email(self):
+        """Test change login email with a valid one."""
         mentor = UserFactory.create(groups=['Mentor'], userprofile__initial_council=True)
         rep = UserFactory.create(groups=['Rep'], userprofile__mentor=mentor, last_name='Doe')
         data = {'first_name': rep.first_name,
@@ -20,8 +20,8 @@ class ChangeUserFormTest(RemoTestCase):
         form = ChangeUserForm(data=data, instance=rep)
         ok_(form.is_valid())
 
-    def test_change_invalid_bugzilla_email(self):
-        """Test change bugzilla email with an invalid one."""
+    def test_change_invalid_login_email(self):
+        """Test change login email with an invalid one."""
         mentor = UserFactory.create(groups=['Mentor'], userprofile__initial_council=True)
         rep = UserFactory.create(groups=['Rep'], userprofile__mentor=mentor)
         data = {'first_name': rep.first_name,

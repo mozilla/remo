@@ -336,14 +336,14 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
         <div class="large-11 columns">
           <p class="profile-item">
             <span class="label radius">
-              Personal Mail
+              Personal email
             </span>
             &nbsp;{% if user.is_authenticated() %} {{ user_profile.private_email }}
             {% else %} {{ user_profile.private_email|mailhide }} {% endif %}
           </p>
           <p class="profile-item">
             <span class="label radius">
-              Bugzilla Mail
+              Mozilla Login Identity
             </span>
             &nbsp;{% if user.is_authenticated() %} {{ pageuser.email }}
             {% else %} {{ pageuser.email|mailhide }} {% endif %}

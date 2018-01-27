@@ -35,7 +35,8 @@ class OIDCCallbackView(OIDCAuthenticationCallbackView):
         if not msg:
             msg = ('Login failed. Please make sure that you are '
                    'an accepted Rep or a vouched Mozillian '
-                   'and you use your Bugzilla email to login.')
+                   'and you use your Mozilla Login Identity to login. '
+                   'This should be the same address as used when you got invited.')
         messages.warning(self.request, msg)
         return super(OIDCCallbackView, self).login_failure()
 
