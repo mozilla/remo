@@ -160,12 +160,12 @@ CELERY_ENABLE_UTC = config('CELERY_ENABLE_UTC', default=True, cast=bool)
 CELERY_TIMEZONE = config('CELERY_TIMEZONE', default='UTC')
 CELERY_TASK_RESULT_EXPIRES = config('CELERY_TASK_RESULT_EXPIRES', default=3600, cast=int)
 CELERY_ACCEPT_CONTENT = ['pickle', 'json']
-CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://broker:6379/1')
 CELERY_TASK_ALWAYS_EAGER = config('CELERY_TASK_ALWAYS_EAGER', default=False, cast=bool)
 CELERY_TASK_SERIALIZER = config('CELERY_TASK_SERIALIZER', default='pickle')
 REDIS_CONNECT_RETRY = config('REDIS_CONNECT_RETRY',
                              default=CELERY_RESULT_BACKEND == 'redis', cast=bool)
-CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='amqp://guest:guest@broker:5672//')
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://broker:6379/1')
 if CELERY_BROKER_URL.startswith('redis'):
     CELERY_BROKER_TRANSPORT_OPTIONS = {
         'visibility_timeout': config('REDIS_VISIBILITY_TIMEOUT', default=604800, cast=int)

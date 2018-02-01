@@ -1,5 +1,9 @@
+import pytz
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
+from django.utils.timezone import now
 
 from nose.tools import ok_
 
@@ -32,15 +36,15 @@ class PollAddFormTest(RemoTestCase):
 
         self.form_data = {
             'description': u'This is a description.',
-            'end_form_0_day': u'1',
-            'end_form_0_month': u'1',
-            'end_form_0_year': u'2019',
+            'end_form_0_day': u'10',
+            'end_form_0_month': u'2',
+            'end_form_0_year': u'{0}'.format(now().year + 2),
             'end_form_1_hour': u'12',
             'end_form_1_minute': u'00',
             'name': u'Form data.',
-            'start_form_0_day': u'1',
-            'start_form_0_month': u'1',
-            'start_form_0_year': u'2018',
+            'start_form_0_day': u'10',
+            'start_form_0_month': u'2',
+            'start_form_0_year': u'{0}'.format(now().year + 1),
             'start_form_1_hour': u'12',
             'start_form_1_minute': u'00',
             'valid_groups': u'1'}
@@ -84,51 +88,52 @@ class PollAddFormTest(RemoTestCase):
             'range_polls-INITIAL_FORMS': u'0',
             'range_polls-MAX_NUM_FORMS': u'1000'}
 
-        RangePollFormset = inlineformset_factory(
-            Poll, RangePoll,
-            formset=forms.BaseRangePollInlineFormSet,
-            extra=1, exclude=('votes',), can_delete=True)
-        RadioPollFormset = inlineformset_factory(
-            Poll, RadioPoll,
-            formset=forms.BaseRadioPollInlineFormSet,
-            extra=1, can_delete=True, exclude=('votes',))
+        RangePollFormset = inlineformset_factory(Poll,
+                                                 RangePoll,
+                                                 formset=forms.BaseRangePollInlineFormSet,
+                                                 extra=1,
+                                                 exclude=('votes',),
+                                                 can_delete=True)
+        RadioPollFormset = inlineformset_factory(Poll,
+                                                 RadioPoll,
+                                                 formset=forms.BaseRadioPollInlineFormSet,
+                                                 extra=1,
+                                                 can_delete=True,
+                                                 exclude=('votes',))
 
-        self.range_poll_formset = (
-            RangePollFormset(self.range_formset_data, instance=self.poll,
-                             user_list=self.user_list))
-        self.radio_poll_formset = (
-            RadioPollFormset(self.radio_formset_data, instance=self.poll))
-        self.radio_poll_formset_empty = (
-            RadioPollFormset(self.empty_radio_formset, instance=self.poll))
-        self.range_poll_formset_empty = (
-            RangePollFormset(self.empty_range_formset, instance=self.poll,
-                             user_list=self.user_list))
+        self.range_poll_formset = RangePollFormset(self.range_formset_data,
+                                                   instance=self.poll,
+                                                   user_list=self.user_list)
+        self.radio_poll_formset = RadioPollFormset(self.radio_formset_data, instance=self.poll)
+        self.radio_poll_formset_empty = RadioPollFormset(self.empty_radio_formset,
+                                                         instance=self.poll)
+        self.range_poll_formset_empty = RangePollFormset(self.empty_range_formset,
+                                                         instance=self.poll,
+                                                         user_list=self.user_list)
 
     def test_clean_one_radio_one_range_poll(self):
         """Test with valid data for one radio and one range poll."""
-        form = forms.PollAddForm(
-            data=self.form_data,
-            instance=self.poll,
-            radio_poll_formset=self.radio_poll_formset,
-            range_poll_formset=self.range_poll_formset)
+        poll = PollFactory.create(start=datetime(now().year + 1, 2, 1, tzinfo=pytz.UTC))
+        form = forms.PollAddForm(data=self.form_data,
+                                 instance=poll,
+                                 radio_poll_formset=self.radio_poll_formset,
+                                 range_poll_formset=self.range_poll_formset)
         ok_(form.is_valid())
 
     def test_clean_one_radio_poll(self):
         """Test with valid data for one radio poll."""
-        form = forms.PollAddForm(
-            data=self.form_data,
-            instance=self.poll,
-            radio_poll_formset=self.radio_poll_formset,
-            range_poll_formset=self.range_poll_formset_empty)
+        form = forms.PollAddForm(data=self.form_data,
+                                 instance=self.poll,
+                                 radio_poll_formset=self.radio_poll_formset,
+                                 range_poll_formset=self.range_poll_formset_empty)
         ok_(form.is_valid())
 
     def test_clean_one_range_poll(self):
         """Test with valid data for one range poll."""
-        form = forms.PollAddForm(
-            data=self.form_data,
-            instance=self.poll,
-            radio_poll_formset=self.radio_poll_formset_empty,
-            range_poll_formset=self.range_poll_formset)
+        form = forms.PollAddForm(data=self.form_data,
+                                 instance=self.poll,
+                                 radio_poll_formset=self.radio_poll_formset_empty,
+                                 range_poll_formset=self.range_poll_formset)
         ok_(form.is_valid())
 
     def test_clean_without_radio_or_range_poll(self):
@@ -138,11 +143,10 @@ class PollAddFormTest(RemoTestCase):
         then PollForm is invalid.
 
         """
-        form = forms.PollAddForm(
-            data=self.form_data,
-            instance=self.poll,
-            radio_poll_formset=self.radio_poll_formset_empty,
-            range_poll_formset=self.range_poll_formset_empty)
+        form = forms.PollAddForm(data=self.form_data,
+                                 instance=self.poll,
+                                 radio_poll_formset=self.radio_poll_formset_empty,
+                                 range_poll_formset=self.range_poll_formset_empty)
         ok_(not form.is_valid())
 
 
@@ -153,9 +157,8 @@ class TestVoteForm(RemoTestCase):
         range_poll = RangePollFactory.create(poll=poll)
         RangePollChoiceFactory.create(range_poll=range_poll)
         data = {'range_poll__{0}'.format(range_poll.choices.all()[0].id): u'1'}
-        vote_form = forms.RangePollChoiceVoteForm(
-            data=data,
-            choices=range_poll.choices.all())
+        vote_form = forms.RangePollChoiceVoteForm(data=data,
+                                                  choices=range_poll.choices.all())
         ok_(vote_form.is_valid())
 
     def test_invalid(self):
@@ -164,9 +167,8 @@ class TestVoteForm(RemoTestCase):
         RangePollChoiceFactory.create(range_poll=range_poll)
         field_name = 'range_poll__{0}'.format(range_poll.choices.all()[0].id)
         data = {field_name: u'0'}
-        vote_form = forms.RangePollChoiceVoteForm(
-            data=data,
-            choices=range_poll.choices.all())
+        vote_form = forms.RangePollChoiceVoteForm(data=data,
+                                                  choices=range_poll.choices.all())
         ok_(not vote_form.is_valid())
         ok_(field_name in vote_form.errors)
         ok_(vote_form[field_name], 'You must vote at least one nominee')

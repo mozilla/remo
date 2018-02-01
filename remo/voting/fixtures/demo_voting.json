@@ -17,14 +17,14 @@
         "pk": 3,
         "model": "voting.poll",
         "fields": {
-            "end": "2018-10-04T07:00:00Z",
+            "end": "2020-10-04T07:00:00Z",
             "name": "Future Test Voting",
-            "start": "2018-10-01T07:00:00Z",
+            "start": "2020-10-01T07:00:00Z",
             "created_by": 4,
             "valid_groups": 3,
             "created_on": "2013-04-23",
             "slug": "future-test-voting",
-            "description": "Future test voting starting on 09/01/2018.",
+            "description": "Future test voting starting on 09/01/2020.",
             "comments_allowed": "False"
         }
     },
@@ -32,7 +32,7 @@
         "pk": 1,
         "model": "voting.poll",
         "fields": {
-            "end": "2018-05-31T19:00:00Z",
+            "end": "2020-05-31T19:00:00Z",
             "name": "Current Test Voting",
             "start": "2013-04-01T07:00:00Z",
             "created_by": 4,
