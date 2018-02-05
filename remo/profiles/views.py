@@ -177,7 +177,12 @@ def view_profile(request, display_name):
     nominee_form = forms.RotmNomineeForm(request.POST or None,
                                          instance=user.userprofile)
 
-    usergroups = user.groups.filter(Q(name='Mentor') | Q(name='Council') | Q(name='Resources'))
+    usergroups = user.groups.filter(
+        Q(name='Mentor') |
+        Q(name='Council') |
+        Q(name='Peers') |
+        Q(name='Resources')
+    )
     is_nomination_period = now().date() < rotm_nomination_end_date()
     data = {'pageuser': user,
             'user_profile': user.userprofile,
