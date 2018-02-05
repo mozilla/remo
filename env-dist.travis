@@ -20,10 +20,10 @@ OIDC_RP_CLIENT_SECRET = ''
 OIDC_RP_CLIENT_SECRET_ENCODED = True
 OIDC_OP_DOMAIN = ''
 OIDC_OP_STORE_ACCESS_TOKEN = True
-# Assuming user remo with password remo and db name db_1
+# Assuming user root and db name remo
+DATABASE_URL = 'mysql://root@localhost:3306/remo'
 # Mozillians
 MOZILLIANS_API_URL = https://mozillians.org/api/v2/
-DATABASE_URL = 'mysql://remo:remo@db:3306/remo'
 # Debug flag
 DEBUG = True
 DEV = True
