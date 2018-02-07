@@ -202,14 +202,16 @@
                 {{ profileform.wiki_profile_url.errors }}
               </small>
             {% endif %}
-            <div class="has-tip tip-left" title="Mentor" data-tooltip data-options="disable-for-touch:true">
-              {{ profileform.mentor }}
-            </div>
-            <div class="required-field"></div>
-            {% if profileform.mentor.errors %}
-              <small class="error">
-                {{ profileform.mentor.errors }}
-              </small>
+            {% if perms.profiles.can_change_mentor %}
+              <div class="has-tip tip-left" title="Mentor" data-tooltip data-options="disable-for-touch:true">
+                {{ profileform.mentor }}
+              </div>
+              <div class="required-field"></div>
+              {% if profileform.mentor.errors %}
+                <small class="error">
+                  {{ profileform.mentor.errors }}
+                </small>
+              {% endif %}
             {% endif %}
           </div>
         </div>

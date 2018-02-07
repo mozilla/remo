@@ -137,19 +137,6 @@ class ChangeProfileForm(happyforms.ModelForm):
         twitter_account = self.cleaned_data['twitter_account']
         return twitter_account.strip('@')
 
-    def clean(self):
-        """Override clean method for custom functionality."""
-        mentor = self.cleaned_data.get('mentor')
-
-        # Do not raise a validation error if the user belongs to the Alumni
-        # group or has admin privileges
-        if (not mentor and not
-                self.request.user.groups.filter(name='Admin').exists()):
-            msg = u'This field is required'
-            self.errors['mentor'] = self.error_class([msg])
-
-        return self.cleaned_data
-
     class Meta:
         model = UserProfile
         fields = ('local_name', 'birth_date',
