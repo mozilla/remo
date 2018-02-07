@@ -127,7 +127,7 @@
                 Step 1: Create an account on <a href="https://libravatar.org" target="_blank">libravatar.org</a>.
               </li>
               <li>
-                Step 2: Once logged in, upload a photo and associate it to your bugzilla email.
+                Step 2: Once logged in, upload a photo and associate it to your Mozilla Login Identity email.
               </li>
             </ul>
           </div>
@@ -157,12 +157,12 @@
                 {{ profileform.private_email.errors }}
               </small>
             {% endif %}
-            <input type="text" placeholder="Bugzilla email"
+            <input type="text" placeholder="Mozilla Login Identity"
                    id="id_email"
                    value="{{ userform.email.value() }}"
                    name="email"
                    class="has-tip tip-left"
-                   title="Bugzilla email"
+                   title="Mozilla Login Identity"
                    aria-required="required"
                    data-tooltip
                    data-options="disable-for-touch:true"

@@ -19,7 +19,7 @@ We are collecting the following information for each Rep:
  * Display Name
  * Mozillians Profile
  * Private Email
- * Bugzilla Email
+ * Mozilla Login Identity
  * Twitter Account
  * GPG-Key
  * Jabber ID
@@ -30,34 +30,31 @@ We are collecting the following information for each Rep:
  * Facebook Profile URL
  * Personal Website URL
  * Personal Blog Feed
- * Rep Status (Admin, Counselor, Mentor, Rep)
+ * Rep Status (Admin, Council, Mentor, Rep)
 
 Avatar
 ------
 
 The portal does not provide functionality for users to upload or
 change avatar images. User's avatar is directly fetched from `Gravatar
-<http://gravatar.com>`_ by hashing user's bugzilla email.
+<http://gravatar.com>`_ by hashing user's Mozilla Login Identity email.
 
 Registration and Login
 ----------------------
 
 All Mozilla Reps are able to login into the ReMo Portal using their
-bugzilla email address and `BrowerID <https://browserid.org>`_. No
-registration is required. Users that are not approved Mozilla Reps
-will not be able to login.
+Mozilla Login Identity. No registration is required.
+Users that are not approved Mozilla Reps will not be able to login.
 
 Creating new account for a Rep
 ------------------------------
 
 Administrators and Mentors can create accounts for Reps using the
-*Account creation form*. The form must be filled with the bugzilla
-email of the Rep that owns the new account.
+*Account creation form*. The form must be filled with the Mozilla Login Identity
+of the Rep that owns the new account.
 
 The new account is not activated on creation. User has to login
 within two weeks to activate the account.
-
-On creation Rep receives an invitation email to join the portal.
 
 Creating new accounts en-masse
 ------------------------------
@@ -66,8 +63,8 @@ New accounts can be created massivelly using the following command::
 
  $ python manage.py create_users <user_list.txt>
 
-The *user_list.txt* parameter is a plain text file containing bugzilla
-email addresses of Reps, one per line like this::
+The *user_list.txt* parameter is a plain text file containing the Mozillians Identity
+Provider email addresses of Reps, one per line like this::
 
   foo@bar.com
   python@snakes.org
@@ -75,8 +72,6 @@ email addresses of Reps, one per line like this::
 
 Accounts are not activated on creation. User has to login within two
 weeks to activate the account.
-
-On creation Rep receives an invitation email to join the portal.
 
 Creating Demo accounts for testing
 ----------------------------------
