@@ -167,7 +167,10 @@ class EventResource(RemoThrottleMixin, ModelResource):
         The 'query' parameters exists in parallel with 'filter'
         parameters as defined by tastypie and EventResource schema.
         """
-
+        if 'start__gte' in applicable_filters:
+            applicable_filters['start__gte'] = applicable_filters['start__gte'] + ' 00:00:00'
+        if 'end__lte' in applicable_filters:
+            applicable_filters['end__lte'] = applicable_filters['end__lte'] + ' 23:59:00'
         base_object_list = (super(EventResource, self).
                             apply_filters(request, applicable_filters))
 
