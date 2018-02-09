@@ -166,7 +166,7 @@
             Mine
           </a>
         </dd>
-        {% if mentees_ng_reportees %}
+        {% if mentees_activities %}
           <dd>
             <a role="button" id="dashboard-continuous-reports-mentees-button" href="#">
               My mentees
@@ -305,7 +305,7 @@
     <!-- end my block -->
 
     <!-- mentees block -->
-    {% if mentees_ng_reportees %}
+    {% if mentees_activities %}
       <div id="dashboard-continuous-reports-mentees-block" class="large-12 columns hidden">
         <table class="dashboard-table responsive">
           <thead>
@@ -319,7 +319,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for reportee in mentees_ng_reportees %}
+            {% for reportee in mentees_activities %}
               <tr>
                 <td class="{{ reportee|get_activity_level }}
                            {% if reportee|user_is_unavailable %}
