@@ -100,7 +100,11 @@
                       [<a id="settings-menu-locator"
                           href="{{ url('edit_settings') }}"> Settings </a>]
                     {% endif %}
-                    [<a href="{{ url('oidc_logout') }}">Logout</a>]
+                    [<a href="#" id="logout">Logout</a>]
+                    <form id="logout_form" class="hidden" action="{{ url('oidc_logout') }}" method="post">
+                      {% csrf_token %}
+                      <input type="submit" value="logout">
+                    </form>
                   </div>
                   <div class="show-for-small">
                     {% if user_is_rep(user) %}
