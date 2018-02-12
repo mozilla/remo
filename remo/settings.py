@@ -308,6 +308,7 @@ BASE_PASSWORD_HASHERS = (
 
 PASSWORD_HASHERS = get_password_hashers(BASE_PASSWORD_HASHERS, HMAC_KEYS)
 AUTHENTICATION_BACKENDS = [
+    'remo.base.backend.RemoAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend'
 ]
 
