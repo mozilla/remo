@@ -7,13 +7,15 @@ from django.db import migrations, models
 def forwards(apps, schema_editor):
     """Create Onboarding group."""
     Group = apps.get_model('auth', 'Group')
-    Group.objects.create(name='Onboarding')
+    if not Group.objects.filter(name='Onboarding').exists():
+        Group.objects.create(name='Onboarding')
 
 
 def backwards(apps, schema_editor):
     """Delete Onboarding group."""
     Group = apps.get_model('auth', 'Group')
-    Group.objects.filter(name='Onboarding').delete()
+    if Group.objects.filter(name='Onboarding').exists():
+        Group.objects.filter(name='Onboarding').delete()
 
 
 class Migration(migrations.Migration):
