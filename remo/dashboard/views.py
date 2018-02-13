@@ -137,8 +137,10 @@ def dashboard(request):
     if user.groups.filter(name='Mentor').exists():
         args['mentees_action_items'] = ActionItem.objects.filter(user__in=my_mentees,
                                                                  resolved=False)[:10]
-        args['mentees_ng_reportees'] = User.objects.filter(
-            ng_reports__isnull=False, ng_reports__mentor=user, groups__name='Rep').distinct()
+        args['mentees_activities'] = User.objects.filter(
+            userprofile__registration_complete=True,
+            userprofile__mentor=user,
+            groups__name='Rep').distinct()
         args['mentees_budget_requests'] = budget_requests.filter(creator__in=my_mentees).distinct()
         args['mentees_swag_requests'] = swag_requests.filter(creator__in=my_mentees).distinct()
         my_mentorship_requests = mentorship_requests.filter(my_q_assigned)
