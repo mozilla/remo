@@ -71,10 +71,9 @@
       <header class="row">
         <div class="large-12 columns">
 
-          <!-- Sign In -->
-
-            <!-- Sign In & Sign Out -->
-            <div class="large-10 small-10 columns hide-on-print" id="login-box">
+          <!-- Sign In & Sign Out -->
+          <div class="row">
+            <div class="large-12 small-12 columns hide-on-print" id="login-box">
               <div class="account anonymous nomenu logout">
                 {% if not user.is_authenticated() %}
                   {% if request.get_full_path() != '/' %}
@@ -88,7 +87,7 @@
                   or
                   <a href="#" data-reveal-id="join-modal">Join</a>
                 {% else %}
-                  <div class="hide-for-small" id="logout-menu-locator">
+                  <div id="logout-menu-locator">
                     {% if user_is_rep(user) %}
                       <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
                         {{ user.get_full_name()|default('user.userprofile.display_name') }}
@@ -97,34 +96,18 @@
                       {{ user.get_full_name()|default('user.userprofile.display_name') }}
                     {% endif %}
                     {% if not user_is_mozillian(user) %}
-                      [<a id="settings-menu-locator"
-                          href="{{ url('edit_settings') }}"> Settings </a>]
+                      [ <a id="settings-menu-locator"
+                          href="{{ url('edit_settings') }}"> Settings </a> ]
                     {% endif %}
-                    [<a href="#" id="logout">Logout</a>]
+                    [ <a href="#" id="logout">Logout</a> ]
                     <form id="logout_form" class="hidden" action="{{ url('oidc_logout') }}" method="post">
                       {% csrf_token %}
                       <input type="submit" value="logout">
                     </form>
                   </div>
-                  <div class="show-for-small">
-                    {% if user_is_rep(user) %}
-                      <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
-                        {{ user.get_full_name()|default('user.userprofile.display_name') }}
-                      </a>
-                    {% else %}
-                      {{ user.get_full_name()|default('user.userprofile.display_name') }}
-                    {% endif %}
-                    {% if not user_is_mozillian(user) %}
-                      [<a id="settings-menu-locator"
-                          href="{{ url('edit_settings') }}"> Settings </a>]
-                    {% endif %}
-                    <div>
-                      [<a href="{{ url('oidc_logout') }}">Logout</a>]
-                    </div>
-                  </div>
                 {% endif %}
               </div>
-          </div>
+            </div>
 
           <!-- Logo & Navigation -->
           <div class="logo-nav">
