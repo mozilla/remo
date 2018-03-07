@@ -37,6 +37,12 @@ class EventsViewSet(BaseReadOnlyModelViewset):
     queryset = Event.objects.all()
     filter_class = EventsFilter
 
+    def retrieve(self, request, pk):
+        event = get_object_or_404(self.queryset, pk=pk)
+        serializer = EventDetailedSerializer(event,
+                                             context={'request': request})
+        return Response(serializer.data)
+
     def get_queryset(self):
         orderby = self.request.query_params.get('orderby', 'DESC')
 
