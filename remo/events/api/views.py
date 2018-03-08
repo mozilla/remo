@@ -46,7 +46,7 @@ class EventsViewSet(BaseReadOnlyModelViewset):
     def get_queryset(self):
         orderby = self.request.query_params.get('orderby', 'DESC')
 
-        if orderby != 'DESC':
+        if orderby == 'DESC':
             self.queryset = self.queryset.order_by('-start')
         return self.queryset
 
