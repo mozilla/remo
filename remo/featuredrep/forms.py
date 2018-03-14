@@ -15,5 +15,5 @@ class FeaturedRepForm(happyforms.ModelForm):
 
     class Meta:
         model = FeaturedRep
-        fields = ['users', 'text']
+        fields = ['users', 'text', 'created_on']
         widgets = {'users': forms.SelectMultiple()}
