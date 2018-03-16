@@ -2,7 +2,7 @@ var MAPBOX_TOKEN = $('body').data('mapbox-token');
 
 function initialize_map() {
     // Initialize map.
-    var map = new L.mapbox.map('map', MAPBOX_TOKEN, {minZoom: 1});
+    var map = new L.mapbox.map('map', {minZoom: 1, accessToken: MAPBOX_TOKEN});
     var map_elm = $('#map');
     var lat = map_elm.data('lat');
     var lon = map_elm.data('lon');
