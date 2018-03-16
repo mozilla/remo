@@ -29,7 +29,7 @@ $(document).ready(function() {
 
         if (!map) {
 
-            map = new L.mapbox.map('map_point', {minZoom: 1, accessToken: MAPBOX_TOKEN});
+            map = new L.mapbox.map('map_point', null, {minZoom: 1, accessToken: MAPBOX_TOKEN});
             addAttributionOSM(map);
 
             var lat = $('#map_point').data('lat');
