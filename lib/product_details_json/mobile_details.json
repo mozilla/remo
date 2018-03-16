@@ -1,8 +1,11 @@
 {
-    "version": "33.0",
-    "beta_version": "34.0b4",
-    "alpha_version": "35.0a2",
-    "builds": [
+  "nightly_version": "61.0a1",
+  "alpha_version": "61.0a1",
+  "beta_version": "60.0b4",
+  "version": "59.0.1",
+  "ios_beta_version": "9.1",
+  "ios_version": "9.0",
+  "builds": [
         {
             "locale": {
                 "code": "ar",
@@ -36,13 +39,6 @@
                 "code": "de",
                 "english": "German",
                 "native": "Deutsch"
-            }
-        },
-        {
-            "locale": {
-                "code": "el",
-                "english": "Greek",
-                "native": "\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac"
             }
         },
         {
@@ -152,13 +148,6 @@
         },
         {
             "locale": {
-                "code": "nn-NO",
-                "english": "Norwegian (Nynorsk)",
-                "native": "Norsk nynorsk"
-            }
-        },
-        {
-            "locale": {
                 "code": "pa-IN",
                 "english": "Punjabi (India)",
                 "native": "\u0a2a\u0a70\u0a1c\u0a3e\u0a2c\u0a40 (\u0a2d\u0a3e\u0a30\u0a24)"
@@ -189,7 +178,7 @@
             "locale": {
                 "code": "ro",
                 "english": "Romanian",
-                "native": "rom\u00e2n\u0103"
+                "native": "Rom\u00e2n\u0103"
             }
         },
         {
@@ -208,20 +197,6 @@
         },
         {
             "locale": {
-                "code": "sl",
-                "english": "Slovenian",
-                "native": "Sloven\u0161\u010dina"
-            }
-        },
-        {
-            "locale": {
-                "code": "sr",
-                "english": "Serbian",
-                "native": "\u0421\u0440\u043f\u0441\u043a\u0438"
-            }
-        },
-        {
-            "locale": {
                 "code": "tr",
                 "english": "Turkish",
                 "native": "T\u00fcrk\u00e7e"
@@ -232,13 +207,6 @@
                 "code": "uk",
                 "english": "Ukrainian",
                 "native": "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430"
-            }
-        },
-        {
-            "locale": {
-                "code": "vi",
-                "english": "Vietnamese",
-                "native": "Ti\u1ebfng Vi\u1ec7t"
             }
         },
         {
