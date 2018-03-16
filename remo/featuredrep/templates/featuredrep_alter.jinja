@@ -22,7 +22,7 @@
     </div>
 
     <div class="row">
-      <div class="large-12 columns">
+      <div class="large-6 columns">
         <label class="required" for="id_users">
           Please specify the Featured Rep(s) for this month.
         </label>
@@ -34,6 +34,11 @@
         {{ field_errors(form.users) }}
       </div>
       <div class="large-6 columns">
+        <input type="text" class="flat" value="{{ form.created_on.value() }}"
+               name="created_on" placeholder="YYYY-MM-DD" />
+        <div class="required-field"></div>
+      </div>
+      <div class="large-12 columns">
         <textarea class="flat" placeholder="Enter featured text"
                   name="text">{{ form.text.value() }}
         </textarea>
@@ -45,11 +50,6 @@
           </a>
           syntax.
         </p>
-      </div>
-      <div class="large-6 columns">
-        <input type="text" class="flat" value="{{ form.created_on.value() }}"
-               name="created_on" placeholder="YYYY-MM-DD" />
-        <div class="required-field"></div>
       </div>
       <div class="large-12 columns">
         <button type="submit" class="featured-button small button">
