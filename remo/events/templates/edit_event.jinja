@@ -149,7 +149,7 @@
                   <div class="required-field"></div>
                 </div>
                 <div class="small-11 columns">
-                  <div class="has-tip tip-right auto-width" title="Country">
+                  <div class="has-tip tip-right auto-width" title="Country or Region">
                     {{ event_form.country }}
                   </div>
                   {{ field_errors(event_form.country) }}
@@ -511,7 +511,7 @@
                   {% endif %}
                 </div>
               </div>
-        
+
               <div class="row">
                 <div class="small-11 small-offset-1 columns">
                   <div class="{% if event.budget_bug %} large-12 {% else %} large-6 {% endif %} columns">
@@ -553,7 +553,7 @@
                           <div class="small-1 columns">
                             <div class="required-field"></div>
                           </div>
-                        {% endif %}  
+                        {% endif %}
                         <div class="small-11 small-offset-1 columns">
                           <div class='has-tip tip-right' data-tooltip
                                data-options='disable-for-touch:true'
