@@ -29,7 +29,7 @@ $(document).ready(function() {
 
         if (!map) {
             L.Icon.Default.imagePath = '/static/base/css/images/';
-            map = new L.mapbox.map('map_point', null, {minZoom: 1, accessToken: MAPBOX_TOKEN});
+            map = new L.mapbox.map('map_point', 'mapbox.streets', {minZoom: 1, accessToken: MAPBOX_TOKEN});
             addAttributionOSM(map);
 
             var lat = $('#map_point').data('lat');
@@ -59,7 +59,7 @@ $(document).ready(function() {
             $('#lat-temp').val(center.lat);
             $('#lon-temp').val(center.lng);
 
-            var control = L.mapbox.geocoderControl(MAPBOX_TOKEN).addTo(map);
+            var control = L.mapbox.geocoderControl('mapbox.streets', {accessToken: MAPBOX_TOKEN}).addTo(map);
 
             control.on('found', function(response) {
                 if (response.results.length == 1) {

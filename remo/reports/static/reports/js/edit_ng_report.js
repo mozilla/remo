@@ -8,7 +8,7 @@
      * Params: @lon string, @lat string, $input object
      */
     function doReverseGeo (longitude, latitude, $input) {
-        var geocoder = L.mapbox.geocoder(MAPBOX_ΤΟΚΕN);
+        var geocoder = L.mapbox.geocoder('mapbox.streets', {accessToken: MAPBOX_TOKEN});
         var array = [];
         var lat = parseFloat(latitude);
         var lon = parseFloat(longitude);

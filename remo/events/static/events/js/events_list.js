@@ -46,7 +46,7 @@ function initialize_map() {
     // Initialize map.
     L.Icon.Default.imagePath = '/static/base/css/images/';
     var center = new L.LatLng(25, 0); // geographical point (longitude and latitude)
-    EventsLib.map = L.mapbox.map('map', null, {minZoom: 1, accessToken: MAPBOX_TOKEN});
+    EventsLib.map = L.mapbox.map('map', 'mapbox.streets', {minZoom: 1, accessToken: MAPBOX_TOKEN});
     addAttributionOSM(EventsLib.map);
     EventsLib.map.setView(center, 2);
 

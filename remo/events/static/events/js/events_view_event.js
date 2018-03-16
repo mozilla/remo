@@ -3,7 +3,7 @@ var MAPBOX_TOKEN = $('body').data('mapbox-token');
 function initialize_map() {
     // Initialize map.
     L.Icon.Default.imagePath = '/static/base/css/images/';
-    var map = new L.mapbox.map('map', null, {minZoom: 1, accessToken: MAPBOX_TOKEN});
+    var map = new L.mapbox.map('map', 'mapbox.streets', {minZoom: 1, accessToken: MAPBOX_TOKEN});
     var map_elm = $('#map');
     var lat = map_elm.data('lat');
     var lon = map_elm.data('lon');
