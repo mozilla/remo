@@ -97,6 +97,13 @@
       </form>
     </div>
   </div>
+  
+  {% if user.is_authenticated() %}
+    <div id="profiles-reps-number" class="row">
+      <div id="profiles-number-of-reps" class="large-12 columns reps-number">
+      </div>
+    </div>
+  {% endif %}
 
   <!-- People are here -->
   <div class="row hidden" id="profiles_noresults">
@@ -141,13 +148,6 @@
       <div id="profiles-loading"></div>
     </div>
   </div>
-
-  {% if user.is_authenticated() %}
-    <div id="profiles-reps-number" class="row">
-      <div id="profiles-number-of-reps" class="large-12 columns reps-number">
-      </div>
-    </div>
-  {% endif %}
 
   {% for rep in reps %}
     <div class="profile-pointer-item"
