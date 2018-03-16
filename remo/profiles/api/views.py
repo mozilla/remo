@@ -66,8 +66,13 @@ class UserProfileViewSet(BaseReadOnlyModelViewset):
     filter_class = UserProfileFilter
 
     def get_queryset(self):
+        orderby = self.request.query_params.get('orderby', 'DESC')
+
         queryset = self.queryset.filter(
             groups__name='Rep', userprofile__registration_complete=True)
+
+        if orderby == 'DESC':
+            queryset = queryset.order_by('-date_joined')
         return queryset
 
     def retrieve(self, request, pk):

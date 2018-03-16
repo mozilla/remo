@@ -46,6 +46,13 @@ class ActivitiesViewSet(BaseReadOnlyModelViewset):
                                                   context={'request': request})
         return Response(serializer.data)
 
+    def get_queryset(self):
+        orderby = self.request.query_params.get('orderby', 'DESC')
+
+        if orderby == 'DESC':
+            self.queryset = self.queryset.order_by('-report_date')
+        return self.queryset
+
 
 class ActivitiesKPIFilter(django_filters.FilterSet):
     """Filter for activities KPI endpoint."""
