@@ -48,11 +48,13 @@ $(document).ready(function() {
             if (lat && lat!=='None' && lng && lng!=='None') {
                 // Same zoom-level as in events list
                 center = new L.LatLng(lat, lng);
-                map.setView(center, 5);
+                map.setView(center, 6);
             }
             else {
                 // Fallback if no lat-lon defined
                 center = new L.LatLng(25, 0);
+                lat = 25;
+                lng = 0;
                 map.setView(center, 1);
             }
 
@@ -88,10 +90,15 @@ $(document).ready(function() {
                 });
             });
 
-            // Update modal's LatLon fields.
-            map.on('click', function(event) {
-                $('#lat-temp').val(event.latlng.lat);
-                $('#lon-temp').val(event.latlng.lng);
+            // Add marker and drag it
+            var marker = L.marker([lat, lng], {draggable:'true'}).addTo(map);
+            map.addLayer(marker);
+            marker.on('dragend', function(event){
+                var marker = event.target;
+                var position = marker.getLatLng();
+                marker.setLatLng(position,{draggable:'true'}).bindPopup(position).update();
+                $('#lat-temp').val(position.lat);
+                $('#lon-temp').val(position.lng);
             });
 
             // Clicking "Use those" closes the modal and updates the hidden input fields.
