@@ -28,7 +28,6 @@ $(document).ready(function() {
         var center;
 
         if (!map) {
-            L.Icon.Default.imagePath = '/static/base/css/images/';
             map = new L.mapbox.map('map_point', 'mapbox.streets', {minZoom: 1, accessToken: MAPBOX_TOKEN});
             addAttributionOSM(map);
 

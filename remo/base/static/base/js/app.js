@@ -68,5 +68,5 @@ jQuery(document).ready(function ($) {
 });
 
 if (typeof(L) != 'undefined') {
-    L.Icon.Default.imagePath = '/static/base/js/images';
+    L.Icon.Default.imagePath = '/static/base/css/images/';
 }
