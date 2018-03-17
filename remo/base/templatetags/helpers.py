@@ -148,7 +148,7 @@ def get_static_map_url(width, height, lon, lat, zoom=4):
     """Return static map url."""
     token = settings.MAPBOX_TOKEN
     base_url = 'https://api.mapbox.com/styles/v1/mapbox/light-v9/static/'
-    marker_query = '%(lon)s,%(lat)s,%(zoom)s,0,0/'
+    marker_query = 'pin-m(%(lon)s,%(lat)s)/%(lon)s,%(lat)s,%(zoom)s,0,0/'
     center_query = '%(width)sx%(height)s?access_token=%(tok)s'
 
     URL = base_url + marker_query + center_query
