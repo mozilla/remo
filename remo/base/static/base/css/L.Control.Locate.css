@@ -1,7 +1,7 @@
 /* Compatible with Leaflet 0.6 */
 
 .leaflet-touch .leaflet-bar-part-single {
-    border-radius: 7px 7px 7px 7px;
+	border-radius: 7px 7px 7px 7px;
 	border-bottom: none;
 }
 
