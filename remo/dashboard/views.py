@@ -111,7 +111,6 @@ def dashboard(request):
     budget_requests = Bug.objects.filter(component='Budget Requests').exclude(q_closed)
     swag_requests = Bug.objects.filter(component='Swag Requests').exclude(q_closed)
     mentorship_requests = Bug.objects.filter(component='Mentorship').exclude(q_closed)
-    cit_requests = Bug.objects.filter(component='Community IT Requests').exclude(q_closed)
     planning_requests = Bug.objects.filter(component='Planning').exclude(q_closed)
 
     today = now().date()
@@ -163,7 +162,6 @@ def dashboard(request):
         args['all_swag_requests'] = swag_requests.all()[:20]
 
     if user.groups.filter(Q(name='Admin') | Q(name='Council')).exists():
-        args['my_cit_requests'] = cit_requests
         args['my_planning_requests'] = planning_requests
     else:
         args['my_planning_requests'] = planning_requests.filter(my_q_assigned).distinct()
