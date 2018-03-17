@@ -34,9 +34,11 @@
         {{ field_errors(form.users) }}
       </div>
       <div class="large-6 columns">
-        <input type="text" class="flat" value="{{ form.created_on.value() }}"
-               name="created_on" placeholder="YYYY-MM-DD HH:MM:SS" />
-        <div class="required-field"></div>
+        {% if form.created_on.value()!= None %}
+            <input type="text" class="flat" value="{{ form.created_on.value() }}"
+                name="created_on" placeholder="YYYY-MM-DD HH:MM:SS" />
+            <div class="required-field"></div>
+        {% endif %}
       </div>
       <div class="large-12 columns">
         <textarea class="flat" placeholder="Enter featured text"
