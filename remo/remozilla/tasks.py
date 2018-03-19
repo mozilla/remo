@@ -17,8 +17,7 @@ from remo.celery import app
 from remo.remozilla.models import Bug
 from remo.remozilla.utils import get_last_updated_date, set_last_updated_date
 
-COMPONENTS = ['Budget Requests', 'Community IT Requests', 'Mentorship',
-              'Swag Requests', 'Planning']
+COMPONENTS = ['Budget Requests', 'Mentorship', 'Swag Requests', 'Planning']
 
 BUGZILLA_FIELDS = ['is_confirmed', 'summary', 'creator', 'creation_time',
                    'component', 'whiteboard', 'op_sys', 'cc', 'id',
