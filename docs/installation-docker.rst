@@ -69,7 +69,7 @@ Running ReMo
 
      $ docker-compose up
      (lots of output - be patient...) or
-     $ docker-composer run -rm --service-ports web
+     $ docker-compose run --rm --service-ports web
      (this enables the output of print() on the docker output)
 
 #. Open the `local site <http://127.0.0.1:8000>`_ and develop!
