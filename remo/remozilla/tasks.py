@@ -45,8 +45,7 @@ def parse_bugzilla_time(time):
 
 @app.task
 @transaction.atomic
-def fetch_bugs(components=
-               , days=None):
+def fetch_bugs(components=COMPONENTS, days=None):
     """Fetch all bugs from Bugzilla.
 
     Loop over components and fetch bugs updated the last days. Link
