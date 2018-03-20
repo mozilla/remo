@@ -336,8 +336,8 @@ var update_results = function(data, query, newquery, past_events) {
     if (newquery) {
         clear_map();
         EventsLib.events_table_body_elm.empty();
-        set_number_of_events(data.meta.total_count);
     }
+    set_number_of_events(data.meta.total_count);
 
     if (!data.meta.next) {
         EventsLib.allset = true;

@@ -198,12 +198,6 @@ class ViewsTest(RemoTestCase):
                                   follow=True)
         self.assertJinja2TemplateUsed(response, 'profiles_edit.jinja')
 
-    def test_number_of_reps_visibility_unauthed(self):
-        """Test visibility of number of reps based on authentication status."""
-        response = self.client.get(reverse('profiles_list_profiles'), follow=True)
-        d = pq(response.content)
-        eq_(len(d('#profiles-number-of-reps')), 0)
-
     def test_number_of_reps_visibility_authenticated(self):
         """Test visibility of number of reps based on authentication status."""
         self.client.login(username=self.rep.username, password='passwd')
