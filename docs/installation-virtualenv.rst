@@ -64,6 +64,8 @@ When you want to start contributing...
 
      (venv)$ cp env-dist .env
 
+   Uncomment the line for `DATABASE_URL` in `.env` to point to the `localhost`
+   hostname.
 
 #. Activate MailHide.
 
