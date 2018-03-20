@@ -37,9 +37,12 @@ def redirect_list_events(request):
 @cache_control(private=True)
 def list_events(request):
     """List events view."""
-    data = {'events': Event.objects.all(),
-            'categories': FunctionalArea.active_objects.all(),
-            'initiatives': Campaign.active_objects.all()}
+    data = {
+        # Events should be ordered by start time
+        'events': Event.objects.all().order_by('start'),
+        'categories': FunctionalArea.active_objects.all(),
+        'initiatives': Campaign.active_objects.all()
+    }
 
     return render(request, 'list_events.jinja', data)
 

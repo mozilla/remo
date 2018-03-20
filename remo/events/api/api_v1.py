@@ -95,7 +95,9 @@ class EventResource(RemoThrottleMixin, ModelResource):
     class Meta:
         cache = HttpCache(control={'max_age': 1800, 's_maxage': 1800,
                                    'public': True})
-        queryset = Event.objects.all()
+        # By default events should be always ordered by start date unless
+        # specified by a query parameter
+        queryset = Event.objects.all().order_by('start')
         resource_name = 'event'
         authentication = Authentication()
         authorization = ReadOnlyAuthorization()
