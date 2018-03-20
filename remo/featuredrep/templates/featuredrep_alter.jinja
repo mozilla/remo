@@ -34,8 +34,7 @@
         {{ field_errors(form.users) }}
       </div>
       <div class="large-6 columns">
-        <input type="text" class="flat" value="{{ form.created_on.value()|default("", True) }}"
-            name="created_on" placeholder="YYYY-MM-DD HH:MM:SS" />
+        {{ field_with_attrs(form.created_on, placeholder='YYYY-MM-DD HH:MM:SS', value=form.created_on.value()|default("", True)) }}
         <div class="required-field"></div>
       </div>
       <div class="large-12 columns">
