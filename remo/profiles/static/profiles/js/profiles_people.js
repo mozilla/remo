@@ -190,8 +190,8 @@ function send_query(newquery) {
         newquery = false;
     }
     ProfilesLib.limited = false;
-    var API_CSV_URL = '/api/v1/rep/?order_by=profile__country,last_name,first_name&offset=0&limit=0';
-    var API_URL = '/api/v1/rep/?order_by=profile__country,last_name,first_name&offset='+ ProfilesLib.offset;
+    var API_CSV_URL = '/api/v1/rep/?order_by=-profile__date_joined_program&offset=0&limit=0';
+    var API_URL = '/api/v1/rep/?order_by=-profile__date_joined_program&offset='+ ProfilesLib.offset;
     var value = ProfilesLib.location_elm.attr('hash').substring(2);
 
 
