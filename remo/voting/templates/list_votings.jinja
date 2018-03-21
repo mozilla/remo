@@ -38,11 +38,19 @@
                 </a>
               </td>
               <td title="{{ poll.start|format_datetime }}"
-                  data-time="{{ poll.start|format_datetime_iso }}">
+                  data-time="{{ poll.start|format_datetime_iso }}" class="date-times tip-bottom"
+                     data-tooltip
+                     data-date-start="{{ poll.start|format_datetime_iso }}"
+                     data-date-end="{{ poll.end|format_datetime_iso }}"
+                     id="datetime-tip">
                 {{ poll.start|format_datetime }}
               </td>
               <td title="{{ poll.end|format_datetime }}"
-                  data-time="{{ poll.end|format_datetime_iso }}">
+                  data-time="{{ poll.end|format_datetime_iso }}" class="date-times tip-bottom"
+                     data-tooltip
+                     data-date-start="{{ poll.start|format_datetime_iso }}"
+                     data-date-end="{{ poll.end|format_datetime_iso }}"
+                     id="datetime-tip">
                 {{ poll.end|format_datetime }}
               </td>
               <td>{{ poll.valid_groups }}</td>
@@ -185,5 +193,6 @@
   {% compress js %}
     <script src="{{ static('base/js/stupidtable.js') }}"></script>
     <script src="{{ static('voting/js/voting_list.js') }}"></script>
+    <script src="{{ static('voting/js/voting_view_voting.js') }}"></script>
   {% endcompress %}
 {% endblock %}
