@@ -2,7 +2,7 @@ function set_time_tooltip() {
     'use strict';
     // Set time tooltip to display the time to your browser's timezone.
     var title = '';
-    var item = $('#datetime-tip');
+    var item = $('.datetime-tip');
 
     var start_date = new Date(item.data('date-start'));
     var user_start_date = new Date(item.data('date-start'));
@@ -13,13 +13,13 @@ function set_time_tooltip() {
     user_end_date.setHours(end_date.getHours(),
                            end_date.getMinutes() - end_date.getTimezoneOffset());
 
-    title = ('Voting started from ' +
+    title = ('Voting starts from ' +
              format_hour(start_date) +
              ' to ' +
              format_hour(end_date) +
              ' (UTC) or ' +
              'from ' + format_hour(user_start_date) + ' to ' +
-             format_hour(user_end_date) + ' (your time).');
+             format_hour(user_end_date) + ' local time.');
 
     // We need to add title, add class and call tooltips() after we
     // have initialized the tooltip.
