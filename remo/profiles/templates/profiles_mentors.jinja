@@ -1,0 +1,51 @@
+{% extends "base_fd4.jinja" %}
+{% block pagetitle %}Mozilla Reps - Mentors{% endblock %}
+
+{% block logo %}
+<h1><span class="metabold">mozilla</span> reps</h1>
+{% endblock %}
+
+{% block content %}
+<main role="main" class="mentors-main">
+  <div class="row">
+    <div class="large-12 columns">
+      <h1>Mentors</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="large-12 columns">
+      {% for mentor in mentors %}
+        <h3>{{mentor}} ({{mentor.mentees.exclude(user__groups__name='Alumni').count()}})</h3>
+        <table class="dashboard-table responsive">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Country</th>
+              <th>Date joined</th>
+              <th>Reports past 3 months</th>
+              <th>Reports past 6 months</th>
+              <th>Reports past 12 months</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rep in mentor.mentees.exclude(user__groups__name='Alumni') %}
+              <tr>
+                <td>
+                  <a href="{{ url('profiles_view_profile',
+                              rep.display_name) }}">{{rep.user.get_full_name()}}</a>
+                </td>
+                <td>{{rep.country}}</td>
+                <td>{{rep.date_joined_program}}</td>
+                <td>{{count_ng_reports(rep.user, period=12)}}</td>
+                <td>{{count_ng_reports(rep.user, period=26)}}</td>
+                <td>{{count_ng_reports(rep.user, period=52)}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endfor %}
+    </div>
+  </div>
+</main>
+{% endblock %}
