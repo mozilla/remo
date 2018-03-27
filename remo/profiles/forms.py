@@ -137,6 +137,12 @@ class ChangeProfileForm(happyforms.ModelForm):
         twitter_account = self.cleaned_data['twitter_account']
         return twitter_account.strip('@')
 
+    def clean_mentor(self):
+        """Make sure that we don't save an empty mentor if it was not part of the request"""
+        if not self.request.user.has_perm('profiles.can_change_mentor'):
+            self.cleaned_data['mentor'] = self.instance.mentor
+        return self.cleaned_data['mentor']
+
     class Meta:
         model = UserProfile
         fields = ('local_name', 'birth_date',
