@@ -152,7 +152,7 @@ def list_profiles(request):
     reps = (User.objects
             .filter(userprofile__registration_complete=True,
                     groups__name='Rep')
-            .order_by('userprofile__country', 'last_name', 'first_name'))
+            .order_by('-userprofile__date_joined_program'))
 
     return render(request, 'profiles_people.jinja',
                   {'countries': countries,
