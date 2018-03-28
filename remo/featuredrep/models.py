@@ -30,6 +30,6 @@ class FeaturedRep(models.Model):
 
         if not self.updated_on:
             self.updated_on = now()
-        if not self.pk:
+        if not self.pk and not self.created_on:
             self.created_on = now()
         super(FeaturedRep, self).save(*args, **kwargs)

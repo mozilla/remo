@@ -36,6 +36,7 @@
       <div class="large-6 columns">
         {{ field_with_attrs(form.created_on, placeholder='YYYY-MM-DD HH:MM:SS', value=form.created_on.value()|default("", True)) }}
         <div class="required-field"></div>
+        {{ field_errors(form.created_on) }}
       </div>
       <div class="large-12 columns">
         <textarea class="flat" placeholder="Enter featured text"
