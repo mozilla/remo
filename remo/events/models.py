@@ -1,5 +1,4 @@
 from pytz import timezone
-from datetime import timedelta
 from urlparse import urljoin
 
 from django.conf import settings
@@ -188,11 +187,8 @@ class Event(models.Model):
     @property
     def is_past_event(self):
         """Property to check is event is in the past."""
-        real_end_date = self.end
-        if self.created_on is not None and real_end_date < self.created_on:
-            real_end_date = self.created_on + timedelta(hours=2)
-        if self.id and real_end_date:
-            return now() > real_end_date
+        if self.id and self.end:
+            return now() > self.end
         return None
 
     def get_similar_events(self):

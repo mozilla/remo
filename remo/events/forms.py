@@ -270,10 +270,14 @@ class EventForm(happyforms.ModelForm):
             msg = 'Start date should come before end date.'
             self._errors['start_form'] = self.error_class([msg])
 
-        # Check that there is a cateogry selected
+        # Check that there is a category selected
         if not cdata.get('categories'):
             msg = 'You need to select one functional area for this event.'
             self._errors['categories'] = self.error_class([msg])
+
+        if self.instance.id is not None and cdata['start'] > now():
+            msg = 'Start date cannot be in the future for an event that already exist.'
+            self._errors['start_form'] = self.error_class([msg])
 
         return cdata
 
