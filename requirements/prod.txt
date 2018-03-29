@@ -235,9 +235,9 @@ ecdsa==0.13 \
     --hash=sha256:64cf1ee26d1cde3c73c6d7d107f835fed7c6a2904aef9eac223d57ad800c43fa
 future==0.16.0 \
     --hash=sha256:e39ced1ab767b5936646cedba8bcce582398233d6a627067d4c6a454c90cfedb
-mozilla-django-oidc==0.5.0 \
-    --hash=sha256:56d72b3a35cbe9b313e4ec19a01943d4ca698562476d3387c3ab30e66d33bcf8 \
-    --hash=sha256:ab6dcccf4841472c1e82244d66503e87ffae0ad7d38d6187fcca54810eceb7a6
+mozilla-django-oidc==0.6.0 \
+    --hash=sha256:4b432410410c685891bb827b9a392e2bb9d6418dd48d650db68f26a07563dbb0 \
+    --hash=sha256:0f21353f376cfc6c52f7dfdf4c09eb5b1af4ad34c3748c0710a2cad008befd20
 python-decouple==3.0 \
     --hash=sha256:99834c9ff7ce5c5b2f4a18bc0880753e54ea3aaabc3cfb16961a92d5046665df
 dj-database-url==0.4.2 \
