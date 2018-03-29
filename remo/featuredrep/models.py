@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.timezone import now
-
+import datetime
 
 class FeaturedRep(models.Model):
     """Featured Rep model.
@@ -27,9 +27,10 @@ class FeaturedRep(models.Model):
 
         # This allows to override the updated_on through the admin interface
         self.updated_on = kwargs.pop('updated_on', None)
-
+        
         if not self.updated_on:
             self.updated_on = now()
-        if not self.pk and not self.created_on:
+        if not self.pk:
             self.created_on = now()
-        super(FeaturedRep, self).save(*args, **kwargs)
+        if self.created_on < now() + datetime.timedelta(days=30):
+            super(FeaturedRep, self).save(*args, **kwargs)
