@@ -25,6 +25,7 @@
             <th class="dashboard-clickable type-string">Start Date</th>
             <th class="dashboard-clickable type-string">End Date</th>
             <th class="dashboard-clickable type-string">Eligible Groups</th>
+            <th class="dashboard-clickable type-string align-center">Voted</th>
             <th class="dashboard-clickable type-string align-center">Users Voted</th>
             <th class="dashboard-clickable type-string align-center">Voting Progress</th>
           </tr>
@@ -52,6 +53,11 @@
                 {{ poll.end|format_datetime }}
               </td>
               <td>{{ poll.valid_groups }}</td>
+              <td class="align-center">
+                {% if user_has_voted(user,poll) %}
+                     <span class="user-voted"></span>
+                {% endif %}
+              </td>
               <td class="align-center">{{ poll|get_users_voted }}</td>
               <td>
                 <span class="meter_text">{{ poll|get_meter_value }}%</span>
