@@ -1,5 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.utils.timezone import now
+import datetime
 
 import happyforms
 
@@ -12,6 +15,14 @@ class FeaturedRepForm(happyforms.ModelForm):
         queryset=User.objects.filter(
             userprofile__registration_complete=True,
             groups__name='Rep').order_by('first_name'))
+
+    def clean_created_on(self):
+        print(self.cleaned_data['created_on'])
+        print(now() + datetime.timedelta(days=30))
+        if self.cleaned_data['created_on'] > now() + datetime.timedelta(days=30):
+            raise ValidationError('The date cannot be over 30 days in the future.')
+
+        return self.cleaned_data['created_on']
 
     class Meta:
         model = FeaturedRep
