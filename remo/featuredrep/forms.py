@@ -17,8 +17,6 @@ class FeaturedRepForm(happyforms.ModelForm):
             groups__name='Rep').order_by('first_name'))
 
     def clean_created_on(self):
-        print(self.cleaned_data['created_on'])
-        print(now() + datetime.timedelta(days=30))
         if self.cleaned_data['created_on'] > now() + datetime.timedelta(days=30):
             raise ValidationError('The date cannot be over 30 days in the future.')
 
