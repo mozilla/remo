@@ -162,6 +162,17 @@ def list_profiles(request):
                    'interests': MobilisingInterest.objects.all()})
 
 
+@cache_control(private=True)
+def list_mentors(request):
+    """List mentors"""
+    mentors = (User.objects
+               .filter(userprofile__registration_complete=True,
+                       groups__name='Mentor')
+               .exclude(groups__name='Alumni'))
+
+    return render(request, 'profiles_mentors.jinja', {'mentors': mentors})
+
+
 @cache_control(private=True, max_age=60 * 5)
 def view_profile(request, display_name):
     """View user profile."""
