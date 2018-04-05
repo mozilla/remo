@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.test import TestCase as BaseTestCase
 from django.test.client import Client
-from django.test.utils import override_settings
+from django.test.utils import modify_settings, override_settings
 
 from django_jinja.backend import Template as Jinja_Template
 from mock import patch
@@ -23,6 +23,7 @@ PASSWORD_HASHERS = (
 
 @override_settings(AUTHENTICATION_BACKENDS=AUTHENTICATION_BACKENDS,
                    PASSWORD_HASHERS=PASSWORD_HASHERS)
+@modify_settings(MIDDLEWARE_CLASSES={'remove': 'mozilla_django_oidc.middleware.RefreshIDToken'})
 class RemoTestCase(BaseTestCase):
 
     @contextmanager

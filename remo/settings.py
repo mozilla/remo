@@ -64,6 +64,7 @@ MIDDLEWARE_CLASSES = (
     'csp.middleware.CSPMiddleware',
     'remo.base.middleware.RegisterMiddleware',
     'waffle.middleware.WaffleMiddleware',
+    'mozilla_django_oidc.middleware.RefreshIDToken',
 )
 
 #############################
