@@ -328,7 +328,8 @@
                 </div>
                 <div class="small-11 columns">
                   <div class="has-tip tip-right auto-width"
-                       title="Estimated attendance" data-tooltip>
+                       title="Estimated attendance" data-tooltip
+                       data-options='disable-for-touch:true'>
                     {{ field_with_attrs(event_form.estimated_attendance,
                                         placeholder='Estimated attendance') }}
                   </div>
@@ -343,7 +344,8 @@
                   </div>
                   <div class="small-11 columns">
                     <div class="has-tip tip-right auto-width"
-                         title="Actual attendance" data-tooltip>
+                         title="Actual attendance" data-tooltip
+                         data-options='disable-for-touch:true'>
                       {{ field_with_attrs(event_form.actual_attendance,
                                           placeholder='Actual attendance') }}
                     </div>
@@ -511,7 +513,7 @@
                   {% endif %}
                 </div>
               </div>
-        
+
               <div class="row">
                 <div class="small-11 small-offset-1 columns">
                   <div class="{% if event.budget_bug %} large-12 {% else %} large-6 {% endif %} columns">
@@ -553,7 +555,7 @@
                           <div class="small-1 columns">
                             <div class="required-field"></div>
                           </div>
-                        {% endif %}  
+                        {% endif %}
                         <div class="small-11 small-offset-1 columns">
                           <div class='has-tip tip-right' data-tooltip
                                data-options='disable-for-touch:true'
@@ -561,13 +563,15 @@
                                {{ form.metric }}
                           </div>
                           {{ field_errors(form.metric) }}
-                          <div class='has-tip tip-right' title='Expected outcome' data-tooltip>
+                          <div class='has-tip tip-right' title='Expected outcome' data-tooltip
+                               data-options='disable-for-touch:true'>
                             {{ field_with_attrs(form.expected_outcome,
                                                 placeholder='Expected outcome (numeric)') }}
                           </div>
                           {{ field_errors(form.expected_outcome) }}
                           {% if form.outcome %}
-                            <div class='has-tip tip-right' title='Actual outcome' data-tooltip>
+                            <div class='has-tip tip-right' title='Actual outcome' data-tooltip
+                                 data-options='disable-for-touch:true'>
                               {{ field_with_attrs(form.outcome,
                                                   placeholder='Actual outcome (numeric)') }}
                             </div>
