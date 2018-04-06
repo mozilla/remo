@@ -158,7 +158,7 @@ class Event(models.Model):
         # Calculate planning pad url
         if not self.planning_pad_url:
             url = urljoin(settings.ETHERPAD_URL,
-                          getattr(settings, 'ETHERPAD_PREFIX', '') + self.slug)
+                          getattr(settings, 'ETHERPAD_PREFIX', '') + self.slug[:45])
             self.planning_pad_url = url
 
         # Update action items
