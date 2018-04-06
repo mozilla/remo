@@ -84,7 +84,8 @@ def edit(request, display_name):
                       'Review': 'review_group',
                       'Peers': 'peers_group',
                       'Resources': 'resources_group',
-                      'Onboarding': 'onboarding_group'}
+                      'Onboarding': 'onboarding_group',
+                      'Newsletter': 'newsletter_group'}
 
             for group_db, group_html in groups.items():
                 if Group.objects.filter(name=group_db).exists():
@@ -117,7 +118,7 @@ def edit(request, display_name):
 
     group_bits = map(lambda x: user.groups.filter(name=x).exists(),
                      ['Admin', 'Council', 'Mentor', 'Rep', 'Alumni', 'Review', 'Peers',
-                      'Resources', 'Onboarding'])
+                      'Resources', 'Onboarding', 'Newsletter'])
 
     functional_areas = map(int, profileform['functional_areas'].value())
     mobilising_skills = map(int, profileform['mobilising_skills'].value())
@@ -194,7 +195,8 @@ def view_profile(request, display_name):
         Q(name='Council') |
         Q(name='Peers') |
         Q(name='Resources') |
-        Q(name='Onboarding')
+        Q(name='Onboarding') |
+        Q(name='Newsletter')
     )
     is_nomination_period = now().date() < rotm_nomination_end_date()
     data = {'pageuser': user,

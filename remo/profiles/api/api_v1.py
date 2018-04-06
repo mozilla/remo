@@ -234,6 +234,8 @@ class RepResource(RemoThrottleMixin, ModelResource):
                 base_object_list = base_object_list.filter(groups__name='Resources')
             elif group == 'onboarding':
                 base_object_list = base_object_list.filter(groups__name='Onboarding')
+            elif group == 'newsletter':
+                base_object_list = base_object_list.filter(groups__name='Newsletter')
 
         return base_object_list
 
