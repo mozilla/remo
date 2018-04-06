@@ -433,7 +433,10 @@ def userprofile_set_display_name_pre_save(sender, instance, **kwargs):
         display_name = display_name[:DISPLAY_NAME_MAX_LENGTH]
 
         while True:
-            instance.display_name = display_name
+            # User created with management command can have blank email.
+            # That may result blank display_name.
+            # As display_name can not be blank, add `_` if its blank
+            instance.display_name = display_name or '_'
 
             try:
                 instance.validate_unique()

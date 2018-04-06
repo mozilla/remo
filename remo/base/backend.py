@@ -48,3 +48,13 @@ class RemoAuthenticationBackend(OIDCAuthenticationBackend):
             user.save()
             user.groups.add(Group.objects.get(name='Mozillians'))
             return user
+
+    def authenticate(self, **kwargs):
+        """ Override authenticate method in order to combine with other backends.
+        It was fixed with PR #87 and released in version 0.2.0
+        """
+        # TODO: remove this override whenever upgrade `mozilla-django-oidc` to version 0.2.0
+        if not kwargs.get('request'):
+            return None
+
+        return super(RemoAuthenticationBackend, self).authenticate(**kwargs)
