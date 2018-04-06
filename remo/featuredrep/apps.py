@@ -10,8 +10,8 @@ def featuredrep_set_groups(sender, **kwargs):
     if (isinstance(app_label, basestring) and app_label != 'featuredrep'):
         return True
 
-    perms = {'can_edit_featured': ['Admin', 'Council'],
-             'can_delete_featured': ['Admin', 'Council']}
+    perms = {'can_edit_featured': ['Admin', 'Council', 'Peers'],
+             'can_delete_featured': ['Admin', 'Council', 'Peers']}
 
     add_permissions_to_groups('featuredrep', perms)
 
