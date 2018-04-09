@@ -11,11 +11,17 @@ from remo.base.decorators import permission_check
 import forms
 from models import FeaturedRep
 
+from datetime import datetime
+
 
 @cache_control(private=True, max_age=60 * 10)
 def list_featured(request):
     """List all Featured Reps."""
-    featured_list = FeaturedRep.objects.all()
+
+    if not request.user.has_perms('featuredrep.can_edit_featured'):
+        featured_list = FeaturedRep.objects.filter(created_on__gte=datetime.today())
+    else:
+        featured_list = FeaturedRep.objects.all()
 
     paginator = Paginator(featured_list,
                           settings.ITEMS_PER_PAGE)
