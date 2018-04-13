@@ -78,5 +78,13 @@
             "name": "Onboarding",
             "permissions": []
         }
+    },
+    {
+        "pk": 11,
+        "model": "auth.group",
+        "fields": {
+            "name": "Newsletter",
+            "permissions": []
+        }
     }
 ]
