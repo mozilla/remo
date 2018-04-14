@@ -21,7 +21,7 @@ class FeaturedRepForm(happyforms.ModelForm):
             nowplusthirthy = now() + datetime.timedelta(days=30)
             if self.cleaned_data['created_on'] > nowplusthirthy:
                         raise ValidationError(
-                                'The date cannot be over 30 days in the' +
+                                'The date cannot be over 30 days in the'
                                 ' future.')
 
         return self.cleaned_data['created_on']
