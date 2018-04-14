@@ -2,6 +2,7 @@ import feedparser
 import json
 import logging
 import requests
+from datetime import datetime
 
 from django import http
 from django.db.models import Q
@@ -44,7 +45,7 @@ class OIDCCallbackView(OIDCAuthenticationCallbackView):
 @cache_control(private=True, no_cache=True)
 def main(request):
     """Main page of the website."""
-    featured_rep = utils.latest_object_or_none(FeaturedRep)
+    featured_rep = FeaturedRep.objects.filter(created_on__lte=datetime.today()).latest()
 
     planet_feed = cache.get('planet')
     if not planet_feed:

@@ -19,7 +19,7 @@ def list_featured(request):
     """List all Featured Reps."""
 
     if not request.user.has_perms('featuredrep.can_edit_featured'):
-        featured_list = FeaturedRep.objects.filter(created_on__gte=datetime.today())
+        featured_list = FeaturedRep.objects.filter(created_on__lte=datetime.today())
     else:
         featured_list = FeaturedRep.objects.all()
 
