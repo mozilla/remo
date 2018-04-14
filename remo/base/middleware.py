@@ -18,6 +18,7 @@ class RegisterMiddleware(object):
     def process_request(self, request):
         if (request.user.is_authenticated() and not
             request.user.userprofile.registration_complete and not
+            request.user.is_superuser and not
                 request.user.groups.filter(name='Mozillians').exists()):
             allow_urls = [
                 reverse('oidc_authentication_init'),
