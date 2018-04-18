@@ -40,11 +40,7 @@
               <label for="id_start_date">
                 I plan to take a break starting on
               </label>
-              <div id="availability-date"
-                   class="has-tip tip-left"
-                   title="Start date"
-                   data-tooltip
-                   data-options="disable-for-touch:true">
+              <div id="availability-date">
                 {{ field_with_attrs(status_form.start_date,
                                     class="datepicker",
                                     autocomplete="off",
@@ -68,11 +64,7 @@
               <label class="required" for="id_expected_date">
                 I plan to be active again in the Reps Program starting on
               </label>
-              <div id="availability-date"
-                  class="has-tip tip-left"
-                  title="Expected return date"
-                  data-tooltip
-                  data-options="disable-for-touch:true">
+              <div id="availability-date">
                 {{ field_with_attrs(status_form.expected_date,
                                     class="datepicker",
                                     autocomplete="off",
@@ -96,11 +88,7 @@
               <p class="required">
                 Will a Rep replace you while you are unavailable?
               </p>
-              <div id="replacement-rep-radio"
-                  class="has-tip tip-left"
-                  title="Replacement Rep"
-                  data-tooltip
-                  data-options="disable-for-touch:true">
+              <div id="replacement-rep-radio">
                 <p>
                   {% for choice in status_form.is_replaced %}
                     {{ choice }}
@@ -112,11 +100,7 @@
                 <label class="required" for="id_replacement_rep">
                   Which Rep will replace you?
                 </label>
-                <div id="replacement-rep"
-                    class="has-tip tip-left"
-                    title="Select a Rep"
-                    data-tooltip
-                    data-options="disable-for-touch:true">
+                <div id="replacement-rep">
                   {{ status_form.replacement_rep }}
                 </div>
                 {{ field_errors(status_form.replacement_rep) }}
@@ -137,11 +121,7 @@
               <label class="required" for="id_body">
                 Why are you taking a break?
               </label>
-              <div id="availability-date"
-                  class="has-tip tip-left"
-                  title="Describe shortly the reasons for your break."
-                  data-tooltip
-                  data-options="disable-for-touch:true">
+              <div id="availability-date">
                 {{ field_with_attrs(email_form.body,
                   placeholder="Any information entered here is sent to your mentor but not stored anywhere",
                   rows=4) }}

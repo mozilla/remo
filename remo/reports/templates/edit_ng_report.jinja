@@ -39,9 +39,7 @@
             <label class="required" for="activity-type">
               What did you do?
             </label>
-            <div id="activity-type" class="activity-type has-tip tip-left"
-                 data-tooltip data-options="disable-for-touch:true"
-                 title="Type of Activity">
+            <div id="activity-type" class="activity-type">
               {{ report_form.activity }}
             </div>
             {{ field_errors(report_form.activity) }}
@@ -58,10 +56,6 @@
               Which initiative did you participate in?
             </label>
             <div id="campaign"
-                 class="has-tip tip-left"
-                 title="Select an initiative"
-                 data-tooltip
-                 data-options="disable-for-touch:true"
                  required>
               {{ report_form.campaign  }}
             </div>
@@ -77,10 +71,7 @@
             <label class="required" for="id_report_date">
               When did you do this activity?
             </label>
-            <span class="tip-left" title="Date of activity in UTC"
-                  placeholder="DD-MM-YYYY"
-                  data-tooltip
-                  data-options="disable-for-touch:true"
+            <span placeholder="DD-MM-YYYY"
                   required>
               {{ field_with_attrs(report_form.report_date,
                                   class="datepicker",
@@ -98,12 +89,8 @@
             <label class="required" for="id_functional_areas">
               Which contribution area does your activity support?
             </label>
-            <span class="has-tip tip-left" title="Contribution area"
-                  data-tooltip
-                  data-options="disable-for-touch:true">
-              {{ field_with_attrs(report_form.functional_areas,
-                                  class='contribution-area') }}
-            </span>
+            {{ field_with_attrs(report_form.functional_areas,
+                                class='contribution-area') }}
           </div>
         </div>
           {{ field_errors(report_form.functional_areas) }}
@@ -119,9 +106,7 @@
             <label class="required" for="id_location">
               Where did your contribution take place?
             </label>
-            <div class="location-inputs has-tip tip-right"
-                 title="Location of contribution" data-tooltip
-                 data-options="disable-for-touch:true">
+            <div class="location-inputs">
               {{ field_with_attrs(report_form.location,
                                   readonly="readonly",
                                   placeholder="City, Region, Country") }}
@@ -149,8 +134,7 @@
             <label for="link">
               URL for your activity
             </label>
-            <div id="link" class="has-tip tip-right" data-tooltip
-                 data-options="disable-for-touch:true" title="URL for activity">
+            <div id="link">
               {{ field_with_attrs(report_form.link,
                                   placeholder="http://www.example.com") }}
             </div>
@@ -166,8 +150,7 @@
             <label for="link-description">
               URL description
             </label>
-            <div id="link-description " data-tooltip class="has-tip tip-right"
-                 data-options="disable-for-touch:true" title="What is this URL for">
+            <div id="link-description ">
               {{ field_with_attrs(report_form.link_description,
                                   class="flat",
                                   placeholder="What is this URL for") }}
@@ -184,8 +167,7 @@
             <label for="description">
               Activity description
             </label>
-            <div id="description" data-tooltip class="has-tip tip-right"
-                 data-options="disable-for-touch:true" title="Activity description">
+            <div id="description">
               {{ field_with_attrs(report_form.activity_description,
                                   class="flat",
                                   placeholder="Describe the activity briefly",
