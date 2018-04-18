@@ -271,8 +271,6 @@ def invite(request):
         # Add new users to Rep group
         user.groups.add(Group.objects.get(name='Rep'))
 
-        if request.user.groups.filter(name='Mentor').exists():
-            user.userprofile.mentor = request.user
         user.userprofile.added_by = request.user
         user.userprofile.save()
 
