@@ -31,7 +31,10 @@
           <tbody>
             {% for rep in mentor.mentees.exclude(user__groups__name='Alumni') %}
               <tr>
-                <td>
+                <td class="{{ rep.user|get_activity_level }}
+                           {% if rep.user|user_is_unavailable %}
+                             unavailable
+                           {% endif %}">
                   <a href="{{ url('profiles_view_profile',
                               rep.display_name) }}">{{rep.user.get_full_name()}}</a>
                 </td>
