@@ -26,17 +26,12 @@
         <label class="required" for="id_users">
           Please specify the Featured Rep(s) for this month.
         </label>
-        <span class="has-tip tip-left" title="Featured Rep"
-              data-tooltip
-              data-options="disable-for-touch:true">
-          {{ field_with_attrs(form.users, size=18) }}
-        </span>
+        {{ field_with_attrs(form.users, size=18) }}
         {{ field_errors(form.users) }}
       </div>
       <div class="large-12 columns">
-        <textarea class="flat" placeholder="Enter featured text"
-                  name="text">{{ form.text.value() }}
-        </textarea>
+        <textarea class="flat" placeholder="Enter text for featured Rep"
+                  name="text">{{ form.text.value() }}</textarea>
         <div class="required-field"></div>
         {{ field_errors(form.text) }}
         <p class="more-info">In this field you can use

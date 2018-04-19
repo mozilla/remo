@@ -76,6 +76,7 @@ Mozilla Reps - {{ event.name }}
                              data-date-local-start="{{ event.local_start|format_datetime_iso }}"
                              data-date-local-end="{{ event.local_end|format_datetime_iso }}"
                              data-is-multidate="false"
+                             data-options="disable-for-touch:true"
                              id="datetime-tip">
                           <div class="time-start">
                             {{ event.local_start|strftime('%H:%M') }}
@@ -120,6 +121,7 @@ Mozilla Reps - {{ event.name }}
                                data-date-local-start="{{ event.local_start|format_datetime_iso }}"
                                data-date-local-end="{{ event.local_end|format_datetime_iso }}"
                                data-is-multidate="true"
+                               data-options="disable-for-touch:true"
                                id="datetime-tip">
                             <div class="pict-icon small time"></div>
                           </div>
@@ -193,28 +195,22 @@ Mozilla Reps - {{ event.name }}
         <div class="large-11 columns">
           <ul class="social-share">
             <li>
-              <a class="fb has-tip tip-bottom"
-                 title="Share on Facebook"
+              <a class="fb"
                  target="_blank"
-                 data-tooltip
                  href="https://www.facebook.com/sharer/sharer.php?u={{ event_link }}">
                 Facebook
               </a>
             </li>
             <li>
-              <a class="tw has-tip tip-bottom"
-                 title="Share on Twitter"
+              <a class="tw"
                  target="_blank"
-                 data-tooltip
                  href="http://twitter.com/share?url={{ event_link }}&amp;via=mozillareps&amp;text=Mozilla%20Reps%20-%20{{ event.name|urlencode }}">
                 Twitter
               </a>
             </li>
             <li>
-              <a class="gp has-tip tip-bottom"
-                 title="Share on Google+"
+              <a class="gp"
                  target="_blank"
-                 data-tooltip
                  href="https://plus.google.com/share?url={{ event_link }}&amp;hl=en-US">
                 Google +
               </a>

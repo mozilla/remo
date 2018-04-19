@@ -47,10 +47,7 @@
                    id="id_display_name"
                    value="{{ profileform.display_name.value() }}"
                    class="has-tip tip-left"
-                   title="Username"
                    aria-required="required"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
                    required>
             <div class="required-field"></div>
             {% if profileform.display_name.errors %}
@@ -64,10 +61,7 @@
                    id="id_last_name"
                    value="{{ userform.last_name.value() }}"
                    class="has-tip tip-left"
-                   title="Last name"
                    aria-required="required"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
                    required>
             <div class="required-field"></div>
             {% if userform.last_name.errors %}
@@ -79,10 +73,7 @@
                    id="id_first_name"
                    value="{{ userform.first_name.value() }}"
                    class="has-tip tip-left"
-                   title="First name"
                    aria-required="required"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
                    required>
             <div class="required-field"></div>
             {% if userform.first_name.errors %}
@@ -92,17 +83,13 @@
             {% endif %}
             <input type="text" placeholder="Name in local language"
                    id="id_local_name"
-                   name="local_name" value="{{ profileform.local_name.value() }}"
-                   class="has-tip tip-left"
-                   title="Name in local language"
-                   data-tooltip
-                   data-options="disable-for-touch:true">
+                   name="local_name" value="{{ profileform.local_name.value() }}">
             {% if profileform.local_name.errors %}
               <small class="error">
                 {{ profileform.local_name.errors }}
               </small>
             {% endif %}
-            <div class="has-tip tip-left" title="Gender" data-tooltip data-options="disable-for-touch:true">
+            <div class="has-tip tip-left">
               {{ profileform.gender }}
             </div>
             {% if profileform.gender.errors %}
@@ -145,11 +132,7 @@
                    id="id_private_email"
                    value="{{ profileform.private_email.value() }}"
                    name="private_email"
-                   class="has-tip tip-left"
-                   title="Private email"
                    aria-required="required"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
                    required>
             <div class="required-field"></div>
             {% if profileform.private_email.errors %}
@@ -162,10 +145,7 @@
                    value="{{ userform.email.value() }}"
                    name="email"
                    class="has-tip tip-left"
-                   title="Mozilla Login Identity"
                    aria-required="required"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
                    required>
             <div class="required-field"></div>
             {% if userform.email.errors %}
@@ -177,11 +157,7 @@
                    id="id_mozillians_profile_url"
                    value="{{ profileform.mozillians_profile_url.value() }}"
                    name="mozillians_profile_url"
-                   class="has-tip tip-left"
-                   title="Mozillians.org profile"
                    aria-required="required"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
                    required>
             <div class="required-field"></div>
             {% if profileform.mozillians_profile_url.errors %}
@@ -192,20 +168,14 @@
             <input type="text" placeholder="Wiki profile"
                    id="id_wiki_profile_url"
                    value="{{ profileform.wiki_profile_url.value() }}"
-                   name="wiki_profile_url"
-                   class="has-tip tip-left"
-                   title="Wiki profile"
-                   data-tooltip
-                   data-options="disable-for-touch:true">
+                   name="wiki_profile_url">
             {% if profileform.wiki_profile_url.errors %}
               <small class="error">
                 {{ profileform.wiki_profile_url.errors }}
               </small>
             {% endif %}
             {% if perms.profiles.can_change_mentor %}
-              <div class="has-tip tip-left" title="Mentor" data-tooltip data-options="disable-for-touch:true">
-                {{ profileform.mentor }}
-              </div>
+              {{ profileform.mentor }}
               <div class="required-field"></div>
               {% if profileform.mentor.errors %}
                 <small class="error">
@@ -225,11 +195,7 @@
             <input type="text" placeholder="City" value="{{ profileform.city.value() }}"
                    id="id_city"
                    name="city"
-                   class="has-tip tip-right"
-                   title="City"
                    aria-required="required"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
                    required>
             <div class="required-field"></div>
             {% if profileform.city.errors %}
@@ -241,11 +207,7 @@
                    id="id_region"
                    value="{{ profileform.region.value() }}"
                    name="region"
-                   class="has-tip tip-right"
-                   title="Region"
                    aria-required="required"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
                    required>
             <div class="required-field"></div>
             {% if profileform.region.errors %}
@@ -253,9 +215,7 @@
                 {{ profileform.region.errors }}
               </small>
             {% endif %}
-            <div class="has-tip tip-right" title="Country" data-tooltip>
-              {{ profileform.country }}
-            </div>
+            {{ profileform.country }}
             <div class="required-field"></div>
             {% if profileform.country.errors %}
               <small class="error">
@@ -263,9 +223,7 @@
               </small>
             {% endif %}
             <!-- Timezone -->
-            <div class="has-tip tip-right" title="Timezone" data-tooltip>
-              {{ profileform.timezone }}
-            </div>
+            {{ profileform.timezone }}
             {% if profileform.timezone.errors %}
               <small class="error">
                 {{ profileform.timezone.errors }}
@@ -303,11 +261,7 @@
             <input type="text" placeholder="Twitter handle"
                    id="id_twitter_account"
                    value="{{ profileform.twitter_account.value() }}"
-                   name="twitter_account"
-                   class="has-tip tip-left"
-                   title="Twitter handle"
-                   data-tooltip
-                   data-options="disable-for-touch:true">
+                   name="twitter_account">
             {% if profileform.twitter_account.errors %}
               <small class="error">
                 {{ profileform.twitter_account.errors }}
@@ -316,11 +270,7 @@
             <input type="text" placeholder="Facebook profile"
                    id="id_facebook_url"
                    value="{{ profileform.facebook_url.value() }}"
-                   name="facebook_url"
-                   class="has-tip tip-left"
-                   title="Facebook profile"
-                   data-tooltip
-                   data-options="disable-for-touch:true">
+                   name="facebook_url">
             {% if profileform.facebook_url.errors %}
               <small class="error">
                 {{ profileform.facebook_url.errors }}
@@ -329,11 +279,7 @@
             <input type="text" placeholder="Diaspora profile"
                    id="id_diaspora"
                    value="{{ profileform.diaspora_url.value() }}"
-                   name="diaspora_url"
-                   class="has-tip tip-left"
-                   title="Diaspora profile"
-                   data-tooltip
-                   data-options="disable-for-touch:true">
+                   name="diaspora_url">
             {% if profileform.diaspora_url.errors %}
               <small class="error">
                 {{ profileform.diaspora_url.errors }}
@@ -342,11 +288,7 @@
             <input type="text" placeholder="LinkedIn profile"
                    id="id_linkedin_url"
                    value="{{ profileform.linkedin_url.value() }}"
-                   name="linkedin_url"
-                   class="has-tip tip-left"
-                   title="LinkedIn profile"
-                   data-tooltip
-                   data-options="disable-for-touch:true">
+                   name="linkedin_url">
             {% if profileform.linkedin_url.errors %}
               <small class="error">
                 {{ profileform.linkedin_url.errors }}
@@ -364,11 +306,7 @@
             <input type="text" placeholder="Jabber ID"
                    id="id_jabber_id"
                    value="{{ profileform.jabber_id.value() }}"
-                   name="jabber_id"
-                   class="has-tip tip-right"
-                   title="Jabber ID"
-                   data-tooltip
-                   data-options="disable-for-touch:true">
+                   name="jabber_id">
             {% if profileform.jabber_id.errors %}
               <small class="error">
                 {{ profileform.jabber_id.errors }}
@@ -379,9 +317,6 @@
                    value="{{ profileform.irc_name.value() }}"
                    name="irc_name"
                    class="has-tip tip-right"
-                   title="IRC nickname"
-                   data-tooltip
-                   data-options="disable-for-touch:true"
                    aria-required="required"
                    required>
             <div class="required-field"></div>
@@ -393,10 +328,7 @@
             <textarea class="flat has-tip tip-right"
                       id="id_irc_channels"
                       placeholder="Please list the channels you use in IRC"
-                      title="List of IRC channels"
-                      name="irc_channels"
-                      data-tooltip
-                      data-options="disable-for-touch:true">{{ profileform.irc_channels.value() }}</textarea>
+                      name="irc_channels">{{ profileform.irc_channels.value() }}</textarea>
             {% if profileform.irc_channels.errors %}
               <small class="error">
                 {{ profileform.irc_channels.errors }}
@@ -416,11 +348,7 @@
             <input type="text" placeholder="Personal site URL"
                    id="id_personal_website_url"
                    value="{{ profileform.personal_website_url.value() }}"
-                   name="personal_website_url"
-                   class="has-tip tip-left"
-                   title="Personal site URL"
-                   data-tooltip
-                   data-options="disable-for-touch:true">
+                   name="personal_website_url">
             {% if profileform.personal_website_url.errors %}
               <small class="error">
                 {{ profileform.personal_website_url.errors }}
@@ -429,11 +357,7 @@
             <input type="text" placeholder="Feed for Reps Planet"
                    id="id_personal_blog_feed"
                    value="{{ profileform.personal_blog_feed.value() }}"
-                   name="personal_blog_feed"
-                   class="has-tip tip-left"
-                   title="Feed for Reps planet"
-                   data-tooltip
-                   data-options="disable-for-touch:true">
+                   name="personal_blog_feed">
             <small>
               Your feed posts will only be validated if they are in
               the remo, reps, mozillareps or mozilla-reps
@@ -456,11 +380,8 @@
           <div class="large-11 columns top-margined" id="bio">
             <textarea class="flat has-tip tip-right"
                       id="id_bio"
-                      placeholder="Bio - Write us a bit about yourself"
-                      name="bio"
-                      title="Bio"
-                      data-tooltip
-                      data-options="disable-for-touch:true">{{ profileform.bio.value() }}</textarea>
+                      placeholder="Bio - Write a bit about yourself"
+                      name="bio">{{ profileform.bio.value() }}</textarea>
             {% if profileform.bio.errors %}
               <small class="error">
                 {{ profileform.bio.errors }}

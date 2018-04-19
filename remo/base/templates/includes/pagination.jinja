@@ -1,7 +1,7 @@
 <div class="row">
     <div class="large-12 columns pagination">
       {% if objects.has_previous() %}
-        <a class="prev" title="Previous page" data-tooltip
+        <a class="prev"
            href="{{ '#'|urlparams(page=objects.previous_page_number(),
                                   sort_key=sort_key, query=query) }}">
           &laquo;
@@ -17,7 +17,7 @@
         {% endfor %}
       </select>
       {% if objects.has_next() %}
-        <a class="next" title="Next page" data-tooltip
+        <a class="next"
            href="{{ '#'|urlparams(page=objects.next_page_number(),
                                   sort_key=sort_key, query=query) }}">
           &raquo;

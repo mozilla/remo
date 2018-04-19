@@ -42,13 +42,13 @@
             <!-- Name and Description -->
           </div>
           <div class="large-11 columns">
-            <div data-tooltip class="has-tip tip-left" title='Voting name'>
+            <div>
               {{ field_with_attrs(poll_form.name,
                                   placeholder='Voting name')}}
               <div class="required-field"></div>
             </div>
             {{ field_errors(poll_form.name) }}
-            <div data-tooltip class="has-tip tip-left" title='Voting description'>
+            <div>
               {{ field_with_attrs(poll_form.description,
                                   class='flat',
                                   placeholder='Description of voting') }}
@@ -90,7 +90,10 @@
               <!-- End date -->
               <div class="row">
                 <div class="large-12">
-                  <div data-tooltip class="data-tip has-tip tip-right" title="Voting end date">
+                  <div data-tooltip
+                       data-options="disable-for-touch:true"
+                       class="data-tip has-tip tip-right"
+                       title="Voting end date">
                     <div id="end-month" class="large-6 small-6 columns voting-edit-date ">
                     <!-- month -->
                     </div>
@@ -109,7 +112,10 @@
               <!-- End Hour -->
               <div class="row">
                 <div class="large-12">
-                  <div data-tooltip class="data-tip has-tip tip-right" title="Voting end hour">
+                  <div data-tooltip
+                       data-options="disable-for-touch:true"
+                       class="data-tip has-tip tip-right"
+                       title="Voting end hour">
                     <div id="end-hour" class="large-3 small-3 columns voting-edit-date">
                     <!-- hour -->
                     </div>
@@ -136,7 +142,10 @@
               <!--Start Date -->
               <div class="row">
                 <div class="large-12">
-                  <div data-tooltip class="data-tip has-tip tip-right" title="Voting start date">
+                  <div data-tooltip
+                       data-options="disable-for-touch:true"
+                       class="data-tip has-tip tip-right"
+                       title="Voting start date">
                     <div id="start-month" class="large-6 small-6 columns voting-edit-date">
                       <!-- month -->
                     </div>
@@ -155,7 +164,10 @@
               <!-- Start Hour -->
               <div class="row">
                 <div class="large-12">
-                  <div data-tooltip class="data-tip has-tip tip-right" title="Voting start hour">
+                  <div data-tooltip
+                       data-options="disable-for-touch:true"
+                       class="data-tip has-tip tip-right"
+                       title="Voting start hour">
                     <div id="start-hour" class="large-3 small-3 columns">
                       <!-- hour -->
                     </div>
@@ -171,7 +183,10 @@
               <!-- End date -->
               <div class="row">
                 <div class="large-12">
-                  <div data-tooltip class="data-tip has-tip tip-right" title="Voting end date">
+                  <div data-tooltip
+                       data-options="disable-for-touch:true"
+                       class="data-tip has-tip tip-right"
+                       title="Voting end date">
                     <div id="end-month" class="large-6 small-6 columns voting-edit-date ">
                     <!-- month -->
                     </div>
@@ -190,7 +205,10 @@
               <!-- End Hour -->
               <div class="row">
                 <div class="large-12">
-                  <div data-tooltip class="data-tip has-tip tip-right" title="Voting end hour">
+                  <div data-tooltip
+                       data-options="disable-for-touch:true"
+                       class="data-tip has-tip tip-right"
+                       title="Voting end hour">
                     <div id="end-hour" class="large-3 small-3 columns voting-edit-date">
                       <!-- hour -->
                     </div>
@@ -217,9 +235,7 @@
               <div class="pict-icon large lock"></div>
             </div>
             <div class="large-11 columns">
-              <div data-tooltip class="data-tip has-tip tip-right valid-groups" title="Eligible voting Group">
-                {{ poll_form.valid_groups }}
-              </div>
+              {{ poll_form.valid_groups }}
               <div class="required-field"></div>
               {{ field_errors(poll_form.valid_groups) }}
             {% endif %}
@@ -245,10 +261,8 @@
                   {{ range_poll_form.id }}
                   <div class="copyblock voting-poll">
                     <div class="poll-block">
-                      <div data-tooltip class="has-tip tip-left" title="Range Poll Name">
-                        {{ field_with_attrs(range_poll_form.name,
-                                            placeholder='Range Poll Name') }}
-                      </div>
+                      {{ field_with_attrs(range_poll_form.name,
+                                          placeholder='Range Poll Name') }}
                       <div class="required-field"></div>
                       {{ field_errors(range_poll_form.name) }}
                       {% if range_poll_form.nested %}
@@ -258,7 +272,10 @@
                             {{ nominee_form.id }}
                             <div id="inner-rangepoll-formset" class="copyblock nominee">
                               <div class="select-nominee-group">
-                                <div data-tooltip class="has-tip tip-left select-nominee" title="Select Nominee">
+                                <div data-tooltip
+                                     data-options="disable-for-touch:true"
+                                     class="has-tip tip-left select-nominee"
+                                     title="Select Nominee">
                                   {{ nominee_form.nominee }}
                                 </div>
                                 {{ field_errors(nominee_form.nominee) }}
@@ -303,10 +320,8 @@
                   {{ radio_poll_form.id }}
                   <div class="copyblock voting-poll">
                     <div class="poll-block">
-                      <div data-tooltip class="has-tip tip-left" title="Radio Poll Title">
-                        {{ field_with_attrs(radio_poll_form.question,
-                                            placeholder='Radio Poll Title') }}
-                      </div>
+                      {{ field_with_attrs(radio_poll_form.question,
+                                          placeholder='Radio Poll Title') }}
                       <div class="required-field"></div>
                       {{ field_errors(radio_poll_form.question) }}
                       {% if radio_poll_form.nested %}
@@ -314,10 +329,8 @@
                           {% for answer_form in radio_poll_form.nested[0] %}
                             {{ answer_form.id }}
                             <div id="inner-radiopoll-formset" class="copyblock radio-choice">
-                              <div data-tooltip class="has-tip tip-left" title="Radio Poll Answer">
-                                {{ field_with_attrs(answer_form.answer,
-                                                    placeholder='Radio Poll Answer') }}
-                              </div>
+                              {{ field_with_attrs(answer_form.answer,
+                                                  placeholder='Radio Poll Answer') }}
                               <div class="required-field"></div>
                               {{ field_errors(answer_form.answer) }}
                               <div class="align-right">

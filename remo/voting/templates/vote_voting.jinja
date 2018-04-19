@@ -57,6 +57,7 @@ Mozilla Reps - {{ poll.name }} - Vote
                     <div class="large-4 small-4 columns end">
                       <div class="date-times tip-bottom datetime-tip"
                            data-tooltip
+                           data-options="disable-for-touch:true"
                            data-width="140"
                            data-date-start="{{ poll.start|format_datetime_iso }}"
                            data-date-end="{{ poll.end|format_datetime_iso }}"
@@ -99,6 +100,7 @@ Mozilla Reps - {{ poll.name }} - Vote
                       <div class="large-1 hide-for-small columns">
                         <div class="tip-bottom datetime-tip"
                              data-tooltip
+                             data-options="disable-for-touch:true"
                              data-width="120"
                              data-date-start="{{ poll.start|format_datetime_iso }}"
                              data-date-end="{{ poll.end|format_datetime_iso }}"

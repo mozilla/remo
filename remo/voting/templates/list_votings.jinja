@@ -41,6 +41,7 @@
               <td title="{{ poll.start|format_datetime }}"
                   data-time="{{ poll.start|format_datetime_iso }}" class="date-times tip-bottom datetime-tip"
                      data-tooltip
+                     data-options="disable-for-touch:true"
                      data-date-start="{{ poll.start|format_datetime_iso }}"
                      data-date-end="{{ poll.end|format_datetime_iso }}">
                 {{ poll.start|format_datetime }}
@@ -48,6 +49,7 @@
               <td title="{{ poll.end|format_datetime }}"
                   data-time="{{ poll.end|format_datetime_iso }}" class="date-times tip-bottom datetime-tip"
                      data-tooltip
+                     data-options="disable-for-touch:true"
                      data-date-start="{{ poll.start|format_datetime_iso }}"
                      data-date-end="{{ poll.end|format_datetime_iso }}">
                 {{ poll.end|format_datetime }}
@@ -119,6 +121,7 @@
                       <td title="{{ poll.end|format_datetime }}"
                           data-time="{{ poll.end|format_datetime_iso }}" class="date-times tip-bottom datetime-tip"
                             data-tooltip
+                            data-options="disable-for-touch:true"
                             data-date-start="{{ poll.start|format_datetime_iso }}"
                             data-date-end="{{ poll.end|format_datetime_iso }}">
                         {{ poll.end|format_datetime }}
