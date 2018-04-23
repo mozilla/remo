@@ -990,7 +990,7 @@
       <h2>Administration</h2>
     </div>
   </div>
-  <div class="section-container auto" data-section>
+  <div id="dashboard-administration-block" class="section-container auto" data-section>
     {% if reps_without_mentors is defined %}
     <div {% if reps_without_mentors is defined %}
             class="active section"
@@ -1008,28 +1008,37 @@
           <table class="dashboard-table responsive">
             <thead>
               <tr>
-                <th class="dashboard-clickable type-string">Username</th>
                 <th class="dashboard-clickable type-string">Full Name</th>
+                <th class="dashboard-clickable type-string">Username</th>
                 <th class="dashboard-clickable type-string">Account created on</th>
+                <th>Reports past 3 months</th>
+                <th>Reports past 6 months</th>
+                <th>Reports past 12 months</th>
               </tr>
             </thead>
             <tbody>
               {% for rep in reps_without_mentors %}
                 <tr>
-                  <td>
+                  <td class="{{ rep|get_activity_level }}
+                             {% if rep|user_is_unavailable %}
+                               unavailable
+                             {% endif %}">
                     <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                      {{ rep|get_display_name }}
+                      {{ rep.get_full_name() }}
                     </a>
                   </td>
                   <td>
                     <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
-                      {{ rep.get_full_name() }}
+                      {{ rep|get_display_name }}
                     </a>
                   </td>
                   <td title="{{ rep.date_joined|format_datetime }}"
                       data-time="{{ rep.date_joined|format_datetime_iso }}">
                     {{ rep.date_joined|format_datetime }}
                   </td>
+                  <td>{{count_ng_reports(rep, period=12)}}</td>
+                  <td>{{count_ng_reports(rep, period=26)}}</td>
+                  <td>{{count_ng_reports(rep, period=52)}}</td>
                 </tr>
               {% endfor %}
             </tbody>
