@@ -20,6 +20,7 @@ from remo.profiles.models import FunctionalArea
 from remo.reports import ACTIVITY_POST_EVENT_METRICS
 from remo.reports.models import Activity, Campaign, NGReport
 from remo.remozilla.models import Bug
+from datetime import timedelta
 
 from models import Event, EventComment, EventMetricOutcome
 
@@ -275,8 +276,8 @@ class EventForm(happyforms.ModelForm):
             msg = 'You need to select one functional area for this event.'
             self._errors['categories'] = self.error_class([msg])
 
-        if self.instance.id is not None and cdata['start'] > now():
-            msg = 'Start date cannot be in the future for an event that already exist.'
+        if self.instance.id is not None and cdata['start'] > now() + timedelta(days=30):
+            msg = 'Start date cannot be over 30 days in the future for an event that already exist.'
             self._errors['start_form'] = self.error_class([msg])
 
         return cdata
