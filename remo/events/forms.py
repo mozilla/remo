@@ -9,6 +9,7 @@ from django.utils.timezone import make_naive, now
 from product_details import product_details
 
 from django_statsd.clients import statsd
+from django.shortcuts import get_object_or_404
 from pytz import common_timezones, timezone
 
 from remo.base.datetimewidgets import SplitSelectDateTimeWidget
@@ -276,9 +277,21 @@ class EventForm(happyforms.ModelForm):
             msg = 'You need to select one functional area for this event.'
             self._errors['categories'] = self.error_class([msg])
 
-        if self.instance.id is not None and cdata['start'] > now() + timedelta(days=30):
-            msg = 'Start date cannot be over 30 days in the future for an event that already exist.'
-            self._errors['start_form'] = self.error_class([msg])
+        if self.instance.id is not None and self.instance.is_past_event and self.instance.has_new_metrics:
+            metrics_filled = True
+            event = get_object_or_404(Event, pk=self.instance.id)
+            for stat in event.eventmetricoutcome_set.all():
+                if stat.expected_outcome is '':
+                        metrics_filled = False
+                        break
+
+            if metrics_filled is True and (cdata['start'] is not event.start or cdata['end'] is not event.end):
+                msg = 'You cannot change the date if the metrics was filled.'
+                self._errors['start_form'] = self.error_class([msg])
+
+            if cdata['start'] > now() + timedelta(days=30):
+                msg = 'Start date cannot be over 30 days in the future for an event that already exist.'
+                self._errors['start_form'] = self.error_class([msg])
 
         return cdata
 
