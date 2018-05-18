@@ -87,8 +87,14 @@ def edit(request, display_name):
                       'Onboarding': 'onboarding_group',
                       'Newsletter': 'newsletter_group'}
 
+            admin_only_groups = ['Admin', 'Peers']
+
+            user_is_admin = request.user.groups.filter(name='Admin').exists()
             for group_db, group_html in groups.items():
                 if Group.objects.filter(name=group_db).exists():
+                    if group_db in admin_only_groups and not user_is_admin:
+                        continue
+
                     if request.POST.get(group_html, None):
                         user.groups.add(Group.objects.get(name=group_db))
                     else:
