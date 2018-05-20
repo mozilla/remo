@@ -21,7 +21,7 @@ from remo.reports.models import NGReport, NGReportComment
 
 
 # New reporting system
-LIST_NG_REPORTS_DEFAULT_SORT = 'report_date_desc'
+LIST_NG_REPORTS_DEFAULT_SORT = 'created_date_desc'
 LIST_NG_REPORTS_VALID_SORTS = {
     'reporter_desc': '-user__last_name,user__first_name',
     'reporter_asc': 'user__last_name,user__first_name',
@@ -30,7 +30,9 @@ LIST_NG_REPORTS_VALID_SORTS = {
     'activity_desc': '-activity__name',
     'activity_asc': 'activity__name',
     'report_date_desc': '-report_date',
-    'report_date_asc': 'report_date'}
+    'report_date_asc': 'report_date',
+    'created_date_desc': '-created_on',
+    'created_date_asc': 'created_on'}
 
 
 @never_cache

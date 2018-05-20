@@ -358,7 +358,7 @@ class ListNGReportTests(RemoTestCase):
     def test_get_invalid_order(self):
         """Test get invalid sort order."""
         response = Client().get(reverse('list_ng_reports'), data={'sort_key': 'invalid'})
-        eq_(response.context['sort_key'], 'report_date_desc')
+        eq_(response.context['sort_key'], 'created_date_desc')
 
     def test_future_not_listed(self):
         report = NGReportFactory.create()

@@ -72,6 +72,21 @@
                 {% endif %}
               </th>
               <th>
+                {% if sort_key == 'created_date_asc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='created_date_desc', query=query) }}">
+                    Report date <span class="pict-table-icon desc"></span>
+                  </a>
+                {% elif sort_key == 'created_date_desc' %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='created_date_asc', query=query) }}">
+                    Report date <span class="pict-table-icon asc"></span>
+                  </a>
+                {% else %}
+                  <a href="{{ '#'|urlparams(page=1, sort_key='created_date_asc', query=query) }}">
+                    Report date
+                  </a>
+                {% endif %}
+              </th>
+              <th>
                 {% if sort_key == 'report_date_asc' %}
                   <a href="{{ '#'|urlparams(page=1, sort_key='report_date_desc', query=query) }}">
                     Activity date <span class="pict-table-icon desc"></span>
@@ -130,6 +145,10 @@
                       <span class="pict-table-icon share"></span>
                     </a>
                   {% endif %}
+                </td>
+                <td title="{{ report.created_on|format_datetime }}"
+                    data-time="{{ report.created_on|format_datetime_iso }}">
+                  {{ report.created_on|strftime("%d %b %Y") }}
                 </td>
                 <td title="{{ report.report_date|format_datetime }}"
                     data-time="{{ report.report_date|format_datetime_iso }}">
