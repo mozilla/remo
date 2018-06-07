@@ -37,7 +37,8 @@ class InactiveCategoriesTest(RemoTestCase):
         owner = UserFactory.create(groups=['Mentor'])
         functional_area = [FunctionalAreaFactory.create()]
         campaign = [CampaignFactory.create()]
-        event = EventFactory.create(owner=owner, categories=functional_area)
+        event = EventFactory.create(owner=owner, categories=functional_area,
+                                    has_new_metrics=False)
 
         data = model_to_dict(event)
         data['categories'] = functional_area[0].id
@@ -149,7 +150,8 @@ class PostEventFormTest(RemoTestCase):
         owner = UserFactory.create(groups=['Rep', 'Mentor'])
         areas = [FunctionalAreaFactory.create()]
         campaign = [CampaignFactory.create()]
-        event = EventFactory.create(owner=owner, categories=areas)
+        event = EventFactory.create(owner=owner, categories=areas,
+                                    has_new_metrics=False)
 
         data = model_to_dict(event)
         data['categories'] = areas[0].id
