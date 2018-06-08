@@ -1,7 +1,5 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
@@ -23,6 +21,7 @@ def list_votings(request):
     """List votings view."""
     user = request.user
     polls = Poll.objects.all()
+    PAST_POLLS_PER_PAGE = 10
 
     is_admin = user.groups.filter(name='Admin').exists()
     is_peer = user.groups.filter(name='Peers').exists()
@@ -34,22 +33,21 @@ def list_votings(request):
             poll_groups += ['Review']
         polls = Poll.objects.filter(valid_groups__name__in=poll_groups)
 
-    past_polls_query = polls.filter(end__lt=now())
     current_polls = polls.filter(start__lt=now(), end__gt=now())
     future_polls = polls.filter(start__gt=now())
 
-    past_polls_paginator = Paginator(past_polls_query, settings.ITEMS_PER_PAGE)
-    past_polls_page = request.GET.get('page', 1)
+    show_all_past = request.GET.get('show_all_past', 'false')
 
-    try:
-        past_polls = past_polls_paginator.page(past_polls_page)
-    except PageNotAnInteger:
-        past_polls = past_polls_paginator.page(1)
-    except EmptyPage:
-        past_polls = past_polls_paginator.page(past_polls_paginator.num_pages)
+    if show_all_past == 'true':
+        past_polls = polls.filter(end__lt=now())
+    else:
+        show_all_past = 'false'
+        past_polls = polls.filter(end__lt=now())[:PAST_POLLS_PER_PAGE]
 
     return render(request, 'list_votings.jinja',
                   {'user': user,
+                   'show_all_past': show_all_past,
+                   'past_polls_per_page': PAST_POLLS_PER_PAGE,
                    'past_polls': past_polls,
                    'current_polls': current_polls,
                    'future_polls': future_polls})

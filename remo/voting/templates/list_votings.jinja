@@ -16,7 +16,7 @@
     {% endif %}
   </div>
 
-  {% macro display_polls(objects, show_pagination) -%}
+  {% macro display_polls(objects) -%}
     <div class="large-12 columns">
       <table class="dashboard-table responsive">
         <thead>
@@ -73,10 +73,6 @@
           {% endfor %}
         </tbody>
       </table>
-      {% if show_pagination %}
-        <!-- Paginator -->
-        {% include "includes/pagination.jinja" %}
-      {% endif %}
     </div>
   {%- endmacro%}
 
@@ -165,7 +161,7 @@
 
         <div class="row">
           {% if future_polls %}
-            {{ display_polls(future_polls, show_pagination=False) }}
+            {{ display_polls(future_polls) }}
           {% else %}
             <div class="large-12 columns no-bugs">
               <p>No future votes found!</p>
@@ -179,13 +175,17 @@
       <div class="dashboard-box">
         <div class="row">
           <div class="large-12 columns">
-            <h2>Past Votes</h2>
+            <h2>
+              Past Votes
+              {% if show_all_past == "false" %}
+                ( Latest {{past_polls_per_page}} | <a href="{{request.path}}?show_all_past=true">Show All</a> )
+              {% endif %}
+            </h2>
           </div>
         </div>
-
         <div class="row">
           {% if past_polls %}
-            {{ display_polls(past_polls, show_pagination=True) }}
+            {{ display_polls(past_polls) }}
           {% else %}
             <div class="large-12 columns no-bugs">
               <p>No past votes found!</p>
