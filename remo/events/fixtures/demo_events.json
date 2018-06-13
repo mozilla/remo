@@ -21,9 +21,9 @@
             "name": "Test Event",
             "city": "Athens",
             "categories": [
-                4,
-                6,
-                12
+                14,
+                15,
+                16
             ],
             "country": "Greece",
             "region": "Attica",
@@ -52,9 +52,9 @@
             "name": "Multi Event",
             "city": "Athens",
             "categories": [
-                4,
-                6,
-                12
+                14,
+                15,
+                16
             ],
             "country": "Greece",
             "region": "Attica",
@@ -113,6 +113,34 @@
             "comment": "This is a comment on event with pk #1",
             "created_on": "2012-03-07 08:14:17",
             "user": 7
+        }
+    },
+    {
+        "pk": 1,
+        "model": "events.eventmetric",
+        "fields": {
+            "name": "Number of people involved in conversations"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "events.eventmetric",
+        "fields": {
+            "name": "Number of bugs fixed"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "events.eventmetric",
+        "fields": {
+            "name": "Number of Rust crates uploaded"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "events.eventmetric",
+        "fields": {
+            "name": "Number of A-Frame projects"
         }
     }
 ]

@@ -1,0 +1,30 @@
+[
+    {
+        "pk": 1,
+        "model": "reports.campaign",
+        "fields": {
+            "name": "Firefox"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "reports.campaign",
+        "fields": {
+            "name": "Reps"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "reports.activity",
+        "fields": {
+            "name": "Planned a project"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "reports.activity",
+        "fields": {
+            "name": "Fixed a bug"
+        }
+    }
+]

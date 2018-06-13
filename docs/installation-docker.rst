@@ -37,10 +37,6 @@ When you want to start contributing...
 
      $ docker-compose run web python manage.py migrate --noinput
 
-#. Create your own admin account::
-
-    $ docker-compose run web ./manage.py createsuperuser
-
 #. Add demo users::
 
     $ docker-compose run web ./manage.py loaddata demo_users
@@ -60,6 +56,14 @@ When you want to start contributing...
 #. Add demo events::
 
     $ docker-compose run web ./manage.py loaddata demo_events
+
+#. Add demo report iniatives::
+
+    $ docker-compose run web ./manage.py loaddata demo_reports
+
+#. Create your own admin account::
+
+    $ docker-compose run web ./manage.py createsuperuser
 
 ************
 Running ReMo

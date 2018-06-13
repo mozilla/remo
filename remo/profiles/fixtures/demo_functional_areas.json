@@ -1,6 +1,6 @@
 [
     {
-        "pk": 2,
+        "pk": 1,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -9,7 +9,7 @@
         }
     },
     {
-        "pk": 3,
+        "pk": 2,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -18,16 +18,7 @@
         }
     },
     {
-        "pk": 4,
-        "model": "profiles.functionalarea",
-        "fields": {
-            "active": true,
-            "name": "Apps",
-            "slug": "apps"
-        }
-    },
-    {
-        "pk": 5,
+        "pk": 3,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -36,7 +27,7 @@
         }
     },
     {
-        "pk": 6,
+        "pk": 4,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -45,7 +36,7 @@
         }
     },
     {
-        "pk": 7,
+        "pk": 5,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -54,7 +45,7 @@
         }
     },
     {
-        "pk": 8,
+        "pk": 6,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -63,7 +54,7 @@
         }
     },
     {
-        "pk": 9,
+        "pk": 7,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -72,7 +63,7 @@
         }
     },
     {
-        "pk": 10,
+        "pk": 8,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -81,7 +72,7 @@
         }
     },
     {
-        "pk": 11,
+        "pk": 9,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -90,7 +81,7 @@
         }
     },
     {
-        "pk": 12,
+        "pk": 10,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -99,7 +90,7 @@
         }
     },
     {
-        "pk": 22,
+        "pk": 11,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -108,16 +99,7 @@
         }
     },
     {
-        "pk": 29,
-        "model": "profiles.functionalarea",
-        "fields": {
-            "active": true,
-            "name": "Firefox OS",
-            "slug": "firefox-os"
-        }
-    },
-    {
-        "pk": 13,
+        "pk": 12,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -126,7 +108,7 @@
         }
     },
     {
-        "pk": 14,
+        "pk": 13,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -135,16 +117,7 @@
         }
     },
     {
-        "pk": 41,
-        "model": "profiles.functionalarea",
-        "fields": {
-            "active": true,
-            "name": "Hive Network",
-            "slug": "hive-network"
-        }
-    },
-    {
-        "pk": 15,
+        "pk": 14,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -153,7 +126,7 @@
         }
     },
     {
-        "pk": 16,
+        "pk": 15,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -162,16 +135,7 @@
         }
     },
     {
-        "pk": 17,
-        "model": "profiles.functionalarea",
-        "fields": {
-            "active": true,
-            "name": "Labs",
-            "slug": "labs"
-        }
-    },
-    {
-        "pk": 18,
+        "pk": 16,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -180,7 +144,7 @@
         }
     },
     {
-        "pk": 19,
+        "pk": 17,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -189,7 +153,7 @@
         }
     },
     {
-        "pk": 20,
+        "pk": 18,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -198,7 +162,7 @@
         }
     },
     {
-        "pk": 21,
+        "pk": 19,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -207,16 +171,7 @@
         }
     },
     {
-        "pk": 42,
-        "model": "profiles.functionalarea",
-        "fields": {
-            "active": true,
-            "name": "Open Badges",
-            "slug": "open-badges"
-        }
-    },
-    {
-        "pk": 24,
+        "pk": 20,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -225,7 +180,7 @@
         }
     },
     {
-        "pk": 25,
+        "pk": 21,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -234,7 +189,7 @@
         }
     },
     {
-        "pk": 26,
+        "pk": 22,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -243,7 +198,7 @@
         }
     },
     {
-        "pk": 27,
+        "pk": 23,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -252,7 +207,7 @@
         }
     },
     {
-        "pk": 28,
+        "pk": 24,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -261,7 +216,7 @@
         }
     },
     {
-        "pk": 30,
+        "pk": 25,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -270,7 +225,7 @@
         }
     },
     {
-        "pk": 31,
+        "pk": 26,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -279,7 +234,7 @@
         }
     },
     {
-        "pk": 32,
+        "pk": 27,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -288,7 +243,7 @@
         }
     },
     {
-        "pk": 45,
+        "pk": 28,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -297,7 +252,7 @@
         }
     },
     {
-        "pk": 33,
+        "pk": 29,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -306,7 +261,7 @@
         }
     },
     {
-        "pk": 34,
+        "pk": 30,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -315,7 +270,7 @@
         }
     },
     {
-        "pk": 46,
+        "pk": 31,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -324,7 +279,7 @@
         }
     },
     {
-        "pk": 35,
+        "pk": 32,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -333,7 +288,7 @@
         }
     },
     {
-        "pk": 36,
+        "pk": 33,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -342,7 +297,7 @@
         }
     },
     {
-        "pk": 37,
+        "pk": 34,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -351,7 +306,7 @@
         }
     },
     {
-        "pk": 38,
+        "pk": 35,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -360,7 +315,7 @@
         }
     },
     {
-        "pk": 39,
+        "pk": 36,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,
@@ -369,25 +324,7 @@
         }
     },
     {
-        "pk": 40,
-        "model": "profiles.functionalarea",
-        "fields": {
-            "active": true,
-            "name": "WebFWD",
-            "slug": "webfwd"
-        }
-    },
-    {
-        "pk": 44,
-        "model": "profiles.functionalarea",
-        "fields": {
-            "active": true,
-            "name": "Webmaker",
-            "slug": "webmaker"
-        }
-    },
-    {
-        "pk": 47,
+        "pk": 37,
         "model": "profiles.functionalarea",
         "fields": {
             "active": true,

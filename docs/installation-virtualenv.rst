@@ -108,13 +108,6 @@ When you want to start contributing...
      (venv)$ ./manage.py migrate --noinput
 
 
-#. Create an admin account.
-
-   Create your own admin account::
-
-    (venv)$ ./manage.py createsuperuser
-
-
 #. Update product_details package.
 
    Package `product_details` provides information about countries. We
@@ -157,6 +150,10 @@ When you want to start contributing...
 
      (venv)$ ./manage.py loaddata demo_events
 
+   To load *demo report initatives* run::
+
+     (venv)$ ./manage.py loaddata demo_reports
+
    To fetch *bugzilla bugs* run::
 
      (venv)$ ./manage.py fetch_bugs
@@ -166,6 +163,12 @@ When you want to start contributing...
       Fetching bugzilla bug requires a Mozilla Reps Admin account on
       Bugzilla. Ping `nemo-yiannis` or `tasos` on #remo-dev to give you access if
       your project requires it.
+
+#. Create an admin account.
+
+   Create your own admin account::
+
+    (venv)$ ./manage.py createsuperuser
 
 #. Run tests::
 
