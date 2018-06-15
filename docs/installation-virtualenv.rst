@@ -67,25 +67,6 @@ When you want to start contributing...
    Uncomment the line for `DATABASE_URL` in `.env` to point to the `localhost`
    hostname.
 
-#. Activate MailHide.
-
-   We use `MailHide
-   <https://developers.google.com/recaptcha/docs/mailhideapi>`_ to
-   protect our users from spam. Open `local.py` under `settings`
-   directory and uncomment the following lines::
-
-     # MAILHIDE_PUB_KEY = '02Ni54q--g1yltekhaSmPYHQ=='
-     # MAILHIDE_PRIV_KEY = 'fe55a9921917184732077e3fed19d0be'
-
-   These keys are `demo` keys and will not decrypt emails on your
-   local installation but that's OK if you are not working on a
-   related bug.
-
-   If you are to work on a MailHide related bug, register on
-   `MailHide's website
-   <http://www.google.com/recaptcha/mailhide/apikey>`_ for a valid
-   pair of keys.
-
 
 #. Setting up a MySQL database for development:
 
