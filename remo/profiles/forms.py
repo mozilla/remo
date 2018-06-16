@@ -1,6 +1,8 @@
 import happyforms
 import re
 
+from datetime import timedelta
+
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -25,7 +27,7 @@ BOOLEAN_CHOICES = ((True, 'Yes'), (False, 'No'))
 MAX_UNAVAILABILITY_PERIOD = 12
 # SOP url for leaving the program
 LEAVING_SOP_URL = ('<a href="https://wiki.mozilla.org/ReMo/SOPs/Leaving" '
-                   'target="_blank"</a>')
+                   'target="_blank">Leaving SOP</a>')
 
 
 class InviteUserForm(happyforms.Form):
@@ -247,7 +249,6 @@ class UserStatusForm(happyforms.ModelForm):
 
         tomorrow = get_date(days=1)
         today = get_date()
-        max_period = get_date(weeks=MAX_UNAVAILABILITY_PERIOD)
 
         if 'start_date' in cdata:
             if cdata['start_date'] < today:
@@ -255,18 +256,22 @@ class UserStatusForm(happyforms.ModelForm):
                 self._errors['start_date'] = self.error_class([msg])
 
         if 'expected_date' in cdata:
-            if cdata['expected_date'] < tomorrow:
+            start_date = cdata['start_date']
+            expected_date = cdata['expected_date']
+            max_period = start_date + timedelta(weeks=MAX_UNAVAILABILITY_PERIOD)
+
+            if expected_date < tomorrow:
                 msg = (u'Return day cannot be earlier than {0}'
                        .format(tomorrow.strftime('%d %B %Y')))
                 self._errors['expected_date'] = self.error_class([msg])
-            if cdata['expected_date'] < cdata['start_date']:
+            if expected_date < start_date:
                 msg = u'Return date cannot be before start date.'
                 self._errors['expected_date'] = self.error_class([msg])
-            if cdata['expected_date'] > max_period:
+            if expected_date > max_period:
                 msg = (u'The maximum period for unavailability is until {0}.'
                        .format(max_period.strftime('%d %B %Y')))
                 sop = mark_safe(msg + (' For more information please check '
-                                       'the %s Leaving SOP') % LEAVING_SOP_URL)
+                                       'the %s') % LEAVING_SOP_URL)
                 self._errors['expected_date'] = self.error_class([sop])
 
         if ('is_replaced' in cdata and
