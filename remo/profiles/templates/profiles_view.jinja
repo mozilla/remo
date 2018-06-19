@@ -344,20 +344,22 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           <div class="pict-icon large at"></div>
         </div>
         <div class="large-11 columns">
-          <p class="profile-item">
-            <span class="label radius">
-              Personal email
-            </span>
-            &nbsp;{% if user.is_authenticated() %} {{ user_profile.private_email }}
-            {% else %} {{ user_profile.private_email|mailhide }} {% endif %}
-          </p>
-          <p class="profile-item">
-            <span class="label radius">
-              Mozilla Login Identity
-            </span>
-            &nbsp;{% if user.is_authenticated() %} {{ pageuser.email }}
-            {% else %} {{ pageuser.email|mailhide }} {% endif %}
-          </p>
+          {% if user.is_authenticated() %}
+            <p class="profile-item">
+              <span class="label radius">
+                Personal email
+              </span>
+              &nbsp;
+              {{ user_profile.private_email }}
+            </p>
+            <p class="profile-item">
+              <span class="label radius">
+                Mozilla Login Identity
+              </span>
+              &nbsp;
+              {{ pageuser.email }}
+            </p>
+          {% endif %}
           <p class="profile-item">
             <span class="label radius">
               Mozillians Profile

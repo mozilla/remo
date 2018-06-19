@@ -1,5 +1,3 @@
-import base64
-import binascii
 import re
 import time
 import urllib
@@ -17,15 +15,12 @@ from django.utils.html import strip_tags
 
 import jinja2
 from markdown import markdown as python_markdown
-from Crypto.Cipher import AES
 from django_jinja import library
 from product_details import product_details
 
 from remo.base import utils
 
 
-AES_PADDING = 16
-AES_IV_LENGTH = 16
 LINE_LIMIT = 75
 FOLD_SEP = u'\r\n '
 
@@ -166,47 +161,6 @@ def get_next_url(request):
         return reverse('dashboard')
 
     return request.get_full_path()
-
-
-def pad_string(str, block_size):
-    """Pad string to reach block_size."""
-    numpad = block_size - (len(str) % block_size)
-    return str + numpad * chr(numpad)
-
-
-def enc_string(str):
-    """Return AES CBC encrypted string."""
-    key = binascii.unhexlify(settings.MAILHIDE_PRIV_KEY)
-    mode = AES.MODE_CBC
-    iv = '\000' * AES_IV_LENGTH
-    obj = AES.new(key, mode, iv)
-    return obj.encrypt(str)
-
-
-@library.filter
-def mailhide(value):
-    """Return MailHided email address.
-
-    Code from https://code.google.com/p/django-mailhide-filter
-    """
-    args = {}
-    padded_value = pad_string(value, AES_PADDING)
-    encrypted_value = enc_string(padded_value)
-
-    args['public_key'] = settings.MAILHIDE_PUB_KEY
-    args['encrypted_email'] = base64.urlsafe_b64encode(encrypted_value)
-    args['domain'] = value[value.index('@') + 1:]
-    args['email'] = value[0]
-
-    result = ("""<a href="http://mailhide.recaptcha.net/d?k=%(public_key)s&"""
-              """c=%(encrypted_email)s" onclick="window.open('"""
-              """http://mailhide.recaptcha.net/d?k=%(public_key)s&"""
-              """c=%(encrypted_email)s', '', 'toolbar=0,scrollbars=0,"""
-              """location=0,statusbar=0,menubar=0,resizable=0,width=500,"""
-              """height=300'); return false;" title="Reveal this e-mail"""
-              """ address">%(email)s...@%(domain)s</a>""") % args
-
-    return jinja2.Markup(result)
 
 
 @library.filter
