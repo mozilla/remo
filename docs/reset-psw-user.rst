@@ -1,9 +1,7 @@
-====================================
+=====================================
 Reset specific user password by shell
-====================================
+=====================================
 
-
----------------
 In case you don't remember the user password it is easy to do change by CLI. For example:
 
 - Run the shell mode in Django:
@@ -12,12 +10,12 @@ In case you don't remember the user password it is easy to do change by CLI. For
 
 - After loading you will be in the shell mode where you can run python code:
 
-   ``from django.contrib.auth.models import User #import the class
-     users = User.objects.filter()
-     users # will show the list of accounts with their public names
-     user=users[0] # with this example we take the first user
-     user.set_password('__enter passwd__')
-     user.username # to get the username for the login
-     user.save()
-     exit
-    ``
+.. code::
+    from django.contrib.auth.models import User #import the class
+    users = User.objects.filter()
+   users # will show the list of accounts with their public names
+   user=users[0] # with this example we take the first user
+   user.set_password('__enter passwd__')
+   user.username # to get the username for the login
+   user.save()
+   exit
