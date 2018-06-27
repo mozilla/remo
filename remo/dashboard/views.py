@@ -178,8 +178,10 @@ def dashboard(request):
         reps_with_alumni_mentors_q = Q(userprofile__mentor__id__in=alumni_ids)
         reps_without_mentor_q = Q(userprofile__registration_complete=True,
                                   userprofile__mentor__isnull=True)
-        args['reps_without_mentors'] = reps.filter(reps_with_alumni_mentors_q |
-                                                   reps_without_mentor_q)
+        reps_without_mentor = reps.filter(reps_with_alumni_mentors_q |
+                                          reps_without_mentor_q)
+        order_by = '-userprofile__date_joined_program'
+        args['reps_without_mentors'] = reps_without_mentor.order_by(order_by)
 
     statsd.incr('dashboard.dashboard_reps')
     return render(request, 'dashboard_reps.jinja', args)
