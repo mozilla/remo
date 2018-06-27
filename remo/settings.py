@@ -64,7 +64,6 @@ MIDDLEWARE_CLASSES = (
     'csp.middleware.CSPMiddleware',
     'remo.base.middleware.RegisterMiddleware',
     'waffle.middleware.WaffleMiddleware',
-    'mozilla_django_oidc.middleware.RefreshIDToken',
 )
 
 #############################
@@ -80,6 +79,9 @@ DATABASES = {
 ############################
 DEBUG = config('DEBUG', default=False, cast=bool)
 DEV = config('DEV', default=False, cast=bool)
+
+if DEV is not True:
+    MIDDLEWARE_CLASSES.append('mozilla_django_oidc.middleware.RefreshIDToken')
 
 # Media and static files settings
 STATIC_URL = config('STATIC_URL', default='/static/')
