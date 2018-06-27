@@ -175,6 +175,7 @@ def list_mentors(request):
     mentors = (User.objects
                .filter(userprofile__registration_complete=True,
                        groups__name='Mentor')
+               .order_by('first_name', 'last_name')
                .exclude(groups__name='Alumni'))
 
     return render(request, 'profiles_mentors.jinja', {'mentors': mentors})

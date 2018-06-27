@@ -16,7 +16,11 @@
   <div class="row">
     <div class="large-12 columns">
       {% for mentor in mentors %}
-        <h3>{{mentor}} ({{mentor.mentees.exclude(user__groups__name='Alumni').count()}})</h3>
+        <h4>
+          <a href="{{ url('profiles_view_profile', mentor.userprofile.display_name) }}">
+            {{mentor}}
+          </a> ({{mentor.mentees.exclude(user__groups__name='Alumni').count()}})
+        </h4>
         <table class="dashboard-table responsive">
           <thead>
             <tr>
@@ -29,7 +33,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for rep in mentor.mentees.exclude(user__groups__name='Alumni') %}
+            {% for rep in mentor.mentees.exclude(user__groups__name='Alumni').order_by('user__first_name', 'user__last_name') %}
               <tr>
                 <td class="{{ rep.user|get_activity_level }}
                            {% if rep.user|user_is_unavailable %}
