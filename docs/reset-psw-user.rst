@@ -10,8 +10,7 @@ In case you don't remember the user password it is easy to do change by CLI. For
 
    ``docker-compose run --rm web ./manage.py shell``
 
-- To create multiple model objects at once (eg. 10) use the ``create_batch()``
-  method:
+- After loading you will be in the shell mode where you can run python code:
 
    ``from django.contrib.auth.models import User #import the class
      users = User.objects.filter()
@@ -21,4 +20,4 @@ In case you don't remember the user password it is easy to do change by CLI. For
      user.username # to get the username for the login
      user.save()
      exit
-``
+    ``
