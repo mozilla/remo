@@ -17,14 +17,6 @@ Mozilla Reps - Events
         <a href="{{ url('events_new_event') }}"
            class="small button update" id="events-create-button">Create event</a>
       {% endif %}
-      <dl id="events-viz-switcher" class="sub-nav dashboard-filter hide-for-small">
-        <dd class="active">
-          <a id="events-map-button" href="#">Map</a>
-        </dd>
-        <dd>
-          <a id="events-timeline-button" href="#">Timeline</a>
-        </dd>
-      </dl>
     </div>
   </div>
 
@@ -33,21 +25,12 @@ Mozilla Reps - Events
   <div class="row {% if perms.events.can_edit_events %}top-margined{% endif %}">
     <div class="large-12 columns">
       <div id="map" class="map300"></div>
-      <div class="hide-for-small">
-        <div id="event-timeline"></div>
-      </div>
     </div>
   </div>
 
   <div id="map-overlay" class="hidden">
     <div id="map-overlay-text">
       Please refine search to view events.
-    </div>
-  </div>
-
-  <div id="timeline-overlay" class="hidden">
-    <div id="timeline-overlay-text">
-      Please refine search to view timeline.
     </div>
   </div>
 
@@ -127,7 +110,7 @@ Mozilla Reps - Events
     <div id="events-number" class="large-12 columns reps-number">
     </div>
   </div>
-  
+
   <!-- Events listing -->
   <div class="row">
     <div class="large-12 columns">
@@ -160,15 +143,10 @@ Mozilla Reps - Events
           media="screen,projection,tv" />
     <link rel="stylesheet" href="{{ static('events/css/jquery-ui-1.10.0.custom.css') }}"
           media="screen,projection,tv" />
-    <link rel="stylesheet" href="{{ static('events/css/timeline/timeline.css') }}"
-          media="screen,projection,tv" />
   {% endcompress %}
   <!--[if lte IE 8]>
       <link rel="stylesheet" href="{{ static('base/css/mapbox.ie.css') }}" />
   <![endif]-->
-
-  <script src="{{ static('events/js/timeline/timeline.js') }}"></script>
-  <script src="{{ static('events/js/timeline/storyjs-embed.js') }}"></script>
 
   {% compress js %}
     <script src="{{ static('base/js/mapbox.js') }}"></script>
