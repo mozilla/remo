@@ -11,4 +11,4 @@ Installation
    static
    runserver
    demo-data
-   reset-psw-user
+   reset-user-password
