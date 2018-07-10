@@ -24,7 +24,7 @@
   <title>
     {% block pagetitle %}Mozilla Reps{% endblock%}
   </title>
-  <link rel="shortcut icon" href="{{ static('base/img/remo/shortcut.ico') }}" />
+  <link rel="shortcut icon" href="{{ static('base/img/remo/remo_icon.svg') }}" />
   <!-- Included CSS Files -->
   {% compress css %}
     <link href="{{ static('base/css/foundation-4.css') }}" rel="stylesheet"
@@ -61,178 +61,169 @@
 </head>
 
 <body data-mapbox-token="{{ settings.MAPBOX_TOKEN }}">
-  <!-- Wrapper for background -->
-  <div id="wrapper">
+  <!-- container -->
+  <div class="container">
 
-    <!-- container -->
-    <div class="container">
+    <!-- Header -->
+    <header class="row">
+      <div class="large-12 columns">
 
-      <!-- Header -->
-      <header class="row">
-        <div class="large-12 columns">
-
-          <!-- Sign In & Sign Out -->
-          <div class="row">
-            <div class="large-12 small-12 columns hide-on-print" id="login-box">
-              <div class="account anonymous nomenu logout">
-                {% if not user.is_authenticated() %}
-                  {% if request.get_full_path() != '/' %}
-                    {% set next_url=request.REQUEST.next %}
-                  {% endif %}
-                  <span id="login-menu-locator">
-                    <a href="{{ url('oidc_authentication_init') }}?next={{ next_url }}">
-                      Login
-                    </a>
-                  </span>
-                  or
-                  <a href="#" data-reveal-id="join-modal">Join</a>
-                {% else %}
-                  <div id="logout-menu-locator">
-                    {% if user_is_rep(user) %}
-                      <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
-                        {{ user.get_full_name()|default('user.userprofile.display_name') }}
-                      </a>
-                    {% else %}
-                      {{ user.get_full_name()|default('user.userprofile.display_name') }}
-                    {% endif %}
-                    {% if not user_is_mozillian(user) %}
-                      [ <a id="settings-menu-locator"
-                          href="{{ url('edit_settings') }}"> Settings </a> ]
-                    {% endif %}
-                    [ <a href="#" id="logout">Logout</a> ]
-                    <form id="logout_form" class="hidden" action="{{ url('oidc_logout') }}" method="post">
-                      {% csrf_token %}
-                      <input type="submit" value="logout">
-                    </form>
-                  </div>
+        <!-- Sign In & Sign Out -->
+        <div class="row">
+          <div class="large-12 small-12 columns hide-on-print" id="login-box">
+            <div class="account anonymous nomenu logout">
+              {% if not user.is_authenticated() %}
+                {% if request.get_full_path() != '/' %}
+                  {% set next_url=request.REQUEST.next %}
                 {% endif %}
-              </div>
-            </div>
-
-          <!-- Logo & Navigation -->
-          <div class="logo-nav">
-
-            <!-- Logo and Wordmark -->
-            <div class="large-3 columns" id="logo-box">
-              <div class="row">
-                <a class="logo" href="{{ url('main') }}">
-                  <img src="{{ static('base/img/remo/remo_logo_medium.png') }}"
-                       alt="Mozilla Reps logo">
-                  {% block logo %}
-                  <h2><span class="metabold">mozilla</span> reps</h2>
-                  {% endblock %}
-                </a>
-              </div>
-            </div>
-
-            <!-- Navigation -->
-            <nav role="navigation" class="small-12 large-9 columns" id="navigation-box">
-              <ul>
-                <li>
-                  {% if user.is_authenticated() %}
-                    <a href="{{ url('dashboard') }}"
-                       id="dashboard-menu-locator"
-                       class="main {{ active(request, '^/dashboard') }}">Dashboard</a>
+                <span id="login-menu-locator">
+                  <a href="{{ url('oidc_authentication_init') }}?next={{ next_url }}">
+                    Login
+                  </a>
+                </span>
+                or
+                <a href="#" data-reveal-id="join-modal">Join</a>
+              {% else %}
+                <div id="logout-menu-locator">
+                  {% if user_is_rep(user) %}
+                    <a id="base-displayname" href="{{ url('profiles_view_my_profile') }}">
+                      {{ user.get_full_name()|default('user.userprofile.display_name') }}
+                    </a>
                   {% else %}
-                    <a href="{{ url('main') }}"
-                       id="main-menu-locator"
-                       class="main {{ active(request, '^/$') }}">Main</a>
+                    {{ user.get_full_name()|default('user.userprofile.display_name') }}
                   {% endif %}
-                </li>
-                <li>
-                  <a href="{{ url('profiles_list_profiles') }}"
-                     id="people-menu-locator"
-                     class="main {{ active(request, '^/people/') }}">People</a>
-                </li>
-                <li>
-                  <a href="{{ url('events_list_events') }}"
-                     id="events-menu-locator"
-                     class="main {{ active(request, '^/events/') }}">Events</a>
-                </li>
-                <li class="dropdown">
-                  <a href="#" class="dropbtn">Communications</a>
-                  <ul class="dropdown-content">
-                    <li><a href="https://blog.mozilla.org/mozillareps"
-                           id="blog-menu-locator"
-                           class="main">Blog</a>
-                    </li>
-                    <li><a href="http://planet.mozillareps.org"
-                           id="planet-menu-locator"
-                           class="main">Planet</a>
-                    </li>
-                    <li><a href="https://discourse.mozilla-community.org/c/reps"
-                           id="forum-menu-locator"
-                           class="main">Forum</a>
-                    </li>
-                  </ul>
-                </li>
-                <li class="dropdown">
-                  <a href="#" class="dropbtn">Documentation</a>
-                  <ul class="dropdown-content">
-                    <li>
-                      <a href="https://wiki.mozilla.org/ReMo"
-                         id="wiki-menu-locator"
-                         class="main">Wiki</a>
-                    </li>
-                    <li>
-                      <a href="{{ url('faq') }}"
-                         id="faq-menu-locator"
-                         class="main {{ active(request, '^/faq/$') }}">FAQ</a>
-                    </li>
-                    <li>
-                      <a href="https://wiki.mozilla.org/ReMo/Leadership"
-                         id="wiki-menu-locator"
-                         class="main">Education</a>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <a href="https://activate.mozilla.community"
-                     id="activate-menu-locator"
-                     class="main">Activate Mozilla</a>
-                </li>
-              </ul>
-            </nav>
+                  {% if not user_is_mozillian(user) %}
+                    [ <a id="settings-menu-locator"
+                        href="{{ url('edit_settings') }}"> Settings </a> ]
+                  {% endif %}
+                  [ <a href="#" id="logout">Logout</a> ]
+                  <form id="logout_form" class="hidden" action="{{ url('oidc_logout') }}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="logout">
+                  </form>
+                </div>
+              {% endif %}
+            </div>
           </div>
-        </div>
-      </header>
 
-      <!-- Separator -->
-      <div class="row hide-on-print">
-        <hr>
+        <!-- Logo & Navigation -->
+        <div class="logo-nav">
+
+          <!-- Logo and Wordmark -->
+          <div class="large-3 columns" id="logo-box">
+            <a class="logo" href="{{ url('main') }}">
+              <img src="{{ static('base/img/remo/remo_logo.svg') }}"
+                   alt="Mozilla Reps logo">
+            </a>
+          </div>
+
+          <!-- Navigation -->
+          <nav role="navigation" class="small-12 large-9 columns" id="navigation-box">
+            <ul>
+              <li>
+                {% if user.is_authenticated() %}
+                  <a href="{{ url('dashboard') }}"
+                      id="dashboard-menu-locator"
+                      class="main {{ active(request, '^/dashboard') }}">Dashboard</a>
+                {% else %}
+                  <a href="{{ url('main') }}"
+                      id="main-menu-locator"
+                      class="main {{ active(request, '^/$') }}">Main</a>
+                {% endif %}
+              </li>
+              <li>
+                <a href="{{ url('profiles_list_profiles') }}"
+                    id="people-menu-locator"
+                    class="main {{ active(request, '^/people/') }}">People</a>
+              </li>
+              <li>
+                <a href="{{ url('events_list_events') }}"
+                    id="events-menu-locator"
+                    class="main {{ active(request, '^/events/') }}">Events</a>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropbtn">Communications</a>
+                <ul class="dropdown-content">
+                  <li><a href="https://blog.mozilla.org/mozillareps"
+                          id="blog-menu-locator"
+                          class="main">Blog</a>
+                  </li>
+                  <li><a href="http://planet.mozillareps.org"
+                          id="planet-menu-locator"
+                          class="main">Planet</a>
+                  </li>
+                  <li><a href="https://discourse.mozilla-community.org/c/reps"
+                          id="forum-menu-locator"
+                          class="main">Forum</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropbtn">Documentation</a>
+                <ul class="dropdown-content">
+                  <li>
+                    <a href="https://wiki.mozilla.org/ReMo"
+                        id="wiki-menu-locator"
+                        class="main">Wiki</a>
+                  </li>
+                  <li>
+                    <a href="{{ url('faq') }}"
+                        id="faq-menu-locator"
+                        class="main {{ active(request, '^/faq/$') }}">FAQ</a>
+                  </li>
+                  <li>
+                    <a href="https://wiki.mozilla.org/ReMo/Leadership"
+                        id="wiki-menu-locator"
+                        class="main">Education</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="https://activate.mozilla.community"
+                    id="activate-menu-locator"
+                    class="main">Activate</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
+    </header>
 
-      <!-- Page Content -->
-      {% if messages %}
-        <div class="row hide-on-print">
-          <div class="large-12 columns">
-            {% for notification in messages %}
-              <div class="alert-box {{ notification.tags }}">
-                {{ notification.message }}
-                <a href="#" class="close">&times;</a>
-              </div>
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
+    <!-- Separator -->
+    <div class="row hide-on-print">
+      <hr>
+    </div>
 
-      <!-- Client-side messages -->
+    <!-- Page Content -->
+    {% if messages %}
       <div class="row hide-on-print">
-        <div id="client-message-container" class="hidden large-12 columns">
-          <div class="alert-box">
-            <a href="#" class="close">&times;</a>
-          </div>
+        <div class="large-12 columns">
+          {% for notification in messages %}
+            <div class="alert-box {{ notification.tags }}">
+              {{ notification.message }}
+              <a href="#" class="close">&times;</a>
+            </div>
+          {% endfor %}
         </div>
       </div>
+    {% endif %}
 
-      {% block content %}
-      {% endblock %}
+    <!-- Client-side messages -->
+    <div class="row hide-on-print">
+      <div id="client-message-container" class="hidden large-12 columns">
+        <div class="alert-box">
+          <a href="#" class="close">&times;</a>
+        </div>
+      </div>
+    </div>
 
-      {% block endrow %}
-        <div class="end-row"></div>
-      {% endblock %}
-    </div> <!-- End of container -->
-  </div> <!-- End of background wrapper -->
+    {% block content %}
+    {% endblock %}
+
+    {% block endrow %}
+      <div class="end-row"></div>
+    {% endblock %}
+  </div> <!-- End of container -->
 
   <!-- Footer -->
   {% block site_footer %}

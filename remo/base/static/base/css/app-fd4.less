@@ -55,7 +55,7 @@
 ----------------------------------------- */
 
 html {
-    border-top: 2px solid white;
+    height: 100%;
 }
 
 body {
@@ -63,10 +63,7 @@ body {
     color: rgb(51, 51, 51);
     .opensans;
     cursor: auto;
-}
-
-#wrapper {
-    background: rgb(249, 249, 249) url('/static/base/img/remo/mozorg-gradient.png') repeat-x top center;
+    height: 100%;
 }
 
 hr {
@@ -349,6 +346,10 @@ label.required:after {
     }
 }
 
+.container {
+    min-height: 100%;
+}
+
 /* -----------------------------------------
    Custom Button Styles
 ----------------------------------------- */
@@ -439,28 +440,10 @@ label.required:after {
     padding-top: 10px;
 }
 
-#logo-box {
-    h1, h2 {
-        font-family: 'MetaNormal';
-        font-size: 28px;
-        letter-spacing: -0.5px;
-        margin-top: 5px;
-    }
-}
-
 #logo-box img {
     max-width: 100%;
-    height: 46px;
-    float: left;
-    padding: 3px 6px 3px 3px;
-}
-
-#logo-box img:hover {
-    animation-name: bounce-flip;
-    animation-duration: 1s;
-    transform-origin:50% 50%;
-    animation-iteration-count: 1;
-    animation-timing-function: linear;
+    height: 72px;
+    padding: 3px 6px 3px 9px;
 }
 
 #navigation-box {
@@ -528,13 +511,13 @@ label.required:after {
     }
 }
 
-
-
-@media only screen and (max-width: @breakLarge) {
+@media only screen and (max-width: @breakSmall) {
     #login-box {
         text-align: center;
     }
+}
 
+@media only screen and (max-width: @breakLarge) {
     #navigation-box {
         a {
             padding: 0 10px;
@@ -1257,8 +1240,23 @@ ul.edit-profile-item {
    Footer Styles
 ----------------------------------------- */
 
+footer {
+    background-color: black;
+    min-height: 200px;
+}
+
+@media only screen and (max-width: @breakSmall) {
+    footer p {
+        margin-top: 48px;
+    }
+}
+
+.footer-logo img {
+    max-width: 150px;
+}
+
 #colophon {
-    color: #bbb;
+    color: white;
     padding: 48px 0;
     line-height: 18px;
     a { color: rgb(103,167,208); }
@@ -1532,15 +1530,8 @@ table .pictogram-button .pict-icon.large {
 }
 
 /* -----------------------------------------
-   Logo Gray Styles
+   About Styles
 ----------------------------------------- */
-
-#gray-logo {
-    .top-margined;
-    text-align: center;
-    width: 100px;
-    margin: 0 auto;
-}
 
 #about p {
     font-size: 16px;
