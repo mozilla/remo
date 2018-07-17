@@ -8,7 +8,7 @@ RUN adduser --uid 431 --disabled-password --disabled-login --gecos 'webdev' --no
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential libxml2-dev libxslt1-dev libffi-dev python-dev \
-    libmysqlclient-dev mysql-client python-pip node-less locales && \
+    default-libmysqlclient-dev mysql-client python-pip node-less locales && \
     rm -rf /var/lib/apt/lists/*
 
 RUN dpkg-reconfigure locales && locale-gen C.UTF-8 && \
