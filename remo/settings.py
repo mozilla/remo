@@ -131,10 +131,6 @@ else:
     EMAIL_HOST_PASSWORD = config('SMTP_EMAIL_HOST_PASSWORD', default='')
     EMAIL_USE_TLS = config('SMTP_EMAIL_USE_TLS', default=False, cast=bool)
 
-# Etherpad
-ETHERPAD_URL = config('ETHERPAD_URL', default='https://public.etherpad-mozilla.org/p/')
-ETHERPAD_PREFIX = config('ETHERPAD_PREFIX', default='remo-')
-
 # Mozillians API
 MOZILLIANS_API_URL = config('MOZILLIANS_API_URL', default='')
 MOZILLIANS_API_KEY = config('MOZILLIANS_API_KEY', default='')

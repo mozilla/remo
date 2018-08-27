@@ -1,7 +1,5 @@
 from pytz import timezone
-from urlparse import urljoin
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
@@ -154,12 +152,6 @@ class Event(models.Model):
         # Create unique slug
         if not self.pk:
             self.slug = slugify(self.name, instance=self)
-
-        # Calculate planning pad url
-        if not self.planning_pad_url:
-            url = urljoin(settings.ETHERPAD_URL,
-                          getattr(settings, 'ETHERPAD_PREFIX', '') + self.slug[:45])
-            self.planning_pad_url = url
 
         # Update action items
         if self.pk:

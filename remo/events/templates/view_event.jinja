@@ -497,49 +497,53 @@ Mozilla Reps - {{ event.name }}
       </div>
       <div class="large-5 columns">
         <!-- Tools section available to registered users -->
-        <div class="row">
-          <div class="large-1 columns">
-            <div class="pict-icon large tools"></div>
-          </div>
-          <div class="large-11 columns">
-            {% if event.swag_bug %}
-              <p>
-                <span class="label inline">
-                  Swag request
-                </span>
-                <a href="{{ event.swag_bug.bug_id|get_bugzilla_url }}" target="_blank">
-                  {{ event.swag_bug.bug_id }}
-                </a>
-                <span class="request-status">
-                  {{ event.swag_bug.whiteboard }}
-                </span>
-              </p>
-            {% endif %}
-            {% if event.budget_bug %}
-              <p>
-                <span class="label inline">
-                  Budget request
-                </span>
-                <a href="{{ event.budget_bug.bug_id|get_bugzilla_url }}" target="_blank">
-                  {{ event.budget_bug.bug_id }}
-                </a>
-                <span class="request-status">
-                  {{ event.budget_bug.whiteboard }}
-                </span>
-              </p>
-            {% endif %}
-            <p>
-              Use the planning etherpad to plan your event with others and to collectively take notes during the event:
-            </p>
-            <div class="align-right">
-              <a href="{{ event.planning_pad_url }}"
-                 class="small button"
-                 target="_blank">
-                Planning pad
-              </a>
+        {% if event.swag_bug or event.budget_bug or event.planning_pad_url %}
+          <div class="row">
+            <div class="large-1 columns">
+              <div class="pict-icon large tools"></div>
+            </div>
+            <div class="large-11 columns">
+              {% if event.swag_bug %}
+                <p>
+                  <span class="label inline">
+                    Swag request
+                  </span>
+                  <a href="{{ event.swag_bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ event.swag_bug.bug_id }}
+                  </a>
+                  <span class="request-status">
+                    {{ event.swag_bug.whiteboard }}
+                  </span>
+                </p>
+              {% endif %}
+              {% if event.budget_bug %}
+                <p>
+                  <span class="label inline">
+                    Budget request
+                  </span>
+                  <a href="{{ event.budget_bug.bug_id|get_bugzilla_url }}" target="_blank">
+                    {{ event.budget_bug.bug_id }}
+                  </a>
+                  <span class="request-status">
+                    {{ event.budget_bug.whiteboard }}
+                  </span>
+                </p>
+              {% endif %}
+              {% if event.planning_pad_url %}
+                <p>
+                  Use a planning document to plan your event with others and to collectively take notes:
+                </p>
+                <div class="align-right">
+                  <a href="{{ event.planning_pad_url }}"
+                    class="small button"
+                    target="_blank">
+                    Planning pad
+                  </a>
+                </div>
+              {% endif %}
             </div>
           </div>
-        </div>
+        {% endif %}
 
         <!-- Metrics section (visible to: all authenticated) - repeat if needed-->
         {% for stat in event.eventmetricoutcome_set.all() %}
