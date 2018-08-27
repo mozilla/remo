@@ -63,9 +63,8 @@ django-filter==0.11.0 \
 celery==4.1.0 \
     --hash=sha256:81a67f0d53a688ec2bc8557bd5d6d7218f925a6f2e6df80e01560de9e28997ec \
     --hash=sha256:77ff3730198d6a17b3c1f05579ebe570b579efb35f6d7e13dba3b1368d068b35
-statsd==3.2.1 \
-    --hash=sha256:7aff40c6cdda703193fac6231410c6c0ad5939ce053a168016501e982c755c84 \
-    --hash=sha256:3fa92bf0192af926f7a0d9be031fe3fd0fbaa1992d42cf2f07e68f76ac18288e
+statsd==2.1.2 \
+    --hash=sha256:45db168312a6820fd78697c7b6fd0196f3af922c8ebc88540edd0d6fafed554d
 django-mozilla-product-details==0.9 \
     --hash=sha256:a7f6ed9ff9c5d8547787437ca189e46ded5ab1d5752206eeb2e733f772d6114f \
     --hash=sha256:1f2a66b806f4d664935e1abe782f4bed2ad75b2d2ab9670ced0b494baeae8a2a
