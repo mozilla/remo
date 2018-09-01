@@ -111,7 +111,6 @@ def dashboard(request):
     budget_requests = Bug.objects.filter(component='Budget Requests').exclude(q_closed)
     swag_requests = Bug.objects.filter(component='Swag Requests').exclude(q_closed)
     mentorship_requests = Bug.objects.filter(component='Mentorship').exclude(q_closed)
-    planning_requests = Bug.objects.filter(component='Planning').exclude(q_closed)
 
     today = now().date()
 
@@ -151,20 +150,17 @@ def dashboard(request):
             groups__name='Rep').distinct()
         args['mentees_budget_requests'] = budget_requests.filter(creator__in=my_mentees).distinct()
         args['mentees_swag_requests'] = swag_requests.filter(creator__in=my_mentees).distinct()
+        args['mentees_emails'] = my_mentees.values_list('first_name', 'last_name', 'email') or None
+        args['email_mentees_form'] = EmailUsersForm(my_mentees)
+
+    if user.groups.filter(Q(name='Mentor') | Q(name='Council')).exists():
         my_mentorship_requests = mentorship_requests.filter(my_q_assigned)
         my_mentorship_requests = my_mentorship_requests.order_by('whiteboard')
         args['my_mentorship_requests'] = my_mentorship_requests.distinct()
-        args['mentees_emails'] = my_mentees.values_list('first_name', 'last_name', 'email') or None
-        args['email_mentees_form'] = EmailUsersForm(my_mentees)
 
     if user.groups.filter(Q(name='Admin') | Q(name='Review')).exists():
         args['all_budget_requests'] = budget_requests.all()[:20]
         args['all_swag_requests'] = swag_requests.all()[:20]
-
-    if user.groups.filter(Q(name='Admin') | Q(name='Council')).exists():
-        args['my_planning_requests'] = planning_requests
-    else:
-        args['my_planning_requests'] = planning_requests.filter(my_q_assigned).distinct()
 
     if user.groups.filter(Q(name='Admin') | Q(name='Council') | Q(name='Onboarding')).exists():
         args['reps_without_profile'] = reps.filter(userprofile__registration_complete=False)
