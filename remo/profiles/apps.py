@@ -10,7 +10,7 @@ def profiles_set_groups(sender, **kwargs):
     if (isinstance(app_label, basestring) and app_label != 'profiles'):
         return True
 
-    perms = {'create_user': ['Admin', 'Mentor'],
+    perms = {'create_user': ['Admin', 'Council', 'Mentor'],
              'can_edit_profiles': ['Admin', 'Council'],
              'can_delete_profiles': ['Admin'],
              'can_change_mentor': ['Admin', 'Council']}
