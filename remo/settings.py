@@ -174,7 +174,7 @@ MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')
 LIBRAVATAR_URL = config('LIBRAVATAR_URL', default='https://seccdn.libravatar.org/avatar/')
 
 # Planet
-PLANET_URL = config('PLANET_URL', default='http://planet.mozillareps.org/rss20.xml')
+PLANET_URL = config('PLANET_URL', default='https://planet.mozillareps.org/rss20.xml')
 PLANET_MAX_TIMEOUT = config('PLANET_MAX_TIMEOUT', default=5, cast=int)
 
 # Bugzilla
