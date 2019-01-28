@@ -120,7 +120,7 @@
           <!-- Navigation -->
           <nav role="navigation" class="small-12 large-9 columns" id="navigation-box">
             <ul>
-              <li>
+              <li class="dropdown">
                 {% if user.is_authenticated() %}
                   <a href="{{ url('dashboard') }}"
                       id="dashboard-menu-locator"
@@ -130,6 +130,18 @@
                       id="main-menu-locator"
                       class="main {{ active(request, '^/$') }}">Main</a>
                 {% endif %}
+                <ul class="dropdown-content">
+                  <li>
+                    <a href="{{ url('stats_dashboard') }}"
+                        id="stats-menu-locator"
+                        class="main">Statistics</a>
+                  </li>
+                  <li>
+                    <a href="{{ url('kpi') }}"
+                        id="kpi-menu-locator"
+                        class="main">KPI</a>
+                  </li>
+                </ul>
               </li>
               <li>
                 <a href="{{ url('profiles_list_profiles') }}"
@@ -141,25 +153,32 @@
                     id="events-menu-locator"
                     class="main {{ active(request, '^/events/') }}">Events</a>
               </li>
+              {% if user.is_authenticated() %}
+                <li>
+                  <a href="{{ url('voting_list_votings') }}"
+                      id="voting-menu-locator"
+                      class="main {{ active(request, '^/voting/|^/v/') }}">Votings</a>
+                </li>
+              {% endif %}
               <li class="dropdown">
-                <a href="#" class="dropbtn">Communications</a>
+                <a href="#" class="dropbtn">Communication</a>
                 <ul class="dropdown-content">
                   <li><a href="https://blog.mozilla.org/mozillareps"
                           id="blog-menu-locator"
                           class="main">Blog</a>
                   </li>
-                  <li><a href="http://planet.mozillareps.org"
-                          id="planet-menu-locator"
-                          class="main">Planet</a>
-                  </li>
                   <li><a href="https://discourse.mozilla-community.org/c/reps"
                           id="forum-menu-locator"
                           class="main">Forum</a>
                   </li>
+                  <li><a href="https://planet.mozillareps.org"
+                          id="planet-menu-locator"
+                          class="main">Planet</a>
+                  </li>
                 </ul>
               </li>
               <li class="dropdown">
-                <a href="#" class="dropbtn">Documentation</a>
+                <a href="#" class="dropbtn">Docs</a>
                 <ul class="dropdown-content">
                   <li>
                     <a href="https://wiki.mozilla.org/ReMo"
