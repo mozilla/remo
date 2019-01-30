@@ -929,7 +929,7 @@
             class="section"
          {% endif %}>
       <p class="title">
-        <a href="#nomentors">No mentors</a>
+        <a href="#nomentors">No mentors ({{ reps_without_mentors.count() }})</a>
       </p>
       <div id="nomentorsTab" class="content">
         <div class="row">
@@ -989,7 +989,7 @@
             class="section"
          {% endif %}>
       <p class="title">
-        <a href="#emptyprofiles">Empty profiles</a>
+        <a href="#emptyprofiles">Empty profiles ({{ reps_without_profile.count() }})</a>
       </p>
       <div id="emptyprofilesTab" class="content">
         <div class="row">
