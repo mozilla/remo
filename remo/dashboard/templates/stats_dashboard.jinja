@@ -12,7 +12,7 @@
     <div class="large-6 columns">
       <div class="dashboard-stats-activities-block">
         <h2>Overview</h2>
-        <p>General overview of the reps program.</p>
+        <p>General overview of the Reps Program.</p>
         <table class="dashboard-table">
           <thead>
             <tr>
@@ -50,6 +50,32 @@
               <td>{{ active_users }}</td>
               <td>{{ inactive_low_users }}</td>
               <td>{{ inactive_high_users }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-6 columns">
+      <div class="dashboard-stats-activities-block">
+        <h2>Activity</h2>
+        <p>Active Reps per time period (filed any reports - only counting past)</p>
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>1 month</th>
+              <th>2 months</th>
+              <th>6 months</th>
+              <th>12 months</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ active_month1 }}</td>
+              <td>{{ active_month2 }}</td>
+              <td>{{ active_month6 }}</td>
+              <td>{{ active_month12 }}</td>
             </tr>
           </tbody>
         </table>

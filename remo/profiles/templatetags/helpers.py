@@ -72,3 +72,12 @@ def get_activity_level(user):
             return 'inactive-high'
         return 'inactive-low'
     return ''
+
+@library.filter
+def get_last_report_date(user):
+    """Return user's inactivity level."""
+    last_report = get_last_report(user)
+    if not last_report:
+        return ''
+
+    return last_report.report_date

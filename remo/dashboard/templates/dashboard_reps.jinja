@@ -1030,6 +1030,114 @@
       </div>
     </div>
     {% endif %}
+    {% if reps_inactive_12_months is defined %}
+      <div class="section">
+        <p class="title">
+          <a href="#emptyprofiles">Inactive > 12 months ({{ reps_inactive_12_months.count() }})</a>
+        </p>
+        <div id="emptyprofilesTab" class="content">
+          <div class="row">
+            <p class="desc">
+              Reps that have not filed a report in the past 52 weeks:
+            </p>
+            <table class="dashboard-table responsive">
+              <thead>
+                <tr>
+                  <th class="dashboard-clickable type-string">Full Name</th>
+                  <th class="dashboard-clickable type-string">Username</th>
+                  <th class="dashboard-clickable type-string">Country</th>
+                  <th class="dashboard-clickable type-string">Account created on</th>
+                  <th class="dashboard-clickable type-string">Last activity on</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for rep in reps_inactive_12_months %}
+                  <tr>
+                    <td class="{{ rep|get_activity_level }}
+                              {% if rep|user_is_unavailable %}
+                                unavailable
+                              {% endif %}">
+                      <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                        {{ rep.get_full_name() }}
+                      </a>
+                    </td>
+                    <td>
+                      <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                        {{ rep|get_display_name }}
+                      </a>
+                    </td>
+                    <td>
+                      {{ rep.userprofile.country }}
+                    </td>
+                    <td title="{{ rep.date_joined|format_datetime }}"
+                        data-time="{{ rep.date_joined|format_datetime_iso }}">
+                      {{ rep.date_joined|format_datetime }}
+                    </td>
+                    <td>
+                      {{ rep|get_last_report_date }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    {% if reps_inactive_6_months is defined %}
+    <div class="section">
+      <p class="title">
+        <a href="#emptyprofiles">Inactive > 6 months ({{ reps_inactive_6_months.count() }})</a>
+      </p>
+      <div id="emptyprofilesTab" class="content">
+        <div class="row">
+          <p class="desc">
+            Reps that have not filed a report in the past 26 weeks (6 months):
+          </p>
+          <table class="dashboard-table responsive">
+            <thead>
+              <tr>
+                <th class="dashboard-clickable type-string">Full Name</th>
+                <th class="dashboard-clickable type-string">Username</th>
+                <th class="dashboard-clickable type-string">Country</th>
+                <th class="dashboard-clickable type-string">Account created on</th>
+                <th class="dashboard-clickable type-string">Last activity on</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rep in reps_inactive_6_months %}
+                <tr>
+                  <td class="{{ rep|get_activity_level }}
+                             {% if rep|user_is_unavailable %}
+                               unavailable
+                             {% endif %}">
+                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                      {{ rep.get_full_name() }}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{{ url('profiles_view_profile', rep|get_display_name) }}">
+                      {{ rep|get_display_name }}
+                    </a>
+                  </td>
+                  <td>
+                    {{ rep.userprofile.country }}
+                  </td>
+                  <td title="{{ rep.date_joined|format_datetime }}"
+                      data-time="{{ rep.date_joined|format_datetime_iso }}">
+                    {{ rep.date_joined|format_datetime }}
+                  </td>
+                  <td>
+                    {{ rep|get_last_report_date }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </div>
 {% endif %}
 {% endblock %}

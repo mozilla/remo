@@ -178,6 +178,12 @@ def dashboard(request):
                                           reps_without_mentor_q)
         order_by = '-userprofile__date_joined_program'
         args['reps_without_mentors'] = reps_without_mentor.order_by(order_by)
+        q_active_12_months = Q(
+            ng_reports__report_date__range=[get_date(weeks=-52), get_date(weeks=0)])
+        args['reps_inactive_12_months'] = reps.filter(~q_active_12_months).distinct()
+        q_active_6_months = Q(
+            ng_reports__report_date__range=[get_date(weeks=-26), get_date(weeks=0)])
+        args['reps_inactive_6_months'] = reps.filter(~q_active_6_months).distinct()
 
     statsd.incr('dashboard.dashboard_reps')
     return render(request, 'dashboard_reps.jinja', args)
@@ -207,7 +213,20 @@ def stats_dashboard(request):
     q_inactive = Q(
         ng_reports__report_date__range=[get_date(weeks=-8), get_date(weeks=8)])
 
+    q_active_month1 = Q(
+        ng_reports__report_date__range=[get_date(weeks=-4), get_date(weeks=0)])
+    q_active_month2 = Q(
+        ng_reports__report_date__range=[get_date(weeks=-8), get_date(weeks=0)])
+    q_active_month6 = Q(
+        ng_reports__report_date__range=[get_date(weeks=-26), get_date(weeks=0)])
+    q_active_month12 = Q(
+        ng_reports__report_date__range=[get_date(weeks=-52), get_date(weeks=0)])
+
     active = reps.filter(q_active)
+    active_month1 = reps.filter(q_active_month1)
+    active_month2 = reps.filter(q_active_month2)
+    active_month6 = reps.filter(q_active_month6)
+    active_month12 = reps.filter(q_active_month12)
     inactive_low = reps.filter(~q_active & q_inactive)
     inactive_high = reps.filter(~q_inactive)
 
@@ -219,6 +238,10 @@ def stats_dashboard(request):
     args['past_events'] = Event.objects.filter(start__lt=now()).count()
     args['future_events'] = Event.objects.filter(start__gte=now()).count()
     args['activities'] = NGReport.objects.all().count()
+    args['active_month1'] = active_month1.distinct().count()
+    args['active_month2'] = active_month2.distinct().count()
+    args['active_month6'] = active_month6.distinct().count()
+    args['active_month12'] = active_month12.distinct().count()
 
     return render(request, 'stats_dashboard.jinja', args)
 
