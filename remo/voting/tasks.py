@@ -119,8 +119,8 @@ def create_rotm_poll():
 
     poll_name = 'Rep of the month for {0}'.format(number2month(now().month))
     start = (datetime.combine(rotm_nomination_end_date(),
-                              datetime.min.time()) +
-             timedelta(days=1)).replace(tzinfo=pytz.UTC)
+                              datetime.min.time())
+             + timedelta(days=1)).replace(tzinfo=pytz.UTC)
     end = start + timedelta(days=ROTM_VOTING_DAYS)
     rotm_poll = Poll.objects.filter(name=poll_name, start=start, end=end)
 
@@ -129,8 +129,8 @@ def create_rotm_poll():
 
     nominees = User.objects.filter(userprofile__registration_complete=True,
                                    userprofile__is_rotm_nominee=True)
-    if ((nominees and create_poll_flag) or
-            waffle.switch_is_active('enable_rotm_tasks')):
+    if ((nominees and create_poll_flag)
+            or waffle.switch_is_active('enable_rotm_tasks')):
         remobot = User.objects.get(username='remobot')
         description = 'Automated vote for the Rep of this month.'
         mentor_group = Group.objects.get(name='Mentor')

@@ -28,8 +28,8 @@ class RegisterMiddleware(object):
                         kwargs={'display_name':
                                 request.user.userprofile.display_name})]
 
-            if (not request.path.startswith(settings.STATIC_URL) and
-                    not filter(lambda x: request.path == x, allow_urls)):
+            if (not request.path.startswith(settings.STATIC_URL)
+                    and not filter(lambda x: request.path == x, allow_urls)):
                 messages.warning(request, 'Please complete your '
                                           'profile before proceeding.')
                 return redirect('profiles_edit',

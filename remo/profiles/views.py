@@ -69,8 +69,8 @@ def edit(request, display_name):
     profile_date_form = forms.ChangeDatesForm(request.POST or None,
                                               instance=user.userprofile)
 
-    if (userform.is_valid() and profileform.is_valid() and
-            profile_date_form_validation(profile_date_form)):
+    if (userform.is_valid() and profileform.is_valid()
+            and profile_date_form_validation(profile_date_form)):
         userform.save()
         profileform.save()
 
@@ -190,20 +190,20 @@ def view_profile(request, display_name):
     if not user.groups.filter(Q(name='Rep') | Q(name='Alumni')).exists():
         raise Http404
 
-    if (not user.userprofile.registration_complete and
-            not request.user.has_perm('profiles.can_edit_profiles')):
-            raise Http404
+    if (not user.userprofile.registration_complete
+            and not request.user.has_perm('profiles.can_edit_profiles')):
+        raise Http404
 
     nominee_form = forms.RotmNomineeForm(request.POST or None,
                                          instance=user.userprofile)
 
     usergroups = user.groups.filter(
-        Q(name='Mentor') |
-        Q(name='Council') |
-        Q(name='Peers') |
-        Q(name='Resources') |
-        Q(name='Onboarding') |
-        Q(name='Newsletter')
+        Q(name='Mentor')
+        | Q(name='Council')
+        | Q(name='Peers')
+        | Q(name='Resources')
+        | Q(name='Onboarding')
+        | Q(name='Newsletter')
     )
     is_nomination_period = now().date() < rotm_nomination_end_date()
     data = {'pageuser': user,
@@ -229,8 +229,8 @@ def view_profile(request, display_name):
             messages.info(request, mark_safe(msg))
 
     if nominee_form.is_valid():
-        if ((is_nomination_period or waffle.switch_is_active('enable_rotm_tasks')) and
-                request.user.groups.filter(name='Mentor').exists() and request.user != user):
+        if ((is_nomination_period or waffle.switch_is_active('enable_rotm_tasks'))
+                and request.user.groups.filter(name='Mentor').exists() and request.user != user):
             nominee_form.save(nominated_by=request.user)
             return redirect('profiles_view_profile', display_name=display_name)
 

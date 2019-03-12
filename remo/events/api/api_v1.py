@@ -125,15 +125,14 @@ class EventResource(RemoThrottleMixin, ModelResource):
 
     def dehydrate_owner_profile_url(self, bundle):
         """Return owner profile url."""
-        return (settings.SITE_URL +
-                reverse('profiles_view_profile',
-                        kwargs={'display_name':
-                                bundle.obj.owner.userprofile.display_name}))
+        return (settings.SITE_URL
+                + reverse('profiles_view_profile',
+                          kwargs={'display_name': bundle.obj.owner.userprofile.display_name}))
 
     def dehydrate_event_url(self, bundle):
         """Return event url."""
-        return (settings.SITE_URL +
-                reverse('events_view_event', kwargs={'slug': bundle.obj.slug}))
+        return (settings.SITE_URL
+                + reverse('events_view_event', kwargs={'slug': bundle.obj.slug}))
 
     def dehydrate_local_start(self, bundle):
         """Return local start datetime."""
@@ -185,14 +184,14 @@ class EventResource(RemoThrottleMixin, ModelResource):
                 for key in ('owner__first_name__istartswith',
                             'owner__last_name__istartswith'):
                     qset |= Q(**{key: term})
-            qset |= (Q(owner__userprofile__display_name__istartswith=query) |
-                     Q(owner__userprofile__local_name__istartswith=query) |
-                     Q(owner__email__istartswith=query) |
-                     Q(owner__userprofile__private_email__istartswith=query) |
-                     Q(country__istartswith=query) |
-                     Q(region__istartswith=query) |
-                     Q(city__istartswith=query) |
-                     Q(name__icontains=query))
+            qset |= (Q(owner__userprofile__display_name__istartswith=query)
+                     | Q(owner__userprofile__local_name__istartswith=query)
+                     | Q(owner__email__istartswith=query)
+                     | Q(owner__userprofile__private_email__istartswith=query)
+                     | Q(country__istartswith=query)
+                     | Q(region__istartswith=query)
+                     | Q(city__istartswith=query)
+                     | Q(name__icontains=query))
 
             base_object_list = base_object_list.filter(qset).distinct()
 

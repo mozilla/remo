@@ -168,8 +168,8 @@ class NGReport(models.Model):
             self.mentor = self.user.userprofile.mentor
         # Save the country if possible
         saved_report = get_object_or_none(NGReport, id=self.id)
-        if (saved_report and (saved_report.latitude != self.latitude or
-                              saved_report.longitude != self.longitude)):
+        if (saved_report and (saved_report.latitude != self.latitude
+                              or saved_report.longitude != self.longitude)):
             country = None
             try:
                 country = self.location.split(',')[-1].strip()
@@ -194,8 +194,8 @@ class NGReport(models.Model):
 
         # If there is already a running streak and the report date
         # is within this streak, update the current streak counter.
-        if (current_start and self.report_date < current_start and
-                self.report_date in daterange((current_start - one_week), current_start)):
+        if (current_start and self.report_date < current_start
+                and self.report_date in daterange((current_start - one_week), current_start)):
             current_start = self.report_date
         # If there isn't any current streak, and the report date
         # is within the current week, let's start the counting.
@@ -441,9 +441,9 @@ def delete_ng_report(sender, instance, **kwargs):
 
     # If instance is in the future or there is another
     # report that date, don't do anything
-    if (instance.is_future_report or
-            (NGReport.objects.filter(user=instance.user, report_date=instance.report_date)
-                             .exclude(pk=instance.id).exists())):
+    if (instance.is_future_report
+            or (NGReport.objects.filter(user=instance.user, report_date=instance.report_date)
+                .exclude(pk=instance.id).exists())):
         return
 
     try:
@@ -464,16 +464,16 @@ def delete_ng_report(sender, instance, **kwargs):
 
     # If the deleted report is between the range of the longest
     # streak counters, we need to update them.
-    elif (longest_start and longest_end and
-            instance.report_date in daterange(longest_start, longest_end)):
+    elif (longest_start and longest_end
+            and instance.report_date in daterange(longest_start, longest_end)):
 
         if longest_start == instance.report_date and next_report:
             longest_start = next_report.report_date
         elif longest_end == instance.report_date and previous_report:
             longest_end = previous_report.report_date
-        elif (previous_report and next_report and
-              (next_report.report_date -
-               previous_report.report_date).days > 7):
+        elif (previous_report and next_report
+              and (next_report.report_date
+                   - previous_report.report_date).days > 7):
             # Compare the number of reports registered from the starting point
             # of the longest streak up until the date of the deleted report,
             # with the number of reports registered from the date of the
@@ -489,11 +489,11 @@ def delete_ng_report(sender, instance, **kwargs):
             # to move the end of the longest streak, just before
             # the deletion point. If the opposite is true, move the starting
             # point of the longest streak just after the deletion point.
-            if (lower_half_report_count >= upper_half_report_count and
-                    previous_report.report_date >= longest_start):
+            if (lower_half_report_count >= upper_half_report_count
+                    and previous_report.report_date >= longest_start):
                 longest_end = previous_report.report_date
-            elif (upper_half_report_count > lower_half_report_count and
-                    next_report.report_date <= longest_end):
+            elif (upper_half_report_count > lower_half_report_count
+                    and next_report.report_date <= longest_end):
                 longest_start = next_report.report_date
 
     # If the deleted report is between the range of the current
@@ -501,9 +501,9 @@ def delete_ng_report(sender, instance, **kwargs):
     if current_start and instance.report_date in daterange(current_start, today):
         if current_start == instance.report_date and next_report:
             current_start = next_report.report_date
-        elif (previous_report and next_report and
-                (next_report.report_date -
-                 previous_report.report_date).days > 7):
+        elif (previous_report and next_report
+                and (next_report.report_date
+                     - previous_report.report_date).days > 7):
             current_start = next_report.report_date
 
     instance.user.userprofile.current_streak_start = current_start

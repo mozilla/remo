@@ -127,11 +127,11 @@ class ChangeProfileForm(happyforms.ModelForm):
 
         countries = product_details.get_regions('en').values()
         countries.sort()
-        country_choices = ([('', "Country")] +
-                           [(country, country) for country in countries])
+        country_choices = ([('', "Country")]
+                           + [(country, country) for country in countries])
         self.fields['country'].choices = country_choices
-        timezone_choices = ([('', 'Timezone')] +
-                            zip(common_timezones, common_timezones))
+        timezone_choices = ([('', 'Timezone')]
+                            + zip(common_timezones, common_timezones))
         self.fields['timezone'].choices = timezone_choices
 
     def clean_twitter_account(self):
@@ -274,8 +274,8 @@ class UserStatusForm(happyforms.ModelForm):
                                        'the %s') % LEAVING_SOP_URL)
                 self._errors['expected_date'] = self.error_class([sop])
 
-        if ('is_replaced' in cdata and
-                cdata['is_replaced'] and not cdata['replacement_rep']):
+        if ('is_replaced' in cdata
+                and cdata['is_replaced'] and not cdata['replacement_rep']):
             msg = 'Please select a replacement Rep during your absence.'
             self._errors['replacement_rep'] = self.error_class([msg])
 
@@ -315,9 +315,9 @@ class RotmNomineeForm(happyforms.Form):
         return cdata
 
     def save(self, nominated_by, *args, **kwargs):
-        if (self.instance and not self.instance.is_rotm_nominee and
-                nominated_by != self.instance.user and
-                self.cleaned_data['is_rotm_nominee']):
+        if (self.instance and not self.instance.is_rotm_nominee
+                and nominated_by != self.instance.user
+                and self.cleaned_data['is_rotm_nominee']):
             self.instance.is_rotm_nominee = True
             self.instance.rotm_nominated_by = nominated_by
             self.instance.save()

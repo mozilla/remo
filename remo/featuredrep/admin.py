@@ -29,8 +29,8 @@ class FeaturedRepAdmin(ExportMixin, admin.ModelAdmin):
         super(FeaturedRepAdmin, self).save_model(request, obj, form, change)
         featured = FeaturedRep.objects.get(pk=obj.pk)
 
-        if (form.is_valid() and 'updated_on' in form.changed_data and
-                form.cleaned_data['updated_on'] != featured.updated_on):
+        if (form.is_valid() and 'updated_on' in form.changed_data
+                and form.cleaned_data['updated_on'] != featured.updated_on):
             obj.save(**{'updated_on': form.cleaned_data['updated_on']})
 
 

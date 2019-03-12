@@ -129,8 +129,8 @@ class Bug(models.Model):
                                                      resolved=False)
             # If there is no user or user is not rep or the bug is resolved,
             # resolve the action item too!
-            if (not self.assigned_to or not user_is_rep(self.assigned_to) or
-                    self.status == 'RESOLVED'):
+            if (not self.assigned_to or not user_is_rep(self.assigned_to)
+                    or self.status == 'RESOLVED'):
                 action_items.update(resolved=True)
             else:
                 possible_actions = [ADD_RECEIPTS_ACTION, ADD_REPORT_ACTION,

@@ -107,5 +107,5 @@ def get_event_search_link(search):
 def get_event_link(event):
     """Returns events url."""
 
-    return (settings.SITE_URL +
-            reverse('events_view_event', kwargs={'slug': event.slug}))
+    return (settings.SITE_URL
+            + reverse('events_view_event', kwargs={'slug': event.slug}))

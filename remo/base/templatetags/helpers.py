@@ -210,8 +210,8 @@ def user_is_mozillian(user):
 @library.global_function
 def user_is_rep(user):
     """Check if a user belongs to Rep group."""
-    return (user.groups.filter(name='Rep').exists() and
-            user.userprofile.registration_complete)
+    return (user.groups.filter(name='Rep').exists()
+            and user.userprofile.registration_complete)
 
 
 @library.global_function

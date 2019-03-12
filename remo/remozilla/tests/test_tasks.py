@@ -23,8 +23,8 @@ class FetchBugsTest(RemoTestCase):
     @patch('requests.get')
     def test_connection_error(self, fake_get):
         """Test fetch_bugs connection error exception."""
-        if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
-             not getattr(settings, 'REMOZILLA_PASSWORD', None))):
+        if ((not getattr(settings, 'REMOZILLA_USERNAME', None)
+             or not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME '
                            'or REMOZILLA_PASSWORD.')
         fake_get.side_effect = requests.ConnectionError()
@@ -35,8 +35,8 @@ class FetchBugsTest(RemoTestCase):
     @patch('remo.remozilla.tasks.requests')
     def test_invalid_return_code(self, mocked_request):
         """Test fetch_bugs invalid status code exception."""
-        if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
-             not getattr(settings, 'REMOZILLA_PASSWORD', None))):
+        if ((not getattr(settings, 'REMOZILLA_USERNAME', None)
+             or not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME '
                            'or REMOZILLA_PASSWORD.')
         mocked_obj = Mock()
@@ -50,8 +50,8 @@ class FetchBugsTest(RemoTestCase):
     def test_with_valid_data(self, mocked_request, switch_is_active_mock):
         """Test fetch_bugs valid bug data processing."""
         UserFactory.create(username='remobot')
-        if ((not getattr(settings, 'REMOZILLA_USERNAME', None) or
-             not getattr(settings, 'REMOZILLA_PASSWORD', None))):
+        if ((not getattr(settings, 'REMOZILLA_USERNAME', None)
+             or not getattr(settings, 'REMOZILLA_PASSWORD', None))):
             raise SkipTest('Skipping test due to unset REMOZILLA_USERNAME.')
 
         switch_is_active_mock.return_value = True

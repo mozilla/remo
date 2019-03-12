@@ -23,7 +23,7 @@ urlpatterns = patterns(
             model=Activity, form_class=ActivityForm,
             success_url=reverse_lazy('list_activities')),
         name='create_activity'),
-    url('^activities/(?P<pk>\d+)/edit/$',
+    url(r'^activities/(?P<pk>\d+)/edit/$',
         BaseUpdateView.as_view(
             groups=['Admin', 'Council'],
             model=Activity, form_class=ActivityForm,
@@ -40,7 +40,7 @@ urlpatterns = patterns(
             model=Campaign, form_class=CampaignForm,
             success_url=reverse_lazy('list_campaigns')),
         name='create_campaign'),
-    url('^initiatives/(?P<pk>\d+)/edit/$',
+    url(r'^initiatives/(?P<pk>\d+)/edit/$',
         BaseUpdateView.as_view(
             groups=['Admin', 'Council'],
             model=Campaign, form_class=CampaignForm,
@@ -56,7 +56,7 @@ urlpatterns = patterns(
             model=FunctionalArea, form_class=FunctionalAreaForm,
             success_url=reverse_lazy('list_functional_areas')),
         name='create_functional_area'),
-    url('^functional_areas/(?P<pk>\d+)/edit/$',
+    url(r'^functional_areas/(?P<pk>\d+)/edit/$',
         BaseUpdateView.as_view(
             model=FunctionalArea, form_class=FunctionalAreaForm,
             success_url=reverse_lazy('list_functional_areas')),
@@ -73,7 +73,7 @@ urlpatterns = patterns(
             model=MobilisingSkill, form_class=MobilisingSkillForm,
             success_url=reverse_lazy('list_mobilising_skills')),
         name='create_mobilising_skills'),
-    url('^mobilising_skills/(?P<pk>\d+)/edit/$',
+    url(r'^mobilising_skills/(?P<pk>\d+)/edit/$',
         BaseUpdateView.as_view(
             groups=['Admin', 'Council'],
             model=MobilisingSkill, form_class=MobilisingSkillForm,
@@ -91,7 +91,7 @@ urlpatterns = patterns(
             model=MobilisingInterest, form_class=MobilisingInterestForm,
             success_url=reverse_lazy('list_mobilising_interests')),
         name='create_mobilising_interests'),
-    url('^mobilising_interests/(?P<pk>\d+)/edit/$',
+    url(r'^mobilising_interests/(?P<pk>\d+)/edit/$',
         BaseUpdateView.as_view(
             groups=['Admin', 'Council'],
             model=MobilisingSkill, form_class=MobilisingInterestForm,
@@ -109,7 +109,7 @@ urlpatterns = patterns(
             model=EventMetric, form_class=EventMetricForm,
             success_url=reverse_lazy('list_metrics')),
         name='create_metric'),
-    url('^metrics/(?P<pk>\d+)/edit/$',
+    url(r'^metrics/(?P<pk>\d+)/edit/$',
         BaseUpdateView.as_view(
             groups=['Admin', 'Council'],
             model=EventMetric, form_class=EventMetricForm,

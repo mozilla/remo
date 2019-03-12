@@ -101,9 +101,9 @@ def view_event(request, slug):
     email_att_form = EmailUsersForm(attendees, initial=email_att_initial)
 
     # Display a message if the event owner needs to submit post event data
-    if (request.user == event.owner and event.is_past_event and
-        event.has_new_metrics and not
-            any([metric.outcome for metric in event.eventmetricoutcome_set.all()])):
+    if (request.user == event.owner and event.is_past_event
+            and event.has_new_metrics
+            and not any([metric.outcome for metric in event.eventmetricoutcome_set.all()])):
         msg = render_to_string('includes/view_post_event_metrics.jinja', {'event': event})
         messages.info(request, mark_safe(msg))
 
@@ -227,9 +227,9 @@ def edit_event(request, slug=None, clone=None):
         return redirect('events_view_event', slug=event_form.instance.slug)
 
     can_delete_event = False
-    if (not created and
-        (event.owner == request.user or
-         request.user.has_perm('events.can_delete_events'))):
+    if (not created
+        and (event.owner == request.user
+             or request.user.has_perm('events.can_delete_events'))):
         can_delete_event = True
 
     return render(request, 'edit_event.jinja',

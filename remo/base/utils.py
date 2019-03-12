@@ -138,8 +138,7 @@ def get_date(days=0, weeks=0):
     offset can be either positive or negative.
     """
 
-    return (timezone.now().date() +
-            datetime.timedelta(days=days, weeks=weeks))
+    return (timezone.now().date() + datetime.timedelta(days=days, weeks=weeks))
 
 
 def daterange(start_date, end_date):

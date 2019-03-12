@@ -102,8 +102,8 @@ def dashboard(request):
     args = {'today': now()}
 
     # Mozillians/Alumni block
-    if (user.groups.filter(name='Mozillians').exists() or
-            user.groups.filter(name='Alumni').exists()):
+    if (user.groups.filter(name='Mozillians').exists()
+            or user.groups.filter(name='Alumni').exists()):
         return dashboard_mozillians(request, user)
 
     # Reps block
@@ -134,10 +134,10 @@ def dashboard(request):
     args['my_swag_requests'] = swag_requests.filter(my_q).distinct()
 
     if user.groups.filter(
-        Q(name='Admin') |
-        Q(name='Council') |
-        Q(name='Peers') |
-        Q(name='Onboarding')
+        Q(name='Admin')
+        | Q(name='Council')
+        | Q(name='Peers')
+        | Q(name='Onboarding')
     ).exists():
         args['can_view_administration'] = True
 
@@ -174,8 +174,8 @@ def dashboard(request):
         reps_with_alumni_mentors_q = Q(userprofile__mentor__id__in=alumni_ids)
         reps_without_mentor_q = Q(userprofile__registration_complete=True,
                                   userprofile__mentor__isnull=True)
-        reps_without_mentor = reps.filter(reps_with_alumni_mentors_q |
-                                          reps_without_mentor_q)
+        reps_without_mentor = reps.filter(reps_with_alumni_mentors_q
+                                          | reps_without_mentor_q)
         order_by = '-userprofile__date_joined_program'
         args['reps_without_mentors'] = reps_without_mentor.order_by(order_by)
         q_active_12_months = Q(

@@ -120,14 +120,14 @@ def fetch_bugs(components=COMPONENTS, days=None):
                         automated_voting_trigger += 1
                         if BUG_WHITEBOARD in bug.whiteboard:
                             bug.council_member_assigned = True
-                    if ((flag['status'] == '?' and
-                         flag['name'] == 'needinfo' and 'requestee' in flag and
-                         flag['requestee'] == (settings.REPS_REVIEW_ALIAS))):
+                    if ((flag['status'] == '?'
+                         and flag['name'] == 'needinfo' and 'requestee' in flag
+                         and flag['requestee'] == (settings.REPS_REVIEW_ALIAS))):
                         automated_voting_trigger += 1
                     if flag['status'] == '?' and flag['name'] == BUG_REVIEW:
                         bug.pending_mentor_validation = True
-                    if (flag['status'] == '?' and flag['name'] == 'needinfo' and
-                            'requestee' in flag):
+                    if (flag['status'] == '?' and flag['name'] == 'needinfo'
+                            and 'requestee' in flag):
                         email = flag['requestee']
                         user = get_object_or_none(User, email=email)
                         if user:

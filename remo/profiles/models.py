@@ -45,8 +45,8 @@ def _validate_birth_date(data, **kwargs):
     """Validator to ensure age of at least 12 years old."""
     today = timezone.now().date()
     youth_threshold_day = (datetime.date(today.year - 12, today.month,
-                                         today.day) +
-                           datetime.timedelta(hours=24))
+                                         today.day)
+                           + datetime.timedelta(hours=24))
 
     if data > youth_threshold_day:
         raise ValidationError('Provided Birthdate is not valid.')
@@ -269,9 +269,9 @@ class UserProfile(models.Model):
 
         """
         d = timezone.now().date()
-        age = ((d.year - self.birth_date.year) -
-               int((d.month, d.day) <
-                   (self.birth_date.month, self.birth_date.day)))
+        age = ((d.year - self.birth_date.year)
+               - int((d.month, d.day)
+                     < (self.birth_date.month, self.birth_date.day)))
         return age
 
     def clean(self, *args, **kwargs):
@@ -362,15 +362,15 @@ def user_status_email_reminder(sender, instance, created, raw, **kwargs):
             datetime.datetime.min.time())
         data = {'user_status': instance}
 
-        time_diff = (timezone.make_aware(notification_datetime, pytz.UTC) -
-                     timezone.now())
+        time_diff = (timezone.make_aware(notification_datetime, pytz.UTC)
+                     - timezone.now())
         # If the notification date is in the past, then send the notification
         # x/2 hours from now, where x is the diff between the return date and
         # now
         if time_diff.days < 0:
             hours_added = (time_diff.seconds / 3600) / 2
-            notification_datetime = (timezone.now() +
-                                     datetime.timedelta(hours=hours_added))
+            notification_datetime = (timezone.now()
+                                     + datetime.timedelta(hours=hours_added))
 
         rep_reminder = send_remo_mail.apply_async(
             eta=notification_datetime,

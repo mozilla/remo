@@ -203,18 +203,18 @@ class RepResource(RemoThrottleMixin, ModelResource):
                 for key in ('first_name__istartswith',
                             'last_name__istartswith'):
                     qset |= Q(**{key: term})
-            qset |= (Q(userprofile__display_name__istartswith=query) |
-                     Q(userprofile__local_name__istartswith=query) |
-                     Q(userprofile__irc_name__istartswith=query) |
-                     Q(email__istartswith=query) |
-                     Q(userprofile__private_email__istartswith=query) |
-                     Q(userprofile__country__istartswith=query) |
-                     Q(userprofile__region__istartswith=query) |
-                     Q(userprofile__city__istartswith=query) |
-                     Q(userprofile__mozillians_profile_url__icontains=query) |
-                     Q(userprofile__functional_areas__name__istartswith=query) |
-                     Q(userprofile__mobilising_skills__name__istartswith=query) |
-                     Q(userprofile__mobilising_interests__name__istartswith=query))
+            qset |= (Q(userprofile__display_name__istartswith=query)
+                     | Q(userprofile__local_name__istartswith=query)
+                     | Q(userprofile__irc_name__istartswith=query)
+                     | Q(email__istartswith=query)
+                     | Q(userprofile__private_email__istartswith=query)
+                     | Q(userprofile__country__istartswith=query)
+                     | Q(userprofile__region__istartswith=query)
+                     | Q(userprofile__city__istartswith=query)
+                     | Q(userprofile__mozillians_profile_url__icontains=query)
+                     | Q(userprofile__functional_areas__name__istartswith=query)
+                     | Q(userprofile__mobilising_skills__name__istartswith=query)
+                     | Q(userprofile__mobilising_interests__name__istartswith=query))
 
             base_object_list = base_object_list.filter(qset).distinct()
 

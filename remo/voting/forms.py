@@ -67,8 +67,8 @@ class RadioPollChoiceVoteForm(happyforms.Form):
         super(RadioPollChoiceVoteForm, self).__init__(*args, **kwargs)
         self.user = user
 
-        choices = ((('', '----'),) +
-                   tuple(radio_poll.answers.values_list('id', 'answer')))
+        choices = ((('', '----'),)
+                   + tuple(radio_poll.answers.values_list('id', 'answer')))
         self.fields['radio_poll__%s' % str(radio_poll.id)] = forms.ChoiceField(
             widget=forms.Select(),
             choices=choices,
@@ -160,9 +160,9 @@ class PollAddForm(PollEditForm):
 
     def is_valid(self):
         """Override the is_valid() method."""
-        return (super(PollAddForm, self).is_valid() and
-                self.range_poll_formset.is_valid() and
-                self.radio_poll_formset.is_valid())
+        return (super(PollAddForm, self).is_valid()
+                and self.range_poll_formset.is_valid()
+                and self.radio_poll_formset.is_valid())
 
     def clean(self):
         """Clean form."""
@@ -184,8 +184,8 @@ class PollAddForm(PollEditForm):
             self._errors['start_form'] = self.error_class([msg])
 
         # Check that there is at least one radio or range poll
-        if ((not self.range_poll_formset._count_filled_forms()) and
-                (not self.radio_poll_formset._count_filled_forms())):
+        if ((not self.range_poll_formset._count_filled_forms())
+                and (not self.radio_poll_formset._count_filled_forms())):
             msg = u'You must fill at least one radio or range poll.'
             raise ValidationError(msg)
 
@@ -255,8 +255,8 @@ class BaseRangePollInlineFormSet(BaseInlineFormSet):
 
     def _count_filled_forms(self):
         """Count valid, filled forms with delete == False."""
-        return len([form for form in self.forms if form.is_valid() and
-                    len(form.cleaned_data) and form.cleaned_data['DELETE'] is False])
+        return len([form for form in self.forms if form.is_valid()
+                    and len(form.cleaned_data) and form.cleaned_data['DELETE'] is False])
 
     def add_fields(self, form, index):
         """Add extra fields."""
@@ -388,9 +388,9 @@ class BaseRadioPollInlineFormSet(BaseInlineFormSet):
     def _count_filled_forms(self):
         """Count valid, filled forms with delete == False."""
         return len([form for form in self.forms if
-                    form.is_valid() and
-                    len(form.cleaned_data) and
-                    form.cleaned_data['DELETE'] is False])
+                    form.is_valid()
+                    and len(form.cleaned_data)
+                    and form.cleaned_data['DELETE'] is False])
 
     def add_fields(self, form, index):
         """Add extra fields."""

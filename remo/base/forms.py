@@ -41,8 +41,8 @@ class EmailUsersForm(BaseEmailUsersForm):
         """Send mail to recipients list."""
         recipients_list = []
         for field in self.fields:
-            if (isinstance(self.fields[field], forms.BooleanField) and
-                    self.cleaned_data[field]):
+            if (isinstance(self.fields[field], forms.BooleanField)
+                    and self.cleaned_data[field]):
                 recipients_list.append(long(field))
 
         if recipients_list:

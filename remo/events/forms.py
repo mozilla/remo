@@ -182,8 +182,8 @@ class EventForm(happyforms.ModelForm):
             initial_category = self.instance.categories.all()[0]
             self.fields['categories'].initial = initial_category.id
 
-        categories = ([('', 'Please select a functional area')] +
-                      list(categories_query.values_list('id', 'name')))
+        categories = ([('', 'Please select a functional area')]
+                      + list(categories_query.values_list('id', 'name')))
         self.fields['categories'].choices = categories
 
         # Intiatives/Campaign field
@@ -192,8 +192,8 @@ class EventForm(happyforms.ModelForm):
         # Dynamic countries field.
         countries = product_details.get_regions('en').values()
         countries.sort()
-        country_choices = ([('', 'Country')] +
-                           [(country, country) for country in countries])
+        country_choices = ([('', 'Country')]
+                           + [(country, country) for country in countries])
         self.fields['country'].choices = country_choices
 
         # Dynamic owner field.

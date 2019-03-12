@@ -130,8 +130,8 @@ class SelectTimeWidget(Widget):
         # there will be a meridiem value, so make sure the
         # hours get printed correctly
         if self.twelve_hr and self.meridiem_val:
-            if (self.meridiem_val.lower().startswith('p') and
-                    hour_val > 12 and hour_val < 24):
+            if (self.meridiem_val.lower().startswith('p')
+                    and hour_val > 12 and hour_val < 24):
                 hour_val = hour_val % 12
 
         output = []
@@ -171,9 +171,9 @@ class SelectTimeWidget(Widget):
         if self.twelve_hr:
             # If we were given an initial value,
             # make sure the correct meridiem gets selected.
-            if (self.meridiem_val is not None and
-                    self.meridiem_val.startswith('p')):
-                    meridiem_choices = [('p.m.', 'p.m.'), ('a.m.', 'a.m.')]
+            if (self.meridiem_val is not None
+                    and self.meridiem_val.startswith('p')):
+                meridiem_choices = [('p.m.', 'p.m.'), ('a.m.', 'a.m.')]
             else:
                 meridiem_choices = [('a.m.', 'a.m.'), ('p.m.', 'p.m.')]
 

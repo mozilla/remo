@@ -163,8 +163,8 @@ class UserResource(resources.ModelResource):
         return user.userprofile.country
 
     def dehydrate_mentor(self, user):
-        if (user.userprofile.mentor and
-                user.groups.filter(name='Rep').exists()):
+        if (user.userprofile.mentor
+                and user.groups.filter(name='Rep').exists()):
             return user.userprofile.mentor.get_full_name()
         return ''
 
@@ -197,14 +197,14 @@ class UserAdmin(ExportMixin, UserAdmin):
     """User Admin."""
     resource_class = UserResource
     inlines = [UserProfileInline]
-    list_filter = (UserAdmin.list_filter +
-                   ('userprofile__registration_complete', RepProfileFilter,
-                    MozillianProfileFilter, MentorProfileFilter,
-                    CouncilProfileFilter, AlumniProfileFilter,
-                    AdminProfileFilter, ActivityCampaign,
-                    'userprofile__is_rotm_nominee',
-                    'userprofile__date_joined_program',
-                    'ng_reports__report_date', UserProfileFilter))
+    list_filter = (UserAdmin.list_filter
+                   + ('userprofile__registration_complete', RepProfileFilter,
+                      MozillianProfileFilter, MentorProfileFilter,
+                      CouncilProfileFilter, AlumniProfileFilter,
+                      AdminProfileFilter, ActivityCampaign,
+                      'userprofile__is_rotm_nominee',
+                      'userprofile__date_joined_program',
+                      'ng_reports__report_date', UserProfileFilter))
     list_display = UserAdmin.list_display + ('get_groups',)
     search_fields = (UserAdmin.search_fields + ('userprofile__country',))
 

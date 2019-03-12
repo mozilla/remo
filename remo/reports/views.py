@@ -89,8 +89,8 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
     verification_form = forms.NGVerifyReportForm(instance=report)
 
     editable = False
-    if (((request.user == user or request.user.has_perm('change_ngreport')) and
-         (report.activity.name not in UNLISTED_ACTIVITIES))):
+    if (((request.user == user or request.user.has_perm('change_ngreport'))
+         and (report.activity.name not in UNLISTED_ACTIVITIES))):
         editable = True
 
     ctx_data = {'pageuser': user,
@@ -121,8 +121,8 @@ def view_ng_report(request, display_name, year, month, day=None, id=None):
         else:
             verification_form = forms.NGVerifyReportForm(request.POST, instance=report)
             if verification_form.is_valid():
-                if ((not request.user.is_authenticated()) or
-                    (not request.user.groups.filter(
+                if ((not request.user.is_authenticated())
+                    or (not request.user.groups.filter(
                         Q(name='Council') | Q(name='Mentor')).exists())):
                     messages.error(request, 'Permission denied.')
                     return redirect('main')
@@ -201,22 +201,22 @@ def list_ng_reports(request, mentor=None, rep=None, functional_area_slug=None):
     if 'query' in request.GET:
         query = request.GET['query'].strip()
         report_list = report_list.filter(
-            Q(ngreportcomment__comment__icontains=query) |
-            Q(activity__name__icontains=query) |
-            Q(activity_description__icontains=query) |
-            Q(campaign__name__icontains=query) |
-            Q(functional_areas__name__icontains=query) |
-            Q(location__icontains=query) |
-            Q(link__icontains=query) |
-            Q(link_description__icontains=query) |
-            Q(user__first_name__icontains=query) |
-            Q(user__last_name__icontains=query) |
-            Q(user__userprofile__local_name__icontains=query) |
-            Q(user__userprofile__display_name__icontains=query) |
-            Q(mentor__first_name__icontains=query) |
-            Q(mentor__last_name__icontains=query) |
-            Q(mentor__userprofile__local_name__icontains=query) |
-            Q(mentor__userprofile__display_name__icontains=query))
+            Q(ngreportcomment__comment__icontains=query)
+            | Q(activity__name__icontains=query)
+            | Q(activity_description__icontains=query)
+            | Q(campaign__name__icontains=query)
+            | Q(functional_areas__name__icontains=query)
+            | Q(location__icontains=query)
+            | Q(link__icontains=query)
+            | Q(link_description__icontains=query)
+            | Q(user__first_name__icontains=query)
+            | Q(user__last_name__icontains=query)
+            | Q(user__userprofile__local_name__icontains=query)
+            | Q(user__userprofile__display_name__icontains=query)
+            | Q(mentor__first_name__icontains=query)
+            | Q(mentor__last_name__icontains=query)
+            | Q(mentor__userprofile__local_name__icontains=query)
+            | Q(mentor__userprofile__display_name__icontains=query))
 
     report_list = report_list.distinct()
     number_of_reports = report_list.count()
