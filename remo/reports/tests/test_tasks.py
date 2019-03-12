@@ -59,7 +59,7 @@ class SendReportDigestTests(RemoTestCase):
         today = now().date()
         # Report is not related to event attedance or creation.
         report = NGReportFactory.create(report_date=today)
-        report.created_on = date(2014, 01, 01)
+        report.created_on = date(2014, 1, 1)
         report.save()
         with patch('remo.reports.tasks.send_mail') as send_mail_mock:
             send_report_digest()
@@ -76,7 +76,7 @@ class SendReportDigestTests(RemoTestCase):
                                         activity=activity,
                                         event=event,
                                         mentor=mentor)
-        report.created_on = date(2014, 01, 01)
+        report.created_on = date(2014, 1, 1)
         report.save()
         with patch('remo.reports.tasks.send_mail') as send_mail_mock:
             send_report_digest()
@@ -191,12 +191,12 @@ class UpdateStreakCountersTaskTest(RemoTestCase):
     def test_no_current_streak(self):
         user = UserFactory.create(groups=['Rep'])
         for i in range(4):
-            report_date = date(2011, 01, 01) + timedelta(weeks=i)
+            report_date = date(2011, 1, 1) + timedelta(weeks=i)
             NGReportFactory.create(user=user, report_date=report_date)
 
         calculate_longest_streaks()
-        eq_(user.userprofile.longest_streak_start, date(2011, 01, 01))
-        eq_(user.userprofile.longest_streak_end, date(2011, 01, 22))
+        eq_(user.userprofile.longest_streak_start, date(2011, 1, 1))
+        eq_(user.userprofile.longest_streak_end, date(2011, 1, 22))
 
     def test_with_smaller_current_streak(self):
         user = UserFactory.create(groups=['Rep'])
@@ -209,14 +209,14 @@ class UpdateStreakCountersTaskTest(RemoTestCase):
         eq_(user.userprofile.longest_streak_end, date.today())
 
         for i in range(4):
-            report_date = date(2011, 01, 01) + timedelta(weeks=i)
+            report_date = date(2011, 1, 1) + timedelta(weeks=i)
             NGReportFactory.create(user=user, report_date=report_date)
 
         calculate_longest_streaks()
 
         user = User.objects.get(pk=user.id)
-        eq_(user.userprofile.longest_streak_start, date(2011, 01, 01))
-        eq_(user.userprofile.longest_streak_end, date(2011, 01, 22))
+        eq_(user.userprofile.longest_streak_start, date(2011, 1, 1))
+        eq_(user.userprofile.longest_streak_end, date(2011, 1, 22))
 
     def test_with_larger_current_streak(self):
         user = UserFactory.create(groups=['Rep'])
@@ -229,7 +229,7 @@ class UpdateStreakCountersTaskTest(RemoTestCase):
         eq_(user.userprofile.longest_streak_end, date.today())
 
         for i in range(3):
-            report_date = date(2011, 01, 01) + timedelta(weeks=i)
+            report_date = date(2011, 1, 1) + timedelta(weeks=i)
             NGReportFactory.create(user=user, report_date=report_date)
 
         calculate_longest_streaks()

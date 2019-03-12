@@ -37,7 +37,7 @@ class NGReportFactory(factory.django.DjangoModelFactory):
     location = 'Activity Location'
     is_passive = False
     link = 'www.example.com'
-    report_date = fuzzy.FuzzyDate(datetime.date(2013, 01, 01), now().date())
+    report_date = fuzzy.FuzzyDate(datetime.date(2013, 1, 1), now().date())
 
     class Meta:
         model = NGReport

@@ -247,7 +247,7 @@ def ical_escape_char(text):
 
     """
 
-    return (text.replace('\N', '\n')
+    return (text.replace('\N', '\n')  # noqa
                 .replace('\\', '\\\\')
                 .replace(';', r'\;')
                 .replace(',', r'\,')

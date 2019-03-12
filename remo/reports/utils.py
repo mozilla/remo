@@ -18,7 +18,7 @@ def count_user_ng_reports(user, current_streak=False,
     eg 2 means 2 * 7 = 14 days.
     """
     end_period = now()
-    start_period = datetime(2011, 01, 01)
+    start_period = datetime(2011, 1, 1)
 
     if current_streak:
         start_period = user.userprofile.current_streak_start

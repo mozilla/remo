@@ -143,7 +143,7 @@ class UserFactory(factory.django.DjangoModelFactory):
                                if name not in [group.name for group in
                                                Group.objects.all()]])
             for group_name in missing_groups:
-                group = Group.objects.create(name=group_name)
+                Group.objects.create(name=group_name)
             groups = Group.objects.filter(name__in=extracted)
             self.groups = groups
 

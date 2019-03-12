@@ -20,19 +20,19 @@ from remo.reports.tests import ActivityFactory, NGReportFactory, NGReportComment
 class NGReportTest(RemoTestCase):
     def test_get_absolute_url(self):
         report = NGReportFactory.create(
-            report_date=datetime.date(2012, 01, 01), id=9999)
+            report_date=datetime.date(2012, 1, 1), id=9999)
         eq_(report.get_absolute_url(),
             '/u/{0}/r/2012/January/1/9999/'.format(report.user.userprofile.display_name))
 
     def test_get_absolute_edit_url(self):
         report = NGReportFactory.create(
-            report_date=datetime.date(2012, 01, 01), id=9999)
+            report_date=datetime.date(2012, 1, 1), id=9999)
         eq_(report.get_absolute_edit_url(),
             '/u/{0}/r/2012/January/1/9999/edit/'.format(report.user.userprofile.display_name))
 
     def test_get_absolute_delete_url(self):
         report = NGReportFactory.create(
-            report_date=datetime.date(2012, 01, 01), id=9999)
+            report_date=datetime.date(2012, 1, 1), id=9999)
         eq_(report.get_absolute_delete_url(),
             '/u/{0}/r/2012/January/1/9999/delete/'.format(report.user.userprofile.display_name))
 
@@ -75,7 +75,7 @@ class NGReportTest(RemoTestCase):
 
 class NGReportComment(RemoTestCase):
     def test_get_absolute_delete_url(self):
-        report = NGReportFactory.create(report_date=datetime.date(2012, 01, 01), id=9999)
+        report = NGReportFactory.create(report_date=datetime.date(2012, 1, 1), id=9999)
         report_comment = NGReportCommentFactory.create(report=report, user=report.user)
         eq_(report_comment.get_absolute_delete_url(),
             '/u/{0}/r/2012/January/1/9999/comment/{1}/delete/'.format(
@@ -351,11 +351,11 @@ class NGReportDeleteSignalTests(RemoTestCase):
         report out of five is deleted.
         """
 
-        mocked_date.return_value = datetime.date(2011, 01, 29)
+        mocked_date.return_value = datetime.date(2011, 1, 29)
         user = UserFactory.create()
         up = user.userprofile
-        start_date = datetime.date(2011, 01, 01)
-        end_date = datetime.date(2011, 01, 29)
+        start_date = datetime.date(2011, 1, 1)
+        end_date = datetime.date(2011, 1, 29)
         # Create 5 reports
         for i in range(0, 5):
             NGReportFactory.create(
@@ -369,13 +369,13 @@ class NGReportDeleteSignalTests(RemoTestCase):
         # Delete the report that the user submitted on 22-01-2012
         NGReport.objects.filter(
             user=user,
-            report_date=datetime.date(2011, 01, 22)).delete()
+            report_date=datetime.date(2011, 1, 22)).delete()
 
         user = User.objects.get(pk=user.id)
         up = user.userprofile
         eq_(up.current_streak_start, end_date)
         eq_(up.longest_streak_start, start_date)
-        eq_(up.longest_streak_end, datetime.date(2011, 01, 15))
+        eq_(up.longest_streak_end, datetime.date(2011, 1, 15))
 
 
 class NGReportActivityNotifications(RemoTestCase):

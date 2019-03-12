@@ -59,13 +59,13 @@ class ViewsTest(RemoTestCase):
             'valid_groups': self.admin_group.id,
             'start_form_0_year': now().year + 1,
             'start_form_0_month': 10,
-            'start_form_0_day': 01,
-            'start_form_1_hour': 07,
+            'start_form_0_day': 1,
+            'start_form_1_hour': 7,
             'start_form_1_minute': 00,
             'end_form_0_year': now().year + 1,
             'end_form_0_month': 10,
-            'end_form_0_day': 04,
-            'end_form_1_hour': 07,
+            'end_form_0_day': 4,
+            'end_form_1_hour': 7,
             'end_form_1_minute': 00,
             'range_polls-TOTAL_FORMS': u'1',
             'range_polls-INITIAL_FORMS': u'1',
@@ -107,8 +107,8 @@ class ViewsTest(RemoTestCase):
             'start_form_0_year': 2011,
             'end_form_0_year': now().year,
             'end_form_0_month': 10,
-            'end_form_0_day': 04,
-            'end_form_1_hour': 07,
+            'end_form_0_day': 4,
+            'end_form_1_hour': 7,
             'end_form_1_minute': 00}
 
         # Give permissions to admin group

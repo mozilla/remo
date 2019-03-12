@@ -403,7 +403,7 @@ class LegacyReportingTests(RemoTestCase):
     def test_old_report_redirect(self):
         """Test old report url redirects to list of reports for that month."""
         user = UserFactory.create(groups=['Rep'])
-        report_date = datetime.date(2011, 01, 05)
+        report_date = datetime.date(2011, 1, 5)
         NGReportFactory.create_batch(3, user=user, report_date=report_date)
 
         display_name = user.userprofile.display_name
