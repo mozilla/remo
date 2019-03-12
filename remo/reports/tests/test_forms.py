@@ -33,7 +33,7 @@ class NGReportFormTests(RemoTestCase):
         form = NGReportForm(data, instance=NGReport(user=user))
         ok_(form.is_valid())
         db_obj = form.save()
-        eq_(db_obj.report_date, date(2012, 03, 25))
+        eq_(db_obj.report_date, date(2012, 3, 25))
         eq_(db_obj.activity, activity)
         eq_(db_obj.longitude, 44.33)
         eq_(db_obj.latitude, 55.66)
