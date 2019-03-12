@@ -178,12 +178,14 @@ def dashboard(request):
                                           | reps_without_mentor_q)
         order_by = '-userprofile__date_joined_program'
         args['reps_without_mentors'] = reps_without_mentor.order_by(order_by)
+
+        reps_with_profiles = reps.filter(userprofile__registration_complete=True)
         q_active_12_months = Q(
             ng_reports__report_date__range=[get_date(weeks=-52), get_date(weeks=0)])
-        args['reps_inactive_12_months'] = reps.filter(~q_active_12_months).distinct()
+        args['reps_inactive_12_months'] = reps_with_profiles.filter(~q_active_12_months).distinct()
         q_active_6_months = Q(
             ng_reports__report_date__range=[get_date(weeks=-26), get_date(weeks=0)])
-        args['reps_inactive_6_months'] = reps.filter(~q_active_6_months).distinct()
+        args['reps_inactive_6_months'] = reps_with_profiles.filter(~q_active_6_months).distinct()
 
     statsd.incr('dashboard.dashboard_reps')
     return render(request, 'dashboard_reps.jinja', args)
