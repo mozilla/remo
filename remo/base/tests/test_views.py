@@ -93,20 +93,6 @@ class ViewsTest(RemoTestCase):
         eq_(response.status_code, 200)
         self.assertJinja2TemplateUsed(response, 'main.jinja')
 
-    def test_view_about_page(self):
-        """Get about page."""
-        c = Client()
-        response = c.get(reverse('about'))
-        eq_(response.status_code, 200)
-        self.assertJinja2TemplateUsed(response, 'about.jinja')
-
-    def test_view_faq_page(self):
-        """Get faq page."""
-        c = Client()
-        response = c.get(reverse('faq'))
-        eq_(response.status_code, 200)
-        self.assertJinja2TemplateUsed(response, 'faq.jinja')
-
     @override_settings(ENGAGE_ROBOTS=True)
     def test_robots_allowed(self):
         """Test robots.txt generation when crawling allowed."""
