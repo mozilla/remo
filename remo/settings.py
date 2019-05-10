@@ -152,16 +152,26 @@ CSP_REPORT_ENABLE = config('CSP_REPORT_ENABLE', default=True, cast=bool)
 CSP_REPORT_URI = config('CSP_REPORT_URI', default='/capture-csp-violation')
 
 # Celery configuration
+REDIS_URL = config('REDIS_URL', default='')
+
+if REDIS_URL:
+    DEFAULT_CELERY_BROKER_URL = "{}/1".format(REDIS_URL)
+    DEFAULT_CELERY_RESULT_URL = "{}/1".format(REDIS_URL)
+else:
+    DEFAULT_CELERY_BROKER_URL = 'redis://broker:6379/1'
+    DEFAULT_CELERY_RESULT_URL = 'redis://broker:6379/1'
+
 CELERY_ENABLE_UTC = config('CELERY_ENABLE_UTC', default=True, cast=bool)
 CELERY_TIMEZONE = config('CELERY_TIMEZONE', default='UTC')
 CELERY_TASK_RESULT_EXPIRES = config('CELERY_TASK_RESULT_EXPIRES', default=3600, cast=int)
 CELERY_ACCEPT_CONTENT = ['pickle', 'json']
-CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://broker:6379/1')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default=DEFAULT_CELERY_RESULT_URL)
 CELERY_TASK_ALWAYS_EAGER = config('CELERY_TASK_ALWAYS_EAGER', default=False, cast=bool)
 CELERY_TASK_SERIALIZER = config('CELERY_TASK_SERIALIZER', default='pickle')
 REDIS_CONNECT_RETRY = config('REDIS_CONNECT_RETRY',
                              default=CELERY_RESULT_BACKEND == 'redis', cast=bool)
-CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://broker:6379/1')
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default=DEFAULT_CELERY_BROKER_URL)
+
 if CELERY_BROKER_URL.startswith('redis'):
     CELERY_BROKER_TRANSPORT_OPTIONS = {
         'visibility_timeout': config('REDIS_VISIBILITY_TIMEOUT', default=604800, cast=int)
@@ -396,14 +406,31 @@ REST_FRAMEWORK = {
 }
 
 # Cache
-CACHES = {
-    'default': {
-        'BACKEND': config('CACHE_BACKEND',
-                          default='django.core.cache.backends.memcached.MemcachedCache'),
-        'LOCATION': config('CACHE_URL', default='127.0.0.1:11211'),
-        'KEY_PREFIX': config('CACHE_KEY_PREFIX', default='remo')
+CACHE_BACKEND = config(
+    'CACHE_BACKEND',
+    default='django.core.cache.backends.memcached.MemcachedCache'
+)
+
+if CACHE_BACKEND == 'django_bmemcached.memcached.BMemcached':
+    CACHES = {
+        'default': {
+            'BACKEND': CACHE_BACKEND,
+            'LOCATION': config('MEMCACHIER_SERVERS'),
+            'OPTIONS': {
+                'username': config('MEMCACHIER_USERNAME'),
+                'password': config('MEMCACHIER_PASSWORD')
+            }
+        }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': config('CACHE_BACKEND'),
+            'LOCATION': config('CACHE_URL', default='127.0.0.1:11211'),
+            'KEY_PREFIX': config('CACHE_KEY_PREFIX', default='remo')
+        }
+    }
+
 
 if DEV:
     CSP_DEFAULT_SRC += (
