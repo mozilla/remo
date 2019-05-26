@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
@@ -224,6 +224,11 @@ def stats_dashboard(request):
     q_active_month12 = Q(
         ng_reports__report_date__range=[get_date(weeks=-52), get_date(weeks=0)])
 
+    top_countries = (User.objects
+                      .values('userprofile__country')
+                      .annotate(country_count=Count('userprofile__country'))
+                      .order_by('-country_count')[:10])
+
     active = reps.filter(q_active)
     active_month1 = reps.filter(q_active_month1)
     active_month2 = reps.filter(q_active_month2)
@@ -244,6 +249,7 @@ def stats_dashboard(request):
     args['active_month2'] = active_month2.distinct().count()
     args['active_month6'] = active_month6.distinct().count()
     args['active_month12'] = active_month12.distinct().count()
+    args['top_countries'] = top_countries
 
     return render(request, 'stats_dashboard.jinja', args)
 
