@@ -71,7 +71,7 @@ def dashboard_mozillians(request, user):
         ng_reports = NGReport.objects.filter(report_date__lte=today,
                                              functional_areas=interest,
                                              user__in=reps)
-        reps_ng_reports[interest.name] = ng_reports.order_by('-report_date')[:10]
+        reps_ng_reports[interest.name] = ng_reports.order_by('-report_date')[:20]
 
         # Get the events with the specified category
         events = Event.objects.filter(categories=interest)
