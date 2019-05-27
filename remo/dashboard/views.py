@@ -225,9 +225,9 @@ def stats_dashboard(request):
         ng_reports__report_date__range=[get_date(weeks=-52), get_date(weeks=0)])
 
     top_countries = (User.objects
-                      .values('userprofile__country')
-                      .annotate(country_count=Count('userprofile__country'))
-                      .order_by('-country_count')[:10])
+                     .values('userprofile__country')
+                     .annotate(country_count=Count('userprofile__country'))
+                     .order_by('-country_count')[:10])
 
     active = reps.filter(q_active)
     active_month1 = reps.filter(q_active_month1)
