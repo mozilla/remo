@@ -114,12 +114,10 @@
                       <table class="dashboard-table responsive">
                         <thead>
                           <tr>
-                            <th>Name</th>
-                            <th>Current streak</th>
-                            <th>Longest streak</th>
-                            <th>Last 4 weeks</th>
-                            <th>Last 8 weeks</th>
-                            <th>Total</th>
+                            <th>Reporter</th>
+                            <th>Report Date</th>
+                            <th>Activity Date</th>
+                            <th>Activity</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -136,19 +134,18 @@
                                 </a>
                               </td>
                               <td>
-                                {{ count_ng_reports(report.user, current_streak=True) }} days
+                                {{ report.created_on|strftime("%d %b %Y") }}
                               </td>
                               <td>
-                                {{ count_ng_reports(report.user, longest_streak=True) }} days
+                                {{ report.report_date|strftime("%d %b %Y") }}
                               </td>
                               <td>
-                                {{ count_ng_reports(report.user, period=4) }} activities
-                              </td>
-                              <td>
-                                {{ count_ng_reports(report.user, period=8) }} activities
-                              </td>
-                              <td>
-                                {{ count_ng_reports(report.user) }} activities
+                                <a href="{{ report.get_absolute_url() }}"
+                                  {% if report.verified_activity %}
+                                    class="report-verified" title="Report verified"
+                                  {% endif %}>
+                                  {{ report }}
+                                </a>
                               </td>
                             </tr>
                           {% endfor %}
