@@ -24,18 +24,12 @@ Mozilla Reps - Profile of {{ user_profile.display_name }}
           <h1>
             {{ pageuser.first_name }} {{ pageuser.last_name }}
           </h1>
-          {% if pageuser == user %}
-            <span class="grayed">
-              (that's you!)
-            </span>
-          {% else %}
-          {% endif %}
           {% if user_profile.local_name %}
-            <h2 class="grayed">
+            <h2>
               {{ user_profile.local_name }}
             </h2>
           {% endif %}
-            <h2 class="grayed">
+            <h2>
               {{ user_profile.display_name }}
             </h2>
           {% if pageuser == user %}

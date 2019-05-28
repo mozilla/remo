@@ -52,7 +52,6 @@ Mozilla Reps - {{ poll.name }} - Results
                         <div class="time-end">
                           {{ poll.end|strftime('%H:%M') }}
                         </div>
-                          <div class="pict-icon small single time"></div>
                       </div>
                     </div>
                   {% else %}
@@ -88,7 +87,6 @@ Mozilla Reps - {{ poll.name }} - Results
                              data-date-start="{{ poll.start|format_datetime_iso }}"
                              data-date-end="{{ poll.end|format_datetime_iso }}"
                              data-is-multidate="true">
-                          <div class="pict-icon small time"></div>
                         </div>
                       </div>
                     </div>
@@ -191,14 +189,12 @@ Mozilla Reps - {{ poll.name }} - Results
             {% for comment in poll.comments.all() %}
               <div class="voting-comment">
                 <span class="label inline">
-                  Comment {{ loop.index }}
+                  Comment {{ loop.index }} by&nbsp;
                 </span>
-                <span class="grayed">by </span>
                   <a href="{{ url('profiles_view_profile', comment.user|get_display_name) }}">
                     {{ comment.user.get_full_name() }}
                   </a>
-                <span class="grayed"
-                      data-time="{{ comment.created_on|format_datetime_iso }}"
+                <span data-time="{{ comment.created_on|format_datetime_iso }}"
                       title="{{ comment.created_on }}">
                   at {{ comment.created_on }}
                 </span><br>

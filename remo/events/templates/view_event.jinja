@@ -84,7 +84,6 @@ Mozilla Reps - {{ event.name }}
                           <div class="time-end">
                             {{ event.local_end|strftime('%H:%M') }}
                           </div>
-                            <div class="pict-icon small single time"></div>
                         </div>
                       </div>
                     {% else %}
@@ -627,9 +626,8 @@ Mozilla Reps - {{ event.name }}
                   {% endif %}
                   <div>
                     <span class="label inline">
-                      Comment {{ loop.index }}
+                      Comment {{ loop.index }} by&nbsp;
                     </span>
-                    <span class="grayed">by </span>
                     {% if user_is_mozillian(comment.user) %}
                       {{ comment.user.get_full_name() }}
                     {% else %}
@@ -637,8 +635,7 @@ Mozilla Reps - {{ event.name }}
                         {{ comment.user.get_full_name() }}
                       </a>
                     {% endif %}
-                    <span class="grayed"
-                          data-time="{{ comment.created_on|format_datetime_iso }}"
+                    <span data-time="{{ comment.created_on|format_datetime_iso }}"
                           title="{{ comment.created_on }}">
                           at {{ comment.created_on }}
                     </span>

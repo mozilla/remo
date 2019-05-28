@@ -68,7 +68,6 @@ Mozilla Reps - {{ poll.name }} - Vote
                         <div class="time-end">
                           {{ poll.end|strftime('%H:%M') }}
                         </div>
-                          <div class="pict-icon small single time"></div>
                       </div>
                     </div>
                   {% else %}
@@ -105,7 +104,6 @@ Mozilla Reps - {{ poll.name }} - Vote
                              data-date-start="{{ poll.start|format_datetime_iso }}"
                              data-date-end="{{ poll.end|format_datetime_iso }}"
                              data-is-multidate="true">
-                          <div class="pict-icon small time"></div>
                         </div>
                       </div>
                     </div>
@@ -278,9 +276,8 @@ Mozilla Reps - {{ poll.name }} - Vote
                   </form>
                 {% endif %}
                 <span class="label inline">
-                  Comment {{ loop.index }}
+                  Comment {{ loop.index }} by&nbsp;
                 </span>
-                <span class="grayed">by </span>
                 {% if comment.user.userprofile.display_name == 'ReMoBot' %}
                   {{ comment.user.get_full_name() }}
                 {% else %}
@@ -288,8 +285,7 @@ Mozilla Reps - {{ poll.name }} - Vote
                     {{ comment.user.get_full_name() }}
                   </a>
                 {% endif %}
-                <span class="grayed"
-                      data-time="{{ comment.created_on|format_datetime_iso }}"
+                <span data-time="{{ comment.created_on|format_datetime_iso }}"
                       title="{{ comment.created_on }}">
                   at {{ comment.created_on }}
                 </span><br>
