@@ -81,6 +81,28 @@
         </table>
       </div>
     </div>
+    <div class="large-6 columns">
+      <h2>Top Countries</h2>
+      <p>Where are the most Reps?</p>
+      <div class="dashboard-stats-activities-block">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Reps</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for country in top_countries %}
+              <tr>
+                <td>{{ country.userprofile__country }}</td>
+                <td>{{ country.country_count }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </main>
 {% endblock %}
