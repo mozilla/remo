@@ -1,21 +1,5 @@
 <!DOCTYPE html>
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if lt IE 7]>
-  <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en">
-<![endif]-->
-
-<!--[if IE 7]>
-  <html class="no-js lt-ie9 lt-ie8" lang="en">
-<![endif]-->
-
-<!--[if IE 8]>
-  <html class="no-js lt-ie9" lang="en">
-<![endif]-->
-
-<!--[if gt IE 8]>
-<!-->
-  <html lang="en">
-<!--<![endif]-->
+<html lang="en">
 
 <head>
   <meta charset="utf-8" />
@@ -33,19 +17,6 @@
           media="screen,projection,tv,print" />
   {% endcompress %}
   {% block topextra %} {% endblock %}
-
-  <!--[if lt IE 9]>
-      {% compress css %}
-        <link href="{{ static('base/css/ie-fd4.css') }}" rel="stylesheet"
-              media="screen,projection,tv" />
-      {% endcompress %}
-  <![endif]-->
-  <!-- IE Fix for HTML5 Tags -->
-  <!--[if lt IE 9]>
-      {% compress js %}
-        <script src="{{ static('base/js/html5.js') }}"></script>
-      {% endcompress %}
-  <![endif]-->
 
   <!-- Bing ownership verification -->
   <meta name="msvalidate.01" content="B7B177115A634927D608514DA17B2574" />
