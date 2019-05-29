@@ -205,55 +205,6 @@ def email_mentees(request):
     return redirect('dashboard')
 
 
-def stats_dashboard(request):
-    """Stats dashboard view."""
-    reps = User.objects.filter(groups__name='Rep',
-                               userprofile__registration_complete=True)
-
-    q_active = Q(
-        ng_reports__report_date__range=[get_date(weeks=-4), get_date(weeks=4)])
-    q_inactive = Q(
-        ng_reports__report_date__range=[get_date(weeks=-8), get_date(weeks=8)])
-
-    q_active_month1 = Q(
-        ng_reports__report_date__range=[get_date(weeks=-4), get_date(weeks=0)])
-    q_active_month2 = Q(
-        ng_reports__report_date__range=[get_date(weeks=-8), get_date(weeks=0)])
-    q_active_month6 = Q(
-        ng_reports__report_date__range=[get_date(weeks=-26), get_date(weeks=0)])
-    q_active_month12 = Q(
-        ng_reports__report_date__range=[get_date(weeks=-52), get_date(weeks=0)])
-
-    top_countries = (User.objects
-                     .values('userprofile__country')
-                     .annotate(country_count=Count('userprofile__country'))
-                     .order_by('-country_count')[:10])
-
-    active = reps.filter(q_active)
-    active_month1 = reps.filter(q_active_month1)
-    active_month2 = reps.filter(q_active_month2)
-    active_month6 = reps.filter(q_active_month6)
-    active_month12 = reps.filter(q_active_month12)
-    inactive_low = reps.filter(~q_active & q_inactive)
-    inactive_high = reps.filter(~q_inactive)
-
-    args = {}
-    args['active_users'] = active.distinct().count()
-    args['inactive_low_users'] = inactive_low.distinct().count()
-    args['inactive_high_users'] = inactive_high.distinct().count()
-    args['reps'] = reps.count()
-    args['past_events'] = Event.objects.filter(start__lt=now()).count()
-    args['future_events'] = Event.objects.filter(start__gte=now()).count()
-    args['activities'] = NGReport.objects.all().count()
-    args['active_month1'] = active_month1.distinct().count()
-    args['active_month2'] = active_month2.distinct().count()
-    args['active_month6'] = active_month6.distinct().count()
-    args['active_month12'] = active_month12.distinct().count()
-    args['top_countries'] = top_countries
-
-    return render(request, 'stats_dashboard.jinja', args)
-
-
 @never_cache
 @permission_check()
 def list_action_items(request):
@@ -305,6 +256,50 @@ def list_action_items(request):
 
 
 def kpi(request):
+    reps = User.objects.filter(groups__name='Rep',
+                               userprofile__registration_complete=True)
+
+    q_active = Q(
+        ng_reports__report_date__range=[get_date(weeks=-4), get_date(weeks=4)])
+    q_inactive = Q(
+        ng_reports__report_date__range=[get_date(weeks=-8), get_date(weeks=8)])
+
+    q_active_month1 = Q(
+        ng_reports__report_date__range=[get_date(weeks=-4), get_date(weeks=0)])
+    q_active_month2 = Q(
+        ng_reports__report_date__range=[get_date(weeks=-8), get_date(weeks=0)])
+    q_active_month6 = Q(
+        ng_reports__report_date__range=[get_date(weeks=-26), get_date(weeks=0)])
+    q_active_month12 = Q(
+        ng_reports__report_date__range=[get_date(weeks=-52), get_date(weeks=0)])
+
+    top_countries = (User.objects
+                     .values('userprofile__country')
+                     .annotate(country_count=Count('userprofile__country'))
+                     .order_by('-country_count')[:15])
+
+    active = reps.filter(q_active)
+    active_month1 = reps.filter(q_active_month1)
+    active_month2 = reps.filter(q_active_month2)
+    active_month6 = reps.filter(q_active_month6)
+    active_month12 = reps.filter(q_active_month12)
+    inactive_low = reps.filter(~q_active & q_inactive)
+    inactive_high = reps.filter(~q_inactive)
+
+    args = {}
+    args['active_users'] = active.distinct().count()
+    args['inactive_low_users'] = inactive_low.distinct().count()
+    args['inactive_high_users'] = inactive_high.distinct().count()
+    args['reps_count'] = reps.count()
+    args['past_events'] = Event.objects.filter(start__lt=now()).count()
+    args['future_events'] = Event.objects.filter(start__gte=now()).count()
+    args['activities'] = NGReport.objects.all().count()
+    args['active_month1'] = active_month1.distinct().count()
+    args['active_month2'] = active_month2.distinct().count()
+    args['active_month6'] = active_month6.distinct().count()
+    args['active_month12'] = active_month12.distinct().count()
+    args['top_countries'] = top_countries
+
     countries = product_details.get_regions('en').values()
     countries.sort()
 
@@ -312,9 +307,11 @@ def kpi(request):
 
     initiatives = Campaign.active_objects.all()
 
-    reps = (User.objects.filter(userprofile__registration_complete=True, groups__name='Rep')
-                        .order_by('userprofile__country', 'last_name', 'first_name'))
+    ordered_reps = reps.order_by('userprofile__country', 'last_name', 'first_name')
 
-    return render(request, 'kpi.jinja',
-                  {'reps': reps, 'countries': countries,
-                   'categories': categories, 'initiatives': initiatives})
+    args['reps'] = ordered_reps
+    args['countries'] = countries
+    args['categories'] = categories
+    args['initiatives'] = initiatives
+
+    return render(request, 'kpi.jinja', args)

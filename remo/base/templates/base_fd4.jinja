@@ -95,24 +95,17 @@
                 {% if user.is_authenticated() %}
                   <a href="{{ url('dashboard') }}"
                       id="dashboard-menu-locator"
-                      class="main {{ active(request, '^/dashboard') }}">Dashboard</a>
+                      class="main {{ active(request, '^/dashboard/$') }}">Dashboard</a>
                 {% else %}
                   <a href="{{ url('main') }}"
                       id="main-menu-locator"
                       class="main {{ active(request, '^/$') }}">Main</a>
                 {% endif %}
-                <ul class="dropdown-content">
-                  <li>
-                    <a href="{{ url('stats_dashboard') }}"
-                        id="stats-menu-locator"
-                        class="main">Statistics</a>
-                  </li>
-                  <li>
-                    <a href="{{ url('kpi') }}"
-                        id="kpi-menu-locator"
-                        class="main">KPI</a>
-                  </li>
-                </ul>
+              </li>
+              <li>
+                <a href="{{ url('kpi') }}"
+                    id="kpi-menu-locator"
+                    class="main {{ active(request, '^/dashboard/kpi/') }}">KPI</a>
               </li>
               <li>
                 <a href="{{ url('profiles_list_profiles') }}"

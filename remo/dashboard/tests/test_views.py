@@ -129,16 +129,36 @@ class ViewsTest(RemoTestCase):
         self.assertJinja2TemplateUsed(response, 'dashboard_mozillians.jinja')
 
 
-class StatsDashboardTest(RemoTestCase):
-    """Test stats dashboard."""
+class ListActionItemsTests(RemoTestCase):
+    """Tests related to action items listing."""
+
+    def test_list(self):
+        model = ContentType.objects.get_for_model(Bug)
+        items = ActionItem.objects.filter(content_type=model)
+        ok_(not items)
+
+        whiteboard = '[waiting receipts]'
+        user = UserFactory.create(groups=['Rep'])
+        bug = BugFactory.create(whiteboard=whiteboard, assigned_to=user)
+        item = ActionItem.objects.get(content_type=model, object_id=bug.id)
+        with self.login(user) as client:
+            response = client.get(reverse('list_action_items'), user=user)
+        self.assertJinja2TemplateUsed(response, 'list_action_items.jinja')
+        eq_(response.context['pageheader'], 'My Action Items')
+        eq_(response.status_code, 200)
+        eq_(set(response.context['objects'].object_list), set([item]))
+
+
+class KPIDashboardTest(RemoTestCase):
+    """Test dashboard KPIs and stats."""
 
     def setUp(self):
         ActivityFactory.create(name=ACTIVITY_EVENT_CREATE)
 
     def test_base(self):
-        response = Client().get(reverse('stats_dashboard'))
+        response = Client().get(reverse('kpi'))
         eq_(response.status_code, 200)
-        self.assertJinja2TemplateUsed(response, 'stats_dashboard.jinja')
+        self.assertJinja2TemplateUsed(response, 'kpi.jinja')
 
     def test_overview(self):
         UserFactory.create_batch(10, groups=['Rep'])
@@ -150,11 +170,11 @@ class StatsDashboardTest(RemoTestCase):
         EventFactory.create_batch(10, start=now() + timedelta(days=3),
                                   end=now() + timedelta(days=4))
 
-        response = Client().get(reverse('stats_dashboard'))
+        response = Client().get(reverse('kpi'))
 
         eq_(response.status_code, 200)
-        self.assertJinja2TemplateUsed(response, 'stats_dashboard.jinja')
-        eq_(response.context['reps'], 10)
+        self.assertJinja2TemplateUsed(response, 'kpi.jinja')
+        eq_(response.context['reps_count'], 10)
         eq_(response.context['past_events'], 5)
         eq_(response.context['future_events'], 10)
         eq_(response.context['activities'], 27)
@@ -196,39 +216,10 @@ class StatsDashboardTest(RemoTestCase):
             NGReportFactory.create(user=user, report_date=now().date() - inactive_high)
             NGReportFactory.create(user=user, report_date=now().date() + inactive_high)
 
-        response = Client().get(reverse('stats_dashboard'))
+        response = Client().get(reverse('kpi'))
 
         eq_(response.status_code, 200)
-        self.assertJinja2TemplateUsed(response, 'stats_dashboard.jinja')
+        self.assertJinja2TemplateUsed(response, 'kpi.jinja')
         eq_(response.context['active_users'], 5)
         eq_(response.context['inactive_low_users'], 4)
         eq_(response.context['inactive_high_users'], 3)
-
-
-class ListActionItemsTests(RemoTestCase):
-    """Tests related to action items listing."""
-
-    def test_list(self):
-        model = ContentType.objects.get_for_model(Bug)
-        items = ActionItem.objects.filter(content_type=model)
-        ok_(not items)
-
-        whiteboard = '[waiting receipts]'
-        user = UserFactory.create(groups=['Rep'])
-        bug = BugFactory.create(whiteboard=whiteboard, assigned_to=user)
-        item = ActionItem.objects.get(content_type=model, object_id=bug.id)
-        with self.login(user) as client:
-            response = client.get(reverse('list_action_items'), user=user)
-        self.assertJinja2TemplateUsed(response, 'list_action_items.jinja')
-        eq_(response.context['pageheader'], 'My Action Items')
-        eq_(response.status_code, 200)
-        eq_(set(response.context['objects'].object_list), set([item]))
-
-
-class KPIDashboardTest(RemoTestCase):
-    """Test dashboard KPIs."""
-
-    def test_base(self):
-        response = Client().get(reverse('kpi'))
-        eq_(response.status_code, 200)
-        self.assertJinja2TemplateUsed(response, 'kpi.jinja')
