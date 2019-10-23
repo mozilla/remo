@@ -27,7 +27,7 @@ MOZILLIANS_API_URL=https://mozillians.org/api/v2/
 DATABASE_URL='mysql://remo:remo@db:3306/remo'
 # Uncomment the below DATABASE_URL setting if you're running the setup
 # locally using virtualenv
-# DATABASE_URL = 'mysql://remo:remo@localhost:3306/remo'
+# DATABASE_URL='mysql://remo:remo@localhost:3306/remo'
 # Debug flag
 DEBUG=True
 DEV=True
