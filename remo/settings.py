@@ -167,6 +167,9 @@ if CELERY_BROKER_URL.startswith('redis'):
         'visibility_timeout': config('REDIS_VISIBILITY_TIMEOUT', default=604800, cast=int)
     }
 
+# Product Details
+PROD_DETAILS_DIR = Path(ROOT, 'lib/product_details_json')
+
 # Mapbox
 MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')
 

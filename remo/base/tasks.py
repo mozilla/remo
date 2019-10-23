@@ -43,7 +43,7 @@ def send_remo_mail(subject, recipients_list, sender=None,
 
     for recipient in recipients_list:
         to = ''
-        if (isinstance(recipient, long)
+        if ((isinstance(recipient, int) or isinstance(recipient, long))
                 and User.objects.filter(pk=recipient).exists()):
             user = User.objects.get(pk=recipient)
             to = '%s <%s>' % (user.get_full_name(), user.email)
