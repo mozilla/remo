@@ -33,9 +33,8 @@ Pygments==2.0.2 \
     --hash=sha256:7320919084e6dac8f4540638a46447a3bd730fca172afc17d2c03eed22cf4f51
 django-jinja==2.2.1 \
     --hash=sha256:04c53ba90cbede97e6543b98291f1eec259e57dfa4e014a5fbf0291afcdae6a9
-MySQL-python==1.2.5 \
-    --hash=sha256:ab22d1322099098730a57fd59d610f60738f95a1cb68dacca2d1c47cb0cbe8ee \
-    --hash=sha256:811040b647e5d5686f84db415efd697e6250008b112b6909ba77ac059e140c74
+mysqlclient==1.4.4 \
+    --hash=sha256:9c737cc55a5dc8dd3583a942d5a9b21be58d16f00f5fefca4e575e7d9682e98c
 django-sha2==0.4 \
     --hash=sha256:b06a86451a99d6c26bfa65082999dbf658e087e596e9292cce688b53eabaaada
 factory_boy==2.6.0 \
@@ -65,9 +64,9 @@ celery==4.1.0 \
     --hash=sha256:77ff3730198d6a17b3c1f05579ebe570b579efb35f6d7e13dba3b1368d068b35
 statsd==2.1.2 \
     --hash=sha256:45db168312a6820fd78697c7b6fd0196f3af922c8ebc88540edd0d6fafed554d
-django-mozilla-product-details==0.9 \
-    --hash=sha256:a7f6ed9ff9c5d8547787437ca189e46ded5ab1d5752206eeb2e733f772d6114f \
-    --hash=sha256:1f2a66b806f4d664935e1abe782f4bed2ad75b2d2ab9670ced0b494baeae8a2a
+django-mozilla-product-details==0.14.1 \
+    --hash=sha256:5fa2a8c3f2b9489aeb39b42c3612a43b0be5e778ffab07a5a2cf23b1eced4d64 \
+    --hash=sha256:b7428e2dae653c4b0e35fa15363dd26b74dba821bf384c5cd835da0f1566b841
 requests==2.9.1 \
     --hash=sha256:113fbba5531a9e34945b7d36b33a084e8ba5d0664b703c81a7c572d91919a5b8 \
     --hash=sha256:c577815dd00f1394203fc44eb979724b098f88264a9ef898ee45b8e5e9cf587f

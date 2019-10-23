@@ -1,2 +1,3 @@
 *.json
 .last_update
+*.last_modified

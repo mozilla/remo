@@ -17,7 +17,7 @@ https://wiki.mozilla.org/Websites/ReMo_Mozilla_Reps
 
 Documentation
 -------------
-See http://remo.readthedocs.org/ or build the /docs folder.
+See https://remo.readthedocs.org/ or build the /docs folder.
 
 How to find bugs to work on
 -------------
