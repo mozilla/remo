@@ -13,8 +13,7 @@ We are collecting the following information for each Rep:
  * Last Name
  * Birth Year
  * City
- * Region
- * Country
+ * Region/Country
  * Longitude, Latitude
  * Display Name
  * Mozillians Profile

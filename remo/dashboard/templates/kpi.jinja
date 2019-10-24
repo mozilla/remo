@@ -88,13 +88,13 @@
     </div>
 
     <div class="large-6 columns">
-      <h2>Top 15 Countries</h2>
+      <h2>Top 15 Countries/Regions</h2>
       <p>Where are the most Reps?</p>
       <div class="dashboard-stats-activities-block">
         <table class="dashboard-table">
           <thead>
             <tr>
-              <th>Country</th>
+              <th>Country or Region</th>
               <th>Reps</th>
             </tr>
           </thead>
@@ -126,7 +126,7 @@
   <div class="row">
     <div class="large-4 columns">
       <select name="country" id="filter-country" data-query="country" autocomplete="off">
-        <option value selected="selected">Country</option>
+        <option value selected="selected">Country or Region</option>
         {% for country in countries %}
           <option value="{{ country }}">{{ country }}</option>
         {% endfor %}

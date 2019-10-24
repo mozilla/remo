@@ -192,7 +192,7 @@ class EventForm(happyforms.ModelForm):
         # Dynamic countries field.
         countries = product_details.get_regions('en').values()
         countries.sort()
-        country_choices = ([('', 'Country')]
+        country_choices = ([('', 'Country or Region')]
                            + [(country, country) for country in countries])
         self.fields['country'].choices = country_choices
 

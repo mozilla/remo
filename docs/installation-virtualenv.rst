@@ -99,7 +99,7 @@ When you want to start contributing...
 #. Update product_details package.
 
    Package `product_details` provides information about countries. We
-   use it in country selection lists. The information get pulled form
+   use it in country or region selection lists. The information get pulled form
    mozilla's SVN, so we need to fetch it at least once. To update run::
 
      (venv)$ ./manage.py update_product_details

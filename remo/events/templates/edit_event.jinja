@@ -138,8 +138,8 @@
                 </div>
                 <div class="small-11 columns">
                   {{ field_with_attrs(event_form.region,
-                                      placeholder='Region',
-                                      title='Region',
+                                      placeholder='Area',
+                                      title='Area',
                                       class='input-text big has-tip tip-right') }}
                   {{ field_errors(event_form.region) }}
                 </div>
@@ -149,7 +149,7 @@
                   <div class="required-field"></div>
                 </div>
                 <div class="small-11 columns">
-                  <div class="has-tip tip-right auto-width" title="Country">
+                  <div class="has-tip tip-right auto-width" title="Country or Region">
                     {{ event_form.country }}
                   </div>
                   {{ field_errors(event_form.country) }}
