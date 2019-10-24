@@ -273,7 +273,7 @@ def kpi(request):
     q_active_month12 = Q(
         ng_reports__report_date__range=[get_date(weeks=-52), get_date(weeks=0)])
 
-    top_countries = (User.objects
+    top_countries = (reps
                      .values('userprofile__country')
                      .annotate(country_count=Count('userprofile__country'))
                      .order_by('-country_count')[:15])
