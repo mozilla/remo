@@ -1,13 +1,11 @@
 version: '2'
 services:
   db:
-    image: mysql:5.5
+    image: postgres:latest
     environment:
-      - MYSQL_DATABASE=remo
-      - MYSQL_USER=remo
-      - MYSQL_PASSWORD=remo
-      - MYSQL_ROOT_PASSWORD=root
-    command: mysqld --max_allowed_packet=64M
+      - POSTGRES_DB=remo
+      - POSTGRES_USER=remo
+      - POSTGRES_PASSWORD=remo
   memcached:
     image: memcached
   broker:

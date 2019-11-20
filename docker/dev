@@ -6,8 +6,8 @@ CMD ["./bin/run-dev.sh"]
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    build-essential libxml2-dev libxslt1-dev libffi-dev python-dev \
-    default-libmysqlclient-dev mysql-client python-pip node-less locales rabbitmq-server && \
+    build-essential libxml2-dev libxslt1-dev libffi-dev zlib1g-dev python-dev \
+    python-pip node-less locales libpq-dev postgresql-client && \
     rm -rf /var/lib/apt/lists/*
 
 RUN dpkg-reconfigure locales && locale-gen C.UTF-8 && \

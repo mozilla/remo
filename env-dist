@@ -24,10 +24,7 @@ OIDC_OP_STORE_ACCESS_TOKEN = True
 # Mozillians
 MOZILLIANS_API_URL = https://mozillians.org/api/v2/
 # Default database setting for docker setup
-DATABASE_URL = 'mysql://remo:remo@db:3306/remo'
-# Uncomment the below DATABASE_URL setting if you're running the setup
-# locally using virtualenv
-# DATABASE_URL = 'mysql://remo:remo@localhost:3306/remo'
+DATABASE_URL = 'postgres://remo:remo@db:5432/remo'
 # Debug flag
 DEBUG = True
 DEV = True
