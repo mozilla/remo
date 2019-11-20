@@ -1,0 +1,9 @@
+build:
+  docker:
+    web: heroku.Dockerfile
+    celery: heroku.Dockerfile
+    celerybeat: heroku.Dockerfile
+run:
+  web: ./bin/run-prod.sh
+  celery: ./bin/run-celery.sh
+  celerybeat: ./bin/run-celery-beat.sh

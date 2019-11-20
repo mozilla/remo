@@ -43,3 +43,4 @@ SESSION_COOKIE_SECURE = False
 CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
 CACHE_URL = '127.0.0.1:11211'
 CELERY_TASK_ALWAYS_EAGER = True
+SECURE_SSL_REDIRECT = False
