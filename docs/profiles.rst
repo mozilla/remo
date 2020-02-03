@@ -22,8 +22,8 @@ We are collecting the following information for each Rep:
  * Twitter Account
  * GPG-Key
  * Jabber ID
- * IRC Nickname
- * IRC Channels in irc.m.o
+ * Matrix Nickname
+ * Matrix Channels on chat.mozilla.org
  * LinkedIn Profile URL
  * Diaspora Profile URL
  * Facebook Profile URL

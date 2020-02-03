@@ -307,7 +307,7 @@
                 {{ profileform.jabber_id.errors }}
               </small>
             {% endif %}
-            <input type="text" placeholder="IRC nickname"
+            <input type="text" placeholder="Matrix nickname"
                    id="id_irc_name"
                    value="{{ profileform.irc_name.value() }}"
                    name="irc_name"
@@ -322,7 +322,7 @@
             {% endif %}
             <textarea class="flat has-tip tip-right"
                       id="id_irc_channels"
-                      placeholder="Please list the channels you use in IRC"
+                      placeholder="Please list the channels you use on Matrix"
                       name="irc_channels">{{ profileform.irc_channels.value() }}</textarea>
             {% if profileform.irc_channels.errors %}
               <small class="error">
