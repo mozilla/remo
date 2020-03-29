@@ -5,6 +5,10 @@ ReMo Portal
 [![Build Status](https://travis-ci.org/mozilla/remo.svg?branch=master)](https://travis-ci.org/mozilla/remo)
 [![Coverage Status](https://coveralls.io/repos/mozilla/remo/badge.png?branch=master)](https://coveralls.io/r/mozilla/remo?branch=master)
 
+**The [Reps Portal](https://reps.mozilla.org) will be decommissioned soon.
+The [Community Portal](https://community.mozilla.org) will replace it.
+Therefore this project is in maintenance mode and we won't do any changes.**
+
 The [Mozilla Reps portal](https://reps.mozilla.org/) provides the tools for Reps to be successful
 in their day to day activities and also receive mentorship for
 continued development. It also provides metrics for understanding
