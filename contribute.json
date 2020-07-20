@@ -24,7 +24,7 @@
     "keywords": [
         "django",
         "python",
-        "mysql",
+        "postgresql",
         "jquery"
     ]
 }
