@@ -26,13 +26,6 @@ Installing LESS Preprocessor
      ~$ make
      ~$ sudo make install
 
-   .. note::
-
-    For other development environments (eg. virtualenv), follow the Node.js
-    `installation guide <https://github.com/joyent/node/wiki/Installation>`_
-    or use your `package manager <https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager>`_
-    if a package is available.
-
 #. **Install lessc using npm**::
 
      ~$ sudo npm install -g less

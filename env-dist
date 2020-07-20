@@ -1,50 +1,47 @@
-SECRET_KEY = 'secret_key'
-MAPBOX_TOKEN = ''
+SECRET_KEY='secret_key'
+MAPBOX_TOKEN=''
 # Mailhide configuration
-MAILHIDE_PUB_KEY = ''
-MAILHIDE_PRIV_KEY = ''
+MAILHIDE_PUB_KEY=''
+MAILHIDE_PRIV_KEY=''
 # Remozilla configuration
-REMOZILLA_USERNAME = ''
-REMOZILLA_PASSWORD = ''
+REMOZILLA_USERNAME=''
+REMOZILLA_PASSWORD=''
 # Site settings
-SITE_URL = http://127.0.0.1:8000
-ALLOWED_HOSTS = 127.0.0.1
+SITE_URL=http://127.0.0.1:8000
+ALLOWED_HOSTS=127.0.0.1
 # Auth0 confiuguration
-AUTH0_DOMAIN = ''
-AUTH0_CLIENT_ID = ''
-OIDC_OP_AUTHORIZATION_ENDPOINT = ''
-OIDC_OP_TOKEN_ENDPOINT = ''
-OIDC_OP_USER_ENDPOINT = ''
-OIDC_RP_CLIENT_ID = ''
-OIDC_RP_CLIENT_SECRET = ''
-OIDC_RP_CLIENT_SECRET_ENCODED = True
-OIDC_OP_DOMAIN = ''
-OIDC_OP_STORE_ACCESS_TOKEN = True
+AUTH0_DOMAIN=''
+AUTH0_CLIENT_ID=''
+OIDC_OP_AUTHORIZATION_ENDPOINT=''
+OIDC_OP_TOKEN_ENDPOINT=''
+OIDC_OP_USER_ENDPOINT=''
+OIDC_RP_CLIENT_ID=''
+OIDC_RP_CLIENT_SECRET=''
+OIDC_RP_CLIENT_SECRET_ENCODED=True
+OIDC_OP_DOMAIN=''
+OIDC_OP_STORE_ACCESS_TOKEN=True
 # Assuming user remo with password remo and db name remo
 # Mozillians
-MOZILLIANS_API_URL = https://mozillians.org/api/v2/
+MOZILLIANS_API_URL=https://mozillians.org/api/v2/
 # Default database setting for docker setup
-DATABASE_URL = 'mysql://remo:remo@db:3306/remo'
-# Uncomment the below DATABASE_URL setting if you're running the setup
-# locally using virtualenv
-# DATABASE_URL = 'mysql://remo:remo@localhost:3306/remo'
+DATABASE_URL='postgres://remo:remo@db:5432/remo'
 # Debug flag
-DEBUG = True
-DEV = True
+DEBUG=True
+DEV=True
 # Disable JS/CSS compression
-COMPRESS_ENABLED = False
-COMPRESS_OFFLINE = False
+COMPRESS_ENABLED=False
+COMPRESS_OFFLINE=False
 # Email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
 # Mailhide
-MAILHIDE_PUB_KEY = '02Ni54q--g1yltekhaSm23HQ=='
-MAILHIDE_PRIV_KEY = 'fe55a9921917184732012e3fed19d0be'
+MAILHIDE_PUB_KEY='02Ni54q--g1yltekhaSm23HQ=='
+MAILHIDE_PRIV_KEY='fe55a9921917184732012e3fed19d0be'
 # CSP
-CSP_REPORT_ENABLE = False
+CSP_REPORT_ENABLE=False
 # Security
-SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE=False
 # Cache
-CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
-CACHE_URL = '127.0.0.1:11211'
-CELERY_TASK_ALWAYS_EAGER = True
-SECURE_SSL_REDIRECT = False
+CACHE_BACKEND='django.core.cache.backends.locmem.LocMemCache'
+CACHE_URL='127.0.0.1:11211'
+CELERY_TASK_ALWAYS_EAGER=True
+SECURE_SSL_REDIRECT=False
